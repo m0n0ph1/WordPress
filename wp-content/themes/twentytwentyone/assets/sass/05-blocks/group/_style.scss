@@ -1,70 +1,71 @@
 .wp-block-group {
-	// Start IE clearfix.
-	// This hack is only necessary because we want to support IE11.
-	// If we don't want to support IE11, then "display: flow-root" would suffice.
-	display: block;
-	clear: both;
+    // Start IE clearfix.
+    // This hack is only necessary because we want to support IE11.
+    // If we don't want to support IE11, then "display: flow-root" would suffice.
+    display: block;
+    clear: both;
 
-	display: flow-root; // stylelint-disable-line declaration-block-no-duplicate-properties
+    display: flow-root; // stylelint-disable-line declaration-block-no-duplicate-properties
 
-	&:before,
-	&:after {
-		content: "";
-		display: block;
-		clear: both;
-	}
-	// End IE clearfix.
+    &:before,
+    &:after {
+        content: "";
+        display: block;
+        clear: both;
+    }
 
-	.wp-block-group__inner-container {
-		margin-left: auto;
-		margin-right: auto;
+    // End IE clearfix.
 
-		> * {
-			margin-top: calc(0.666 * var(--global--spacing-vertical));
-			margin-bottom: calc(0.666 * var(--global--spacing-vertical));
+    .wp-block-group__inner-container {
+        margin-left: auto;
+        margin-right: auto;
 
-			&.alignfull {
-				@extend %responsive-alignfull-width-mobile;
-			}
+        > * {
+            margin-top: calc(0.666 * var(--global--spacing-vertical));
+            margin-bottom: calc(0.666 * var(--global--spacing-vertical));
 
-			@include media(mobile) {
-				margin-top: var(--global--spacing-vertical);
-				margin-bottom: var(--global--spacing-vertical);
-			}
+            &.alignfull {
+                @extend %responsive-alignfull-width-mobile;
+            }
 
-			&:first-child {
-				margin-top: 0;
-			}
+            @include media(mobile) {
+                margin-top: var(--global--spacing-vertical);
+                margin-bottom: var(--global--spacing-vertical);
+            }
 
-			&:last-child {
-				margin-bottom: 0;
-			}
-		}
-	}
+            &:first-child {
+                margin-top: 0;
+            }
 
-	&.has-background {
-		padding: calc(0.666 * var(--global--spacing-vertical));
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
 
-		@include media(mobile) {
-			padding: var(--global--spacing-vertical);
-		}
-	}
+    &.has-background {
+        padding: calc(0.666 * var(--global--spacing-vertical));
 
-	// Block Styles
-	&.is-style-twentytwentyone-border {
-		border: calc(3 * var(--separator--height)) solid var(--global--color-border);
-		padding: var(--global--spacing-vertical);
-	}
+        @include media(mobile) {
+            padding: var(--global--spacing-vertical);
+        }
+    }
 
-	// Adjust alignfull items to account for left and right padding.
-	&.has-background,
-	&.is-style-twentytwentyone-border {
+    // Block Styles
+    &.is-style-twentytwentyone-border {
+        border: calc(3 * var(--separator--height)) solid var(--global--color-border);
+        padding: var(--global--spacing-vertical);
+    }
 
-		.wp-block-group__inner-container > .alignfull,
-		.wp-block-group__inner-container > hr.wp-block-separator:not(.is-style-dots):not(.alignwide).alignfull {
-			max-width: calc(var(--responsive--alignfull-width) + (2 * var(--global--spacing-vertical)));
-			width: calc(var(--responsive--alignfull-width) + (2 * var(--global--spacing-vertical)));
-			margin-left: calc(-1 * var(--global--spacing-vertical));
-		}
-	}
+    // Adjust alignfull items to account for left and right padding.
+    &.has-background,
+    &.is-style-twentytwentyone-border {
+
+        .wp-block-group__inner-container > .alignfull,
+        .wp-block-group__inner-container > hr.wp-block-separator:not(.is-style-dots):not(.alignwide).alignfull {
+            max-width: calc(var(--responsive--alignfull-width) + (2 * var(--global--spacing-vertical)));
+            width: calc(var(--responsive--alignfull-width) + (2 * var(--global--spacing-vertical)));
+            margin-left: calc(-1 * var(--global--spacing-vertical));
+        }
+    }
 }

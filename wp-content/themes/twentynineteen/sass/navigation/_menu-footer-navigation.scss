@@ -2,21 +2,21 @@
 
 .footer-navigation {
 
-	display: inline;
+    display: inline;
 
-	& > div {
-		display: inline;
-	}
+    & > div {
+        display: inline;
+    }
 
-	.footer-menu {
+    .footer-menu {
 
-		display: inline;
-		padding-left: 0;
+        display: inline;
+        padding-left: 0;
 
-		li {
-			display: inline;
-			margin-right: 1rem;
-		}
-	}
+        li {
+            display: inline;
+            margin-right: 1rem;
+        }
+    }
 
 }

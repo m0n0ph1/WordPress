@@ -1,12 +1,12 @@
 <?php
-/**
- * Simple blog posts block pattern
- */
-return array(
-	'title'      => __( 'Simple blog posts', 'twentytwentytwo' ),
-	'categories' => array( 'query' ),
-	'blockTypes' => array( 'core/query' ),
-	'content'    => '<!-- wp:query {"query":{"perPage":3,"pages":0,"offset":0,"postType":"post","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":true,"perPage":10},"layout":{"inherit":true}} -->
+    /**
+     * Simple blog posts block pattern
+     */
+    return [
+        'title' => __('Simple blog posts', 'twentytwentytwo'),
+        'categories' => ['query'],
+        'blockTypes' => ['core/query'],
+        'content' => '<!-- wp:query {"query":{"perPage":3,"pages":0,"offset":0,"postType":"post","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":true,"perPage":10},"layout":{"inherit":true}} -->
 					<div class="wp-block-query"><!-- wp:post-template -->
 					<!-- wp:post-title {"isLink":true,"style":{"spacing":{"margin":{"top":"1rem","bottom":"1rem"}},"typography":{"fontStyle":"normal","fontWeight":"300"},"elements":{"link":{"color":{"text":"var:preset|color|primary"}}}},"textColor":"primary","fontSize":"var(--wp--custom--typography--font-size--huge, clamp(2.25rem, 4vw, 2.75rem))"} /-->
 
@@ -35,4 +35,4 @@ return array(
 					<!-- wp:query-pagination-next {"fontSize":"small"} /-->
 					<!-- /wp:query-pagination --></div>
 					<!-- /wp:query -->',
-);
+    ];

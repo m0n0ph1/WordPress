@@ -1,11 +1,11 @@
 <?php
-/**
- * Grid of posts with left sidebar block pattern
- */
-return array(
-	'title'      => __( 'Grid of posts with left sidebar', 'twentytwentytwo' ),
-	'categories' => array( 'pages' ),
-	'content'    => '<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(--wp--custom--spacing--small, 1.25rem)","bottom":"var(--wp--custom--spacing--small, 1.25rem)"}}},"layout":{"inherit":true}} -->
+    /**
+     * Grid of posts with left sidebar block pattern
+     */
+    return [
+        'title' => __('Grid of posts with left sidebar', 'twentytwentytwo'),
+        'categories' => ['pages'],
+        'content' => '<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(--wp--custom--spacing--small, 1.25rem)","bottom":"var(--wp--custom--spacing--small, 1.25rem)"}}},"layout":{"inherit":true}} -->
 					<div class="wp-block-group alignfull" style="padding-top:var(--wp--custom--spacing--small, 1.25rem);padding-bottom:var(--wp--custom--spacing--small, 1.25rem)"><!-- wp:columns {"align":"wide","style":{"spacing":{"margin":{"top":"0px","bottom":"0px"}}}} -->
 					<div class="wp-block-columns alignwide" style="margin-top:0px;margin-bottom:0px"><!-- wp:column {"width":"30%"} -->
 					<div class="wp-block-column" style="flex-basis:30%"><!-- wp:site-title {"isLink":false,"style":{"spacing":{"margin":{"top":"0px","bottom":"1rem"}},"typography":{"fontStyle":"italic","fontWeight":"300","lineHeight":"1.1"}},"fontSize":"var(--wp--custom--typography--font-size--huge, clamp(2.25rem, 4vw, 2.75rem))","fontFamily":"source-serif-pro"} /-->
@@ -74,4 +74,4 @@ return array(
 					<!-- /wp:column --></div>
 					<!-- /wp:columns --></div>
 					<!-- /wp:group -->',
-);
+    ];
