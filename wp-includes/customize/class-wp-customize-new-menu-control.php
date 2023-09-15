@@ -14,6 +14,7 @@
 
         public function render_content()
         {
+            parent::render_content();
             _deprecated_function(__METHOD__, '4.9.0');
             ?>
             <button type="button"

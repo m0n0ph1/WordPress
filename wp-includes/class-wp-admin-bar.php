@@ -343,13 +343,13 @@
                             $container->parent = $grandparent->id;
 
                             $index = array_search($parent, $grandparent->children, true);
-                            if(false === $index)
+                            if(false !== $index)
                             {
-                                $grandparent->children[] = $container;
+                                array_splice($grandparent->children, $index, 1, [$container]);
                             }
                             else
                             {
-                                array_splice($grandparent->children, $index, 1, [$container]);
+                                $grandparent->children[] = $container;
                             }
                         }
 

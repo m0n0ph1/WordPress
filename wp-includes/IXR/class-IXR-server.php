@@ -2,20 +2,20 @@
 
     class IXR_Server
     {
-        var $data;
+        public $data;
 
-        var $callbacks = [];
+        public $callbacks = [];
 
-        var $message;
+        public $message;
 
-        var $capabilities;
+        public $capabilities;
 
         public function IXR_Server($callbacks = false, $data = false, $wait = false)
         {
-            self::__construct($callbacks, $data, $wait);
+            $this->__construct($callbacks, $data, $wait);
         }
 
-        function __construct($callbacks = false, $data = false, $wait = false)
+        public function __construct($callbacks = false, $data = false, $wait = false)
         {
             $this->setCapabilities();
             if($callbacks)
@@ -29,14 +29,14 @@
             }
         }
 
-        function setCallbacks()
+        public function setCallbacks()
         {
             $this->callbacks['system.getCapabilities'] = 'this:getCapabilities';
             $this->callbacks['system.listMethods'] = 'this:listMethods';
             $this->callbacks['system.multicall'] = 'this:multiCall';
         }
 
-        function serve($data = false)
+        public function serve($data = false)
         {
             if(! $data)
             {
@@ -91,7 +91,7 @@ EOD;
             $this->output($xml);
         }
 
-        function error($error, $message = false)
+        public function error($error, $message = false)
         {
             // Accepts either an error object or an error code and message
             if($message && ! is_object($error))
@@ -102,7 +102,7 @@ EOD;
             $this->output($error->getXml());
         }
 
-        function output($xml)
+        public function output($xml)
         {
             $charset = function_exists('get_option') ? get_option('blog_charset') : '';
             if($charset)
@@ -128,7 +128,7 @@ EOD;
             exit;
         }
 
-        function call($methodname, $args)
+        public function call($methodname, $args)
         {
             if(! $this->hasMethod($methodname))
             {
@@ -144,7 +144,7 @@ EOD;
             }
 
             // Are we dealing with a function or a method?
-            if(is_string($method) && substr($method, 0, 5) == 'this:')
+            if(is_string($method) && strpos($method, 'this:') === 0)
             {
                 // It's a class method - check it exists
                 $method = substr($method, 5);
@@ -181,17 +181,17 @@ EOD;
             return $result;
         }
 
-        function hasMethod($method)
+        public function hasMethod($method)
         {
-            return in_array($method, array_keys($this->callbacks));
+            return array_key_exists($method, $this->callbacks);
         }
 
-        function getCapabilities($args)
+        public function getCapabilities($args)
         {
             return $this->capabilities;
         }
 
-        function setCapabilities()
+        public function setCapabilities()
         {
             // Initialises capabilities array
             $this->capabilities = [
@@ -210,14 +210,14 @@ EOD;
             ];
         }
 
-        function listMethods($args)
+        public function listMethods($args)
         {
             // Returns a list of methods - uses array_reverse to ensure user defined
             // methods are listed before server defined methods
             return array_reverse(array_keys($this->callbacks));
         }
 
-        function multiCall($methodcalls)
+        public function multiCall($methodcalls)
         {
             // See http://www.xmlrpc.com/discuss/msgReader$1208
             $return = [];

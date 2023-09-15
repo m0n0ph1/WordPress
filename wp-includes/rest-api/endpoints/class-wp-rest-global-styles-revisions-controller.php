@@ -16,6 +16,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->parent_base.'/(?P<parent>[\d]+)/'.$this->rest_base, [
                 'args' => [
                     'parent' => [

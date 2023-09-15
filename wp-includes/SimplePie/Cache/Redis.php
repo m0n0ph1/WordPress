@@ -1,6 +1,6 @@
 <?php
 
-    class SimplePie_Cache_Redis implements SimplePie_Cache_Base
+    class Redis implements SimplePie_Cache_Base
     {
         protected $cache;
 

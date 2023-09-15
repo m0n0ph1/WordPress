@@ -14,6 +14,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             $current_taxonomy = $this->_get_current_taxonomy($instance);
 
             if(! empty($instance['title']))
@@ -106,6 +107,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $title = ! empty($instance['title']) ? $instance['title'] : '';
             $count = isset($instance['count']) ? (bool) $instance['count'] : false;
             ?>

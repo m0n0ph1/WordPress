@@ -109,12 +109,9 @@
                 }
 
                 // Add icons to menu items with children.
-                if(isset($args['show_sub_menu_icons']) && true === $args['show_sub_menu_icons'])
+                if(isset($args['show_sub_menu_icons']) && true === $args['show_sub_menu_icons'] && isset($args['pages_with_children'][$page->ID]))
                 {
-                    if(isset($args['pages_with_children'][$page->ID]))
-                    {
-                        $args['list_item_after'] = '<span class="icon"></span>';
-                    }
+                    $args['list_item_after'] = '<span class="icon"></span>';
                 }
 
                 $output .= $indent.sprintf('<li%s>%s<a%s>%s%s%s</a>%s', $css_classes, $args['list_item_before'], $attributes, $args['link_before'], apply_filters('the_title', $page->post_title, $page->ID), $args['link_after'], $args['list_item_after']);

@@ -69,18 +69,18 @@
                 <item>
                     <title>
                         <?php
-                            if(! is_singular())
+                            if(is_singular())
+                            {
+                                /* translators: Comment author title. %s: Comment author name. */
+                                printf(ent2ncr(__('By: %s')), get_comment_author_rss());
+                            }
+                            else
                             {
                                 $title = get_the_title($comment_post->ID);
 
                                 $title = apply_filters('the_title_rss', $title);
                                 /* translators: Individual comment title. 1: Post title, 2: Comment author name. */
                                 printf(ent2ncr(__('Comment on %1$s by %2$s')), $title, get_comment_author_rss());
-                            }
-                            else
-                            {
-                                /* translators: Comment author title. %s: Comment author name. */
-                                printf(ent2ncr(__('By: %s')), get_comment_author_rss());
                             }
                         ?>
                     </title>

@@ -391,12 +391,7 @@
 
         public function transform_query(&$query, $resulting_field)
         {
-            if(empty($query['terms']))
-            {
-                return;
-            }
-
-            if($query['field'] === $resulting_field)
+            if(empty($query['terms']) || $query['field'] === $resulting_field)
             {
                 return;
             }
@@ -469,13 +464,8 @@
             $alias = false;
 
             // Sanity check. Only IN queries use the JOIN syntax.
-            if(! isset($clause['operator']) || 'IN' !== $clause['operator'])
-            {
-                return $alias;
-            }
-
             // Since we're only checking IN queries, we're only concerned with OR relations.
-            if(! isset($parent_query['relation']) || 'OR' !== $parent_query['relation'])
+            if(! isset($clause['operator']) || 'IN' !== $clause['operator'] || ! isset($parent_query['relation']) || 'OR' !== $parent_query['relation'])
             {
                 return $alias;
             }

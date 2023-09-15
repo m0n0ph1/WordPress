@@ -112,14 +112,11 @@
                 $feedback = $this->upgrader->strings[$feedback];
             }
 
-            if(str_contains($feedback, '%'))
+            if(str_contains($feedback, '%') && $args)
             {
-                if($args)
-                {
-                    $args = array_map('strip_tags', $args);
-                    $args = array_map('esc_html', $args);
-                    $feedback = vsprintf($feedback, $args);
-                }
+                $args = array_map('strip_tags', $args);
+                $args = array_map('esc_html', $args);
+                $feedback = vsprintf($feedback, $args);
             }
             if(empty($feedback))
             {

@@ -106,17 +106,17 @@
 
             if(! is_null($dest_path))
             {
-                if(! wp_is_stream($dest_path))
+                if(wp_is_stream($dest_path))
+                {
+                    $dir = $dest_path;
+                }
+                else
                 {
                     $_dest_path = realpath($dest_path);
                     if($_dest_path)
                     {
                         $dir = $_dest_path;
                     }
-                }
-                else
-                {
-                    $dir = $dest_path;
                 }
             }
 

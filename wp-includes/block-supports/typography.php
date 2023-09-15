@@ -60,12 +60,7 @@
         }
 
         $typography_supports = _wp_array_get($block_type->supports, ['typography'], false);
-        if(! $typography_supports)
-        {
-            return [];
-        }
-
-        if(wp_should_skip_block_supports_serialization($block_type, 'typography'))
+        if(! $typography_supports || wp_should_skip_block_supports_serialization($block_type, 'typography'))
         {
             return [];
         }
@@ -428,17 +423,9 @@
         ]);
 
         // Don't enforce minimum font size if a font size has explicitly set a min and max value.
-        if(! empty($minimum_font_size_limit) && (! $minimum_font_size_raw && ! $maximum_font_size_raw))
+        if(! empty($minimum_font_size_limit) && (! $minimum_font_size_raw && ! $maximum_font_size_raw) && $preferred_size['value'] <= $minimum_font_size_limit['value'])
         {
-            /*
-             * If a minimum size was not passed to this function
-             * and the user-defined font size is lower than $minimum_font_size_limit,
-             * do not calculate a fluid value.
-             */
-            if($preferred_size['value'] <= $minimum_font_size_limit['value'])
-            {
-                return $preset['size'];
-            }
+            return $preset['size'];
         }
 
         // If no fluid max font size is available use the incoming value.

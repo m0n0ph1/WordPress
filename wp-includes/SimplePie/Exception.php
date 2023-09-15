@@ -1,5 +1,5 @@
 <?php
 
-    class SimplePie_Exception extends Exception
+    class Exception extends Exception
     {
     }

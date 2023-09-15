@@ -52,7 +52,7 @@
              * If there are 50 or fewer sites, run every time. Otherwise, throttle to reduce load:
              * attempt to do no more than threshold value, with some +/- allowed.
              */
-            if($c <= 50 || ($c > 50 && mt_rand(0, (int) ($c / 50)) === 1))
+            if($c <= 50 || ($c > 50 && random_int(0, (int) ($c / 50)) === 1))
             {
                 require_once ABSPATH.WPINC.'/http.php';
                 $response = wp_remote_get(admin_url('upgrade.php?step=1'), [

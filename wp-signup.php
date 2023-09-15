@@ -1,4 +1,8 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
 
     require __DIR__.'/wp-load.php';
 
@@ -163,6 +167,7 @@
                         echo '<label for="blogname">'.__('Site Domain (subdomain only):').'</label>';
                     }
 
+                    /** @noinspection NativeMemberUsageInspection */
                     $errmsg_blogname = $errors->get_error_message('blogname');
                     $errmsg_blogname_aria = '';
                     if($errmsg_blogname)
@@ -199,6 +204,7 @@
                     ?>
                     <label for="blog_title"><?php _e('Site Title:'); ?></label>
                     <?php
+                    /** @noinspection NativeMemberUsageInspection */
                     $errmsg_blog_title = $errors->get_error_message('blog_title');
                     $errmsg_blog_title_aria = '';
                     if($errmsg_blog_title)
@@ -306,6 +312,7 @@
 
                     // Username.
                     echo '<label for="user_name">'.__('Username:').'</label>';
+                    /** @noinspection NativeMemberUsageInspection */
                     $errmsg_username = $errors->get_error_message('user_name');
                     $errmsg_username_aria = '';
                     if($errmsg_username)
@@ -329,6 +336,7 @@
                     <?php
                     // Email address.
                     echo '<label for="user_email">'.__('Email&nbsp;Address:').'</label>';
+                    /** @noinspection NativeMemberUsageInspection */
                     $errmsg_email = $errors->get_error_message('user_email');
                     $errmsg_email_aria = '';
                     if($errmsg_email)
@@ -349,6 +357,7 @@
 
                     <?php
                     // Extra fields.
+                    /** @noinspection NativeMemberUsageInspection */
                     $errmsg_generic = $errors->get_error_message('generic');
                     if($errmsg_generic)
                     {

@@ -7,17 +7,7 @@
 
         public function run()
         {
-            if($this->is_disabled())
-            {
-                return;
-            }
-
-            if(! is_main_network() || ! is_main_site())
-            {
-                return;
-            }
-
-            if(! WP_Upgrader::create_lock('auto_updater'))
+            if($this->is_disabled() || ! is_main_network() || ! is_main_site() || ! WP_Upgrader::create_lock('auto_updater'))
             {
                 return;
             }
@@ -132,12 +122,7 @@
         public function is_disabled()
         {
             // Background updates are disabled if you don't want file changes.
-            if(! wp_is_file_mod_allowed('automatic_updater'))
-            {
-                return true;
-            }
-
-            if(wp_installing())
+            if(! wp_is_file_mod_allowed('automatic_updater') || wp_installing())
             {
                 return true;
             }
@@ -370,15 +355,10 @@
             }
 
             // If updating a plugin or theme, ensure the minimum PHP version requirements are satisfied.
-            if(in_array($type, ['plugin', 'theme'], true))
-            {
-                if(! empty($item->requires_php) && version_compare(PHP_VERSION, $item->requires_php, '<'))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return ! (in_array($type, [
+                    'plugin',
+                    'theme'
+                ],             true) && ! empty($item->requires_php) && version_compare(PHP_VERSION, $item->requires_php, '<'));
         }
 
         public function is_vcs_checkout($context)

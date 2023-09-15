@@ -31,12 +31,7 @@
         public function switch_to_locale($locale, $user_id = false)
         {
             $current_locale = determine_locale();
-            if($current_locale === $locale)
-            {
-                return false;
-            }
-
-            if(! in_array($locale, $this->available_languages, true))
+            if($current_locale === $locale || ! in_array($locale, $this->available_languages, true))
             {
                 return false;
             }

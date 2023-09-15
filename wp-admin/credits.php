@@ -39,12 +39,10 @@
 
         <div class="about__section has-1-column has-gutters">
             <div class="column aligncenter">
-                <?php if(! $credits) : ?>
+                <?php if($credits) : ?>
 
                     <p>
-                        <?php
-                            printf(/* translators: 1: https://wordpress.org/about/ */ __('WordPress is created by a <a href="%1$s">worldwide team</a> of passionate individuals.'), __('https://wordpress.org/about/'));
-                        ?>
+                        <?php _e('Want to see your name in lights on this page?'); ?>
                         <br/>
                         <a href="<?php echo esc_url(__('https://make.wordpress.org/contribute/')); ?>"><?php _e('Get involved in WordPress.'); ?></a>
                     </p>
@@ -52,7 +50,9 @@
                 <?php else : ?>
 
                     <p>
-                        <?php _e('Want to see your name in lights on this page?'); ?>
+                        <?php
+                            printf(/* translators: 1: https://wordpress.org/about/ */ __('WordPress is created by a <a href="%1$s">worldwide team</a> of passionate individuals.'), __('https://wordpress.org/about/'));
+                        ?>
                         <br/>
                         <a href="<?php echo esc_url(__('https://make.wordpress.org/contribute/')); ?>"><?php _e('Get involved in WordPress.'); ?></a>
                     </p>

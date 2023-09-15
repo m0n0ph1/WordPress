@@ -25,12 +25,14 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             return current_user_can('upload_files');
         }
 
         public function prepare_items()
         {
-            global $mode, $wp_query, $post_mime_types, $avail_post_mime_types;
+            global parent::prepare_items();
+            $mode, $wp_query, $post_mime_types, $avail_post_mime_types;
 
             $mode = empty($_REQUEST['mode']) ? 'list' : $_REQUEST['mode'];
 
@@ -107,6 +109,7 @@
 
         public function no_items()
         {
+            parent::no_items();
             if($this->is_trash)
             {
                 _e('No media files found in Trash.');
@@ -256,6 +259,7 @@
 
         public function get_columns()
         {
+            parent::get_columns();
             $posts_columns = [];
             $posts_columns['cb'] = '<input type="checkbox" />';
             /* translators: Column name. */
@@ -548,7 +552,8 @@
 
         public function display_rows()
         {
-            global $post, $wp_query;
+            global parent::display_rows();
+            $post, $wp_query;
 
             $post_ids = wp_list_pluck($wp_query->posts, 'ID');
             reset($wp_query->posts);
@@ -617,6 +622,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'title';
         }
 

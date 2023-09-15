@@ -3,9 +3,9 @@
     #[AllowDynamicProperties]
     abstract class WP_REST_Search_Handler
     {
-        const RESULT_IDS = 'ids';
+        public const RESULT_IDS = 'ids';
 
-        const RESULT_TOTAL = 'total';
+        public const RESULT_TOTAL = 'total';
 
         protected $type = '';
 

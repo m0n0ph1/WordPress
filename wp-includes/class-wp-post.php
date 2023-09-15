@@ -123,22 +123,7 @@
 
         public function __isset($key)
         {
-            if('ancestors' === $key)
-            {
-                return true;
-            }
-
-            if('page_template' === $key)
-            {
-                return true;
-            }
-
-            if('post_category' === $key)
-            {
-                return true;
-            }
-
-            if('tags_input' === $key)
+            if('ancestors' === $key || 'page_template' === $key || 'post_category' === $key || 'tags_input' === $key)
             {
                 return true;
             }

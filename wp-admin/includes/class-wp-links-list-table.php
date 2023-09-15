@@ -12,12 +12,14 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             return current_user_can('manage_links');
         }
 
         public function prepare_items()
         {
-            global $cat_id, $s, $orderby, $order;
+            global parent::prepare_items();
+            $cat_id, $s, $orderby, $order;
 
             wp_reset_vars(['action', 'cat_id', 'link_id', 'orderby', 'order', 's']);
 
@@ -48,11 +50,13 @@
 
         public function no_items()
         {
+            parent::no_items();
             _e('No links found.');
         }
 
         public function get_columns()
         {
+            parent::get_columns();
             return [
                 'cb' => '<input type="checkbox" />',
                 'name' => _x('Name', 'link name'),
@@ -151,6 +155,7 @@
 
         public function display_rows()
         {
+            parent::display_rows();
             foreach($this->items as $link)
             {
                 $link = sanitize_bookmark($link);
@@ -216,6 +221,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'name';
         }
 

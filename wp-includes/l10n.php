@@ -83,7 +83,12 @@
 
         $locale = $user_object->locale;
 
-        return $locale ? $locale : get_locale();
+        if($locale)
+        {
+            return $locale;
+        }
+
+        return get_locale();
     }
 
     function determine_locale()
@@ -134,13 +139,13 @@
     function before_last_bar($text)
     {
         $last_bar = strrpos($text, '|');
-        if(false === $last_bar)
+        if(false !== $last_bar)
         {
-            return $text;
+            return substr($text, 0, $last_bar);
         }
         else
         {
-            return substr($text, 0, $last_bar);
+            return $text;
         }
     }
 
@@ -654,12 +659,7 @@
         $l10n_unloaded = (array) $l10n_unloaded;
 
         // Short-circuit if domain is 'default' which is reserved for core.
-        if('default' === $domain || isset($l10n_unloaded[$domain]))
-        {
-            return false;
-        }
-
-        if(! $wp_textdomain_registry->has($domain))
+        if('default' === $domain || isset($l10n_unloaded[$domain]) || ! $wp_textdomain_registry->has($domain))
         {
             return false;
         }

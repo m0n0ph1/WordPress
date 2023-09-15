@@ -28,7 +28,7 @@
             public function POMO_Reader()
             {
                 _deprecated_constructor(self::class, '5.4.0', static::class);
-                self::__construct();
+                $this->__construct();
             }
 
             public function setEndian($endian)
@@ -87,7 +87,11 @@
 
             public function str_split($input_string, $chunk_size)
             {
-                if(! function_exists('str_split'))
+                if(function_exists('str_split'))
+                {
+                    return str_split($input_string, $chunk_size);
+                }
+                else
                 {
                     $length = $this->strlen($input_string);
                     $out = [];
@@ -97,10 +101,6 @@
                     }
 
                     return $out;
-                }
-                else
-                {
-                    return str_split($input_string, $chunk_size);
                 }
             }
 
@@ -135,7 +135,7 @@
             public function POMO_FileReader($filename)
             {
                 _deprecated_constructor(self::class, '5.4.0', static::class);
-                self::__construct($filename);
+                $this->__construct($filename);
             }
 
             public function read($bytes)
@@ -192,7 +192,7 @@
             public function POMO_StringReader($str = '')
             {
                 _deprecated_constructor(self::class, '5.4.0', static::class);
-                self::__construct($str);
+                $this->__construct($str);
             }
 
             public function read($bytes)
@@ -248,7 +248,7 @@
             public function POMO_CachedFileReader($filename)
             {
                 _deprecated_constructor(self::class, '5.4.0', static::class);
-                self::__construct($filename);
+                $this->__construct($filename);
             }
         }
     endif;
@@ -265,7 +265,7 @@
             public function POMO_CachedIntFileReader($filename)
             {
                 _deprecated_constructor(self::class, '5.4.0', static::class);
-                self::__construct($filename);
+                $this->__construct($filename);
             }
         }
     endif;

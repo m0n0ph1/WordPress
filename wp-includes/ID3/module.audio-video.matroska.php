@@ -210,7 +210,7 @@
     define('EBML_ID_CLUSTERREFERENCEBLOCK', 0x7B); //             [FB] -- Timecode of another frame used as a reference (ie: B or P frame). The timecode is relative to the block it's attached to.
     define('EBML_ID_CLUSTERREFERENCEVIRTUAL', 0x7D); //             [FD] -- Relative position of the data that should be in position of the virtual block.
 
-    class getid3_matroska extends getid3_handler
+    class module extends getid3_handler
     {
         public $hide_clusters = true;
 
@@ -462,7 +462,7 @@
                                         $this->warning('Unable to parse audio data ['.basename(__FILE__).':'.__LINE__.'] because CodecPrivate data does not contain "vorbis" keyword');
                                         break;
                                     }
-                                    $vorbis_offset -= 1;
+                                    --$vorbis_offset;
 
                                     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.audio.ogg.php', __FILE__, true);
 
@@ -547,7 +547,7 @@
             {
                 foreach($info['matroska']['attachments'] as $i => $entry)
                 {
-                    if(strpos($entry['FileMimeType'], 'image/') === 0 && ! empty($entry['FileData']))
+                    if(strncmp($entry['FileMimeType'], 'image/', 6) === 0 && ! empty($entry['FileData']))
                     {
                         $info['matroska']['comments']['picture'][] = [
                             'data' => $entry['FileData'],
@@ -1366,18 +1366,9 @@
                                     }
 
                                     // check to see if all the data we need exists already, if so, break out of the loop
-                                    if(! $this->parse_whole_file)
+                                    if(! $this->parse_whole_file && isset($info['matroska']['info']) && is_array($info['matroska']['info']))
                                     {
-                                        if(isset($info['matroska']['info']) && is_array($info['matroska']['info']))
-                                        {
-                                            if(isset($info['matroska']['tracks']['tracks']) && is_array($info['matroska']['tracks']['tracks']))
-                                            {
-                                                if(count($info['matroska']['track_data_offsets']) == count($info['matroska']['tracks']['tracks']))
-                                                {
-                                                    return;
-                                                }
-                                            }
-                                        }
+                                        return;
                                     }
                                     break;
 
@@ -1456,7 +1447,7 @@
                     return false;
                 }
 
-                if($this->EBMLbuffer_length == 0 && $this->feof())
+                if($this->EBMLbuffer_length === 0 && $this->feof())
                 {
                     return $this->error('EBML parser: ran out of file at offset '.$this->current_offset);
                 }
@@ -1505,7 +1496,7 @@
             }
             else
             {
-                throw new Exception('invalid EBML integer (leading 0x00) at '.$this->current_offset);
+                throw new \RuntimeException('invalid EBML integer (leading 0x00) at '.$this->current_offset);
             }
 
             // read

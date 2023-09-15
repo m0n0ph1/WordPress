@@ -159,10 +159,7 @@
 
             if($caption)
             {
-                $image = img_caption_shortcode([
-                                                   'width' => $width,
-                                                   'caption' => $caption,
-                                               ], $image);
+                $image = img_caption_shortcode(compact('width', 'caption'), $image);
             }
 
             echo $image;

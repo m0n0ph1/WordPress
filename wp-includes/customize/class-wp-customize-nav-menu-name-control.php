@@ -4,7 +4,10 @@
     {
         public $type = 'nav_menu_name';
 
-        protected function render_content() {}
+        protected function render_content()
+        {
+            parent::render_content();
+        }
 
         protected function content_template()
         {

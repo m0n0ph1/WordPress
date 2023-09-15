@@ -41,12 +41,7 @@
 
         $menu_obj = wp_get_nav_menu_object($menu);
 
-        if($menu_obj && ! is_wp_error($menu_obj) && ! empty($menu_obj->taxonomy) && 'nav_menu' === $menu_obj->taxonomy)
-        {
-            return true;
-        }
-
-        return false;
+        return $menu_obj && ! is_wp_error($menu_obj) && ! empty($menu_obj->taxonomy) && 'nav_menu' === $menu_obj->taxonomy;
     }
 
     function register_nav_menus($locations = [])
@@ -105,7 +100,12 @@
     {
         $locations = get_theme_mod('nav_menu_locations');
 
-        return (is_array($locations)) ? $locations : [];
+        if(is_array($locations))
+        {
+            return $locations;
+        }
+
+        return [];
     }
 
     function has_nav_menu($location)
@@ -298,13 +298,13 @@
 
         $args = wp_parse_args($menu_item_data, $defaults);
 
-        if(0 == $menu_id)
+        if(0 === $menu_id)
         {
             $args['menu-item-position'] = 1;
         }
-        elseif(0 == (int) $args['menu-item-position'])
+        elseif(0 === (int) $args['menu-item-position'])
         {
-            $menu_items = 0 == $menu_id ? [] : (array) wp_get_nav_menu_items($menu_id, ['post_status' => 'publish,draft']);
+            $menu_items = 0 === $menu_id ? [] : (array) wp_get_nav_menu_items($menu_id, ['post_status' => 'publish,draft']);
             $last_item = array_pop($menu_items);
             $args['menu-item-position'] = ($last_item && isset($last_item->menu_order)) ? 1 + $last_item->menu_order : count($menu_items);
         }
@@ -376,7 +376,7 @@
             $post['post_date'] = $post_date;
         }
 
-        $update = 0 != $menu_item_db_id;
+        $update = 0 !== $menu_item_db_id;
 
         // New menu item. Default is draft status.
         if(! $update)
@@ -431,7 +431,7 @@
         update_post_meta($menu_item_db_id, '_menu_item_xfn', $args['menu-item-xfn']);
         update_post_meta($menu_item_db_id, '_menu_item_url', sanitize_url($args['menu-item-url']));
 
-        if(0 == $menu_id)
+        if(0 === $menu_id)
         {
             update_post_meta($menu_item_db_id, '_menu_item_orphaned', (string) time());
         }
@@ -479,12 +479,7 @@
     {
         $menu = wp_get_nav_menu_object($menu);
 
-        if(! $menu)
-        {
-            return false;
-        }
-
-        if(! taxonomy_exists('nav_menu'))
+        if(! $menu || ! taxonomy_exists('nav_menu'))
         {
             return false;
         }
@@ -830,11 +825,7 @@
 
     function _wp_auto_add_pages_to_menu($new_status, $old_status, $post)
     {
-        if('publish' !== $new_status || 'publish' === $old_status || 'page' !== $post->post_type)
-        {
-            return;
-        }
-        if(! empty($post->post_parent))
+        if('publish' !== $new_status || 'publish' === $old_status || 'page' !== $post->post_type || ! empty($post->post_parent))
         {
             return;
         }

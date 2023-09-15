@@ -10,6 +10,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base.'/search', [
                 [
                     'methods' => WP_REST_Server::READABLE,

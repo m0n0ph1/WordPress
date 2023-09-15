@@ -117,8 +117,6 @@
 
                     if(is_wp_error($result))
                     {
-                        error_log(sprintf(/* translators: 1: Hook name, 2: Error code, 3: Error message, 4: Event data. */ __('Cron reschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s'), $hook, $result->get_error_code(), $result->get_error_message(), wp_json_encode($v)));
-
                         do_action('cron_reschedule_event_error', $result, $hook, $v);
                     }
                 }
@@ -127,8 +125,6 @@
 
                 if(is_wp_error($result))
                 {
-                    error_log(sprintf(/* translators: 1: Hook name, 2: Error code, 3: Error message, 4: Event data. */ __('Cron unschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s'), $hook, $result->get_error_code(), $result->get_error_message(), wp_json_encode($v)));
-
                     do_action('cron_unschedule_event_error', $result, $hook, $v);
                 }
 

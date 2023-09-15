@@ -29,21 +29,17 @@
         // PHP Version.
         $check_php = wp_check_php_version();
 
-        if($check_php && current_user_can('update_php'))
+        if($check_php && current_user_can('update_php') && isset($check_php['is_acceptable']) && ! $check_php['is_acceptable'])
         {
-            // If "not acceptable" the widget will be shown.
-            if(isset($check_php['is_acceptable']) && ! $check_php['is_acceptable'])
-            {
-                add_filter('postbox_classes_dashboard_dashboard_php_nag', 'dashboard_php_nag_class');
+            add_filter('postbox_classes_dashboard_dashboard_php_nag', 'dashboard_php_nag_class');
 
-                if($check_php['is_lower_than_future_minimum'])
-                {
-                    wp_add_dashboard_widget('dashboard_php_nag', __('PHP Update Required'), 'wp_dashboard_php_nag');
-                }
-                else
-                {
-                    wp_add_dashboard_widget('dashboard_php_nag', __('PHP Update Recommended'), 'wp_dashboard_php_nag');
-                }
+            if($check_php['is_lower_than_future_minimum'])
+            {
+                wp_add_dashboard_widget('dashboard_php_nag', __('PHP Update Required'), 'wp_dashboard_php_nag');
+            }
+            else
+            {
+                wp_add_dashboard_widget('dashboard_php_nag', __('PHP Update Recommended'), 'wp_dashboard_php_nag');
             }
         }
 
@@ -454,7 +450,7 @@
             $user_id = get_current_user_id();
 
             // Don't create an option if this is a super admin who does not belong to this site.
-            if(in_array(get_current_blog_id(), array_keys(get_blogs_of_user($user_id)), true))
+            if(array_key_exists(get_current_blog_id(), get_blogs_of_user($user_id)))
             {
                 update_user_option($user_id, 'dashboard_quick_press_last_post_id', (int) $post->ID); // Save post_ID.
             }
@@ -614,13 +610,13 @@
 
             $actions['spam'] = sprintf('<a href="%s" data-wp-lists="%s" class="vim-s vim-destructive aria-button-if-js" aria-label="%s">%s</a>', $spam_url, "delete:the-comment-list:comment-{$comment->comment_ID}::spam=1", esc_attr__('Mark this comment as spam'), /* translators: "Mark as spam" link. */ _x('Spam', 'verb'));
 
-            if(! EMPTY_TRASH_DAYS)
+            if(EMPTY_TRASH_DAYS)
             {
-                $actions['delete'] = sprintf('<a href="%s" data-wp-lists="%s" class="delete vim-d vim-destructive aria-button-if-js" aria-label="%s">%s</a>', $delete_url, "delete:the-comment-list:comment-{$comment->comment_ID}::trash=1", esc_attr__('Delete this comment permanently'), __('Delete Permanently'));
+                $actions['trash'] = sprintf('<a href="%s" data-wp-lists="%s" class="delete vim-d vim-destructive aria-button-if-js" aria-label="%s">%s</a>', $trash_url, "delete:the-comment-list:comment-{$comment->comment_ID}::trash=1", esc_attr__('Move this comment to the Trash'), _x('Trash', 'verb'));
             }
             else
             {
-                $actions['trash'] = sprintf('<a href="%s" data-wp-lists="%s" class="delete vim-d vim-destructive aria-button-if-js" aria-label="%s">%s</a>', $trash_url, "delete:the-comment-list:comment-{$comment->comment_ID}::trash=1", esc_attr__('Move this comment to the Trash'), _x('Trash', 'verb'));
+                $actions['delete'] = sprintf('<a href="%s" data-wp-lists="%s" class="delete vim-d vim-destructive aria-button-if-js" aria-label="%s">%s</a>', $delete_url, "delete:the-comment-list:comment-{$comment->comment_ID}::trash=1", esc_attr__('Delete this comment permanently'), __('Delete Permanently'));
             }
 
             $actions['view'] = sprintf('<a class="comment-link" href="%s" aria-label="%s">%s</a>', esc_url(get_comment_link($comment)), esc_attr__('View this comment'), __('View'));
@@ -1536,22 +1532,16 @@
                     </svg>
                 </div>
                 <div class="site-health-progress-label">
-                    <?php if(false === $get_issues) : ?>
-                        <?php _e('No information yet&hellip;'); ?>
-                    <?php else : ?>
+                    <?php if(false !== $get_issues) : ?>
                         <?php _e('Results are still loading&hellip;'); ?>
+                    <?php else : ?>
+                        <?php _e('No information yet&hellip;'); ?>
                     <?php endif; ?>
                 </div>
             </div>
 
             <div class="site-health-details">
-                <?php if(false === $get_issues) : ?>
-                    <p>
-                        <?php
-                            printf(/* translators: %s: URL to Site Health screen. */ __('Site health checks will automatically run periodically to gather information about your site. You can also <a href="%s">visit the Site Health screen</a> to gather information about your site now.'), esc_url(admin_url('site-health.php')));
-                        ?>
-                    </p>
-                <?php else : ?>
+                <?php if(false !== $get_issues) : ?>
                     <p>
                         <?php if($issues_total <= 0) : ?>
                             <?php _e('Great job! Your site currently passes all site health checks.'); ?>
@@ -1564,6 +1554,12 @@
                         <?php else : ?>
                             <?php _e('Your site&#8217;s health is looking good, but there are still some things you can do to improve its performance and security.'); ?>
                         <?php endif; ?>
+                    </p>
+                <?php else : ?>
+                    <p>
+                        <?php
+                            printf(/* translators: %s: URL to Site Health screen. */ __('Site health checks will automatically run periodically to gather information about your site. You can also <a href="%s">visit the Site Health screen</a> to gather information about your site now.'), esc_url(admin_url('site-health.php')));
+                        ?>
                     </p>
                 <?php endif; ?>
 

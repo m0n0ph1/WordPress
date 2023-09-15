@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
     namespace WpOrg\Requests;
 
@@ -121,6 +121,7 @@
                     continue;
                 }
 
+                /** @noinspection NativeMemberUsageInspection */
                 $result = $class::test($capabilities);
                 if($result === true)
                 {

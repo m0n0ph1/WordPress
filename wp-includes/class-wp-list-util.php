@@ -58,13 +58,9 @@
                             ++$matched;
                         }
                     }
-                    elseif(is_object($obj))
+                    elseif(is_object($obj) && isset($obj->{$m_key}) && ($m_value == $obj->{$m_key}))
                     {
-                        // Treat object as an object.
-                        if(isset($obj->{$m_key}) && ($m_value == $obj->{$m_key}))
-                        {
-                            ++$matched;
-                        }
+                        ++$matched;
                     }
                 }
 
@@ -208,10 +204,20 @@
 
                 if(is_numeric($a[$field]) && is_numeric($b[$field]))
                 {
-                    return ($a[$field] < $b[$field]) ? $results[0] : $results[1];
+                    if($a[$field] < $b[$field])
+                    {
+                        return $results[0];
+                    }
+
+                    return $results[1];
                 }
 
-                return 0 > strcmp($a[$field], $b[$field]) ? $results[0] : $results[1];
+                if(0 > strcmp($a[$field], $b[$field]))
+                {
+                    return $results[0];
+                }
+
+                return $results[1];
             }
 
             return 0;

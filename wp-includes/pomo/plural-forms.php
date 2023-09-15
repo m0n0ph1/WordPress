@@ -4,9 +4,9 @@
         #[AllowDynamicProperties]
         class Plural_Forms
         {
-            const OP_CHARS = '|&><!=%?:';
+            public const OP_CHARS = '|&><!=%?:';
 
-            const NUM_CHARS = '0123456789';
+            public const NUM_CHARS = '0123456789';
 
             protected static $op_precedence = [
                 '%' => 6,
@@ -90,7 +90,7 @@
 
                             if(! $found)
                             {
-                                throw new Exception('Mismatched parentheses');
+                                throw new \RuntimeException('Mismatched parentheses');
                             }
 
                             ++$pos;
@@ -109,7 +109,7 @@
                             $operator = substr($str, $pos, $end_operator);
                             if(! array_key_exists($operator, self::$op_precedence))
                             {
-                                throw new Exception(sprintf('Unknown operator "%s"', $operator));
+                                throw new \RuntimeException(sprintf('Unknown operator "%s"', $operator));
                             }
 
                             while(! empty($stack))
@@ -158,7 +158,7 @@
 
                             if(! $found)
                             {
-                                throw new Exception('Missing starting "?" ternary operator');
+                                throw new \RuntimeException('Missing starting "?" ternary operator');
                             }
                             ++$pos;
                             break;
@@ -173,7 +173,7 @@
                                 break;
                             }
 
-                            throw new Exception(sprintf('Unknown symbol "%s"', $next));
+                            throw new \RuntimeException(sprintf('Unknown symbol "%s"', $next));
                     }
                 }
 
@@ -182,7 +182,7 @@
                     $o2 = array_pop($stack);
                     if('(' === $o2 || ')' === $o2)
                     {
-                        throw new Exception('Mismatched parentheses');
+                        throw new \RuntimeException('Mismatched parentheses');
                     }
 
                     $output[] = ['op', $o2];
@@ -287,13 +287,13 @@
                             break;
 
                         default:
-                            throw new Exception(sprintf('Unknown operator "%s"', $next[1]));
+                            throw new \RuntimeException(sprintf('Unknown operator "%s"', $next[1]));
                     }
                 }
 
                 if(count($stack) !== 1)
                 {
-                    throw new Exception('Too many values remaining on the stack');
+                    throw new \RuntimeException('Too many values remaining on the stack');
                 }
 
                 return (int) $stack[0];

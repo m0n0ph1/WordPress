@@ -1,6 +1,6 @@
 <?php
 
-    class SimplePie_Cache
+    class Cache
     {
         protected static $handlers = [
             'mysql' => 'SimplePie_Cache_MySQL',

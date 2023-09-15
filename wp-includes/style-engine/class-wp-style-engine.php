@@ -3,7 +3,7 @@
     #[AllowDynamicProperties]
     final class WP_Style_Engine
     {
-        const BLOCK_STYLE_DEFINITIONS_METADATA = [
+        public const BLOCK_STYLE_DEFINITIONS_METADATA = [
             'color' => [
                 'text' => [
                     'property_keys' => [

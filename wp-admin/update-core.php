@@ -113,13 +113,13 @@
                 {
                     $message = sprintf(/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required PHP version number, 4: Current PHP version number. */ __('You cannot update because <a href="%1$s">WordPress %2$s</a> requires PHP version %3$s or higher. You are running version %4$s.'), $version_url, $update->current, $update->php_version, $php_version).$php_update_message;
                 }
-                elseif(! $mysql_compat)
+                elseif($mysql_compat)
                 {
-                    $message = sprintf(/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required MySQL version number, 4: Current MySQL version number. */ __('You cannot update because <a href="%1$s">WordPress %2$s</a> requires MySQL version %3$s or higher. You are running version %4$s.'), $version_url, $update->current, $update->mysql_version, $mysql_version);
+                    $message = sprintf(/* translators: 1: Installed WordPress version number, 2: URL to WordPress release notes, 3: New WordPress version number, including locale if necessary. */ __('You can update from WordPress %1$s to <a href="%2$s">WordPress %3$s</a> manually:'), $wp_version, $version_url, $version_string);
                 }
                 else
                 {
-                    $message = sprintf(/* translators: 1: Installed WordPress version number, 2: URL to WordPress release notes, 3: New WordPress version number, including locale if necessary. */ __('You can update from WordPress %1$s to <a href="%2$s">WordPress %3$s</a> manually:'), $wp_version, $version_url, $version_string);
+                    $message = sprintf(/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required MySQL version number, 4: Current MySQL version number. */ __('You cannot update because <a href="%1$s">WordPress %2$s</a> requires MySQL version %3$s or higher. You are running version %4$s.'), $version_url, $update->current, $update->mysql_version, $mysql_version);
                 }
 
                 if(! $mysql_compat || ! $php_compat)

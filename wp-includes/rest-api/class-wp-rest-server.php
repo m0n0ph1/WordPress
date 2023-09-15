@@ -3,15 +3,15 @@
     #[AllowDynamicProperties]
     class WP_REST_Server
     {
-        const READABLE = 'GET';
+        public const READABLE = 'GET';
 
-        const CREATABLE = 'POST';
+        public const CREATABLE = 'POST';
 
-        const EDITABLE = 'POST, PUT, PATCH';
+        public const EDITABLE = 'POST, PUT, PATCH';
 
-        const DELETABLE = 'DELETE';
+        public const DELETABLE = 'DELETE';
 
-        const ALLMETHODS = 'GET, POST, PUT, PATCH, DELETE';
+        public const ALLMETHODS = 'GET, POST, PUT, PATCH, DELETE';
 
         protected $namespaces = [];
 

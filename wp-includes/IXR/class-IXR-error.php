@@ -2,22 +2,22 @@
 
     class IXR_Error
     {
-        var $code;
+        public $code;
 
-        var $message;
+        public $message;
 
         public function IXR_Error($code, $message)
         {
-            self::__construct($code, $message);
+            $this->__construct($code, $message);
         }
 
-        function __construct($code, $message)
+        public function __construct($code, $message)
         {
             $this->code = $code;
             $this->message = htmlspecialchars($message);
         }
 
-        function getXml()
+        public function getXml()
         {
             $xml = <<<EOD
 <methodResponse>

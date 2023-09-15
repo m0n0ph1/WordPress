@@ -19,7 +19,7 @@
         exit;
     }
 
-    class getid3_mp3 extends getid3_handler
+    class module extends getid3_handler
     {
         public $allow_bruteforce = false;
 
@@ -32,7 +32,7 @@
 
         public static function MPEGaudioHeaderValid($rawarray, $echoerrors = false, $allowBitrate15 = false)
         {
-            if(! isset($rawarray['synch']) || ($rawarray['synch'] & 0x0FFE) != 0x0FFE)
+            if(! isset($rawarray['synch']) || ($rawarray['synch'] & 0x0FFE) !== 0x0FFE)
             {
                 return false;
             }
@@ -334,13 +334,10 @@
 
             $initialOffset = $info['avdataoffset'];
 
-            if(! $this->getOnlyMPEGaudioInfo($info['avdataoffset']))
+            if(! $this->getOnlyMPEGaudioInfo($info['avdataoffset']) && $this->allow_bruteforce)
             {
-                if($this->allow_bruteforce)
-                {
-                    $this->error('Rescanning file in BruteForce mode');
-                    $this->getOnlyMPEGaudioInfoBruteForce();
-                }
+                $this->error('Rescanning file in BruteForce mode');
+                $this->getOnlyMPEGaudioInfoBruteForce();
             }
 
             if(isset($info['mpeg']['audio']['bitrate_mode']))
@@ -397,7 +394,7 @@
             }
 
             $CurrentDataLAMEversionString = (! empty($CurrentDataLAMEversionString) ? $CurrentDataLAMEversionString : (isset($info['audio']['encoder']) ? $info['audio']['encoder'] : ''));
-            if(! empty($CurrentDataLAMEversionString) && (substr($CurrentDataLAMEversionString, 0, 6) == 'LAME3.') && ! preg_match('[0-9\)]', substr($CurrentDataLAMEversionString, -1)))
+            if(! empty($CurrentDataLAMEversionString) && (strpos($CurrentDataLAMEversionString, 'LAME3.') === 0) && ! preg_match('[0-9\)]', substr($CurrentDataLAMEversionString, -1)))
             {
                 // a version number of LAME that does not end with a number like "LAME3.92"
                 // or with a closing parenthesis like "LAME3.88 (alpha)"
@@ -419,23 +416,17 @@
                         $CurrentDataLAMEversionString = substr($CurrentDataLAMEversionString, 0, -1);
                         break;
                 }
-                if(($PossiblyLongerLAMEversion_String = strstr($PossiblyLongerLAMEversion_Data, $CurrentDataLAMEversionString)) !== false)
+                if(($PossiblyLongerLAMEversion_String = strstr($PossiblyLongerLAMEversion_Data, $CurrentDataLAMEversionString)) !== false && strpos($PossiblyLongerLAMEversion_String, $CurrentDataLAMEversionString) === 0)
                 {
-                    if(substr($PossiblyLongerLAMEversion_String, 0, strlen($CurrentDataLAMEversionString)) == $CurrentDataLAMEversionString)
+                    $PossiblyLongerLAMEversion_NewString = substr($PossiblyLongerLAMEversion_String, 0, strspn($PossiblyLongerLAMEversion_String, 'LAME0123456789., (abcdefghijklmnopqrstuvwxyzJFSOND)')); //"LAME3.90.3"  "LAME3.87 (beta 1, Sep 27 2000)" "LAME3.88 (beta)"
+                    if(empty($info['audio']['encoder']) || (strlen($PossiblyLongerLAMEversion_NewString) > strlen($info['audio']['encoder'])))
                     {
-                        $PossiblyLongerLAMEversion_NewString = substr($PossiblyLongerLAMEversion_String, 0, strspn($PossiblyLongerLAMEversion_String, 'LAME0123456789., (abcdefghijklmnopqrstuvwxyzJFSOND)')); //"LAME3.90.3"  "LAME3.87 (beta 1, Sep 27 2000)" "LAME3.88 (beta)"
-                        if(empty($info['audio']['encoder']) || (strlen($PossiblyLongerLAMEversion_NewString) > strlen($info['audio']['encoder'])))
+                        if(! empty($info['audio']['encoder']) && ! empty($info['mpeg']['audio']['LAME']['short_version']) && ($info['audio']['encoder'] == $info['mpeg']['audio']['LAME']['short_version']) && preg_match('#^LAME[0-9\\.]+#', $PossiblyLongerLAMEversion_NewString, $matches))
                         {
-                            if(! empty($info['audio']['encoder']) && ! empty($info['mpeg']['audio']['LAME']['short_version']) && ($info['audio']['encoder'] == $info['mpeg']['audio']['LAME']['short_version']))
-                            {
-                                if(preg_match('#^LAME[0-9\\.]+#', $PossiblyLongerLAMEversion_NewString, $matches))
-                                {
-                                    // "LAME3.100" -> "LAME3.100.1", but avoid including "(alpha)" and similar
-                                    $info['mpeg']['audio']['LAME']['short_version'] = $matches[0];
-                                }
+                                // "LAME3.100" -> "LAME3.100.1", but avoid including "(alpha)" and similar
+                                $info['mpeg']['audio']['LAME']['short_version'] = $matches[0];
                             }
-                            $info['audio']['encoder'] = $PossiblyLongerLAMEversion_NewString;
-                        }
+                        $info['audio']['encoder'] = $PossiblyLongerLAMEversion_NewString;
                     }
                 }
             }
@@ -627,30 +618,27 @@
                                 $info['audio']['dataformat'] = 'mp3';
                                 break;
                         }
-                        if(isset($FirstFrameThisfileInfo) && isset($FirstFrameThisfileInfo['mpeg']['audio']['bitrate_mode']) && ($FirstFrameThisfileInfo['mpeg']['audio']['bitrate_mode'] == 'vbr'))
+                        if(isset($FirstFrameThisfileInfo) && isset($FirstFrameThisfileInfo['mpeg']['audio']['bitrate_mode']) && ($FirstFrameThisfileInfo['mpeg']['audio']['bitrate_mode'] == 'vbr') && ! (abs($info['audio']['bitrate'] - $FirstFrameThisfileInfo['audio']['bitrate']) <= 1))
                         {
-                            if(! (abs($info['audio']['bitrate'] - $FirstFrameThisfileInfo['audio']['bitrate']) <= 1))
+                            // If there is garbage data between a valid VBR header frame and a sequence
+                            // of valid MPEG-audio frames the VBR data is no longer discarded.
+                            $info = $FirstFrameThisfileInfo;
+                            $info['avdataoffset'] = $FirstFrameAVDataOffset;
+                            $info['fileformat'] = 'mp3';
+                            $info['audio']['dataformat'] = 'mp3';
+                            $dummy = $info;
+                            unset($dummy['mpeg']['audio']);
+                            $GarbageOffsetStart = $FirstFrameAVDataOffset + $FirstFrameThisfileInfo['mpeg']['audio']['framelength'];
+                            $GarbageOffsetEnd = $avdataoffset + $SynchSeekOffset;
+                            if($this->decodeMPEGaudioHeader($GarbageOffsetEnd, $dummy, true, true))
                             {
-                                // If there is garbage data between a valid VBR header frame and a sequence
-                                // of valid MPEG-audio frames the VBR data is no longer discarded.
-                                $info = $FirstFrameThisfileInfo;
-                                $info['avdataoffset'] = $FirstFrameAVDataOffset;
-                                $info['fileformat'] = 'mp3';
-                                $info['audio']['dataformat'] = 'mp3';
-                                $dummy = $info;
-                                unset($dummy['mpeg']['audio']);
-                                $GarbageOffsetStart = $FirstFrameAVDataOffset + $FirstFrameThisfileInfo['mpeg']['audio']['framelength'];
-                                $GarbageOffsetEnd = $avdataoffset + $SynchSeekOffset;
-                                if($this->decodeMPEGaudioHeader($GarbageOffsetEnd, $dummy, true, true))
-                                {
-                                    $info = $dummy;
-                                    $info['avdataoffset'] = $GarbageOffsetEnd;
-                                    $this->warning('apparently-valid VBR header not used because could not find '.$this->mp3_valid_check_frames.' consecutive MPEG-audio frames immediately after VBR header (garbage data for '.($GarbageOffsetEnd - $GarbageOffsetStart).' bytes between '.$GarbageOffsetStart.' and '.$GarbageOffsetEnd.'), but did find valid CBR stream starting at '.$GarbageOffsetEnd);
-                                }
-                                else
-                                {
-                                    $this->warning('using data from VBR header even though could not find '.$this->mp3_valid_check_frames.' consecutive MPEG-audio frames immediately after VBR header (garbage data for '.($GarbageOffsetEnd - $GarbageOffsetStart).' bytes between '.$GarbageOffsetStart.' and '.$GarbageOffsetEnd.')');
-                                }
+                                $info = $dummy;
+                                $info['avdataoffset'] = $GarbageOffsetEnd;
+                                $this->warning('apparently-valid VBR header not used because could not find '.$this->mp3_valid_check_frames.' consecutive MPEG-audio frames immediately after VBR header (garbage data for '.($GarbageOffsetEnd - $GarbageOffsetStart).' bytes between '.$GarbageOffsetStart.' and '.$GarbageOffsetEnd.'), but did find valid CBR stream starting at '.$GarbageOffsetEnd);
+                            }
+                            else
+                            {
+                                $this->warning('using data from VBR header even though could not find '.$this->mp3_valid_check_frames.' consecutive MPEG-audio frames immediately after VBR header (garbage data for '.($GarbageOffsetEnd - $GarbageOffsetStart).' bytes between '.$GarbageOffsetStart.' and '.$GarbageOffsetEnd.')');
                             }
                         }
                         if(isset($info['mpeg']['audio']['bitrate_mode']) && ($info['mpeg']['audio']['bitrate_mode'] == 'vbr') && ! isset($info['mpeg']['audio']['VBR_method']))
@@ -808,16 +796,13 @@
                                     $buffer_4k = $this->fread(4096);
                                     for($j = 0; $j < (strlen($buffer_4k) - 4); $j++)
                                     {
-                                        if(($buffer_4k[$j] == "\xFF") && ($buffer_4k[($j + 1)] > "\xE0"))
-                                        { // synch detected
-                                            if($this->decodeMPEGaudioHeader($scan_start_offset[$current_segment] + $j, $dummy, false, false, $FastMode))
+                                        if(($buffer_4k[$j] == "\xFF") && ($buffer_4k[($j + 1)] > "\xE0") && $this->decodeMPEGaudioHeader($scan_start_offset[$current_segment] + $j, $dummy, false, false, $FastMode))
+                                        {
+                                            $calculated_next_offset = $scan_start_offset[$current_segment] + $j + $dummy['mpeg']['audio']['framelength'];
+                                            if($this->decodeMPEGaudioHeader($calculated_next_offset, $dummy, false, false, $FastMode))
                                             {
-                                                $calculated_next_offset = $scan_start_offset[$current_segment] + $j + $dummy['mpeg']['audio']['framelength'];
-                                                if($this->decodeMPEGaudioHeader($calculated_next_offset, $dummy, false, false, $FastMode))
-                                                {
-                                                    $scan_start_offset[$current_segment] += $j;
-                                                    break;
-                                                }
+                                                $scan_start_offset[$current_segment] += $j;
+                                                break;
                                             }
                                         }
                                     }
@@ -844,7 +829,7 @@
                                     if($frames_scan_per_segment && (++$frames_scanned_this_segment >= $frames_scan_per_segment))
                                     {
                                         $this_pct_scanned = ($this->ftell() - $scan_start_offset[$current_segment]) / ($info['avdataend'] - $info['avdataoffset']);
-                                        if(($current_segment == 0) && (($this_pct_scanned * $max_scan_segments) >= 1))
+                                        if(($current_segment === 0) && (($this_pct_scanned * $max_scan_segments) >= 1))
                                         {
                                             // file likely contains < $max_frames_scan, just scan as one segment
                                             $max_scan_segments = 1;
@@ -1294,7 +1279,7 @@
                             $thisfile_mpeg_audio_lame['short_version'] = $matches[0];
                             $thisfile_mpeg_audio_lame['numeric_version'] = $matches[1];
                         }
-                        if(strlen($thisfile_mpeg_audio_lame['numeric_version']) > 0)
+                        if($thisfile_mpeg_audio_lame['numeric_version'] != '')
                         {
                             foreach(explode('.', $thisfile_mpeg_audio_lame['numeric_version']) as $key => $number)
                             {
@@ -1563,29 +1548,26 @@
                 }
             }
 
-            if(($thisfile_mpeg_audio['bitrate'] == 'free') && empty($info['audio']['bitrate']))
+            if(($thisfile_mpeg_audio['bitrate'] == 'free') && empty($info['audio']['bitrate']) && ($offset == $info['avdataoffset']) && empty($thisfile_mpeg_audio['VBR_frames']))
             {
-                if(($offset == $info['avdataoffset']) && empty($thisfile_mpeg_audio['VBR_frames']))
+                $framebytelength = $this->FreeFormatFrameLength($offset, true);
+                if($framebytelength > 0)
                 {
-                    $framebytelength = $this->FreeFormatFrameLength($offset, true);
-                    if($framebytelength > 0)
+                    $thisfile_mpeg_audio['framelength'] = $framebytelength;
+                    if($thisfile_mpeg_audio['layer'] == '1')
                     {
-                        $thisfile_mpeg_audio['framelength'] = $framebytelength;
-                        if($thisfile_mpeg_audio['layer'] == '1')
-                        {
-                            // BitRate = (((FrameLengthInBytes / 4) - Padding) * SampleRate) / 12
-                            $info['audio']['bitrate'] = ((($framebytelength / 4) - intval($thisfile_mpeg_audio['padding'])) * $thisfile_mpeg_audio['sample_rate']) / 12;
-                        }
-                        else
-                        {
-                            // Bitrate = ((FrameLengthInBytes - Padding) * SampleRate) / 144
-                            $info['audio']['bitrate'] = (($framebytelength - intval($thisfile_mpeg_audio['padding'])) * $thisfile_mpeg_audio['sample_rate']) / 144;
-                        }
+                        // BitRate = (((FrameLengthInBytes / 4) - Padding) * SampleRate) / 12
+                        $info['audio']['bitrate'] = ((($framebytelength / 4) - intval($thisfile_mpeg_audio['padding'])) * $thisfile_mpeg_audio['sample_rate']) / 12;
                     }
                     else
                     {
-                        $this->error('Error calculating frame length of free-format MP3 without Xing/LAME header');
+                        // Bitrate = ((FrameLengthInBytes - Padding) * SampleRate) / 144
+                        $info['audio']['bitrate'] = (($framebytelength - intval($thisfile_mpeg_audio['padding'])) * $thisfile_mpeg_audio['sample_rate']) / 144;
                     }
+                }
+                else
+                {
+                    $this->error('Error calculating frame length of free-format MP3 without Xing/LAME header');
                 }
             }
 
@@ -1623,20 +1605,16 @@
                 {
                     return false;
                 }
-                if(! empty($this->getid3->info['mp3_validity_check_bitrates']) && ! empty($thisfile_mpeg_audio['bitrate_mode']) && ($thisfile_mpeg_audio['bitrate_mode'] == 'vbr') && ! empty($thisfile_mpeg_audio['VBR_bitrate']))
+                if(! empty($this->getid3->info['mp3_validity_check_bitrates']) && ! empty($thisfile_mpeg_audio['bitrate_mode']) && ($thisfile_mpeg_audio['bitrate_mode'] == 'vbr') && ! empty($thisfile_mpeg_audio['VBR_bitrate']) && count(array_keys($this->getid3->info['mp3_validity_check_bitrates'])) == 1)
                 {
-                    // https://github.com/JamesHeinrich/getID3/issues/287
-                    if(count(array_keys($this->getid3->info['mp3_validity_check_bitrates'])) == 1)
+                    [$cbr_bitrate_in_short_scan] = array_keys($this->getid3->info['mp3_validity_check_bitrates']);
+                    $deviation_cbr_from_header_bitrate = abs($thisfile_mpeg_audio['VBR_bitrate'] - $cbr_bitrate_in_short_scan) / $cbr_bitrate_in_short_scan;
+                    if($deviation_cbr_from_header_bitrate < 0.01)
                     {
-                        [$cbr_bitrate_in_short_scan] = array_keys($this->getid3->info['mp3_validity_check_bitrates']);
-                        $deviation_cbr_from_header_bitrate = abs($thisfile_mpeg_audio['VBR_bitrate'] - $cbr_bitrate_in_short_scan) / $cbr_bitrate_in_short_scan;
-                        if($deviation_cbr_from_header_bitrate < 0.01)
-                        {
-                            // VBR header bitrate may differ slightly from true bitrate of frames, perhaps accounting for overhead of VBR header frame itself?
-                            // If measured CBR bitrate is within 1% of specified bitrate in VBR header then assume that file is truly CBR
-                            $thisfile_mpeg_audio['bitrate_mode'] = 'cbr';
-                            //$this->warning('VBR header ignored, assuming CBR '.round($cbr_bitrate_in_short_scan / 1000).'kbps based on scan of '.$this->mp3_valid_check_frames.' frames');
-                        }
+                        // VBR header bitrate may differ slightly from true bitrate of frames, perhaps accounting for overhead of VBR header frame itself?
+                        // If measured CBR bitrate is within 1% of specified bitrate in VBR header then assume that file is truly CBR
+                        $thisfile_mpeg_audio['bitrate_mode'] = 'cbr';
+                        //$this->warning('VBR header ignored, assuming CBR '.round($cbr_bitrate_in_short_scan / 1000).'kbps based on scan of '.$this->mp3_valid_check_frames.' frames');
                     }
                 }
                 if(isset($this->getid3->info['mp3_validity_check_bitrates']))
@@ -2116,19 +2094,19 @@
                 {
                     $framelength = $framelength2;
                 }
-                if(! $framelength)
-                {
-                    $this->error('Cannot find next free-format synch pattern ('.getid3_lib::PrintHexBytes($SyncPattern1).' or '.getid3_lib::PrintHexBytes($SyncPattern2).') after offset '.$offset);
-
-                    return false;
-                }
-                else
+                if($framelength)
                 {
                     $this->warning('ModeExtension varies between first frame and other frames (known free-format issue in LAME 3.88)');
                     $info['audio']['codec'] = 'LAME';
                     $info['audio']['encoder'] = 'LAME3.88';
                     $SyncPattern1 = substr($SyncPattern1, 0, 3);
                     $SyncPattern2 = substr($SyncPattern2, 0, 3);
+                }
+                else
+                {
+                    $this->error('Cannot find next free-format synch pattern ('.getid3_lib::PrintHexBytes($SyncPattern1).' or '.getid3_lib::PrintHexBytes($SyncPattern2).') after offset '.$offset);
+
+                    return false;
                 }
             }
 
@@ -2145,7 +2123,7 @@
                         // good - found where expected
                         $ActualFrameLengthValues[] = $framelength;
                     }
-                    elseif((substr($NextSyncPattern, 0, strlen($SyncPattern1)) == $SyncPattern1) || (substr($NextSyncPattern, 0, strlen($SyncPattern2)) == $SyncPattern2))
+                    elseif((strpos($NextSyncPattern, $SyncPattern1) === 0) || (strpos($NextSyncPattern, $SyncPattern2) === 0))
                     {
                         // ok - found one byte earlier than expected (last frame wasn't padded, first frame was)
                         $ActualFrameLengthValues[] = ($framelength - 1);

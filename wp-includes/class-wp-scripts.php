@@ -291,7 +291,12 @@
                 return '';
             }
 
-            return in_array('async', $eligible, true) ? 'async' : 'defer';
+            if(in_array('async', $eligible, true))
+            {
+                return 'async';
+            }
+
+            return 'defer';
         }
 
         private function filter_eligible_strategies($handle, $eligible = null, $checked = [])
@@ -312,13 +317,8 @@
             $checked[$handle] = true;
 
             // If this handle isn't registered, don't filter anything and return.
-            if(! isset($this->registered[$handle]))
-            {
-                return $eligible;
-            }
-
             // If the handle is not enqueued, don't filter anything and return.
-            if(! $this->query($handle, 'enqueued'))
+            if(! isset($this->registered[$handle]) || ! $this->query($handle, 'enqueued'))
             {
                 return $eligible;
             }

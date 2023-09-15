@@ -368,13 +368,9 @@
             $url = add_query_arg('rest_route', $path, $url);
         }
 
-        if(is_ssl() && isset($_SERVER['SERVER_NAME']))
+        if(is_ssl() && isset($_SERVER['SERVER_NAME']) && parse_url(get_home_url($blog_id), PHP_URL_HOST) === $_SERVER['SERVER_NAME'])
         {
-            // If the current host is the same as the REST URL host, force the REST URL scheme to HTTPS.
-            if(parse_url(get_home_url($blog_id), PHP_URL_HOST) === $_SERVER['SERVER_NAME'])
-            {
-                $url = set_url_scheme($url, 'https');
-            }
+            $url = set_url_scheme($url, 'https');
         }
 
         if(is_admin() && force_ssl_admin())
@@ -406,7 +402,7 @@
     {
         /* @var WP_REST_Server $wp_rest_server */ global $wp_rest_server;
 
-        if(empty($wp_rest_server))
+        if($wp_rest_server === null)
         {
             $wp_rest_server_class = apply_filters('wp_rest_server_class', 'WP_REST_Server');
             $wp_rest_server = new $wp_rest_server_class();
@@ -434,12 +430,7 @@
 
     function rest_ensure_response($response)
     {
-        if(is_wp_error($response))
-        {
-            return $response;
-        }
-
-        if($response instanceof WP_REST_Response)
+        if(is_wp_error($response) || $response instanceof WP_REST_Response)
         {
             return $response;
         }
@@ -717,15 +708,11 @@
 		 * Check to see if $field is the parent of any item in $fields.
 		 * A field "parent" should be accepted if "parent.child" is accepted.
 		 */
-            if(str_starts_with($accepted_field, "$field."))
-            {
-                return true;
-            }
             /*
 		 * Conversely, if "parent" is accepted, all "parent.child" fields
 		 * should also be accepted.
 		 */
-            if(str_starts_with($field, "$accepted_field."))
+            if(str_starts_with($accepted_field, "$field.") || str_starts_with($field, "$accepted_field."))
             {
                 return true;
             }
@@ -1012,7 +999,12 @@
 
     function rest_authorization_required_code()
     {
-        return is_user_logged_in() ? 403 : 401;
+        if(is_user_logged_in())
+        {
+            return 403;
+        }
+
+        return 401;
     }
 
     function rest_validate_request_arg($value, $request, $param)
@@ -1143,12 +1135,7 @@
 
     function rest_is_object($maybe_object)
     {
-        if('' === $maybe_object)
-        {
-            return true;
-        }
-
-        if($maybe_object instanceof stdClass)
+        if('' === $maybe_object || $maybe_object instanceof stdClass)
         {
             return true;
         }
@@ -1441,7 +1428,15 @@
             }
 
             $is_valid = rest_validate_value_from_schema($value, $schema, $param);
-            if(! is_wp_error($is_valid))
+            if(is_wp_error($is_valid))
+            {
+                $errors[] = [
+                    'error_object' => $is_valid,
+                    'schema' => $schema,
+                    'index' => $index,
+                ];
+            }
+            else
             {
                 if($stop_after_first_match)
                 {
@@ -1450,14 +1445,6 @@
 
                 $matching_schemas[] = [
                     'schema_object' => $schema,
-                    'index' => $index,
-                ];
-            }
-            else
-            {
-                $errors[] = [
-                    'error_object' => $is_valid,
-                    'schema' => $schema,
                     'index' => $index,
                 ];
             }
@@ -2422,12 +2409,9 @@
             }
         }
 
-        if(in_array('array', $type, true))
+        if(in_array('array', $type, true) && isset($schema['items']))
         {
-            if(isset($schema['items']))
-            {
-                $schema['items'] = rest_default_additional_properties_to_false($schema['items']);
-            }
+            $schema['items'] = rest_default_additional_properties_to_false($schema['items']);
         }
 
         return $schema;
@@ -2456,12 +2440,7 @@
     function rest_get_route_for_post_type_items($post_type)
     {
         $post_type = get_post_type_object($post_type);
-        if(! $post_type)
-        {
-            return '';
-        }
-
-        if(! $post_type->show_in_rest)
+        if(! $post_type || ! $post_type->show_in_rest)
         {
             return '';
         }
@@ -2496,12 +2475,7 @@
     function rest_get_route_for_taxonomy_items($taxonomy)
     {
         $taxonomy = get_taxonomy($taxonomy);
-        if(! $taxonomy)
-        {
-            return '';
-        }
-
-        if(! $taxonomy->show_in_rest)
+        if(! $taxonomy || ! $taxonomy->show_in_rest)
         {
             return '';
         }
@@ -2596,7 +2570,12 @@
     {
         $status = array_reduce($error->get_all_error_data(), static function($status, $error_data)
         {
-            return is_array($error_data) && isset($error_data['status']) ? $error_data['status'] : $status;
+            if(is_array($error_data) && isset($error_data['status']))
+            {
+                return $error_data['status'];
+            }
+
+            return $status;
         },                     500);
 
         $errors = [];

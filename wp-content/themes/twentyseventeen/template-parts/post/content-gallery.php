@@ -52,15 +52,11 @@
     <div class="entry-content">
 
         <?php
-            if(! is_single())
+            if(! is_single() && get_post_gallery())
             {
-                // If not a single post, highlight the gallery.
-                if(get_post_gallery())
-                {
-                    echo '<div class="entry-gallery">';
-                    echo get_post_gallery();
-                    echo '</div>';
-                }
+                echo '<div class="entry-gallery">';
+                echo get_post_gallery();
+                echo '</div>';
             }
 
             if(is_single() || ! get_post_gallery())

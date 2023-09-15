@@ -117,15 +117,15 @@
                      * priority, we need to move back to it.
                      */
 
-                    if(false === current($iteration))
-                    {
-                        // If we've already moved off the end of the array, go back to the last element.
-                        $prev = end($iteration);
-                    }
-                    else
+                    if(false !== current($iteration))
                     {
                         // Otherwise, just go back to the previous element.
                         $prev = prev($iteration);
+                    }
+                    else
+                    {
+                        // If we've already moved off the end of the array, go back to the last element.
+                        $prev = end($iteration);
                     }
 
                     if(false === $prev)
@@ -330,7 +330,12 @@
         #[ReturnTypeWillChange]
         public function offsetGet($offset)
         {
-            return isset($this->callbacks[$offset]) ? $this->callbacks[$offset] : null;
+            if(isset($this->callbacks[$offset]))
+            {
+                return $this->callbacks[$offset];
+            }
+
+            return null;
         }
 
         #[ReturnTypeWillChange]

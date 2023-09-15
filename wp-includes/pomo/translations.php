@@ -65,30 +65,47 @@
 
             public function get_header($header)
             {
-                return isset($this->headers[$header]) ? $this->headers[$header] : false;
+                if(isset($this->headers[$header]))
+                {
+                    return $this->headers[$header];
+                }
+
+                return false;
             }
 
             public function translate_entry(&$entry)
             {
                 $key = $entry->key();
 
-                return isset($this->entries[$key]) ? $this->entries[$key] : false;
+                if(isset($this->entries[$key]))
+                {
+                    return $this->entries[$key];
+                }
+
+                return false;
             }
 
             public function translate($singular, $context = null)
             {
-                $entry = new Translation_Entry([
-                                                   'singular' => $singular,
-                                                   'context' => $context,
-                                               ]);
+                $entry = new Translation_Entry(compact('singular', 'context'));
                 $translated = $this->translate_entry($entry);
 
-                return ($translated && ! empty($translated->translations)) ? $translated->translations[0] : $singular;
+                if($translated && ! empty($translated->translations))
+                {
+                    return $translated->translations[0];
+                }
+
+                return $singular;
             }
 
             public function select_plural_form($count)
             {
-                return 1 === (int) $count ? 0 : 1;
+                if(1 === (int) $count)
+                {
+                    return 0;
+                }
+
+                return 1;
             }
 
             public function get_plural_forms_count()
@@ -98,11 +115,7 @@
 
             public function translate_plural($singular, $plural, $count, $context = null)
             {
-                $entry = new Translation_Entry([
-                                                   'singular' => $singular,
-                                                   'plural' => $plural,
-                                                   'context' => $context,
-                                               ]);
+                $entry = new Translation_Entry(compact('singular', 'plural', 'context'));
                 $translated = $this->translate_entry($entry);
                 $index = $this->select_plural_form($count);
                 $total_plural_forms = $this->get_plural_forms_count();
@@ -112,7 +125,12 @@
                 }
                 else
                 {
-                    return 1 === (int) $count ? $singular : $plural;
+                    if(1 === (int) $count)
+                    {
+                        return $singular;
+                    }
+
+                    return $plural;
                 }
             }
 
@@ -128,13 +146,13 @@
             {
                 foreach($other->entries as $entry)
                 {
-                    if(! isset($this->entries[$entry->key()]))
+                    if(isset($this->entries[$entry->key()]))
                     {
-                        $this->entries[$entry->key()] = $entry;
+                        $this->entries[$entry->key()]->merge_with($entry);
                     }
                     else
                     {
-                        $this->entries[$entry->key()]->merge_with($entry);
+                        $this->entries[$entry->key()] = $entry;
                     }
                 }
             }
@@ -196,7 +214,7 @@
                 $expression .= ';';
                 $res = '';
                 $depth = 0;
-                for($i = 0; $i < strlen($expression); ++$i)
+                for($i = 0, $iMax = strlen($expression); $i < $iMax; ++$i)
                 {
                     $char = $expression[$i];
                     switch($char)
@@ -290,7 +308,12 @@
 
             public function select_plural_form($count)
             {
-                return 1 === (int) $count ? 0 : 1;
+                if(1 === (int) $count)
+                {
+                    return 0;
+                }
+
+                return 1;
             }
 
             public function get_plural_forms_count()
@@ -300,7 +323,12 @@
 
             public function translate_plural($singular, $plural, $count, $context = null)
             {
-                return 1 === (int) $count ? $singular : $plural;
+                if(1 === (int) $count)
+                {
+                    return $singular;
+                }
+
+                return $plural;
             }
 
             public function merge_with(&$other) {}

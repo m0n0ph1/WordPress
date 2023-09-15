@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
     #[AllowDynamicProperties]
     class WP_Object_Cache
@@ -55,12 +55,7 @@
 
         public function add($key, $data, $group = 'default', $expire = 0)
         {
-            if(wp_suspend_cache_addition())
-            {
-                return false;
-            }
-
-            if(! $this->is_valid_key($key))
+            if(wp_suspend_cache_addition() || ! $this->is_valid_key($key))
             {
                 return false;
             }
@@ -84,6 +79,7 @@
             return $this->set($key, $data, $group, (int) $expire);
         }
 
+        /** @noinspection DebugFunctionUsageInspection */
         protected function is_valid_key($key)
         {
             if(is_int($key))

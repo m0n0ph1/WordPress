@@ -5,6 +5,6 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core32_Util extends ParagonIE_Sodium_Core_Util
+    abstract class Util extends ParagonIE_Sodium_Core_Util
     {
     }

@@ -64,17 +64,13 @@
     <div class="entry-content">
 
         <?php
-            if(! is_single())
+            if(! is_single() && ! empty($audio))
             {
-                // If not a single post, highlight the audio file.
-                if(! empty($audio))
+                foreach($audio as $audio_html)
                 {
-                    foreach($audio as $audio_html)
-                    {
-                        echo '<div class="entry-audio">';
-                        echo $audio_html;
-                        echo '</div><!-- .entry-audio -->';
-                    }
+                    echo '<div class="entry-audio">';
+                    echo $audio_html;
+                    echo '</div><!-- .entry-audio -->';
                 }
             }
 

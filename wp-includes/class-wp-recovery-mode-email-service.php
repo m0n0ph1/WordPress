@@ -3,7 +3,7 @@
     #[AllowDynamicProperties]
     final class WP_Recovery_Mode_Email_Service
     {
-        const RATE_LIMIT_OPTION = 'recovery_mode_email_last_sent';
+        public const RATE_LIMIT_OPTION = 'recovery_mode_email_last_sent';
 
         private $link_service;
 
@@ -134,13 +134,13 @@ When seeking help with this issue, you may be asked for some of the following in
             {
                 $plugin = $this->get_plugin($extension);
 
-                if(false === $plugin)
+                if(false !== $plugin)
                 {
-                    $name = $extension['slug'];
+                    $name = $plugin['Name'];
                 }
                 else
                 {
-                    $name = $plugin['Name'];
+                    $name = $extension['slug'];
                 }
 
                 /* translators: %s: Plugin name. */

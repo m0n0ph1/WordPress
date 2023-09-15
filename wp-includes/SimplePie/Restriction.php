@@ -1,12 +1,12 @@
 <?php
 
-    class SimplePie_Restriction
+    class Restriction
     {
-        var $relationship;
+        public $relationship;
 
-        var $type;
+        public $type;
 
-        var $value;
+        public $value;
 
         public function __construct($relationship = null, $type = null, $value = null)
         {

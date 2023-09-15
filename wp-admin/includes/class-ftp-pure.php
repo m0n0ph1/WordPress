@@ -2,7 +2,7 @@
 
     class ftp_pure extends ftp_base
     {
-        function __construct($verb = false, $le = false)
+        public function __construct($verb = false, $le = false)
         {
             parent::__construct(false, $verb, $le);
         }
@@ -11,7 +11,7 @@
 // <!--       Private functions                                                                 -->
 // <!-- --------------------------------------------------------------------------------------- -->
 
-        function _settimeout($sock)
+        public function _settimeout($sock)
         {
             if(! @stream_set_timeout($sock, $this->_timeout))
             {
@@ -24,7 +24,7 @@
             return true;
         }
 
-        function _quit($force = false)
+        public function _quit($force = false)
         {
             if($this->_connected or $force)
             {
@@ -34,7 +34,7 @@
             }
         }
 
-        function _connect($host, $port)
+        public function _connect($host, $port)
         {
             $this->SendMSG("Creating socket");
             $sock = @fsockopen($host, $port, $errno, $errstr, $this->_timeout);
@@ -49,7 +49,7 @@
             return $sock;
         }
 
-        function _data_prepare($mode = FTP_ASCII)
+        public function _data_prepare($mode = FTP_ASCII)
         {
             if(! $this->_settype($mode))
             {
@@ -74,16 +74,16 @@
                 $this->_dataport = (((int) $ip_port[4]) << 8) + ((int) $ip_port[5]);
                 $this->SendMSG("Connecting to ".$this->_datahost.":".$this->_dataport);
                 $this->_ftp_data_sock = @fsockopen($this->_datahost, $this->_dataport, $errno, $errstr, $this->_timeout);
-                if(! $this->_ftp_data_sock)
+                if($this->_ftp_data_sock)
+                {
+                    $this->_ftp_data_sock;
+                }
+                else
                 {
                     $this->PushError("_data_prepare", "fsockopen fails", $errstr." (".$errno.")");
                     $this->_data_close();
 
                     return false;
-                }
-                else
-                {
-                    $this->_ftp_data_sock;
                 }
             }
             else
@@ -96,7 +96,7 @@
             return true;
         }
 
-        function _exec($cmd, $fnction = "_exec")
+        public function _exec($cmd, $fnction = "_exec")
         {
             if(! $this->_ready)
             {
@@ -108,7 +108,7 @@
             {
                 echo "PUT > ", $cmd, CRLF;
             }
-            $status = @fputs($this->_ftp_control_sock, $cmd.CRLF);
+            $status = @fwrite($this->_ftp_control_sock, $cmd.CRLF);
             if($status === false)
             {
                 $this->PushError($fnction, 'socket write failed');
@@ -124,7 +124,7 @@
             return true;
         }
 
-        function _readmsg($fnction = "_readmsg")
+        public function _readmsg($fnction = "_readmsg")
         {
             if(! $this->_connected)
             {
@@ -139,18 +139,19 @@
             do
             {
                 $tmp = @fgets($this->_ftp_control_sock, 512);
-                if($tmp === false)
-                {
-                    $go = $result = false;
-                    $this->PushError($fnction, 'Read failed');
-                }
-                else
+                if($tmp !== false)
                 {
                     $this->_message .= $tmp;
                     if(preg_match("/^([0-9]{3})(-(.*[".CRLF."]{1,2})+\\1)? [^".CRLF."]+[".CRLF."]{1,2}$/", $this->_message, $regs))
                     {
                         $go = false;
                     }
+                }
+                else
+                {
+                    $result = false;
+                    $go = false;
+                    $this->PushError($fnction, 'Read failed');
                 }
             }
             while($go);
@@ -163,7 +164,7 @@
             return $result;
         }
 
-        function _data_close()
+        public function _data_close()
         {
             @fclose($this->_ftp_data_sock);
             $this->SendMSG("Disconnected data from remote host");
@@ -171,7 +172,7 @@
             return true;
         }
 
-        function _data_read($mode = FTP_ASCII, $fp = null)
+        public function _data_read($mode = FTP_ASCII, $fp = null)
         {
             if(is_resource($fp))
             {
@@ -207,7 +208,7 @@
             return $out;
         }
 
-        function _data_write($mode = FTP_ASCII, $fp = null)
+        public function _data_write($mode = FTP_ASCII, $fp = null)
         {
             if(is_resource($fp))
             {
@@ -242,7 +243,7 @@
             return true;
         }
 
-        function _data_write_block($mode, $block)
+        public function _data_write_block($mode, $block)
         {
             if($mode != FTP_BINARY)
             {

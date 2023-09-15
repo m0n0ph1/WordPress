@@ -34,13 +34,13 @@
             case 'enable':
                 check_admin_referer('enable-theme_'.$_GET['theme']);
                 WP_Theme::network_enable_theme($_GET['theme']);
-                if(! str_contains($referer, '/network/themes.php'))
+                if(str_contains($referer, '/network/themes.php'))
                 {
-                    wp_redirect(network_admin_url('themes.php?enabled=1'));
+                    wp_safe_redirect(add_query_arg('enabled', 1, $referer));
                 }
                 else
                 {
-                    wp_safe_redirect(add_query_arg('enabled', 1, $referer));
+                    wp_redirect(network_admin_url('themes.php?enabled=1'));
                 }
                 exit;
             case 'disable':

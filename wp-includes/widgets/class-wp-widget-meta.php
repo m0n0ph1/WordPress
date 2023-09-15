@@ -15,6 +15,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             $default_title = __('Meta');
             $title = ! empty($instance['title']) ? $instance['title'] : $default_title;
 
@@ -76,6 +77,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $instance = wp_parse_args((array) $instance, ['title' => '']);
             ?>
             <p>

@@ -2,7 +2,7 @@
 
     class ftp_sockets extends ftp_base
     {
-        function __construct($verb = false, $le = false)
+        public function __construct($verb = false, $le = false)
         {
             parent::__construct(true, $verb, $le);
         }
@@ -11,7 +11,7 @@
 // <!--       Private functions                                                                 -->
 // <!-- --------------------------------------------------------------------------------------- -->
 
-        function _connect($host, $port)
+        public function _connect($host, $port)
         {
             $this->SendMSG("Creating socket");
             if(! ($sock = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP)))
@@ -37,7 +37,7 @@
             return $sock;
         }
 
-        function _settimeout($sock)
+        public function _settimeout($sock)
         {
             if(! @socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, ["sec" => $this->_timeout, "usec" => 0]))
             {
@@ -57,7 +57,7 @@
             return true;
         }
 
-        function _data_prepare($mode = FTP_ASCII)
+        public function _data_prepare($mode = FTP_ASCII)
         {
             if(! $this->_settype($mode))
             {
@@ -95,16 +95,16 @@
                 $this->_datahost = $ip_port[0].".".$ip_port[1].".".$ip_port[2].".".$ip_port[3];
                 $this->_dataport = (((int) $ip_port[4]) << 8) + ((int) $ip_port[5]);
                 $this->SendMSG("Connecting to ".$this->_datahost.":".$this->_dataport);
-                if(! @socket_connect($this->_ftp_data_sock, $this->_datahost, $this->_dataport))
+                if(@socket_connect($this->_ftp_data_sock, $this->_datahost, $this->_dataport))
+                {
+                    $this->_ftp_temp_sock = $this->_ftp_data_sock;
+                }
+                else
                 {
                     $this->PushError("_data_prepare", "socket_connect", socket_strerror(socket_last_error($this->_ftp_data_sock)));
                     $this->_data_close();
 
                     return false;
-                }
-                else
-                {
-                    $this->_ftp_temp_sock = $this->_ftp_data_sock;
                 }
             }
             else
@@ -154,7 +154,7 @@
             return true;
         }
 
-        function _data_close()
+        public function _data_close()
         {
             @socket_close($this->_ftp_temp_sock);
             @socket_close($this->_ftp_data_sock);
@@ -163,7 +163,7 @@
             return true;
         }
 
-        function _exec($cmd, $fnction = "_exec")
+        public function _exec($cmd, $fnction = "_exec")
         {
             if(! $this->_ready)
             {
@@ -191,7 +191,7 @@
             return true;
         }
 
-        function _readmsg($fnction = "_readmsg")
+        public function _readmsg($fnction = "_readmsg")
         {
             if(! $this->_connected)
             {
@@ -206,15 +206,16 @@
             do
             {
                 $tmp = @socket_read($this->_ftp_control_sock, 4096, PHP_BINARY_READ);
-                if($tmp === false)
-                {
-                    $go = $result = false;
-                    $this->PushError($fnction, 'Read failed', socket_strerror(socket_last_error($this->_ftp_control_sock)));
-                }
-                else
+                if($tmp !== false)
                 {
                     $this->_message .= $tmp;
                     $go = ! preg_match("/^([0-9]{3})(-.+\\1)? [^".CRLF."]+".CRLF."$/Us", $this->_message, $regs);
+                }
+                else
+                {
+                    $result = false;
+                    $go = false;
+                    $this->PushError($fnction, 'Read failed', socket_strerror(socket_last_error($this->_ftp_control_sock)));
                 }
             }
             while($go);
@@ -227,7 +228,7 @@
             return $result;
         }
 
-        function _data_read($mode = FTP_ASCII, $fp = null)
+        public function _data_read($mode = FTP_ASCII, $fp = null)
         {
             $NewLine = $this->_eol_code[$this->OS_local];
             if(is_resource($fp))
@@ -274,7 +275,7 @@
             return $out;
         }
 
-        function _data_write($mode = FTP_ASCII, $fp = null)
+        public function _data_write($mode = FTP_ASCII, $fp = null)
         {
             $NewLine = $this->_eol_code[$this->OS_local];
             if(is_resource($fp))
@@ -316,7 +317,7 @@
             return true;
         }
 
-        function _data_write_block($mode, $block)
+        public function _data_write_block($mode, $block)
         {
             if($mode != FTP_BINARY)
             {
@@ -338,7 +339,7 @@
             return true;
         }
 
-        function _quit()
+        public function _quit()
         {
             if($this->_connected)
             {

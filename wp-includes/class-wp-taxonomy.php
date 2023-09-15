@@ -370,12 +370,7 @@
 
             $class = $this->rest_controller_class ? $this->rest_controller_class : WP_REST_Terms_Controller::class;
 
-            if(! class_exists($class))
-            {
-                return null;
-            }
-
-            if(! is_subclass_of($class, WP_REST_Controller::class))
+            if(! class_exists($class) || ! is_subclass_of($class, WP_REST_Controller::class))
             {
                 return null;
             }

@@ -130,7 +130,12 @@
             $cache_key = "get_sites:$key:$last_changed";
             $cache_value = wp_cache_get($cache_key, 'site-queries');
 
-            if(false === $cache_value)
+            if(false !== $cache_value)
+            {
+                $site_ids = $cache_value['site_ids'];
+                $this->found_sites = $cache_value['found_sites'];
+            }
+            else
             {
                 $site_ids = $this->get_site_ids();
                 if($site_ids)
@@ -143,11 +148,6 @@
                     'found_sites' => $this->found_sites,
                 ];
                 wp_cache_add($cache_key, $cache_value, 'site-queries');
-            }
-            else
-            {
-                $site_ids = $cache_value['site_ids'];
-                $this->found_sites = $cache_value['found_sites'];
             }
 
             if($this->found_sites && $this->query_vars['number'])
@@ -416,7 +416,7 @@
             }
 
             // Falsey search strings are ignored.
-            if(strlen($this->query_vars['search']))
+            if($this->query_vars['search'] != '')
             {
                 $search_columns = [];
 
@@ -464,7 +464,7 @@
 
             $pieces = ['fields', 'join', 'where', 'orderby', 'limits', 'groupby'];
 
-            $clauses = apply_filters_ref_array('sites_clauses', [compact($pieces), &$this]);
+            $clauses = apply_filters_ref_array('sites_clauses', [compact('pieces'), &$this]);
 
             $fields = isset($clauses['fields']) ? $clauses['fields'] : '';
             $join = isset($clauses['join']) ? $clauses['join'] : '';
@@ -521,12 +521,7 @@
 
         protected function parse_order($order)
         {
-            if(! is_string($order) || empty($order))
-            {
-                return 'ASC';
-            }
-
-            if('ASC' === strtoupper($order))
+            if(! is_string($order) || empty($order) || 'ASC' === strtoupper($order))
             {
                 return 'ASC';
             }

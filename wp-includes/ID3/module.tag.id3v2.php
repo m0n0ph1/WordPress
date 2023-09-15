@@ -20,7 +20,7 @@
     }
     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.tag.id3v1.php', __FILE__, true);
 
-    class getid3_id3v2 extends getid3_handler
+    class module extends getid3_handler
     {
         public $StartingOffset = 0;
 
@@ -57,7 +57,7 @@
 
             $this->fseek($this->StartingOffset);
             $header = $this->fread(10);
-            if(substr($header, 0, 3) == 'ID3' && strlen($header) == 10)
+            if(strpos($header, 'ID3') === 0 && strlen($header) == 10)
             {
                 $thisfile_id3v2['majorversion'] = ord($header[3]);
                 $thisfile_id3v2['minorversion'] = ord($header[4]);
@@ -204,7 +204,7 @@
                         $extended_header_offset += 4;
 
                         $thisfile_id3v2['exthead']['flag_bytes'] = getid3_lib::BigEndian2Int(substr($framedata, $extended_header_offset, 1)); // should always be 1
-                        $extended_header_offset += 1;
+                        ++$extended_header_offset;
 
                         $thisfile_id3v2['exthead']['flag_raw'] = getid3_lib::BigEndian2Int(substr($framedata, $extended_header_offset, $thisfile_id3v2['exthead']['flag_bytes']));
                         $extended_header_offset += $thisfile_id3v2['exthead']['flag_bytes'];
@@ -216,13 +216,13 @@
                         if($thisfile_id3v2['exthead']['flags']['update'])
                         {
                             $ext_header_chunk_length = getid3_lib::BigEndian2Int(substr($framedata, $extended_header_offset, 1)); // should be 0
-                            $extended_header_offset += 1;
+                            ++$extended_header_offset;
                         }
 
                         if($thisfile_id3v2['exthead']['flags']['crc'])
                         {
                             $ext_header_chunk_length = getid3_lib::BigEndian2Int(substr($framedata, $extended_header_offset, 1)); // should be 5
-                            $extended_header_offset += 1;
+                            ++$extended_header_offset;
                             $thisfile_id3v2['exthead']['flag_data']['crc'] = getid3_lib::BigEndian2Int(substr($framedata, $extended_header_offset, $ext_header_chunk_length), true, false);
                             $extended_header_offset += $ext_header_chunk_length;
                         }
@@ -230,11 +230,11 @@
                         if($thisfile_id3v2['exthead']['flags']['restrictions'])
                         {
                             $ext_header_chunk_length = getid3_lib::BigEndian2Int(substr($framedata, $extended_header_offset, 1)); // should be 1
-                            $extended_header_offset += 1;
+                            ++$extended_header_offset;
 
                             // %ppqrrstt
                             $restrictions_raw = getid3_lib::BigEndian2Int(substr($framedata, $extended_header_offset, 1));
-                            $extended_header_offset += 1;
+                            ++$extended_header_offset;
                             $thisfile_id3v2['exthead']['flags']['restrictions']['tagsize'] = ($restrictions_raw & 0xC0) >> 6; // p - Tag size restrictions
                             $thisfile_id3v2['exthead']['flags']['restrictions']['textenc'] = ($restrictions_raw & 0x20) >> 5; // q - Text encoding restrictions
                             $thisfile_id3v2['exthead']['flags']['restrictions']['textsize'] = ($restrictions_raw & 0x18) >> 3; // r - Text fields size restrictions
@@ -258,7 +258,7 @@
                     $framedata = substr($framedata, $extended_header_offset);
                 } // end extended header
 
-                while(isset($framedata) && (strlen($framedata) > 0))
+                while(isset($framedata) && ($framedata != ''))
                 { // cycle through until no more frame data is left to parse
                     if(strlen($framedata) <= $this->ID3v2HeaderLength($id3v2_majorversion))
                     {
@@ -451,7 +451,7 @@
             if(isset($thisfile_id3v2_flags['isfooter']) && $thisfile_id3v2_flags['isfooter'])
             {
                 $footer = $this->fread(10);
-                if(substr($footer, 0, 3) == '3DI')
+                if(strpos($footer, '3DI') === 0)
                 {
                     $thisfile_id3v2['footer'] = true;
                     $thisfile_id3v2['majorversion_footer'] = ord($footer[3]);
@@ -773,11 +773,7 @@
                 if($parsedFrame['flags']['compression'])
                 {
                     $parsedFrame['decompressed_size'] = getid3_lib::BigEndian2Int(substr($parsedFrame['data'], 0, 4));
-                    if(! function_exists('gzuncompress'))
-                    {
-                        $this->warning('gzuncompress() support required to decompress ID3v2 frame "'.$parsedFrame['frame_name'].'"');
-                    }
-                    else
+                    if(function_exists('gzuncompress'))
                     {
                         if($decompresseddata = @gzuncompress(substr($parsedFrame['data'], 4)))
                         {
@@ -790,15 +786,16 @@
                             $this->warning('gzuncompress() failed on compressed contents of ID3v2 frame "'.$parsedFrame['frame_name'].'"');
                         }
                     }
+                    else
+                    {
+                        $this->warning('gzuncompress() support required to decompress ID3v2 frame "'.$parsedFrame['frame_name'].'"');
+                    }
                 }
             }
 
-            if(! empty($parsedFrame['flags']['DataLengthIndicator']))
+            if(! empty($parsedFrame['flags']['DataLengthIndicator']) && $parsedFrame['data_length_indicator'] != strlen($parsedFrame['data']))
             {
-                if($parsedFrame['data_length_indicator'] != strlen($parsedFrame['data']))
-                {
-                    $this->warning('ID3v2 frame "'.$parsedFrame['frame_name'].'" should be '.$parsedFrame['data_length_indicator'].' bytes long according to DataLengthIndicator, but found '.strlen($parsedFrame['data']).' bytes of data');
-                }
+                $this->warning('ID3v2 frame "'.$parsedFrame['frame_name'].'" should be '.$parsedFrame['data_length_indicator'].' bytes long according to DataLengthIndicator, but found '.strlen($parsedFrame['data']).' bytes of data');
             }
 
             if(isset($parsedFrame['datalength']) && ($parsedFrame['datalength'] == 0))
@@ -918,7 +915,7 @@
                     }
                     $Txxx_elements = [];
                     $Txxx_elements_start_offset = 0;
-                    for($i = 0; $i < strlen($parsedFrame['data']); $i += $wordsize)
+                    for($i = 0, $iMax = strlen($parsedFrame['data']); $i < $iMax; $i += $wordsize)
                     {
                         if(substr($parsedFrame['data'], $i, $wordsize) == str_repeat("\x00", $wordsize))
                         {
@@ -1019,11 +1016,11 @@
                 if(strpos($parsedFrame['data_raw'], "\x00") !== false)
                 {
                     $IPLS_parts_unsorted = [];
-                    if(((strlen($parsedFrame['data_raw']) % 2) == 0) && ((substr($parsedFrame['data_raw'], 0, 2) == "\xFF\xFE") || (substr($parsedFrame['data_raw'], 0, 2) == "\xFE\xFF")))
+                    if(((strlen($parsedFrame['data_raw']) % 2) === 0) && ((strpos($parsedFrame['data_raw'], "\xFF\xFE") === 0) || (strpos($parsedFrame['data_raw'], "\xFE\xFF") === 0)))
                     {
                         // UTF-16, be careful looking for null bytes since most 2-byte characters may contain one; you need to find twin null bytes, and on even padding
                         $thisILPS = '';
-                        for($i = 0; $i < strlen($parsedFrame['data_raw']); $i += 2)
+                        for($i = 0, $iMax = strlen($parsedFrame['data_raw']); $i < $iMax; $i += 2)
                         {
                             $twobytes = substr($parsedFrame['data_raw'], $i, 2);
                             if($twobytes === "\x00\x00")
@@ -1055,24 +1052,24 @@
                             $position = '';
                             foreach($IPLS_parts_sorted as $person)
                             {
-                                $IPLS_parts[] = ['position' => $position, 'person' => $person];
+                                $IPLS_parts[] = compact('position', 'person');
                             }
                         }
                     }
-                    elseif((count($IPLS_parts_unsorted) % 2) == 0)
+                    elseif((count($IPLS_parts_unsorted) % 2) === 0)
                     {
                         $position = '';
                         $person = '';
                         foreach($IPLS_parts_unsorted as $key => $value)
                         {
-                            if(($key % 2) == 0)
+                            if(($key % 2) === 0)
                             {
                                 $position = $value;
                             }
                             else
                             {
                                 $person = $value;
-                                $IPLS_parts[] = ['position' => $position, 'person' => $person];
+                                $IPLS_parts[] = compact('position', 'person');
                                 $position = '';
                                 $person = '';
                             }
@@ -1169,7 +1166,7 @@
                     $deviationbitstream .= getid3_lib::BigEndian2Bin(substr($parsedFrame['data'], $frame_offset++, 1));
                 }
                 $reference_counter = 0;
-                while(strlen($deviationbitstream) > 0)
+                while($deviationbitstream !== '')
                 {
                     $parsedFrame[$reference_counter]['bytedeviation'] = bindec(substr($deviationbitstream, 0, $parsedFrame['bitsforbytesdeviation']));
                     $parsedFrame[$reference_counter]['msdeviation'] = bindec(substr($deviationbitstream, $parsedFrame['bitsforbytesdeviation'], $parsedFrame['bitsformsdeviation']));
@@ -1298,15 +1295,11 @@
 
                 $timestampindex = 0;
                 $frame_remainingdata = substr($parsedFrame['data'], $frame_offset);
-                while(strlen($frame_remainingdata))
+                while($frame_remainingdata !== '')
                 {
                     $frame_offset = 0;
                     $frame_terminatorpos = strpos($frame_remainingdata, $frame_textencoding_terminator);
-                    if($frame_terminatorpos === false)
-                    {
-                        $frame_remainingdata = '';
-                    }
-                    else
+                    if($frame_terminatorpos !== false)
                     {
                         if(ord(substr($frame_remainingdata, $frame_terminatorpos + strlen($frame_textencoding_terminator), 1)) === 0)
                         {
@@ -1315,7 +1308,7 @@
                         $parsedFrame['lyrics'][$timestampindex]['data'] = substr($frame_remainingdata, $frame_offset, $frame_terminatorpos - $frame_offset);
 
                         $frame_remainingdata = substr($frame_remainingdata, $frame_terminatorpos + strlen($frame_textencoding_terminator));
-                        if(($timestampindex == 0) && (ord($frame_remainingdata[0]) != 0))
+                        if(($timestampindex === 0) && (ord($frame_remainingdata[0]) != 0))
                         {
                             // timestamp probably omitted for first data item
                         }
@@ -1325,6 +1318,10 @@
                             $frame_remainingdata = substr($frame_remainingdata, 4);
                         }
                         $timestampindex++;
+                    }
+                    else
+                    {
+                        $frame_remainingdata = '';
                     }
                 }
                 unset($parsedFrame['data']);
@@ -1483,7 +1480,7 @@
                 if($id3v2_majorversion == 3)
                 {
                     $parsedFrame['data'] = substr($parsedFrame['data'], $frame_offset);
-                    if(strlen($parsedFrame['data']) > 0)
+                    if($parsedFrame['data'] != '')
                     {
                         $parsedFrame['incdec']['rightrear'] = (bool) substr($frame_incrdecrflags, 4, 1);
                         $parsedFrame['incdec']['leftrear'] = (bool) substr($frame_incrdecrflags, 5, 1);
@@ -1505,7 +1502,7 @@
                         $frame_offset += $frame_bytesvolume;
                     }
                     $parsedFrame['data'] = substr($parsedFrame['data'], $frame_offset);
-                    if(strlen($parsedFrame['data']) > 0)
+                    if($parsedFrame['data'] != '')
                     {
                         $parsedFrame['incdec']['center'] = (bool) substr($frame_incrdecrflags, 3, 1);
                         $parsedFrame['volumechange']['center'] = getid3_lib::BigEndian2Int(substr($parsedFrame['data'], $frame_offset, $frame_bytesvolume));
@@ -1518,7 +1515,7 @@
                         $frame_offset += $frame_bytesvolume;
                     }
                     $parsedFrame['data'] = substr($parsedFrame['data'], $frame_offset);
-                    if(strlen($parsedFrame['data']) > 0)
+                    if($parsedFrame['data'] != '')
                     {
                         $parsedFrame['incdec']['bass'] = (bool) substr($frame_incrdecrflags, 2, 1);
                         $parsedFrame['volumechange']['bass'] = getid3_lib::BigEndian2Int(substr($parsedFrame['data'], $frame_offset, $frame_bytesvolume));
@@ -1556,7 +1553,7 @@
                 }
                 $parsedFrame['description'] = $frame_idstring;
                 $frame_remainingdata = substr($parsedFrame['data'], $frame_terminatorpos + strlen("\x00"));
-                while(strlen($frame_remainingdata))
+                while($frame_remainingdata !== '')
                 {
                     $frame_frequency = getid3_lib::BigEndian2Int(substr($frame_remainingdata, 0, 2)) / 2;
                     $parsedFrame['data'][$frame_frequency] = getid3_lib::BigEndian2Int(substr($frame_remainingdata, 2, 2), false, true);
@@ -1585,7 +1582,7 @@
                 $frame_adjustmentbytes = ceil($parsedFrame['adjustmentbits'] / 8);
 
                 $frame_remainingdata = (string) substr($parsedFrame['data'], $frame_offset);
-                while(strlen($frame_remainingdata) > 0)
+                while($frame_remainingdata !== '')
                 {
                     $frame_frequencystr = getid3_lib::BigEndian2Bin(substr($frame_remainingdata, 0, 2));
                     $frame_incdec = (bool) substr($frame_frequencystr, 0, 1);
@@ -1729,19 +1726,16 @@
 
                     $parsedFrame['image_mime'] = '';
                     $imageinfo = [];
-                    if($imagechunkcheck = getid3_lib::GetDataImageSize($parsedFrame['data'], $imageinfo))
+                    if(getid3_lib::GetDataImageSize($parsedFrame['data'], $imageinfo) && ($imagechunkcheck[2] >= 1) && ($imagechunkcheck[2] <= 3))
                     {
-                        if(($imagechunkcheck[2] >= 1) && ($imagechunkcheck[2] <= 3))
+                        $parsedFrame['image_mime'] = image_type_to_mime_type($imagechunkcheck[2]);
+                        if($imagechunkcheck[0])
                         {
-                            $parsedFrame['image_mime'] = image_type_to_mime_type($imagechunkcheck[2]);
-                            if($imagechunkcheck[0])
-                            {
-                                $parsedFrame['image_width'] = $imagechunkcheck[0];
-                            }
-                            if($imagechunkcheck[1])
-                            {
-                                $parsedFrame['image_height'] = $imagechunkcheck[1];
-                            }
+                            $parsedFrame['image_width'] = $imagechunkcheck[0];
+                        }
+                        if($imagechunkcheck[1])
+                        {
+                            $parsedFrame['image_height'] = $imagechunkcheck[1];
                         }
                     }
 
@@ -2533,9 +2527,9 @@
                 @list($parsedFrame['element_id']) = explode("\x00", $parsedFrame['data'], 2);
                 $frame_offset += strlen($parsedFrame['element_id']."\x00");
                 $ctoc_flags_raw = ord(substr($parsedFrame['data'], $frame_offset, 1));
-                $frame_offset += 1;
+                ++$frame_offset;
                 $parsedFrame['entry_count'] = ord(substr($parsedFrame['data'], $frame_offset, 1));
-                $frame_offset += 1;
+                ++$frame_offset;
 
                 $terminator_position = null;
                 for($i = 0; $i < $parsedFrame['entry_count']; $i++)
@@ -2844,26 +2838,14 @@
 
         public static function IsValidDateStampString($datestamp)
         {
-            if(strlen($datestamp) != 8)
-            {
-                return false;
-            }
-            if(! self::IsANumber($datestamp, false))
+            if(strlen($datestamp) != 8 || ! self::IsANumber($datestamp, false))
             {
                 return false;
             }
             $year = substr($datestamp, 0, 4);
             $month = substr($datestamp, 4, 2);
             $day = substr($datestamp, 6, 2);
-            if(($year == 0) || ($month == 0) || ($day == 0))
-            {
-                return false;
-            }
-            if($month > 12)
-            {
-                return false;
-            }
-            if($day > 31)
+            if(($year == 0) || ($month == 0) || ($day == 0) || $month > 12 || $day > 31)
             {
                 return false;
             }
@@ -2881,7 +2863,7 @@
 
         public static function IsANumber($numberstring, $allowdecimal = false, $allownegative = false)
         {
-            for($i = 0; $i < strlen($numberstring); $i++)
+            for($i = 0, $iMax = strlen($numberstring); $i < $iMax; $i++)
             {
                 if((chr($numberstring[$i]) < chr('0')) || (chr($numberstring[$i]) > chr('9')))
                 {
@@ -2889,7 +2871,7 @@
                     {
                         // allowed
                     }
-                    elseif(($numberstring[$i] == '-') && $allownegative && ($i == 0))
+                    elseif(($numberstring[$i] == '-') && $allownegative && ($i === 0))
                     {
                         // allowed
                     }

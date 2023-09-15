@@ -111,12 +111,9 @@
         if(empty($prev_value))
         {
             $old_value = get_metadata_raw($meta_type, $object_id, $meta_key);
-            if(is_countable($old_value) && count($old_value) === 1)
+            if(is_countable($old_value) && count($old_value) === 1 && $old_value[0] === $meta_value)
             {
-                if($old_value[0] === $meta_value)
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -508,10 +505,7 @@
             $meta_value = maybe_serialize($meta_value);
 
             // Format the data query arguments.
-            $data = [
-                'meta_key' => $meta_key,
-                'meta_value' => $meta_value,
-            ];
+            $data = compact('meta_key', 'meta_value');
 
             // Format the where query arguments.
             $where = [];
@@ -653,13 +647,13 @@
 
         foreach($cache_values as $id => $cached_object)
         {
-            if(false === $cached_object)
+            if(false !== $cached_object)
             {
-                $non_cached_ids[] = $id;
+                $cache[$id] = $cached_object;
             }
             else
             {
-                $cache[$id] = $cached_object;
+                $non_cached_ids[] = $id;
             }
         }
 
@@ -747,7 +741,7 @@
     function is_protected_meta($meta_key, $meta_type = '')
     {
         $sanitized_key = preg_replace("/[^\x20-\x7E\p{L}]/", '', $meta_key);
-        $protected = strlen($sanitized_key) > 0 && ('_' === $sanitized_key[0]);
+        $protected = $sanitized_key != '' && ('_' === $sanitized_key[0]);
 
         return apply_filters('is_protected_meta', $protected, $meta_key, $meta_type);
     }
@@ -899,12 +893,7 @@
     {
         global $wp_meta_keys;
 
-        if(wp_installing())
-        {
-            return $value;
-        }
-
-        if(! is_array($wp_meta_keys) || ! isset($wp_meta_keys[$meta_type]))
+        if(wp_installing() || ! is_array($wp_meta_keys) || ! isset($wp_meta_keys[$meta_type]))
         {
             return $value;
         }

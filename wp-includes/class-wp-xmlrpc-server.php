@@ -15,6 +15,7 @@
 
         public function __construct()
         {
+            parent::__construct(null, null, null);
             $this->methods = [
                 // WordPress API.
                 'wp.getUsersBlogs' => 'this:wp_getUsersBlogs',
@@ -527,6 +528,7 @@
         public function error($error, $message = false)
         {
             // Accepts either an error object or an error code and message
+            parent::error($error, $message);
             if($message && ! is_object($error))
             {
                 $error = new IXR_Error($error, $message);
@@ -869,7 +871,11 @@
 
                             $term = get_term_by('name', $term_name, $taxonomy);
 
-                            if(! $term)
+                            if($term)
+                            {
+                                $terms[$taxonomy][] = (int) $term->term_id;
+                            }
+                            else
                             {
                                 // Term doesn't exist, so check that the user is allowed to create new terms.
                                 if(! current_user_can($post_type_taxonomies[$taxonomy]->cap->edit_terms))
@@ -885,10 +891,6 @@
                                 }
 
                                 $terms[$taxonomy][] = (int) $term_info['term_id'];
-                            }
-                            else
-                            {
-                                $terms[$taxonomy][] = (int) $term->term_id;
                             }
                         }
                     }
@@ -1096,13 +1098,9 @@
                 return new IXR_Error(404, __('Invalid post ID.'));
             }
 
-            if(isset($content_struct['if_not_modified_since']))
+            if(isset($content_struct['if_not_modified_since']) && mysql2date('U', $post['post_modified_gmt']) > $content_struct['if_not_modified_since']->getTimestamp())
             {
-                // If the post has been modified since the date provided, return an error.
-                if(mysql2date('U', $post['post_modified_gmt']) > $content_struct['if_not_modified_since']->getTimestamp())
-                {
-                    return new IXR_Error(409, __('There is a revision of this post that is more recent.'));
-                }
+                return new IXR_Error(409, __('There is a revision of this post that is more recent.'));
             }
 
             // Convert the date field back to IXR form.
@@ -2769,22 +2767,7 @@
 
             if(isset($content_struct['mt_allow_comments']))
             {
-                if(! is_numeric($content_struct['mt_allow_comments']))
-                {
-                    switch($content_struct['mt_allow_comments'])
-                    {
-                        case 'closed':
-                            $comment_status = 'closed';
-                            break;
-                        case 'open':
-                            $comment_status = 'open';
-                            break;
-                        default:
-                            $comment_status = get_default_comment_status($post_type);
-                            break;
-                    }
-                }
-                else
+                if(is_numeric($content_struct['mt_allow_comments']))
                 {
                     switch((int) $content_struct['mt_allow_comments'])
                     {
@@ -2800,6 +2783,21 @@
                             break;
                     }
                 }
+                else
+                {
+                    switch($content_struct['mt_allow_comments'])
+                    {
+                        case 'closed':
+                            $comment_status = 'closed';
+                            break;
+                        case 'open':
+                            $comment_status = 'open';
+                            break;
+                        default:
+                            $comment_status = get_default_comment_status($post_type);
+                            break;
+                    }
+                }
             }
             else
             {
@@ -2808,14 +2806,14 @@
 
             if(isset($content_struct['mt_allow_pings']))
             {
-                if(! is_numeric($content_struct['mt_allow_pings']))
+                if(is_numeric($content_struct['mt_allow_pings']))
                 {
-                    switch($content_struct['mt_allow_pings'])
+                    switch((int) $content_struct['mt_allow_pings'])
                     {
-                        case 'closed':
+                        case 0:
                             $ping_status = 'closed';
                             break;
-                        case 'open':
+                        case 1:
                             $ping_status = 'open';
                             break;
                         default:
@@ -2825,12 +2823,12 @@
                 }
                 else
                 {
-                    switch((int) $content_struct['mt_allow_pings'])
+                    switch($content_struct['mt_allow_pings'])
                     {
-                        case 0:
+                        case 'closed':
                             $ping_status = 'closed';
                             break;
-                        case 1:
+                        case 'open':
                             $ping_status = 'open';
                             break;
                         default:
@@ -3179,22 +3177,7 @@
 
             if(isset($content_struct['mt_allow_comments']))
             {
-                if(! is_numeric($content_struct['mt_allow_comments']))
-                {
-                    switch($content_struct['mt_allow_comments'])
-                    {
-                        case 'closed':
-                            $comment_status = 'closed';
-                            break;
-                        case 'open':
-                            $comment_status = 'open';
-                            break;
-                        default:
-                            $comment_status = get_default_comment_status($post_type);
-                            break;
-                    }
-                }
-                else
+                if(is_numeric($content_struct['mt_allow_comments']))
                 {
                     switch((int) $content_struct['mt_allow_comments'])
                     {
@@ -3210,18 +3193,33 @@
                             break;
                     }
                 }
+                else
+                {
+                    switch($content_struct['mt_allow_comments'])
+                    {
+                        case 'closed':
+                            $comment_status = 'closed';
+                            break;
+                        case 'open':
+                            $comment_status = 'open';
+                            break;
+                        default:
+                            $comment_status = get_default_comment_status($post_type);
+                            break;
+                    }
+                }
             }
 
             if(isset($content_struct['mt_allow_pings']))
             {
-                if(! is_numeric($content_struct['mt_allow_pings']))
+                if(is_numeric($content_struct['mt_allow_pings']))
                 {
-                    switch($content_struct['mt_allow_pings'])
+                    switch((int) $content_struct['mt_allow_pings'])
                     {
-                        case 'closed':
+                        case 0:
                             $ping_status = 'closed';
                             break;
-                        case 'open':
+                        case 1:
                             $ping_status = 'open';
                             break;
                         default:
@@ -3231,12 +3229,12 @@
                 }
                 else
                 {
-                    switch((int) $content_struct['mt_allow_pings'])
+                    switch($content_struct['mt_allow_pings'])
                     {
-                        case 0:
+                        case 'closed':
                             $ping_status = 'closed';
                             break;
-                        case 1:
+                        case 'open':
                             $ping_status = 'open';
                             break;
                         default:
@@ -3454,15 +3452,14 @@
             );
 
             // The date needs to be formatted properly.
-            $num_pages = count($page_list);
-            for($i = 0; $i < $num_pages; $i++)
+            foreach($page_list as $iValue)
             {
-                $page_list[$i]->dateCreated = $this->_convert_date($page_list[$i]->post_date);
-                $page_list[$i]->date_created_gmt = $this->_convert_date_gmt($page_list[$i]->post_date_gmt, $page_list[$i]->post_date);
+                $iValue->dateCreated = $this->_convert_date($iValue->post_date);
+                $iValue->date_created_gmt = $this->_convert_date_gmt($iValue->post_date_gmt, $iValue->post_date);
 
-                unset($page_list[$i]->post_date_gmt);
-                unset($page_list[$i]->post_date);
-                unset($page_list[$i]->post_status);
+                unset($iValue->post_date_gmt);
+                unset($iValue->post_date);
+                unset($iValue->post_status);
             }
 
             return $page_list;
@@ -3818,13 +3815,7 @@
                 $number = absint($struct['number']);
             }
 
-            $comments = get_comments([
-                                         'status' => $status,
-                                         'post_id' => $post_id,
-                                         'offset' => $offset,
-                                         'number' => $number,
-                                         'post_type' => $post_type,
-                                     ]);
+            $comments = get_comments(compact('status', 'post_id', 'offset', 'number', 'post_type'));
 
             $comments_struct = [];
             if(is_array($comments))
@@ -3975,7 +3966,11 @@
 
             $user = $this->login($username, $password);
 
-            if(! $user)
+            if($user)
+            {
+                $logged_in = true;
+            }
+            else
             {
                 $logged_in = false;
                 if($allow_anon && get_option('comment_registration'))
@@ -3987,10 +3982,6 @@
                     return $this->error;
                 }
             }
-            else
-            {
-                $logged_in = true;
-            }
 
             if(is_numeric($post))
             {
@@ -4001,12 +3992,7 @@
                 $post_id = url_to_postid($post);
             }
 
-            if(! $post_id)
-            {
-                return new IXR_Error(404, __('Invalid post ID.'));
-            }
-
-            if(! get_post($post_id))
+            if(! $post_id || ! get_post($post_id))
             {
                 return new IXR_Error(404, __('Invalid post ID.'));
             }
@@ -4420,21 +4406,15 @@
             $formats = get_post_format_strings();
 
             // Find out if they want a list of currently supports formats.
-            if(isset($args[3]) && is_array($args[3]))
+            if(isset($args[3]) && is_array($args[3]) && $args[3]['show-supported'])
             {
-                if($args[3]['show-supported'])
-                {
-                    if(current_theme_supports('post-formats'))
-                    {
-                        $supported = get_theme_support('post-formats');
+                $supported = get_theme_support('post-formats');
 
-                        $data = [];
-                        $data['all'] = $formats;
-                        $data['supported'] = $supported[0];
+                $data = [];
+                $data['all'] = $formats;
+                $data['supported'] = $supported[0];
 
-                        $formats = $data;
-                    }
-                }
+                $formats = $data;
             }
 
             return $formats;
@@ -4684,12 +4664,7 @@
             do_action('xmlrpc_call', 'wp.restoreRevision', $args, $this);
 
             $revision = wp_get_post_revision($revision_id);
-            if(! $revision)
-            {
-                return new IXR_Error(404, __('Invalid post ID.'));
-            }
-
-            if(wp_is_post_autosave($revision))
+            if(! $revision || wp_is_post_autosave($revision))
             {
                 return new IXR_Error(404, __('Invalid post ID.'));
             }
@@ -5699,8 +5674,7 @@
             $this->escape($args);
 
             $pagelinkedfrom = str_replace('&amp;', '&', $args[0]);
-            $pagelinkedto = str_replace('&amp;', '&', $args[1]);
-            $pagelinkedto = str_replace('&', '&amp;', $pagelinkedto);
+            $pagelinkedto = str_replace(array('&amp;', '&'), array('&', '&amp;'), $args[1]);
 
             $pagelinkedfrom = apply_filters('pingback_ping_source_uri', $pagelinkedfrom, $pagelinkedto);
 

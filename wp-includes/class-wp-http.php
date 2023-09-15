@@ -12,125 +12,125 @@
     class WP_Http
     {
         // Aliases for HTTP response codes.
-        const HTTP_CONTINUE = 100;
+        public const HTTP_CONTINUE = 100;
 
-        const SWITCHING_PROTOCOLS = 101;
+        public const SWITCHING_PROTOCOLS = 101;
 
-        const PROCESSING = 102;
+        public const PROCESSING = 102;
 
-        const EARLY_HINTS = 103;
+        public const EARLY_HINTS = 103;
 
-        const OK = 200;
+        public const OK = 200;
 
-        const CREATED = 201;
+        public const CREATED = 201;
 
-        const ACCEPTED = 202;
+        public const ACCEPTED = 202;
 
-        const NON_AUTHORITATIVE_INFORMATION = 203;
+        public const NON_AUTHORITATIVE_INFORMATION = 203;
 
-        const NO_CONTENT = 204;
+        public const NO_CONTENT = 204;
 
-        const RESET_CONTENT = 205;
+        public const RESET_CONTENT = 205;
 
-        const PARTIAL_CONTENT = 206;
+        public const PARTIAL_CONTENT = 206;
 
-        const MULTI_STATUS = 207;
+        public const MULTI_STATUS = 207;
 
-        const IM_USED = 226;
+        public const IM_USED = 226;
 
-        const MULTIPLE_CHOICES = 300;
+        public const MULTIPLE_CHOICES = 300;
 
-        const MOVED_PERMANENTLY = 301;
+        public const MOVED_PERMANENTLY = 301;
 
-        const FOUND = 302;
+        public const FOUND = 302;
 
-        const SEE_OTHER = 303;
+        public const SEE_OTHER = 303;
 
-        const NOT_MODIFIED = 304;
+        public const NOT_MODIFIED = 304;
 
-        const USE_PROXY = 305;
+        public const USE_PROXY = 305;
 
-        const RESERVED = 306;
+        public const RESERVED = 306;
 
-        const TEMPORARY_REDIRECT = 307;
+        public const TEMPORARY_REDIRECT = 307;
 
-        const PERMANENT_REDIRECT = 308;
+        public const PERMANENT_REDIRECT = 308;
 
-        const BAD_REQUEST = 400;
+        public const BAD_REQUEST = 400;
 
-        const UNAUTHORIZED = 401;
+        public const UNAUTHORIZED = 401;
 
-        const PAYMENT_REQUIRED = 402;
+        public const PAYMENT_REQUIRED = 402;
 
-        const FORBIDDEN = 403;
+        public const FORBIDDEN = 403;
 
-        const NOT_FOUND = 404;
+        public const NOT_FOUND = 404;
 
-        const METHOD_NOT_ALLOWED = 405;
+        public const METHOD_NOT_ALLOWED = 405;
 
-        const NOT_ACCEPTABLE = 406;
+        public const NOT_ACCEPTABLE = 406;
 
-        const PROXY_AUTHENTICATION_REQUIRED = 407;
+        public const PROXY_AUTHENTICATION_REQUIRED = 407;
 
-        const REQUEST_TIMEOUT = 408;
+        public const REQUEST_TIMEOUT = 408;
 
-        const CONFLICT = 409;
+        public const CONFLICT = 409;
 
-        const GONE = 410;
+        public const GONE = 410;
 
-        const LENGTH_REQUIRED = 411;
+        public const LENGTH_REQUIRED = 411;
 
-        const PRECONDITION_FAILED = 412;
+        public const PRECONDITION_FAILED = 412;
 
-        const REQUEST_ENTITY_TOO_LARGE = 413;
+        public const REQUEST_ENTITY_TOO_LARGE = 413;
 
-        const REQUEST_URI_TOO_LONG = 414;
+        public const REQUEST_URI_TOO_LONG = 414;
 
-        const UNSUPPORTED_MEDIA_TYPE = 415;
+        public const UNSUPPORTED_MEDIA_TYPE = 415;
 
-        const REQUESTED_RANGE_NOT_SATISFIABLE = 416;
+        public const REQUESTED_RANGE_NOT_SATISFIABLE = 416;
 
-        const EXPECTATION_FAILED = 417;
+        public const EXPECTATION_FAILED = 417;
 
-        const IM_A_TEAPOT = 418;
+        public const IM_A_TEAPOT = 418;
 
-        const MISDIRECTED_REQUEST = 421;
+        public const MISDIRECTED_REQUEST = 421;
 
-        const UNPROCESSABLE_ENTITY = 422;
+        public const UNPROCESSABLE_ENTITY = 422;
 
-        const LOCKED = 423;
+        public const LOCKED = 423;
 
-        const FAILED_DEPENDENCY = 424;
+        public const FAILED_DEPENDENCY = 424;
 
-        const UPGRADE_REQUIRED = 426;
+        public const UPGRADE_REQUIRED = 426;
 
-        const PRECONDITION_REQUIRED = 428;
+        public const PRECONDITION_REQUIRED = 428;
 
-        const TOO_MANY_REQUESTS = 429;
+        public const TOO_MANY_REQUESTS = 429;
 
-        const REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
+        public const REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
 
-        const UNAVAILABLE_FOR_LEGAL_REASONS = 451;
+        public const UNAVAILABLE_FOR_LEGAL_REASONS = 451;
 
-        const INTERNAL_SERVER_ERROR = 500;
+        public const INTERNAL_SERVER_ERROR = 500;
 
-        const NOT_IMPLEMENTED = 501;
+        public const NOT_IMPLEMENTED = 501;
 
-        const BAD_GATEWAY = 502;
+        public const BAD_GATEWAY = 502;
 
-        const SERVICE_UNAVAILABLE = 503;
+        public const SERVICE_UNAVAILABLE = 503;
 
-        const GATEWAY_TIMEOUT = 504;
+        public const GATEWAY_TIMEOUT = 504;
 
-        const HTTP_VERSION_NOT_SUPPORTED = 505;
+        public const HTTP_VERSION_NOT_SUPPORTED = 505;
 
-        const VARIANT_ALSO_NEGOTIATES = 506;
+        public const VARIANT_ALSO_NEGOTIATES = 506;
 
-        const INSUFFICIENT_STORAGE = 507;
+        public const INSUFFICIENT_STORAGE = 507;
 
-        const NOT_EXTENDED = 510;
+        public const NOT_EXTENDED = 510;
 
-        const NETWORK_AUTHENTICATION_REQUIRED = 511;
+        public const NETWORK_AUTHENTICATION_REQUIRED = 511;
 
         public static function browser_redirect_compatibility($location, $headers, $data, &$options, $original)
         {
@@ -168,10 +168,7 @@
                 {
                     if(! is_object($value))
                     {
-                        $r['cookies'][$name] = new WP_Http_Cookie([
-                                                                      'name' => $name,
-                                                                      'value' => $value,
-                                                                  ]);
+                        $r['cookies'][$name] = new WP_Http_Cookie(compact('name', 'value'));
                     }
                 }
 
@@ -227,13 +224,8 @@
         public static function handle_redirects($url, $args, $response)
         {
             // If no redirects are present, or, redirects were not requested, perform no action.
-            if(! isset($response['headers']['location']) || 0 === $args['_redirection'])
-            {
-                return false;
-            }
-
             // Only perform redirections on redirection http codes.
-            if($response['response']['code'] > 399 || $response['response']['code'] < 300)
+            if(! isset($response['headers']['location']) || 0 === $args['_redirection'] || $response['response']['code'] > 399 || $response['response']['code'] < 300)
             {
                 return false;
             }
@@ -255,12 +247,9 @@
             $redirect_location = WP_Http::make_absolute_url($redirect_location, $url);
 
             // POST requests should not POST to a redirected location.
-            if('POST' === $args['method'])
+            if('POST' === $args['method'] && in_array($response['response']['code'], [302, 303], true))
             {
-                if(in_array($response['response']['code'], [302, 303], true))
-                {
-                    $args['method'] = 'GET';
-                }
+                $args['method'] = 'GET';
             }
 
             // Include valid cookies in the redirect process.
@@ -292,13 +281,8 @@
             }
 
             $relative_url_parts = wp_parse_url($maybe_relative_path);
-            if(! $relative_url_parts)
-            {
-                return $maybe_relative_path;
-            }
-
             // Check for a scheme on the 'relative' URL.
-            if(! empty($relative_url_parts['scheme']))
+            if(! $relative_url_parts || ! empty($relative_url_parts['scheme']))
             {
                 return $maybe_relative_path;
             }
@@ -561,14 +545,14 @@
             }
 
             // SSL certificate handling.
-            if(! $parsed_args['sslverify'])
+            if($parsed_args['sslverify'])
             {
-                $options['verify'] = false;
-                $options['verifyname'] = false;
+                $options['verify'] = $parsed_args['sslcertificates'];
             }
             else
             {
-                $options['verify'] = $parsed_args['sslcertificates'];
+                $options['verify'] = false;
+                $options['verifyname'] = false;
             }
 
             // All non-GET/HEAD requests should put the arguments in the form body.

@@ -40,13 +40,8 @@
     function ms_site_check()
     {
         $check = apply_filters('ms_site_check', null);
-        if(null !== $check)
-        {
-            return true;
-        }
-
         // Allow super admins to see blocked sites.
-        if(is_super_admin())
+        if(null !== $check || is_super_admin())
         {
             return true;
         }
@@ -223,7 +218,21 @@
                 $current_blog = get_site_by_path($domain, $path, 1);
             }
         }
-        elseif(! $subdomain)
+        elseif($subdomain)
+        {
+            // Find the site by the domain and at most the first path segment.
+            $current_blog = get_site_by_path($domain, $path, 1);
+            if($current_blog)
+            {
+                $current_site = WP_Network::get_instance($current_blog->site_id ? $current_blog->site_id : 1);
+            }
+            else
+            {
+                // If you don't have a site with the same domain/path as a network, you're pretty screwed, but:
+                $current_site = WP_Network::get_by_path($domain, $path, 1);
+            }
+        }
+        else
         {
             /*
              * A "subdomain" installation can be re-interpreted to mean "can support any domain".
@@ -266,20 +275,6 @@
             {
                 // Search the network path + one more path segment (on top of the network path).
                 $current_blog = get_site_by_path($domain, $path, substr_count($current_site->path, '/'));
-            }
-        }
-        else
-        {
-            // Find the site by the domain and at most the first path segment.
-            $current_blog = get_site_by_path($domain, $path, 1);
-            if($current_blog)
-            {
-                $current_site = WP_Network::get_instance($current_blog->site_id ? $current_blog->site_id : 1);
-            }
-            else
-            {
-                // If you don't have a site with the same domain/path as a network, you're pretty screwed, but:
-                $current_site = WP_Network::get_by_path($domain, $path, 1);
             }
         }
 
@@ -371,13 +366,13 @@
         $msg .= '<p>'.__('If your site does not display, please contact the owner of this network.').'';
         $msg .= ' '.__('If you are the owner of this network please check that your host&#8217;s database server is running properly and all tables are error free.').'</p>';
         $query = $wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($wpdb->site));
-        if(! $wpdb->get_var($query))
+        if($wpdb->get_var($query))
         {
-            $msg .= '<p>'.sprintf(/* translators: %s: Table name. */ __('<strong>Database tables are missing.</strong> This means that your host&#8217;s database server is not running, WordPress was not installed properly, or someone deleted %s. You really should look at your database now.'), '<code>'.$wpdb->site.'</code>').'</p>';
+            $msg .= '<p>'.sprintf(/* translators: 1: Site URL, 2: Table name, 3: Database name. */ __('<strong>Could not find site %1$s.</strong> Searched for table %2$s in database %3$s. Is that right?'), '<code>'.rtrim($domain.$path, '/').'</code>', '<code>'.$wpdb->blogs.'</code>', '<code>'.DB_NAME.'</code>').'</p>';
         }
         else
         {
-            $msg .= '<p>'.sprintf(/* translators: 1: Site URL, 2: Table name, 3: Database name. */ __('<strong>Could not find site %1$s.</strong> Searched for table %2$s in database %3$s. Is that right?'), '<code>'.rtrim($domain.$path, '/').'</code>', '<code>'.$wpdb->blogs.'</code>', '<code>'.DB_NAME.'</code>').'</p>';
+            $msg .= '<p>'.sprintf(/* translators: %s: Table name. */ __('<strong>Database tables are missing.</strong> This means that your host&#8217;s database server is not running, WordPress was not installed properly, or someone deleted %s. You really should look at your database now.'), '<code>'.$wpdb->site.'</code>').'</p>';
         }
         $msg .= '<p><strong>'.__('What do I do now?').'</strong> ';
         $msg .= sprintf(/* translators: %s: Documentation URL. */ __('Read the <a href="%s" target="_blank">Debugging a WordPress Network</a> article. Some of the suggestions there may help you figure out what went wrong.'), __('https://wordpress.org/documentation/article/debugging-a-wordpress-network/'));

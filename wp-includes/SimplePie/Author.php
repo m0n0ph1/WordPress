@@ -1,12 +1,12 @@
 <?php
 
-    class SimplePie_Author
+    class Author
     {
-        var $name;
+        public $name;
 
-        var $link;
+        public $link;
 
-        var $email;
+        public $email;
 
         public function __construct($name = null, $link = null, $email = null)
         {

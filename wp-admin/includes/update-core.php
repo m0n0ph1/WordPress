@@ -1106,7 +1106,7 @@
                      * when updating from older WordPress versions, in which case
                      * the polyfills from wp-includes/compat.php may not be available.
                      */
-                    if('wp-content' === substr($file, 0, 10))
+                    if(strpos($file, 'wp-content') === 0)
                     {
                         continue;
                     }
@@ -1220,7 +1220,7 @@
                  * when updating from older WordPress versions, in which case
                  * the polyfills from wp-includes/compat.php may not be available.
                  */
-                if('wp-content' === substr($file, 0, 10))
+                if(strpos($file, 'wp-content') === 0)
                 {
                     continue;
                 }
@@ -1333,12 +1333,9 @@
          * 3.5 -> 3.5+ - an empty twentytwelve directory was created upon upgrade to 3.5 for some users,
          * preventing installation of Twenty Twelve.
          */
-        if('3.5' === $old_wp_version)
+        if('3.5' === $old_wp_version && is_dir(WP_CONTENT_DIR.'/themes/twentytwelve') && ! file_exists(WP_CONTENT_DIR.'/themes/twentytwelve/style.css'))
         {
-            if(is_dir(WP_CONTENT_DIR.'/themes/twentytwelve') && ! file_exists(WP_CONTENT_DIR.'/themes/twentytwelve/style.css'))
-            {
-                $wp_filesystem->delete($wp_filesystem->wp_themes_dir().'twentytwelve/');
-            }
+            $wp_filesystem->delete($wp_filesystem->wp_themes_dir().'twentytwelve/');
         }
 
         /*
@@ -1378,19 +1375,7 @@
                         continue;
                     }
 
-                    if(! $directory)
-                    {
-                        if(! $development_build && $wp_filesystem->exists($dest.$filename))
-                        {
-                            continue;
-                        }
-
-                        if(! $wp_filesystem->copy($from.$distro.'wp-content/'.$file, $dest.$filename, FS_CHMOD_FILE))
-                        {
-                            $result = new WP_Error("copy_failed_for_new_bundled_$type", __('Could not copy file.'), $dest.$filename);
-                        }
-                    }
-                    else
+                    if($directory)
                     {
                         if(! $development_build && $wp_filesystem->is_dir($dest.$filename))
                         {
@@ -1412,6 +1397,18 @@
                             }
 
                             $result->add($_result->get_error_code()."_$type", $_result->get_error_message(), substr($_result->get_error_data(), strlen($dest)));
+                        }
+                    }
+                    else
+                    {
+                        if(! $development_build && $wp_filesystem->exists($dest.$filename))
+                        {
+                            continue;
+                        }
+
+                        if(! $wp_filesystem->copy($from.$distro.'wp-content/'.$file, $dest.$filename, FS_CHMOD_FILE))
+                        {
+                            $result = new WP_Error("copy_failed_for_new_bundled_$type", __('Could not copy file.'), $dest.$filename);
                         }
                     }
                 }
@@ -1536,13 +1533,8 @@
     {
         global $wp_version, $pagenow, $action;
 
-        if(version_compare($wp_version, '3.4-RC1', '>='))
-        {
-            return;
-        }
-
         // Ensure we only run this on the update-core.php page. The Core_Upgrader may be used in other contexts.
-        if('update-core.php' !== $pagenow)
+        if(version_compare($wp_version, '3.4-RC1', '>=') || 'update-core.php' !== $pagenow)
         {
             return;
         }

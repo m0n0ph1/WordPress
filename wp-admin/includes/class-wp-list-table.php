@@ -268,7 +268,7 @@
              */
             if(! isset($columns[$default]))
             {
-                $default = self::get_default_primary_column_name();
+                $default = $this->get_default_primary_column_name();
             }
 
             $column = apply_filters('list_table_primary_column', $default, $this->screen->id);
@@ -955,7 +955,12 @@
 
         protected function handle_row_actions($item, $column_name, $primary)
         {
-            return $column_name === $primary ? '<button type="button" class="toggle-row"><span class="screen-reader-text">'./* translators: Hidden accessibility text. */ __('Show more details').'</span></button>' : '';
+            if($column_name === $primary)
+            {
+                return '<button type="button" class="toggle-row"><span class="screen-reader-text">'./* translators: Hidden accessibility text. */ __('Show more details').'</span></button>';
+            }
+
+            return '';
         }
 
         protected function column_default($item, $column_name) {}

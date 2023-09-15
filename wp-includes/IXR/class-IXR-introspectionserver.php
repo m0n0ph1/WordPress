@@ -2,17 +2,18 @@
 
     class IXR_IntrospectionServer extends IXR_Server
     {
-        var $signatures;
+        public $signatures;
 
-        var $help;
+        public $help;
 
         public function IXR_IntrospectionServer()
         {
-            self::__construct();
+            $this->__construct();
         }
 
-        function __construct()
+        public function __construct()
         {
+            parent::__construct(null, null, null);
             $this->setCallbacks();
             $this->setCapabilities();
             $this->capabilities['introspection'] = [
@@ -31,14 +32,14 @@
             ],                 'Returns a documentation string for the specified method');
         }
 
-        function addCallback($method, $callback, $args, $help)
+        public function addCallback($method, $callback, $args, $help)
         {
             $this->callbacks[$method] = $callback;
             $this->signatures[$method] = $args;
             $this->help[$method] = $help;
         }
 
-        function call($methodname, $args)
+        public function call($methodname, $args)
         {
             // Make sure it's in an array
             if($args && ! is_array($args))
@@ -56,7 +57,7 @@
             $returnType = array_shift($signature);
 
             // Check the number of arguments
-            if(count($args) != count($signature))
+            if(count($args) !== count($signature))
             {
                 return new IXR_Error(-32602, 'server error. wrong number of method parameters');
             }
@@ -115,7 +116,7 @@
             return parent::call($methodname, $argsbackup);
         }
 
-        function methodSignature($method)
+        public function methodSignature($method)
         {
             if(! $this->hasMethod($method))
             {
@@ -159,7 +160,7 @@
             return $return;
         }
 
-        function methodHelp($method)
+        public function methodHelp($method)
         {
             return $this->help[$method];
         }

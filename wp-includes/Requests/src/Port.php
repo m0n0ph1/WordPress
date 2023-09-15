@@ -6,13 +6,13 @@
 
     final class Port
     {
-        const ACAP = 674;
+        public const ACAP = 674;
 
-        const DICT = 2628;
+        public const DICT = 2628;
 
-        const HTTP = 80;
+        public const HTTP = 80;
 
-        const HTTPS = 443;
+        public const HTTPS = 443;
 
         public static function get($type)
         {

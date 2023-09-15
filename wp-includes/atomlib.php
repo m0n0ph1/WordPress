@@ -2,57 +2,57 @@
 
     class AtomFeed
     {
-        var $links = [];
+        public $links = [];
 
-        var $categories = [];
+        public $categories = [];
 
-        var $entries = [];
+        public $entries = [];
     }
 
     class AtomEntry
     {
-        var $links = [];
+        public $links = [];
 
-        var $categories = [];
+        public $categories = [];
     }
 
     class AtomParser
     {
-        var $NS = 'http://www.w3.org/2005/Atom';
+        public $NS = 'http://www.w3.org/2005/Atom';
 
-        var $ATOM_CONTENT_ELEMENTS = ['content', 'summary', 'title', 'subtitle', 'rights'];
+        public $ATOM_CONTENT_ELEMENTS = ['content', 'summary', 'title', 'subtitle', 'rights'];
 
-        var $ATOM_SIMPLE_ELEMENTS = ['id', 'updated', 'published', 'draft'];
+        public $ATOM_SIMPLE_ELEMENTS = ['id', 'updated', 'published', 'draft'];
 
-        var $debug = false;
+        public $debug = false;
 
-        var $depth = 0;
+        public $depth = 0;
 
-        var $indent = 2;
+        public $indent = 2;
 
-        var $in_content;
+        public $in_content;
 
-        var $ns_contexts = [];
+        public $ns_contexts = [];
 
-        var $ns_decls = [];
+        public $ns_decls = [];
 
-        var $content_ns_decls = [];
+        public $content_ns_decls = [];
 
-        var $content_ns_contexts = [];
+        public $content_ns_contexts = [];
 
-        var $is_xhtml = false;
+        public $is_xhtml = false;
 
-        var $is_html = false;
+        public $is_html = false;
 
-        var $is_text = true;
+        public $is_text = true;
 
-        var $skipped_div = false;
+        public $skipped_div = false;
 
-        var $FILE = "php://input";
+        public $FILE = "php://input";
 
-        var $feed;
+        public $feed;
 
-        var $current;
+        public $current;
 
         public static function map_attrs($k, $v)
         {
@@ -72,10 +72,10 @@
 
         public function AtomParser()
         {
-            self::__construct();
+            $this->__construct();
         }
 
-        function __construct()
+        public function __construct()
         {
             $this->feed = new AtomFeed();
             $this->current = null;
@@ -83,12 +83,12 @@
             $this->map_xmlns_func = [__CLASS__, 'map_xmlns'];
         }
 
-        function error_handler($log_level, $log_text, $error_file, $error_line)
+        public function error_handler($log_level, $log_text, $error_file, $error_line)
         {
             $this->error = $log_text;
         }
 
-        function parse()
+        public function parse()
         {
             set_error_handler([&$this, 'error_handler']);
 
@@ -141,7 +141,7 @@
             return $ret;
         }
 
-        function start_element($parser, $name, $attrs)
+        public function start_element($parser, $name, $attrs)
         {
             $name_parts = explode(":", $name);
             $tag = array_pop($name_parts);
@@ -182,8 +182,8 @@
                     $attrs_prefix[$with_prefix[1]] = $this->xml_escape($value);
                 }
 
-                $attrs_str = join(' ', array_map($this->map_attrs_func, array_keys($attrs_prefix), array_values($attrs_prefix)));
-                if(strlen($attrs_str) > 0)
+                $attrs_str = implode(' ', array_map($this->map_attrs_func, array_keys($attrs_prefix), array_values($attrs_prefix)));
+                if($attrs_str !== '')
                 {
                     $attrs_str = " ".$attrs_str;
                 }
@@ -192,21 +192,21 @@
 
                 if(! $this->is_declared_content_ns($with_prefix[0]))
                 {
-                    array_push($this->content_ns_decls, $with_prefix[0]);
+                    $this->content_ns_decls[] = $with_prefix[0];
                 }
 
                 $xmlns_str = '';
                 if(count($this->content_ns_decls) > 0)
                 {
                     array_unshift($this->content_ns_contexts, $this->content_ns_decls);
-                    $xmlns_str .= join(' ', array_map($this->map_xmlns_func, array_keys($this->content_ns_contexts[0]), array_values($this->content_ns_contexts[0])));
-                    if(strlen($xmlns_str) > 0)
+                    $xmlns_str .= implode(' ', array_map($this->map_xmlns_func, array_keys($this->content_ns_contexts[0]), array_values($this->content_ns_contexts[0])));
+                    if($xmlns_str !== '')
                     {
                         $xmlns_str = " ".$xmlns_str;
                     }
                 }
 
-                array_push($this->in_content, [$tag, $this->depth, "<".$with_prefix[1]."{$xmlns_str}{$attrs_str}".">"]);
+                $this->in_content[] = [$tag, $this->depth, "<".$with_prefix[1]."{$xmlns_str}{$attrs_str}".">"];
             }
             else
             {
@@ -215,29 +215,29 @@
                     $this->in_content = [];
                     $this->is_xhtml = $attrs['type'] == 'xhtml';
                     $this->is_html = $attrs['type'] == 'html' || $attrs['type'] == 'text/html';
-                    $this->is_text = ! in_array('type', array_keys($attrs)) || $attrs['type'] == 'text';
+                    $this->is_text = ! array_key_exists('type', $attrs) || $attrs['type'] == 'text';
                     $type = $this->is_xhtml ? 'XHTML' : ($this->is_html ? 'HTML' : ($this->is_text ? 'TEXT' : $attrs['type']));
 
-                    if(in_array('src', array_keys($attrs)))
+                    if(array_key_exists('src', $attrs))
                     {
                         $this->current->$tag = $attrs;
                     }
                     else
                     {
-                        array_push($this->in_content, [$tag, $this->depth, $type]);
+                        $this->in_content[] = [$tag, $this->depth, $type];
                     }
                 }
                 else
                 {
                     if($tag == 'link')
                     {
-                        array_push($this->current->links, $attrs);
+                        $this->current->links[] = $attrs;
                     }
                     else
                     {
                         if($tag == 'category')
                         {
-                            array_push($this->current->categories, $attrs);
+                            $this->current->categories[] = $attrs;
                         }
                     }
                 }
@@ -246,7 +246,7 @@
             $this->ns_decls = [];
         }
 
-        function _p($msg)
+        public function _p($msg)
         {
             if($this->debug)
             {
@@ -254,7 +254,7 @@
             }
         }
 
-        function ns_to_prefix($qname, $attr = false)
+        public function ns_to_prefix($qname, $attr = false)
         {
             # split 'http://www.w3.org/1999/xhtml:div' into ('http','//www.w3.org/1999/xhtml','div')
             $components = explode(":", $qname);
@@ -265,12 +265,12 @@
             if(! empty($components))
             {
                 # re-join back the namespace component
-                $ns = join(":", $components);
+                $ns = implode(":", $components);
                 foreach($this->ns_contexts as $context)
                 {
                     foreach($context as $mapping)
                     {
-                        if($mapping[1] == $ns && strlen($mapping[0]) > 0)
+                        if($mapping[1] == $ns && $mapping[0] != '')
                         {
                             return [$mapping, "$mapping[0]:$name"];
                         }
@@ -288,7 +288,7 @@
                 {
                     foreach($context as $mapping)
                     {
-                        if(strlen($mapping[0]) == 0)
+                        if($mapping[0] == '')
                         {
                             return [$mapping, $name];
                         }
@@ -297,12 +297,12 @@
             }
         }
 
-        function xml_escape($content)
+        public function xml_escape($content)
         {
             return str_replace(['&', '"', "'", '<', '>'], ['&amp;', '&quot;', '&apos;', '&lt;', '&gt;'], $content);
         }
 
-        function is_declared_content_ns($new_mapping)
+        public function is_declared_content_ns($new_mapping)
         {
             foreach($this->content_ns_contexts as $context)
             {
@@ -318,7 +318,7 @@
             return false;
         }
 
-        function end_element($parser, $name)
+        public function end_element($parser, $name)
         {
             $name_parts = explode(":", $name);
             $tag = array_pop($name_parts);
@@ -339,27 +339,27 @@
                     {
                         if(count($c) == 3)
                         {
-                            array_push($newcontent, $c[2]);
+                            $newcontent[] = $c[2];
                         }
                         else
                         {
                             if($this->is_xhtml || $this->is_text)
                             {
-                                array_push($newcontent, $this->xml_escape($c));
+                                $newcontent[] = $this->xml_escape($c);
                             }
                             else
                             {
-                                array_push($newcontent, $c);
+                                $newcontent[] = $c;
                             }
                         }
                     }
                     if(in_array($tag, $this->ATOM_CONTENT_ELEMENTS))
                     {
-                        $this->current->$tag = [$origtype, join('', $newcontent)];
+                        $this->current->$tag = [$origtype, implode('', $newcontent)];
                     }
                     else
                     {
-                        $this->current->$tag = join('', $newcontent);
+                        $this->current->$tag = implode('', $newcontent);
                     }
                     $this->in_content = [];
                 }
@@ -373,7 +373,7 @@
                     {
                         # else, just finalize the current element's content
                         $endtag = $this->ns_to_prefix($name);
-                        array_push($this->in_content, [$tag, $this->depth, "</$endtag[1]>"]);
+                        $this->in_content[] = [$tag, $this->depth, "</$endtag[1]>"];
                     }
                 }
             }
@@ -384,34 +384,34 @@
 
             if($name == ($this->NS.':entry'))
             {
-                array_push($this->feed->entries, $this->current);
+                $this->feed->entries[] = $this->current;
                 $this->current = null;
             }
 
             $this->_p("end_element('$name')");
         }
 
-        function start_ns($parser, $prefix, $uri)
+        public function start_ns($parser, $prefix, $uri)
         {
             $this->_p("starting: ".$prefix.":".$uri);
-            array_push($this->ns_decls, [$prefix, $uri]);
+            $this->ns_decls[] = [$prefix, $uri];
         }
 
-        function end_ns($parser, $prefix)
+        public function end_ns($parser, $prefix)
         {
             $this->_p("ending: #".$prefix."#");
         }
 
-        function cdata($parser, $data)
+        public function cdata($parser, $data)
         {
             $this->_p("data: #".str_replace(["\n"], ["\\n"], trim($data))."#");
             if(! empty($this->in_content))
             {
-                array_push($this->in_content, $data);
+                $this->in_content[] = $data;
             }
         }
 
-        function _default($parser, $data)
+        public function _default($parser, $data)
         {
             # when does this gets called?
         }

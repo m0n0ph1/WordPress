@@ -28,20 +28,20 @@
 
     class PasswordHash
     {
-        var $itoa64;
+        public $itoa64;
 
-        var $iteration_count_log2;
+        public $iteration_count_log2;
 
-        var $portable_hashes;
+        public $portable_hashes;
 
-        var $random_state;
+        public $random_state;
 
-        function PasswordHash($iteration_count_log2, $portable_hashes)
+        public function PasswordHash($iteration_count_log2, $portable_hashes)
         {
-            self::__construct($iteration_count_log2, $portable_hashes);
+            $this->__construct($iteration_count_log2, $portable_hashes);
         }
 
-        function __construct($iteration_count_log2, $portable_hashes)
+        public function __construct($iteration_count_log2, $portable_hashes)
         {
             $this->itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
@@ -60,7 +60,7 @@
             }
         }
 
-        function HashPassword($password)
+        public function HashPassword($password)
         {
             if(strlen($password) > 4096)
             {
@@ -95,7 +95,7 @@
             return '*';
         }
 
-        function get_random_bytes($count)
+        public function get_random_bytes($count)
         {
             $output = '';
             if(@is_readable('/dev/urandom') && ($fh = @fopen('/dev/urandom', 'rb')))
@@ -118,7 +118,7 @@
             return $output;
         }
 
-        function gensalt_blowfish($input)
+        public function gensalt_blowfish($input)
         {
             # This one needs to use a different order of characters and a
             # different encoding scheme from the one in encode64() above.
@@ -162,10 +162,10 @@
             return $output;
         }
 
-        function crypt_private($password, $setting)
+        public function crypt_private($password, $setting)
         {
             $output = '*0';
-            if(substr($setting, 0, 2) === $output)
+            if(strpos($setting, $output) === 0)
             {
                 $output = '*1';
             }
@@ -210,7 +210,7 @@
             return $output;
         }
 
-        function encode64($input, $count)
+        public function encode64($input, $count)
         {
             $output = '';
             $i = 0;
@@ -243,7 +243,7 @@
             return $output;
         }
 
-        function gensalt_private($input)
+        public function gensalt_private($input)
         {
             $output = '$P$';
             $output .= $this->itoa64[min($this->iteration_count_log2 + ((PHP_VERSION >= '5') ? 5 : 3), 30)];
@@ -252,7 +252,7 @@
             return $output;
         }
 
-        function CheckPassword($password, $stored_hash)
+        public function CheckPassword($password, $stored_hash)
         {
             if(strlen($password) > 4096)
             {

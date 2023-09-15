@@ -140,7 +140,12 @@
 
             $cache_key = "get_comments:$key:$last_changed";
             $cache_value = wp_cache_get($cache_key, 'comment-queries');
-            if(false === $cache_value)
+            if(false !== $cache_value)
+            {
+                $comment_ids = $cache_value['comment_ids'];
+                $this->found_comments = $cache_value['found_comments'];
+            }
+            else
             {
                 $comment_ids = $this->get_comment_ids();
                 if($comment_ids)
@@ -153,11 +158,6 @@
                     'found_comments' => $this->found_comments,
                 ];
                 wp_cache_add($cache_key, $cache_value, 'comment-queries');
-            }
-            else
-            {
-                $comment_ids = $cache_value['comment_ids'];
-                $this->found_comments = $cache_value['found_comments'];
             }
 
             if($this->found_comments && $this->query_vars['number'])
@@ -584,7 +584,7 @@
             }
 
             // Falsey search strings are ignored.
-            if(isset($this->query_vars['search']) && strlen($this->query_vars['search']))
+            if(isset($this->query_vars['search']) && $this->query_vars['search'] != '')
             {
                 $search_sql = $this->get_search_sql($this->query_vars['search'], [
                     'comment_author',
@@ -702,7 +702,7 @@
 
             $pieces = ['fields', 'join', 'where', 'orderby', 'limits', 'groupby'];
 
-            $clauses = apply_filters_ref_array('comments_clauses', [compact($pieces), &$this]);
+            $clauses = apply_filters_ref_array('comments_clauses', [compact('pieces'), &$this]);
 
             $fields = isset($clauses['fields']) ? $clauses['fields'] : '';
             $join = isset($clauses['join']) ? $clauses['join'] : '';
@@ -974,16 +974,16 @@
                     $_c = get_comment($c->comment_ID);
 
                     // If the comment isn't in the reference array, it goes in the top level of the thread.
-                    if(! isset($ref[$c->comment_parent]))
+                    if(isset($ref[$c->comment_parent]))
+                    {
+                        $ref[$_c->comment_parent]->add_child($_c);
+                        $ref[$_c->comment_ID] = $ref[$_c->comment_parent]->get_child($_c->comment_ID);
+                    }
+                    else
                     {
                         $threaded_comments[$_c->comment_ID] = $_c;
                         $ref[$_c->comment_ID] = $threaded_comments[$_c->comment_ID];
                         // Otherwise, set it as a child of its parent.
-                    }
-                    else
-                    {
-                        $ref[$_c->comment_parent]->add_child($_c);
-                        $ref[$_c->comment_ID] = $ref[$_c->comment_parent]->get_child($_c->comment_ID);
                     }
                 }
 

@@ -15,6 +15,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             static $first_dropdown = true;
 
             $default_title = __('Categories');
@@ -122,6 +123,7 @@
         public function form($instance)
         {
             // Defaults.
+            parent::form($instance);
             $instance = wp_parse_args((array) $instance, ['title' => '']);
             $count = isset($instance['count']) ? (bool) $instance['count'] : false;
             $hierarchical = isset($instance['hierarchical']) ? (bool) $instance['hierarchical'] : false;

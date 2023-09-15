@@ -1,6 +1,6 @@
 <?php
 
-    class SimplePie_Cache_File implements SimplePie_Cache_Base
+    class File implements SimplePie_Cache_Base
     {
         protected $location;
 

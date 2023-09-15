@@ -1,4 +1,9 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
 
     function plugins_api($action, $args = [])
     {
@@ -10,21 +15,23 @@
             $args = (object) $args;
         }
 
-        if('query_plugins' === $action)
+        if('query_plugins' === $action && ! isset($args->per_page))
         {
-            if(! isset($args->per_page))
-            {
-                $args->per_page = 24;
-            }
+            /** @noinspection NativeMemberUsageInspection */
+            $args->per_page = 24;
         }
 
+        /** @noinspection NativeMemberUsageInspection */
         if(! isset($args->locale))
         {
+            /** @noinspection NativeMemberUsageInspection */
             $args->locale = get_user_locale();
         }
 
+        /** @noinspection NativeMemberUsageInspection */
         if(! isset($args->wp_version))
         {
+            /** @noinspection NativeMemberUsageInspection */
             $args->wp_version = substr($wp_version, 0, 3); // x.y
         }
 

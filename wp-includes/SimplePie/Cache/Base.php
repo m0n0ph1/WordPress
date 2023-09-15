@@ -1,10 +1,10 @@
 <?php
 
-    interface SimplePie_Cache_Base
+    interface Base
     {
-        const TYPE_FEED = 'spc';
+        public const TYPE_FEED = 'spc';
 
-        const TYPE_IMAGE = 'spi';
+        public const TYPE_IMAGE = 'spi';
 
         public function __construct($location, $name, $type);
 

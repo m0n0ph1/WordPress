@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
+    class P1p1
     {
         public $X;
 

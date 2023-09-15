@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core32_Curve25519_Fe implements ArrayAccess
+    class Fe implements ArrayAccess
     {
         protected $container = [];
 
@@ -35,13 +35,13 @@
             }
             else
             {
-                for($i = 0; $i < $count; ++$i)
+                foreach($array as $i => $iValue)
                 {
-                    if(! ($array[$i] instanceof ParagonIE_Sodium_Core32_Int32))
+                    if(! ($iValue instanceof ParagonIE_Sodium_Core32_Int32))
                     {
                         throw new TypeError('Expected ParagonIE_Sodium_Core32_Int32');
                     }
-                    $array[$i]->overflow = 0;
+                    $iValue->overflow = 0;
                     $obj->offsetSet($i, $array[$i]);
                 }
             }

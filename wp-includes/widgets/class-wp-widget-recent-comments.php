@@ -36,6 +36,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             static $first_instance = true;
 
             if(! isset($args['widget_id']))
@@ -122,6 +123,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $title = isset($instance['title']) ? $instance['title'] : '';
             $number = isset($instance['number']) ? absint($instance['number']) : 5;
             ?>

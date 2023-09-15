@@ -1,5 +1,5 @@
 <?php
 
-    class SimplePie_Core extends SimplePie
+    class Core extends SimplePie
     {
     }

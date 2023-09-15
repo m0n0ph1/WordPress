@@ -9,7 +9,15 @@
 
         public function __construct($server, $path = false, $port = false, $timeout = 15)
         {
-            if(! $path)
+            parent::__construct($server, $path, $port, $timeout);
+            if($path)
+            {
+                $this->scheme = 'http';
+                $this->server = $server;
+                $this->path = $path;
+                $this->port = $port;
+            }
+            else
             {
                 // Assume we have been given a URL instead.
                 $bits = parse_url($server);
@@ -28,13 +36,6 @@
                 {
                     $this->path .= '?'.$bits['query'];
                 }
-            }
-            else
-            {
-                $this->scheme = 'http';
-                $this->server = $server;
-                $this->path = $path;
-                $this->port = $port;
             }
             $this->useragent = 'The Incutio XML-RPC PHP Library';
             $this->timeout = $timeout;

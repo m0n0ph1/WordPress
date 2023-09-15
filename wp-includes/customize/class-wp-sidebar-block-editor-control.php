@@ -6,7 +6,6 @@
 
         public function render_content()
         {
-            // Render an empty control. The JavaScript in
-            // @wordpress/customize-widgets will do the rest.
+            parent::render_content();
         }
     }

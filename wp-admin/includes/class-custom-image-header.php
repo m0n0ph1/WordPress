@@ -122,12 +122,7 @@
 
         public function take_action()
         {
-            if(! current_user_can('edit_theme_options'))
-            {
-                return;
-            }
-
-            if(empty($_POST))
+            if(! current_user_can('edit_theme_options') || empty($_POST))
             {
                 return;
             }
@@ -218,12 +213,7 @@
         {
             global $_wp_default_headers;
 
-            if(! isset($_wp_default_headers))
-            {
-                return;
-            }
-
-            if(! empty($this->default_headers))
+            if(! isset($_wp_default_headers) || ! empty($this->default_headers))
             {
                 return;
             }
@@ -758,12 +748,9 @@
                                                 printf(/* translators: %s: Size in pixels. */ __('Images should be at least %s wide.').' ', sprintf(/* translators: %d: Custom header width. */ '<strong>'.__('%d pixels').'</strong>', get_theme_support('custom-header', 'width')));
                                             }
                                         }
-                                        elseif(current_theme_supports('custom-header', 'flex-width'))
+                                        elseif(current_theme_supports('custom-header', 'flex-width') && ! current_theme_supports('custom-header', 'flex-height'))
                                         {
-                                            if(! current_theme_supports('custom-header', 'flex-height'))
-                                            {
-                                                printf(/* translators: %s: Size in pixels. */ __('Images should be at least %s tall.').' ', sprintf(/* translators: %d: Custom header height. */ '<strong>'.__('%d pixels').'</strong>', get_theme_support('custom-header', 'height')));
-                                            }
+                                            printf(/* translators: %s: Size in pixels. */ __('Images should be at least %s tall.').' ', sprintf(/* translators: %d: Custom header height. */ '<strong>'.__('%d pixels').'</strong>', get_theme_support('custom-header', 'height')));
                                         }
 
                                         if(current_theme_supports('custom-header', 'flex-height') || current_theme_supports('custom-header', 'flex-width'))

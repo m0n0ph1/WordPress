@@ -14,22 +14,12 @@
             $theme_support = get_theme_support('featured-content');
 
             // Return early if theme does not support Featured Content.
-            if(! $theme_support)
-            {
-                return;
-            }
-
             /*
              * An array of named arguments must be passed as the second parameter
              * of add_theme_support().
              */
-            if(! isset($theme_support[0]))
-            {
-                return;
-            }
-
             // Return early if "featured_content_filter" has not been defined.
-            if(! isset($theme_support[0]['featured_content_filter']))
+            if(! $theme_support || ! isset($theme_support[0]) || ! isset($theme_support[0]['featured_content_filter']))
             {
                 return;
             }
@@ -77,7 +67,12 @@
 
             if('all' !== $key)
             {
-                return isset($options[$key]) ? $options[$key] : false;
+                if(isset($options[$key]))
+                {
+                    return $options[$key];
+                }
+
+                return false;
             }
 
             return $options;
@@ -149,13 +144,8 @@
         public static function pre_get_posts($query)
         {
             // Bail if not home or not main query.
-            if(! $query->is_home() || ! $query->is_main_query())
-            {
-                return;
-            }
-
             // Bail if the blog page is not the front page.
-            if('posts' !== get_option('show_on_front'))
+            if(! $query->is_home() || ! $query->is_main_query() || 'posts' !== get_option('show_on_front'))
             {
                 return;
             }
@@ -239,25 +229,10 @@
         public static function hide_featured_term($terms, $taxonomies, $args)
         {
             // This filter is only appropriate on the front end.
-            if(is_admin())
-            {
-                return $terms;
-            }
-
             // We only want to hide the featured tag.
-            if(! in_array('post_tag', $taxonomies, true))
-            {
-                return $terms;
-            }
-
             // Bail if no terms were returned.
-            if(empty($terms))
-            {
-                return $terms;
-            }
-
             // Bail if term objects are unavailable.
-            if('all' !== $args['fields'])
+            if(is_admin() || ! in_array('post_tag', $taxonomies, true) || empty($terms) || 'all' !== $args['fields'])
             {
                 return $terms;
             }
@@ -277,19 +252,9 @@
         public static function hide_the_featured_term($terms, $id, $taxonomy)
         {
             // This filter is only appropriate on the front end.
-            if(is_admin())
-            {
-                return $terms;
-            }
-
             // Make sure we are in the correct taxonomy.
-            if('post_tag' !== $taxonomy)
-            {
-                return $terms;
-            }
-
             // No terms? Return early!
-            if(empty($terms))
+            if(is_admin() || 'post_tag' !== $taxonomy || empty($terms))
             {
                 return $terms;
             }

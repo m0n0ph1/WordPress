@@ -49,7 +49,12 @@
 
         public function custom_get_readable_color($background_color)
         {
-            return (127 < self::get_relative_luminance_from_hex($background_color)) ? '#000' : '#fff';
+            if(127 < self::get_relative_luminance_from_hex($background_color))
+            {
+                return '#000';
+            }
+
+            return '#fff';
         }
 
         public static function get_relative_luminance_from_hex($hex)

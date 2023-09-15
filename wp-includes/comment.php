@@ -58,27 +58,11 @@
 			 * fail the check for the given field by returning false.
 			 */
                 $pattern = "#$word#iu";
-                if(preg_match($pattern, $author))
+                if(preg_match($pattern, $author) || preg_match($pattern, $email))
                 {
                     return false;
                 }
-                if(preg_match($pattern, $email))
-                {
-                    return false;
-                }
-                if(preg_match($pattern, $url))
-                {
-                    return false;
-                }
-                if(preg_match($pattern, $comment))
-                {
-                    return false;
-                }
-                if(preg_match($pattern, $user_ip))
-                {
-                    return false;
-                }
-                if(preg_match($pattern, $user_agent))
+                if(preg_match($pattern, $url) || preg_match($pattern, $comment) || preg_match($pattern, $user_ip) || preg_match($pattern, $user_agent))
                 {
                     return false;
                 }
@@ -106,14 +90,8 @@
                     // expected_slashed ($author, $email)
                     $ok_to_comment = $wpdb->get_var($wpdb->prepare("SELECT comment_approved FROM $wpdb->comments WHERE comment_author = %s AND comment_author_email = %s and comment_approved = '1' LIMIT 1", $author, $email));
                 }
-                if((1 == $ok_to_comment) && (empty($mod_keys) || ! str_contains($email, $mod_keys)))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+
+                return (1 == $ok_to_comment) && (empty($mod_keys) || ! str_contains($email, $mod_keys));
             }
             else
             {
@@ -172,7 +150,6 @@
 
         if(OBJECT === $output)
         {
-            return $_comment;
         }
         elseif(ARRAY_A === $output)
         {
@@ -569,11 +546,9 @@
             'pings' => [],
         ];
 
-        $count = count($comments);
-
-        for($i = 0; $i < $count; $i++)
+        foreach($comments as $i => $iValue)
         {
-            $type = $comments[$i]->comment_type;
+            $type = $iValue->comment_type;
 
             if(empty($type))
             {
@@ -1472,13 +1447,8 @@
 	 * wp_notify_postauthor() checks if notifying the author of their own comment.
 	 * By default, it won't, but filters can override this.
 	 */
-        if(! $maybe_notify)
-        {
-            return false;
-        }
-
         // Only send notifications for approved comments.
-        if(! isset($comment->comment_approved) || '1' != $comment->comment_approved)
+        if(! $maybe_notify || ! isset($comment->comment_approved) || '1' != $comment->comment_approved)
         {
             return false;
         }
@@ -1964,12 +1934,7 @@
             foreach((array) $to_ping as $tb_ping)
             {
                 $tb_ping = trim($tb_ping);
-                if(! in_array($tb_ping, $pinged, true))
-                {
-                    trackback($tb_ping, $post_title, $excerpt, $post->ID);
-                    $pinged[] = $tb_ping;
-                }
-                else
+                if(in_array($tb_ping, $pinged, true))
                 {
                     $wpdb->query(
                         $wpdb->prepare(
@@ -1977,6 +1942,11 @@
 					'')) WHERE ID = %d", $tb_ping, $post->ID
                         )
                     );
+                }
+                else
+                {
+                    trackback($tb_ping, $post_title, $excerpt, $post->ID);
+                    $pinged[] = $tb_ping;
                 }
             }
         }
@@ -2142,7 +2112,7 @@
         require_once ABSPATH.WPINC.'/class-wp-http-ixr-client.php';
 
         // Using a timeout of 3 seconds should be enough to cover slow servers.
-        $client = new WP_HTTP_IXR_Client($server, ((! strlen(trim($path)) || ('/' === $path)) ? false : $path));
+        $client = new WP_HTTP_IXR_Client($server, ((trim($path) === '' || ('/' === $path)) ? false : $path));
         $client->timeout = 3;
         $client->useragent .= ' -- WordPress/'.get_bloginfo('version');
 
@@ -2259,12 +2229,7 @@
 
     function _close_comments_for_old_post($open, $post_id)
     {
-        if(! $open)
-        {
-            return $open;
-        }
-
-        if(! get_option('close_comments_for_old_posts'))
+        if(! $open || ! get_option('close_comments_for_old_posts'))
         {
             return $open;
         }
@@ -2278,13 +2243,8 @@
         $post = get_post($post_id);
 
         $post_types = apply_filters('close_comments_for_post_types', ['post']);
-        if(! in_array($post->post_type, $post_types, true))
-        {
-            return $open;
-        }
-
         // Undated drafts should not show up as comments closed.
-        if('0000-00-00 00:00:00' === $post->post_date_gmt)
+        if(! in_array($post->post_type, $post_types, true) || '0000-00-00 00:00:00' === $post->post_date_gmt)
         {
             return $open;
         }
@@ -2543,10 +2503,7 @@
 
                 if(! empty($value))
                 {
-                    $comment_data_to_export[] = [
-                        'name' => $name,
-                        'value' => $value,
-                    ];
+                    $comment_data_to_export[] = compact('name', 'value');
                 }
             }
 
@@ -2660,12 +2617,7 @@
 
         $done = count($comments) < $number;
 
-        return [
-            'items_removed' => $items_removed,
-            'items_retained' => $items_retained,
-            'messages' => $messages,
-            'done' => $done,
-        ];
+        return compact('items_removed', 'items_retained', 'messages', 'done');
     }
 
     function wp_cache_set_comments_last_changed()

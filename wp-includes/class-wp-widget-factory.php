@@ -8,7 +8,7 @@
         public function WP_Widget_Factory()
         {
             _deprecated_constructor('WP_Widget_Factory', '4.3.0');
-            self::__construct();
+            $this->__construct();
         }
 
         public function __construct()

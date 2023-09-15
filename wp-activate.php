@@ -137,29 +137,7 @@
 
     <div id="signup-content" class="widecolumn">
         <div class="wp-activate-container">
-            <?php if(! $key) { ?>
-
-                <h2><?php _e('Activation Key Required'); ?></h2>
-                <form name="activateform"
-                      id="activateform"
-                      method="post"
-                      action="<?php echo network_site_url($blog_details->path.'wp-activate.php'); ?>">
-                    <p>
-                        <label for="key"><?php _e('Activation Key:'); ?></label>
-                        <br/><input type="text" name="key" id="key" value="" size="50" autofocus="autofocus"/>
-                    </p>
-                    <p class="submit">
-                        <input id="submit"
-                               type="submit"
-                               name="Submit"
-                               class="submit"
-                               value="<?php esc_attr_e('Activate'); ?>"/>
-                    </p>
-                </form>
-
-                <?php
-            }
-            else
+            <?php if($key)
             {
                 if(is_wp_error($result) && in_array($result->get_error_code(), $valid_error_codes, true))
                 {
@@ -220,6 +198,29 @@
                     <?php
                     endif;
                 }
+            }
+            else
+            { ?>
+
+                <h2><?php _e('Activation Key Required'); ?></h2>
+                <form name="activateform"
+                      id="activateform"
+                      method="post"
+                      action="<?php echo network_site_url($blog_details->path.'wp-activate.php'); ?>">
+                    <p>
+                        <label for="key"><?php _e('Activation Key:'); ?></label>
+                        <br/><input type="text" name="key" id="key" value="" size="50" autofocus="autofocus"/>
+                    </p>
+                    <p class="submit">
+                        <input id="submit"
+                               type="submit"
+                               name="Submit"
+                               class="submit"
+                               value="<?php esc_attr_e('Activate'); ?>"/>
+                    </p>
+                </form>
+
+                <?php
             }
             ?>
         </div>

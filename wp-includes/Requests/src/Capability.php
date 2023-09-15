@@ -4,9 +4,9 @@
 
     interface Capability
     {
-        const SSL = 'ssl';
+        public const SSL = 'ssl';
 
-        const ALL = [
+        public const ALL = [
             self::SSL,
         ];
     }

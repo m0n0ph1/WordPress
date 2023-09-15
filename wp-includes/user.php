@@ -206,12 +206,7 @@
 
     function wp_authenticate_application_password($input_user, $username, $password)
     {
-        if($input_user instanceof WP_User)
-        {
-            return $input_user;
-        }
-
-        if(! WP_Application_Passwords::is_in_use())
+        if($input_user instanceof WP_User || ! WP_Application_Passwords::is_in_use())
         {
             return $input_user;
         }
@@ -306,18 +301,8 @@
     function wp_validate_application_password($input_user)
     {
         // Don't authenticate twice.
-        if(! empty($input_user))
-        {
-            return $input_user;
-        }
-
-        if(! wp_is_application_passwords_available())
-        {
-            return $input_user;
-        }
-
         // Both $_SERVER['PHP_AUTH_USER'] and $_SERVER['PHP_AUTH_PW'] must be set in order to attempt authentication.
-        if(! isset($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
+        if(! empty($input_user) || ! wp_is_application_passwords_available() || ! isset($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
         {
             return $input_user;
         }
@@ -1809,27 +1794,24 @@ All at ###SITENAME###
 
         // Update the cookies if the password changed.
         $current_user = wp_get_current_user();
-        if($current_user->ID == $user_id)
+        if($current_user->ID == $user_id && isset($plaintext_pass))
         {
-            if(isset($plaintext_pass))
+            wp_clear_auth_cookie();
+
+            /*
+         * Here we calculate the expiration length of the current auth cookie and compare it to the default expiration.
+         * If it's greater than this, then we know the user checked 'Remember Me' when they logged in.
+         */
+            $logged_in_cookie = wp_parse_auth_cookie('', 'logged_in');
+
+            $default_cookie_life = apply_filters('auth_cookie_expiration', (2 * DAY_IN_SECONDS), $user_id, false);
+            $remember = false;
+            if(false !== $logged_in_cookie && ($logged_in_cookie['expiration'] - time()) > $default_cookie_life)
             {
-                wp_clear_auth_cookie();
-
-                /*
-			 * Here we calculate the expiration length of the current auth cookie and compare it to the default expiration.
-			 * If it's greater than this, then we know the user checked 'Remember Me' when they logged in.
-			 */
-                $logged_in_cookie = wp_parse_auth_cookie('', 'logged_in');
-
-                $default_cookie_life = apply_filters('auth_cookie_expiration', (2 * DAY_IN_SECONDS), $user_id, false);
-                $remember = false;
-                if(false !== $logged_in_cookie && ($logged_in_cookie['expiration'] - time()) > $default_cookie_life)
-                {
-                    $remember = true;
-                }
-
-                wp_set_auth_cookie($user_id, $remember);
+                $remember = true;
             }
+
+            wp_set_auth_cookie($user_id, $remember);
         }
 
         do_action('wp_update_user', $user_id, $userdata, $userdata_raw);
@@ -1950,12 +1932,7 @@ All at ###SITENAME###
 
         $key = preg_replace('/[^a-z0-9]/i', '', $key);
 
-        if(empty($key) || ! is_string($key))
-        {
-            return new WP_Error('invalid_key', __('Invalid key.'));
-        }
-
-        if(empty($login) || ! is_string($login))
+        if(empty($key) || ! is_string($key) || empty($login) || ! is_string($login))
         {
             return new WP_Error('invalid_key', __('Invalid key.'));
         }
@@ -2273,7 +2250,12 @@ All at ###SITENAME###
     {
         $cookie = wp_parse_auth_cookie('', 'logged_in');
 
-        return ! empty($cookie['token']) ? $cookie['token'] : '';
+        if(! empty($cookie['token']))
+        {
+            return $cookie['token'];
+        }
+
+        return '';
     }
 
     function wp_get_all_sessions()
@@ -2349,7 +2331,7 @@ All at ###SITENAME###
     {
         global $current_user;
 
-        if(! empty($current_user))
+        if($current_user !== null)
         {
             if($current_user instanceof WP_User)
             {
@@ -2460,10 +2442,14 @@ All at ###SITENAME###
             $content = apply_filters('new_user_email_content', $email_text, $new_user_email);
 
             $content = str_replace('###USERNAME###', $current_user->user_login, $content);
-            $content = str_replace('###ADMIN_URL###', esc_url(self_admin_url('profile.php?newuseremail='.$hash)), $content);
-            $content = str_replace('###EMAIL###', $_POST['email'], $content);
-            $content = str_replace('###SITENAME###', $sitename, $content);
-            $content = str_replace('###SITEURL###', home_url(), $content);
+            $content = str_replace(array(
+                                       '###ADMIN_URL###',
+                                       '###EMAIL###'
+                                   ), array(
+                                       esc_url(self_admin_url('profile.php?newuseremail='.$hash)),
+                                       $_POST['email']
+                                   ), $content);
+            $content = str_replace(array('###SITENAME###', '###SITEURL###'), array($sitename, home_url()), $content);
 
             /* translators: New email address notification email subject. %s: Site title. */
             wp_mail($_POST['email'], sprintf(__('[%s] Email Change Request'), $sitename), $content);
@@ -2564,10 +2550,7 @@ All at ###SITENAME###
 
             if(! empty($value))
             {
-                $user_data_to_export[] = [
-                    'name' => $name,
-                    'value' => $value,
-                ];
+                $user_data_to_export[] = compact('name', 'value');
             }
         }
 
@@ -2661,10 +2644,7 @@ All at ###SITENAME###
                         {
                             $value = date_i18n('F d, Y H:i A', $value);
                         }
-                        $session_tokens_data_to_export[] = [
-                            'name' => $name,
-                            'value' => $value,
-                        ];
+                        $session_tokens_data_to_export[] = compact('name', 'value');
                     }
                 }
 
@@ -2688,12 +2668,7 @@ All at ###SITENAME###
     {
         $request = wp_get_user_request($request_id);
 
-        if(! $request)
-        {
-            return;
-        }
-
-        if(! in_array($request->status, ['request-pending', 'request-failed'], true))
+        if(! $request || ! in_array($request->status, ['request-pending', 'request-failed'], true))
         {
             return;
         }
@@ -2773,10 +2748,17 @@ All at ###SITENAME###
         $content = apply_filters('user_request_confirmed_email_content', $content, $email_data);
 
         $content = str_replace('###SITENAME###', $email_data['sitename'], $content);
-        $content = str_replace('###USER_EMAIL###', $email_data['user_email'], $content);
-        $content = str_replace('###DESCRIPTION###', $email_data['description'], $content);
-        $content = str_replace('###MANAGE_URL###', sanitize_url($email_data['manage_url']), $content);
-        $content = str_replace('###SITEURL###', sanitize_url($email_data['siteurl']), $content);
+        $content = str_replace(array('###USER_EMAIL###', '###DESCRIPTION###'), array(
+            $email_data['user_email'],
+            $email_data['description']
+        ),                     $content);
+        $content = str_replace(array(
+                                   '###MANAGE_URL###',
+                                   '###SITEURL###'
+                               ), array(
+                                   sanitize_url($email_data['manage_url']),
+                                   sanitize_url($email_data['siteurl'])
+                               ), $content);
 
         $headers = '';
 
@@ -2875,8 +2857,13 @@ All at ###SITENAME###
         $content = apply_filters('user_erasure_fulfillment_email_content', $content, $email_data);
 
         $content = str_replace('###SITENAME###', $email_data['sitename'], $content);
-        $content = str_replace('###PRIVACY_POLICY_URL###', $email_data['privacy_policy_url'], $content);
-        $content = str_replace('###SITEURL###', sanitize_url($email_data['siteurl']), $content);
+        $content = str_replace(array(
+                                   '###PRIVACY_POLICY_URL###',
+                                   '###SITEURL###'
+                               ), array(
+                                   $email_data['privacy_policy_url'],
+                                   sanitize_url($email_data['siteurl'])
+                               ), $content);
 
         $headers = '';
 
@@ -3063,10 +3050,14 @@ All at ###SITENAME###
         $content = apply_filters('user_request_action_email_content', $content, $email_data);
 
         $content = str_replace('###DESCRIPTION###', $email_data['description'], $content);
-        $content = str_replace('###CONFIRM_URL###', sanitize_url($email_data['confirm_url']), $content);
-        $content = str_replace('###EMAIL###', $email_data['email'], $content);
-        $content = str_replace('###SITENAME###', $email_data['sitename'], $content);
-        $content = str_replace('###SITEURL###', sanitize_url($email_data['siteurl']), $content);
+        $content = str_replace(array(
+                                   '###CONFIRM_URL###',
+                                   '###EMAIL###'
+                               ), array(sanitize_url($email_data['confirm_url']), $email_data['email']), $content);
+        $content = str_replace(array('###SITENAME###', '###SITEURL###'), array(
+            $email_data['sitename'],
+            sanitize_url($email_data['siteurl'])
+        ),                     $content);
 
         $headers = '';
 

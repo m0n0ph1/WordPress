@@ -394,18 +394,11 @@
                     $valid = false;
                 }
             }
-            elseif($day_exists && $month_exists)
+            elseif($day_exists && $month_exists && ! wp_checkdate($date_query['month'], $date_query['day'], 2012, sprintf('2012-%s-%s', $date_query['month'], $date_query['day'])))
             {
-                /*
-                 * 2. checking day, month combination
-                 * We use 2012 because, as a leap year, it's the most permissive.
-                 */
-                if(! wp_checkdate($date_query['month'], $date_query['day'], 2012, sprintf('2012-%s-%s', $date_query['month'], $date_query['day'])))
-                {
-                    $day_month_year_error_msg = sprintf(/* translators: 1: Month, 2: Day of month. */ __('The following values do not describe a valid date: month %1$s, day %2$s.'), '<code>'.esc_html($date_query['month']).'</code>', '<code>'.esc_html($date_query['day']).'</code>');
+                $day_month_year_error_msg = sprintf(/* translators: 1: Month, 2: Day of month. */ __('The following values do not describe a valid date: month %1$s, day %2$s.'), '<code>'.esc_html($date_query['month']).'</code>', '<code>'.esc_html($date_query['day']).'</code>');
 
-                    $valid = false;
-                }
+                $valid = false;
             }
 
             if(! empty($day_month_year_error_msg))

@@ -415,12 +415,7 @@
                 return false;
             }
 
-            if(! $recursive)
-            {
-                return chown($file, $owner);
-            }
-
-            if(! $this->is_dir($file))
+            if(! $recursive || ! $this->is_dir($file))
             {
                 return chown($file, $owner);
             }
@@ -443,12 +438,7 @@
                 return false;
             }
 
-            if(! $recursive)
-            {
-                return chgrp($file, $group);
-            }
-
-            if(! $this->is_dir($file))
+            if(! $recursive || ! $this->is_dir($file))
             {
                 return chgrp($file, $group);
             }

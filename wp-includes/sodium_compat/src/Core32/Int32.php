@@ -1,6 +1,6 @@
 <?php
 
-    class ParagonIE_Sodium_Core32_Int32
+    class Int32
     {
         public $limbs = [0, 0];
 
@@ -250,9 +250,9 @@
 
             $r = array_fill(0, $a_l + $b_l + 1, 0);
             $base = 1 << $baseLog2;
-            for($i = 0; $i < $a_l; ++$i)
+            foreach($a as $i => $iValue)
             {
-                $a_i = $a[$i];
+                $a_i = $iValue;
                 for($j = 0; $j < $a_l; ++$j)
                 {
                     $b_j = $b[$j];
@@ -348,21 +348,18 @@
                 ++$b[0];
             }
             $res = $this->multiplyLong($a, $b);
-            if($aNeg !== $bNeg)
+            if($aNeg !== $bNeg && $aNeg !== $bNeg)
             {
-                if($aNeg !== $bNeg)
+                for($i = 0; $i < 2; ++$i)
                 {
-                    for($i = 0; $i < 2; ++$i)
-                    {
-                        $res[$i] = ($res[$i] ^ 0xffff) & 0xffff;
-                    }
-                    $c = 1;
-                    for($i = 0; $i < 2; ++$i)
-                    {
-                        $res[$i] += $c;
-                        $c = $res[$i] >> 16;
-                        $res[$i] &= 0xffff;
-                    }
+                    $res[$i] = ($res[$i] ^ 0xffff) & 0xffff;
+                }
+                $c = 1;
+                for($i = 0; $i < 2; ++$i)
+                {
+                    $res[$i] += $c;
+                    $c = $res[$i] >> 16;
+                    $res[$i] &= 0xffff;
                 }
             }
             $return = new ParagonIE_Sodium_Core32_Int32();

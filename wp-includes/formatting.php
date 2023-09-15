@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
     function wptexturize($text, $reset = false)
     {
@@ -991,13 +991,8 @@
             $utf8_pcre = @preg_match('/^./u', 'a');
         }
         // We can't demand utf8 in the PCRE installation, so just return the string in those cases.
-        if(! $utf8_pcre)
-        {
-            return $text;
-        }
-
         // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- preg_match fails when it encounters invalid UTF8 in $text.
-        if(1 === @preg_match('/^./us', $text))
+        if(! $utf8_pcre || 1 === @preg_match('/^./us', $text))
         {
             return $text;
         }
@@ -1093,12 +1088,9 @@
 		 * Unicode sequence normalization from NFD (Normalization Form Decomposed)
 		 * to NFC (Normalization Form [Pre]Composed), the encoding used in this function.
 		 */
-            if(function_exists('normalizer_is_normalized') && function_exists('normalizer_normalize'))
+            if(function_exists('normalizer_is_normalized') && function_exists('normalizer_normalize') && ! normalizer_is_normalized($text))
             {
-                if(! normalizer_is_normalized($text))
-                {
-                    $text = normalizer_normalize($text);
-                }
+                $text = normalizer_normalize($text);
             }
 
             $chars = [
@@ -2129,7 +2121,12 @@
 
     function stripslashes_from_strings_only($value)
     {
-        return is_string($value) ? stripslashes($value) : $value;
+        if(is_string($value))
+        {
+            return stripslashes($value);
+        }
+
+        return $value;
     }
 
     function urlencode_deep($value)
@@ -2153,7 +2150,7 @@
 
         for($i = 0, $len = strlen($email_address); $i < $len; $i++)
         {
-            $j = rand(0, 1 + $hex_encoding);
+            $j = random_int(0, 1 + $hex_encoding);
 
             if(0 === $j)
             {
@@ -3879,6 +3876,7 @@ EOF;
             if('' === $error && is_wp_error($value))
             {
                 /* translators: 1: Option name, 2: Error code. */
+                /** @noinspection NativeMemberUsageInspection */
                 $error = sprintf(__('Could not sanitize the %1$s option. Error code: %2$s'), $option, $value->get_error_code());
             }
 
@@ -9741,7 +9739,12 @@ EOF;
             return '';
         }
 
-        return sanitize_hex_color('#'.$color) ? $color : null;
+        if(sanitize_hex_color('#'.$color))
+        {
+            return $color;
+        }
+
+        return null;
     }
 
     function maybe_hash_hex_color($color)

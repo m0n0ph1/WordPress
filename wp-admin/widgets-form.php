@@ -351,7 +351,10 @@
 
                     <div class="widget-control-actions">
                         <div class="alignleft">
-                            <?php if(! isset($_GET['addnew'])) : ?>
+                            <?php if(isset($_GET['addnew'])) : ?>
+                                <a href="widgets.php"
+                                   class="button-link widget-control-close"><?php _e('Cancel'); ?></a>
+                            <?php else : ?>
                                 <input type="submit"
                                        name="removewidget"
                                        id="removewidget"
@@ -360,9 +363,6 @@
                                 <span class="widget-control-close-wrapper">
 					| <a href="widgets.php" class="button-link widget-control-close"><?php _e('Cancel'); ?></a>
 				</span>
-                            <?php else : ?>
-                                <a href="widgets.php"
-                                   class="button-link widget-control-close"><?php _e('Cancel'); ?></a>
                             <?php endif; ?>
                         </div>
                         <div class="alignright">

@@ -22,7 +22,7 @@
     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.audio.mp3.php', __FILE__, true);
     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.tag.id3v2.php', __FILE__, true); // needed for ISO 639-2 language code lookup
 
-    class getid3_quicktime extends getid3_handler
+    class module extends getid3_handler
     {
         public $ReturnAtomData = false;
 
@@ -92,7 +92,7 @@
                 {
                     $parsedAtomData['xsize_bytes'] = $atom_size_extended_bytes;
                 }
-                if(in_array($atomname, ['uuid']))
+                if($atomname == 'uuid')
                 {
                     @$info['quicktime'][$atomname][] = $parsedAtomData;
                 }
@@ -116,7 +116,7 @@
             if(isset($info['quicktime']['comments']['chapters']) && is_array($info['quicktime']['comments']['chapters']) && (count($info['quicktime']['comments']['chapters']) > 0))
             {
                 $durations = $this->quicktime_time_to_sample_table($info);
-                for($i = 0; $i < count($info['quicktime']['comments']['chapters']); $i++)
+                for($i = 0, $iMax = count($info['quicktime']['comments']['chapters']); $i < $iMax; $i++)
                 {
                     $bookmark = [];
                     $bookmark['title'] = $info['quicktime']['comments']['chapters'][$i];
@@ -288,13 +288,13 @@
             $info = &$this->getid3->info;
 
             $atom_parent = end($atomHierarchy); // not array_pop($atomHierarchy); see https://www.getid3.org/phpBB3/viewtopic.php?t=1717
-            array_push($atomHierarchy, $atomname);
+            $atomHierarchy[] = $atomname;
             $atom_structure = [];
             $atom_structure['hierarchy'] = implode(' ', $atomHierarchy);
             $atom_structure['name'] = $atomname;
             $atom_structure['size'] = $atomsize;
             $atom_structure['offset'] = $baseoffset;
-            if(substr($atomname, 0, 3) == "\x00\x00\x00")
+            if(strpos($atomname, "\x00\x00\x00") === 0)
             {
                 // https://github.com/JamesHeinrich/getID3/issues/139
                 $atomname = getid3_lib::BigEndian2Int($atomname);
@@ -332,7 +332,7 @@
                             $allnumericnames = true;
                             foreach($atom_structure['subatoms'] as $subatomarray)
                             {
-                                if(! is_integer($subatomarray['name']) || (count($subatomarray['subatoms']) != 1))
+                                if(! is_int($subatomarray['name']) || (count($subatomarray['subatoms']) != 1))
                                 {
                                     $allnumericnames = false;
                                     break;
@@ -633,7 +633,7 @@
                                                             {
                                                                 $atom_structure['image_mime'] = 'image/png';
                                                             }
-                                                            elseif(preg_match('#^GIF#', $atom_structure['data']))
+                                                            elseif(0 === strpos($atom_structure['data'], "GIF"))
                                                             {
                                                                 $atom_structure['image_mime'] = 'image/gif';
                                                             }
@@ -678,7 +678,7 @@
                                                                 ];
                                                                 foreach($ImageFormatSignatures as $mime => $image_format_signature)
                                                                 {
-                                                                    if(substr($atom_structure['data'], 0, strlen($image_format_signature)) == $image_format_signature)
+                                                                    if(strpos($atom_structure['data'], $image_format_signature) === 0)
                                                                     {
                                                                         $atom_structure['image_mime'] = $mime;
                                                                         break;
@@ -1006,9 +1006,11 @@
                                                 case 'in32': // 32-bit Integer
                                                 case 'fl32': // 32-bit Floating Point
                                                 case 'fl64': // 64-bit Floating Point
-                                                    $info['audio']['lossless'] = $info['quicktime']['audio']['lossless'] = true;
-                                                    $info['audio']['bitrate'] = $info['quicktime']['audio']['bitrate'] = $info['audio']['channels'] * $info['audio']['bits_per_sample'] * $info['audio']['sample_rate'];
-                                                    break;
+                                                    $info['quicktime']['audio']['lossless'] = true;
+                                                $info['audio']['lossless'] = true;
+                                                $info['quicktime']['audio']['bitrate'] = $info['audio']['channels'] * $info['audio']['bits_per_sample'] * $info['audio']['sample_rate'];
+                                                $info['audio']['bitrate'] = $info['quicktime']['audio']['bitrate'];
+                                                break;
                                                 default:
                                                     $info['audio']['lossless'] = false;
                                                     break;
@@ -1247,7 +1249,7 @@
                             $atom_structure['data_references'][$i]['type'] = substr($atom_data, $drefDataOffset, 4);
                             $drefDataOffset += 4;
                             $atom_structure['data_references'][$i]['version'] = getid3_lib::BigEndian2Int(substr($atom_data, $drefDataOffset, 1));
-                            $drefDataOffset += 1;
+                            ++$drefDataOffset;
                             $atom_structure['data_references'][$i]['flags_raw'] = getid3_lib::BigEndian2Int(substr($atom_data, $drefDataOffset, 3)); // hardcoded: 0x0000
                             $drefDataOffset += 3;
                             $atom_structure['data_references'][$i]['data'] = substr($atom_data, $drefDataOffset, ($atom_structure['data_references'][$i]['size'] - 4 - 4 - 1 - 3));
@@ -1363,7 +1365,7 @@
                     case 'sync': // SYNChronization atom
                     case 'scpt': // tranSCriPT atom
                     case 'ssrc': // non-primary SouRCe atom
-                        for($i = 0; $i < strlen($atom_data); $i += 4)
+                        for($i = 0, $iMax = strlen($atom_data); $i < $iMax; $i += 4)
                         {
                             @$atom_structure['track_id'][] = getid3_lib::BigEndian2Int(substr($atom_data, $i, 4));
                         }
@@ -1511,7 +1513,8 @@
                         // either be zero and automatically correct, or nonzero and be set correctly.
                         if(! isset($info['video']['rotate']) || (($info['video']['rotate'] == 0) && ($matrixRotation > 0)))
                         {
-                            $info['quicktime']['video']['rotate'] = $info['video']['rotate'] = $matrixRotation;
+                            $info['video']['rotate'] = $matrixRotation;
+                            $info['quicktime']['video']['rotate'] = $matrixRotation;
                         }
 
                         if($atom_structure['flags']['enabled'] == 1)
@@ -1540,31 +1543,31 @@
                         // http://libquicktime.sourcearchive.com/documentation/1.0.2plus-pdebian/iods_8c-source.html
                         $offset = 0;
                         $atom_structure['version'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 1));
-                        $offset += 1;
+                        ++$offset;
                         $atom_structure['flags_raw'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 3));
                         $offset += 3;
                         $atom_structure['mp4_iod_tag'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 1));
-                        $offset += 1;
+                        ++$offset;
                         $atom_structure['length'] = $this->quicktime_read_mp4_descr_length($atom_data, $offset);
                         //$offset already adjusted by quicktime_read_mp4_descr_length()
                         $atom_structure['object_descriptor_id'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 2));
                         $offset += 2;
                         $atom_structure['od_profile_level'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 1));
-                        $offset += 1;
+                        ++$offset;
                         $atom_structure['scene_profile_level'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 1));
-                        $offset += 1;
+                        ++$offset;
                         $atom_structure['audio_profile_id'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 1));
-                        $offset += 1;
+                        ++$offset;
                         $atom_structure['video_profile_id'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 1));
-                        $offset += 1;
+                        ++$offset;
                         $atom_structure['graphics_profile_level'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 1));
-                        $offset += 1;
+                        ++$offset;
 
                         $atom_structure['num_iods_tracks'] = ($atom_structure['length'] - 7) / 6; // 6 bytes would only be right if all tracks use 1-byte length fields
                         for($i = 0; $i < $atom_structure['num_iods_tracks']; $i++)
                         {
                             $atom_structure['track'][$i]['ES_ID_IncTag'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 1));
-                            $offset += 1;
+                            ++$offset;
                             $atom_structure['track'][$i]['length'] = $this->quicktime_read_mp4_descr_length($atom_data, $offset);
                             //$offset already adjusted by quicktime_read_mp4_descr_length()
                             $atom_structure['track'][$i]['track_id'] = getid3_lib::BigEndian2Int(substr($atom_data, $offset, 4));
@@ -1965,7 +1968,7 @@
                                             $sensor_data_array['yaw'] = $uuid_bytes_read['yaw'];
                                             $sensor_data_array['pitch'] = $uuid_bytes_read['pitch'];
                                             $sensor_data_array['roll'] = $uuid_bytes_read['roll'];
-                                            array_push($atom_structure['sensor_data']['data_type']['fusion_data'], $sensor_data_array);
+                                            $atom_structure['sensor_data']['data_type']['fusion_data'][] = $sensor_data_array;
                                             break;
                                         case 1:
                                             $atom_structure['sensor_data']['data_type']['accel_count']++;
@@ -1975,7 +1978,7 @@
                                             $sensor_data_array['yaw'] = $uuid_bytes_read['yaw'];
                                             $sensor_data_array['pitch'] = $uuid_bytes_read['pitch'];
                                             $sensor_data_array['roll'] = $uuid_bytes_read['roll'];
-                                            array_push($atom_structure['sensor_data']['data_type']['accel_data'], $sensor_data_array);
+                                            $atom_structure['sensor_data']['data_type']['accel_data'][] = $sensor_data_array;
                                             break;
                                         case 2:
                                             $atom_structure['sensor_data']['data_type']['gyro_count']++;
@@ -1985,7 +1988,7 @@
                                             $sensor_data_array['yaw'] = $uuid_bytes_read['yaw'];
                                             $sensor_data_array['pitch'] = $uuid_bytes_read['pitch'];
                                             $sensor_data_array['roll'] = $uuid_bytes_read['roll'];
-                                            array_push($atom_structure['sensor_data']['data_type']['gyro_data'], $sensor_data_array);
+                                            $atom_structure['sensor_data']['data_type']['gyro_data'][] = $sensor_data_array;
                                             break;
                                         case 3:
                                             $atom_structure['sensor_data']['data_type']['magno_count']++;
@@ -1995,7 +1998,7 @@
                                             $sensor_data_array['magx'] = $uuid_bytes_read['magx'];
                                             $sensor_data_array['magy'] = $uuid_bytes_read['magy'];
                                             $sensor_data_array['magz'] = $uuid_bytes_read['magz'];
-                                            array_push($atom_structure['sensor_data']['data_type']['magno_data'], $sensor_data_array);
+                                            $atom_structure['sensor_data']['data_type']['magno_data'][] = $sensor_data_array;
                                             break;
                                         case 5:
                                             $atom_structure['sensor_data']['data_type']['gps_count']++;
@@ -2008,7 +2011,7 @@
                                             $sensor_data_array['speed'] = $uuid_bytes_read['speed'];
                                             $sensor_data_array['bearing'] = $uuid_bytes_read['bearing'];
                                             $sensor_data_array['acc'] = $uuid_bytes_read['acc'];
-                                            array_push($atom_structure['sensor_data']['data_type']['gps_data'], $sensor_data_array);
+                                            $atom_structure['sensor_data']['data_type']['gps_data'][] = $sensor_data_array;
                                             // array_push($debug_structure['debug_items'], $uuid_bytes_read['timestamp']);
                                             break;
                                         case 6:
@@ -2019,7 +2022,7 @@
                                             $sensor_data_array['rotx'] = $uuid_bytes_read['rotx'];
                                             $sensor_data_array['roty'] = $uuid_bytes_read['roty'];
                                             $sensor_data_array['rotz'] = $uuid_bytes_read['rotz'];
-                                            array_push($atom_structure['sensor_data']['data_type']['rotation_data'], $sensor_data_array);
+                                            $atom_structure['sensor_data']['data_type']['rotation_data'][] = $sensor_data_array;
                                             break;
                                         default:
                                             $atom_structure['sensor_data']['data_type']['unknown_count']++;
@@ -2045,9 +2048,9 @@
                         // The following rows consist of 4byte address (absolute) and 4byte size (0x1000), these point to the GPS data in the file.
 
                         $GPS_rowsize = 8; // 4 bytes for offset, 4 bytes for size
-                        if(strlen($atom_data) > 0)
+                        if($atom_data != '')
                         {
-                            if((strlen($atom_data) % $GPS_rowsize) == 0)
+                            if((strlen($atom_data) % $GPS_rowsize) === 0)
                             {
                                 $atom_structure['gps_toc'] = [];
                                 foreach(str_split($atom_data, $GPS_rowsize) as $counter => $datapair)
@@ -2212,7 +2215,7 @@
                             $info['quicktime']['chapters'][$i]['timestamp'] = getid3_lib::BigEndian2Int(substr($atom_data, $chpl_offset, 8)) / 10000000; // timestamps are stored as 100-nanosecond units
                             $chpl_offset += 8;
                             $chpl_title_size = getid3_lib::BigEndian2Int(substr($atom_data, $chpl_offset, 1));
-                            $chpl_offset += 1;
+                            ++$chpl_offset;
                             $info['quicktime']['chapters'][$i]['title'] = substr($atom_data, $chpl_offset, $chpl_title_size);
                             $chpl_offset += $chpl_title_size;
                         }
@@ -2229,14 +2232,15 @@
                     case 'dscp':
                     case 'rcif':
                         // https://www.getid3.org/phpBB3/viewtopic.php?t=1908
-                        if(substr($atom_data, 0, 7) == "\x00\x00\x00\x00\x55\xC4".'{')
+                        if(strpos($atom_data, "\x00\x00\x00\x00\x55\xC4".'{') === 0)
                         {
                             if($json_decoded = @json_decode(rtrim(substr($atom_data, 6), "\x00"), true))
                             {
                                 $info['quicktime']['camera'][$atomname] = $json_decoded;
                                 if(($atomname == 'rcif') && isset($info['quicktime']['camera']['rcif']['wxcamera']['rotate']))
                                 {
-                                    $info['video']['rotate'] = $info['quicktime']['video']['rotate'] = $info['quicktime']['camera']['rcif']['wxcamera']['rotate'];
+                                    $info['quicktime']['video']['rotate'] = $info['quicktime']['camera']['rcif']['wxcamera']['rotate'];
+                                    $info['video']['rotate'] = $info['quicktime']['video']['rotate'];
                                 }
                             }
                             else
@@ -2268,7 +2272,7 @@
                         break;
                     case 'thma': // subatom to "frea" -- "ThumbnailImage"
                         // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Kodak.html#frea
-                        if(strlen($atom_data) > 0)
+                        if($atom_data != '')
                         {
                             $info['quicktime']['comments']['picture'][] = [
                                 'data' => $atom_data,
@@ -2280,7 +2284,7 @@
                     case 'scra': // subatom to "frea" -- "PreviewImage"
                         // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Kodak.html#frea
                         // but the only sample file I've seen has no useful data here
-                        if(strlen($atom_data) > 0)
+                        if($atom_data != '')
                         {
                             $info['quicktime']['comments']['picture'][] = [
                                 'data' => $atom_data,
@@ -3162,7 +3166,7 @@
                     foreach($ts_res as $sub_value)
                     {
                         $prefix = substr($sub_value[0], 0, -12);
-                        if((substr($stbl_res[0][0], 0, strlen($prefix)) === $prefix) && ($ts_prefix_len < strlen($prefix)))
+                        if((strpos($stbl_res[0][0], $prefix) === 0) && ($ts_prefix_len < strlen($prefix)))
                         {
                             $time_scale = $sub_value[1]['time_scale'];
                             $ts_prefix_len = strlen($prefix);

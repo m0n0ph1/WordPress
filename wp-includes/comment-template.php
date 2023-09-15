@@ -163,8 +163,7 @@
         $comment_author_url = get_comment_author_url($comment);
 
         $display = ('' !== $link_text) ? $link_text : $comment_author_url;
-        $display = str_replace('http://www.', '', $display);
-        $display = str_replace('http://', '', $display);
+        $display = str_replace(array('http://www.', 'http://'), '', $display);
 
         if(str_ends_with($display, '/'))
         {
@@ -219,12 +218,9 @@
             $classes[] = 'comment-author-'.sanitize_html_class($user->user_nicename, $comment->user_id);
             // For comment authors who are the author of the post.
             $_post = get_post($post);
-            if($_post)
+            if($_post && $comment->user_id === $_post->post_author)
             {
-                if($comment->user_id === $_post->post_author)
-                {
-                    $classes[] = 'bypostauthor';
-                }
+                $classes[] = 'bypostauthor';
             }
         }
 
@@ -304,13 +300,13 @@
     {
         $comment = get_comment($comment_id);
 
-        if(! post_password_required($comment->comment_post_ID))
+        if(post_password_required($comment->comment_post_ID))
         {
-            $comment_text = strip_tags(str_replace(["\n", "\r"], ' ', $comment->comment_content));
+            $comment_text = __('Password protected');
         }
         else
         {
-            $comment_text = __('Password protected');
+            $comment_text = strip_tags(str_replace(["\n", "\r"], ' ', $comment->comment_content));
         }
 
         /* translators: Maximum number of words used in a comment excerpt. */
@@ -371,12 +367,7 @@
         $comment_link = get_permalink($comment->comment_post_ID);
 
         // The 'cpage' param takes precedence.
-        if(! is_null($args['cpage']))
-        {
-            $cpage = $args['cpage'];
-            // No 'cpage' is provided, so we calculate one.
-        }
-        else
+        if(is_null($args['cpage']))
         {
             if('' === $args['per_page'] && get_option('page_comments'))
             {
@@ -412,6 +403,11 @@
             {
                 $cpage = '';
             }
+        }
+        else
+        {
+            $cpage = $args['cpage'];
+            // No 'cpage' is provided, so we calculate one.
         }
 
         if($cpage && get_option('page_comments'))
@@ -483,11 +479,7 @@
 
         if($comments_number > 1)
         {
-            if(false === $more)
-            {
-                $comments_number_text = sprintf(/* translators: %s: Number of comments. */ _n('%s Comment', '%s Comments', $comments_number), number_format_i18n($comments_number));
-            }
-            else
+            if(false !== $more)
             {
                 // % Comments
                 /*
@@ -516,6 +508,10 @@
                 }
 
                 $comments_number_text = str_replace('%', number_format_i18n($comments_number), $more);
+            }
+            else
+            {
+                $comments_number_text = sprintf(/* translators: %s: Number of comments. */ _n('%s Comment', '%s Comments', $comments_number), number_format_i18n($comments_number));
             }
         }
         elseif(0 == $comments_number)

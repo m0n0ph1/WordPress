@@ -525,6 +525,11 @@
             $path = $template ? get_template_directory() : get_stylesheet_directory();
             $candidate = $path.'/'.$file_name;
 
-            return is_readable($candidate) ? $candidate : '';
+            if(is_readable($candidate))
+            {
+                return $candidate;
+            }
+
+            return '';
         }
     }

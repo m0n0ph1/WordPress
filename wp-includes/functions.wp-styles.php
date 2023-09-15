@@ -28,12 +28,9 @@
 
         _wp_scripts_maybe_doing_it_wrong(__FUNCTION__);
 
-        if(! ($wp_styles instanceof WP_Styles))
+        if(! ($wp_styles instanceof WP_Styles) && ! $handles)
         {
-            if(! $handles)
-            {
-                return []; // No need to instantiate if nothing is there.
-            }
+            return []; // No need to instantiate if nothing is there.
         }
 
         return wp_styles()->do_items($handles);

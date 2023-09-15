@@ -324,7 +324,12 @@
                     continue;
                 }
 
-                return ($result && ! is_wp_error($result)) ? $result : false;
+                if($result && ! is_wp_error($result))
+                {
+                    return $result;
+                }
+
+                return false;
             }
 
             return false;
@@ -437,7 +442,12 @@
         {
             $data = json_decode(trim($response_body));
 
-            return ($data && is_object($data)) ? $data : false;
+            if($data && is_object($data))
+            {
+                return $data;
+            }
+
+            return false;
         }
 
         private function _parse_xml($response_body)
@@ -480,12 +490,7 @@
 
             $dom = new DOMDocument();
             $success = $dom->loadXML($response_body);
-            if(! $success)
-            {
-                return false;
-            }
-
-            if(isset($dom->doctype))
+            if(! $success || isset($dom->doctype))
             {
                 return false;
             }

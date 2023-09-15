@@ -313,17 +313,7 @@
         require ABSPATH.'.maintenance';
 
         // If the $upgrading timestamp is older than 10 minutes, consider maintenance over.
-        if((time() - $upgrading) >= 10 * MINUTE_IN_SECONDS)
-        {
-            return false;
-        }
-
-        if(! apply_filters('enable_maintenance_mode', true, $upgrading))
-        {
-            return false;
-        }
-
-        return true;
+        return ! ((time() - $upgrading) >= 10 * MINUTE_IN_SECONDS || ! apply_filters('enable_maintenance_mode', true, $upgrading));
     }
 
     function timer_float()
@@ -847,12 +837,7 @@
 
     function is_protected_ajax_action()
     {
-        if(! wp_doing_ajax())
-        {
-            return false;
-        }
-
-        if(! isset($_REQUEST['action']))
+        if(! wp_doing_ajax() || ! isset($_REQUEST['action']))
         {
             return false;
         }
@@ -1151,12 +1136,7 @@
     {
         if(isset($_SERVER['HTTPS']))
         {
-            if('on' === strtolower($_SERVER['HTTPS']))
-            {
-                return true;
-            }
-
-            if('1' === (string) $_SERVER['HTTPS'])
+            if('on' === strtolower($_SERVER['HTTPS']) || '1' === (string) $_SERVER['HTTPS'])
             {
                 return true;
             }
@@ -1381,12 +1361,7 @@
             }
         }
 
-        if(isset($_SERVER['CONTENT_TYPE']) && in_array($_SERVER['CONTENT_TYPE'], $accepted, true))
-        {
-            return true;
-        }
-
-        return false;
+        return isset($_SERVER['CONTENT_TYPE']) && in_array($_SERVER['CONTENT_TYPE'], $accepted, true);
     }
 
     function wp_is_site_protected_by_basic_auth($context = '')

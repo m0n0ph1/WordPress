@@ -363,12 +363,7 @@
 
         public function add_role($role)
         {
-            if(empty($role))
-            {
-                return;
-            }
-
-            if(in_array($role, $this->roles, true))
+            if(empty($role) || in_array($role, $this->roles, true))
             {
                 return;
             }

@@ -9,14 +9,19 @@
     { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
         $post = get_post();
 
-        return ! empty($post) ? $post->ID : false;
+        if(! empty($post))
+        {
+            return $post->ID;
+        }
+
+        return false;
     }
 
     function the_title($before = '', $after = '', $display = true)
     {
         $title = get_the_title();
 
-        if(strlen($title) === 0)
+        if($title == '')
         {
             return;
         }
@@ -45,7 +50,7 @@
 
         $title = get_the_title($parsed_args['post']);
 
-        if(strlen($title) === 0)
+        if($title == '')
         {
             return;
         }
@@ -715,13 +720,13 @@
         $hasher = new PasswordHash(8, true);
 
         $hash = wp_unslash($_COOKIE['wp-postpass_'.COOKIEHASH]);
-        if(! str_starts_with($hash, '$P$B'))
+        if(str_starts_with($hash, '$P$B'))
         {
-            $required = true;
+            $required = ! $hasher->CheckPassword($post->post_password, $hash);
         }
         else
         {
-            $required = ! $hasher->CheckPassword($post->post_password, $hash);
+            $required = true;
         }
 
         return apply_filters('post_password_required', $required, $post);
@@ -1333,7 +1338,7 @@
     function get_the_password_form($post = 0)
     {
         $post = get_post($post);
-        $label = 'pwbox-'.(empty($post->ID) ? rand() : $post->ID);
+        $label = 'pwbox-'.(empty($post->ID) ? random_int() : $post->ID);
         $output = '<form action="'.esc_url(site_url('wp-login.php?action=postpass', 'login_post')).'" class="post-password-form" method="post">
 	<p>'.__('This content is password protected. To view it please enter your password below:').'</p>
 	<p><label for="'.$label.'">'.__('Password:').' <input name="post_password" id="'.$label.'" type="password" spellcheck="false" size="20" /></label> <input type="submit" name="Submit" value="'.esc_attr_x('Enter', 'post password form').'" /></p></form>
@@ -1528,7 +1533,12 @@
     {
         $wp_post = get_post($post);
 
-        return ! empty($wp_post->post_parent) ? get_post($wp_post->post_parent) : null;
+        if(! empty($wp_post->post_parent))
+        {
+            return get_post($wp_post->post_parent);
+        }
+
+        return null;
     }
 
     function has_post_parent($post = null)

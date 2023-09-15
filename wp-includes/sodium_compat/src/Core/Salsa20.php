@@ -5,9 +5,9 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core_Salsa20 extends ParagonIE_Sodium_Core_Util
+    abstract class Salsa20 extends ParagonIE_Sodium_Core_Util
     {
-        const ROUNDS = 20;
+        public const ROUNDS = 20;
 
         public static function salsa20_xor_ic($m, $n, $ic, $k)
         {
@@ -65,30 +65,50 @@
             }
             if($c === null)
             {
-                $j0 = $x0 = 0x61707865;
-                $j5 = $x5 = 0x3320646e;
-                $j10 = $x10 = 0x79622d32;
-                $j15 = $x15 = 0x6b206574;
+                $x0 = 0x61707865;
+                $j0 = 0x61707865;
+                $x5 = 0x3320646e;
+                $j5 = 0x3320646e;
+                $x10 = 0x79622d32;
+                $j10 = 0x79622d32;
+                $x15 = 0x6b206574;
+                $j15 = 0x6b206574;
             }
             else
             {
-                $j0 = $x0 = self::load_4(self::substr($c, 0, 4));
-                $j5 = $x5 = self::load_4(self::substr($c, 4, 4));
-                $j10 = $x10 = self::load_4(self::substr($c, 8, 4));
-                $j15 = $x15 = self::load_4(self::substr($c, 12, 4));
+                $x0 = self::load_4(self::substr($c, 0, 4));
+                $j0 = $x0;
+                $x5 = self::load_4(self::substr($c, 4, 4));
+                $j5 = $x5;
+                $x10 = self::load_4(self::substr($c, 8, 4));
+                $j10 = $x10;
+                $x15 = self::load_4(self::substr($c, 12, 4));
+                $j15 = $x15;
             }
-            $j1 = $x1 = self::load_4(self::substr($k, 0, 4));
-            $j2 = $x2 = self::load_4(self::substr($k, 4, 4));
-            $j3 = $x3 = self::load_4(self::substr($k, 8, 4));
-            $j4 = $x4 = self::load_4(self::substr($k, 12, 4));
-            $j6 = $x6 = self::load_4(self::substr($in, 0, 4));
-            $j7 = $x7 = self::load_4(self::substr($in, 4, 4));
-            $j8 = $x8 = self::load_4(self::substr($in, 8, 4));
-            $j9 = $x9 = self::load_4(self::substr($in, 12, 4));
-            $j11 = $x11 = self::load_4(self::substr($k, 16, 4));
-            $j12 = $x12 = self::load_4(self::substr($k, 20, 4));
-            $j13 = $x13 = self::load_4(self::substr($k, 24, 4));
-            $j14 = $x14 = self::load_4(self::substr($k, 28, 4));
+            $x1 = self::load_4(self::substr($k, 0, 4));
+            $j1 = $x1;
+            $x2 = self::load_4(self::substr($k, 4, 4));
+            $j2 = $x2;
+            $x3 = self::load_4(self::substr($k, 8, 4));
+            $j3 = $x3;
+            $x4 = self::load_4(self::substr($k, 12, 4));
+            $j4 = $x4;
+            $x6 = self::load_4(self::substr($in, 0, 4));
+            $j6 = $x6;
+            $x7 = self::load_4(self::substr($in, 4, 4));
+            $j7 = $x7;
+            $x8 = self::load_4(self::substr($in, 8, 4));
+            $j8 = $x8;
+            $x9 = self::load_4(self::substr($in, 12, 4));
+            $j9 = $x9;
+            $x11 = self::load_4(self::substr($k, 16, 4));
+            $j11 = $x11;
+            $x12 = self::load_4(self::substr($k, 20, 4));
+            $j12 = $x12;
+            $x13 = self::load_4(self::substr($k, 24, 4));
+            $j13 = $x13;
+            $x14 = self::load_4(self::substr($k, 28, 4));
+            $j14 = $x14;
 
             for($i = self::ROUNDS; $i > 0; $i -= 2)
             {

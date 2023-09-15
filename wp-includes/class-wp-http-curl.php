@@ -165,13 +165,13 @@
             // If streaming to a file open a file handle, and setup our curl streaming handler.
             if($parsed_args['stream'])
             {
-                if(! WP_DEBUG)
+                if(WP_DEBUG)
                 {
-                    $this->stream_handle = @fopen($parsed_args['filename'], 'w+');
+                    $this->stream_handle = fopen($parsed_args['filename'], 'w+');
                 }
                 else
                 {
-                    $this->stream_handle = fopen($parsed_args['filename'], 'w+');
+                    $this->stream_handle = @fopen($parsed_args['filename'], 'w+');
                 }
                 if(! $this->stream_handle)
                 {
@@ -250,7 +250,7 @@
             $curl_error = curl_errno($handle);
 
             // If an error occurred, or, no response.
-            if($curl_error || (0 === strlen($body) && empty($processed_headers['headers'])))
+            if($curl_error || ($body === '' && empty($processed_headers['headers'])))
             {
                 if(CURLE_WRITE_ERROR /* 23 */ === $curl_error)
                 {

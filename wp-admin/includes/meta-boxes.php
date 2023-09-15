@@ -387,13 +387,13 @@
                     <?php
                         if(current_user_can('delete_post', $post_id))
                         {
-                            if(! EMPTY_TRASH_DAYS)
+                            if(EMPTY_TRASH_DAYS)
                             {
-                                $delete_text = __('Delete permanently');
+                                $delete_text = __('Move to Trash');
                             }
                             else
                             {
-                                $delete_text = __('Move to Trash');
+                                $delete_text = __('Delete permanently');
                             }
                             ?>
                             <a class="submitdelete deletion"
@@ -1673,13 +1673,13 @@
 
             $label = $taxonomy->labels->name;
 
-            if(! is_taxonomy_hierarchical($tax_name))
+            if(is_taxonomy_hierarchical($tax_name))
             {
-                $tax_meta_box_id = 'tagsdiv-'.$tax_name;
+                $tax_meta_box_id = $tax_name.'div';
             }
             else
             {
-                $tax_meta_box_id = $tax_name.'div';
+                $tax_meta_box_id = 'tagsdiv-'.$tax_name;
             }
 
             add_meta_box($tax_meta_box_id, $label, $taxonomy->meta_box_cb, null, 'side', 'core', [

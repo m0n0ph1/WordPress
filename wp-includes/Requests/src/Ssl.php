@@ -28,7 +28,7 @@
                 foreach($altnames as $altname)
                 {
                     $altname = trim($altname);
-                    if(strpos($altname, 'DNS:') !== 0)
+                    if(strncmp($altname, 'DNS:', 4) !== 0)
                     {
                         continue;
                     }
@@ -106,12 +106,7 @@
                 throw InvalidArgument::create(1, '$reference', 'string|Stringable', gettype($reference));
             }
 
-            if($reference === '')
-            {
-                return false;
-            }
-
-            if(preg_match('`\s`', $reference) > 0)
+            if($reference === '' || preg_match('`\s`', $reference) > 0)
             {
                 // Whitespace detected. This can never be a dNSName.
                 return false;
@@ -130,13 +125,8 @@
             if(strpos($first, '*') !== false)
             {
                 // Check that the wildcard is the full part
-                if($first !== '*')
-                {
-                    return false;
-                }
-
                 // Check that we have at least 3 components (including first)
-                if(count($parts) < 2)
+                if($first !== '*' || count($parts) < 2)
                 {
                     return false;
                 }

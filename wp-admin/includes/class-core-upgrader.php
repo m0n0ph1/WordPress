@@ -50,13 +50,8 @@
             }
 
             // 1: If we're already on that version, not much point in updating?
-            if($offered_ver === $wp_version)
-            {
-                return false;
-            }
-
             // 2: If we're running a newer version, that's a nope.
-            if(version_compare($wp_version, $offered_ver, '>'))
+            if($offered_ver === $wp_version || version_compare($wp_version, $offered_ver, '>'))
             {
                 return false;
             }
@@ -88,13 +83,9 @@
             }
 
             // 3: 3.7-alpha-25000 -> 3.7-alpha-25678 -> 3.7-beta1 -> 3.7-beta2.
-            if($current_is_development_version)
+            if($current_is_development_version && ! apply_filters('allow_dev_auto_core_updates', $upgrade_dev))
             {
-                if(! apply_filters('allow_dev_auto_core_updates', $upgrade_dev))
-                {
-                    return false;
-                }
-                // Else fall through to minor + major branches below.
+                return false;
             }
 
             // 4: Minor in-branch updates (3.7.0 -> 3.7.1 -> 3.7.2 -> 3.7.4).

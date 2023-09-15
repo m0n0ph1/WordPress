@@ -63,13 +63,13 @@
             if(empty($opt['password']))
             {
                 // Password can be blank if we are using keys.
-                if(! $this->keys)
+                if($this->keys)
                 {
-                    $this->errors->add('empty_password', __('SSH2 password is required'));
+                    $this->options['password'] = null;
                 }
                 else
                 {
-                    $this->options['password'] = null;
+                    $this->errors->add('empty_password', __('SSH2 password is required'));
                 }
             }
             else
@@ -80,13 +80,13 @@
 
         public function connect()
         {
-            if(! $this->keys)
+            if($this->keys)
             {
-                $this->link = @ssh2_connect($this->options['hostname'], $this->options['port']);
+                $this->link = @ssh2_connect($this->options['hostname'], $this->options['port'], $this->options['hostkey']);
             }
             else
             {
-                $this->link = @ssh2_connect($this->options['hostname'], $this->options['port'], $this->options['hostkey']);
+                $this->link = @ssh2_connect($this->options['hostname'], $this->options['port']);
             }
 
             if(! $this->link)
@@ -96,20 +96,20 @@
                 return false;
             }
 
-            if(! $this->keys)
+            if($this->keys)
             {
-                if(! @ssh2_auth_password($this->link, $this->options['username'], $this->options['password']))
+                if(! @ssh2_auth_pubkey_file($this->link, $this->options['username'], $this->options['public_key'], $this->options['private_key'], $this->options['password']))
                 {
-                    $this->errors->add('auth', sprintf(/* translators: %s: Username. */ __('Username/Password incorrect for %s'), $this->options['username']));
+                    $this->errors->add('auth', sprintf(/* translators: %s: Username. */ __('Public and Private keys incorrect for %s'), $this->options['username']));
 
                     return false;
                 }
             }
             else
             {
-                if(! @ssh2_auth_pubkey_file($this->link, $this->options['username'], $this->options['public_key'], $this->options['private_key'], $this->options['password']))
+                if(! @ssh2_auth_password($this->link, $this->options['username'], $this->options['password']))
                 {
-                    $this->errors->add('auth', sprintf(/* translators: %s: Username. */ __('Public and Private keys incorrect for %s'), $this->options['username']));
+                    $this->errors->add('auth', sprintf(/* translators: %s: Username. */ __('Username/Password incorrect for %s'), $this->options['username']));
 
                     return false;
                 }
@@ -168,11 +168,7 @@
 
             $stream = ssh2_exec($this->link, $command);
 
-            if(! $stream)
-            {
-                $this->errors->add('command', sprintf(/* translators: %s: Command. */ __('Unable to perform command: %s'), $command));
-            }
-            else
+            if($stream)
             {
                 stream_set_blocking($stream, true);
                 stream_set_timeout($stream, FS_TIMEOUT);
@@ -181,12 +177,21 @@
 
                 if($returnbool)
                 {
-                    return (false === $data) ? false : '' !== trim($data);
+                    if(false === $data)
+                    {
+                        return false;
+                    }
+
+                    return '' !== trim($data);
                 }
                 else
                 {
                     return $data;
                 }
+            }
+            else
+            {
+                $this->errors->add('command', sprintf(/* translators: %s: Command. */ __('Unable to perform command: %s'), $command));
             }
 
             return false;

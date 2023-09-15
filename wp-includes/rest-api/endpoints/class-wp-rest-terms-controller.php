@@ -24,6 +24,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -208,12 +209,8 @@
         protected function check_is_taxonomy_allowed($taxonomy)
         {
             $taxonomy_obj = get_taxonomy($taxonomy);
-            if($taxonomy_obj && ! empty($taxonomy_obj->show_in_rest))
-            {
-                return true;
-            }
 
-            return false;
+            return $taxonomy_obj && ! empty($taxonomy_obj->show_in_rest);
         }
 
         public function check_read_terms_permission_for_post($post, $request)
@@ -225,13 +222,8 @@
             }
 
             // Grant access if the post is publicly viewable.
-            if(is_post_publicly_viewable($post))
-            {
-                return true;
-            }
-
             // Otherwise grant access if the post is readable by the logged in user.
-            if(current_user_can('read_post', $post->ID))
+            if(is_post_publicly_viewable($post) || current_user_can('read_post', $post->ID))
             {
                 return true;
             }
@@ -532,12 +524,7 @@
         {
             $error = new WP_Error('rest_term_invalid', __('Term does not exist.'), ['status' => 404]);
 
-            if(! $this->check_is_taxonomy_allowed($this->taxonomy))
-            {
-                return $error;
-            }
-
-            if((int) $id <= 0)
+            if(! $this->check_is_taxonomy_allowed($this->taxonomy) || (int) $id <= 0)
             {
                 return $error;
             }

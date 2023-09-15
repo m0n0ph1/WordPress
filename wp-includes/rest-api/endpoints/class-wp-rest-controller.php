@@ -134,12 +134,7 @@
                 $object_type = $this->get_object_type();
             }
 
-            if(! $object_type)
-            {
-                return [];
-            }
-
-            if(! $wp_rest_additional_fields || ! isset($wp_rest_additional_fields[$object_type]))
+            if(! $object_type || ! $wp_rest_additional_fields || ! isset($wp_rest_additional_fields[$object_type]))
             {
                 return [];
             }

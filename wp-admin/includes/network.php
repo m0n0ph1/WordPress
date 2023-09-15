@@ -16,12 +16,8 @@
     function allow_subdomain_install()
     {
         $domain = preg_replace('|https?://([^/]+)|', '$1', get_option('home'));
-        if(parse_url(get_option('home'), PHP_URL_PATH) || 'localhost' === $domain || preg_match('|^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$|', $domain))
-        {
-            return false;
-        }
 
-        return true;
+        return ! (parse_url(get_option('home'), PHP_URL_PATH) || 'localhost' === $domain || preg_match('|^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$|', $domain));
     }
 
     function allow_subdirectory_install()
@@ -145,11 +141,7 @@
         { // Assume nothing.
             $subdomain_install = true;
         }
-        elseif(! allow_subdirectory_install())
-        {
-            $subdomain_install = true;
-        }
-        else
+        elseif(allow_subdirectory_install())
         {
             $subdomain_install = false;
             $got_mod_rewrite = got_mod_rewrite();
@@ -172,6 +164,10 @@
                 printf(/* translators: 1: mod_rewrite, 2: mod_rewrite documentation URL, 3: Google search for mod_rewrite. */ __('If %1$s is disabled, ask your administrator to enable that module, or look at the <a href="%2$s">Apache documentation</a> or <a href="%3$s">elsewhere</a> for help setting it up.'), '<code>mod_rewrite</code>', 'https://httpd.apache.org/docs/mod/mod_rewrite.html', 'https://www.google.com/search?q=apache+mod_rewrite');
                 echo '</p></div>';
             }
+        }
+        else
+        {
+            $subdomain_install = true;
         }
 
         if(allow_subdomain_install() && allow_subdirectory_install()) :

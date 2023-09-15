@@ -208,10 +208,7 @@
                 ++$delete_count;
             }
 
-            $redirect = add_query_arg([
-                                          'delete_count' => $delete_count,
-                                          'update' => $update,
-                                      ], $redirect);
+            $redirect = add_query_arg(compact('delete_count', 'update'), $redirect);
             wp_redirect($redirect);
             exit;
 
@@ -378,45 +375,45 @@
                     <?php
                         if($go_delete) :
 
-                            if(! $users_have_content) :
+                            if($users_have_content) :
                                 ?>
-                                <input type="hidden" name="delete_option" value="delete"/>
-                            <?php else : ?>
-                                <fieldset>
-                                    <?php if(1 === $go_delete) : ?>
-                                        <p>
-                                            <legend><?php _e('What should be done with content owned by this user?'); ?></legend>
-                                        </p>
-                                    <?php else : ?>
-                                        <p>
-                                            <legend><?php _e('What should be done with content owned by these users?'); ?></legend>
-                                        </p>
-                                    <?php endif; ?>
+                                    <fieldset>
+                                        <?php if(1 === $go_delete) : ?>
+                                            <p>
+                                                <legend><?php _e('What should be done with content owned by this user?'); ?></legend>
+                                            </p>
+                                        <?php else : ?>
+                                            <p>
+                                                <legend><?php _e('What should be done with content owned by these users?'); ?></legend>
+                                            </p>
+                                        <?php endif; ?>
 
-                                    <ul style="list-style:none;">
-                                        <li>
-                                            <input type="radio"
-                                                   id="delete_option0"
-                                                   name="delete_option"
-                                                   value="delete"/>
-                                            <label for="delete_option0"><?php _e('Delete all content.'); ?></label>
-                                        </li>
-                                        <li>
-                                            <input type="radio"
-                                                   id="delete_option1"
-                                                   name="delete_option"
-                                                   value="reassign"/>
-                                            <label for="delete_option1"><?php _e('Attribute all content to:'); ?></label>
-                                            <?php
-                                                wp_dropdown_users([
-                                                                      'name' => 'reassign_user',
-                                                                      'exclude' => $user_ids,
-                                                                      'show' => 'display_name_with_login',
-                                                                  ]);
-                                            ?>
-                                        </li>
-                                    </ul>
-                                </fieldset>
+                                        <ul style="list-style:none;">
+                                            <li>
+                                                <input type="radio"
+                                                       id="delete_option0"
+                                                       name="delete_option"
+                                                       value="delete"/>
+                                                <label for="delete_option0"><?php _e('Delete all content.'); ?></label>
+                                            </li>
+                                            <li>
+                                                <input type="radio"
+                                                       id="delete_option1"
+                                                       name="delete_option"
+                                                       value="reassign"/>
+                                                <label for="delete_option1"><?php _e('Attribute all content to:'); ?></label>
+                                                <?php
+                                                    wp_dropdown_users([
+                                                                          'name' => 'reassign_user',
+                                                                          'exclude' => $user_ids,
+                                                                          'show' => 'display_name_with_login',
+                                                                      ]);
+                                                ?>
+                                            </li>
+                                        </ul>
+                                    </fieldset>
+                                <?php else : ?>
+                                <input type="hidden" name="delete_option" value="delete"/>
                             <?php
                             endif;
 
@@ -524,13 +521,7 @@
                             {
                                 $user = get_userdata($id);
 
-                                if(! current_user_can('remove_user', $id))
-                                {
-                                    echo '<li>';
-                                    printf(/* translators: 1: User ID, 2: User login. */ __('ID #%1$s: %2$s <strong>Sorry, you are not allowed to remove this user.</strong>'), $id, $user->user_login);
-                                    echo "</li>\n";
-                                }
-                                else
+                                if(current_user_can('remove_user', $id))
                                 {
                                     echo '<li>';
                                     printf('<input type="hidden" name="users[]" value="%s" />', esc_attr($id));
@@ -538,6 +529,12 @@
                                     echo "</li>\n";
 
                                     $go_remove = true;
+                                }
+                                else
+                                {
+                                    echo '<li>';
+                                    printf(/* translators: 1: User ID, 2: User login. */ __('ID #%1$s: %2$s <strong>Sorry, you are not allowed to remove this user.</strong>'), $id, $user->user_login);
+                                    echo "</li>\n";
                                 }
                             }
                         ?>

@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core_Curve25519_Ge_Precomp
+    class Precomp
     {
         public $yplusx;
 

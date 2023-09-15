@@ -34,6 +34,7 @@
 
         public function footer()
         {
+            parent::footer();
             $output = ob_get_clean();
             if(! empty($output))
             {
@@ -43,6 +44,7 @@
 
         public function feedback($feedback, ...$args)
         {
+            parent::feedback($feedback, ...$args);
             if(is_wp_error($feedback))
             {
                 $string = $feedback->get_error_message();
@@ -61,12 +63,9 @@
                 $string = $this->upgrader->strings[$string];
             }
 
-            if(str_contains($string, '%'))
+            if(str_contains($string, '%') && ! empty($args))
             {
-                if(! empty($args))
-                {
-                    $string = vsprintf($string, $args);
-                }
+                $string = vsprintf($string, $args);
             }
 
             $string = trim($string);

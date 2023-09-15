@@ -279,17 +279,7 @@
         }
 
         $parsed_url = parse_url($url);
-        if(! $parsed_url || empty($parsed_url['host']))
-        {
-            return false;
-        }
-
-        if(isset($parsed_url['user']) || isset($parsed_url['pass']))
-        {
-            return false;
-        }
-
-        if(false !== strpbrk($parsed_url['host'], ':#?[]'))
+        if(! $parsed_url || empty($parsed_url['host']) || isset($parsed_url['user']) || isset($parsed_url['pass']) || false !== strpbrk($parsed_url['host'], ':#?[]'))
         {
             return false;
         }

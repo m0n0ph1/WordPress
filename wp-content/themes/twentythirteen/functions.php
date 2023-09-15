@@ -563,7 +563,12 @@
         $content = get_the_content();
         $has_url = get_url_in_content($content);
 
-        return ($has_url) ? $has_url : apply_filters('the_permalink', get_permalink());
+        if($has_url)
+        {
+            return $has_url;
+        }
+
+        return apply_filters('the_permalink', get_permalink());
     }
 
     if(! function_exists('twentythirteen_excerpt_more') && ! is_admin()) :

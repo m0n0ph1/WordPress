@@ -16,12 +16,7 @@
 
         protected function check_has_read_only_access($request)
         {
-            if(current_user_can('edit_theme_options'))
-            {
-                return true;
-            }
-
-            if(current_user_can('edit_posts'))
+            if(current_user_can('edit_theme_options') || current_user_can('edit_posts'))
             {
                 return true;
             }
@@ -366,6 +361,7 @@
 
         public function update_item($request)
         {
+            parent::update_item($request);
             $term = $this->get_term($request['id']);
             if(is_wp_error($term))
             {
@@ -448,6 +444,7 @@
 
         public function delete_item($request)
         {
+            parent::delete_item($request);
             $term = $this->get_term($request['id']);
             if(is_wp_error($term))
             {

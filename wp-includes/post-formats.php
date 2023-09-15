@@ -4,12 +4,7 @@
     {
         $post = get_post($post);
 
-        if(! $post)
-        {
-            return false;
-        }
-
-        if(! post_type_supports($post->post_type, 'post-formats'))
+        if(! $post || ! post_type_supports($post->post_type, 'post-formats'))
         {
             return false;
         }
@@ -95,13 +90,18 @@
     function get_post_format_string($slug)
     {
         $strings = get_post_format_strings();
-        if(! $slug)
+        if($slug)
         {
-            return $strings['standard'];
+            if(isset($strings[$slug]))
+            {
+                return $strings[$slug];
+            }
+
+            return '';
         }
         else
         {
-            return (isset($strings[$slug])) ? $strings[$slug] : '';
+            return $strings['standard'];
         }
     }
 

@@ -2,26 +2,26 @@
 
     class IXR_Date
     {
-        var $year;
+        public $year;
 
-        var $month;
+        public $month;
 
-        var $day;
+        public $day;
 
-        var $hour;
+        public $hour;
 
-        var $minute;
+        public $minute;
 
-        var $second;
+        public $second;
 
-        var $timezone;
+        public $timezone;
 
         public function IXR_Date($time)
         {
-            self::__construct($time);
+            $this->__construct($time);
         }
 
-        function __construct($time)
+        public function __construct($time)
         {
             // $time can be a PHP timestamp or an ISO one
             if(is_numeric($time))
@@ -34,7 +34,7 @@
             }
         }
 
-        function parseTimestamp($timestamp)
+        public function parseTimestamp($timestamp)
         {
             $this->year = gmdate('Y', $timestamp);
             $this->month = gmdate('m', $timestamp);
@@ -45,7 +45,7 @@
             $this->timezone = '';
         }
 
-        function parseIso($iso)
+        public function parseIso($iso)
         {
             $this->year = substr($iso, 0, 4);
             $this->month = substr($iso, 4, 2);
@@ -56,17 +56,17 @@
             $this->timezone = substr($iso, 17);
         }
 
-        function getXml()
+        public function getXml()
         {
             return '<dateTime.iso8601>'.$this->getIso().'</dateTime.iso8601>';
         }
 
-        function getIso()
+        public function getIso()
         {
             return $this->year.$this->month.$this->day.'T'.$this->hour.':'.$this->minute.':'.$this->second.$this->timezone;
         }
 
-        function getTimestamp()
+        public function getTimestamp()
         {
             return mktime($this->hour, $this->minute, $this->second, $this->month, $this->day, $this->year);
         }

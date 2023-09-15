@@ -18,6 +18,7 @@
 
         public function render_content()
         {
+            parent::render_content();
             $id = 'reorder-widgets-desc-'.str_replace(['[', ']'], ['-', ''], $this->id);
             ?>
             <button type="button" class="button add-new-widget" aria-expanded="false" aria-controls="available-widgets">

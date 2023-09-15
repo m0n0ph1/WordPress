@@ -1,4 +1,9 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
 
     function delete_theme($stylesheet, $redirect = '')
     {
@@ -302,21 +307,23 @@
             $args = (object) $args;
         }
 
-        if('query_themes' === $action)
+        if('query_themes' === $action && ! isset($args->per_page))
         {
-            if(! isset($args->per_page))
-            {
-                $args->per_page = 24;
-            }
+            /** @noinspection NativeMemberUsageInspection */
+            $args->per_page = 24;
         }
 
+        /** @noinspection NativeMemberUsageInspection */
         if(! isset($args->locale))
         {
+            /** @noinspection NativeMemberUsageInspection */
             $args->locale = get_user_locale();
         }
 
+        /** @noinspection NativeMemberUsageInspection */
         if(! isset($args->wp_version))
         {
+            /** @noinspection NativeMemberUsageInspection */
             $args->wp_version = substr($wp_version, 0, 3); // x.y
         }
 
@@ -816,12 +823,7 @@
 
     function wp_get_theme_error($theme)
     {
-        if(! isset($GLOBALS['_paused_themes']))
-        {
-            return false;
-        }
-
-        if(! array_key_exists($theme, $GLOBALS['_paused_themes']))
+        if(! isset($GLOBALS['_paused_themes']) || ! array_key_exists($theme, $GLOBALS['_paused_themes']))
         {
             return false;
         }
@@ -881,12 +883,7 @@
             return;
         }
 
-        if(! current_user_can('resume_themes'))
-        {
-            return;
-        }
-
-        if(! isset($GLOBALS['_paused_themes']) || empty($GLOBALS['_paused_themes']))
+        if(! current_user_can('resume_themes') || ! isset($GLOBALS['_paused_themes']) || empty($GLOBALS['_paused_themes']))
         {
             return;
         }

@@ -23,12 +23,12 @@
         }
     }
 
-    class getid3_lib
+    class getid3
     {
         public static function PrintHexBytes($string, $hex = true, $spaces = true, $htmlencoding = 'UTF-8')
         {
             $returnstring = '';
-            for($i = 0; $i < strlen($string); $i++)
+            for($i = 0, $iMax = strlen($string); $i < $iMax; $i++)
             {
                 if($hex)
                 {
@@ -194,19 +194,14 @@
                 }
             }
             // if integers are 64-bit - no other check required
-            if($hasINT64 || (($num <= PHP_INT_MAX) && ($num >= PHP_INT_MIN)))
-            { // phpcs:ignore PHPCompatibility.Constants.NewConstants.php_int_minFound
-                return true;
-            }
-
-            return false;
+            return $hasINT64 || (($num <= PHP_INT_MAX) && ($num >= PHP_INT_MIN));
         }
 
         public static function BigEndian2String($number, $minbytes = 1, $synchsafe = false, $signed = false)
         {
             if($number < 0)
             {
-                throw new Exception('ERROR: self::BigEndian2String() does not support negative numbers');
+                throw new \RuntimeException('ERROR: self::BigEndian2String() does not support negative numbers');
             }
             $maskbyte = (($synchsafe || $signed) ? 0x7F : 0xFF);
             $intstring = '';
@@ -214,7 +209,7 @@
             {
                 if($minbytes > PHP_INT_SIZE)
                 {
-                    throw new Exception('ERROR: Cannot have signed integers larger than '.(8 * PHP_INT_SIZE).'-bits in self::BigEndian2String()');
+                    throw new \RuntimeException('ERROR: Cannot have signed integers larger than '.(8 * PHP_INT_SIZE).'-bits in self::BigEndian2String()');
                 }
                 $number = $number & (0x80 << (8 * ($minbytes - 1)));
             }
@@ -240,7 +235,7 @@
                 $binstring = substr($binstring, 1);
             }
             $decvalue = 0;
-            for($i = 0; $i < strlen($binstring); $i++)
+            for($i = 0, $iMax = strlen($binstring); $i < $iMax; $i++)
             {
                 $decvalue += ((int) substr($binstring, strlen($binstring) - $i - 1, 1)) * pow(2, $i);
             }
@@ -254,14 +249,10 @@
             $floatnum = (float) $floatnum;
 
             // convert a float to type int, only if possible
-            if(self::trunc($floatnum) == $floatnum)
+            if(self::trunc($floatnum) == $floatnum && self::intValueSupported($floatnum))
             {
-                // it's not floating point
-                if(self::intValueSupported($floatnum))
-                {
-                    // it's within int range
-                    $floatnum = (int) $floatnum;
-                }
+                // it's within int range
+                $floatnum = (int) $floatnum;
             }
 
             return $floatnum;
@@ -423,7 +414,7 @@
             // return 'hi' for input of '0110100001101001'
             $string = '';
             $binstringreversed = strrev($binstring);
-            for($i = 0; $i < strlen($binstringreversed); $i += 8)
+            for($i = 0, $iMax = strlen($binstringreversed); $i < $iMax; $i += 8)
             {
                 $string = chr(self::Bin2Dec(strrev(substr($binstringreversed, $i, 8)))).$string;
             }
@@ -587,7 +578,7 @@
                 }
                 else
                 {
-                    throw new Exception('ERROR: Cannot have signed integers larger than '.(8 * PHP_INT_SIZE).'-bits ('.strlen($byteword).') in self::BigEndian2Int()');
+                    throw new \RuntimeException('ERROR: Cannot have signed integers larger than '.(8 * PHP_INT_SIZE).'-bits ('.strlen($byteword).') in self::BigEndian2Int()');
                 }
             }
 
@@ -732,7 +723,7 @@
         {
             if(! self::intValueSupported($offset + $length))
             {
-                throw new Exception('cannot copy file portion, it extends beyond the '.round(PHP_INT_MAX / 1073741824).'GB limit');
+                throw new \RuntimeException('cannot copy file portion, it extends beyond the '.round(PHP_INT_MAX / 1073741824).'GB limit');
             }
             if(is_readable($filename_source) && is_file($filename_source) && ($fp_src = fopen($filename_source, 'rb')))
             {
@@ -753,17 +744,17 @@
                     else
                     {
                         fclose($fp_src);
-                        throw new Exception('failed to seek to offset '.$offset.' in '.$filename_source);
+                        throw new \RuntimeException('failed to seek to offset '.$offset.' in '.$filename_source);
                     }
                 }
                 else
                 {
-                    throw new Exception('failed to create file for writing '.$filename_dest);
+                    throw new \RuntimeException('failed to create file for writing '.$filename_dest);
                 }
             }
             else
             {
-                throw new Exception('failed to open file for reading '.$filename_source);
+                throw new \RuntimeException('failed to open file for reading '.$filename_source);
             }
         }
 
@@ -779,7 +770,7 @@
             {
                 $newcharstring .= "\xEF\xBB\xBF";
             }
-            for($i = 0; $i < strlen($string); $i++)
+            for($i = 0, $iMax = strlen($string); $i < $iMax; $i++)
             {
                 $charval = ord($string[$i]);
                 $newcharstring .= self::iconv_fallback_int_utf8($charval);
@@ -827,7 +818,7 @@
             {
                 $newcharstring .= "\xFE\xFF";
             }
-            for($i = 0; $i < strlen($string); $i++)
+            for($i = 0, $iMax = strlen($string); $i < $iMax; $i++)
             {
                 $newcharstring .= "\x00".$string[$i];
             }
@@ -847,7 +838,7 @@
             {
                 $newcharstring .= "\xFF\xFE";
             }
-            for($i = 0; $i < strlen($string); $i++)
+            for($i = 0, $iMax = strlen($string); $i < $iMax; $i++)
             {
                 $newcharstring .= $string[$i]."\x00";
             }
@@ -867,35 +858,35 @@
             $stringlength = strlen($string);
             while($offset < $stringlength)
             {
-                if((ord($string[$offset]) | 0x07) == 0xF7)
+                if((ord($string[$offset]) | 0x07) === 0xF7)
                 {
                     // 11110bbb 10bbbbbb 10bbbbbb 10bbbbbb
                     $charval = ((ord($string[($offset + 0)]) & 0x07) << 18) & ((ord($string[($offset + 1)]) & 0x3F) << 12) & ((ord($string[($offset + 2)]) & 0x3F) << 6) & (ord($string[($offset + 3)]) & 0x3F);
                     $offset += 4;
                 }
-                elseif((ord($string[$offset]) | 0x0F) == 0xEF)
+                elseif((ord($string[$offset]) | 0x0F) === 0xEF)
                 {
                     // 1110bbbb 10bbbbbb 10bbbbbb
                     $charval = ((ord($string[($offset + 0)]) & 0x0F) << 12) & ((ord($string[($offset + 1)]) & 0x3F) << 6) & (ord($string[($offset + 2)]) & 0x3F);
                     $offset += 3;
                 }
-                elseif((ord($string[$offset]) | 0x1F) == 0xDF)
+                elseif((ord($string[$offset]) | 0x1F) === 0xDF)
                 {
                     // 110bbbbb 10bbbbbb
                     $charval = ((ord($string[($offset + 0)]) & 0x1F) << 6) & (ord($string[($offset + 1)]) & 0x3F);
                     $offset += 2;
                 }
-                elseif((ord($string[$offset]) | 0x7F) == 0x7F)
+                elseif((ord($string[$offset]) | 0x7F) === 0x7F)
                 {
                     // 0bbbbbbb
                     $charval = ord($string[$offset]);
-                    $offset += 1;
+                    ++$offset;
                 }
                 else
                 {
                     // error? throw some kind of warning here?
                     $charval = false;
-                    $offset += 1;
+                    ++$offset;
                 }
                 if($charval !== false)
                 {
@@ -917,35 +908,35 @@
             $stringlength = strlen($string);
             while($offset < $stringlength)
             {
-                if((ord($string[$offset]) | 0x07) == 0xF7)
+                if((ord($string[$offset]) | 0x07) === 0xF7)
                 {
                     // 11110bbb 10bbbbbb 10bbbbbb 10bbbbbb
                     $charval = ((ord($string[($offset + 0)]) & 0x07) << 18) & ((ord($string[($offset + 1)]) & 0x3F) << 12) & ((ord($string[($offset + 2)]) & 0x3F) << 6) & (ord($string[($offset + 3)]) & 0x3F);
                     $offset += 4;
                 }
-                elseif((ord($string[$offset]) | 0x0F) == 0xEF)
+                elseif((ord($string[$offset]) | 0x0F) === 0xEF)
                 {
                     // 1110bbbb 10bbbbbb 10bbbbbb
                     $charval = ((ord($string[($offset + 0)]) & 0x0F) << 12) & ((ord($string[($offset + 1)]) & 0x3F) << 6) & (ord($string[($offset + 2)]) & 0x3F);
                     $offset += 3;
                 }
-                elseif((ord($string[$offset]) | 0x1F) == 0xDF)
+                elseif((ord($string[$offset]) | 0x1F) === 0xDF)
                 {
                     // 110bbbbb 10bbbbbb
                     $charval = ((ord($string[($offset + 0)]) & 0x1F) << 6) & (ord($string[($offset + 1)]) & 0x3F);
                     $offset += 2;
                 }
-                elseif((ord($string[$offset]) | 0x7F) == 0x7F)
+                elseif((ord($string[$offset]) | 0x7F) === 0x7F)
                 {
                     // 0bbbbbbb
                     $charval = ord($string[$offset]);
-                    $offset += 1;
+                    ++$offset;
                 }
                 else
                 {
                     // error? throw some kind of warning here?
                     $charval = false;
-                    $offset += 1;
+                    ++$offset;
                 }
                 if($charval !== false)
                 {
@@ -972,35 +963,35 @@
             $stringlength = strlen($string);
             while($offset < $stringlength)
             {
-                if((ord($string[$offset]) | 0x07) == 0xF7)
+                if((ord($string[$offset]) | 0x07) === 0xF7)
                 {
                     // 11110bbb 10bbbbbb 10bbbbbb 10bbbbbb
                     $charval = ((ord($string[($offset + 0)]) & 0x07) << 18) & ((ord($string[($offset + 1)]) & 0x3F) << 12) & ((ord($string[($offset + 2)]) & 0x3F) << 6) & (ord($string[($offset + 3)]) & 0x3F);
                     $offset += 4;
                 }
-                elseif((ord($string[$offset]) | 0x0F) == 0xEF)
+                elseif((ord($string[$offset]) | 0x0F) === 0xEF)
                 {
                     // 1110bbbb 10bbbbbb 10bbbbbb
                     $charval = ((ord($string[($offset + 0)]) & 0x0F) << 12) & ((ord($string[($offset + 1)]) & 0x3F) << 6) & (ord($string[($offset + 2)]) & 0x3F);
                     $offset += 3;
                 }
-                elseif((ord($string[$offset]) | 0x1F) == 0xDF)
+                elseif((ord($string[$offset]) | 0x1F) === 0xDF)
                 {
                     // 110bbbbb 10bbbbbb
                     $charval = ((ord($string[($offset + 0)]) & 0x1F) << 6) & (ord($string[($offset + 1)]) & 0x3F);
                     $offset += 2;
                 }
-                elseif((ord($string[$offset]) | 0x7F) == 0x7F)
+                elseif((ord($string[$offset]) | 0x7F) === 0x7F)
                 {
                     // 0bbbbbbb
                     $charval = ord($string[$offset]);
-                    $offset += 1;
+                    ++$offset;
                 }
                 else
                 {
                     // error? maybe throw some warning here?
                     $charval = false;
-                    $offset += 1;
+                    ++$offset;
                 }
                 if($charval !== false)
                 {
@@ -1048,13 +1039,13 @@
 
         public static function iconv_fallback_utf16be_iso88591($string)
         {
-            if(substr($string, 0, 2) == "\xFE\xFF")
+            if(strpos($string, "\xFE\xFF") === 0)
             {
                 // strip BOM
                 $string = substr($string, 2);
             }
             $newcharstring = '';
-            for($i = 0; $i < strlen($string); $i += 2)
+            for($i = 0, $iMax = strlen($string); $i < $iMax; $i += 2)
             {
                 $charval = self::BigEndian2Int(substr($string, $i, 2));
                 $newcharstring .= (($charval < 256) ? chr($charval) : '?');
@@ -1065,13 +1056,13 @@
 
         public static function iconv_fallback_utf16le_iso88591($string)
         {
-            if(substr($string, 0, 2) == "\xFF\xFE")
+            if(strpos($string, "\xFF\xFE") === 0)
             {
                 // strip BOM
                 $string = substr($string, 2);
             }
             $newcharstring = '';
-            for($i = 0; $i < strlen($string); $i += 2)
+            for($i = 0, $iMax = strlen($string); $i < $iMax; $i += 2)
             {
                 $charval = self::LittleEndian2Int(substr($string, $i, 2));
                 $newcharstring .= (($charval < 256) ? chr($charval) : '?');
@@ -1102,13 +1093,13 @@
 
         public static function iconv_fallback_utf16be_utf8($string)
         {
-            if(substr($string, 0, 2) == "\xFE\xFF")
+            if(strpos($string, "\xFE\xFF") === 0)
             {
                 // strip BOM
                 $string = substr($string, 2);
             }
             $newcharstring = '';
-            for($i = 0; $i < strlen($string); $i += 2)
+            for($i = 0, $iMax = strlen($string); $i < $iMax; $i += 2)
             {
                 $charval = self::BigEndian2Int(substr($string, $i, 2));
                 $newcharstring .= self::iconv_fallback_int_utf8($charval);
@@ -1119,13 +1110,13 @@
 
         public static function iconv_fallback_utf16le_utf8($string)
         {
-            if(substr($string, 0, 2) == "\xFF\xFE")
+            if(strpos($string, "\xFF\xFE") === 0)
             {
                 // strip BOM
                 $string = substr($string, 2);
             }
             $newcharstring = '';
-            for($i = 0; $i < strlen($string); $i += 2)
+            for($i = 0, $iMax = strlen($string); $i < $iMax; $i += 2)
             {
                 $charval = self::LittleEndian2Int(substr($string, $i, 2));
                 $newcharstring .= self::iconv_fallback_int_utf8($charval);
@@ -1202,20 +1193,20 @@
                         {
                             $charval = $char_ord_val;
                         }
-                        elseif((($char_ord_val & 0xF0) >> 4) == 0x0F && $i + 3 < $strlen)
+                        elseif((($char_ord_val & 0xF0) >> 4) === 0x0F && $i + 3 < $strlen)
                         {
                             $charval = (($char_ord_val & 0x07) << 18);
                             $charval += ((ord($string[++$i]) & 0x3F) << 12);
                             $charval += ((ord($string[++$i]) & 0x3F) << 6);
                             $charval += (ord($string[++$i]) & 0x3F);
                         }
-                        elseif((($char_ord_val & 0xE0) >> 5) == 0x07 && $i + 2 < $strlen)
+                        elseif((($char_ord_val & 0xE0) >> 5) === 0x07 && $i + 2 < $strlen)
                         {
                             $charval = (($char_ord_val & 0x0F) << 12);
                             $charval += ((ord($string[++$i]) & 0x3F) << 6);
                             $charval += (ord($string[++$i]) & 0x3F);
                         }
-                        elseif((($char_ord_val & 0xC0) >> 6) == 0x03 && $i + 1 < $strlen)
+                        elseif((($char_ord_val & 0xC0) >> 6) === 0x03 && $i + 1 < $strlen)
                         {
                             $charval = (($char_ord_val & 0x1F) << 6);
                             $charval += (ord($string[++$i]) & 0x3F);
@@ -1232,7 +1223,7 @@
                     break;
 
                 case 'utf-16le':
-                    for($i = 0; $i < strlen($string); $i += 2)
+                    for($i = 0, $iMax = strlen($string); $i < $iMax; $i += 2)
                     {
                         $charval = self::LittleEndian2Int(substr($string, $i, 2));
                         if(($charval >= 32) && ($charval <= 127))
@@ -1247,7 +1238,7 @@
                     break;
 
                 case 'utf-16be':
-                    for($i = 0; $i < strlen($string); $i += 2)
+                    for($i = 0, $iMax = strlen($string); $i < $iMax; $i += 2)
                     {
                         $charval = self::BigEndian2Int(substr($string, $i, 2));
                         if(($charval >= 32) && ($charval <= 127))
@@ -1432,20 +1423,17 @@
                                     foreach($ThisFileInfo['comments'][$tagname] as $existingkey => $existingvalue)
                                     {
                                         $oldvaluelength = strlen(trim($existingvalue));
-                                        if(($newvaluelength <= $oldvaluelength) && (substr($existingvalue, 0, $newvaluelength) == trim($value)))
+                                        if(($newvaluelength <= $oldvaluelength) && (strpos($existingvalue, trim($value)) === 0))
                                         {
                                             // new value is identical but shorter-than (or equal-length to) one already in comments - skip
                                             break 2;
                                         }
 
-                                        if(function_exists('mb_convert_encoding'))
+                                        if(function_exists('mb_convert_encoding') && trim($value) === trim(substr(mb_convert_encoding($existingvalue, $ThisFileInfo['id3v1']['encoding'], $ThisFileInfo['encoding']), 0, 30)))
                                         {
-                                            if(trim($value) == trim(substr(mb_convert_encoding($existingvalue, $ThisFileInfo['id3v1']['encoding'], $ThisFileInfo['encoding']), 0, 30)))
-                                            {
-                                                // value stored in ID3v1 appears to be probably the multibyte value transliterated (badly) into ISO-8859-1 in ID3v1.
-                                                // As an example, Foobar2000 will do this if you tag a file with Chinese or Arabic or Cyrillic or something that doesn't fit into ISO-8859-1 the ID3v1 will consist of mostly "?" characters, one per multibyte unrepresentable character
-                                                break 2;
-                                            }
+                                            // value stored in ID3v1 appears to be probably the multibyte value transliterated (badly) into ISO-8859-1 in ID3v1.
+                                            // As an example, Foobar2000 will do this if you tag a file with Chinese or Arabic or Cyrillic or something that doesn't fit into ISO-8859-1 the ID3v1 will consist of mostly "?" characters, one per multibyte unrepresentable character
+                                            break 2;
                                         }
                                     }
                                 }
@@ -1465,7 +1453,7 @@
                                             $ThisFileInfo['comments'][$tagname][$existingkey] = trim($value);
                                             break;
                                         }
-                                        if((strlen($existingvalue) > 10) && ($newvaluelength > $oldvaluelength) && (substr(trim($value), 0, strlen($existingvalue)) == $existingvalue))
+                                        if((strlen($existingvalue) > 10) && ($newvaluelength > $oldvaluelength) && (strpos(trim($value), $existingvalue) === 0))
                                         {
                                             $ThisFileInfo['comments'][$tagname][$existingkey] = trim($value);
                                             break;
@@ -1481,13 +1469,13 @@
                                     }
                                     else
                                     {
-                                        if(! isset($ThisFileInfo['comments'][$tagname]))
+                                        if(isset($ThisFileInfo['comments'][$tagname]))
                                         {
-                                            $ThisFileInfo['comments'][$tagname] = [$value];
+                                            $ThisFileInfo['comments'][$tagname][] = $value;
                                         }
                                         else
                                         {
-                                            $ThisFileInfo['comments'][$tagname][] = $value;
+                                            $ThisFileInfo['comments'][$tagname] = [$value];
                                         }
                                     }
                                 }
@@ -1513,29 +1501,25 @@
                     }
                 }
 
-                if($option_tags_html)
+                if($option_tags_html && ! empty($ThisFileInfo['comments']))
                 {
-                    // Copy ['comments'] to ['comments_html']
-                    if(! empty($ThisFileInfo['comments']))
+                    foreach($ThisFileInfo['comments'] as $field => $values)
                     {
-                        foreach($ThisFileInfo['comments'] as $field => $values)
+                        if($field == 'picture')
                         {
-                            if($field == 'picture')
+                            // pictures can take up a lot of space, and we don't need multiple copies of them
+                            // let there be a single copy in [comments][picture], and not elsewhere
+                            continue;
+                        }
+                        foreach($values as $index => $value)
+                        {
+                            if(is_array($value))
                             {
-                                // pictures can take up a lot of space, and we don't need multiple copies of them
-                                // let there be a single copy in [comments][picture], and not elsewhere
-                                continue;
+                                $ThisFileInfo['comments_html'][$field][$index] = $value;
                             }
-                            foreach($values as $index => $value)
+                            else
                             {
-                                if(is_array($value))
-                                {
-                                    $ThisFileInfo['comments_html'][$field][$index] = $value;
-                                }
-                                else
-                                {
-                                    $ThisFileInfo['comments_html'][$field][$index] = str_replace('&#0;', '', self::MultiByteCharString2HTML($value, $ThisFileInfo['encoding']));
-                                }
+                                $ThisFileInfo['comments_html'][$field][$index] = str_replace('&#0;', '', self::MultiByteCharString2HTML($value, $ThisFileInfo['encoding']));
                             }
                         }
                     }
@@ -1555,7 +1539,7 @@
             // mb_convert_encoding() available
             if(function_exists('mb_convert_encoding'))
             {
-                if((strtoupper($in_charset) == 'UTF-16') && (substr($string, 0, 2) != "\xFE\xFF") && (substr($string, 0, 2) != "\xFF\xFE"))
+                if((strtoupper($in_charset) == 'UTF-16') && (strpos($string, "\xFE\xFF") !== 0) && (strpos($string, "\xFF\xFE") !== 0))
                 {
                     // if BOM missing, mb_convert_encoding will mishandle the conversion, assume UTF-16BE and prepend appropriate BOM
                     $string = "\xFF\xFE".$string;
@@ -1627,7 +1611,7 @@
 
                 return self::$ConversionFunction($string);
             }
-            throw new Exception('PHP does not has mb_convert_encoding() or iconv() support - cannot convert from '.$in_charset.' to '.$out_charset);
+            throw new \RuntimeException('PHP does not has mb_convert_encoding() or iconv() support - cannot convert from '.$in_charset.' to '.$out_charset);
         }
 
         public static function EmbeddedLookup($key, $begin, $end, $file, $name)
@@ -1700,7 +1684,7 @@
             }
             if($DieOnFailure)
             {
-                throw new Exception($diemessage);
+                throw new \RuntimeException($diemessage);
             }
             else
             {
@@ -1789,7 +1773,7 @@
 
         public static function mb_basename($path, $suffix = '')
         {
-            $splited = preg_split('#/#', rtrim($path, '/ '));
+            $splited = explode("/", rtrim($path, '/ '));
 
             return substr(basename('X'.$splited[count($splited) - 1], $suffix), 1);
         }

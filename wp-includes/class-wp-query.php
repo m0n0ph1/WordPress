@@ -474,16 +474,16 @@
                         continue;
                     }
 
-                    if(! $ptype_obj->hierarchical)
-                    {
-                        // Non-hierarchical post types can directly use 'name'.
-                        $q['name'] = $q[$ptype_obj->query_var];
-                    }
-                    else
+                    if($ptype_obj->hierarchical)
                     {
                         // Hierarchical post types will operate through 'pagename'.
                         $q['pagename'] = $q[$ptype_obj->query_var];
                         $q['name'] = '';
+                    }
+                    else
+                    {
+                        // Non-hierarchical post types can directly use 'name'.
+                        $q['name'] = $q[$ptype_obj->query_var];
                     }
 
                     // Only one request for a slug is possible, this is why name & pagename are overwritten above.
@@ -620,7 +620,7 @@
             }
 
             // If a search pattern is specified, load the posts that match.
-            if(strlen($q['s']))
+            if($q['s'] != '')
             {
                 $search = $this->parse_search($q);
             }
@@ -846,13 +846,13 @@
             }
 
             $rand = (isset($q['orderby']) && 'rand' === $q['orderby']);
-            if(! isset($q['order']))
+            if(isset($q['order']))
             {
-                $q['order'] = $rand ? '' : 'DESC';
+                $q['order'] = $rand ? '' : $this->parse_order($q['order']);
             }
             else
             {
-                $q['order'] = $rand ? '' : $this->parse_order($q['order']);
+                $q['order'] = $rand ? '' : 'DESC';
             }
 
             // These values of orderby should ignore the 'order' parameter.
@@ -1137,7 +1137,11 @@
                     $where .= " AND ($where_status)";
                 }
             }
-            elseif(! $this->is_singular)
+            elseif($this->is_singular)
+            {
+                $where .= $post_type_where;
+            }
+            else
             {
                 if('any' === $post_type)
                 {
@@ -1213,10 +1217,6 @@
                 {
                     $where .= ' AND 1=0 ';
                 }
-            }
-            else
-            {
-                $where .= $post_type_where;
             }
 
             /*
@@ -1348,7 +1348,7 @@
 
                 $fields = apply_filters_ref_array('posts_fields', [$fields, &$this]);
 
-                $clauses = (array) apply_filters_ref_array('posts_clauses', [compact($pieces), &$this]);
+                $clauses = (array) apply_filters_ref_array('posts_clauses', [compact('pieces'), &$this]);
 
                 $where = isset($clauses['where']) ? $clauses['where'] : '';
                 $groupby = isset($clauses['groupby']) ? $clauses['groupby'] : '';
@@ -1381,7 +1381,7 @@
 
                 $limits = apply_filters_ref_array('post_limits_request', [$limits, &$this]);
 
-                $clauses = (array) apply_filters_ref_array('posts_clauses_request', [compact($pieces), &$this]);
+                $clauses = (array) apply_filters_ref_array('posts_clauses_request', [compact('pieces'), &$this]);
 
                 $where = isset($clauses['where']) ? $clauses['where'] : '';
                 $groupby = isset($clauses['groupby']) ? $clauses['groupby'] : '';
@@ -1687,27 +1687,22 @@
 
                     if($post_status_obj && ! $post_status_obj->public)
                     {
-                        if(! is_user_logged_in())
-                        {
-                            // User must be logged in to view unpublished posts.
-                            $this->posts = [];
-                        }
-                        else
+                        if(is_user_logged_in())
                         {
                             if($post_status_obj->protected)
                             {
                                 // User must have edit permissions on the draft to preview.
-                                if(! current_user_can($edit_cap, $this->posts[0]->ID))
-                                {
-                                    $this->posts = [];
-                                }
-                                else
+                                if(current_user_can($edit_cap, $this->posts[0]->ID))
                                 {
                                     $this->is_preview = true;
                                     if('future' !== $status)
                                     {
                                         $this->posts[0]->post_date = current_time('mysql');
                                     }
+                                }
+                                else
+                                {
+                                    $this->posts = [];
                                 }
                             }
                             elseif($post_status_obj->private)
@@ -1722,14 +1717,15 @@
                                 $this->posts = [];
                             }
                         }
-                    }
-                    elseif(! $post_status_obj)
-                    {
-                        // Post status is not registered, assume it's not public.
-                        if(! current_user_can($edit_cap, $this->posts[0]->ID))
+                        else
                         {
+                            // User must be logged in to view unpublished posts.
                             $this->posts = [];
                         }
+                    }
+                    elseif(! $post_status_obj && ! current_user_can($edit_cap, $this->posts[0]->ID))
+                    {
+                        $this->posts = [];
                     }
                 }
 
@@ -1743,14 +1739,13 @@
             $sticky_posts = get_option('sticky_posts');
             if($this->is_home && $page <= 1 && is_array($sticky_posts) && ! empty($sticky_posts) && ! $q['ignore_sticky_posts'])
             {
-                $num_posts = count($this->posts);
                 $sticky_offset = 0;
                 // Loop over posts and relocate stickies to the front.
-                for($i = 0; $i < $num_posts; $i++)
+                foreach($this->posts as $i => $iValue)
                 {
-                    if(in_array($this->posts[$i]->ID, $sticky_posts, true))
+                    if(in_array($iValue->ID, $sticky_posts, true))
                     {
-                        $sticky_post = $this->posts[$i];
+                        $sticky_post = $iValue;
                         // Remove sticky from current position.
                         array_splice($this->posts, $i, 1);
                         // Move to front, after other stickies.
@@ -1981,46 +1976,37 @@
                     $this->is_date = true;
                 }
 
-                if($qv['day'])
+                if($qv['day'] && ! $this->is_date)
                 {
-                    if(! $this->is_date)
+                    $date = sprintf('%04d-%02d-%02d', $qv['year'], $qv['monthnum'], $qv['day']);
+                    if($qv['monthnum'] && $qv['year'] && ! wp_checkdate($qv['monthnum'], $qv['day'], $qv['year'], $date))
                     {
-                        $date = sprintf('%04d-%02d-%02d', $qv['year'], $qv['monthnum'], $qv['day']);
-                        if($qv['monthnum'] && $qv['year'] && ! wp_checkdate($qv['monthnum'], $qv['day'], $qv['year'], $date))
-                        {
-                            $qv['error'] = '404';
-                        }
-                        else
-                        {
-                            $this->is_day = true;
-                            $this->is_date = true;
-                        }
+                        $qv['error'] = '404';
                     }
-                }
-
-                if($qv['monthnum'])
-                {
-                    if(! $this->is_date)
+                    else
                     {
-                        if(12 < $qv['monthnum'])
-                        {
-                            $qv['error'] = '404';
-                        }
-                        else
-                        {
-                            $this->is_month = true;
-                            $this->is_date = true;
-                        }
-                    }
-                }
-
-                if($qv['year'])
-                {
-                    if(! $this->is_date)
-                    {
-                        $this->is_year = true;
+                        $this->is_day = true;
                         $this->is_date = true;
                     }
+                }
+
+                if($qv['monthnum'] && ! $this->is_date)
+                {
+                    if(12 < $qv['monthnum'])
+                    {
+                        $qv['error'] = '404';
+                    }
+                    else
+                    {
+                        $this->is_month = true;
+                        $this->is_date = true;
+                    }
+                }
+
+                if($qv['year'] && ! $this->is_date)
+                {
+                    $this->is_year = true;
+                    $this->is_date = true;
                 }
 
                 if($qv['m'])
@@ -2184,18 +2170,15 @@
             {
                 $this->queried_object = get_page_by_path($qv['pagename']);
 
-                if($this->queried_object && 'attachment' === $this->queried_object->post_type)
+                if($this->queried_object && 'attachment' === $this->queried_object->post_type && preg_match('/^[^%]*%(?:postname)%/', get_option('permalink_structure')))
                 {
-                    if(preg_match('/^[^%]*%(?:postname)%/', get_option('permalink_structure')))
+                    // See if we also have a post with the same slug.
+                    $post = get_page_by_path($qv['pagename'], OBJECT, 'post');
+                    if($post)
                     {
-                        // See if we also have a post with the same slug.
-                        $post = get_page_by_path($qv['pagename'], OBJECT, 'post');
-                        if($post)
-                        {
-                            $this->queried_object = $post;
-                            $this->is_page = false;
-                            $this->is_single = true;
-                        }
+                        $this->queried_object = $post;
+                        $this->is_page = false;
+                        $this->is_single = true;
                     }
                 }
 
@@ -3256,12 +3239,10 @@
             if(str_contains($content, '<!--nextpage-->'))
             {
                 $content = str_replace("\n<!--nextpage-->\n", '<!--nextpage-->', $content);
-                $content = str_replace("\n<!--nextpage-->", '<!--nextpage-->', $content);
-                $content = str_replace("<!--nextpage-->\n", '<!--nextpage-->', $content);
+                $content = str_replace(array("\n<!--nextpage-->", "<!--nextpage-->\n"), '<!--nextpage-->', $content);
 
                 // Remove the nextpage block delimiters, to avoid invalid block structures in the split content.
-                $content = str_replace('<!-- wp:nextpage -->', '', $content);
-                $content = str_replace('<!-- /wp:nextpage -->', '', $content);
+                $content = str_replace(array('<!-- wp:nextpage -->', '<!-- /wp:nextpage -->'), '', $content);
 
                 // Ignore nextpage at the beginning of the content.
                 if(str_starts_with($content, '<!--nextpage-->'))
@@ -3328,15 +3309,7 @@
 
             $page = array_map('strval', (array) $page);
 
-            if(in_array((string) $page_obj->ID, $page, true))
-            {
-                return true;
-            }
-            elseif(in_array($page_obj->post_title, $page, true))
-            {
-                return true;
-            }
-            elseif(in_array($page_obj->post_name, $page, true))
+            if(in_array((string) $page_obj->ID, $page, true) || in_array($page_obj->post_title, $page, true) || in_array($page_obj->post_name, $page, true))
             {
                 return true;
             }
@@ -3502,15 +3475,7 @@
 
             $post = array_map('strval', (array) $post);
 
-            if(in_array((string) $post_obj->ID, $post, true))
-            {
-                return true;
-            }
-            elseif(in_array($post_obj->post_title, $post, true))
-            {
-                return true;
-            }
-            elseif(in_array($post_obj->post_name, $post, true))
+            if(in_array((string) $post_obj->ID, $post, true) || in_array($post_obj->post_title, $post, true) || in_array($post_obj->post_name, $post, true))
             {
                 return true;
             }
@@ -3712,15 +3677,7 @@
                 return false;
             }
 
-            if(in_array((string) $post_obj->ID, $attachment, true))
-            {
-                return true;
-            }
-            elseif(in_array($post_obj->post_title, $attachment, true))
-            {
-                return true;
-            }
-            elseif(in_array($post_obj->post_name, $attachment, true))
+            if(in_array((string) $post_obj->ID, $attachment, true) || in_array($post_obj->post_title, $attachment, true) || in_array($post_obj->post_name, $attachment, true))
             {
                 return true;
             }
@@ -3748,20 +3705,7 @@
 
             $author = array_map('strval', (array) $author);
 
-            if(in_array((string) $author_obj->ID, $author, true))
-            {
-                return true;
-            }
-            elseif(in_array($author_obj->nickname, $author, true))
-            {
-                return true;
-            }
-            elseif(in_array($author_obj->user_nicename, $author, true))
-            {
-                return true;
-            }
-
-            return false;
+            return in_array((string) $author_obj->ID, $author, true) || in_array($author_obj->nickname, $author, true) || in_array($author_obj->user_nicename, $author, true);
         }
 
         public function is_category($category = '')
@@ -3784,20 +3728,7 @@
 
             $category = array_map('strval', (array) $category);
 
-            if(in_array((string) $cat_obj->term_id, $category, true))
-            {
-                return true;
-            }
-            elseif(in_array($cat_obj->name, $category, true))
-            {
-                return true;
-            }
-            elseif(in_array($cat_obj->slug, $category, true))
-            {
-                return true;
-            }
-
-            return false;
+            return in_array((string) $cat_obj->term_id, $category, true) || in_array($cat_obj->name, $category, true) || in_array($cat_obj->slug, $category, true);
         }
 
         public function is_tag($tag = '')
@@ -3820,20 +3751,7 @@
 
             $tag = array_map('strval', (array) $tag);
 
-            if(in_array((string) $tag_obj->term_id, $tag, true))
-            {
-                return true;
-            }
-            elseif(in_array($tag_obj->name, $tag, true))
-            {
-                return true;
-            }
-            elseif(in_array($tag_obj->slug, $tag, true))
-            {
-                return true;
-            }
-
-            return false;
+            return in_array((string) $tag_obj->term_id, $tag, true) || in_array($tag_obj->name, $tag, true) || in_array($tag_obj->slug, $tag, true);
         }
 
         public function is_tax($taxonomy = '', $term = '')
@@ -3921,14 +3839,7 @@
 
         public function is_privacy_policy()
         {
-            if(get_option('wp_page_for_privacy_policy') && $this->is_page(get_option('wp_page_for_privacy_policy')))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return get_option('wp_page_for_privacy_policy') && $this->is_page(get_option('wp_page_for_privacy_policy'));
         }
 
         public function is_month()

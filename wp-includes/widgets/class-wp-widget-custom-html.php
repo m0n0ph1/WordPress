@@ -130,7 +130,8 @@
 
         public function widget($args, $instance)
         {
-            global $post;
+            global parent::widget($args, $instance);
+            $post;
 
             // Override global $post so filters (and shortcodes) apply in a consistent context.
             $original_post = $post;
@@ -236,6 +237,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $instance = wp_parse_args((array) $instance, $this->default_instance);
             ?>
             <input id="<?php echo $this->get_field_id('title'); ?>"

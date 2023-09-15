@@ -211,7 +211,12 @@
             $should_respect_color_scheme = get_theme_mod('respect_user_color_preference', false);
             if($should_respect_color_scheme && 127 <= Twenty_Twenty_One_Custom_Colors::get_relative_luminance_from_hex($background_color))
             {
-                return ($classes) ? ' respect-color-scheme-preference' : 'respect-color-scheme-preference';
+                if($classes)
+                {
+                    return ' respect-color-scheme-preference';
+                }
+
+                return 'respect-color-scheme-preference';
             }
 
             return $classes;

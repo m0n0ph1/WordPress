@@ -1061,13 +1061,10 @@ $login_title = apply_filters('login_title', $login_title, $title);
                     $user = get_user_by('email', $user_name);
                 }
 
-                if($user)
+                if($user && get_user_option('use_ssl', $user->ID))
                 {
-                    if(get_user_option('use_ssl', $user->ID))
-                    {
-                        $secure_cookie = true;
-                        force_ssl_admin(true);
-                    }
+                    $secure_cookie = true;
+                    force_ssl_admin(true);
                 }
             }
 

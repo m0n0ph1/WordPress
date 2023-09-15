@@ -12,6 +12,7 @@
 
         public function start_lvl(&$output, $depth = 0, $args = null)
         {
+            parent::start_lvl($output, $depth, $args);
             $indent = str_repeat("\t", $depth);
             $output .= "\n$indent<ul class='children'>\n";
         }

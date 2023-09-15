@@ -129,7 +129,12 @@
 
             $paused_extensions = (array) get_option($option_name, []);
 
-            return isset($paused_extensions[$this->type]) ? $paused_extensions[$this->type] : [];
+            if(isset($paused_extensions[$this->type]))
+            {
+                return $paused_extensions[$this->type];
+            }
+
+            return [];
         }
 
         public function delete_all()

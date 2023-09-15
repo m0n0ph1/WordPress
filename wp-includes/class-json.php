@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
     _deprecated_file(basename(__FILE__), '5.3.0', '', 'The PHP native JSON extension is now a requirement.');
 
     if(! class_exists('Services_JSON')) :
@@ -142,7 +143,12 @@
                 switch(gettype($var))
                 {
                     case 'boolean':
-                        return $var ? 'true' : 'false';
+                        if($var)
+                        {
+                            return 'true';
+                        }
+
+                        return 'false';
 
                     case 'NULL':
                         return 'null';
@@ -197,7 +203,7 @@
                                     $ascii .= $var[$c];
                                     break;
 
-                                case (($ord_var_c & 0xE0) == 0xC0):
+                                case (($ord_var_c & 0xE0) === 0xC0):
                                     // characters U-00000080 - U-000007FF, mask 110XXXXX
                                     // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                                     if($c + 1 >= $strlen_var)
@@ -213,7 +219,7 @@
                                     $ascii .= sprintf('\u%04s', bin2hex($utf16));
                                     break;
 
-                                case (($ord_var_c & 0xF0) == 0xE0):
+                                case (($ord_var_c & 0xF0) === 0xE0):
                                     if($c + 2 >= $strlen_var)
                                     {
                                         $c += 2;
@@ -228,7 +234,7 @@
                                     $ascii .= sprintf('\u%04s', bin2hex($utf16));
                                     break;
 
-                                case (($ord_var_c & 0xF8) == 0xF0):
+                                case (($ord_var_c & 0xF8) === 0xF0):
                                     if($c + 3 >= $strlen_var)
                                     {
                                         $c += 3;
@@ -243,7 +249,7 @@
                                     $ascii .= sprintf('\u%04s', bin2hex($utf16));
                                     break;
 
-                                case (($ord_var_c & 0xFC) == 0xF8):
+                                case (($ord_var_c & 0xFC) === 0xF8):
                                     // characters U-00200000 - U-03FFFFFF, mask 111110XX
                                     // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                                     if($c + 4 >= $strlen_var)
@@ -258,7 +264,7 @@
                                     $ascii .= sprintf('\u%04s', bin2hex($utf16));
                                     break;
 
-                                case (($ord_var_c & 0xFE) == 0xFC):
+                                case (($ord_var_c & 0xFE) === 0xFC):
                                     if($c + 5 >= $strlen_var)
                                     {
                                         $c += 5;
@@ -336,7 +342,12 @@
 
                             if(method_exists($recode, 'toJSON'))
                             {
-                                return ($this->use & SERVICES_JSON_SUPPRESS_ERRORS) ? 'null' : new Services_JSON_Error(get_class($var)." toJSON returned an object with a toJSON method.");
+                                if($this->use & SERVICES_JSON_SUPPRESS_ERRORS)
+                                {
+                                    return 'null';
+                                }
+
+                                return new Services_JSON_Error(get_class($var)." toJSON returned an object with a toJSON method.");
                             }
 
                             return $this->_encode($recode);
@@ -357,7 +368,12 @@
                         return '{'.join(',', $properties).'}';
 
                     default:
-                        return ($this->use & SERVICES_JSON_SUPPRESS_ERRORS) ? 'null' : new Services_JSON_Error(gettype($var)." can not be encoded as JSON string");
+                        if($this->use & SERVICES_JSON_SUPPRESS_ERRORS)
+                        {
+                            return 'null';
+                        }
+
+                        return new Services_JSON_Error(gettype($var)." can not be encoded as JSON string");
                 }
             }
 
@@ -425,7 +441,12 @@
                             // return (float)$str;
 
                             // Return float or int, as appropriate
-                            return ((float) $str == (integer) $str) ? (integer) $str : (float) $str;
+                            if((float) $str == (integer) $str)
+                            {
+                                return (integer) $str;
+                            }
+
+                            return (float) $str;
                         }
                         elseif(preg_match('/^("|\').*(\1)$/s', $str, $m) && $m[1] == $m[2])
                         {
@@ -484,35 +505,35 @@
                                         $utf8 .= $chrs[$c];
                                         break;
 
-                                    case ($ord_chrs_c & 0xE0) == 0xC0:
+                                    case ($ord_chrs_c & 0xE0) === 0xC0:
                                         // characters U-00000080 - U-000007FF, mask 110XXXXX
                                         // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                                         $utf8 .= $this->substr8($chrs, $c, 2);
                                         ++$c;
                                         break;
 
-                                    case ($ord_chrs_c & 0xF0) == 0xE0:
+                                    case ($ord_chrs_c & 0xF0) === 0xE0:
                                         // characters U-00000800 - U-0000FFFF, mask 1110XXXX
                                         // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                                         $utf8 .= $this->substr8($chrs, $c, 3);
                                         $c += 2;
                                         break;
 
-                                    case ($ord_chrs_c & 0xF8) == 0xF0:
+                                    case ($ord_chrs_c & 0xF8) === 0xF0:
                                         // characters U-00010000 - U-001FFFFF, mask 11110XXX
                                         // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                                         $utf8 .= $this->substr8($chrs, $c, 4);
                                         $c += 3;
                                         break;
 
-                                    case ($ord_chrs_c & 0xFC) == 0xF8:
+                                    case ($ord_chrs_c & 0xFC) === 0xF8:
                                         // characters U-00200000 - U-03FFFFFF, mask 111110XX
                                         // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                                         $utf8 .= $this->substr8($chrs, $c, 5);
                                         $c += 4;
                                         break;
 
-                                    case ($ord_chrs_c & 0xFE) == 0xFC:
+                                    case ($ord_chrs_c & 0xFE) === 0xFC:
                                         // characters U-04000000 - U-7FFFFFFF, mask 1111110X
                                         // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                                         $utf8 .= $this->substr8($chrs, $c, 6);
@@ -612,6 +633,7 @@
                                             }
                                             else
                                             {
+                                                /** @noinspection NativeMemberUsageInspection */
                                                 $obj->$key = $val;
                                             }
                                         }
@@ -627,6 +649,7 @@
                                             }
                                             else
                                             {
+                                                /** @noinspection NativeMemberUsageInspection */
                                                 $obj->$key = $val;
                                             }
                                         }
@@ -643,7 +666,7 @@
                                     // print("Found start of string at {$c}\n");
 
                                 }
-                                elseif(($chrs[$c] == $top['delim']) && ($top['what'] == SERVICES_JSON_IN_STR) && (($this->strlen8($this->substr8($chrs, 0, $c)) - $this->strlen8(rtrim($this->substr8($chrs, 0, $c), '\\'))) % 2 != 1))
+                                elseif(($chrs[$c] == $top['delim']) && ($top['what'] == SERVICES_JSON_IN_STR) && (($this->strlen8($this->substr8($chrs, 0, $c)) - $this->strlen8(rtrim($this->substr8($chrs, 0, $c), '\\'))) % 2 !== 1))
                                 {
                                     // found a quote, we're in a string, and it's not escaped
                                     // we know that it's not escaped because there is _not_ an

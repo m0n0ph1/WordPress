@@ -18,7 +18,12 @@
             if($fallback && ! is_wp_error($fallback))
             {
                 // Return the newly created fallback post object which will now be the most recently created navigation menu.
-                return $fallback instanceof WP_Post ? $fallback : static::get_most_recently_published_navigation();
+                if($fallback instanceof WP_Post)
+                {
+                    return $fallback;
+                }
+
+                return static::get_most_recently_published_navigation();
             }
 
             $fallback = static::create_default_fallback();
@@ -26,7 +31,12 @@
             if($fallback && ! is_wp_error($fallback))
             {
                 // Return the newly created fallback post object which will now be the most recently created navigation menu.
-                return $fallback instanceof WP_Post ? $fallback : static::get_most_recently_published_navigation();
+                if($fallback instanceof WP_Post)
+                {
+                    return $fallback;
+                }
+
+                return static::get_most_recently_published_navigation();
             }
 
             return null;
@@ -179,6 +189,11 @@
             $registry = WP_Block_Type_Registry::get_instance();
 
             // If `core/page-list` is not registered then use empty blocks.
-            return $registry->is_registered('core/page-list') ? '<!-- wp:page-list /-->' : '';
+            if($registry->is_registered('core/page-list'))
+            {
+                return '<!-- wp:page-list /-->';
+            }
+
+            return '';
         }
     }

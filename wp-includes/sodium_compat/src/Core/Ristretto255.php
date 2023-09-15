@@ -1,14 +1,14 @@
 <?php
 
-    class ParagonIE_Sodium_Core_Ristretto255 extends ParagonIE_Sodium_Core_Ed25519
+    class Ristretto255 extends ParagonIE_Sodium_Core_Ed25519
     {
-        const crypto_core_ristretto255_HASHBYTES = 64;
+        public const crypto_core_ristretto255_HASHBYTES = 64;
 
-        const HASH_SC_L = 48;
+        public const HASH_SC_L = 48;
 
-        const CORE_H2C_SHA256 = 1;
+        public const CORE_H2C_SHA256 = 1;
 
-        const CORE_H2C_SHA512 = 2;
+        public const CORE_H2C_SHA512 = 2;
 
         public static function is_valid_point($p)
         {
@@ -23,12 +23,9 @@
 
         public static function ristretto255_frombytes($s, $skipCanonicalCheck = false)
         {
-            if(! $skipCanonicalCheck)
+            if(! $skipCanonicalCheck && ! self::ristretto255_point_is_canonical($s))
             {
-                if(! self::ristretto255_point_is_canonical($s))
-                {
-                    throw new SodiumException('S is not canonical');
-                }
+                throw new SodiumException('S is not canonical');
             }
 
             $s_ = self::fe_frombytes($s);
@@ -65,7 +62,7 @@
 
             $res = -((1 - $notsquare) | self::fe_isnegative($h->T) | self::fe_iszero($h->Y));
 
-            return ['h' => $h, 'res' => $res];
+            return compact('h', 'res');
         }
 
         public static function ristretto255_point_is_canonical($s)

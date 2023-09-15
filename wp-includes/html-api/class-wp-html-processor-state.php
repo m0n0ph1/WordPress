@@ -17,9 +17,9 @@
          * @see https://html.spec.whatwg.org/#the-insertion-mode
          */
 
-        const INSERTION_MODE_INITIAL = 'insertion-mode-initial';
+        public const INSERTION_MODE_INITIAL = 'insertion-mode-initial';
 
-        const INSERTION_MODE_IN_BODY = 'insertion-mode-in-body';
+        public const INSERTION_MODE_IN_BODY = 'insertion-mode-in-body';
 
         public $stack_of_open_elements = null;
 

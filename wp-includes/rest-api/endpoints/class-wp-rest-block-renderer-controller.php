@@ -10,6 +10,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base.'/(?P<name>[a-z0-9-]+/[a-z0-9-]+)', [
                 'args' => [
                     'name' => [

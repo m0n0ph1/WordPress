@@ -2,35 +2,41 @@
 
     class IXR_Client
     {
-        var $server;
+        public $server;
 
-        var $port;
+        public $port;
 
-        var $path;
+        public $path;
 
-        var $useragent;
+        public $useragent;
 
-        var $response;
+        public $response;
 
-        var $message = false;
+        public $message = false;
 
-        var $debug = false;
+        public $debug = false;
 
-        var $timeout;
+        public $timeout;
 
-        var $headers = [];
+        public $headers = [];
 
         // Storage place for an error message
-        var $error = false;
+        public $error = false;
 
         public function IXR_Client($server, $path = false, $port = 80, $timeout = 15)
         {
-            self::__construct($server, $path, $port, $timeout);
+            $this->__construct($server, $path, $port, $timeout);
         }
 
-        function __construct($server, $path = false, $port = 80, $timeout = 15)
+        public function __construct($server, $path = false, $port = 80, $timeout = 15)
         {
-            if(! $path)
+            if($path)
+            {
+                $this->server = $server;
+                $this->path = $path;
+                $this->port = $port;
+            }
+            else
             {
                 // Assume we have been given a URL instead
                 $bits = parse_url($server);
@@ -49,17 +55,11 @@
                     $this->path .= '?'.$bits['query'];
                 }
             }
-            else
-            {
-                $this->server = $server;
-                $this->path = $path;
-                $this->port = $port;
-            }
             $this->useragent = 'The Incutio XML-RPC PHP Library';
             $this->timeout = $timeout;
         }
 
-        function query(...$args)
+        public function query(...$args)
         {
             $method = array_shift($args);
             $request = new IXR_Request($method, $args);
@@ -102,7 +102,7 @@
 
                 return false;
             }
-            fputs($fp, $request);
+            fwrite($fp, $request);
             $contents = '';
             $debugContents = '';
             $gotFirstLine = false;
@@ -162,23 +162,23 @@
             return true;
         }
 
-        function getResponse()
+        public function getResponse()
         {
             // methodResponses can only have one param - return that
             return $this->message->params[0];
         }
 
-        function isError()
+        public function isError()
         {
             return (is_object($this->error));
         }
 
-        function getErrorCode()
+        public function getErrorCode()
         {
             return $this->error->code;
         }
 
-        function getErrorMessage()
+        public function getErrorMessage()
         {
             return $this->error->message;
         }

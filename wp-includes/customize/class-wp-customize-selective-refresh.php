@@ -3,7 +3,7 @@
     #[AllowDynamicProperties]
     final class WP_Customize_Selective_Refresh
     {
-        const RENDER_QUERY_VAR = 'wp_customize_render_partials';
+        public const RENDER_QUERY_VAR = 'wp_customize_render_partials';
 
         public $manager;
 

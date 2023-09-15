@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core32_ChaCha20_IetfCtx extends ParagonIE_Sodium_Core32_ChaCha20_Ctx
+    class IetfCtx extends ParagonIE_Sodium_Core32_ChaCha20_Ctx
     {
         public function __construct($key = '', $iv = '', $counter = '')
         {

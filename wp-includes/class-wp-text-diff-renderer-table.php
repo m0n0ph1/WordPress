@@ -263,7 +263,7 @@
             {
                 while($diff_count < 0)
                 {
-                    array_push($orig_rows, $diff_count++);
+                    $orig_rows[] = $diff_count++;
                 }
             }
             elseif($diff_count > 0)
@@ -271,7 +271,7 @@
                 $diff_count = -1 * $diff_count;
                 while($diff_count < 0)
                 {
-                    array_push($final_rows, $diff_count++);
+                    $final_rows[] = $diff_count++;
                 }
             }
 

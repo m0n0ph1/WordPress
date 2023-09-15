@@ -163,16 +163,13 @@ text-align: center;
             $most_active = $t;
         }
 
-        if($display)
+        if($display && is_array($most_active))
         {
-            if(is_array($most_active))
+            reset($most_active);
+            foreach((array) $most_active as $key => $details)
             {
-                reset($most_active);
-                foreach((array) $most_active as $key => $details)
-                {
-                    $url = esc_url('http://'.$details['domain'].$details['path']);
-                    echo '<li>'.$details['postcount']." <a href='$url'>$url</a></li>";
-                }
+                $url = esc_url('http://'.$details['domain'].$details['path']);
+                echo '<li>'.$details['postcount']." <a href='$url'>$url</a></li>";
             }
         }
 
@@ -235,13 +232,13 @@ text-align: center;
 
         if(! str_contains($url, 'updated=true'))
         {
-            if(! str_contains($url, '?'))
+            if(str_contains($url, '?'))
             {
-                return $url.'?updated=true';
+                return $url.'&updated=true';
             }
             else
             {
-                return $url.'&updated=true';
+                return $url.'?updated=true';
             }
         }
 
@@ -341,11 +338,7 @@ text-align: center;
 
         global $wpdb;
 
-        if(! $domain)
-        {
-            $network_id = get_current_network_id();
-        }
-        else
+        if($domain)
         {
             $_networks = get_networks([
                                           'fields' => 'ids',
@@ -354,6 +347,10 @@ text-align: center;
                                           'path' => $path,
                                       ]);
             $network_id = ! empty($_networks) ? array_shift($_networks) : 0;
+        }
+        else
+        {
+            $network_id = get_current_network_id();
         }
 
         if($network_id)
@@ -440,11 +437,7 @@ text-align: center;
     {
         _deprecated_function(__FUNCTION__, '5.1.0', 'wp_insert_site()');
 
-        $data = [
-            'domain' => $domain,
-            'path' => $path,
-            'site_id' => $site_id,
-        ];
+        $data = compact('domain', 'path', 'site_id');
 
         $site_id = wp_insert_site($data);
         if(is_wp_error($site_id))
@@ -485,7 +478,8 @@ text-align: center;
         // populate_roles() clears previous role definitions so we start over.
         $wp_roles = new WP_Roles();
 
-        $siteurl = $home = untrailingslashit($url);
+        $home = untrailingslashit($url);
+        $siteurl = $home;
 
         if(! is_subdomain_install())
         {

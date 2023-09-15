@@ -214,17 +214,17 @@
         {
             $errors->add('empty_email', __('<strong>Error:</strong> Please enter an email address.'), ['form-field' => 'email']);
         }
-        elseif(! is_email($user->user_email))
-        {
-            $errors->add('invalid_email', __('<strong>Error:</strong> The email address is not correct.'), ['form-field' => 'email']);
-        }
-        else
+        elseif(is_email($user->user_email))
         {
             $owner_id = email_exists($user->user_email);
             if($owner_id && (! $update || ($owner_id !== $user->ID)))
             {
                 $errors->add('email_exists', __('<strong>Error:</strong> This email is already registered. Please choose another one.'), ['form-field' => 'email']);
             }
+        }
+        else
+        {
+            $errors->add('invalid_email', __('<strong>Error:</strong> The email address is not correct.'), ['form-field' => 'email']);
         }
 
         do_action_ref_array('user_profile_update_errors', [&$errors, $update, &$user]);

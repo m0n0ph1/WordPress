@@ -253,15 +253,15 @@
                 ];
 
                 // Add a style attribute with the height, or append the height to the style attribute if the style attribute already exists.
-                if(! str_contains($html, ' style='))
-                {
-                    $search[] = '/(src=)/';
-                    $replace[] = "style=\"height: {$logo_height}px;\" src=";
-                }
-                else
+                if(str_contains($html, ' style='))
                 {
                     $search[] = '/(style="[^"]*)/';
                     $replace[] = "$1 height: {$logo_height}px;";
+                }
+                else
+                {
+                    $search[] = '/(src=)/';
+                    $replace[] = "style=\"height: {$logo_height}px;\" src=";
                 }
 
                 $html = preg_replace($search, $replace, $html);
@@ -368,13 +368,13 @@
             return $mce_init;
         }
 
-        if(! isset($mce_init['content_style']))
+        if(isset($mce_init['content_style']))
         {
-            $mce_init['content_style'] = $styles.' ';
+            $mce_init['content_style'] .= ' '.$styles.' ';
         }
         else
         {
-            $mce_init['content_style'] .= ' '.$styles.' ';
+            $mce_init['content_style'] = $styles.' ';
         }
 
         return $mce_init;
@@ -392,13 +392,13 @@
             return $mce_init;
         }
 
-        if(! isset($mce_init['content_style']))
+        if(isset($mce_init['content_style']))
         {
-            $mce_init['content_style'] = $styles.' ';
+            $mce_init['content_style'] .= ' '.$styles.' ';
         }
         else
         {
-            $mce_init['content_style'] .= ' '.$styles.' ';
+            $mce_init['content_style'] = $styles.' ';
         }
 
         return $mce_init;

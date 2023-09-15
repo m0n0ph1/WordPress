@@ -131,7 +131,11 @@
         $id = wpmu_create_blog($newdomain, $path, $title, $user_id, $meta, get_current_network_id());
         $wpdb->show_errors();
 
-        if(! is_wp_error($id))
+        if(is_wp_error($id))
+        {
+            wp_die($id->get_error_message());
+        }
+        else
         {
             if(! is_super_admin($user_id) && ! get_user_option('primary_blog', $user_id))
             {
@@ -147,10 +151,6 @@
                               ], 'site-new.php')
             );
             exit;
-        }
-        else
-        {
-            wp_die($id->get_error_message());
         }
     }
 

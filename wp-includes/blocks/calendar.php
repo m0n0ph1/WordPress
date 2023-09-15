@@ -52,8 +52,10 @@
             $classnames .= ' has-link-color';
         }
         // Apply color classes and styles to the calendar.
-        $calendar = str_replace('<table', '<table'.$inline_styles, get_calendar(true, false));
-        $calendar = str_replace('class="wp-calendar-table', 'class="wp-calendar-table'.$classnames, $calendar);
+        $calendar = str_replace(array('<table', 'class="wp-calendar-table'), array(
+            '<table'.$inline_styles,
+            'class="wp-calendar-table'.$classnames
+        ),                      get_calendar(true, false));
 
         $wrapper_attributes = get_block_wrapper_attributes();
         $output = sprintf('<div %1$s>%2$s</div>', $wrapper_attributes, $calendar);
@@ -123,12 +125,7 @@
         function block_core_calendar_update_has_published_post_on_transition_post_status(
             $new_status, $old_status, $post
         ) {
-            if($new_status === $old_status)
-            {
-                return;
-            }
-
-            if('post' !== get_post_type($post))
+            if($new_status === $old_status || 'post' !== get_post_type($post))
             {
                 return;
             }

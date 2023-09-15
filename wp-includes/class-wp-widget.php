@@ -28,7 +28,7 @@
         public function WP_Widget($id_base, $name, $widget_options = [], $control_options = [])
         {
             _deprecated_constructor('WP_Widget', '4.3.0', get_class($this));
-            WP_Widget::__construct($id_base, $name, $widget_options, $control_options);
+            $this->__construct($id_base, $name, $widget_options, $control_options);
         }
 
         public function __construct($id_base, $name, $widget_options = [], $control_options = [])

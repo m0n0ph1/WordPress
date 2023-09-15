@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
 
     function _wp_translate_postdata($update = false, $post_data = null)
     {
@@ -334,6 +336,7 @@
         $post_data = _wp_translate_postdata(true, $post_data);
         if(is_wp_error($post_data))
         {
+            /** @noinspection NativeMemberUsageInspection */
             wp_die($post_data->get_error_message());
         }
         $translated = _wp_get_allowed_postdata($post_data);
@@ -995,6 +998,7 @@
         $result = wp_write_post();
         if(is_wp_error($result))
         {
+            /** @noinspection NativeMemberUsageInspection */
             wp_die($result->get_error_message());
         }
         else
@@ -1103,19 +1107,14 @@
         $content = $post['post_content'];
 
         // Don't run if no pretty permalinks or post is not published, scheduled, or privately published.
+        // Short if there aren't any links or no '?attachment_id=' strings (strpos cannot be zero).
         if(
             ! get_option('permalink_structure') || ! in_array($post['post_status'], [
                 'publish',
                 'future',
                 'private',
-            ],                                                true)
+            ],                                                true) || ! strpos($content, '?attachment_id=') || ! preg_match_all('/<a ([^>]+)>[\s\S]+?<\/a>/', $content, $link_matches)
         )
-        {
-            return;
-        }
-
-        // Short if there aren't any links or no '?attachment_id=' strings (strpos cannot be zero).
-        if(! strpos($content, '?attachment_id=') || ! preg_match_all('/<a ([^>]+)>[\s\S]+?<\/a>/', $content, $link_matches))
         {
             return;
         }
@@ -1135,7 +1134,7 @@
             $url_id = (int) $url_match[2];
             $rel_id = (int) $rel_match[1];
 
-            if(! $url_id || ! $rel_id || $url_id != $rel_id || ! str_contains($url_match[0], $site_url))
+            if(! $url_id || ! $rel_id || $url_id !== $rel_id || ! str_contains($url_match[0], $site_url))
             {
                 continue;
             }
@@ -1838,6 +1837,7 @@
 
         if(is_wp_error($saved_post_id))
         {
+            /** @noinspection NativeMemberUsageInspection */
             wp_die($saved_post_id->get_error_message());
         }
 

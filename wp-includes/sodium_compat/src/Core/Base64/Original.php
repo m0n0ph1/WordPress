@@ -1,6 +1,6 @@
 <?php
 
-    class ParagonIE_Sodium_Core_Base64_Original
+    class Original
     {
         // COPY ParagonIE_Sodium_Core_Base64_Common STARTING HERE
 
@@ -87,22 +87,15 @@
 
             if($strictPadding)
             {
-                if(($srcLen & 3) === 0)
+                if(($srcLen & 3) === 0 && $src[$srcLen - 1] === '=')
                 {
+                    $srcLen--;
                     if($src[$srcLen - 1] === '=')
                     {
                         $srcLen--;
-                        if($src[$srcLen - 1] === '=')
-                        {
-                            $srcLen--;
-                        }
                     }
                 }
-                if(($srcLen & 3) === 1)
-                {
-                    throw new RangeException('Incorrect padding');
-                }
-                if($src[$srcLen - 1] === '=')
+                if(($srcLen & 3) === 1 || $src[$srcLen - 1] === '=')
                 {
                     throw new RangeException('Incorrect padding');
                 }

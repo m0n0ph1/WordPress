@@ -26,11 +26,7 @@
 
         $format = $nicename ? 'slug' : 'name';
 
-        $args = [
-            'separator' => $separator,
-            'link' => $link,
-            'format' => $format,
-        ];
+        $args = compact('separator', 'link', 'format');
 
         return get_term_parents_list($category_id, 'category', $args);
     }
@@ -63,7 +59,12 @@
             return $category;
         }
 
-        return ($category) ? $category->name : '';
+        if($category)
+        {
+            return $category->name;
+        }
+
+        return '';
     }
 
     function get_the_category_list($separator = '', $parents = '', $post_id = false)
@@ -697,7 +698,7 @@
 
             $tags_data[] = [
                 'id' => $tag_id,
-                'url' => ('#' !== $tag->link) ? $tag->link : '#',
+                'url' => $tag->link,
                 'role' => ('#' !== $tag->link) ? '' : ' role="button"',
                 'name' => $tag->name,
                 'formatted_count' => $formatted_count,
@@ -850,7 +851,12 @@
 
         $description = get_term_field('description', $term);
 
-        return is_wp_error($description) ? '' : $description;
+        if(is_wp_error($description))
+        {
+            return '';
+        }
+
+        return $description;
     }
 
     function get_the_terms($post, $taxonomy)

@@ -2,23 +2,23 @@
 
     class WP_HTML_Processor extends WP_HTML_Tag_Processor
     {
-        const MAX_BOOKMARKS = 100;
+        public const MAX_BOOKMARKS = 100;
 
-        const VISIT_EVERYTHING = ['tag_closers' => 'visit'];
+        public const VISIT_EVERYTHING = ['tag_closers' => 'visit'];
 
-        const PROCESS_NEXT_NODE = 'process-next-node';
+        public const PROCESS_NEXT_NODE = 'process-next-node';
 
-        const REPROCESS_CURRENT_NODE = 'reprocess-current-node';
+        public const REPROCESS_CURRENT_NODE = 'reprocess-current-node';
 
-        const ERROR_UNSUPPORTED = 'unsupported';
+        public const ERROR_UNSUPPORTED = 'unsupported';
 
-        const ERROR_EXCEEDED_MAX_BOOKMARKS = 'exceeded-max-bookmarks';
+        public const ERROR_EXCEEDED_MAX_BOOKMARKS = 'exceeded-max-bookmarks';
 
         /*
          * Public Interface Functions
          */
 
-        const CONSTRUCTOR_UNLOCK_CODE = 'Use WP_HTML_Processor::createFragment instead of calling the class constructor directly.';
+        public const CONSTRUCTOR_UNLOCK_CODE = 'Use WP_HTML_Processor::createFragment instead of calling the class constructor directly.';
 
         private $state = null;
 
@@ -276,7 +276,7 @@
             if(! parent::set_bookmark(++$this->bookmark_counter))
             {
                 $this->last_error = self::ERROR_EXCEEDED_MAX_BOOKMARKS;
-                throw new Exception('could not allocate bookmark');
+                throw new \RuntimeException('could not allocate bookmark');
             }
 
             return "{$this->bookmark_counter}";

@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
 //
 // No-privilege Ajax handlers.
@@ -102,7 +102,7 @@
 	 * Require $term_search_min_chars chars for matching (default: 2)
 	 * ensure it's a non-negative, non-zero integer.
 	 */
-        if((0 == $term_search_min_chars) || (strlen($search) < $term_search_min_chars))
+        if((0 === $term_search_min_chars) || (strlen($search) < $term_search_min_chars))
         {
             wp_die();
         }
@@ -450,7 +450,7 @@
         }
 
         // Only do the expensive stuff on a page-break, and about 1 other time per page.
-        if(0 == $total % $per_page || 1 == mt_rand(1, $per_page))
+        if(0 === $total % $per_page || 1 == random_int(1, $per_page))
         {
             $post_id = 0;
             // What type of comment count are we looking for?
@@ -2426,19 +2426,15 @@
 
         $attachment_id = (int) $_POST['attachment_id'];
 
-        if(! empty($_POST['_wp_upload_failed_cleanup']))
+        if(! empty($_POST['_wp_upload_failed_cleanup']) && wp_attachment_is_image($attachment_id) && current_user_can('delete_post', $attachment_id))
         {
-            // Upload failed. Cleanup.
-            if(wp_attachment_is_image($attachment_id) && current_user_can('delete_post', $attachment_id))
-            {
-                $attachment = get_post($attachment_id);
+            $attachment = get_post($attachment_id);
 
-                // Created at most 10 min ago.
-                if($attachment && (time() - strtotime($attachment->post_date_gmt) < 600))
-                {
-                    wp_delete_attachment($attachment_id, true);
-                    wp_send_json_success();
-                }
+            // Created at most 10 min ago.
+            if($attachment && (time() - strtotime($attachment->post_date_gmt) < 600))
+            {
+                wp_delete_attachment($attachment_id, true);
+                wp_send_json_success();
             }
         }
 
@@ -2525,6 +2521,7 @@
 
         if(is_wp_error($post_data))
         {
+            /** @noinspection NativeMemberUsageInspection */
             wp_die($post_data->get_error_message());
         }
 

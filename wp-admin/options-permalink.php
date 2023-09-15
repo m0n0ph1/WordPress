@@ -172,13 +172,13 @@
         {
             if($iis7_permalinks)
             {
-                if(! $writable)
+                if($writable)
                 {
-                    $message = sprintf(/* translators: %s: web.config */ __('You should update your %s file now.'), '<code>web.config</code>');
+                    $message = sprintf(/* translators: %s: web.config */ __('Permalink structure updated. Remove write access on %s file now!'), '<code>web.config</code>');
                 }
                 else
                 {
-                    $message = sprintf(/* translators: %s: web.config */ __('Permalink structure updated. Remove write access on %s file now!'), '<code>web.config</code>');
+                    $message = sprintf(/* translators: %s: web.config */ __('You should update your %s file now.'), '<code>web.config</code>');
                 }
             }
             elseif(! $is_nginx && $htaccess_update_required && ! $writable)

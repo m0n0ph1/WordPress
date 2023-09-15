@@ -432,7 +432,7 @@
         else
         {
             // If no root selector found, generate default block class selector.
-            $block_name = str_replace('/', '-', str_replace('core/', '', $block_type->name));
+            $block_name = str_replace(array('core/', '/'), array('', '-'), $block_type->name);
             $root_selector = ".wp-block-{$block_name}";
         }
 
@@ -469,7 +469,12 @@
                 // Check if feature selector is set via shorthand.
                 $feature_selector = _wp_array_get($block_type->selectors, $target, null);
 
-                return is_string($feature_selector) ? $feature_selector : $fallback_selector;
+                if(is_string($feature_selector))
+                {
+                    return $feature_selector;
+                }
+
+                return $fallback_selector;
             }
 
             // Try getting old experimental supports selector value.

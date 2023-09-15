@@ -408,20 +408,20 @@
             // WordPress features requiring processing.
             $wp_dotorg = wp_remote_get('https://wordpress.org', ['timeout' => 10]);
 
-            if(! is_wp_error($wp_dotorg))
+            if(is_wp_error($wp_dotorg))
             {
                 $info['wp-core']['fields']['dotorg_communication'] = [
                     'label' => __('Communication with WordPress.org'),
-                    'value' => __('WordPress.org is reachable'),
-                    'debug' => 'true',
+                    'value' => sprintf(/* translators: 1: The IP address WordPress.org resolves to. 2: The error returned by the lookup. */ __('Unable to reach WordPress.org at %1$s: %2$s'), gethostbyname('wordpress.org'), $wp_dotorg->get_error_message()),
+                    'debug' => $wp_dotorg->get_error_message(),
                 ];
             }
             else
             {
                 $info['wp-core']['fields']['dotorg_communication'] = [
                     'label' => __('Communication with WordPress.org'),
-                    'value' => sprintf(/* translators: 1: The IP address WordPress.org resolves to. 2: The error returned by the lookup. */ __('Unable to reach WordPress.org at %1$s: %2$s'), gethostbyname('wordpress.org'), $wp_dotorg->get_error_message()),
-                    'debug' => $wp_dotorg->get_error_message(),
+                    'value' => __('WordPress.org is reachable'),
+                    'debug' => 'true',
                 ];
             }
 
@@ -533,15 +533,7 @@
                 'value' => ($imagick_version) ? $imagick_version : __('Not available'),
             ];
 
-            if(! function_exists('ini_get'))
-            {
-                $info['wp-media']['fields']['ini_get'] = [
-                    'label' => __('File upload settings'),
-                    'value' => sprintf(/* translators: %s: ini_get() */ __('Unable to determine some settings, as the %s function has been disabled.'), 'ini_get()'),
-                    'debug' => 'ini_get() is disabled',
-                ];
-            }
-            else
+            if(function_exists('ini_get'))
             {
                 // Get the PHP ini directive values.
                 $file_uploads = ini_get('file_uploads');
@@ -571,6 +563,14 @@
                 $info['wp-media']['fields']['max_file_uploads'] = [
                     'label' => __('Max number of files allowed'),
                     'value' => number_format($max_file_uploads),
+                ];
+            }
+            else
+            {
+                $info['wp-media']['fields']['ini_get'] = [
+                    'label' => __('File upload settings'),
+                    'value' => sprintf(/* translators: %s: ini_get() */ __('Unable to determine some settings, as the %s function has been disabled.'), 'ini_get()'),
+                    'debug' => 'ini_get() is disabled',
                 ];
             }
 
@@ -653,7 +653,7 @@
                 $index = $format_key.' Support';
                 if(isset($gd[$index]) && $gd[$index])
                 {
-                    array_push($gd_image_formats, $format);
+                    $gd_image_formats[] = $format;
                 }
             }
 
@@ -735,15 +735,7 @@
             ];
 
             // Some servers disable `ini_set()` and `ini_get()`, we check this before trying to get configuration values.
-            if(! function_exists('ini_get'))
-            {
-                $info['wp-server']['fields']['ini_get'] = [
-                    'label' => __('Server settings'),
-                    'value' => sprintf(/* translators: %s: ini_get() */ __('Unable to determine some settings, as the %s function has been disabled.'), 'ini_get()'),
-                    'debug' => 'ini_get() is disabled',
-                ];
-            }
-            else
+            if(function_exists('ini_get'))
             {
                 $info['wp-server']['fields']['max_input_variables'] = [
                     'label' => __('PHP max input variables'),
@@ -784,6 +776,14 @@
                 $info['wp-server']['fields']['php_post_max_size'] = [
                     'label' => __('PHP post max size'),
                     'value' => ini_get('post_max_size'),
+                ];
+            }
+            else
+            {
+                $info['wp-server']['fields']['ini_get'] = [
+                    'label' => __('Server settings'),
+                    'value' => sprintf(/* translators: %s: ini_get() */ __('Unable to determine some settings, as the %s function has been disabled.'), 'ini_get()'),
+                    'debug' => 'ini_get() is disabled',
                 ];
             }
 
@@ -1079,13 +1079,13 @@
 
                     $auto_update_forced = wp_is_auto_update_forced_for_item('plugin', null, (object) $item);
 
-                    if(! is_null($auto_update_forced))
+                    if(is_null($auto_update_forced))
                     {
-                        $enabled = $auto_update_forced;
+                        $enabled = in_array($plugin_path, $auto_updates, true);
                     }
                     else
                     {
-                        $enabled = in_array($plugin_path, $auto_updates, true);
+                        $enabled = $auto_update_forced;
                     }
 
                     if($enabled)
@@ -1215,13 +1215,13 @@
 
                 $auto_update_forced = wp_is_auto_update_forced_for_item('theme', null, (object) $item);
 
-                if(! is_null($auto_update_forced))
+                if(is_null($auto_update_forced))
                 {
-                    $enabled = $auto_update_forced;
+                    $enabled = in_array($active_theme->stylesheet, $auto_updates, true);
                 }
                 else
                 {
-                    $enabled = in_array($active_theme->stylesheet, $auto_updates, true);
+                    $enabled = $auto_update_forced;
                 }
 
                 if($enabled)
@@ -1309,13 +1309,13 @@
 
                     $auto_update_forced = wp_is_auto_update_forced_for_item('theme', null, (object) $item);
 
-                    if(! is_null($auto_update_forced))
+                    if(is_null($auto_update_forced))
                     {
-                        $enabled = $auto_update_forced;
+                        $enabled = in_array($parent_theme->stylesheet, $auto_updates, true);
                     }
                     else
                     {
-                        $enabled = in_array($parent_theme->stylesheet, $auto_updates, true);
+                        $enabled = $auto_update_forced;
                     }
 
                     if($enabled)
@@ -1417,13 +1417,13 @@
 
                     $auto_update_forced = wp_is_auto_update_forced_for_item('theme', null, (object) $item);
 
-                    if(! is_null($auto_update_forced))
+                    if(is_null($auto_update_forced))
                     {
-                        $enabled = $auto_update_forced;
+                        $enabled = in_array($theme_slug, $auto_updates, true);
                     }
                     else
                     {
-                        $enabled = in_array($theme_slug, $auto_updates, true);
+                        $enabled = $auto_update_forced;
                     }
 
                     if($enabled)

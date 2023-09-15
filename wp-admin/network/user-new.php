@@ -42,11 +42,7 @@
             $password = wp_generate_password(12, false);
             $user_id = wpmu_create_user(esc_html(strtolower($user['username'])), $password, sanitize_email($user['email']));
 
-            if(! $user_id)
-            {
-                $add_user_errors = new WP_Error('add_user_fail', __('Cannot add user.'));
-            }
-            else
+            if($user_id)
             {
                 do_action('network_user_new_created_user', $user_id);
 
@@ -58,30 +54,31 @@
                 );
                 exit;
             }
+            else
+            {
+                $add_user_errors = new WP_Error('add_user_fail', __('Cannot add user.'));
+            }
         }
     }
 
     $message = '';
-    if(isset($_GET['update']))
+    if(isset($_GET['update']) && 'added' === $_GET['update'])
     {
-        if('added' === $_GET['update'])
+        $edit_link = '';
+        if(isset($_GET['user_id']))
         {
-            $edit_link = '';
-            if(isset($_GET['user_id']))
+            $user_id_new = absint($_GET['user_id']);
+            if($user_id_new)
             {
-                $user_id_new = absint($_GET['user_id']);
-                if($user_id_new)
-                {
-                    $edit_link = esc_url(add_query_arg('wp_http_referer', urlencode(wp_unslash($_SERVER['REQUEST_URI'])), get_edit_user_link($user_id_new)));
-                }
+                $edit_link = esc_url(add_query_arg('wp_http_referer', urlencode(wp_unslash($_SERVER['REQUEST_URI'])), get_edit_user_link($user_id_new)));
             }
+        }
 
-            $message = __('User added.');
+        $message = __('User added.');
 
-            if($edit_link)
-            {
-                $message .= sprintf(' <a href="%s">%s</a>', $edit_link, __('Edit user'));
-            }
+        if($edit_link)
+        {
+            $message .= sprintf(' <a href="%s">%s</a>', $edit_link, __('Edit user'));
         }
     }
 

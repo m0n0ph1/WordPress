@@ -1,6 +1,6 @@
 <?php
 
-    class SimplePie_Misc
+    class Misc
     {
         public static function time_hms($seconds)
         {
@@ -64,13 +64,13 @@
                     $return[$i]['attribs'] = [];
                     if(isset($matches[$i][2][0]) && preg_match_all('/[\x09\x0A\x0B\x0C\x0D\x20]+([^\x09\x0A\x0B\x0C\x0D\x20\x2F\x3E][^\x09\x0A\x0B\x0C\x0D\x20\x2F\x3D\x3E]*)(?:[\x09\x0A\x0B\x0C\x0D\x20]*=[\x09\x0A\x0B\x0C\x0D\x20]*(?:"([^"]*)"|\'([^\']*)\'|([^\x09\x0A\x0B\x0C\x0D\x20\x22\x27\x3E][^\x09\x0A\x0B\x0C\x0D\x20\x3E]*)?))?/', ' '.$matches[$i][2][0].' ', $attribs, PREG_SET_ORDER))
                     {
-                        for($j = 0, $total_attribs = count($attribs); $j < $total_attribs; $j++)
+                        foreach($attribs as $j => $jValue)
                         {
-                            if(count($attribs[$j]) === 2)
+                            if(count($jValue) === 2)
                             {
                                 $attribs[$j][2] = $attribs[$j][1];
                             }
-                            $return[$i]['attribs'][strtolower($attribs[$j][1])]['data'] = SimplePie_Misc::entities_decode(end($attribs[$j]));
+                            $return[$i]['attribs'][strtolower($jValue[1])]['data'] = SimplePie_Misc::entities_decode(end($attribs[$j]));
                         }
                     }
                 }
@@ -203,11 +203,11 @@
             {
                 $curl = $curl['version'];
             }
-            elseif(substr($curl, 0, 5) === 'curl/')
+            elseif(strpos($curl, 'curl/') === 0)
             {
                 $curl = substr($curl, 5, strcspn($curl, "\x09\x0A\x0B\x0C\x0D", 5));
             }
-            elseif(substr($curl, 0, 8) === 'libcurl/')
+            elseif(strpos($curl, 'libcurl/') === 0)
             {
                 $curl = substr($curl, 8, strcspn($curl, "\x09\x0A\x0B\x0C\x0D", 8));
             }
@@ -382,7 +382,7 @@
                     case 'xhtml':
                         return SIMPLEPIE_CONSTRUCT_XHTML;
                 }
-                if(in_array(substr($type, -4), ['+xml', '/xml']) || substr($type, 0, 5) === 'text/')
+                if(in_array(substr($type, -4), ['+xml', '/xml']) || strpos($type, 'text/') === 0)
                 {
                     return SIMPLEPIE_CONSTRUCT_NONE;
                 }
@@ -483,27 +483,27 @@
         public static function xml_encoding($data, $registry)
         {
             // UTF-32 Big Endian BOM
-            if(substr($data, 0, 4) === "\x00\x00\xFE\xFF")
+            if(strpos($data, "\x00\x00\xFE\xFF") === 0)
             {
                 $encoding[] = 'UTF-32BE';
             } // UTF-32 Little Endian BOM
-            elseif(substr($data, 0, 4) === "\xFF\xFE\x00\x00")
+            elseif(strpos($data, "\xFF\xFE\x00\x00") === 0)
             {
                 $encoding[] = 'UTF-32LE';
             } // UTF-16 Big Endian BOM
-            elseif(substr($data, 0, 2) === "\xFE\xFF")
+            elseif(strpos($data, "\xFE\xFF") === 0)
             {
                 $encoding[] = 'UTF-16BE';
             } // UTF-16 Little Endian BOM
-            elseif(substr($data, 0, 2) === "\xFF\xFE")
+            elseif(strpos($data, "\xFF\xFE") === 0)
             {
                 $encoding[] = 'UTF-16LE';
             } // UTF-8 BOM
-            elseif(substr($data, 0, 3) === "\xEF\xBB\xBF")
+            elseif(strpos($data, "\xEF\xBB\xBF") === 0)
             {
                 $encoding[] = 'UTF-8';
             } // UTF-32 Big Endian Without BOM
-            elseif(substr($data, 0, 20) === "\x00\x00\x00\x3C\x00\x00\x00\x3F\x00\x00\x00\x78\x00\x00\x00\x6D\x00\x00\x00\x6C")
+            elseif(strpos($data, "\x00\x00\x00\x3C\x00\x00\x00\x3F\x00\x00\x00\x78\x00\x00\x00\x6D\x00\x00\x00\x6C") === 0)
             {
                 if($pos = strpos($data, "\x00\x00\x00\x3F\x00\x00\x00\x3E"))
                 {
@@ -515,7 +515,7 @@
                 }
                 $encoding[] = 'UTF-32BE';
             } // UTF-32 Little Endian Without BOM
-            elseif(substr($data, 0, 20) === "\x3C\x00\x00\x00\x3F\x00\x00\x00\x78\x00\x00\x00\x6D\x00\x00\x00\x6C\x00\x00\x00")
+            elseif(strpos($data, "\x3C\x00\x00\x00\x3F\x00\x00\x00\x78\x00\x00\x00\x6D\x00\x00\x00\x6C\x00\x00\x00") === 0)
             {
                 if($pos = strpos($data, "\x3F\x00\x00\x00\x3E\x00\x00\x00"))
                 {
@@ -527,7 +527,7 @@
                 }
                 $encoding[] = 'UTF-32LE';
             } // UTF-16 Big Endian Without BOM
-            elseif(substr($data, 0, 10) === "\x00\x3C\x00\x3F\x00\x78\x00\x6D\x00\x6C")
+            elseif(strpos($data, "\x00\x3C\x00\x3F\x00\x78\x00\x6D\x00\x6C") === 0)
             {
                 if($pos = strpos($data, "\x00\x3F\x00\x3E"))
                 {
@@ -539,7 +539,7 @@
                 }
                 $encoding[] = 'UTF-16BE';
             } // UTF-16 Little Endian Without BOM
-            elseif(substr($data, 0, 10) === "\x3C\x00\x3F\x00\x78\x00\x6D\x00\x6C\x00")
+            elseif(strpos($data, "\x3C\x00\x3F\x00\x78\x00\x6D\x00\x6C\x00") === 0)
             {
                 if($pos = strpos($data, "\x3F\x00\x3E\x00"))
                 {
@@ -551,7 +551,7 @@
                 }
                 $encoding[] = 'UTF-16LE';
             } // US-ASCII (or superset)
-            elseif(substr($data, 0, 5) === "\x3C\x3F\x78\x6D\x6C")
+            elseif(strpos($data, "\x3C\x3F\x78\x6D\x6C") === 0)
             {
                 if($pos = strpos($data, "\x3F\x3E"))
                 {
@@ -2081,12 +2081,7 @@
             }
 
             // Check that the encoding is supported
-            if(! in_array($input, mb_list_encodings()))
-            {
-                return false;
-            }
-
-            if(@mb_convert_encoding("\x80", 'UTF-16BE', $input) === "\x00\x80")
+            if(! in_array($input, mb_list_encodings()) || @mb_convert_encoding("\x80", 'UTF-16BE', $input) === "\x00\x80")
             {
                 return false;
             }

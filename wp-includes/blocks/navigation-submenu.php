@@ -82,7 +82,23 @@
 
         // If Submenus open on hover, we render an anchor tag with attributes.
         // If submenu icons are set to show, we also render a submenu button, so the submenu can be opened on click.
-        if(! $open_on_click)
+        if($open_on_click)
+        {
+            // If menus open on click, we render the parent as a button.
+            $html .= '<button aria-label="'.esc_attr($aria_label).'" class="wp-block-navigation-item__content wp-block-navigation-submenu__toggle" aria-expanded="false">';
+
+            // Wrap title with span to isolate it from submenu icon.
+            $html .= '<span class="wp-block-navigation-item__label">';
+
+            $html .= $label;
+
+            $html .= '</span>';
+
+            $html .= '</button>';
+
+            $html .= '<span class="wp-block-navigation__submenu-icon">'.block_core_navigation_submenu_render_submenu_icon().'</span>';
+        }
+        else
         {
             $item_url = isset($attributes['url']) ? $attributes['url'] : '';
             // Start appending HTML attributes to anchor tag.
@@ -136,22 +152,6 @@
                 // so that there's a clickable element to open the submenu.
                 $html .= '<button aria-label="'.esc_attr($aria_label).'" class="wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle" aria-expanded="false">'.block_core_navigation_submenu_render_submenu_icon().'</button>';
             }
-        }
-        else
-        {
-            // If menus open on click, we render the parent as a button.
-            $html .= '<button aria-label="'.esc_attr($aria_label).'" class="wp-block-navigation-item__content wp-block-navigation-submenu__toggle" aria-expanded="false">';
-
-            // Wrap title with span to isolate it from submenu icon.
-            $html .= '<span class="wp-block-navigation-item__label">';
-
-            $html .= $label;
-
-            $html .= '</span>';
-
-            $html .= '</button>';
-
-            $html .= '<span class="wp-block-navigation__submenu-icon">'.block_core_navigation_submenu_render_submenu_icon().'</span>';
         }
 
         if($has_submenu)

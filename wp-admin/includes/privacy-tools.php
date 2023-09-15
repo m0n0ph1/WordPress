@@ -92,7 +92,11 @@
                         add_settings_error('action_type', 'action_type', __('Invalid personal data action.'), 'error');
                     }
 
-                    if(! is_email($username_or_email_address))
+                    if(is_email($username_or_email_address))
+                    {
+                        $email_address = $username_or_email_address;
+                    }
+                    else
                     {
                         $user = get_user_by('login', $username_or_email_address);
                         if(! $user instanceof WP_User)
@@ -103,10 +107,6 @@
                         {
                             $email_address = $user->user_email;
                         }
-                    }
-                    else
-                    {
-                        $email_address = $username_or_email_address;
                     }
 
                     if(empty($email_address))
@@ -581,10 +581,14 @@ All at ###SITENAME###
         $content = apply_filters('wp_privacy_personal_data_email_content', $email_text, $request_id, $email_data);
 
         $content = str_replace('###EXPIRATION###', $expiration_date, $content);
-        $content = str_replace('###LINK###', sanitize_url($export_file_url), $content);
-        $content = str_replace('###EMAIL###', $request_email, $content);
-        $content = str_replace('###SITENAME###', $site_name, $content);
-        $content = str_replace('###SITEURL###', sanitize_url($site_url), $content);
+        $content = str_replace(array('###LINK###', '###EMAIL###'), array(
+            sanitize_url($export_file_url),
+            $request_email
+        ),                     $content);
+        $content = str_replace(array('###SITENAME###', '###SITEURL###'), array(
+            $site_name,
+            sanitize_url($site_url)
+        ),                     $content);
 
         $headers = '';
 
@@ -612,22 +616,7 @@ All at ###SITENAME###
          * If the exporter response is malformed, don't attempt to consume it - let it
          * pass through to generate a warning to the user by default Ajax processing.
          */
-        if(! is_array($response))
-        {
-            return $response;
-        }
-
-        if(! array_key_exists('done', $response))
-        {
-            return $response;
-        }
-
-        if(! array_key_exists('data', $response))
-        {
-            return $response;
-        }
-
-        if(! is_array($response['data']))
+        if(! is_array($response) || ! array_key_exists('done', $response) || ! array_key_exists('data', $response) || ! is_array($response['data']))
         {
             return $response;
         }
@@ -755,22 +744,7 @@ All at ###SITENAME###
             return $response;
         }
 
-        if(! array_key_exists('done', $response))
-        {
-            return $response;
-        }
-
-        if(! array_key_exists('items_removed', $response))
-        {
-            return $response;
-        }
-
-        if(! array_key_exists('items_retained', $response))
-        {
-            return $response;
-        }
-
-        if(! array_key_exists('messages', $response))
+        if(! array_key_exists('done', $response) || ! array_key_exists('items_removed', $response) || ! array_key_exists('items_retained', $response) || ! array_key_exists('messages', $response))
         {
             return $response;
         }

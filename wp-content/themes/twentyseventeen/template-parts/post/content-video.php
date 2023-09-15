@@ -63,17 +63,13 @@
     <div class="entry-content">
 
         <?php
-            if(! is_single())
+            if(! is_single() && ! empty($video))
             {
-                // If not a single post, highlight the video file.
-                if(! empty($video))
+                foreach($video as $video_html)
                 {
-                    foreach($video as $video_html)
-                    {
-                        echo '<div class="entry-video">';
-                        echo $video_html;
-                        echo '</div>';
-                    }
+                    echo '<div class="entry-video">';
+                    echo $video_html;
+                    echo '</div>';
                 }
             }
 

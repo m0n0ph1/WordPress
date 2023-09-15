@@ -65,16 +65,16 @@
                 $email_password = true;
                 $user_created = true;
             }
-            elseif(! $user_id)
+            elseif($user_id)
+            {
+                $message = __('User already exists. Password inherited.');
+            }
+            else
             {
                 // Password has been provided.
                 $message = '<em>'.__('Your chosen password.').'</em>';
                 $user_id = wp_create_user($user_name, $user_password, $user_email);
                 $user_created = true;
-            }
-            else
-            {
-                $message = __('User already exists. Password inherited.');
             }
 
             $user = new WP_User($user_id);
@@ -153,8 +153,10 @@
                 $first_post = sprintf($first_post, sprintf('<a href="%s">%s</a>', esc_url(network_home_url()), get_network()->site_name));
 
                 // Back-compat for pre-4.4.
-                $first_post = str_replace('SITE_URL', esc_url(network_home_url()), $first_post);
-                $first_post = str_replace('SITE_NAME', get_network()->site_name, $first_post);
+                $first_post = str_replace(array('SITE_URL', 'SITE_NAME'), array(
+                    esc_url(network_home_url()),
+                    get_network()->site_name
+                ),                        $first_post);
             }
             else
             {
@@ -501,12 +503,7 @@ https://wordpress.org/
             $wp_current_db_version = __get_option('db_version');
 
             // We are up to date. Nothing to do.
-            if($wp_db_version == $wp_current_db_version)
-            {
-                return;
-            }
-
-            if(! is_blog_installed())
+            if($wp_db_version == $wp_current_db_version || ! is_blog_installed())
             {
                 return;
             }
@@ -1512,17 +1509,10 @@ https://wordpress.org/
     {
         global $wp_current_db_version;
 
-        if($wp_current_db_version < 11958)
+        if($wp_current_db_version < 11958 && get_option('thread_comments_depth') == '1')
         {
-            /*
-		 * Previously, setting depth to 1 would redundantly disable threading,
-		 * but now 2 is the minimum depth to avoid confusion.
-		 */
-            if(get_option('thread_comments_depth') == '1')
-            {
-                update_option('thread_comments_depth', 2);
-                update_option('thread_comments', 0);
-            }
+            update_option('thread_comments_depth', 2);
+            update_option('thread_comments', 0);
         }
     }
 
@@ -1674,14 +1664,11 @@ https://wordpress.org/
             $wpdb->query("DELETE FROM $wpdb->usermeta WHERE meta_key = 'themes_last_view'");
         }
 
-        if($wp_current_db_version < 20080)
+        if($wp_current_db_version < 20080 && 'yes' === $wpdb->get_var("SELECT autoload FROM $wpdb->options WHERE option_name = 'uninstall_plugins'"))
         {
-            if('yes' === $wpdb->get_var("SELECT autoload FROM $wpdb->options WHERE option_name = 'uninstall_plugins'"))
-            {
-                $uninstall_plugins = get_option('uninstall_plugins');
-                delete_option('uninstall_plugins');
-                add_option('uninstall_plugins', $uninstall_plugins, null, 'no');
-            }
+            $uninstall_plugins = get_option('uninstall_plugins');
+            delete_option('uninstall_plugins');
+            add_option('uninstall_plugins', $uninstall_plugins, null, 'no');
         }
     }
 
@@ -1755,18 +1742,15 @@ https://wordpress.org/
     {
         global $wp_current_db_version;
 
-        if($wp_current_db_version < 29630)
+        if($wp_current_db_version < 29630 && ! is_multisite() && false === get_option('WPLANG'))
         {
-            if(! is_multisite() && false === get_option('WPLANG'))
+            if(defined('WPLANG') && ('' !== WPLANG) && in_array(WPLANG, get_available_languages(), true))
             {
-                if(defined('WPLANG') && ('' !== WPLANG) && in_array(WPLANG, get_available_languages(), true))
-                {
-                    update_option('WPLANG', WPLANG);
-                }
-                else
-                {
-                    update_option('WPLANG', '');
-                }
+                update_option('WPLANG', WPLANG);
+            }
+            else
+            {
+                update_option('WPLANG', '');
             }
         }
     }
@@ -2080,17 +2064,14 @@ https://wordpress.org/
     {
         global $wp_current_db_version;
 
-        if($wp_current_db_version < 55853)
+        if($wp_current_db_version < 55853 && ! is_multisite())
         {
-            if(! is_multisite())
+            // Replace non-autoload option can_compress_scripts with autoload option, see #55270
+            $can_compress_scripts = get_option('can_compress_scripts', false);
+            if(false !== $can_compress_scripts)
             {
-                // Replace non-autoload option can_compress_scripts with autoload option, see #55270
-                $can_compress_scripts = get_option('can_compress_scripts', false);
-                if(false !== $can_compress_scripts)
-                {
-                    delete_option('can_compress_scripts');
-                    add_option('can_compress_scripts', $can_compress_scripts, '', 'yes');
-                }
+                delete_option('can_compress_scripts');
+                add_option('can_compress_scripts', $can_compress_scripts, '', 'yes');
             }
         }
     }
@@ -2109,13 +2090,13 @@ https://wordpress.org/
             $active_sitewide_plugins = get_site_option('active_sitewide_plugins');
             if($wpmu_sitewide_plugins)
             {
-                if(! $active_sitewide_plugins)
+                if($active_sitewide_plugins)
                 {
-                    $sitewide_plugins = (array) $wpmu_sitewide_plugins;
+                    $sitewide_plugins = array_merge((array) $active_sitewide_plugins, (array) $wpmu_sitewide_plugins);
                 }
                 else
                 {
-                    $sitewide_plugins = array_merge((array) $active_sitewide_plugins, (array) $wpmu_sitewide_plugins);
+                    $sitewide_plugins = (array) $wpmu_sitewide_plugins;
                 }
 
                 update_site_option('active_sitewide_plugins', $sitewide_plugins);
@@ -2154,12 +2135,9 @@ https://wordpress.org/
             update_site_option('initial_db_version', $wp_current_db_version);
         }
 
-        if($wp_current_db_version < 19470)
+        if($wp_current_db_version < 19470 && false === get_site_option('active_sitewide_plugins'))
         {
-            if(false === get_site_option('active_sitewide_plugins'))
-            {
-                update_site_option('active_sitewide_plugins', []);
-            }
+            update_site_option('active_sitewide_plugins', []);
         }
 
         // 3.4.0
@@ -2203,63 +2181,57 @@ https://wordpress.org/
         }
 
         // 4.2.0
-        if($wp_current_db_version < 31351 && 'utf8mb4' === $wpdb->charset)
+        if($wp_current_db_version < 31351 && 'utf8mb4' === $wpdb->charset && wp_should_upgrade_global_tables())
         {
-            if(wp_should_upgrade_global_tables())
+            $wpdb->query("ALTER TABLE $wpdb->usermeta DROP INDEX meta_key, ADD INDEX meta_key(meta_key(191))");
+            $wpdb->query("ALTER TABLE $wpdb->site DROP INDEX domain, ADD INDEX domain(domain(140),path(51))");
+            $wpdb->query("ALTER TABLE $wpdb->sitemeta DROP INDEX meta_key, ADD INDEX meta_key(meta_key(191))");
+            $wpdb->query("ALTER TABLE $wpdb->signups DROP INDEX domain_path, ADD INDEX domain_path(domain(140),path(51))");
+
+            $tables = $wpdb->tables('global');
+
+            // sitecategories may not exist.
+            if(! $wpdb->get_var("SHOW TABLES LIKE '{$tables['sitecategories']}'"))
             {
-                $wpdb->query("ALTER TABLE $wpdb->usermeta DROP INDEX meta_key, ADD INDEX meta_key(meta_key(191))");
-                $wpdb->query("ALTER TABLE $wpdb->site DROP INDEX domain, ADD INDEX domain(domain(140),path(51))");
-                $wpdb->query("ALTER TABLE $wpdb->sitemeta DROP INDEX meta_key, ADD INDEX meta_key(meta_key(191))");
-                $wpdb->query("ALTER TABLE $wpdb->signups DROP INDEX domain_path, ADD INDEX domain_path(domain(140),path(51))");
+                unset($tables['sitecategories']);
+            }
 
-                $tables = $wpdb->tables('global');
-
-                // sitecategories may not exist.
-                if(! $wpdb->get_var("SHOW TABLES LIKE '{$tables['sitecategories']}'"))
-                {
-                    unset($tables['sitecategories']);
-                }
-
-                foreach($tables as $table)
-                {
-                    maybe_convert_table_to_utf8mb4($table);
-                }
+            foreach($tables as $table)
+            {
+                maybe_convert_table_to_utf8mb4($table);
             }
         }
 
         // 4.3.0
-        if($wp_current_db_version < 33055 && 'utf8mb4' === $wpdb->charset)
+        if($wp_current_db_version < 33055 && 'utf8mb4' === $wpdb->charset && wp_should_upgrade_global_tables())
         {
-            if(wp_should_upgrade_global_tables())
+            $upgrade = false;
+            $indexes = $wpdb->get_results("SHOW INDEXES FROM $wpdb->signups");
+            foreach($indexes as $index)
             {
-                $upgrade = false;
-                $indexes = $wpdb->get_results("SHOW INDEXES FROM $wpdb->signups");
-                foreach($indexes as $index)
+                if('domain_path' === $index->Key_name && 'domain' === $index->Column_name && 140 != $index->Sub_part)
                 {
-                    if('domain_path' === $index->Key_name && 'domain' === $index->Column_name && 140 != $index->Sub_part)
-                    {
-                        $upgrade = true;
-                        break;
-                    }
+                    $upgrade = true;
+                    break;
                 }
+            }
 
-                if($upgrade)
-                {
-                    $wpdb->query("ALTER TABLE $wpdb->signups DROP INDEX domain_path, ADD INDEX domain_path(domain(140),path(51))");
-                }
+            if($upgrade)
+            {
+                $wpdb->query("ALTER TABLE $wpdb->signups DROP INDEX domain_path, ADD INDEX domain_path(domain(140),path(51))");
+            }
 
-                $tables = $wpdb->tables('global');
+            $tables = $wpdb->tables('global');
 
-                // sitecategories may not exist.
-                if(! $wpdb->get_var("SHOW TABLES LIKE '{$tables['sitecategories']}'"))
-                {
-                    unset($tables['sitecategories']);
-                }
+            // sitecategories may not exist.
+            if(! $wpdb->get_var("SHOW TABLES LIKE '{$tables['sitecategories']}'"))
+            {
+                unset($tables['sitecategories']);
+            }
 
-                foreach($tables as $table)
-                {
-                    maybe_convert_table_to_utf8mb4($table);
-                }
+            foreach($tables as $table)
+            {
+                maybe_convert_table_to_utf8mb4($table);
             }
         }
 
@@ -2291,12 +2263,7 @@ https://wordpress.org/
         $wpdb->query($create_ddl);
 
         // We cannot directly tell that whether this succeeded!
-        if($wpdb->get_var($query) === $table_name)
-        {
-            return true;
-        }
-
-        return false;
+        return $wpdb->get_var($query) === $table_name;
     }
 
     function drop_index($table, $index)
@@ -2709,33 +2676,19 @@ https://wordpress.org/
                     if($tablefield->Type != $fieldtype)
                     {
                         $do_change = true;
-                        if(in_array($fieldtype_lowercased, $text_fields, true) && in_array($tablefield_type_lowercased, $text_fields, true))
+                        if(in_array($fieldtype_lowercased, $text_fields, true) && in_array($tablefield_type_lowercased, $text_fields, true) && array_search($fieldtype_lowercased, $text_fields, true) < array_search($tablefield_type_lowercased, $text_fields, true))
                         {
-                            if(array_search($fieldtype_lowercased, $text_fields, true) < array_search($tablefield_type_lowercased, $text_fields, true))
-                            {
-                                $do_change = false;
-                            }
+                            $do_change = false;
                         }
 
-                        if(in_array($fieldtype_lowercased, $blob_fields, true) && in_array($tablefield_type_lowercased, $blob_fields, true))
+                        if(in_array($fieldtype_lowercased, $blob_fields, true) && in_array($tablefield_type_lowercased, $blob_fields, true) && array_search($fieldtype_lowercased, $blob_fields, true) < array_search($tablefield_type_lowercased, $blob_fields, true))
                         {
-                            if(array_search($fieldtype_lowercased, $blob_fields, true) < array_search($tablefield_type_lowercased, $blob_fields, true))
-                            {
-                                $do_change = false;
-                            }
+                            $do_change = false;
                         }
 
-                        if(in_array($fieldtype_base, $int_fields, true) && in_array($tablefield_type_base, $int_fields, true) && $fieldtype_without_parentheses === $tablefield_type_without_parentheses)
+                        if(in_array($fieldtype_base, $int_fields, true) && in_array($tablefield_type_base, $int_fields, true) && $fieldtype_without_parentheses === $tablefield_type_without_parentheses && version_compare($db_version, '8.0.17', '>=') && ! str_contains($db_server_info, 'MariaDB'))
                         {
-                            /*
-						 * MySQL 8.0.17 or later does not support display width for integer data types,
-						 * so if display width is the only difference, it can be safely ignored.
-						 * Note: This is specific to MySQL and does not affect MariaDB.
-						 */
-                            if(version_compare($db_version, '8.0.17', '>=') && ! str_contains($db_server_info, 'MariaDB'))
-                            {
-                                $do_change = false;
-                            }
+                            $do_change = false;
                         }
 
                         if($do_change)
@@ -2796,7 +2749,7 @@ https://wordpress.org/
                         'fieldname' => $tableindex->Column_name,
                         'subpart' => $tableindex->Sub_part,
                     ];
-                    $index_ary[$keyname]['unique'] = (0 == $tableindex->Non_unique) ? true : false;
+                    $index_ary[$keyname]['unique'] = 0 == $tableindex->Non_unique;
                     $index_ary[$keyname]['index_type'] = $tableindex->Index_type;
                 }
 
@@ -2969,10 +2922,14 @@ https://wordpress.org/
                     }
 
                     // Update stylesheet references.
-                    $line = str_replace("<?php echo __get_option('siteurl'); ?>/wp-layout.css", "<?php bloginfo('stylesheet_url'); ?>", $line);
-
                     // Update comments template inclusion.
-                    $line = str_replace("<?php include(ABSPATH . 'wp-comments.php'); ?>", '<?php comments_template(); ?>', $line);
+                    $line = str_replace(array(
+                                            "<?php echo __get_option('siteurl'); ?>/wp-layout.css",
+                                            "<?php include(ABSPATH . 'wp-comments.php'); ?>"
+                                        ), array(
+                                            "<?php bloginfo('stylesheet_url'); ?>",
+                                            '<?php comments_template(); ?>'
+                                        ), $line);
 
                     fwrite($f, "{$line}\n");
                 }
@@ -3095,13 +3052,8 @@ https://wordpress.org/
         $site_dir = WP_CONTENT_DIR."/themes/$template";
 
         // If the theme already exists, nothing to do.
-        if(is_dir($site_dir))
-        {
-            return false;
-        }
-
         // We must be able to write to the themes dir.
-        if(! is_writable(WP_CONTENT_DIR.'/themes'))
+        if(is_dir($site_dir) || ! is_writable(WP_CONTENT_DIR.'/themes'))
         {
             return false;
         }
@@ -3250,14 +3202,10 @@ https://wordpress.org/
         }
 
         // Upgrade versions prior to 4.4.
-        if($wp_current_db_version < 34978)
+        if($wp_current_db_version < 34978 && $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->termmeta}'") && $wpdb->get_results("SHOW INDEX FROM {$wpdb->termmeta} WHERE Column_name = 'meta_key'"))
         {
-            // If compatible termmeta table is found, use it, but enforce a proper index and update collation.
-            if($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->termmeta}'") && $wpdb->get_results("SHOW INDEX FROM {$wpdb->termmeta} WHERE Column_name = 'meta_key'"))
-            {
-                $wpdb->query("ALTER TABLE $wpdb->termmeta DROP INDEX meta_key, ADD INDEX meta_key(meta_key(191))");
-                maybe_convert_table_to_utf8mb4($wpdb->termmeta);
-            }
+            $wpdb->query("ALTER TABLE $wpdb->termmeta DROP INDEX meta_key, ADD INDEX meta_key(meta_key(191))");
+            maybe_convert_table_to_utf8mb4($wpdb->termmeta);
         }
     }
 

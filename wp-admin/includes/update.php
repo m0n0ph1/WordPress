@@ -757,11 +757,7 @@
         $next_update_time = wp_next_scheduled('wp_version_check');
 
         // Check if the event exists.
-        if(false === $next_update_time)
-        {
-            $message = __('Automatic update not scheduled. There may be a problem with WP-Cron.');
-        }
-        else
+        if(false !== $next_update_time)
         {
             $time_to_next_update = human_time_diff((int) $next_update_time);
 
@@ -776,6 +772,10 @@
             {
                 $message = sprintf(/* translators: %s: Time until the next update. */ __('Automatic update scheduled in %s.'), $time_to_next_update);
             }
+        }
+        else
+        {
+            $message = __('Automatic update not scheduled. There may be a problem with WP-Cron.');
         }
 
         return $message;

@@ -1,10 +1,10 @@
 <?php
 
-    class SimplePie_Parse_Date
+    class Date
     {
-        var $date;
+        public $date;
 
-        var $day = [
+        public $day = [
             // English
             'mon' => 1,
             'monday' => 1,
@@ -103,7 +103,7 @@
             'Вс.' => 7,
         ];
 
-        var $month = [
+        public $month = [
             // English
             'jan' => 1,
             'january' => 1,
@@ -279,7 +279,7 @@
 
         ];
 
-        var $timezone = [
+        public $timezone = [
             'ACDT' => 37800,
             'ACIT' => 28800,
             'ACST' => 34200,
@@ -482,13 +482,13 @@
             'YEKT' => 18000,
         ];
 
-        var $day_pcre;
+        public $day_pcre;
 
-        var $month_pcre;
+        public $month_pcre;
 
-        var $built_in = [];
+        public $built_in = [];
 
-        var $user = [];
+        public $user = [];
 
         public function __construct()
         {
@@ -502,7 +502,7 @@
 
                 foreach($all_methods as $method)
                 {
-                    if(strtolower(substr($method, 0, 5)) === 'date_')
+                    if(stripos($method, 'date_') === 0)
                     {
                         $cache[get_class($this)][] = $method;
                     }
@@ -565,7 +565,11 @@
             if(! $pcre)
             {
                 $year = '([0-9]{4})';
-                $month = $day = $hour = $minute = $second = '([0-9]{2})';
+                $second = '([0-9]{2})';
+                $minute = '([0-9]{2})';
+                $hour = '([0-9]{2})';
+                $day = '([0-9]{2})';
+                $month = '([0-9]{2})';
                 $decimal = '([0-9]*)';
                 $zone = '(?:(Z)|([+\-])([0-9]{1,2}):?([0-9]{1,2}))';
                 $pcre = '/^'.$year.'(?:-?'.$month.'(?:-?'.$day.'(?:[Tt\x09\x20]+'.$hour.'(?::?'.$minute.'(?::?'.$second.'(?:.'.$decimal.')?)?)?'.$zone.')?)?)?$/';
@@ -633,7 +637,9 @@
                 $day_name = $this->day_pcre;
                 $month = $this->month_pcre;
                 $day = '([0-9]{1,2})';
-                $hour = $minute = $second = '([0-9]{2})';
+                $second = '([0-9]{2})';
+                $minute = '([0-9]{2})';
+                $hour = '([0-9]{2})';
                 $year = '([0-9]{2,4})';
                 $num_zone = '([+\-])([0-9]{2})([0-9]{2})';
                 $character_zone = '([A-Z]{1,5})';
@@ -768,7 +774,10 @@
                 $day_name = $this->day_pcre;
                 $month = $this->month_pcre;
                 $day = '([0-9]{1,2})';
-                $year = $hour = $minute = $second = '([0-9]{2})';
+                $second = '([0-9]{2})';
+                $minute = '([0-9]{2})';
+                $hour = '([0-9]{2})';
+                $year = '([0-9]{2})';
                 $zone = '([A-Z]{1,5})';
                 $pcre = '/^'.$day_name.','.$space.$day.'-'.$month.'-'.$year.$space.$hour.':'.$minute.':'.$second.$space.$zone.'$/i';
             }
@@ -824,7 +833,9 @@
                 $wday_name = $this->day_pcre;
                 $mon_name = $this->month_pcre;
                 $day = '([0-9]{1,2})';
-                $hour = $sec = $min = '([0-9]{2})';
+                $min = '([0-9]{2})';
+                $sec = '([0-9]{2})';
+                $hour = '([0-9]{2})';
                 $year = '([0-9]{4})';
                 $terminator = '\x0A?\x00?';
                 $pcre = '/^'.$wday_name.$space.$mon_name.$space.$day.$space.$hour.':'.$min.':'.$sec.$space.$year.$terminator.'$/i';

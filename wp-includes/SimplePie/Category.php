@@ -1,14 +1,14 @@
 <?php
 
-    class SimplePie_Category
+    class Category
     {
-        var $term;
+        public $term;
 
-        var $scheme;
+        public $scheme;
 
-        var $label;
+        public $label;
 
-        var $type;
+        public $type;
 
         public function __construct($term = null, $scheme = null, $label = null, $type = null)
         {

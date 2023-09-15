@@ -53,7 +53,10 @@
             $this->json['widget_content'] = $widget_control_parts['content'];
         }
 
-        public function render_content() {}
+        public function render_content()
+        {
+            parent::render_content();
+        }
 
         public function active_callback()
         {

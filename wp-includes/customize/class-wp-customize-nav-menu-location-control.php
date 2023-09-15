@@ -14,6 +14,7 @@
 
         public function render_content()
         {
+            parent::render_content();
             if(empty($this->choices))
             {
                 return;

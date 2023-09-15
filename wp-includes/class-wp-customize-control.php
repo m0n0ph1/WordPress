@@ -54,7 +54,7 @@
             {
                 $this->active_callback = [$this, 'active_callback'];
             }
-            self::$instance_count += 1;
+            ++self::$instance_count;
             $this->instance_number = self::$instance_count;
 
             // Process settings.
@@ -164,12 +164,8 @@
             }
 
             $section = $this->manager->get_section($this->section);
-            if(isset($section) && ! $section->check_capabilities())
-            {
-                return false;
-            }
 
-            return true;
+            return ! (isset($section) && ! $section->check_capabilities());
         }
 
         protected function render()

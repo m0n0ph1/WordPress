@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
     $wp_file_descriptions = [
         'functions.php' => __('Theme Functions'),
@@ -451,9 +451,9 @@
 
         if($is_active && 'php' === $extension)
         {
-            $scrape_key = md5(rand());
+            $scrape_key = md5(random_int());
             $transient = 'scrape_key_'.$scrape_key;
-            $scrape_nonce = (string) rand();
+            $scrape_nonce = (string) random_int();
             // It shouldn't take more than 60 seconds to make the two loopback requests.
             set_transient($transient, $scrape_nonce, 60);
 
@@ -1074,6 +1074,7 @@
                 apply_filters('wp_signature_softfail', true, $url)
             )
             {
+                /** @noinspection NativeMemberUsageInspection */
                 $signature_verification->add_data($tmpfname, 'softfail-filename');
             }
             else
@@ -1308,12 +1309,9 @@
             {
                 return $result;
             }
-            elseif(is_wp_error($result))
+            elseif(is_wp_error($result) && 'incompatible_archive' !== $result->get_error_code())
             {
-                if('incompatible_archive' !== $result->get_error_code())
-                {
-                    return $result;
-                }
+                return $result;
             }
         }
 
@@ -1630,12 +1628,9 @@
             }
             elseif('d' === $fileinfo['type'])
             {
-                if(! $wp_filesystem->is_dir($to.$filename))
+                if(! $wp_filesystem->is_dir($to.$filename) && ! $wp_filesystem->mkdir($to.$filename, FS_CHMOD_DIR))
                 {
-                    if(! $wp_filesystem->mkdir($to.$filename, FS_CHMOD_DIR))
-                    {
-                        return new WP_Error('mkdir_failed_copy_dir', __('Could not create directory.'), $to.$filename);
-                    }
+                    return new WP_Error('mkdir_failed_copy_dir', __('Could not create directory.'), $to.$filename);
                 }
 
                 // Generate the $sub_skip_list for the subdirectory as a sub-set of the existing $skip_list.
@@ -1704,12 +1699,9 @@
         }
 
         // Fall back to a recursive copy.
-        if(! $wp_filesystem->is_dir($to))
+        if(! $wp_filesystem->is_dir($to) && ! $wp_filesystem->mkdir($to, FS_CHMOD_DIR))
         {
-            if(! $wp_filesystem->mkdir($to, FS_CHMOD_DIR))
-            {
-                return new WP_Error('mkdir_failed_move_dir', __('Could not create directory.'), $to);
-            }
+            return new WP_Error('mkdir_failed_move_dir', __('Could not create directory.'), $to);
         }
 
         $result = copy_dir($from, $to, [basename($to)]);
@@ -2233,13 +2225,8 @@
         }
 
         // If invalidation is not available, return early.
-        if(! $can_invalidate)
-        {
-            return false;
-        }
-
         // Verify that file to be invalidated has a PHP extension.
-        if('.php' !== strtolower(substr($filepath, -4)))
+        if(! $can_invalidate || '.php' !== strtolower(substr($filepath, -4)))
         {
             return false;
         }

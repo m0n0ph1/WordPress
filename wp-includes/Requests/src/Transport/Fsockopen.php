@@ -14,7 +14,7 @@
 
     final class Fsockopen implements Transport
     {
-        const SECOND_IN_MICROSECONDS = 1000000;
+        public const SECOND_IN_MICROSECONDS = 1000000;
 
         public $headers = '';
 

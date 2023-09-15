@@ -405,11 +405,7 @@
 
         public function plugin_info()
         {
-            if(! is_array($this->result))
-            {
-                return false;
-            }
-            if(empty($this->result['destination_name']))
+            if(! is_array($this->result) || empty($this->result['destination_name']))
             {
                 return false;
             }
@@ -429,13 +425,8 @@
 
         public function deactivate_plugin_before_upgrade($response, $plugin)
         {
-            if(is_wp_error($response))
-            { // Bypass.
-                return $response;
-            }
-
             // When in cron (background updates) don't deactivate the plugin, as we require a browser to reactivate it.
-            if(wp_doing_cron())
+            if(is_wp_error($response) || wp_doing_cron())
             {
                 return $response;
             }
@@ -457,13 +448,8 @@
 
         public function active_before($response, $plugin)
         {
-            if(is_wp_error($response))
-            {
-                return $response;
-            }
-
             // Only enable maintenance mode when in cron (background update).
-            if(! wp_doing_cron())
+            if(is_wp_error($response) || ! wp_doing_cron())
             {
                 return $response;
             }
@@ -487,13 +473,8 @@
 
         public function active_after($response, $plugin)
         {
-            if(is_wp_error($response))
-            {
-                return $response;
-            }
-
             // Only disable maintenance mode when in cron (background update).
-            if(! wp_doing_cron())
+            if(is_wp_error($response) || ! wp_doing_cron())
             {
                 return $response;
             }

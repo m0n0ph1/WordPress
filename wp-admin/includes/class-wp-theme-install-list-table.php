@@ -11,6 +11,7 @@
 
         public function prepare_items()
         {
+            parent::prepare_items();
             require ABSPATH.'wp-admin/includes/theme-install.php';
 
             global $tabs, $tab, $paged, $type, $theme_field_defaults;
@@ -128,11 +129,13 @@
 
         public function no_items()
         {
+            parent::no_items();
             _e('No themes match your request.');
         }
 
         public function display()
         {
+            parent::display();
             wp_nonce_field('fetch-list-'.get_class($this), '_ajax_fetch_list_nonce');
             ?>
             <div class="tablenav top themes">
@@ -156,6 +159,7 @@
 
         public function display_rows()
         {
+            parent::display_rows();
             $themes = $this->items;
             foreach($themes as $theme)
             {
@@ -173,7 +177,8 @@
 
         public function single_row($theme)
         {
-            global $themes_allowedtags;
+            global parent::single_row($item);
+            $themes_allowedtags;
 
             if(empty($theme))
             {

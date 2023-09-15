@@ -61,12 +61,7 @@
 
     function handle_legacy_widget_preview_iframe()
     {
-        if(empty($_GET['legacy-widget-preview']))
-        {
-            return;
-        }
-
-        if(! current_user_can('edit_theme_options'))
+        if(empty($_GET['legacy-widget-preview']) || ! current_user_can('edit_theme_options'))
         {
             return;
         }

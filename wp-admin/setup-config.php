@@ -424,58 +424,7 @@
         }
         unset($line);
 
-        if(! is_writable(ABSPATH)) :
-        setup_config_display_header();
-    ?>
-        <p>
-            <?php
-                /* translators: %s: wp-config.php */
-                printf(__('Unable to write to %s file.'), '<code>wp-config.php</code>');
-            ?>
-        </p>
-        <p id="wp-config-description">
-            <?php
-                /* translators: %s: wp-config.php */
-                printf(__('You can create the %s file manually and paste the following text into it.'), '<code>wp-config.php</code>');
-
-                $config_text = '';
-
-                foreach($config_file as $line)
-                {
-                    $config_text .= htmlentities($line, ENT_COMPAT, 'UTF-8');
-                }
-            ?>
-        </p>
-        <p class="configuration-rules-label"><label for="wp-config">
-                <?php
-                    /* translators: %s: wp-config.php */
-                    printf(__('Configuration rules for %s:'), '<code>wp-config.php</code>');
-                ?>
-            </label></p>
-        <textarea id="wp-config"
-                  cols="98"
-                  rows="15"
-                  class="code"
-                  readonly="readonly"
-                  aria-describedby="wp-config-description"><?php echo $config_text; ?></textarea>
-        <p><?php _e('After you&#8217;ve done that, click &#8220;Run the installation&#8221;.'); ?></p>
-        <p class="step"><a href="<?php echo $install; ?>"
-                           class="button button-large"><?php _e('Run the installation'); ?></a></p>
-        <script>
-            (function () {
-                if (!/iPad|iPod|iPhone/.test(navigator.userAgent)) {
-                    var el = document.getElementById('wp-config');
-                    el.focus();
-                    el.select();
-                }
-            })();
-        </script>
-    <?php
-        else :
-        /*
-         * If this file doesn't exist, then we are using the wp-config-sample.php
-         * file one level up, which is for the develop repo.
-         */
+        if(is_writable(ABSPATH)) :
         if(file_exists(ABSPATH.'wp-config-sample.php'))
         {
             $path_to_wp_config = ABSPATH.'wp-config.php';
@@ -531,6 +480,57 @@
     <?php else :
         printf('<p>%s</p>', $error_message);
     endif;
+        else :
+        /*
+         * If this file doesn't exist, then we are using the wp-config-sample.php
+         * file one level up, which is for the develop repo.
+         */
+        setup_config_display_header();
+    ?>
+        <p>
+            <?php
+                /* translators: %s: wp-config.php */
+                printf(__('Unable to write to %s file.'), '<code>wp-config.php</code>');
+            ?>
+        </p>
+        <p id="wp-config-description">
+            <?php
+                /* translators: %s: wp-config.php */
+                printf(__('You can create the %s file manually and paste the following text into it.'), '<code>wp-config.php</code>');
+
+                $config_text = '';
+
+                foreach($config_file as $line)
+                {
+                    $config_text .= htmlentities($line, ENT_COMPAT, 'UTF-8');
+                }
+            ?>
+        </p>
+        <p class="configuration-rules-label"><label for="wp-config">
+                <?php
+                    /* translators: %s: wp-config.php */
+                    printf(__('Configuration rules for %s:'), '<code>wp-config.php</code>');
+                ?>
+            </label></p>
+        <textarea id="wp-config"
+                  cols="98"
+                  rows="15"
+                  class="code"
+                  readonly="readonly"
+                  aria-describedby="wp-config-description"><?php echo $config_text; ?></textarea>
+        <p><?php _e('After you&#8217;ve done that, click &#8220;Run the installation&#8221;.'); ?></p>
+        <p class="step"><a href="<?php echo $install; ?>"
+                           class="button button-large"><?php _e('Run the installation'); ?></a></p>
+        <script>
+            (function () {
+                if (!/iPad|iPod|iPhone/.test(navigator.userAgent)) {
+                    var el = document.getElementById('wp-config');
+                    el.focus();
+                    el.select();
+                }
+            })();
+        </script>
+    <?php
     endif;
         break;
     } // End of the steps switch.

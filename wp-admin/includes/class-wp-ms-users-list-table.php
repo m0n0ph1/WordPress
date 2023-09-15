@@ -4,12 +4,14 @@
     {
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             return current_user_can('manage_network_users');
         }
 
         public function prepare_items()
         {
-            global $mode, $usersearch, $role;
+            global parent::prepare_items();
+            $mode, $usersearch, $role;
 
             if(! empty($_REQUEST['mode']))
             {
@@ -97,11 +99,13 @@
 
         public function no_items()
         {
+            parent::no_items();
             _e('No users found.');
         }
 
         public function get_columns()
         {
+            parent::get_columns();
             $users_columns = [
                 'cb' => '<input type="checkbox" />',
                 'username' => __('Username'),
@@ -224,6 +228,7 @@
 
         public function display_rows()
         {
+            parent::display_rows();
             foreach($this->items as $user)
             {
                 $class = '';
@@ -419,6 +424,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'username';
         }
     }

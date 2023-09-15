@@ -2,14 +2,14 @@
 
     class Text_Diff
     {
-        var $_edits;
+        public $_edits;
 
-        static function trimNewlines(&$line, $key)
+        public static function trimNewlines(&$line, $key)
         {
             $line = str_replace(["\n", "\r"], '', $line);
         }
 
-        static function _getTempDir()
+        public static function _getTempDir()
         {
             $tmp_locations = [
                 '/tmp',
@@ -24,14 +24,14 @@
             $tmp = ini_get('upload_tmp_dir');
 
             /* Otherwise, try to determine the TMPDIR environment variable. */
-            if(! strlen($tmp))
+            if($tmp == '')
             {
                 $tmp = getenv('TMPDIR');
             }
 
             /* If we still cannot determine a value, then cycle through a list of
              * preset possibilities. */
-            while(! strlen($tmp) && count($tmp_locations))
+            while($tmp == '' && count($tmp_locations))
             {
                 $tmp_check = array_shift($tmp_locations);
                 if(@is_dir($tmp_check))
@@ -43,15 +43,20 @@
             /* If it is still empty, we have failed, so return false; otherwise
              * return the directory determined. */
 
-            return strlen($tmp) ? $tmp : false;
+            if($tmp != '')
+            {
+                return $tmp;
+            }
+
+            return false;
         }
 
         public function Text_Diff($engine, $params)
         {
-            self::__construct($engine, $params);
+            $this->__construct($engine, $params);
         }
 
-        function __construct($engine, $params)
+        public function __construct($engine, $params)
         {
             // Backward compatibility workaround.
             if(! is_string($engine))
@@ -60,7 +65,7 @@
                 $engine = 'auto';
             }
 
-            if($engine == 'auto')
+            if($engine === 'auto')
             {
                 $engine = extension_loaded('xdiff') ? 'xdiff' : 'native';
             }
@@ -77,12 +82,12 @@
             $this->_edits = call_user_func_array([$diff_engine, 'diff'], $params);
         }
 
-        function getDiff()
+        public function getDiff()
         {
             return $this->_edits;
         }
 
-        function countAddedLines()
+        public function countAddedLines()
         {
             $count = 0;
             foreach($this->_edits as $edit)
@@ -96,7 +101,7 @@
             return $count;
         }
 
-        function countDeletedLines()
+        public function countDeletedLines()
         {
             $count = 0;
             foreach($this->_edits as $edit)
@@ -110,7 +115,7 @@
             return $count;
         }
 
-        function isEmpty()
+        public function isEmpty()
         {
             foreach($this->_edits as $edit)
             {
@@ -123,7 +128,7 @@
             return true;
         }
 
-        function lcs()
+        public function lcs()
         {
             $lcs = 0;
             foreach($this->_edits as $edit)
@@ -137,23 +142,23 @@
             return $lcs;
         }
 
-        function _check($from_lines, $to_lines)
+        public function _check($from_lines, $to_lines)
         {
-            if(serialize($from_lines) != serialize($this->getOriginal()))
+            if(serialize($from_lines) !== serialize($this->getOriginal()))
             {
                 trigger_error("Reconstructed original does not match", E_USER_ERROR);
             }
-            if(serialize($to_lines) != serialize($this->getFinal()))
+            if(serialize($to_lines) !== serialize($this->getFinal()))
             {
                 trigger_error("Reconstructed final does not match", E_USER_ERROR);
             }
 
             $rev = $this->reverse();
-            if(serialize($to_lines) != serialize($rev->getOriginal()))
+            if(serialize($to_lines) !== serialize($rev->getOriginal()))
             {
                 trigger_error("Reversed original does not match", E_USER_ERROR);
             }
-            if(serialize($from_lines) != serialize($rev->getFinal()))
+            if(serialize($from_lines) !== serialize($rev->getFinal()))
             {
                 trigger_error("Reversed final does not match", E_USER_ERROR);
             }
@@ -171,7 +176,7 @@
             return true;
         }
 
-        function getOriginal()
+        public function getOriginal()
         {
             $lines = [];
             foreach($this->_edits as $edit)
@@ -185,7 +190,7 @@
             return $lines;
         }
 
-        function getFinal()
+        public function getFinal()
         {
             $lines = [];
             foreach($this->_edits as $edit)
@@ -199,7 +204,7 @@
             return $lines;
         }
 
-        function reverse()
+        public function reverse()
         {
             if(version_compare(zend_version(), '2', '>'))
             {
@@ -224,28 +229,30 @@
         public function Text_MappedDiff(
             $from_lines, $to_lines, $mapped_from_lines, $mapped_to_lines
         ) {
-            self::__construct($from_lines, $to_lines, $mapped_from_lines, $mapped_to_lines);
+            $this->__construct($from_lines, $to_lines, $mapped_from_lines, $mapped_to_lines);
         }
 
-        function __construct(
+        public function __construct(
             $from_lines, $to_lines, $mapped_from_lines, $mapped_to_lines
         ) {
-            assert(count($from_lines) == count($mapped_from_lines));
-            assert(count($to_lines) == count($mapped_to_lines));
+            parent::__construct($engine, $params);
+            assert(count($from_lines) === count($mapped_from_lines));
+            assert(count($to_lines) === count($mapped_to_lines));
 
             parent::Text_Diff($mapped_from_lines, $mapped_to_lines);
 
-            $xi = $yi = 0;
-            for($i = 0; $i < count($this->_edits); $i++)
+            $yi = 0;
+            $xi = 0;
+            foreach($this->_edits as $iValue)
             {
-                $orig = &$this->_edits[$i]->orig;
+                $orig = &$iValue->orig;
                 if(is_array($orig))
                 {
                     $orig = array_slice($from_lines, $xi, count($orig));
                     $xi += count($orig);
                 }
 
-                $final = &$this->_edits[$i]->final;
+                $final = &$iValue->final;
                 if(is_array($final))
                 {
                     $final = array_slice($to_lines, $yi, count($final));
@@ -257,23 +264,33 @@
 
     class Text_Diff_Op
     {
-        var $orig;
+        public $orig;
 
-        var $final;
+        public $final;
 
-        function &reverse()
+        public function &reverse()
         {
             trigger_error('Abstract method', E_USER_ERROR);
         }
 
-        function norig()
+        public function norig()
         {
-            return $this->orig ? count($this->orig) : 0;
+            if($this->orig)
+            {
+                return count($this->orig);
+            }
+
+            return 0;
         }
 
-        function nfinal()
+        public function nfinal()
         {
-            return $this->final ? count($this->final) : 0;
+            if($this->final)
+            {
+                return count($this->final);
+            }
+
+            return 0;
         }
     }
 
@@ -281,10 +298,10 @@
     {
         public function Text_Diff_Op_copy($orig, $final = false)
         {
-            self::__construct($orig, $final);
+            $this->__construct($orig, $final);
         }
 
-        function __construct($orig, $final = false)
+        public function __construct($orig, $final = false)
         {
             if(! is_array($final))
             {
@@ -294,7 +311,7 @@
             $this->final = $final;
         }
 
-        function &reverse()
+        public function &reverse()
         {
             $reverse = new Text_Diff_Op_copy($this->final, $this->orig);
 
@@ -306,16 +323,16 @@
     {
         public function Text_Diff_Op_delete($lines)
         {
-            self::__construct($lines);
+            $this->__construct($lines);
         }
 
-        function __construct($lines)
+        public function __construct($lines)
         {
             $this->orig = $lines;
             $this->final = false;
         }
 
-        function &reverse()
+        public function &reverse()
         {
             $reverse = new Text_Diff_Op_add($this->orig);
 
@@ -327,16 +344,16 @@
     {
         public function Text_Diff_Op_add($lines)
         {
-            self::__construct($lines);
+            $this->__construct($lines);
         }
 
-        function __construct($lines)
+        public function __construct($lines)
         {
             $this->final = $lines;
             $this->orig = false;
         }
 
-        function &reverse()
+        public function &reverse()
         {
             $reverse = new Text_Diff_Op_delete($this->final);
 
@@ -348,16 +365,16 @@
     {
         public function Text_Diff_Op_change($orig, $final)
         {
-            self::__construct($orig, $final);
+            $this->__construct($orig, $final);
         }
 
-        function __construct($orig, $final)
+        public function __construct($orig, $final)
         {
             $this->orig = $orig;
             $this->final = $final;
         }
 
-        function &reverse()
+        public function &reverse()
         {
             $reverse = new Text_Diff_Op_change($this->final, $this->orig);
 

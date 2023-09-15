@@ -2,12 +2,7 @@
 
     function render_block_core_post_terms($attributes, $content, $block)
     {
-        if(! isset($block->context['postId']) || ! isset($attributes['term']))
-        {
-            return '';
-        }
-
-        if(! is_taxonomy_viewable($attributes['term']))
+        if(! isset($block->context['postId']) || ! isset($attributes['term']) || ! is_taxonomy_viewable($attributes['term']))
         {
             return '';
         }

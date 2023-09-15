@@ -47,7 +47,22 @@
         // Distinguish between `false` as a default, and not passing one.
         $passed_default = func_num_args() > 1;
 
-        if(! wp_installing())
+        if(wp_installing())
+        {
+            $suppress = $wpdb->suppress_errors();
+            $row = $wpdb->get_row($wpdb->prepare("SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $option));
+            $wpdb->suppress_errors($suppress);
+
+            if(is_object($row))
+            {
+                $value = $row->option_value;
+            }
+            else
+            {
+                return apply_filters("default_option_{$option}", $default_value, $option, $passed_default);
+            }
+        }
+        else
         {
             $alloptions = wp_load_alloptions();
 
@@ -91,21 +106,6 @@
                         return apply_filters("default_option_{$option}", $default_value, $option, $passed_default);
                     }
                 }
-            }
-        }
-        else
-        {
-            $suppress = $wpdb->suppress_errors();
-            $row = $wpdb->get_row($wpdb->prepare("SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $option));
-            $wpdb->suppress_errors($suppress);
-
-            if(is_object($row))
-            {
-                $value = $row->option_value;
-            }
-            else
-            {
-                return apply_filters("default_option_{$option}", $default_value, $option, $passed_default);
             }
         }
 
@@ -812,17 +812,7 @@
             $transient_timeout = '_transient_timeout_'.$transient;
             $transient_option = '_transient_'.$transient;
 
-            if(false === get_option($transient_option))
-            {
-                $autoload = 'yes';
-                if($expiration)
-                {
-                    $autoload = 'no';
-                    add_option($transient_timeout, time() + $expiration, '', 'no');
-                }
-                $result = add_option($transient_option, $value, '', $autoload);
-            }
-            else
+            if(false !== get_option($transient_option))
             {
                 /*
 			 * If expiration is requested, but the transient has no timeout option,
@@ -832,16 +822,16 @@
 
                 if($expiration)
                 {
-                    if(false === get_option($transient_timeout))
+                    if(false !== get_option($transient_timeout))
+                    {
+                        update_option($transient_timeout, time() + $expiration);
+                    }
+                    else
                     {
                         delete_option($transient_option);
                         add_option($transient_timeout, time() + $expiration, '', 'no');
                         $result = add_option($transient_option, $value, '', 'no');
                         $update = false;
-                    }
-                    else
-                    {
-                        update_option($transient_timeout, time() + $expiration);
                     }
                 }
 
@@ -849,6 +839,16 @@
                 {
                     $result = update_option($transient_option, $value);
                 }
+            }
+            else
+            {
+                $autoload = 'yes';
+                if($expiration)
+                {
+                    $autoload = 'no';
+                    add_option($transient_timeout, time() + $expiration, '', 'no');
+                }
+                $result = add_option($transient_option, $value, '', $autoload);
             }
         }
 
@@ -917,12 +917,7 @@
         }
 
         $user_id = get_current_user_id();
-        if(! $user_id)
-        {
-            return;
-        }
-
-        if(! is_user_member_of_blog())
+        if(! $user_id || ! is_user_member_of_blog())
         {
             return;
         }
@@ -963,7 +958,12 @@
     {
         $all_user_settings = get_all_user_settings();
 
-        return isset($all_user_settings[$name]) ? $all_user_settings[$name] : $default_value;
+        if(isset($all_user_settings[$name]))
+        {
+            return $all_user_settings[$name];
+        }
+
+        return $default_value;
     }
 
     function set_user_setting($name, $value)
@@ -1149,12 +1149,7 @@
             return apply_filters("default_site_option_{$option}", $default_value, $option, $network_id);
         }
 
-        if(! is_multisite())
-        {
-            $default_value = apply_filters('default_site_option_'.$option, $default_value, $option, $network_id);
-            $value = get_option($option, $default_value);
-        }
-        else
+        if(is_multisite())
         {
             $cache_key = "$network_id:$option";
             $value = wp_cache_get($cache_key, 'site-options');
@@ -1183,6 +1178,11 @@
                     $value = apply_filters('default_site_option_'.$option, $default_value, $option, $network_id);
                 }
             }
+        }
+        else
+        {
+            $default_value = apply_filters('default_site_option_'.$option, $default_value, $option, $network_id);
+            $value = get_option($option, $default_value);
         }
 
         if(! is_array($notoptions))
@@ -1217,11 +1217,7 @@
 
         $notoptions_key = "$network_id:notoptions";
 
-        if(! is_multisite())
-        {
-            $result = add_option($option, $value, '', 'no');
-        }
-        else
+        if(is_multisite())
         {
             $cache_key = "$network_id:$option";
 
@@ -1264,6 +1260,10 @@
                 wp_cache_set($notoptions_key, $notoptions, 'site-options');
             }
         }
+        else
+        {
+            $result = add_option($option, $value, '', 'no');
+        }
 
         if($result)
         {
@@ -1296,11 +1296,7 @@
 
         do_action("pre_delete_site_option_{$option}", $option, $network_id);
 
-        if(! is_multisite())
-        {
-            $result = delete_option($option);
-        }
-        else
+        if(is_multisite())
         {
             $row = $wpdb->get_row($wpdb->prepare("SELECT meta_id FROM {$wpdb->sitemeta} WHERE meta_key = %s AND site_id = %d", $option, $network_id));
             if(is_null($row) || ! $row->meta_id)
@@ -1314,6 +1310,10 @@
                 'meta_key' => $option,
                 'site_id' => $network_id,
             ]);
+        }
+        else
+        {
+            $result = delete_option($option);
         }
 
         if($result)
@@ -1379,11 +1379,7 @@
             wp_cache_set($notoptions_key, $notoptions, 'site-options');
         }
 
-        if(! is_multisite())
-        {
-            $result = update_option($option, $value, 'no');
-        }
-        else
+        if(is_multisite())
         {
             $value = sanitize_option($option, $value);
 
@@ -1398,6 +1394,10 @@
                 $cache_key = "$network_id:$option";
                 wp_cache_set($cache_key, $value, 'site-options');
             }
+        }
+        else
+        {
+            $result = update_option($option, $value, 'no');
         }
 
         if($result)
@@ -1496,21 +1496,21 @@
             $transient_timeout = '_site_transient_timeout_'.$transient;
             $option = '_site_transient_'.$transient;
 
-            if(false === get_site_option($option))
-            {
-                if($expiration)
-                {
-                    add_site_option($transient_timeout, time() + $expiration);
-                }
-                $result = add_site_option($option, $value);
-            }
-            else
+            if(false !== get_site_option($option))
             {
                 if($expiration)
                 {
                     update_site_option($transient_timeout, time() + $expiration);
                 }
                 $result = update_site_option($option, $value);
+            }
+            else
+            {
+                if($expiration)
+                {
+                    add_site_option($transient_timeout, time() + $expiration);
+                }
+                $result = add_site_option($option, $value);
             }
         }
 

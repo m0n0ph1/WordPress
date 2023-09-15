@@ -5,7 +5,7 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core32_HSalsa20 extends ParagonIE_Sodium_Core32_Salsa20
+    abstract class HSalsa20 extends ParagonIE_Sodium_Core32_Salsa20
     {
         public static function hsalsa20($in, $k, $c = null)
         {

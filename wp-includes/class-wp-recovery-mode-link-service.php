@@ -3,9 +3,9 @@
     #[AllowDynamicProperties]
     class WP_Recovery_Mode_Link_Service
     {
-        const LOGIN_ACTION_ENTER = 'enter_recovery_mode';
+        public const LOGIN_ACTION_ENTER = 'enter_recovery_mode';
 
-        const LOGIN_ACTION_ENTERED = 'entered_recovery_mode';
+        public const LOGIN_ACTION_ENTERED = 'entered_recovery_mode';
 
         private $key_service;
 
@@ -39,12 +39,7 @@
 
         public function handle_begin_link($ttl)
         {
-            if(! isset($GLOBALS['pagenow']) || 'wp-login.php' !== $GLOBALS['pagenow'])
-            {
-                return;
-            }
-
-            if(! isset($_GET['action'], $_GET['rm_token'], $_GET['rm_key']) || self::LOGIN_ACTION_ENTER !== $_GET['action'])
+            if(! isset($GLOBALS['pagenow']) || 'wp-login.php' !== $GLOBALS['pagenow'] || ! isset($_GET['action'], $_GET['rm_token'], $_GET['rm_key']) || self::LOGIN_ACTION_ENTER !== $_GET['action'])
             {
                 return;
             }

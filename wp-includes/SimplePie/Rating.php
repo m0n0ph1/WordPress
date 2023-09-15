@@ -1,10 +1,10 @@
 <?php
 
-    class SimplePie_Rating
+    class Rating
     {
-        var $scheme;
+        public $scheme;
 
-        var $value;
+        public $value;
 
         public function __construct($scheme = null, $value = null)
         {

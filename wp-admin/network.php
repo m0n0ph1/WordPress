@@ -74,7 +74,11 @@
             install_network();
             $base = parse_url(trailingslashit(get_option('home')), PHP_URL_PATH);
             $subdomain_install = allow_subdomain_install() ? ! empty($_POST['subdomain_install']) : false;
-            if(! network_domain_check())
+            if(network_domain_check())
+            {
+                network_step2();
+            }
+            else
             {
                 $result = populate_network(1, get_clean_basedomain(), sanitize_email($_POST['email']), wp_unslash($_POST['sitename']), $base, $subdomain_install);
                 if(is_wp_error($result))
@@ -92,10 +96,6 @@
                 {
                     network_step2();
                 }
-            }
-            else
-            {
-                network_step2();
             }
         }
         elseif(is_multisite() || network_domain_check())

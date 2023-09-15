@@ -906,12 +906,8 @@
         $file = plugin_basename($plugin);
 
         $uninstallable_plugins = (array) get_option('uninstall_plugins');
-        if(isset($uninstallable_plugins[$file]) || file_exists(WP_PLUGIN_DIR.'/'.dirname($file).'/uninstall.php'))
-        {
-            return true;
-        }
 
-        return false;
+        return isset($uninstallable_plugins[$file]) || file_exists(WP_PLUGIN_DIR.'/'.dirname($file).'/uninstall.php');
     }
 
     function uninstall_plugin($plugin)
@@ -1523,11 +1519,7 @@
 
         if(empty($parent))
         {
-            if(isset($_wp_menu_nopriv[$pagenow]))
-            {
-                return false;
-            }
-            if(isset($_wp_submenu_nopriv[$pagenow][$pagenow]))
+            if(isset($_wp_menu_nopriv[$pagenow]) || isset($_wp_submenu_nopriv[$pagenow][$pagenow]))
             {
                 return false;
             }
@@ -1715,12 +1707,7 @@
 
     function is_plugin_paused($plugin)
     {
-        if(! isset($GLOBALS['_paused_plugins']))
-        {
-            return false;
-        }
-
-        if(! is_plugin_active($plugin))
+        if(! isset($GLOBALS['_paused_plugins']) || ! is_plugin_active($plugin))
         {
             return false;
         }
@@ -1777,17 +1764,7 @@
 
     function paused_plugins_notice()
     {
-        if('plugins.php' === $GLOBALS['pagenow'])
-        {
-            return;
-        }
-
-        if(! current_user_can('resume_plugins'))
-        {
-            return;
-        }
-
-        if(! isset($GLOBALS['_paused_plugins']) || empty($GLOBALS['_paused_plugins']))
+        if('plugins.php' === $GLOBALS['pagenow'] || ! current_user_can('resume_plugins') || ! isset($GLOBALS['_paused_plugins']) || empty($GLOBALS['_paused_plugins']))
         {
             return;
         }
@@ -1798,12 +1775,7 @@
 
     function deactivated_plugins_notice()
     {
-        if('plugins.php' === $GLOBALS['pagenow'])
-        {
-            return;
-        }
-
-        if(! current_user_can('activate_plugins'))
+        if('plugins.php' === $GLOBALS['pagenow'] || ! current_user_can('activate_plugins'))
         {
             return;
         }

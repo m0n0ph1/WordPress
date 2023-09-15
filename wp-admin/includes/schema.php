@@ -963,10 +963,7 @@ CREATE TABLE $wpdb->signups (
 
         if(1 === $network_id)
         {
-            $wpdb->insert($wpdb->site, [
-                'domain' => $domain,
-                'path' => $path,
-            ]);
+            $wpdb->insert($wpdb->site, compact('domain', 'path'));
             $network_id = $wpdb->insert_id;
         }
         else
@@ -1133,7 +1130,11 @@ CREATE TABLE $wpdb->signups (
             wp_cache_delete($network_id, 'networks');
         }
 
-        if(! is_multisite())
+        if(is_multisite())
+        {
+            $site_admins = get_site_option('site_admins');
+        }
+        else
         {
             $site_admins = [$site_user->user_login];
             $users = get_users([
@@ -1149,10 +1150,6 @@ CREATE TABLE $wpdb->signups (
 
                 $site_admins = array_unique($site_admins);
             }
-        }
-        else
-        {
-            $site_admins = get_site_option('site_admins');
         }
 
         /* translators: Do not translate USERNAME, SITE_NAME, BLOG_URL, PASSWORD: those are placeholders. */
@@ -1263,12 +1260,7 @@ We hope you enjoy your new site. Thanks!
 
         $site_id = (int) $site_id;
 
-        if(! is_site_meta_supported())
-        {
-            return;
-        }
-
-        if(empty($meta))
+        if(! is_site_meta_supported() || empty($meta))
         {
             return;
         }

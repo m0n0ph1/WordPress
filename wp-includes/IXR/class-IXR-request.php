@@ -2,18 +2,18 @@
 
     class IXR_Request
     {
-        var $method;
+        public $method;
 
-        var $args;
+        public $args;
 
-        var $xml;
+        public $xml;
 
         public function IXR_Request($method, $args)
         {
-            self::__construct($method, $args);
+            $this->__construct($method, $args);
         }
 
-        function __construct($method, $args)
+        public function __construct($method, $args)
         {
             $this->method = $method;
             $this->args = $args;
@@ -34,12 +34,12 @@ EOD;
             $this->xml .= '</params></methodCall>';
         }
 
-        function getXml()
+        public function getXml()
         {
             return $this->xml;
         }
 
-        function getLength()
+        public function getLength()
         {
             return strlen($this->xml);
         }

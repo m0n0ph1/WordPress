@@ -1,6 +1,6 @@
 <?php
 
-    if(empty($wp))
+    if($wp === null)
     {
         require_once __DIR__.'/wp-load.php';
         wp(['tb' => '1']);

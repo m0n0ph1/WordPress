@@ -549,7 +549,12 @@
         {
             $size = ftp_size($this->link, $file);
 
-            return ($size > -1) ? $size : false;
+            if($size > -1)
+            {
+                return $size;
+            }
+
+            return false;
         }
 
         public function touch($file, $time = 0, $atime = 0)
@@ -561,12 +566,7 @@
         {
             $path = untrailingslashit($path);
 
-            if(empty($path))
-            {
-                return false;
-            }
-
-            if(! ftp_mkdir($this->link, $path))
+            if(empty($path) || ! ftp_mkdir($this->link, $path))
             {
                 return false;
             }

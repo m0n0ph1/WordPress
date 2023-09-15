@@ -65,12 +65,14 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             return current_user_can(get_post_type_object($this->screen->post_type)->cap->edit_posts);
         }
 
         public function prepare_items()
         {
-            global $mode, $avail_post_stati, $wp_query, $per_page;
+            global parent::prepare_items();
+            $mode, $avail_post_stati, $wp_query, $per_page;
 
             if(! empty($_REQUEST['mode']))
             {
@@ -130,10 +132,7 @@
 
             $this->is_trash = isset($_REQUEST['post_status']) && 'trash' === $_REQUEST['post_status'];
 
-            $this->set_pagination_args([
-                                           'total_items' => $total_items,
-                                           'per_page' => $per_page,
-                                       ]);
+            $this->set_pagination_args(compact('total_items', 'per_page'));
         }
 
         public function set_hierarchical_display($display)
@@ -143,6 +142,7 @@
 
         public function no_items()
         {
+            parent::no_items();
             if(isset($_REQUEST['post_status']) && 'trash' === $_REQUEST['post_status'])
             {
                 echo get_post_type_object($this->screen->post_type)->labels->not_found_in_trash;
@@ -165,6 +165,7 @@
 
         public function get_columns()
         {
+            parent::get_columns();
             $post_type = $this->screen->post_type;
 
             $posts_columns = [];
@@ -232,7 +233,8 @@
 
         public function display_rows($posts = [], $level = 0)
         {
-            global $wp_query, $per_page;
+            global parent::display_rows();
+            $wp_query, $per_page;
 
             if(empty($posts))
             {
@@ -434,6 +436,7 @@
 
         public function single_row($post, $level = 0)
         {
+            parent::single_row($item);
             $global_post = get_post();
 
             $post = get_post($post);
@@ -1172,12 +1175,12 @@
                                         ?>
 
                                         <div class="submit inline-edit-save">
-                                            <?php if(! $bulk) : ?>
+                                            <?php if($bulk) : ?>
+                                                <?php submit_button(__('Update'), 'primary', 'bulk_edit', false); ?>
+                                            <?php else : ?>
                                                 <?php wp_nonce_field('inlineeditnonce', '_inline_edit', false); ?>
                                                 <button type="button"
                                                         class="button button-primary save"><?php _e('Update'); ?></button>
-                                            <?php else : ?>
-                                                <?php submit_button(__('Update'), 'primary', 'bulk_edit', false); ?>
                                             <?php endif; ?>
 
                                             <button type="button" class="button cancel"><?php _e('Cancel'); ?></button>
@@ -1451,13 +1454,8 @@
 
         protected function formats_dropdown($post_type)
         {
-            if(apply_filters('disable_formats_dropdown', false, $post_type))
-            {
-                return;
-            }
-
             // Return if the post type doesn't have post formats or if we're in the Trash.
-            if(! is_object_in_taxonomy($post_type, 'post_format') || $this->is_trash)
+            if(apply_filters('disable_formats_dropdown', false, $post_type) || ! is_object_in_taxonomy($post_type, 'post_format') || $this->is_trash)
             {
                 return;
             }
@@ -1576,29 +1574,26 @@
         {
             global $mode;
 
-            if($this->hierarchical_display)
+            if($this->hierarchical_display && 0 === $this->current_level && (int) $post->post_parent > 0)
             {
-                if(0 === $this->current_level && (int) $post->post_parent > 0)
+                // Sent level 0 by accident, by default, or because we don't know the actual level.
+                $find_main_page = (int) $post->post_parent;
+
+                while($find_main_page > 0)
                 {
-                    // Sent level 0 by accident, by default, or because we don't know the actual level.
-                    $find_main_page = (int) $post->post_parent;
+                    $parent = get_post($find_main_page);
 
-                    while($find_main_page > 0)
+                    if(is_null($parent))
                     {
-                        $parent = get_post($find_main_page);
+                        break;
+                    }
 
-                        if(is_null($parent))
-                        {
-                            break;
-                        }
+                    ++$this->current_level;
+                    $find_main_page = (int) $parent->post_parent;
 
-                        ++$this->current_level;
-                        $find_main_page = (int) $parent->post_parent;
-
-                        if(! isset($parent_name))
-                        {
-                            $parent_name = apply_filters('the_title', $parent->post_title, $parent->ID);
-                        }
+                    if(! isset($parent_name))
+                    {
+                        $parent_name = apply_filters('the_title', $parent->post_title, $parent->ID);
                     }
                 }
             }
@@ -1740,6 +1735,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'title';
         }
     }

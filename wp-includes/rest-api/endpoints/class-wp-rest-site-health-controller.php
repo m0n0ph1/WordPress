@@ -14,6 +14,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, sprintf('/%s/%s', $this->rest_base, 'background-updates'), [
                 [
                     'methods' => 'GET',

@@ -3,11 +3,11 @@
     #[AllowDynamicProperties]
     class WP_Application_Passwords
     {
-        const USERMETA_KEY_APPLICATION_PASSWORDS = '_application_passwords';
+        public const USERMETA_KEY_APPLICATION_PASSWORDS = '_application_passwords';
 
-        const OPTION_KEY_IN_USE = 'using_application_passwords';
+        public const OPTION_KEY_IN_USE = 'using_application_passwords';
 
-        const PW_LENGTH = 24;
+        public const PW_LENGTH = 24;
 
         public static function is_in_use()
         {

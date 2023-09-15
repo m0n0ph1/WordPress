@@ -76,12 +76,7 @@
             return $bookmark;
         }
 
-        if(! is_object($bookmark))
-        {
-            return '';
-        }
-
-        if(! isset($bookmark->$field))
+        if(! is_object($bookmark) || ! isset($bookmark->$field))
         {
             return '';
         }
@@ -111,14 +106,11 @@
         $key = md5(serialize($parsed_args));
         $cache = wp_cache_get('get_bookmarks', 'bookmark');
 
-        if('rand' !== $parsed_args['orderby'] && $cache)
+        if('rand' !== $parsed_args['orderby'] && $cache && is_array($cache) && isset($cache[$key]))
         {
-            if(is_array($cache) && isset($cache[$key]))
-            {
-                $bookmarks = $cache[$key];
+            $bookmarks = $cache[$key];
 
-                return apply_filters('get_bookmarks', $bookmarks, $parsed_args);
-            }
+            return apply_filters('get_bookmarks', $bookmarks, $parsed_args);
         }
 
         if(! is_array($cache))

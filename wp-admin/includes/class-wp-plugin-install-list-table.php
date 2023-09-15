@@ -12,11 +12,13 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             return current_user_can('install_plugins');
         }
 
         public function prepare_items()
         {
+            parent::prepare_items();
             require_once ABSPATH.'wp-admin/includes/plugin-install.php';
 
             global $tabs, $tab, $paged, $type, $term;
@@ -235,6 +237,7 @@
 
         public function no_items()
         {
+            parent::no_items();
             if(isset($this->error))
             { ?>
                 <div class="inline error"><p><?php echo $this->error->get_error_message(); ?></p>
@@ -296,6 +299,7 @@
 
         public function display()
         {
+            parent::display();
             $singular = $this->_args['singular'];
 
             $data_attr = '';
@@ -357,11 +361,13 @@
 
         public function get_columns()
         {
+            parent::get_columns();
             return [];
         }
 
         public function display_rows()
         {
+            parent::display_rows();
             $plugins_allowedtags = [
                 'a' => [
                     'href' => [],
@@ -667,13 +673,13 @@
                                 {
                                     echo '<span class="compatibility-untested">'.__('Untested with your version of WordPress').'</span>';
                                 }
-                                elseif(! $compatible_wp)
+                                elseif($compatible_wp)
                                 {
-                                    echo '<span class="compatibility-incompatible">'.__('<strong>Incompatible</strong> with your version of WordPress').'</span>';
+                                    echo '<span class="compatibility-compatible">'.__('<strong>Compatible</strong> with your version of WordPress').'</span>';
                                 }
                                 else
                                 {
-                                    echo '<span class="compatibility-compatible">'.__('<strong>Compatible</strong> with your version of WordPress').'</span>';
+                                    echo '<span class="compatibility-incompatible">'.__('<strong>Incompatible</strong> with your version of WordPress').'</span>';
                                 }
                             ?>
                         </div>
@@ -712,11 +718,21 @@
 
             if('DESC' === $this->order)
             {
-                return ($a < $b) ? 1 : -1;
+                if($a < $b)
+                {
+                    return 1;
+                }
+
+                return -1;
             }
             else
             {
-                return ($a < $b) ? -1 : 1;
+                if($a < $b)
+                {
+                    return -1;
+                }
+
+                return 1;
             }
         }
     }

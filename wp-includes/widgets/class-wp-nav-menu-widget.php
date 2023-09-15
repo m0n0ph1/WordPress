@@ -15,6 +15,7 @@
         public function widget($args, $instance)
         {
             // Get menu.
+            parent::widget($args, $instance);
             $nav_menu = ! empty($instance['nav_menu']) ? wp_get_nav_menu_object($instance['nav_menu']) : false;
 
             if(! $nav_menu)
@@ -82,7 +83,8 @@
 
         public function form($instance)
         {
-            global $wp_customize;
+            global parent::form($instance);
+            $wp_customize;
             $title = isset($instance['title']) ? $instance['title'] : '';
             $nav_menu = isset($instance['nav_menu']) ? $instance['nav_menu'] : '';
 

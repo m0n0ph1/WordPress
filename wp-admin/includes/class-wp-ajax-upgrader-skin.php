@@ -51,12 +51,9 @@
                     $string = $this->upgrader->strings[$string];
                 }
 
-                if(str_contains($string, '%'))
+                if(str_contains($string, '%') && ! empty($args))
                 {
-                    if(! empty($args))
-                    {
-                        $string = vsprintf($string, $args);
-                    }
+                    $string = vsprintf($string, $args);
                 }
 
                 // Count existing errors to generate a unique error code.

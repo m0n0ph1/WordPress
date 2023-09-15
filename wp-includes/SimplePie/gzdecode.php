@@ -1,34 +1,34 @@
 <?php
 
-    class SimplePie_gzdecode
+    class gzdecode
     {
-        var $compressed_data;
+        public $compressed_data;
 
-        var $compressed_size;
+        public $compressed_size;
 
-        var $min_compressed_size = 18;
+        public $min_compressed_size = 18;
 
-        var $position = 0;
+        public $position = 0;
 
-        var $flags;
+        public $flags;
 
-        var $data;
+        public $data;
 
-        var $MTIME;
+        public $MTIME;
 
-        var $XFL;
+        public $XFL;
 
-        var $OS;
+        public $OS;
 
-        var $SI1;
+        public $SI1;
 
-        var $SI2;
+        public $SI2;
 
-        var $extra_field;
+        public $extra_field;
 
-        var $filename;
+        public $filename;
 
-        var $comment;
+        public $comment;
 
         public function __construct($data)
         {
@@ -46,7 +46,7 @@
             if($this->compressed_size >= $this->min_compressed_size)
             {
                 // Check ID1, ID2, and CM
-                if(substr($this->compressed_data, 0, 3) !== "\x1F\x8B\x08")
+                if(strpos($this->compressed_data, "\x1F\x8B\x08") !== 0)
                 {
                     return false;
                 }
@@ -195,13 +195,8 @@
                 // Check ISIZE of data
                 $isize = current(unpack('V', substr($this->compressed_data, $this->position, 4)));
                 $this->position += 4;
-                if(sprintf('%u', strlen($this->data) & 0xFFFFFFFF) !== sprintf('%u', $isize))
-                {
-                    return false;
-                }
 
-                // Wow, against all odds, we've actually got a valid gzip string
-                return true;
+                return sprintf('%u', strlen($this->data) & 0xFFFFFFFF) === sprintf('%u', $isize);
             }
 
             return false;

@@ -270,8 +270,6 @@
                 $message .= '<p>'.sprintf(/* translators: %s: Support forums URL. */ __('If you are unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">WordPress support forums</a>.'), __('https://wordpress.org/support/forums/'))."</p>\n";
 
                 $this->bail($message, 'db_connect_fail');
-
-                return false;
             }
             elseif($this->dbh)
             {
@@ -593,8 +591,8 @@
 		 * For backward compatibility, this is only applied to %s, and not to placeholders like %1$s,
 		 * which are frequently used in the middle of longer strings, or as table name placeholders.
 		 */
-            $query = str_replace("'%s'", '%s', $query); // Strip any existing single quotes.
-            $query = str_replace('"%s"', '%s', $query); // Strip any existing double quotes.
+            // Strip any existing single quotes.
+            $query = str_replace(array("'%s'", '"%s"'), '%s', $query); // Strip any existing double quotes.
 
             // Escape any unescaped percents (i.e. anything unrecognised).
             $query = preg_replace("/%(?:%|$|(?!($allowed_format)?[sdfFi]))/", '%%\\1', $query);
@@ -906,7 +904,7 @@
                 // If ext/hash is not present, compat.php's hash_hmac() does not support sha256.
                 $algo = function_exists('hash') ? 'sha256' : 'sha1';
                 // Old WP installs may not have AUTH_SALT defined.
-                $salt = defined('AUTH_SALT') && AUTH_SALT ? AUTH_SALT : (string) rand();
+                $salt = defined('AUTH_SALT') && AUTH_SALT ? AUTH_SALT : (string) random_int();
 
                 $placeholder = '{'.hash_hmac($algo, uniqid($salt, true), $salt).'}';
             }
@@ -1501,13 +1499,8 @@
             }
 
             // If still no column information, return the table charset.
-            if(empty($this->col_meta[$tablekey]))
-            {
-                return $this->table_charset[$tablekey];
-            }
-
             // If this column doesn't exist, return the table charset.
-            if(empty($this->col_meta[$tablekey][$columnkey]))
+            if(empty($this->col_meta[$tablekey]) || empty($this->col_meta[$tablekey][$columnkey]))
             {
                 return $this->table_charset[$tablekey];
             }
@@ -1724,13 +1717,8 @@
 
             // We don't need to check the collation for queries that don't read data.
             $query = ltrim($query, "\r\n\t (");
-            if(preg_match('/^(?:SHOW|DESCRIBE|DESC|EXPLAIN|CREATE)\s/i', $query))
-            {
-                return true;
-            }
-
             // All-ASCII queries don't need extra checking.
-            if($this->check_ascii($query))
+            if(preg_match('/^(?:SHOW|DESCRIBE|DESC|EXPLAIN|CREATE)\s/i', $query) || $this->check_ascii($query))
             {
                 return true;
             }
@@ -2257,20 +2245,40 @@
 
             if(OBJECT === $output)
             {
-                return $this->last_result[$y] ? $this->last_result[$y] : null;
+                if($this->last_result[$y])
+                {
+                    return $this->last_result[$y];
+                }
+
+                return null;
             }
             elseif(ARRAY_A === $output)
             {
-                return $this->last_result[$y] ? get_object_vars($this->last_result[$y]) : null;
+                if($this->last_result[$y])
+                {
+                    return get_object_vars($this->last_result[$y]);
+                }
+
+                return null;
             }
             elseif(ARRAY_N === $output)
             {
-                return $this->last_result[$y] ? array_values(get_object_vars($this->last_result[$y])) : null;
+                if($this->last_result[$y])
+                {
+                    return array_values(get_object_vars($this->last_result[$y]));
+                }
+
+                return null;
             }
             elseif(OBJECT === strtoupper($output))
             {
                 // Back compat for OBJECT being previously case-insensitive.
-                return $this->last_result[$y] ? $this->last_result[$y] : null;
+                if($this->last_result[$y])
+                {
+                    return $this->last_result[$y];
+                }
+
+                return null;
             }
             else
             {
@@ -2308,8 +2316,6 @@
                 $error_str = sprintf('WordPress database error %1$s for query %2$s', $str, $this->last_query);
             }
 
-            error_log($error_str);
-
             // Are we showing errors?
             if(! $this->show_errors)
             {
@@ -2325,7 +2331,6 @@
 
                 if(defined('ERRORLOGFILE'))
                 {
-                    error_log($msg, 3, ERRORLOGFILE);
                 }
                 if(defined('DIEONDBERROR'))
                 {
@@ -2435,12 +2440,7 @@
 		 * If template_redirect has already happened, it's too late for wp_die()/dead_db().
 		 * Let's just return and hope for the best.
 		 */
-            if(did_action('template_redirect'))
-            {
-                return false;
-            }
-
-            if(! $allow_bail)
+            if(did_action('template_redirect') || ! $allow_bail)
             {
                 return false;
             }
@@ -2723,7 +2723,12 @@
             }
 
             // If there is a value return it, else return null.
-            return (isset($values[$x]) && '' !== $values[$x]) ? $values[$x] : null;
+            if(isset($values[$x]) && '' !== $values[$x])
+            {
+                return $values[$x];
+            }
+
+            return null;
         }
 
         public function strip_invalid_text_for_column($table, $column, $value)

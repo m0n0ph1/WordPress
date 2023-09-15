@@ -69,10 +69,14 @@ All at ###SITENAME###
 
         $content = apply_filters('delete_site_email_content', $content);
 
-        $content = str_replace('###USERNAME###', $user->user_login, $content);
-        $content = str_replace('###URL_DELETE###', $url_delete, $content);
-        $content = str_replace('###SITENAME###', get_network()->site_name, $content);
-        $content = str_replace('###SITEURL###', network_home_url(), $content);
+        $content = str_replace(array('###USERNAME###', '###URL_DELETE###'), array(
+            $user->user_login,
+            $url_delete
+        ),                     $content);
+        $content = str_replace(array('###SITENAME###', '###SITEURL###'), array(
+            get_network()->site_name,
+            network_home_url()
+        ),                     $content);
 
         wp_mail(get_option('admin_email'), sprintf(/* translators: %s: Site title. */ __('[%s] Delete My Site'), wp_specialchars_decode(get_option('blogname'))), $content);
 

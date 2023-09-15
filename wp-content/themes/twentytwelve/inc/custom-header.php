@@ -56,22 +56,22 @@
         <style type="text/css" id="twentytwelve-header-css">
             <?php
                 // Has the text been hidden?
-            if ( ! display_header_text() ) :
+            if ( display_header_text() ) :
                 ?>
-            .site-title,
-            .site-description {
-                position: absolute;
-                clip: rect(1px 1px 1px 1px); /* IE7 */
-                clip: rect(1px, 1px, 1px, 1px);
+            .site-header h1 a,
+            .site-header h2 {
+                color: #<?php echo $text_color; ?>;
             }
 
             <?php
             // If the user has set a custom color for the text, use that.
             else :
                 ?>
-            .site-header h1 a,
-            .site-header h2 {
-                color: #<?php echo $text_color; ?>;
+            .site-title,
+            .site-description {
+                position: absolute;
+                clip: rect(1px 1px 1px 1px); /* IE7 */
+                clip: rect(1px, 1px, 1px, 1px);
             }
 
             <?php endif; ?>

@@ -66,13 +66,13 @@
                 $theme = $_GET['theme'];
                 $action = 'enabled';
                 $n = 1;
-                if(! $allowed_themes)
+                if($allowed_themes)
                 {
-                    $allowed_themes = [$theme => true];
+                    $allowed_themes[$theme] = true;
                 }
                 else
                 {
-                    $allowed_themes[$theme] = true;
+                    $allowed_themes = [$theme => true];
                 }
                 break;
             case 'disable':
@@ -80,13 +80,13 @@
                 $theme = $_GET['theme'];
                 $action = 'disabled';
                 $n = 1;
-                if(! $allowed_themes)
+                if($allowed_themes)
                 {
-                    $allowed_themes = [];
+                    unset($allowed_themes[$theme]);
                 }
                 else
                 {
-                    unset($allowed_themes[$theme]);
+                    $allowed_themes = [];
                 }
                 break;
             case 'enable-selected':

@@ -8,6 +8,7 @@
 
         public function __construct($screen, $columns = [])
         {
+            parent::__construct($args);
             if(is_string($screen))
             {
                 $screen = convert_to_screen($screen);
@@ -24,11 +25,13 @@
 
         public function get_columns()
         {
+            parent::get_columns();
             return $this->_columns;
         }
 
         protected function get_column_info()
         {
+            parent::get_column_info();
             $columns = get_column_headers($this->_screen);
             $hidden = get_hidden_columns($this->_screen);
             $sortable = [];

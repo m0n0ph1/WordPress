@@ -114,7 +114,7 @@
         }
 
         $default_size = get_option('image_default_size', 'large');
-        $image_default_size = in_array($default_size, array_keys($image_size_names), true) ? $default_size : 'large';
+        $image_default_size = array_key_exists($default_size, $image_size_names) ? $default_size : 'large';
 
         $image_dimensions = [];
         $all_sizes = wp_get_registered_image_subsizes();
@@ -276,10 +276,7 @@
         $wp_styles = $current_wp_styles;
         $wp_scripts = $current_wp_scripts;
 
-        return [
-            'styles' => $styles,
-            'scripts' => $scripts,
-        ];
+        return compact('styles', 'scripts');
     }
 
     function wp_get_first_block($blocks, $block_name)
@@ -564,8 +561,8 @@
          * intended for the block editor.
          */
         $backup_global_post = ! empty($post) ? clone $post : $post;
-        $backup_wp_scripts = ! empty($wp_scripts) ? clone $wp_scripts : $wp_scripts;
-        $backup_wp_styles = ! empty($wp_styles) ? clone $wp_styles : $wp_styles;
+        $backup_wp_scripts = $wp_scripts !== null ? clone $wp_scripts : $wp_scripts;
+        $backup_wp_styles = $wp_styles !== null ? clone $wp_styles : $wp_styles;
 
         foreach($preload_paths as &$path)
         {

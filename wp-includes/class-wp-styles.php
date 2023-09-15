@@ -79,17 +79,14 @@
                 $inline_style_tag = '';
             }
 
-            if($this->do_concat)
+            if($this->do_concat && $this->in_default_dir($src) && ! $conditional && ! isset($obj->extra['alt']))
             {
-                if($this->in_default_dir($src) && ! $conditional && ! isset($obj->extra['alt']))
-                {
-                    $this->concat .= "$handle,";
-                    $this->concat_version .= "$handle$ver";
+                $this->concat .= "$handle,";
+                $this->concat_version .= "$handle$ver";
 
-                    $this->print_code .= $inline_style;
+                $this->print_code .= $inline_style;
 
-                    return true;
-                }
+                return true;
             }
 
             if(isset($obj->args))

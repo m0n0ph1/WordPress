@@ -14,12 +14,9 @@
         wp_die(__('Sorry, you are not allowed to edit posts in this post type.'));
     }
 
-    if('attachment' === $typenow)
+    if('attachment' === $typenow && wp_redirect(admin_url('upload.php')))
     {
-        if(wp_redirect(admin_url('upload.php')))
-        {
-            exit;
-        }
+        exit;
     }
 
     global $post_type, $post_type_object;

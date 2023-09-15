@@ -127,7 +127,12 @@
                     $chars = $chars[0];
                     foreach($chars as $char)
                     {
-                        if(! $previous_is_backslash)
+                        if($previous_is_backslash)
+                        {
+                            $previous_is_backslash = false;
+                            $unpoified .= isset($escapes[$char]) ? $escapes[$char] : $char;
+                        }
+                        else
                         {
                             if('\\' === $char)
                             {
@@ -137,11 +142,6 @@
                             {
                                 $unpoified .= $char;
                             }
-                        }
-                        else
-                        {
-                            $previous_is_backslash = false;
-                            $unpoified .= isset($escapes[$char]) ? $escapes[$char] : $char;
                         }
                     }
                 }
@@ -210,13 +210,7 @@
                     $po[] = 'msgctxt '.PO::poify($entry->context);
                 }
                 $po[] = 'msgid '.PO::poify($entry->singular);
-                if(! $entry->is_plural)
-                {
-                    $translation = empty($entry->translations) ? '' : $entry->translations[0];
-                    $translation = PO::match_begin_and_end_newlines($translation, $entry->singular);
-                    $po[] = 'msgstr '.PO::poify($translation);
-                }
-                else
+                if($entry->is_plural)
                 {
                     $po[] = 'msgid_plural '.PO::poify($entry->plural);
                     $translations = empty($entry->translations) ? ['', ''] : $entry->translations;
@@ -225,6 +219,12 @@
                         $translation = PO::match_begin_and_end_newlines($translation, $entry->plural);
                         $po[] = "msgstr[$i] ".PO::poify($translation);
                     }
+                }
+                else
+                {
+                    $translation = empty($entry->translations) ? '' : $entry->translations[0];
+                    $translation = PO::match_begin_and_end_newlines($translation, $entry->singular);
+                    $po[] = 'msgstr '.PO::poify($translation);
                 }
 
                 return implode("\n", $po);
@@ -237,9 +237,9 @@
                     return $translation;
                 }
 
-                $original_begin = "\n" === substr($original, 0, 1);
+                $original_begin = strpos($original, "\n") === 0;
                 $original_end = "\n" === substr($original, -1);
-                $translation_begin = "\n" === substr($translation, 0, 1);
+                $translation_begin = strpos($translation, "\n") === 0;
                 $translation_end = "\n" === substr($translation, -1);
 
                 if($original_begin)
@@ -293,7 +293,7 @@
                         $this->add_entry($res['entry']);
                     }
                 }
-                PO::read_line($f, 'clear');
+                $this->read_line($f, 'clear');
                 if(false === $res)
                 {
                     return false;
@@ -321,7 +321,7 @@
                 while(true)
                 {
                     ++$lineno;
-                    $line = PO::read_line($f);
+                    $line = $this->read_line($f);
                     if(! $line)
                     {
                         if(feof($f))
@@ -330,13 +330,13 @@
                             {
                                 break;
                             }
-                            elseif(! $context)
-                            { // We haven't read a line and EOF came.
-                                return null;
-                            }
-                            else
+                            elseif($context)
                             {
                                 return false;
+                            }
+                            else
+                            { // We haven't read a line and EOF came.
+                                return null;
                             }
                         }
                         else
@@ -354,7 +354,7 @@
                         // The comment is the start of a new entry.
                         if(self::is_final($context))
                         {
-                            PO::read_line($f, 'put-back');
+                            $this->read_line($f, 'put-back');
                             --$lineno;
                             break;
                         }
@@ -370,7 +370,7 @@
                     {
                         if(self::is_final($context))
                         {
-                            PO::read_line($f, 'put-back');
+                            $this->read_line($f, 'put-back');
                             --$lineno;
                             break;
                         }
@@ -385,7 +385,7 @@
                     {
                         if(self::is_final($context))
                         {
-                            PO::read_line($f, 'put-back');
+                            $this->read_line($f, 'put-back');
                             --$lineno;
                             break;
                         }
@@ -469,10 +469,7 @@
                     $entry->translations = [];
                 }
 
-                return [
-                    'entry' => $entry,
-                    'lineno' => $lineno,
-                ];
+                return compact('entry', 'lineno');
             }
 
             public function read_line($f, $action = 'read')

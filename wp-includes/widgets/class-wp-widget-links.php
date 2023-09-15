@@ -13,6 +13,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             $show_description = isset($instance['description']) ? $instance['description'] : false;
             $show_name = isset($instance['name']) ? $instance['name'] : false;
             $show_rating = isset($instance['rating']) ? $instance['rating'] : false;
@@ -75,6 +76,7 @@
         public function form($instance)
         {
             // Defaults.
+            parent::form($instance);
             $instance = wp_parse_args((array) $instance, [
                 'images' => true,
                 'name' => true,

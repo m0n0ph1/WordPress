@@ -53,13 +53,13 @@
     {
         global $wp_filter, $wp_filters, $wp_current_filter;
 
-        if(! isset($wp_filters[$hook_name]))
+        if(isset($wp_filters[$hook_name]))
         {
-            $wp_filters[$hook_name] = 1;
+            ++$wp_filters[$hook_name];
         }
         else
         {
-            ++$wp_filters[$hook_name];
+            $wp_filters[$hook_name] = 1;
         }
 
         // Do 'all' actions first.
@@ -100,13 +100,13 @@
     {
         global $wp_filter, $wp_filters, $wp_current_filter;
 
-        if(! isset($wp_filters[$hook_name]))
+        if(isset($wp_filters[$hook_name]))
         {
-            $wp_filters[$hook_name] = 1;
+            ++$wp_filters[$hook_name];
         }
         else
         {
-            ++$wp_filters[$hook_name];
+            $wp_filters[$hook_name] = 1;
         }
 
         // Do 'all' actions first.
@@ -227,13 +227,13 @@
     {
         global $wp_filter, $wp_actions, $wp_current_filter;
 
-        if(! isset($wp_actions[$hook_name]))
+        if(isset($wp_actions[$hook_name]))
         {
-            $wp_actions[$hook_name] = 1;
+            ++$wp_actions[$hook_name];
         }
         else
         {
-            ++$wp_actions[$hook_name];
+            $wp_actions[$hook_name] = 1;
         }
 
         // Do 'all' actions first.
@@ -278,13 +278,13 @@
     {
         global $wp_filter, $wp_actions, $wp_current_filter;
 
-        if(! isset($wp_actions[$hook_name]))
+        if(isset($wp_actions[$hook_name]))
         {
-            $wp_actions[$hook_name] = 1;
+            ++$wp_actions[$hook_name];
         }
         else
         {
-            ++$wp_actions[$hook_name];
+            $wp_actions[$hook_name] = 1;
         }
 
         // Do 'all' actions first.

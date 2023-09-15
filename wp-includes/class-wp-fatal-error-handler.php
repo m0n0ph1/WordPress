@@ -54,13 +54,8 @@
             $error = error_get_last();
 
             // No error, just skip the error handling code.
-            if(null === $error)
-            {
-                return null;
-            }
-
             // Bail if this error should not be handled.
-            if(! $this->should_handle_error($error))
+            if(null === $error || ! $this->should_handle_error($error))
             {
                 return null;
             }

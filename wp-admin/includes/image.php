@@ -7,17 +7,17 @@
         { // Handle int as attachment ID.
             $src_file = get_attached_file($src);
 
-            if(! file_exists($src_file))
+            if(file_exists($src_file))
+            {
+                $src = $src_file;
+            }
+            else
             {
                 /*
                  * If the file doesn't exist, attempt a URL fopen on the src link.
                  * This can occur with certain file replication plugins.
                  */
                 $src = _load_image_to_edit_path($src, 'full');
-            }
-            else
-            {
-                $src = $src_file;
             }
         }
 
@@ -243,7 +243,11 @@
                     $rotated = $resized;
                 }
 
-                if(! is_wp_error($resized))
+                if(is_wp_error($resized))
+                {
+                    // TODO: Log errors.
+                }
+                else
                 {
                     /*
                      * Append "-scaled" to the image file name. It will look like "my_image-scaled.jpg".
@@ -266,10 +270,6 @@
                         // TODO: Log errors.
                     }
                 }
-                else
-                {
-                    // TODO: Log errors.
-                }
             }
             elseif(! empty($exif_meta['orientation']) && 1 !== (int) $exif_meta['orientation'])
             {
@@ -291,7 +291,11 @@
                     // Append `-rotated` to the image file name.
                     $saved = $editor->save($editor->generate_filename('rotated'));
 
-                    if(! is_wp_error($saved))
+                    if(is_wp_error($saved))
+                    {
+                        // TODO: Log errors.
+                    }
+                    else
                     {
                         $image_meta = _wp_image_meta_replace_original($saved, $file, $image_meta, $attachment_id);
 
@@ -300,10 +304,6 @@
                         {
                             $image_meta['image_meta']['orientation'] = 1;
                         }
-                    }
-                    else
-                    {
-                        // TODO: Log errors.
                     }
                 }
             }
@@ -609,13 +609,8 @@
         [$numerator, $denominator] = explode('/', $str);
 
         // Both the numerator and the denominator must be numbers.
-        if(! is_numeric($numerator) || ! is_numeric($denominator))
-        {
-            return 0;
-        }
-
         // The denominator must not be zero.
-        if(0 == $denominator)
+        if(! is_numeric($numerator) || ! is_numeric($denominator) || 0 == $denominator)
         { // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Deliberate loose comparison.
             return 0;
         }
@@ -898,13 +893,13 @@
         {
             $result = false;
         }
-        elseif(! in_array($info[2], $displayable_image_types, true))
+        elseif(in_array($info[2], $displayable_image_types, true))
         {
-            $result = false;
+            $result = true;
         }
         else
         {
-            $result = true;
+            $result = false;
         }
 
         return apply_filters('file_is_displayable_image', $result, $path);

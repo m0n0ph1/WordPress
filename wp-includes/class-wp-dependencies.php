@@ -151,13 +151,13 @@
             // If the item was enqueued before the details were registered, enqueue it now.
             if(array_key_exists($handle, $this->queued_before_register))
             {
-                if(! is_null($this->queued_before_register[$handle]))
+                if(is_null($this->queued_before_register[$handle]))
                 {
-                    $this->enqueue($handle.'?'.$this->queued_before_register[$handle]);
+                    $this->enqueue($handle);
                 }
                 else
                 {
-                    $this->enqueue($handle);
+                    $this->enqueue($handle.'?'.$this->queued_before_register[$handle]);
                 }
 
                 unset($this->queued_before_register[$handle]);
@@ -208,12 +208,7 @@
 
         public function get_data($handle, $key)
         {
-            if(! isset($this->registered[$handle]))
-            {
-                return false;
-            }
-
-            if(! isset($this->registered[$handle]->extra[$key]))
+            if(! isset($this->registered[$handle]) || ! isset($this->registered[$handle]->extra[$key]))
             {
                 return false;
             }
@@ -306,7 +301,7 @@
                         if($deps)
                         {
                             $all_deps += array_fill_keys($deps, true);
-                            array_push($queues, $deps);
+                            $queues[] = $deps;
                         }
                         $done[$queued] = true;
                     }

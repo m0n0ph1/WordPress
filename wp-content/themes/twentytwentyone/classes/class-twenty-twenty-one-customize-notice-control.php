@@ -6,7 +6,7 @@
 
         public function render_content()
         {
-            ?>
+            ?>parent::render_content();
             <div class="notice notice-warning">
                 <p><?php esc_html_e('To access the Dark Mode settings, select a light background color.', 'twentytwentyone'); ?></p>
                 <p>

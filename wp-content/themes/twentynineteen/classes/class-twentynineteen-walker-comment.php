@@ -4,6 +4,7 @@
     {
         protected function html5_comment($comment, $depth, $args)
         {
+            parent::html5_comment($comment, $depth, $args);
             $tag = ('div' === $args['style']) ? 'div' : 'li';
 
             ?>

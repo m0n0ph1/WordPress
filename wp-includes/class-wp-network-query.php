@@ -91,7 +91,12 @@
             $cache_key = "get_network_ids:$key:$last_changed";
             $cache_value = wp_cache_get($cache_key, 'network-queries');
 
-            if(false === $cache_value)
+            if(false !== $cache_value)
+            {
+                $network_ids = $cache_value['network_ids'];
+                $this->found_networks = $cache_value['found_networks'];
+            }
+            else
             {
                 $network_ids = $this->get_network_ids();
                 if($network_ids)
@@ -104,11 +109,6 @@
                     'found_networks' => $this->found_networks,
                 ];
                 wp_cache_add($cache_key, $cache_value, 'network-queries');
-            }
-            else
-            {
-                $network_ids = $cache_value['network_ids'];
-                $this->found_networks = $cache_value['found_networks'];
             }
 
             if($this->found_networks && $this->query_vars['number'])
@@ -297,7 +297,7 @@
             }
 
             // Falsey search strings are ignored.
-            if(strlen($this->query_vars['search']))
+            if($this->query_vars['search'] != '')
             {
                 $this->sql_clauses['where']['search'] = $this->get_search_sql($this->query_vars['search'], [
                     "$wpdb->site.domain",
@@ -313,7 +313,7 @@
 
             $pieces = ['fields', 'join', 'where', 'orderby', 'limits', 'groupby'];
 
-            $clauses = apply_filters_ref_array('networks_clauses', [compact($pieces), &$this]);
+            $clauses = apply_filters_ref_array('networks_clauses', [compact('pieces'), &$this]);
 
             $fields = isset($clauses['fields']) ? $clauses['fields'] : '';
             $join = isset($clauses['join']) ? $clauses['join'] : '';
@@ -370,12 +370,7 @@
 
         protected function parse_order($order)
         {
-            if(! is_string($order) || empty($order))
-            {
-                return 'ASC';
-            }
-
-            if('ASC' === strtoupper($order))
+            if(! is_string($order) || empty($order) || 'ASC' === strtoupper($order))
             {
                 return 'ASC';
             }

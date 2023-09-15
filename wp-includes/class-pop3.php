@@ -1,4 +1,10 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+
+    /** @noinspection ALL */
 
     class POP3
     {
@@ -43,15 +49,9 @@
         function __construct($server = '', $timeout = '')
         {
             settype($this->BUFFER, "integer");
-            if(! empty($server))
+            if(! empty($server) && empty($this->MAILSERVER))
             {
-                // Do not allow programs to alter MAILSERVER
-                // if it is already specified. They can get around
-                // this if they -really- want to, so don't count on it.
-                if(empty($this->MAILSERVER))
-                {
-                    $this->MAILSERVER = $server;
-                }
+                $this->MAILSERVER = $server;
             }
             if(! empty($timeout))
             {
@@ -106,7 +106,6 @@
             $reply = $this->strip_clf($reply);
             if($this->DEBUG)
             {
-                error_log("POP3 SEND [connect: $server] GOT [$reply]", 0);
             }
             if(! $this->is_ok($reply))
             {
@@ -689,12 +688,7 @@
 
             $PopArray = $this->last("array");
 
-            if($PopArray == -1)
-            {
-                return false;
-            }
-
-            if((! $PopArray) or (empty($PopArray)))
+            if($PopArray == -1 || (! $PopArray) or (empty($PopArray)))
             {
                 return false;
             }

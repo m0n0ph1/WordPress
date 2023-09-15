@@ -77,22 +77,7 @@
 
         $post = get_post($post_id);
 
-        if(! $post)
-        {
-            return;
-        }
-
-        if(! post_type_supports($post->post_type, 'revisions'))
-        {
-            return;
-        }
-
-        if('auto-draft' === $post->post_status)
-        {
-            return;
-        }
-
-        if(! wp_revisions_enabled($post))
+        if(! $post || ! post_type_supports($post->post_type, 'revisions') || 'auto-draft' === $post->post_status || ! wp_revisions_enabled($post))
         {
             return;
         }
@@ -288,7 +273,6 @@
 
         if(OBJECT === $output)
         {
-            return $revision;
         }
         elseif(ARRAY_A === $output)
         {
@@ -551,12 +535,7 @@
     {
         $post = get_post();
 
-        if(! $post)
-        {
-            return $terms;
-        }
-
-        if(empty($_REQUEST['post_format']) || $post->ID !== $post_id || 'post_format' !== $taxonomy || 'revision' === $post->post_type)
+        if(! $post || empty($_REQUEST['post_format']) || $post->ID !== $post_id || 'post_format' !== $taxonomy || 'revision' === $post->post_type)
         {
             return $terms;
         }
@@ -582,12 +561,7 @@
     {
         $post = get_post();
 
-        if(! $post)
-        {
-            return $value;
-        }
-
-        if(empty($_REQUEST['_thumbnail_id']) || empty($_REQUEST['preview_id']) || $post->ID !== $post_id || $post_id !== (int) $_REQUEST['preview_id'] || '_thumbnail_id' !== $meta_key || 'revision' === $post->post_type)
+        if(! $post || empty($_REQUEST['_thumbnail_id']) || empty($_REQUEST['preview_id']) || $post->ID !== $post_id || $post_id !== (int) $_REQUEST['preview_id'] || '_thumbnail_id' !== $meta_key || 'revision' === $post->post_type)
         {
             return $value;
         }
@@ -635,16 +609,7 @@
             // If we couldn't get a lock, see how old the previous lock is.
             $locked = get_option($lock);
 
-            if(! $locked)
-            {
-                /*
-                 * Can't write to the lock, and can't read the lock.
-                 * Something broken has happened.
-                 */
-                return false;
-            }
-
-            if($locked > $now - HOUR_IN_SECONDS)
+            if(! $locked || $locked > $now - HOUR_IN_SECONDS)
             {
                 // Lock is not too old: some other process may be upgrading this post. Bail.
                 return false;

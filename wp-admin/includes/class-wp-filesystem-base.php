@@ -334,9 +334,9 @@
             $legal = ['', 'w', 'r', 'x', '-'];
             $attarray = preg_split('//', $mode);
 
-            for($i = 0, $c = count($attarray); $i < $c; $i++)
+            foreach($attarray as $iValue)
             {
-                $key = array_search($attarray[$i], $legal, true);
+                $key = array_search($iValue, $legal, true);
 
                 if($key)
                 {

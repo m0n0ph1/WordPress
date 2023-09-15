@@ -458,7 +458,7 @@
 
             $pieces = ['fields', 'join', 'where', 'distinct', 'orderby', 'order', 'limits'];
 
-            $clauses = apply_filters('terms_clauses', compact($pieces), $taxonomies, $args);
+            $clauses = apply_filters('terms_clauses', compact('pieces'), $taxonomies, $args);
 
             $fields = isset($clauses['fields']) ? $clauses['fields'] : '';
             $join = isset($clauses['join']) ? $clauses['join'] : '';

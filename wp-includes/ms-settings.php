@@ -46,14 +46,14 @@
         {
             // `$current_blog` and `$current_site are now populated.
         }
-        elseif(false === $bootstrap_result)
-        {
-            ms_not_installed($domain, $path);
-        }
-        else
+        elseif(false !== $bootstrap_result)
         {
             header('Location: '.$bootstrap_result);
             exit;
+        }
+        else
+        {
+            ms_not_installed($domain, $path);
         }
         unset($bootstrap_result);
 

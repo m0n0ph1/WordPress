@@ -35,12 +35,7 @@
         global $wp_admin_bar;
         static $rendered = false;
 
-        if($rendered)
-        {
-            return;
-        }
-
-        if(! is_admin_bar_showing() || ! is_object($wp_admin_bar))
+        if($rendered || ! is_admin_bar_showing() || ! is_object($wp_admin_bar))
         {
             return;
         }
@@ -343,13 +338,8 @@
         global $_wp_current_template_id;
 
         // Don't show if a block theme is not activated.
-        if(! wp_is_block_theme())
-        {
-            return;
-        }
-
         // Don't show for users who can't edit theme options or when in the admin.
-        if(! current_user_can('edit_theme_options') || is_admin())
+        if(! wp_is_block_theme() || ! current_user_can('edit_theme_options') || is_admin())
         {
             return;
         }
@@ -1042,12 +1032,7 @@
         global $show_admin_bar, $pagenow;
 
         // For all these types of requests, we never want an admin bar.
-        if(defined('XMLRPC_REQUEST') || defined('DOING_AJAX') || defined('IFRAME_REQUEST') || wp_is_json_request())
-        {
-            return false;
-        }
-
-        if(is_embed())
+        if(defined('XMLRPC_REQUEST') || defined('DOING_AJAX') || defined('IFRAME_REQUEST') || wp_is_json_request() || is_embed())
         {
             return false;
         }

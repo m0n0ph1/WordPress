@@ -2,7 +2,10 @@
 
     class Walker_Nav_Menu_Edit extends Walker_Nav_Menu
     {
-        public function start_lvl(&$output, $depth = 0, $args = null) {}
+        public function start_lvl(&$output, $depth = 0, $args = null)
+        {
+            parent::start_lvl($output, $depth, $args);
+        }
 
         public function end_lvl(&$output, $depth = 0, $args = null) {}
 

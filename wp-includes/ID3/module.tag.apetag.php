@@ -19,7 +19,7 @@
         exit;
     }
 
-    class getid3_apetag extends getid3_handler
+    class module extends getid3_handler
     {
         public $inline_attachments = true;
 
@@ -241,7 +241,7 @@
                             ] = explode(',', $thisfile_ape_items_current['data'][0]);
                             $thisfile_replaygain['mp3gain']['undo_left'] = intval($mp3gain_undo_left);
                             $thisfile_replaygain['mp3gain']['undo_right'] = intval($mp3gain_undo_right);
-                            $thisfile_replaygain['mp3gain']['undo_wrap'] = (($mp3gain_undo_wrap == 'Y') ? true : false);
+                            $thisfile_replaygain['mp3gain']['undo_wrap'] = ($mp3gain_undo_wrap == 'Y');
                         }
                         else
                         {

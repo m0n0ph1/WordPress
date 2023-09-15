@@ -5,202 +5,202 @@
         return;
     }
 
-    class ParagonIE_Sodium_Compat
+    class Compat
     {
-        const LIBRARY_MAJOR_VERSION = 9;
+        public const LIBRARY_MAJOR_VERSION = 9;
 
-        const LIBRARY_MINOR_VERSION = 1;
+        public const LIBRARY_MINOR_VERSION = 1;
 
-        const LIBRARY_VERSION_MAJOR = 9;
+        public const LIBRARY_VERSION_MAJOR = 9;
 
-        const LIBRARY_VERSION_MINOR = 1;
+        public const LIBRARY_VERSION_MINOR = 1;
 
-        const VERSION_STRING = 'polyfill-1.0.8';
+        public const VERSION_STRING = 'polyfill-1.0.8';
 
-        const BASE64_VARIANT_ORIGINAL = 1;
+        public const BASE64_VARIANT_ORIGINAL = 1;
 
-        const BASE64_VARIANT_ORIGINAL_NO_PADDING = 3;
+        public const BASE64_VARIANT_ORIGINAL_NO_PADDING = 3;
 
         // From libsodium
-        const BASE64_VARIANT_URLSAFE = 5;
+        public const BASE64_VARIANT_URLSAFE = 5;
 
-        const BASE64_VARIANT_URLSAFE_NO_PADDING = 7;
+        public const BASE64_VARIANT_URLSAFE_NO_PADDING = 7;
 
-        const CRYPTO_AEAD_AES256GCM_KEYBYTES = 32;
+        public const CRYPTO_AEAD_AES256GCM_KEYBYTES = 32;
 
-        const CRYPTO_AEAD_AES256GCM_NSECBYTES = 0;
+        public const CRYPTO_AEAD_AES256GCM_NSECBYTES = 0;
 
-        const CRYPTO_AEAD_AES256GCM_NPUBBYTES = 12;
+        public const CRYPTO_AEAD_AES256GCM_NPUBBYTES = 12;
 
-        const CRYPTO_AEAD_AES256GCM_ABYTES = 16;
+        public const CRYPTO_AEAD_AES256GCM_ABYTES = 16;
 
-        const CRYPTO_AEAD_CHACHA20POLY1305_KEYBYTES = 32;
+        public const CRYPTO_AEAD_CHACHA20POLY1305_KEYBYTES = 32;
 
-        const CRYPTO_AEAD_CHACHA20POLY1305_NSECBYTES = 0;
+        public const CRYPTO_AEAD_CHACHA20POLY1305_NSECBYTES = 0;
 
-        const CRYPTO_AEAD_CHACHA20POLY1305_NPUBBYTES = 8;
+        public const CRYPTO_AEAD_CHACHA20POLY1305_NPUBBYTES = 8;
 
-        const CRYPTO_AEAD_CHACHA20POLY1305_ABYTES = 16;
+        public const CRYPTO_AEAD_CHACHA20POLY1305_ABYTES = 16;
 
-        const CRYPTO_AEAD_CHACHA20POLY1305_IETF_KEYBYTES = 32;
+        public const CRYPTO_AEAD_CHACHA20POLY1305_IETF_KEYBYTES = 32;
 
-        const CRYPTO_AEAD_CHACHA20POLY1305_IETF_NSECBYTES = 0;
+        public const CRYPTO_AEAD_CHACHA20POLY1305_IETF_NSECBYTES = 0;
 
-        const CRYPTO_AEAD_CHACHA20POLY1305_IETF_NPUBBYTES = 12;
+        public const CRYPTO_AEAD_CHACHA20POLY1305_IETF_NPUBBYTES = 12;
 
-        const CRYPTO_AEAD_CHACHA20POLY1305_IETF_ABYTES = 16;
+        public const CRYPTO_AEAD_CHACHA20POLY1305_IETF_ABYTES = 16;
 
-        const CRYPTO_AEAD_XCHACHA20POLY1305_IETF_KEYBYTES = 32;
+        public const CRYPTO_AEAD_XCHACHA20POLY1305_IETF_KEYBYTES = 32;
 
-        const CRYPTO_AEAD_XCHACHA20POLY1305_IETF_NSECBYTES = 0;
+        public const CRYPTO_AEAD_XCHACHA20POLY1305_IETF_NSECBYTES = 0;
 
-        const CRYPTO_AEAD_XCHACHA20POLY1305_IETF_NPUBBYTES = 24;
+        public const CRYPTO_AEAD_XCHACHA20POLY1305_IETF_NPUBBYTES = 24;
 
-        const CRYPTO_AEAD_XCHACHA20POLY1305_IETF_ABYTES = 16;
+        public const CRYPTO_AEAD_XCHACHA20POLY1305_IETF_ABYTES = 16;
 
-        const CRYPTO_AUTH_BYTES = 32;
+        public const CRYPTO_AUTH_BYTES = 32;
 
-        const CRYPTO_AUTH_KEYBYTES = 32;
+        public const CRYPTO_AUTH_KEYBYTES = 32;
 
-        const CRYPTO_BOX_SEALBYTES = 16;
+        public const CRYPTO_BOX_SEALBYTES = 16;
 
-        const CRYPTO_BOX_SECRETKEYBYTES = 32;
+        public const CRYPTO_BOX_SECRETKEYBYTES = 32;
 
-        const CRYPTO_BOX_PUBLICKEYBYTES = 32;
+        public const CRYPTO_BOX_PUBLICKEYBYTES = 32;
 
-        const CRYPTO_BOX_KEYPAIRBYTES = 64;
+        public const CRYPTO_BOX_KEYPAIRBYTES = 64;
 
-        const CRYPTO_BOX_MACBYTES = 16;
+        public const CRYPTO_BOX_MACBYTES = 16;
 
-        const CRYPTO_BOX_NONCEBYTES = 24;
+        public const CRYPTO_BOX_NONCEBYTES = 24;
 
-        const CRYPTO_BOX_SEEDBYTES = 32;
+        public const CRYPTO_BOX_SEEDBYTES = 32;
 
-        const CRYPTO_CORE_RISTRETTO255_BYTES = 32;
+        public const CRYPTO_CORE_RISTRETTO255_BYTES = 32;
 
-        const CRYPTO_CORE_RISTRETTO255_SCALARBYTES = 32;
+        public const CRYPTO_CORE_RISTRETTO255_SCALARBYTES = 32;
 
-        const CRYPTO_CORE_RISTRETTO255_HASHBYTES = 64;
+        public const CRYPTO_CORE_RISTRETTO255_HASHBYTES = 64;
 
-        const CRYPTO_CORE_RISTRETTO255_NONREDUCEDSCALARBYTES = 64;
+        public const CRYPTO_CORE_RISTRETTO255_NONREDUCEDSCALARBYTES = 64;
 
-        const CRYPTO_KDF_BYTES_MIN = 16;
+        public const CRYPTO_KDF_BYTES_MIN = 16;
 
-        const CRYPTO_KDF_BYTES_MAX = 64;
+        public const CRYPTO_KDF_BYTES_MAX = 64;
 
-        const CRYPTO_KDF_CONTEXTBYTES = 8;
+        public const CRYPTO_KDF_CONTEXTBYTES = 8;
 
-        const CRYPTO_KDF_KEYBYTES = 32;
+        public const CRYPTO_KDF_KEYBYTES = 32;
 
-        const CRYPTO_KX_BYTES = 32;
+        public const CRYPTO_KX_BYTES = 32;
 
-        const CRYPTO_KX_PRIMITIVE = 'x25519blake2b';
+        public const CRYPTO_KX_PRIMITIVE = 'x25519blake2b';
 
-        const CRYPTO_KX_SEEDBYTES = 32;
+        public const CRYPTO_KX_SEEDBYTES = 32;
 
-        const CRYPTO_KX_KEYPAIRBYTES = 64;
+        public const CRYPTO_KX_KEYPAIRBYTES = 64;
 
-        const CRYPTO_KX_PUBLICKEYBYTES = 32;
+        public const CRYPTO_KX_PUBLICKEYBYTES = 32;
 
-        const CRYPTO_KX_SECRETKEYBYTES = 32;
+        public const CRYPTO_KX_SECRETKEYBYTES = 32;
 
-        const CRYPTO_KX_SESSIONKEYBYTES = 32;
+        public const CRYPTO_KX_SESSIONKEYBYTES = 32;
 
-        const CRYPTO_GENERICHASH_BYTES = 32;
+        public const CRYPTO_GENERICHASH_BYTES = 32;
 
-        const CRYPTO_GENERICHASH_BYTES_MIN = 16;
+        public const CRYPTO_GENERICHASH_BYTES_MIN = 16;
 
-        const CRYPTO_GENERICHASH_BYTES_MAX = 64;
+        public const CRYPTO_GENERICHASH_BYTES_MAX = 64;
 
-        const CRYPTO_GENERICHASH_KEYBYTES = 32;
+        public const CRYPTO_GENERICHASH_KEYBYTES = 32;
 
-        const CRYPTO_GENERICHASH_KEYBYTES_MIN = 16;
+        public const CRYPTO_GENERICHASH_KEYBYTES_MIN = 16;
 
-        const CRYPTO_GENERICHASH_KEYBYTES_MAX = 64;
+        public const CRYPTO_GENERICHASH_KEYBYTES_MAX = 64;
 
-        const CRYPTO_PWHASH_SALTBYTES = 16;
+        public const CRYPTO_PWHASH_SALTBYTES = 16;
 
-        const CRYPTO_PWHASH_STRPREFIX = '$argon2id$';
+        public const CRYPTO_PWHASH_STRPREFIX = '$argon2id$';
 
-        const CRYPTO_PWHASH_ALG_ARGON2I13 = 1;
+        public const CRYPTO_PWHASH_ALG_ARGON2I13 = 1;
 
-        const CRYPTO_PWHASH_ALG_ARGON2ID13 = 2;
+        public const CRYPTO_PWHASH_ALG_ARGON2ID13 = 2;
 
-        const CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE = 33554432;
+        public const CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE = 33554432;
 
-        const CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE = 4;
+        public const CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE = 4;
 
-        const CRYPTO_PWHASH_MEMLIMIT_MODERATE = 134217728;
+        public const CRYPTO_PWHASH_MEMLIMIT_MODERATE = 134217728;
 
-        const CRYPTO_PWHASH_OPSLIMIT_MODERATE = 6;
+        public const CRYPTO_PWHASH_OPSLIMIT_MODERATE = 6;
 
-        const CRYPTO_PWHASH_MEMLIMIT_SENSITIVE = 536870912;
+        public const CRYPTO_PWHASH_MEMLIMIT_SENSITIVE = 536870912;
 
-        const CRYPTO_PWHASH_OPSLIMIT_SENSITIVE = 8;
+        public const CRYPTO_PWHASH_OPSLIMIT_SENSITIVE = 8;
 
-        const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_SALTBYTES = 32;
+        public const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_SALTBYTES = 32;
 
-        const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_STRPREFIX = '$7$';
+        public const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_STRPREFIX = '$7$';
 
-        const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE = 534288;
+        public const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE = 534288;
 
-        const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE = 16777216;
+        public const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE = 16777216;
 
-        const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_SENSITIVE = 33554432;
+        public const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_SENSITIVE = 33554432;
 
-        const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_SENSITIVE = 1073741824;
+        public const CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_SENSITIVE = 1073741824;
 
-        const CRYPTO_SCALARMULT_BYTES = 32;
+        public const CRYPTO_SCALARMULT_BYTES = 32;
 
-        const CRYPTO_SCALARMULT_SCALARBYTES = 32;
+        public const CRYPTO_SCALARMULT_SCALARBYTES = 32;
 
-        const CRYPTO_SCALARMULT_RISTRETTO255_BYTES = 32;
+        public const CRYPTO_SCALARMULT_RISTRETTO255_BYTES = 32;
 
-        const CRYPTO_SCALARMULT_RISTRETTO255_SCALARBYTES = 32;
+        public const CRYPTO_SCALARMULT_RISTRETTO255_SCALARBYTES = 32;
 
-        const CRYPTO_SHORTHASH_BYTES = 8;
+        public const CRYPTO_SHORTHASH_BYTES = 8;
 
-        const CRYPTO_SHORTHASH_KEYBYTES = 16;
+        public const CRYPTO_SHORTHASH_KEYBYTES = 16;
 
-        const CRYPTO_SECRETBOX_KEYBYTES = 32;
+        public const CRYPTO_SECRETBOX_KEYBYTES = 32;
 
-        const CRYPTO_SECRETBOX_MACBYTES = 16;
+        public const CRYPTO_SECRETBOX_MACBYTES = 16;
 
-        const CRYPTO_SECRETBOX_NONCEBYTES = 24;
+        public const CRYPTO_SECRETBOX_NONCEBYTES = 24;
 
-        const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_ABYTES = 17;
+        public const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_ABYTES = 17;
 
-        const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_HEADERBYTES = 24;
+        public const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_HEADERBYTES = 24;
 
-        const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES = 32;
+        public const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES = 32;
 
-        const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_PUSH = 0;
+        public const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_PUSH = 0;
 
-        const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_PULL = 1;
+        public const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_PULL = 1;
 
-        const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_REKEY = 2;
+        public const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_REKEY = 2;
 
-        const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL = 3;
+        public const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_TAG_FINAL = 3;
 
-        const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_MESSAGEBYTES_MAX = 0x3fffffff80;
+        public const CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_MESSAGEBYTES_MAX = 0x3fffffff80;
 
-        const CRYPTO_SIGN_BYTES = 64;
+        public const CRYPTO_SIGN_BYTES = 64;
 
-        const CRYPTO_SIGN_SEEDBYTES = 32;
+        public const CRYPTO_SIGN_SEEDBYTES = 32;
 
-        const CRYPTO_SIGN_PUBLICKEYBYTES = 32;
+        public const CRYPTO_SIGN_PUBLICKEYBYTES = 32;
 
-        const CRYPTO_SIGN_SECRETKEYBYTES = 64;
+        public const CRYPTO_SIGN_SECRETKEYBYTES = 64;
 
-        const CRYPTO_SIGN_KEYPAIRBYTES = 96;
+        public const CRYPTO_SIGN_KEYPAIRBYTES = 96;
 
-        const CRYPTO_STREAM_KEYBYTES = 32;
+        public const CRYPTO_STREAM_KEYBYTES = 32;
 
-        const CRYPTO_STREAM_NONCEBYTES = 24;
+        public const CRYPTO_STREAM_NONCEBYTES = 24;
 
-        const CRYPTO_STREAM_XCHACHA20_KEYBYTES = 32;
+        public const CRYPTO_STREAM_XCHACHA20_KEYBYTES = 32;
 
-        const CRYPTO_STREAM_XCHACHA20_NONCEBYTES = 24;
+        public const CRYPTO_STREAM_XCHACHA20_NONCEBYTES = 24;
 
         public static $disableFallbackForUnitTests = false;
 
@@ -336,12 +336,7 @@
             {
                 $res = extension_loaded('libsodium') && PHP_VERSION_ID >= 50300;
             }
-            if($res === false)
-            {
-                // No libsodium installed
-                return false;
-            }
-            if(self::$disableFallbackForUnitTests)
+            if($res === false || self::$disableFallbackForUnitTests)
             {
                 // Don't fallback. Use the PHP implementation.
                 return false;
@@ -419,12 +414,7 @@
             {
                 return call_user_func('\\Sodium\\crypto_aead_aes256gcm_is_available');
             }
-            if(PHP_VERSION_ID < 70100)
-            {
-                // OpenSSL doesn't support AEAD before 7.1.0
-                return false;
-            }
-            if(! is_callable('openssl_encrypt') || ! is_callable('openssl_decrypt'))
+            if(PHP_VERSION_ID < 70100 || ! is_callable('openssl_encrypt') || ! is_callable('openssl_decrypt'))
             {
                 // OpenSSL isn't installed
                 return false;
@@ -637,13 +627,13 @@
         ) {
             /* Type checks: */
             ParagonIE_Sodium_Core_Util::declareScalarType($ciphertext, 'string', 1);
-            if(! is_null($assocData))
+            if(is_null($assocData))
             {
-                ParagonIE_Sodium_Core_Util::declareScalarType($assocData, 'string', 2);
+                $assocData = '';
             }
             else
             {
-                $assocData = '';
+                ParagonIE_Sodium_Core_Util::declareScalarType($assocData, 'string', 2);
             }
             ParagonIE_Sodium_Core_Util::declareScalarType($nonce, 'string', 3);
             ParagonIE_Sodium_Core_Util::declareScalarType($key, 'string', 4);
@@ -661,12 +651,9 @@
             {
                 throw new SodiumException('Message must be at least CRYPTO_AEAD_XCHACHA20POLY1305_IETF_ABYTES long');
             }
-            if(self::useNewSodiumAPI() && ! $dontFallback)
+            if(self::useNewSodiumAPI() && ! $dontFallback && is_callable('sodium_crypto_aead_xchacha20poly1305_ietf_decrypt'))
             {
-                if(is_callable('sodium_crypto_aead_xchacha20poly1305_ietf_decrypt'))
-                {
-                    return sodium_crypto_aead_xchacha20poly1305_ietf_decrypt($ciphertext, $assocData, $nonce, $key);
-                }
+                return sodium_crypto_aead_xchacha20poly1305_ietf_decrypt($ciphertext, $assocData, $nonce, $key);
             }
 
             if(PHP_INT_SIZE === 4)
@@ -682,13 +669,13 @@
         ) {
             /* Type checks: */
             ParagonIE_Sodium_Core_Util::declareScalarType($plaintext, 'string', 1);
-            if(! is_null($assocData))
+            if(is_null($assocData))
             {
-                ParagonIE_Sodium_Core_Util::declareScalarType($assocData, 'string', 2);
+                $assocData = '';
             }
             else
             {
-                $assocData = '';
+                ParagonIE_Sodium_Core_Util::declareScalarType($assocData, 'string', 2);
             }
             ParagonIE_Sodium_Core_Util::declareScalarType($nonce, 'string', 3);
             ParagonIE_Sodium_Core_Util::declareScalarType($key, 'string', 4);
@@ -702,12 +689,9 @@
             {
                 throw new SodiumException('Key must be CRYPTO_AEAD_XCHACHA20POLY1305_KEYBYTES long');
             }
-            if(self::useNewSodiumAPI() && ! $dontFallback)
+            if(self::useNewSodiumAPI() && ! $dontFallback && is_callable('sodium_crypto_aead_xchacha20poly1305_ietf_encrypt'))
             {
-                if(is_callable('sodium_crypto_aead_xchacha20poly1305_ietf_encrypt'))
-                {
-                    return sodium_crypto_aead_xchacha20poly1305_ietf_encrypt($plaintext, $assocData, $nonce, $key);
-                }
+                return sodium_crypto_aead_xchacha20poly1305_ietf_encrypt($plaintext, $assocData, $nonce, $key);
             }
 
             if(PHP_INT_SIZE === 4)
@@ -1127,17 +1111,9 @@
             $personal = str_pad($personal, 16, "\0", STR_PAD_RIGHT);
 
             /* Input validation: */
-            if(! empty($key))
+            if(! empty($key) && ParagonIE_Sodium_Core_Util::strlen($key) > self::CRYPTO_GENERICHASH_KEYBYTES_MAX)
             {
-                /*
-            if (ParagonIE_Sodium_Core_Util::strlen($key) < self::CRYPTO_GENERICHASH_KEYBYTES_MIN) {
-                throw new SodiumException('Unsupported key size. Must be at least CRYPTO_GENERICHASH_KEYBYTES_MIN bytes long.');
-            }
-            */
-                if(ParagonIE_Sodium_Core_Util::strlen($key) > self::CRYPTO_GENERICHASH_KEYBYTES_MAX)
-                {
-                    throw new SodiumException('Unsupported key size. Must be at most CRYPTO_GENERICHASH_KEYBYTES_MAX bytes long.');
-                }
+                throw new SodiumException('Unsupported key size. Must be at most CRYPTO_GENERICHASH_KEYBYTES_MAX bytes long.');
             }
             if(PHP_INT_SIZE === 4)
             {
@@ -1252,12 +1228,9 @@
                 throw new SodiumException('Argument 4 must be CRYPTO_BOX_PUBLICKEYBYTES long.');
             }
 
-            if(self::useNewSodiumAPI() && ! $dontFallback)
+            if(self::useNewSodiumAPI() && ! $dontFallback && is_callable('sodium_crypto_kx'))
             {
-                if(is_callable('sodium_crypto_kx'))
-                {
-                    return (string) sodium_crypto_kx($my_secret, $their_public, $client_public, $server_public);
-                }
+                return (string) sodium_crypto_kx($my_secret, $their_public, $client_public, $server_public);
             }
             if(self::use_fallback('crypto_kx'))
             {
@@ -1605,16 +1578,7 @@
 
         public static function crypto_pwhash_is_available()
         {
-            if(self::useNewSodiumAPI())
-            {
-                return true;
-            }
-            if(self::use_fallback('crypto_pwhash'))
-            {
-                return true;
-            }
-
-            return false;
+            return self::useNewSodiumAPI() || self::use_fallback('crypto_pwhash');
         }
 
         public static function crypto_pwhash_str($passwd, $opslimit, $memlimit)
@@ -1695,16 +1659,7 @@
 
         public static function crypto_pwhash_scryptsalsa208sha256_is_available()
         {
-            if(self::useNewSodiumAPI())
-            {
-                return true;
-            }
-            if(self::use_fallback('crypto_pwhash_scryptsalsa208sha256'))
-            {
-                return true;
-            }
-
-            return false;
+            return self::useNewSodiumAPI() || self::use_fallback('crypto_pwhash_scryptsalsa208sha256');
         }
 
         public static function crypto_pwhash_scryptsalsa208sha256_str($passwd, $opslimit, $memlimit)
@@ -2236,12 +2191,9 @@
             {
                 throw new SodiumException('Argument 1 must be at least CRYPTO_SIGN_PUBLICKEYBYTES long.');
             }
-            if(self::useNewSodiumAPI())
+            if(self::useNewSodiumAPI() && is_callable('crypto_sign_ed25519_pk_to_curve25519'))
             {
-                if(is_callable('crypto_sign_ed25519_pk_to_curve25519'))
-                {
-                    return (string) sodium_crypto_sign_ed25519_pk_to_curve25519($pk);
-                }
+                return (string) sodium_crypto_sign_ed25519_pk_to_curve25519($pk);
             }
             if(self::use_fallback('crypto_sign_ed25519_pk_to_curve25519'))
             {
@@ -2265,12 +2217,9 @@
             {
                 throw new SodiumException('Argument 1 must be at least CRYPTO_SIGN_SEEDBYTES long.');
             }
-            if(self::useNewSodiumAPI())
+            if(self::useNewSodiumAPI() && is_callable('crypto_sign_ed25519_sk_to_curve25519'))
             {
-                if(is_callable('crypto_sign_ed25519_sk_to_curve25519'))
-                {
-                    return sodium_crypto_sign_ed25519_sk_to_curve25519($sk);
-                }
+                return sodium_crypto_sign_ed25519_sk_to_curve25519($sk);
             }
             if(self::use_fallback('crypto_sign_ed25519_sk_to_curve25519'))
             {
@@ -2456,12 +2405,9 @@
             ParagonIE_Sodium_Core_Util::declareScalarType($string, 'string', 1);
             ParagonIE_Sodium_Core_Util::declareScalarType($ignore, 'string', 2);
 
-            if(self::useNewSodiumAPI())
+            if(self::useNewSodiumAPI() && is_callable('sodium_hex2bin'))
             {
-                if(is_callable('sodium_hex2bin'))
-                {
-                    return (string) sodium_hex2bin($string, $ignore);
-                }
+                return (string) sodium_hex2bin($string, $ignore);
             }
             if(self::use_fallback('hex2bin'))
             {
@@ -2913,11 +2859,7 @@
 
         public static function polyfill_is_fast()
         {
-            if(extension_loaded('sodium'))
-            {
-                return true;
-            }
-            if(extension_loaded('libsodium'))
+            if(extension_loaded('sodium') || extension_loaded('libsodium'))
             {
                 return true;
             }

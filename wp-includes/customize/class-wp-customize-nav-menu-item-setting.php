@@ -2,11 +2,11 @@
 
     class WP_Customize_Nav_Menu_Item_Setting extends WP_Customize_Setting
     {
-        const ID_PATTERN = '/^nav_menu_item\[(?P<id>-?\d+)\]$/';
+        public const ID_PATTERN = '/^nav_menu_item\[(?P<id>-?\d+)\]$/';
 
-        const POST_TYPE = 'nav_menu_item';
+        public const POST_TYPE = 'nav_menu_item';
 
-        const TYPE = 'nav_menu_item';
+        public const TYPE = 'nav_menu_item';
 
         public $type = self::TYPE;
 
@@ -55,12 +55,12 @@
         {
             if(empty($manager->nav_menus))
             {
-                throw new Exception('Expected WP_Customize_Manager::$nav_menus to be set.');
+                throw new \RuntimeException('Expected WP_Customize_Manager::$nav_menus to be set.');
             }
 
             if(! preg_match(self::ID_PATTERN, $id, $matches))
             {
-                throw new Exception("Illegal widget setting ID: $id");
+                throw new \RuntimeException("Illegal widget setting ID: $id");
             }
 
             $this->post_id = (int) $matches['id'];
@@ -74,7 +74,7 @@
                 $this->populate_value();
                 foreach(array_diff(array_keys($this->default), array_keys($this->value)) as $missing)
                 {
-                    throw new Exception("Supplied nav_menu_item value missing property: $missing");
+                    throw new \RuntimeException("Supplied nav_menu_item value missing property: $missing");
                 }
             }
         }
@@ -648,14 +648,14 @@
                 {
                     $r = wp_delete_post($this->post_id, true);
 
-                    if(false === $r)
+                    if(false !== $r)
                     {
-                        $this->update_error = new WP_Error('delete_failure');
-                        $this->update_status = 'error';
+                        $this->update_status = 'deleted';
                     }
                     else
                     {
-                        $this->update_status = 'deleted';
+                        $this->update_error = new WP_Error('delete_failure');
+                        $this->update_status = 'error';
                     }
                     // @todo send back the IDs for all associated nav menu items deleted, so these settings (and controls) can be removed from Customizer?
                 }

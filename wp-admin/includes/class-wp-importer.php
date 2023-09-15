@@ -131,12 +131,9 @@
                 $blog_id = (int) $blog->blog_id;
             }
 
-            if(function_exists('is_multisite'))
+            if(function_exists('is_multisite') && is_multisite())
             {
-                if(is_multisite())
-                {
-                    switch_to_blog($blog_id);
-                }
+                switch_to_blog($blog_id);
             }
 
             return $blog_id;
@@ -195,15 +192,7 @@
 
         public function is_user_over_quota()
         {
-            if(function_exists('upload_is_user_over_quota'))
-            {
-                if(upload_is_user_over_quota())
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return function_exists('upload_is_user_over_quota') && upload_is_user_over_quota();
         }
 
         public function min_whitespace($text)

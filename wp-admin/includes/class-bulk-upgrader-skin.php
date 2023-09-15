@@ -1,4 +1,8 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+
+    /** @noinspection ALL */
 
     class Bulk_Upgrader_Skin extends WP_Upgrader_Skin
     {
@@ -36,11 +40,12 @@
 
         public function footer()
         {
-            // Nothing. This will be displayed within an iframe.
+            parent::footer();
         }
 
         public function error($errors)
         {
+            parent::error($errors);
             if(is_string($errors) && isset($this->upgrader->strings[$errors]))
             {
                 $this->error = $this->upgrader->strings[$errors];
@@ -49,10 +54,14 @@
             if(is_wp_error($errors))
             {
                 $messages = [];
+                /** @noinspection NativeMemberUsageInspection */
                 foreach($errors->get_error_messages() as $emessage)
                 {
+                    /** @noinspection NativeMemberUsageInspection */
+                    /** @noinspection NativeMemberUsageInspection */
                     if($errors->get_error_data() && is_string($errors->get_error_data()))
                     {
+                        /** @noinspection NativeMemberUsageInspection */
                         $messages[] = $emessage.' '.esc_html(strip_tags($errors->get_error_data()));
                     }
                     else
@@ -72,19 +81,17 @@
 
         public function feedback($feedback, ...$args)
         {
+            parent::feedback($feedback, ...$args);
             if(isset($this->upgrader->strings[$feedback]))
             {
                 $feedback = $this->upgrader->strings[$feedback];
             }
 
-            if(str_contains($feedback, '%'))
+            if(str_contains($feedback, '%') && $args)
             {
-                if($args)
-                {
-                    $args = array_map('strip_tags', $args);
-                    $args = array_map('esc_html', $args);
-                    $feedback = vsprintf($feedback, $args);
-                }
+                $args = array_map('strip_tags', $args);
+                $args = array_map('esc_html', $args);
+                $feedback = vsprintf($feedback, $args);
             }
             if(empty($feedback))
             {

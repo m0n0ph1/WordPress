@@ -81,7 +81,7 @@
 
     class getid3_flv extends getid3_handler
     {
-        const magic = 'FLV';
+        public const magic = 'FLV';
 
         public $max_frames = 100000;
 
@@ -178,7 +178,7 @@
                                     $lengthSizeMinusOne = getid3_lib::BigEndian2Int(substr($FLVvideoHeader, 7, 1));
                                     $numOfSequenceParameterSets = getid3_lib::BigEndian2Int(substr($FLVvideoHeader, 8, 1));
 
-                                    if(($numOfSequenceParameterSets & 0x1F) != 0)
+                                    if(($numOfSequenceParameterSets & 0x1F) !== 0)
                                     {
                                         //	there is at least one SequenceParameterSet
                                         //	read size of the first SequenceParameterSet
@@ -257,17 +257,12 @@
                                         break;
                                 }
                             }
-                            elseif($info['flv']['video']['videoCodec'] == GETID3_FLV_VIDEO_VP6FLV_ALPHA)
-                            {
-                                /* contributed by schouwerwouØgmail*com */
-                                if(! isset($info['video']['resolution_x']))
-                                { // only when meta data isn't set
-                                    $PictureSizeEnc['x'] = getid3_lib::BigEndian2Int(substr($FLVvideoHeader, 6, 2));
-                                    $PictureSizeEnc['y'] = getid3_lib::BigEndian2Int(substr($FLVvideoHeader, 7, 2));
-                                    $info['video']['resolution_x'] = ($PictureSizeEnc['x'] & 0xFF) << 3;
-                                    $info['video']['resolution_y'] = ($PictureSizeEnc['y'] & 0xFF) << 3;
-                                }
-                                /* end schouwerwouØgmail*com */
+                            elseif($info['flv']['video']['videoCodec'] == GETID3_FLV_VIDEO_VP6FLV_ALPHA && ! isset($info['video']['resolution_x']))
+                            { // only when meta data isn't set
+                                $PictureSizeEnc['x'] = getid3_lib::BigEndian2Int(substr($FLVvideoHeader, 6, 2));
+                                $PictureSizeEnc['y'] = getid3_lib::BigEndian2Int(substr($FLVvideoHeader, 7, 2));
+                                $info['video']['resolution_x'] = ($PictureSizeEnc['x'] & 0xFF) << 3;
+                                $info['video']['resolution_y'] = ($PictureSizeEnc['y'] & 0xFF) << 3;
                             }
                             if(! empty($info['video']['resolution_x']) && ! empty($info['video']['resolution_y']))
                             {
@@ -850,7 +845,7 @@
         public function expGolombSe()
         {
             $result = $this->expGolombUe();
-            if(($result & 0x01) == 0)
+            if(($result & 0x01) === 0)
             {
                 return -($result >> 1);
             }

@@ -1,6 +1,6 @@
 <?php
 
-    class ParagonIE_Sodium_Core_SecretStream_State
+    class State
     {
         protected $key;
 

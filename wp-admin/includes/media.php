@@ -178,13 +178,9 @@
         $time = current_time('mysql');
         $post = get_post($post_id);
 
-        if($post)
+        if($post && 'page' !== $post->post_type && substr($post->post_date, 0, 4) > 0)
         {
-            // The post date doesn't usually matter for pages, so don't backdate this upload.
-            if('page' !== $post->post_type && substr($post->post_date, 0, 4) > 0)
-            {
-                $time = $post->post_date;
-            }
+            $time = $post->post_date;
         }
 
         $file = wp_handle_upload($_FILES[$file_id], $overrides, $time);
@@ -205,7 +201,7 @@
         $content = '';
         $excerpt = '';
 
-        if(preg_match('#^audio#', $type))
+        if(0 === strpos($type, "audio"))
         {
             $meta = wp_read_audio_metadata($file);
 
@@ -523,7 +519,7 @@
         if($legacy_filter)
         {
             // #WP22559. Close <a> if a plugin started by closing <a> to open their own <a> tag.
-            if(0 === stripos(trim($legacy_filter), '</a>'))
+            if(0 === strncasecmp(trim($legacy_filter), '</a>', 4))
             {
                 $legacy_filter .= '</a>';
             }
@@ -601,12 +597,9 @@
                     $post['menu_order'] = $attachment['menu_order'];
                 }
 
-                if(isset($send_id) && $attachment_id == $send_id)
+                if(isset($send_id) && $attachment_id == $send_id && isset($attachment['post_parent']))
                 {
-                    if(isset($attachment['post_parent']))
-                    {
-                        $post['post_parent'] = $attachment['post_parent'];
-                    }
+                    $post['post_parent'] = $attachment['post_parent'];
                 }
 
                 $post = apply_filters('attachment_fields_to_save', $post, $attachment);
@@ -1422,7 +1415,12 @@
             {
                 $delete = "<a href='".wp_nonce_url("post.php?action=delete&amp;post=$attachment_id", 'delete-post_'.$attachment_id)."' id='del[$attachment_id]' class='delete-permanently'>".__('Delete Permanently').'</a>';
             }
-            elseif(! MEDIA_TRASH)
+            elseif(MEDIA_TRASH)
+            {
+                $delete = "<a href='".wp_nonce_url("post.php?action=trash&amp;post=$attachment_id", 'trash-post_'.$attachment_id)."' id='del[$attachment_id]' class='delete'>".__('Move to Trash')."</a>
+			<a href='".wp_nonce_url("post.php?action=untrash&amp;post=$attachment_id", 'untrash-post_'.$attachment_id)."' id='undo[$attachment_id]' class='undo hidden'>".__('Undo').'</a>';
+            }
+            else
             {
                 $delete = "<a href='#' class='del-link' onclick=\"document.getElementById('del_attachment_$attachment_id').style.display='block';return false;\">".__('Delete')."</a>
 				<div id='del_attachment_$attachment_id' class='del-attachment' style='display:none;'>"./* translators: %s: File name. */
@@ -1430,11 +1428,6 @@
 				<a href='".wp_nonce_url("post.php?action=delete&amp;post=$attachment_id", 'delete-post_'.$attachment_id)."' id='del[$attachment_id]' class='button'>".__('Continue')."</a>
 				<a href='#' class='button' onclick=\"this.parentNode.style.display='none';return false;\">".__('Cancel').'</a>
 				</div>';
-            }
-            else
-            {
-                $delete = "<a href='".wp_nonce_url("post.php?action=trash&amp;post=$attachment_id", 'trash-post_'.$attachment_id)."' id='del[$attachment_id]' class='delete'>".__('Move to Trash')."</a>
-			<a href='".wp_nonce_url("post.php?action=untrash&amp;post=$attachment_id", 'untrash-post_'.$attachment_id)."' id='undo[$attachment_id]' class='undo hidden'>".__('Undo').'</a>';
             }
         }
         else
@@ -2020,15 +2013,15 @@
 
                     if($id)
                     {
-                        if(! is_wp_error($id))
-                        {
-                            add_filter('attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2);
-                            echo get_media_items($id, $errors);
-                        }
-                        else
+                        if(is_wp_error($id))
                         {
                             echo '<div id="media-upload-error">'.esc_html($id->get_error_message()).'</div></div>';
                             exit;
+                        }
+                        else
+                        {
+                            add_filter('attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2);
+                            echo get_media_items($id, $errors);
                         }
                     }
 
@@ -2575,7 +2568,11 @@
 
     function wp_media_insert_url_form($default_view = 'image')
     {
-        if(! apply_filters('disable_captions', ''))
+        if(apply_filters('disable_captions', ''))
+        {
+            $caption = '';
+        }
+        else
         {
             $caption = '
 		<tr class="image-only">
@@ -2584,10 +2581,6 @@
 			</th>
 			<td class="field"><textarea id="caption" name="caption"></textarea></td>
 		</tr>';
-        }
-        else
-        {
-            $caption = '';
         }
 
         $default_align = get_option('image_default_align');
@@ -3013,12 +3006,9 @@
                     {
                         echo esc_html(strtoupper($matches[1]));
                         [$mime_type] = explode('/', $post->post_mime_type);
-                        if('image' !== $mime_type && ! empty($meta['mime_type']))
+                        if('image' !== $mime_type && ! empty($meta['mime_type']) && "$mime_type/".strtolower($matches[1]) !== $meta['mime_type'])
                         {
-                            if("$mime_type/".strtolower($matches[1]) !== $meta['mime_type'])
-                            {
-                                echo ' ('.$meta['mime_type'].')';
-                            }
+                            echo ' ('.$meta['mime_type'].')';
                         }
                     }
                     else
@@ -3468,12 +3458,9 @@
             $location = 'upload.php';
             $referer = wp_get_referer();
 
-            if($referer)
+            if($referer && str_contains($referer, 'upload.php'))
             {
-                if(str_contains($referer, 'upload.php'))
-                {
-                    $location = remove_query_arg(['attached', 'detach'], $referer);
-                }
+                $location = remove_query_arg(['attached', 'detach'], $referer);
             }
 
             $key = 'attach' === $action ? 'attached' : 'detach';

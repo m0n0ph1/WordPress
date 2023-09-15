@@ -14,6 +14,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -330,12 +331,9 @@
             if(! empty($comment->comment_post_ID))
             {
                 $post = get_post($comment->comment_post_ID);
-                if($post)
+                if($post && $this->check_read_post_permission($post, $request) && 1 === (int) $comment->comment_approved)
                 {
-                    if($this->check_read_post_permission($post, $request) && 1 === (int) $comment->comment_approved)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 

@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection ALL */
+
+    /** @noinspection ALL */
 
     class WP_Customize_Date_Time_Control extends WP_Customize_Control
     {
@@ -14,7 +16,10 @@
 
         public $twelve_hour_format = true;
 
-        public function render_content() {}
+        public function render_content()
+        {
+            parent::render_content();
+        }
 
         public function content_template()
         {
@@ -215,7 +220,9 @@
                 if($tz)
                 {
                     $now = new DateTime('now', $tz);
+                    /** @noinspection NativeMemberUsageInspection */
                     $formatted_gmt_offset = $this->format_gmt_offset($tz->getOffset($now) / HOUR_IN_SECONDS);
+                    /** @noinspection NativeMemberUsageInspection */
                     $tz_name = str_replace('_', ' ', $tz->getName());
                     $timezone_info['abbr'] = $now->format('T');
 

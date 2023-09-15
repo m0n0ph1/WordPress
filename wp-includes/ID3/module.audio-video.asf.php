@@ -19,7 +19,7 @@
     }
     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.audio-video.riff.php', __FILE__, true);
 
-    class getid3_asf extends getid3_handler
+    class module extends getid3_handler
     {
         protected static $ASFIndexParametersObjectIndexSpecifiersIndexTypes = [
             1 => 'Nearest Past Data Packet',
@@ -543,11 +543,7 @@
                             if($thisfile_asf_codeclistobject_codecentries_current['type_raw'] == 2)
                             { // audio codec
 
-                                if(strpos($thisfile_asf_codeclistobject_codecentries_current['description'], ',') === false)
-                                {
-                                    $this->warning('[asf][codec_list_object][codec_entries]['.$CodecEntryCounter.'][description] expected to contain comma-separated list of parameters: "'.$thisfile_asf_codeclistobject_codecentries_current['description'].'"');
-                                }
-                                else
+                                if(strpos($thisfile_asf_codeclistobject_codecentries_current['description'], ',') !== false)
                                 {
                                     [
                                         $AudioCodecBitrate,
@@ -631,6 +627,10 @@
                                             $thisfile_audio['channels'] = 1;
                                         }
                                     }
+                                }
+                                else
+                                {
+                                    $this->warning('[asf][codec_list_object][codec_entries]['.$CodecEntryCounter.'][description] expected to contain comma-separated list of parameters: "'.$thisfile_asf_codeclistobject_codecentries_current['description'].'"');
                                 }
                             }
                         }
@@ -842,7 +842,7 @@
                                 // Silence Data                 BYTESTREAM   variable        // hardcoded: 0x00 * (Silence Data Length) bytes
 
                                 $thisfile_asf_errorcorrectionobject['span'] = getid3_lib::LittleEndian2Int(substr($ASFHeaderData, $offset, 1));
-                                $offset += 1;
+                                ++$offset;
                                 $thisfile_asf_errorcorrectionobject['virtual_packet_length'] = getid3_lib::LittleEndian2Int(substr($ASFHeaderData, $offset, 2));
                                 $offset += 2;
                                 $thisfile_asf_errorcorrectionobject['virtual_chunk_length'] = getid3_lib::LittleEndian2Int(substr($ASFHeaderData, $offset, 2));
@@ -1122,7 +1122,7 @@
                                     switch($thisfile_asf_extendedcontentdescriptionobject_contentdescriptor_current['value_type'])
                                     {
                                         case 0: // Unicode string
-                                            if(substr($this->TrimConvert($thisfile_asf_extendedcontentdescriptionobject_contentdescriptor_current['name']), 0, 3) == 'WM/')
+                                            if(strpos($this->TrimConvert($thisfile_asf_extendedcontentdescriptionobject_contentdescriptor_current['name']), 'WM/') === 0)
                                             {
                                                 $thisfile_asf_comments[str_replace('wm/', '', strtolower($this->TrimConvert($thisfile_asf_extendedcontentdescriptionobject_contentdescriptor_current['name'])))] = [$this->TrimTerm($thisfile_asf_extendedcontentdescriptionobject_contentdescriptor_current['value'])];
                                             }
@@ -1346,7 +1346,7 @@
                             $thisfile_asf_videomedia_currentstream['image_height'] = getid3_lib::LittleEndian2Int(substr($streamdata['type_specific_data'], $videomediaoffset, 4));
                             $videomediaoffset += 4;
                             $thisfile_asf_videomedia_currentstream['flags'] = getid3_lib::LittleEndian2Int(substr($streamdata['type_specific_data'], $videomediaoffset, 1));
-                            $videomediaoffset += 1;
+                            ++$videomediaoffset;
                             $thisfile_asf_videomedia_currentstream['format_data_size'] = getid3_lib::LittleEndian2Int(substr($streamdata['type_specific_data'], $videomediaoffset, 2));
                             $videomediaoffset += 2;
                             $thisfile_asf_videomedia_currentstream['format_data']['format_data_size'] = getid3_lib::LittleEndian2Int(substr($streamdata['type_specific_data'], $videomediaoffset, 4));
@@ -1988,7 +1988,7 @@
                             $languageIDrecord = [];
 
                             $languageIDrecord['language_id_length'] = getid3_lib::LittleEndian2Int(substr($asf_header_extension_object_data, $offset, 1));
-                            $offset += 1;
+                            ++$offset;
 
                             $languageIDrecord['language_id'] = substr($asf_header_extension_object_data, $offset, $languageIDrecord['language_id_length']);
                             $offset += $languageIDrecord['language_id_length'];
@@ -2125,10 +2125,10 @@
 
                     case GETID3_ASF_Compatibility_Object:
                         $thisObject['profile'] = getid3_lib::LittleEndian2Int(substr($asf_header_extension_object_data, $offset, 1));
-                        $offset += 1;
+                        ++$offset;
 
                         $thisObject['mode'] = getid3_lib::LittleEndian2Int(substr($asf_header_extension_object_data, $offset, 1));
-                        $offset += 1;
+                        ++$offset;
 
                         break;
 
@@ -2199,7 +2199,7 @@
 
             $offset = 0;
             $WMpicture['image_type_id'] = getid3_lib::LittleEndian2Int(substr($data, $offset, 1));
-            $offset += 1;
+            ++$offset;
             $WMpicture['image_type'] = self::WMpictureTypeLookup($WMpicture['image_type_id']);
             $WMpicture['image_size'] = getid3_lib::LittleEndian2Int(substr($data, $offset, 4));
             $offset += 4;

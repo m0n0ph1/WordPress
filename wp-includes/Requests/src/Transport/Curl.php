@@ -14,11 +14,11 @@
 
     final class Curl implements Transport
     {
-        const CURL_7_10_5 = 0x070A05;
+        public const CURL_7_10_5 = 0x070A05;
 
-        const CURL_7_16_2 = 0x071002;
+        public const CURL_7_16_2 = 0x071002;
 
-        const CURL_7_22_0 = 0x071600;
+        public const CURL_7_22_0 = 0x071600;
 
         public $headers = '';
 
@@ -305,7 +305,12 @@
         {
             if(! is_array($data))
             {
-                return strlen((string) $data) >= 1048576 ? '100-Continue' : '';
+                if(strlen((string) $data) >= 1048576)
+                {
+                    return '100-Continue';
+                }
+
+                return '';
             }
 
             $bytesize = 0;

@@ -67,11 +67,7 @@
                     $password = wp_generate_password(12, false);
                     $user_id = wpmu_create_user(esc_html(strtolower($user['username'])), $password, esc_html($user['email']));
 
-                    if(false === $user_id)
-                    {
-                        $update = 'err_new_dup';
-                    }
-                    else
+                    if(false !== $user_id)
                     {
                         $result = add_user_to_blog($id, $user_id, $_POST['new_role']);
 
@@ -86,6 +82,10 @@
                             do_action('network_site_users_created_user', $user_id);
                         }
                     }
+                    else
+                    {
+                        $update = 'err_new_dup';
+                    }
                 }
                 break;
 
@@ -98,7 +98,11 @@
                     $user = get_user_by('login', $newuser);
                     if($user && $user->exists())
                     {
-                        if(! is_user_member_of_blog($user->ID, $id))
+                        if(is_user_member_of_blog($user->ID, $id))
+                        {
+                            $update = 'err_add_member';
+                        }
+                        else
                         {
                             $result = add_user_to_blog($id, $user->ID, $_POST['new_role']);
 
@@ -106,10 +110,6 @@
                             {
                                 $update = 'err_add_fail';
                             }
-                        }
-                        else
-                        {
-                            $update = 'err_add_member';
                         }
                     }
                     else

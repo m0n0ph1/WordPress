@@ -98,7 +98,12 @@
         }
         $wrapper_attributes = get_block_wrapper_attributes(['class' => implode(' ', $classnames)]);
 
-        return ! empty($comments) ? sprintf('<ol %1$s>%2$s</ol>', $wrapper_attributes, $list_items_markup) : sprintf('<div %1$s>%2$s</div>', $wrapper_attributes, __('No comments to show.'));
+        if(! empty($comments))
+        {
+            return sprintf('<ol %1$s>%2$s</ol>', $wrapper_attributes, $list_items_markup);
+        }
+
+        return sprintf('<div %1$s>%2$s</div>', $wrapper_attributes, __('No comments to show.'));
     }
 
     function register_block_core_latest_comments()

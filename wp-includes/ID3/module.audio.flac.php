@@ -20,9 +20,9 @@
     }
     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.audio.ogg.php', __FILE__, true);
 
-    class getid3_flac extends getid3_handler
+    class module extends getid3_handler
     {
-        const syncword = 'fLaC';
+        public const syncword = 'fLaC';
 
         public function Analyze()
         {
@@ -217,7 +217,7 @@
                 {
                     $info['md5_data_source'] = '';
                     $md5 = $info['flac']['STREAMINFO']['audio_signature'];
-                    for($i = 0; $i < strlen($md5); $i++)
+                    for($i = 0, $iMax = strlen($md5); $i < $iMax; $i++)
                     {
                         $info['md5_data_source'] .= str_pad(dechex(ord($md5[$i])), 2, '00', STR_PAD_LEFT);
                     }
@@ -273,13 +273,13 @@
                 $info['playtime_seconds'] = $info['flac']['STREAMINFO']['samples_stream'] / $info['flac']['STREAMINFO']['sample_rate'];
                 if($info['playtime_seconds'] > 0)
                 {
-                    if(! $this->isDependencyFor('matroska'))
+                    if($this->isDependencyFor('matroska'))
                     {
-                        $info['audio']['bitrate'] = (($info['avdataend'] - $info['avdataoffset']) * 8) / $info['playtime_seconds'];
+                        $this->warning('Cannot determine audio bitrate because total stream size is unknown');
                     }
                     else
                     {
-                        $this->warning('Cannot determine audio bitrate because total stream size is unknown');
+                        $info['audio']['bitrate'] = (($info['avdataend'] - $info['avdataoffset']) * 8) / $info['playtime_seconds'];
                     }
                 }
             }
@@ -437,19 +437,19 @@
             $info['flac']['CUESHEET']['lead_in_samples'] = getid3_lib::BigEndian2Int(substr($BlockData, $offset, 8));
             $offset += 8;
             $info['flac']['CUESHEET']['flags']['is_cd'] = (bool) (getid3_lib::BigEndian2Int(substr($BlockData, $offset, 1)) & 0x80);
-            $offset += 1;
+            ++$offset;
 
             $offset += 258; // reserved
 
             $info['flac']['CUESHEET']['number_tracks'] = getid3_lib::BigEndian2Int(substr($BlockData, $offset, 1));
-            $offset += 1;
+            ++$offset;
 
             for($track = 0; $track < $info['flac']['CUESHEET']['number_tracks']; $track++)
             {
                 $TrackSampleOffset = getid3_lib::BigEndian2Int(substr($BlockData, $offset, 8));
                 $offset += 8;
                 $TrackNumber = getid3_lib::BigEndian2Int(substr($BlockData, $offset, 1));
-                $offset += 1;
+                ++$offset;
 
                 $info['flac']['CUESHEET']['tracks'][$TrackNumber]['sample_offset'] = $TrackSampleOffset;
 
@@ -457,21 +457,21 @@
                 $offset += 12;
 
                 $TrackFlagsRaw = getid3_lib::BigEndian2Int(substr($BlockData, $offset, 1));
-                $offset += 1;
+                ++$offset;
                 $info['flac']['CUESHEET']['tracks'][$TrackNumber]['flags']['is_audio'] = (bool) ($TrackFlagsRaw & 0x80);
                 $info['flac']['CUESHEET']['tracks'][$TrackNumber]['flags']['pre_emphasis'] = (bool) ($TrackFlagsRaw & 0x40);
 
                 $offset += 13; // reserved
 
                 $info['flac']['CUESHEET']['tracks'][$TrackNumber]['index_points'] = getid3_lib::BigEndian2Int(substr($BlockData, $offset, 1));
-                $offset += 1;
+                ++$offset;
 
                 for($index = 0; $index < $info['flac']['CUESHEET']['tracks'][$TrackNumber]['index_points']; $index++)
                 {
                     $IndexSampleOffset = getid3_lib::BigEndian2Int(substr($BlockData, $offset, 8));
                     $offset += 8;
                     $IndexNumber = getid3_lib::BigEndian2Int(substr($BlockData, $offset, 1));
-                    $offset += 1;
+                    ++$offset;
 
                     $offset += 3; // reserved
 

@@ -84,12 +84,7 @@
     {
         global $shortcode_tags;
 
-        if(! str_contains($content, '['))
-        {
-            return $content;
-        }
-
-        if(empty($shortcode_tags) || ! is_array($shortcode_tags))
+        if(! str_contains($content, '[') || empty($shortcode_tags) || ! is_array($shortcode_tags))
         {
             return $content;
         }
@@ -358,11 +353,11 @@
                 {
                     $atts[strtolower($m[5])] = stripcslashes($m[6]);
                 }
-                elseif(isset($m[7]) && strlen($m[7]))
+                elseif(isset($m[7]) && $m[7] !== '')
                 {
                     $atts[] = stripcslashes($m[7]);
                 }
-                elseif(isset($m[8]) && strlen($m[8]))
+                elseif(isset($m[8]) && $m[8] !== '')
                 {
                     $atts[] = stripcslashes($m[8]);
                 }
@@ -375,12 +370,9 @@
             // Reject any unclosed HTML elements.
             foreach($atts as &$value)
             {
-                if(str_contains($value, '<'))
+                if(str_contains($value, '<') && 1 !== preg_match('/^[^<]*+(?:<[^>]*+>[^<]*+)*+$/', $value))
                 {
-                    if(1 !== preg_match('/^[^<]*+(?:<[^>]*+>[^<]*+)*+$/', $value))
-                    {
-                        $value = '';
-                    }
+                    $value = '';
                 }
             }
         }
@@ -420,12 +412,7 @@
     {
         global $shortcode_tags;
 
-        if(! str_contains($content, '['))
-        {
-            return $content;
-        }
-
-        if(empty($shortcode_tags) || ! is_array($shortcode_tags))
+        if(! str_contains($content, '[') || empty($shortcode_tags) || ! is_array($shortcode_tags))
         {
             return $content;
         }

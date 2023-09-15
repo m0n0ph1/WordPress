@@ -27,8 +27,8 @@
                 {
                     $repl = '<svg class="svg-icon" aria-hidden="true" role="img" focusable="false" ';
                     $svg = preg_replace('/^<svg /', $repl, trim($arr[$icon])); // Add extra attributes to SVG code.
-                    $svg = str_replace('#1A1A1B', $color, $svg);   // Replace the color.
-                    $svg = str_replace('#', '%23', $svg);          // Urlencode hashes.
+                    // Replace the color.
+                    $svg = str_replace(array('#1A1A1B', '#'), array($color, '%23'), $svg);          // Urlencode hashes.
                     $svg = preg_replace("/([\n\t]+)/", ' ', $svg); // Remove newlines & tabs.
                     $svg = preg_replace('/>\s*</', '><', $svg);    // Remove whitespace between SVG tags.
 

@@ -259,14 +259,11 @@
                     wp_die(sprintf(/* translators: %s: A link to install the Link Manager plugin. */ __('If you are looking to use the link manager, please install the <a href="%s">Link Manager plugin</a>.'), esc_url($install_url)));
                 }
             }
-            elseif(is_plugin_inactive('link-manager/link-manager.php'))
+            elseif(is_plugin_inactive('link-manager/link-manager.php') && current_user_can('activate_plugins'))
             {
-                if(current_user_can('activate_plugins'))
-                {
-                    $activate_url = wp_nonce_url(self_admin_url('plugins.php?action=activate&plugin=link-manager/link-manager.php'), 'activate-plugin_link-manager/link-manager.php');
+                $activate_url = wp_nonce_url(self_admin_url('plugins.php?action=activate&plugin=link-manager/link-manager.php'), 'activate-plugin_link-manager/link-manager.php');
 
-                    wp_die(sprintf(/* translators: %s: A link to activate the Link Manager plugin. */ __('Please activate the <a href="%s">Link Manager plugin</a> to use the link manager.'), esc_url($activate_url)));
-                }
+                wp_die(sprintf(/* translators: %s: A link to activate the Link Manager plugin. */ __('Please activate the <a href="%s">Link Manager plugin</a> to use the link manager.'), esc_url($activate_url)));
             }
         }
 

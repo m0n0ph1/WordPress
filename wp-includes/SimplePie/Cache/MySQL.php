@@ -1,6 +1,6 @@
 <?php
 
-    class SimplePie_Cache_MySQL extends SimplePie_Cache_DB
+    class MySQL extends SimplePie_Cache_DB
     {
         protected $mysql;
 

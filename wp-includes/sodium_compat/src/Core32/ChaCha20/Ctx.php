@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core32_ChaCha20_Ctx extends ParagonIE_Sodium_Core32_Util implements ArrayAccess
+    class Ctx extends ParagonIE_Sodium_Core32_Util implements ArrayAccess
     {
         protected $container;
 
@@ -86,6 +86,11 @@
         #[ReturnTypeWillChange]
         public function offsetGet($offset)
         {
-            return isset($this->container[$offset]) ? $this->container[$offset] : null;
+            if(isset($this->container[$offset]))
+            {
+                return $this->container[$offset];
+            }
+
+            return null;
         }
     }

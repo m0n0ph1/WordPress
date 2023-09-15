@@ -1,4 +1,22 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+
+    /** @noinspection ALL */
 
     class WP_REST_Posts_Controller extends WP_REST_Controller
     {
@@ -22,6 +40,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -1805,20 +1824,14 @@
                 $rels[] = 'https://api.w.org/action-unfiltered-html';
             }
 
-            if('post' === $post_type->name)
+            if('post' === $post_type->name && current_user_can($post_type->cap->edit_others_posts) && current_user_can($post_type->cap->publish_posts))
             {
-                if(current_user_can($post_type->cap->edit_others_posts) && current_user_can($post_type->cap->publish_posts))
-                {
-                    $rels[] = 'https://api.w.org/action-sticky';
-                }
+                $rels[] = 'https://api.w.org/action-sticky';
             }
 
-            if(post_type_supports($post_type->name, 'author'))
+            if(post_type_supports($post_type->name, 'author') && current_user_can($post_type->cap->edit_others_posts))
             {
-                if(current_user_can($post_type->cap->edit_others_posts))
-                {
-                    $rels[] = 'https://api.w.org/action-assign-author';
-                }
+                $rels[] = 'https://api.w.org/action-assign-author';
             }
 
             $taxonomies = wp_list_filter(get_object_taxonomies($this->post_type, 'objects'), ['show_in_rest' => true]);
@@ -1855,13 +1868,9 @@
                 return new WP_Error('rest_forbidden_context', __('Sorry, you are not allowed to edit this post.'), ['status' => rest_authorization_required_code()]);
             }
 
-            if($post && ! empty($request['password']))
+            if($post && ! empty($request['password']) && ! hash_equals($post->post_password, $request['password']))
             {
-                // Check post password, and return error if invalid.
-                if(! hash_equals($post->post_password, $request['password']))
-                {
-                    return new WP_Error('rest_post_incorrect_password', __('Incorrect post password.'), ['status' => 403]);
-                }
+                return new WP_Error('rest_post_incorrect_password', __('Incorrect post password.'), ['status' => 403]);
             }
 
             // Allow access to all password protected posts if the context is edit.
@@ -2003,8 +2012,12 @@
                 return $prepared_post;
             }
 
+            /** @noinspection NativeMemberUsageInspection */
             $prepared_post->post_type = $this->post_type;
 
+            /** @noinspection NativeMemberUsageInspection */
+            /** @noinspection NativeMemberUsageInspection */
+            /** @noinspection NativeMemberUsageInspection */
             if(
                 ! empty($prepared_post->post_name) && ! empty($prepared_post->post_status) && in_array($prepared_post->post_status, [
                     'draft',
@@ -2017,6 +2030,11 @@
 			 *
 			 * To ensure that a unique slug is generated, pass the post data with the 'publish' status.
 			 */
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
                 $prepared_post->post_name = wp_unique_post_slug($prepared_post->post_name, $prepared_post->id, 'publish', $prepared_post->post_type, $prepared_post->post_parent);
             }
 
@@ -2272,12 +2290,9 @@
                 }
             }
 
-            if(! empty($schema['properties']['sticky']) && ! empty($request['sticky']))
+            if(! empty($schema['properties']['sticky']) && ! empty($request['sticky']) && ! empty($prepared_post->ID) && post_password_required($prepared_post->ID))
             {
-                if(! empty($prepared_post->ID) && post_password_required($prepared_post->ID))
-                {
-                    return new WP_Error('rest_invalid_field', __('A password protected post can not be set to sticky.'), ['status' => 400]);
-                }
+                return new WP_Error('rest_invalid_field', __('A password protected post can not be set to sticky.'), ['status' => 400]);
             }
 
             // Parent.
@@ -2460,8 +2475,10 @@
                 return $post;
             }
 
+            /** @noinspection NativeMemberUsageInspection */
             if(! empty($post->post_status))
             {
+                /** @noinspection NativeMemberUsageInspection */
                 $post_status = $post->post_status;
             }
             else
@@ -2474,9 +2491,16 @@
 		 *
 		 * To ensure that a unique slug is generated, pass the post data with the 'publish' status.
 		 */
+            /** @noinspection NativeMemberUsageInspection */
             if(! empty($post->post_name) && in_array($post_status, ['draft', 'pending'], true))
             {
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
                 $post_parent = ! empty($post->post_parent) ? $post->post_parent : 0;
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
                 $post->post_name = wp_unique_post_slug($post->post_name, $post->ID, 'publish', $post->post_type, $post_parent);
             }
 

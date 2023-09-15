@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core32_Curve25519_H extends ParagonIE_Sodium_Core32_Util
+    class H extends ParagonIE_Sodium_Core32_Util
     {
         protected static $base = [
             [

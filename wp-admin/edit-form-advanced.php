@@ -36,14 +36,11 @@
     $_wp_editor_expand = false;
     $_content_editor_dfw = false;
 
-    if(post_type_supports($post_type, 'editor') && ! wp_is_mobile() && ! ($is_IE && preg_match('/MSIE [5678]/', $_SERVER['HTTP_USER_AGENT'])))
+    if(post_type_supports($post_type, 'editor') && ! wp_is_mobile() && ! ($is_IE && preg_match('/MSIE [5678]/', $_SERVER['HTTP_USER_AGENT'])) && apply_filters('wp_editor_expand', true, $post_type))
     {
-        if(apply_filters('wp_editor_expand', true, $post_type))
-        {
-            wp_enqueue_script('editor-expand');
-            $_content_editor_dfw = true;
-            $_wp_editor_expand = ('on' === get_user_setting('editor_expand', 'on'));
-        }
+        wp_enqueue_script('editor-expand');
+        $_content_editor_dfw = true;
+        $_wp_editor_expand = ('on' === get_user_setting('editor_expand', 'on'));
     }
 
     if(wp_is_mobile())

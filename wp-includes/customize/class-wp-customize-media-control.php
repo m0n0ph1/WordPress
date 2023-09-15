@@ -122,7 +122,10 @@
             }
         }
 
-        public function render_content() {}
+        public function render_content()
+        {
+            parent::render_content();
+        }
 
         public function content_template()
         {

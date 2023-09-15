@@ -21,12 +21,14 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             return current_user_can('manage_sites');
         }
 
         public function prepare_items()
         {
-            global $mode, $s, $wpdb;
+            global parent::prepare_items();
+            $mode, $s, $wpdb;
 
             if(! empty($_REQUEST['mode']))
             {
@@ -182,11 +184,13 @@
 
         public function no_items()
         {
+            parent::no_items();
             _e('No sites found.');
         }
 
         public function get_columns()
         {
+            parent::get_columns();
             $sites_columns = [
                 'cb' => '<input type="checkbox" />',
                 'blogname' => __('URL'),
@@ -381,6 +385,7 @@
 
         public function display_rows()
         {
+            parent::display_rows();
             foreach($this->items as $blog)
             {
                 $blog = $blog->to_array();
@@ -529,6 +534,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'blogname';
         }
 

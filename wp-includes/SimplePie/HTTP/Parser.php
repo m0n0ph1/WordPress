@@ -1,6 +1,6 @@
 <?php
 
-    class SimplePie_HTTP_Parser
+    class Parser
     {
         public $http_version = 0.0;
 
@@ -77,7 +77,7 @@
 
         protected function http_version()
         {
-            if(strpos($this->data, "\x0A") !== false && strtoupper(substr($this->data, 0, 5)) === 'HTTP/')
+            if(strpos($this->data, "\x0A") !== false && stripos($this->data, 'HTTP/') === 0)
             {
                 $len = strspn($this->data, '0123456789.', 5);
                 $this->http_version = substr($this->data, 5, $len);
@@ -139,7 +139,7 @@
             }
             $this->name = '';
             $this->value = '';
-            if(substr($this->data[$this->position], 0, 2) === "\x0D\x0A")
+            if(strpos($this->data[$this->position], "\x0D\x0A") === 0)
             {
                 $this->position += 2;
                 $this->state = 'body';

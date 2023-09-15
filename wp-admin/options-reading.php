@@ -43,95 +43,97 @@
             }
         ?>
 
-        <?php if(! get_pages()) : ?>
-        <input name="show_on_front" type="hidden" value="posts"/>
+        <?php if(get_pages()) :
+            if('page' === get_option('show_on_front') && ! get_option('page_on_front') && ! get_option('page_for_posts'))
+            {
+                update_option('show_on_front', 'posts');
+            }
+        ?>
         <table class="form-table" role="presentation">
+            <tr>
+                <th scope="row"><?php _e('Your homepage displays'); ?></th>
+                <td id="front-static-pages">
+                    <fieldset>
+                        <legend class="screen-reader-text"><span>
+    <?php
+        /* translators: Hidden accessibility text. */
+        _e('Your homepage displays');
+    ?>
+</span></legend>
+                        <p><label>
+                                <input name="show_on_front"
+                                       type="radio"
+                                       value="posts"
+                                       class="tog" <?php checked('posts', get_option('show_on_front')); ?> />
+                                <?php _e('Your latest posts'); ?>
+                            </label>
+                        </p>
+                        <p><label>
+                                <input name="show_on_front"
+                                       type="radio"
+                                       value="page"
+                                       class="tog" <?php checked('page', get_option('show_on_front')); ?> />
+                                <?php
+                                    printf(/* translators: %s: URL to Pages screen. */ __('A <a href="%s">static page</a> (select below)'), 'edit.php?post_type=page');
+                                ?>
+                            </label>
+                        </p>
+                        <ul>
+                            <li><label for="page_on_front">
+                                    <?php
+                                        printf(/* translators: %s: Select field to choose the front page. */ __('Homepage: %s'), wp_dropdown_pages([
+                                                                                                                                                       'name' => 'page_on_front',
+                                                                                                                                                       'echo' => 0,
+                                                                                                                                                       'show_option_none' => __('&mdash; Select &mdash;'),
+                                                                                                                                                       'option_none_value' => '0',
+                                                                                                                                                       'selected' => get_option('page_on_front'),
+                                                                                                                                                   ])
+                                        );
+                                    ?>
+                                </label></li>
+                            <li><label for="page_for_posts">
+                                    <?php
+                                        printf(/* translators: %s: Select field to choose the page for posts. */ __('Posts page: %s'), wp_dropdown_pages([
+                                                                                                                                                             'name' => 'page_for_posts',
+                                                                                                                                                             'echo' => 0,
+                                                                                                                                                             'show_option_none' => __('&mdash; Select &mdash;'),
+                                                                                                                                                             'option_none_value' => '0',
+                                                                                                                                                             'selected' => get_option('page_for_posts'),
+                                                                                                                                                         ])
+                                        );
+                                    ?>
+                                </label></li>
+                        </ul>
+                        <?php
+                            if('page' === get_option('show_on_front') && get_option('page_for_posts') === get_option('page_on_front')) :
+                                wp_admin_notice(__('<strong>Warning:</strong> these pages should not be the same!'), [
+                                    'type' => 'warning',
+                                    'id' => 'front-page-warning',
+                                    'additional_classes' => ['inline'],
+                                ]);
+                            endif;
+                            if(get_option('wp_page_for_privacy_policy') === get_option('page_for_posts') || get_option('wp_page_for_privacy_policy') === get_option('page_on_front')) :
+                                wp_admin_notice(__('<strong>Warning:</strong> these pages should not be the same as your Privacy Policy page!'), [
+                                    'type' => 'warning',
+                                    'id' => 'privacy-policy-page-warning',
+                                    'additional_classes' => ['inline'],
+                                ]);
+                            endif;
+                        ?>
+                    </fieldset>
+                </td>
+            </tr>
             <?php
-                if('posts' !== get_option('show_on_front')) :
-                    update_option('show_on_front', 'posts');
-                endif;
 
                 else :
-                if('page' === get_option('show_on_front') && ! get_option('page_on_front') && ! get_option('page_for_posts'))
-                {
-                    update_option('show_on_front', 'posts');
-                }
-            ?>
-            <table class="form-table" role="presentation">
-                <tr>
-                    <th scope="row"><?php _e('Your homepage displays'); ?></th>
-                    <td id="front-static-pages">
-                        <fieldset>
-                            <legend class="screen-reader-text"><span>
-		<?php
-            /* translators: Hidden accessibility text. */
-            _e('Your homepage displays');
-        ?>
-	</span></legend>
-                            <p><label>
-                                    <input name="show_on_front"
-                                           type="radio"
-                                           value="posts"
-                                           class="tog" <?php checked('posts', get_option('show_on_front')); ?> />
-                                    <?php _e('Your latest posts'); ?>
-                                </label>
-                            </p>
-                            <p><label>
-                                    <input name="show_on_front"
-                                           type="radio"
-                                           value="page"
-                                           class="tog" <?php checked('page', get_option('show_on_front')); ?> />
-                                    <?php
-                                        printf(/* translators: %s: URL to Pages screen. */ __('A <a href="%s">static page</a> (select below)'), 'edit.php?post_type=page');
-                                    ?>
-                                </label>
-                            </p>
-                            <ul>
-                                <li><label for="page_on_front">
-                                        <?php
-                                            printf(/* translators: %s: Select field to choose the front page. */ __('Homepage: %s'), wp_dropdown_pages([
-                                                                                                                                                           'name' => 'page_on_front',
-                                                                                                                                                           'echo' => 0,
-                                                                                                                                                           'show_option_none' => __('&mdash; Select &mdash;'),
-                                                                                                                                                           'option_none_value' => '0',
-                                                                                                                                                           'selected' => get_option('page_on_front'),
-                                                                                                                                                       ])
-                                            );
-                                        ?>
-                                    </label></li>
-                                <li><label for="page_for_posts">
-                                        <?php
-                                            printf(/* translators: %s: Select field to choose the page for posts. */ __('Posts page: %s'), wp_dropdown_pages([
-                                                                                                                                                                 'name' => 'page_for_posts',
-                                                                                                                                                                 'echo' => 0,
-                                                                                                                                                                 'show_option_none' => __('&mdash; Select &mdash;'),
-                                                                                                                                                                 'option_none_value' => '0',
-                                                                                                                                                                 'selected' => get_option('page_for_posts'),
-                                                                                                                                                             ])
-                                            );
-                                        ?>
-                                    </label></li>
-                            </ul>
-                            <?php
-                                if('page' === get_option('show_on_front') && get_option('page_for_posts') === get_option('page_on_front')) :
-                                    wp_admin_notice(__('<strong>Warning:</strong> these pages should not be the same!'), [
-                                        'type' => 'warning',
-                                        'id' => 'front-page-warning',
-                                        'additional_classes' => ['inline'],
-                                    ]);
-                                endif;
-                                if(get_option('wp_page_for_privacy_policy') === get_option('page_for_posts') || get_option('wp_page_for_privacy_policy') === get_option('page_on_front')) :
-                                    wp_admin_notice(__('<strong>Warning:</strong> these pages should not be the same as your Privacy Policy page!'), [
-                                        'type' => 'warning',
-                                        'id' => 'privacy-policy-page-warning',
-                                        'additional_classes' => ['inline'],
-                                    ]);
-                                endif;
-                            ?>
-                        </fieldset>
-                    </td>
-                </tr>
-                <?php endif; ?>
+                ?>
+                <input name="show_on_front" type="hidden" value="posts"/>
+                <table class="form-table" role="presentation">
+                    <?php
+                        if('posts' !== get_option('show_on_front')) :
+                            update_option('show_on_front', 'posts');
+                        endif;
+                endif; ?>
                 <tr>
                     <th scope="row"><label for="posts_per_page"><?php _e('Blog pages show at most'); ?></label></th>
                     <td>

@@ -1,6 +1,6 @@
 <?php
 
-    class Text_Diff_Engine_native
+    class native
     {
         public $xchanged;
 
@@ -20,7 +20,7 @@
 
         public $lcs;
 
-        function diff($from_lines, $to_lines)
+        public function diff($from_lines, $to_lines)
         {
             array_walk($from_lines, ['Text_Diff', 'trimNewlines']);
             array_walk($to_lines, ['Text_Diff', 'trimNewlines']);
@@ -28,9 +28,12 @@
             $n_from = count($from_lines);
             $n_to = count($to_lines);
 
-            $this->xchanged = $this->ychanged = [];
-            $this->xv = $this->yv = [];
-            $this->xind = $this->yind = [];
+            $this->ychanged = [];
+            $this->xchanged = $this->ychanged;
+            $this->yv = [];
+            $this->xv = $this->yv;
+            $this->yind = [];
+            $this->xind = $this->yind;
             unset($this->seq);
             unset($this->in_seq);
             unset($this->lcs);
@@ -42,7 +45,8 @@
                 {
                     break;
                 }
-                $this->xchanged[$skip] = $this->ychanged[$skip] = false;
+                $this->ychanged[$skip] = false;
+                $this->xchanged[$skip] = false;
             }
 
             // Skip trailing common lines.
@@ -54,7 +58,8 @@
                 {
                     break;
                 }
-                $this->xchanged[$xi] = $this->ychanged[$yi] = false;
+                $this->ychanged[$yi] = false;
+                $this->xchanged[$xi] = false;
             }
 
             // Ignore lines which do not exist in both files.
@@ -93,7 +98,8 @@
 
             // Compute the edit operations.
             $edits = [];
-            $xi = $yi = 0;
+            $yi = 0;
+            $xi = 0;
             while($xi < $n_from || $yi < $n_to)
             {
                 assert($yi < $n_to || $this->xchanged[$xi]);
@@ -141,7 +147,7 @@
             return $edits;
         }
 
-        function _compareseq($xoff, $xlim, $yoff, $ylim)
+        public function _compareseq($xoff, $xlim, $yoff, $ylim)
         {
             /* Slide down the bottom initial diagonal. */
             while($xoff < $xlim && $yoff < $ylim && $this->xv[$xoff] == $this->yv[$yoff])
@@ -196,7 +202,7 @@
             }
         }
 
-        function _diag($xoff, $xlim, $yoff, $ylim, $nchunks)
+        public function _diag($xoff, $xlim, $yoff, $ylim, $nchunks)
         {
             $flip = false;
 
@@ -296,7 +302,7 @@
             return [$this->lcs, $seps];
         }
 
-        function _lcsPos($ypos)
+        public function _lcsPos($ypos)
         {
             $end = $this->lcs;
             if($end == 0 || $ypos > $this->seq[$end])
@@ -330,12 +336,12 @@
             return $end;
         }
 
-        function _shiftBoundaries($lines, &$changed, $other_changed)
+        public function _shiftBoundaries($lines, &$changed, $other_changed)
         {
             $i = 0;
             $j = 0;
 
-            assert(count($lines) == count($changed));
+            assert(count($lines) === count($changed));
             $len = count($lines);
             $other_len = count($other_changed);
 

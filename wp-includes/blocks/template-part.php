@@ -89,8 +89,12 @@
 
         if(isset($seen_ids[$template_part_id]))
         {
-            return $is_debug ? // translators: Visible only in the front end, this warning takes the place of a faulty block.
-                __('[block rendering halted]') : '';
+            if($is_debug)
+            {
+                return __('[block rendering halted]');
+            }
+
+            return '';
         }
 
         // Look up area definition.

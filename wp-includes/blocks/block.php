@@ -21,8 +21,12 @@
             // is set in `wp_debug_mode()`.
             $is_debug = WP_DEBUG && WP_DEBUG_DISPLAY;
 
-            return $is_debug ? // translators: Visible only in the front end, this warning takes the place of a faulty block.
-                __('[block rendering halted]') : '';
+            if($is_debug)
+            {
+                return __('[block rendering halted]');
+            }
+
+            return '';
         }
 
         if('publish' !== $reusable_block->post_status || ! empty($reusable_block->post_password))

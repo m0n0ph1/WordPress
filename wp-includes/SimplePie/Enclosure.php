@@ -1,60 +1,60 @@
 <?php
 
-    class SimplePie_Enclosure
+    class Enclosure
     {
-        var $bitrate;
+        public $bitrate;
 
-        var $captions;
+        public $captions;
 
-        var $categories;
+        public $categories;
 
-        var $channels;
+        public $channels;
 
-        var $copyright;
+        public $copyright;
 
-        var $credits;
+        public $credits;
 
-        var $description;
+        public $description;
 
-        var $duration;
+        public $duration;
 
-        var $expression;
+        public $expression;
 
-        var $framerate;
+        public $framerate;
 
-        var $handler;
+        public $handler;
 
-        var $hashes;
+        public $hashes;
 
-        var $height;
+        public $height;
 
-        var $javascript;
+        public $javascript;
 
-        var $keywords;
+        public $keywords;
 
-        var $lang;
+        public $lang;
 
-        var $length;
+        public $length;
 
-        var $link;
+        public $link;
 
-        var $medium;
+        public $medium;
 
-        var $player;
+        public $player;
 
-        var $ratings;
+        public $ratings;
 
-        var $restrictions;
+        public $restrictions;
 
-        var $samplingrate;
+        public $samplingrate;
 
-        var $thumbnails;
+        public $thumbnails;
 
-        var $title;
+        public $title;
 
-        var $type;
+        public $type;
 
-        var $width;
+        public $width;
 
         public function __construct(
             $link = null, $type = null, $length = null, $javascript = null, $bitrate = null, $captions = null, $categories = null, $channels = null, $copyright = null, $credits = null, $description = null, $duration = null, $expression = null, $framerate = null, $hashes = null, $height = null, $keywords = null, $lang = null, $medium = null, $player = null, $ratings = null, $restrictions = null, $samplingrate = null, $thumbnails = null, $title = null, $width = null

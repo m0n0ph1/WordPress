@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
 
     require_once ABSPATH.'wp-admin/includes/class-walker-nav-menu-edit.php';
 
@@ -45,26 +46,23 @@
                     }
                 }
             }
-            elseif(taxonomy_exists($object_type))
+            elseif(taxonomy_exists($object_type) && isset($request['ID']))
             {
-                if(isset($request['ID']))
-                {
-                    $object_id = (int) $request['ID'];
+                $object_id = (int) $request['ID'];
 
-                    if('markup' === $response_format)
-                    {
-                        echo walk_nav_menu_tree(array_map('wp_setup_nav_menu_item', [get_term($object_id, $object_type)]), 0, (object) $args);
-                    }
-                    elseif('json' === $response_format)
-                    {
-                        $post_obj = get_term($object_id, $object_type);
-                        echo wp_json_encode([
-                                                'ID' => $object_id,
-                                                'post_title' => $post_obj->name,
-                                                'post_type' => $object_type,
-                                            ]);
-                        echo "\n";
-                    }
+                if('markup' === $response_format)
+                {
+                    echo walk_nav_menu_tree(array_map('wp_setup_nav_menu_item', [get_term($object_id, $object_type)]), 0, (object) $args);
+                }
+                elseif('json' === $response_format)
+                {
+                    $post_obj = get_term($object_id, $object_type);
+                    echo wp_json_encode([
+                                            'ID' => $object_id,
+                                            'post_title' => $post_obj->name,
+                                            'post_type' => $object_type,
+                                        ]);
+                    echo "\n";
                 }
             }
         }
@@ -605,7 +603,8 @@
                         echo walk_nav_menu_tree(array_map('wp_setup_nav_menu_item', $search_results), 0, (object) $args);
                         ?>
                     <?php elseif(is_wp_error($search_results)) : ?>
-                        <li><?php echo $search_results->get_error_message(); ?></li>
+                        <li><?php /** @noinspection NativeMemberUsageInspection */
+                                echo $search_results->get_error_message(); ?></li>
                     <?php elseif(! empty($searched)) : ?>
                         <li><?php _e('No results found.'); ?></li>
                     <?php endif; ?>
@@ -916,7 +915,8 @@
                         echo walk_nav_menu_tree(array_map('wp_setup_nav_menu_item', $search_results), 0, (object) $args);
                         ?>
                     <?php elseif(is_wp_error($search_results)) : ?>
-                        <li><?php echo $search_results->get_error_message(); ?></li>
+                        <li><?php /** @noinspection NativeMemberUsageInspection */
+                                echo $search_results->get_error_message(); ?></li>
                     <?php elseif(! empty($searched)) : ?>
                         <li><?php _e('No results found.'); ?></li>
                     <?php endif; ?>

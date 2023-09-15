@@ -1,12 +1,12 @@
 <?php
 
-    class SimplePie_Decode_HTML_Entities
+    class Entities
     {
-        var $data = '';
+        public $data = '';
 
-        var $consumed = '';
+        public $consumed = '';
 
-        var $position = 0;
+        public $position = 0;
 
         public function __construct($data)
         {

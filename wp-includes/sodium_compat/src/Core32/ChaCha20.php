@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core32_ChaCha20 extends ParagonIE_Sodium_Core32_Util
+    class ChaCha20 extends ParagonIE_Sodium_Core32_Util
     {
         public static function stream($len = 64, $nonce = '', $key = '')
         {

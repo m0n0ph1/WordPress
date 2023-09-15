@@ -1,16 +1,16 @@
 <?php
 
-    class SimplePie_Caption
+    class Caption
     {
-        var $type;
+        public $type;
 
-        var $lang;
+        public $lang;
 
-        var $startTime;
+        public $startTime;
 
-        var $endTime;
+        public $endTime;
 
-        var $text;
+        public $text;
 
         public function __construct($type = null, $lang = null, $startTime = null, $endTime = null, $text = null)
         {

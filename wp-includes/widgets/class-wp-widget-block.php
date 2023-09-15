@@ -25,6 +25,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             $instance = wp_parse_args($instance, $this->default_instance);
 
             echo str_replace('widget_block', $this->get_dynamic_classname($instance['content']), $args['before_widget']);
@@ -109,6 +110,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $instance = wp_parse_args((array) $instance, $this->default_instance);
             ?>
             <p>

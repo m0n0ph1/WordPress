@@ -183,13 +183,8 @@
     function _wp_rest_api_force_autosave_difference($prepared_post, $request)
     {
         // We only want to be altering POST requests.
-        if($request->get_method() !== 'POST')
-        {
-            return $prepared_post;
-        }
-
         // Only alter requests for the '/autosaves' route.
-        if(substr($request->get_route(), -strlen('/autosaves')) !== '/autosaves')
+        if($request->get_method() !== 'POST' || substr($request->get_route(), -strlen('/autosaves')) !== '/autosaves')
         {
             return $prepared_post;
         }

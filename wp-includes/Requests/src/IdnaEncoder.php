@@ -7,23 +7,23 @@
 
     class IdnaEncoder
     {
-        const ACE_PREFIX = 'xn--';
+        public const ACE_PREFIX = 'xn--';
 
-        const MAX_LENGTH = 64;
+        public const MAX_LENGTH = 64;
 
-        const BOOTSTRAP_BASE = 36;
+        public const BOOTSTRAP_BASE = 36;
 
-        const BOOTSTRAP_TMIN = 1;
+        public const BOOTSTRAP_TMIN = 1;
 
-        const BOOTSTRAP_TMAX = 26;
+        public const BOOTSTRAP_TMAX = 26;
 
-        const BOOTSTRAP_SKEW = 38;
+        public const BOOTSTRAP_SKEW = 38;
 
-        const BOOTSTRAP_DAMP = 700;
+        public const BOOTSTRAP_DAMP = 700;
 
-        const BOOTSTRAP_INITIAL_BIAS = 72;
+        public const BOOTSTRAP_INITIAL_BIAS = 72;
 
-        const BOOTSTRAP_INITIAL_N = 128;
+        public const BOOTSTRAP_INITIAL_N = 128;
 
         public static function encode($hostname)
         {
@@ -152,7 +152,7 @@
             sort($extended);
             $b = $h;
             // [copy them] followed by a delimiter if b > 0
-            if(strlen($output) > 0)
+            if($output !== '')
             {
                 $output .= '-';
             }
@@ -170,9 +170,9 @@
                 // let n = m
                 $n = $m;
                 // for each code point c in the input (in order) do begin
-                for($num = 0; $num < $codepointcount; $num++)
+                foreach($codepoints as $numValue)
                 {
-                    $c = $codepoints[$num];
+                    $c = $numValue;
                     // if c < n then increment delta, fail on overflow
                     if($c < $n)
                     {

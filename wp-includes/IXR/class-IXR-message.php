@@ -2,47 +2,47 @@
 
     class IXR_Message
     {
-        var $message = false;
+        public $message = false;
 
-        var $messageType = false;  // methodCall / methodResponse / fault
+        public $messageType = false;  // methodCall / methodResponse / fault
 
-        var $faultCode = false;
+        public $faultCode = false;
 
-        var $faultString = false;
+        public $faultString = false;
 
-        var $methodName = '';
+        public $methodName = '';
 
-        var $params = [];
+        public $params = [];
 
         // Current variable stacks
-        var $_arraystructs = [];   // The stack used to keep track of the current array/struct
+        public $_arraystructs = [];   // The stack used to keep track of the current array/struct
 
-        var $_arraystructstypes = []; // Stack keeping track of if things are structs or array
+        public $_arraystructstypes = []; // Stack keeping track of if things are structs or array
 
-        var $_currentStructName = [];  // A stack as well
+        public $_currentStructName = [];  // A stack as well
 
-        var $_param;
+        public $_param;
 
-        var $_value;
+        public $_value;
 
-        var $_currentTag;
+        public $_currentTag;
 
-        var $_currentTagContents;
+        public $_currentTagContents;
 
         // The XML parser
-        var $_parser;
+        public $_parser;
 
         public function IXR_Message($message)
         {
-            self::__construct($message);
+            $this->__construct($message);
         }
 
-        function __construct($message)
+        public function __construct($message)
         {
             $this->message =& $message;
         }
 
-        function parse()
+        public function parse()
         {
             if(! function_exists('xml_parser_create'))
             {
@@ -70,11 +70,13 @@
 
             // Check that the root tag is valid
             $root_tag = substr($this->message, 0, strcspn(substr($this->message, 0, 20), "> \t\r\n"));
-            if('<!DOCTYPE' === strtoupper($root_tag))
-            {
-                return false;
-            }
-            if(! in_array($root_tag, ['<methodCall', '<methodResponse', '<fault']))
+            if(
+                '<!DOCTYPE' === strtoupper($root_tag) || ! in_array($root_tag, [
+                    '<methodCall',
+                    '<methodResponse',
+                    '<fault'
+                ])
+            )
             {
                 return false;
             }
@@ -143,7 +145,7 @@
             return true;
         }
 
-        function tag_open($parser, $tag, $attr)
+        public function tag_open($parser, $tag, $attr)
         {
             $this->_currentTagContents = '';
             $this->_currentTag = $tag;
@@ -165,12 +167,12 @@
             }
         }
 
-        function cdata($parser, $cdata)
+        public function cdata($parser, $cdata)
         {
             $this->_currentTagContents .= $cdata;
         }
 
-        function tag_close($parser, $tag)
+        public function tag_close($parser, $tag)
         {
             $valueFlag = false;
             switch($tag)

@@ -7,12 +7,7 @@
         public static function test($args = [])
         {
             // First, test Imagick's extension and classes.
-            if(! extension_loaded('imagick') || ! class_exists('Imagick', false) || ! class_exists('ImagickPixel', false))
-            {
-                return false;
-            }
-
-            if(version_compare(phpversion('imagick'), '2.2.0', '<'))
+            if(! extension_loaded('imagick') || ! class_exists('Imagick', false) || ! class_exists('ImagickPixel', false) || version_compare(phpversion('imagick'), '2.2.0', '<'))
             {
                 return false;
             }
@@ -588,22 +583,21 @@
                     is_callable([$this->image, 'getImageAlphaChannel']) && is_callable([
                                                                                            $this->image,
                                                                                            'setImageAlphaChannel'
-                                                                                       ]) && defined('Imagick::ALPHACHANNEL_UNDEFINED') && defined('Imagick::ALPHACHANNEL_OPAQUE')
+                                                                                       ]) && defined('Imagick::ALPHACHANNEL_UNDEFINED') && defined('Imagick::ALPHACHANNEL_OPAQUE') && $this->image->getImageAlphaChannel() === Imagick::ALPHACHANNEL_UNDEFINED
                 )
                 {
-                    if($this->image->getImageAlphaChannel() === Imagick::ALPHACHANNEL_UNDEFINED)
-                    {
-                        $this->image->setImageAlphaChannel(Imagick::ALPHACHANNEL_OPAQUE);
-                    }
+                    $this->image->setImageAlphaChannel(Imagick::ALPHACHANNEL_OPAQUE);
                 }
 
                 // Limit the bit depth of resized images to 8 bits per channel.
-                if(is_callable([$this->image, 'getImageDepth']) && is_callable([$this->image, 'setImageDepth']))
+                if(
+                    is_callable([$this->image, 'getImageDepth']) && is_callable([
+                                                                                    $this->image,
+                                                                                    'setImageDepth'
+                                                                                ]) && 8 < $this->image->getImageDepth()
+                )
                 {
-                    if(8 < $this->image->getImageDepth())
-                    {
-                        $this->image->setImageDepth(8);
-                    }
+                    $this->image->setImageDepth(8);
                 }
 
                 if(is_callable([$this->image, 'setInterlaceScheme']) && defined('Imagick::INTERLACE_NO'))
@@ -726,13 +720,13 @@
                  * Due to reports of issues with streams with `Imagick::writeImageFile()` and `Imagick::writeImage()`, copies the blob instead.
                  * Checks for exact type due to: https://www.php.net/manual/en/function.file-put-contents.php
                  */
-                if(file_put_contents($filename, $image->getImageBlob()) === false)
+                if(file_put_contents($filename, $image->getImageBlob()) !== false)
                 {
-                    return new WP_Error('image_save_error', sprintf(/* translators: %s: PHP function name. */ __('%s failed while writing image to stream.'), '<code>file_put_contents()</code>'), $filename);
+                    return true;
                 }
                 else
                 {
-                    return true;
+                    return new WP_Error('image_save_error', sprintf(/* translators: %s: PHP function name. */ __('%s failed while writing image to stream.'), '<code>file_put_contents()</code>'), $filename);
                 }
             }
             else

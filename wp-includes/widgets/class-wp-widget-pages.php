@@ -15,6 +15,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             $default_title = __('Pages');
             $title = ! empty($instance['title']) ? $instance['title'] : $default_title;
 
@@ -93,6 +94,7 @@
         public function form($instance)
         {
             // Defaults.
+            parent::form($instance);
             $instance = wp_parse_args((array) $instance, [
                 'sortby' => 'post_title',
                 'title' => '',

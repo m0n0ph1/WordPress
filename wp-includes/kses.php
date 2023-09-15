@@ -9,7 +9,33 @@
 // (e.g. if using namespaces / autoload in the current PHP environment).
     global $allowedposttags, $allowedtags, $allowedentitynames, $allowedxmlentitynames;
 
-    if(! CUSTOM_TAGS)
+    if(CUSTOM_TAGS)
+    {
+        $required_kses_globals = [
+            'allowedposttags',
+            'allowedtags',
+            'allowedentitynames',
+            'allowedxmlentitynames',
+        ];
+        $missing_kses_globals = [];
+
+        foreach($required_kses_globals as $global_name)
+        {
+            if(! isset($GLOBALS[$global_name]) || ! is_array($GLOBALS[$global_name]))
+            {
+                $missing_kses_globals[] = '<code>$'.$global_name.'</code>';
+            }
+        }
+
+        if($missing_kses_globals)
+        {
+            _doing_it_wrong('wp_kses_allowed_html', sprintf(/* translators: 1: CUSTOM_TAGS, 2: Global variable names. */ __('When using the %1$s constant, make sure to set these globals to an array: %2$s.'), '<code>CUSTOM_TAGS</code>', implode(', ', $missing_kses_globals)), '6.2.0');
+        }
+
+        $allowedtags = wp_kses_array_lc($allowedtags);
+        $allowedposttags = wp_kses_array_lc($allowedposttags);
+    }
+    else
     {
         $allowedposttags = [
             'address' => [],
@@ -626,32 +652,6 @@
 
         $allowedposttags = array_map('_wp_add_global_attributes', $allowedposttags);
     }
-    else
-    {
-        $required_kses_globals = [
-            'allowedposttags',
-            'allowedtags',
-            'allowedentitynames',
-            'allowedxmlentitynames',
-        ];
-        $missing_kses_globals = [];
-
-        foreach($required_kses_globals as $global_name)
-        {
-            if(! isset($GLOBALS[$global_name]) || ! is_array($GLOBALS[$global_name]))
-            {
-                $missing_kses_globals[] = '<code>$'.$global_name.'</code>';
-            }
-        }
-
-        if($missing_kses_globals)
-        {
-            _doing_it_wrong('wp_kses_allowed_html', sprintf(/* translators: 1: CUSTOM_TAGS, 2: Global variable names. */ __('When using the %1$s constant, make sure to set these globals to an array: %2$s.'), '<code>CUSTOM_TAGS</code>', implode(', ', $missing_kses_globals)), '6.2.0');
-        }
-
-        $allowedtags = wp_kses_array_lc($allowedtags);
-        $allowedposttags = wp_kses_array_lc($allowedposttags);
-    }
 
     function wp_kses($content, $allowed_html, $allowed_protocols = [])
     {
@@ -1088,7 +1088,7 @@
 
         // Loop through the whole attribute list.
 
-        while(strlen($attr) !== 0)
+        while($attr != '')
         {
             $working = 0; // Was the last operation successful?
 
@@ -1129,7 +1129,7 @@
                             ];
                         }
 
-                        $attr = preg_replace('/^\s+/', '', $attr);
+                        $attr = ltrim($attr);
                     }
 
                     break;
@@ -1277,7 +1277,7 @@
 
         // Make sure all input is returned by adding front and back matter.
         array_unshift($attrarr, $begin.$slash.$elname);
-        array_push($attrarr, $xhtml_slash.$end);
+        $attrarr[] = $xhtml_slash.$end;
 
         return $attrarr;
     }
@@ -1408,7 +1408,7 @@
 			 * has one of the given values.
 			 */
 
-                if(false === array_search(strtolower($value), $checkvalue, true))
+                if(! in_array(strtolower($value), $checkvalue, true))
                 {
                     $ok = false;
                 }
@@ -1587,7 +1587,12 @@
 
         $i = $matches[1];
 
-        return (! in_array($i, $allowedentitynames, true)) ? "&amp;$i;" : "&$i;";
+        if(! in_array($i, $allowedentitynames, true))
+        {
+            return "&amp;$i;";
+        }
+
+        return "&$i;";
     }
 
     function wp_kses_xml_named_entities($matches)
@@ -1644,7 +1649,12 @@
 
         $hexchars = $matches[1];
 
-        return (! valid_unicode(hexdec($hexchars))) ? "&amp;#x$hexchars;" : '&#x'.ltrim($hexchars, '0').';';
+        if(! valid_unicode(hexdec($hexchars)))
+        {
+            return "&amp;#x$hexchars;";
+        }
+
+        return '&#x'.ltrim($hexchars, '0').';';
     }
 
     function valid_unicode($i)
@@ -1984,11 +1994,7 @@
             $gradient_attr = false;
             $is_custom_var = false;
 
-            if(! str_contains($css_item, ':'))
-            {
-                $found = true;
-            }
-            else
+            if(str_contains($css_item, ':'))
             {
                 $parts = explode(':', $css_item, 2);
                 $css_selector = trim($parts[0]);
@@ -2013,6 +2019,10 @@
                     $url_attr = str_starts_with($css_value, 'url(');
                     $gradient_attr = str_contains($css_value, '-gradient(');
                 }
+            }
+            else
+            {
+                $found = true;
             }
 
             if($found && $url_attr)
@@ -2126,13 +2136,8 @@
     function _wp_kses_allow_pdf_objects($url)
     {
         // We're not interested in URLs that contain query strings or fragments.
-        if(str_contains($url, '?') || str_contains($url, '#'))
-        {
-            return false;
-        }
-
         // If it doesn't have a PDF extension, it's not safe.
-        if(! str_ends_with($url, '.pdf'))
+        if(str_contains($url, '?') || str_contains($url, '#') || ! str_ends_with($url, '.pdf'))
         {
             return false;
         }
@@ -2143,10 +2148,5 @@
         $upload_host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
         $upload_port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
 
-        if(str_starts_with($url, "http://$upload_host$upload_port/") || str_starts_with($url, "https://$upload_host$upload_port/"))
-        {
-            return true;
-        }
-
-        return false;
+        return str_starts_with($url, "http://$upload_host$upload_port/") || str_starts_with($url, "https://$upload_host$upload_port/");
     }

@@ -14,10 +14,7 @@
                 return;
             }
 
-            $data = [
-                'plugin_name' => $plugin_name,
-                'policy_text' => $policy_text,
-            ];
+            $data = compact('plugin_name', 'policy_text');
 
             if(! in_array($data, self::$policy_content, true))
             {
@@ -30,12 +27,7 @@
             $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
 
             // The site doesn't have a privacy policy.
-            if(empty($policy_page_id))
-            {
-                return false;
-            }
-
-            if(! current_user_can('edit_post', $policy_page_id))
+            if(empty($policy_page_id) || ! current_user_can('edit_post', $policy_page_id))
             {
                 return false;
             }
@@ -189,12 +181,7 @@
                 $post = get_post($post);
             }
 
-            if(! ($post instanceof WP_Post))
-            {
-                return;
-            }
-
-            if(! current_user_can('manage_privacy_options'))
+            if(! ($post instanceof WP_Post) || ! current_user_can('manage_privacy_options'))
             {
                 return;
             }
@@ -214,10 +201,7 @@
             if(get_current_screen()->is_block_editor())
             {
                 wp_enqueue_script('wp-notices');
-                $action = [
-                    'url' => $url,
-                    'label' => $label,
-                ];
+                $action = compact('url', 'label');
                 wp_add_inline_script('wp-notices', sprintf('wp.data.dispatch( "core/notices" ).createWarningNotice( "%s", { actions: [ %s ], isDismissible: false } )', $message, wp_json_encode($action)), 'after');
             }
             else

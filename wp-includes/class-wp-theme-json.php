@@ -3,16 +3,16 @@
     #[AllowDynamicProperties]
     class WP_Theme_JSON
     {
-        const ROOT_BLOCK_SELECTOR = 'body';
+        public const ROOT_BLOCK_SELECTOR = 'body';
 
-        const VALID_ORIGINS = [
+        public const VALID_ORIGINS = [
             'default',
             'blocks',
             'theme',
             'custom',
         ];
 
-        const PRESETS_METADATA = [
+        public const PRESETS_METADATA = [
             [
                 'path' => ['color', 'palette'],
                 'prevent_override' => ['color', 'defaultPalette'],
@@ -83,7 +83,7 @@
             ],
         ];
 
-        const PROPERTIES_METADATA = [
+        public const PROPERTIES_METADATA = [
             'background' => ['color', 'gradient'],
             'background-color' => ['color', 'background'],
             'border-radius' => ['border', 'radius'],
@@ -140,7 +140,7 @@
             'box-shadow' => ['shadow'],
         ];
 
-        const INDIRECT_PROPERTIES_METADATA = [
+        public const INDIRECT_PROPERTIES_METADATA = [
             'gap' => [
                 ['spacing', 'blockGap'],
             ],
@@ -156,11 +156,11 @@
             ],
         ];
 
-        const PROTECTED_PROPERTIES = [
+        public const PROTECTED_PROPERTIES = [
             'spacing.blockGap' => ['spacing', 'blockGap'],
         ];
 
-        const VALID_TOP_LEVEL_KEYS = [
+        public const VALID_TOP_LEVEL_KEYS = [
             'customTemplates',
             'description',
             'patterns',
@@ -171,7 +171,7 @@
             'version',
         ];
 
-        const VALID_SETTINGS = [
+        public const VALID_SETTINGS = [
             'appearanceTools' => null,
             'useRootPaddingAwareAlignments' => null,
             'border' => [
@@ -239,7 +239,7 @@
             ],
         ];
 
-        const VALID_STYLES = [
+        public const VALID_STYLES = [
             'border' => [
                 'color' => null,
                 'radius' => null,
@@ -287,12 +287,12 @@
             'css' => null,
         ];
 
-        const VALID_ELEMENT_PSEUDO_SELECTORS = [
+        public const VALID_ELEMENT_PSEUDO_SELECTORS = [
             'link' => [':link', ':any-link', ':visited', ':hover', ':focus', ':active'],
             'button' => [':link', ':any-link', ':visited', ':hover', ':focus', ':active'],
         ];
 
-        const ELEMENTS = [
+        public const ELEMENTS = [
             'link' => 'a:where(:not(.wp-element-button))',
             // The `where` is needed to lower the specificity.
             'heading' => 'h1, h2, h3, h4, h5, h6',
@@ -309,19 +309,19 @@
             'cite' => 'cite',
         ];
 
-        const __EXPERIMENTAL_ELEMENT_CLASS_NAMES = [
+        public const __EXPERIMENTAL_ELEMENT_CLASS_NAMES = [
             'button' => 'wp-element-button',
             'caption' => 'wp-element-caption',
         ];
 
-        const BLOCK_SUPPORT_FEATURE_LEVEL_SELECTORS = [
+        public const BLOCK_SUPPORT_FEATURE_LEVEL_SELECTORS = [
             '__experimentalBorder' => 'border',
             'color' => 'color',
             'spacing' => 'spacing',
             'typography' => 'typography',
         ];
 
-        const APPEARANCE_TOOLS_OPT_INS = [
+        public const APPEARANCE_TOOLS_OPT_INS = [
             ['border', 'color'],
             ['border', 'radius'],
             ['border', 'style'],
@@ -338,7 +338,7 @@
             ['typography', 'lineHeight'],
         ];
 
-        const LATEST_SCHEMA = 2;
+        public const LATEST_SCHEMA = 2;
 
         protected static $blocks_metadata = [];
 
@@ -1015,13 +1015,8 @@
         {
             $selectors = static::get_blocks_metadata();
             $nodes = [];
-            if(! isset($theme_json['styles']))
-            {
-                return $nodes;
-            }
-
             // Blocks.
-            if(! isset($theme_json['styles']['blocks']))
+            if(! isset($theme_json['styles']) || ! isset($theme_json['styles']['blocks']))
             {
                 return $nodes;
             }
@@ -1252,7 +1247,6 @@
 
             if(is_array($value))
             {
-                return $value;
             }
 
             return $value;
@@ -1470,13 +1464,13 @@
 
         public function get_settings()
         {
-            if(! isset($this->theme_json['settings']))
+            if(isset($this->theme_json['settings']))
             {
-                return [];
+                return $this->theme_json['settings'];
             }
             else
             {
-                return $this->theme_json['settings'];
+                return [];
             }
         }
 
@@ -1828,7 +1822,7 @@
 
             $declaration_block = array_reduce($declarations, static function($carry, $element)
             {
-                return $carry .= $element['name'].': '.$element['value'].';';
+                return $element['name'].': '.$element['value'].';';
             },                                '');
 
             return $selector.'{'.$declaration_block.'}';
@@ -1940,7 +1934,11 @@
             {
                 $block_gap_value = null;
                 // Use a fallback gap value if block gap support is not available.
-                if(! $has_block_gap_support)
+                if($has_block_gap_support)
+                {
+                    $block_gap_value = static::get_property_value($node, ['spacing', 'blockGap']);
+                }
+                else
                 {
                     $block_gap_value = static::ROOT_BLOCK_SELECTOR === $selector ? '0.5em' : null;
                     if(! empty($block_type))
@@ -1951,10 +1949,6 @@
                             '__experimentalDefault'
                         ],                               null);
                     }
-                }
-                else
-                {
-                    $block_gap_value = static::get_property_value($node, ['spacing', 'blockGap']);
                 }
 
                 // Support split row / column values and concatenate to a shorthand value.
@@ -2007,15 +2001,15 @@
                                         }
                                     }
 
-                                    if(! $has_block_gap_support)
+                                    if($has_block_gap_support)
                                     {
-                                        // For fallback gap styles, use lower specificity, to ensure styles do not unintentionally override theme styles.
-                                        $format = static::ROOT_BLOCK_SELECTOR === $selector ? ':where(.%2$s%3$s)' : ':where(%1$s.%2$s%3$s)';
+                                        $format = static::ROOT_BLOCK_SELECTOR === $selector ? ':where(%s .%s) %s' : '%s-%s%s';
                                         $layout_selector = sprintf($format, $selector, $class_name, $spacing_rule['selector']);
                                     }
                                     else
                                     {
-                                        $format = static::ROOT_BLOCK_SELECTOR === $selector ? ':where(%s .%s) %s' : '%s-%s%s';
+                                        // For fallback gap styles, use lower specificity, to ensure styles do not unintentionally override theme styles.
+                                        $format = static::ROOT_BLOCK_SELECTOR === $selector ? ':where(.%2$s%3$s)' : ':where(%1$s.%2$s%3$s)';
                                         $layout_selector = sprintf($format, $selector, $class_name, $spacing_rule['selector']);
                                     }
                                     $block_rules .= static::to_ruleset($layout_selector, $declarations);
@@ -2087,7 +2081,7 @@
                 {
                     continue;
                 }
-                $block_rules .= static::get_styles_for_block($metadata);
+                $block_rules .= $this->get_styles_for_block($metadata);
             }
 
             return $block_rules;
@@ -2099,7 +2093,7 @@
             $use_root_padding = isset($this->theme_json['settings']['useRootPaddingAwareAlignments']) && true === $this->theme_json['settings']['useRootPaddingAwareAlignments'];
             $selector = $block_metadata['selector'];
             $settings = _wp_array_get($this->theme_json, ['settings']);
-            $feature_declarations = static::get_feature_declarations_for_node($block_metadata, $node);
+            $feature_declarations = $this->get_feature_declarations_for_node($block_metadata, $node);
 
             // If there are style variations, generate the declarations for them, including any feature selectors the block may have.
             $style_variation_declarations = [];
@@ -2111,7 +2105,7 @@
                     $clean_style_variation_selector = trim($style_variation['selector']);
 
                     // Generate any feature/subfeature style declarations for the current style variation.
-                    $variation_declarations = static::get_feature_declarations_for_node($block_metadata, $style_variation_node);
+                    $variation_declarations = $this->get_feature_declarations_for_node($block_metadata, $style_variation_node);
 
                     // Combine selectors with style variation's selector and add to overall style variation declarations.
                     foreach($variation_declarations as $current_selector => $new_declarations)
@@ -2628,7 +2622,7 @@
                             {
                                 if(! isset($item['name']))
                                 {
-                                    $name = static::get_name_from_defaults($item['slug'], $base_path);
+                                    $name = $this->get_name_from_defaults($item['slug'], $base_path);
                                     if(null !== $name)
                                     {
                                         $content[$key]['name'] = $name;
@@ -3036,7 +3030,7 @@
             // If there are 7 or fewer steps in the scale revert to numbers for labels instead of t-shirt sizes.
             if($spacing_scale['steps'] <= 7)
             {
-                for($spacing_sizes_count = 0; $spacing_sizes_count < count($spacing_sizes); $spacing_sizes_count++)
+                foreach($spacing_sizes as $spacing_sizes_count => $spacing_sizes_countValue)
                 {
                     $spacing_sizes[$spacing_sizes_count]['name'] = (string) ($spacing_sizes_count + 1);
                 }

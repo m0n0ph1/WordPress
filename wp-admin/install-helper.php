@@ -131,12 +131,7 @@
                     ++$diffs;
                 }
 
-                if($diffs > 0)
-                {
-                    return false;
-                }
-
-                return true;
+                return $diffs <= 0;
             } // End if found our column.
         }
 

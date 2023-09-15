@@ -45,19 +45,9 @@
 
             $privacy_page_updated_message = __('Privacy Policy page updated successfully.');
 
-            if($privacy_policy_page_id)
+            if($privacy_policy_page_id && 'publish' === get_post_status($privacy_policy_page_id) && current_user_can('edit_theme_options') && current_theme_supports('menus'))
             {
-                /*
-                 * Don't always link to the menu customizer:
-                 *
-                 * - Unpublished pages can't be selected by default.
-                 * - `WP_Customize_Nav_Menus::__construct()` checks the user's capabilities.
-                 * - Themes might not "officially" support menus.
-                 */
-                if('publish' === get_post_status($privacy_policy_page_id) && current_user_can('edit_theme_options') && current_theme_supports('menus'))
-                {
-                    $privacy_page_updated_message = sprintf(/* translators: %s: URL to Customizer -> Menus. */ __('Privacy Policy page setting updated successfully. Remember to <a href="%s">update your menus</a>!'), esc_url(add_query_arg('autofocus[panel]', 'nav_menus', admin_url('customize.php'))));
-                }
+                $privacy_page_updated_message = sprintf(/* translators: %s: URL to Customizer -> Menus. */ __('Privacy Policy page setting updated successfully. Remember to <a href="%s">update your menus</a>!'), esc_url(add_query_arg('autofocus[panel]', 'nav_menus', admin_url('customize.php'))));
             }
 
             add_settings_error('page_for_privacy_policy', 'page_for_privacy_policy', $privacy_page_updated_message, 'success');
@@ -99,11 +89,7 @@
     {
         $privacy_policy_page = get_post($privacy_policy_page_id);
 
-        if(! $privacy_policy_page instanceof WP_Post)
-        {
-            add_settings_error('page_for_privacy_policy', 'page_for_privacy_policy', __('The currently selected Privacy Policy page does not exist. Please create or select a new page.'), 'error');
-        }
-        else
+        if($privacy_policy_page instanceof WP_Post)
         {
             if('trash' === $privacy_policy_page->post_status)
             {
@@ -113,6 +99,10 @@
             {
                 $privacy_policy_page_exists = true;
             }
+        }
+        else
+        {
+            add_settings_error('page_for_privacy_policy', 'page_for_privacy_policy', __('The currently selected Privacy Policy page does not exist. Please create or select a new page.'), 'error');
         }
     }
 

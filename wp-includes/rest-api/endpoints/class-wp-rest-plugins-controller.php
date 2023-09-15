@@ -2,7 +2,7 @@
 
     class WP_REST_Plugins_Controller extends WP_REST_Controller
     {
-        const PATTERN = '[^.\/]+(?:\/[^.\/]+)?';
+        public const PATTERN = '[^.\/]+(?:\/[^.\/]+)?';
 
         public function __construct()
         {
@@ -12,6 +12,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -139,12 +140,7 @@
                 return new WP_Error('rest_plugin_not_found', __('Plugin not found.'), ['status' => 404]);
             }
 
-            if(! is_multisite())
-            {
-                return true;
-            }
-
-            if(! is_network_only_plugin($plugin) || is_plugin_active($plugin) || current_user_can('manage_network_plugins'))
+            if(! is_multisite() || ! is_network_only_plugin($plugin) || is_plugin_active($plugin) || current_user_can('manage_network_plugins'))
             {
                 return true;
             }
@@ -182,12 +178,7 @@
 
             $status = $request['status'];
 
-            if($status && ! in_array($this->get_plugin_status($item['_file']), $status, true))
-            {
-                return false;
-            }
-
-            return true;
+            return ! ($status && ! in_array($this->get_plugin_status($item['_file']), $status, true));
         }
 
         protected function get_plugin_status($plugin)

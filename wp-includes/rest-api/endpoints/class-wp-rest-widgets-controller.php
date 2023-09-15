@@ -14,6 +14,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, $this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -472,13 +473,10 @@
                 }
             }
 
-            if($request->has_param('sidebar'))
+            if($request->has_param('sidebar') && $sidebar_id !== $request['sidebar'])
             {
-                if($sidebar_id !== $request['sidebar'])
-                {
-                    $sidebar_id = $request['sidebar'];
-                    wp_assign_widget_to_sidebar($widget_id, $sidebar_id);
-                }
+                $sidebar_id = $request['sidebar'];
+                wp_assign_widget_to_sidebar($widget_id, $sidebar_id);
             }
 
             $request['context'] = 'edit';

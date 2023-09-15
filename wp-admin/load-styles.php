@@ -86,8 +86,10 @@
         if(0 === strpos($style->src, '/'.WPINC.'/css/'))
         {
             $content = str_replace('../images/', '../'.WPINC.'/images/', $content);
-            $content = str_replace('../js/tinymce/', '../'.WPINC.'/js/tinymce/', $content);
-            $content = str_replace('../fonts/', '../'.WPINC.'/fonts/', $content);
+            $content = str_replace(array('../js/tinymce/', '../fonts/'), array(
+                '../'.WPINC.'/js/tinymce/',
+                '../'.WPINC.'/fonts/'
+            ),                     $content);
             $out .= $content;
         }
         else

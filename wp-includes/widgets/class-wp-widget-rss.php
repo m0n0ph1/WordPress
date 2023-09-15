@@ -19,6 +19,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             if(isset($instance['error']) && $instance['error'])
             {
                 return;
@@ -30,13 +31,8 @@
                 $url = substr($url, 1);
             }
 
-            if(empty($url))
-            {
-                return;
-            }
-
             // Self-URL destruction sequence.
-            if(in_array(untrailingslashit($url), [site_url(), home_url()], true))
+            if(empty($url) || in_array(untrailingslashit($url), [site_url(), home_url()], true))
             {
                 return;
             }
@@ -122,6 +118,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             if(empty($instance))
             {
                 $instance = [

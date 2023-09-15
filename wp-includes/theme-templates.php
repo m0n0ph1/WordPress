@@ -12,7 +12,7 @@
         {
             wp_update_post([
                                'ID' => $post_id,
-                               'post_name' => 'custom_slug_'.uniqid(),
+                               'post_name' => 'custom_slug_'.uniqid('', true),
                            ]);
         }
 
@@ -89,13 +89,8 @@
         global $_wp_current_template_content;
 
         // Early exit if not a block theme.
-        if(! current_theme_supports('block-templates'))
-        {
-            return;
-        }
-
         // Early exit if not a block template.
-        if(! $_wp_current_template_content)
+        if(! current_theme_supports('block-templates') || ! $_wp_current_template_content)
         {
             return;
         }

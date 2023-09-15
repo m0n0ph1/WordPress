@@ -562,26 +562,14 @@
         {
             global $wp_filesystem;
 
-            if(is_wp_error($removed))
-            {
-                return $removed; // Pass errors through.
-            }
-
-            if(! isset($theme['theme']))
+            if(is_wp_error($removed) || ! isset($theme['theme']))
             {
                 return $removed;
             }
 
             $theme = $theme['theme'];
             $themes_dir = trailingslashit($wp_filesystem->wp_themes_dir($theme));
-            if($wp_filesystem->exists($themes_dir.$theme))
-            {
-                if(! $wp_filesystem->delete($themes_dir.$theme, true))
-                {
-                    return false;
-                }
-            }
 
-            return true;
+            return ! ($wp_filesystem->exists($themes_dir.$theme) && ! $wp_filesystem->delete($themes_dir.$theme, true));
         }
     }

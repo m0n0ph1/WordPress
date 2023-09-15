@@ -1,8 +1,8 @@
 <?php
 
-    class SimplePie_Content_Type_Sniffer
+    class Sniffer
     {
-        var $file;
+        public $file;
 
         public function __construct($file)
         {
@@ -26,7 +26,7 @@
                 {
                     $official = $this->file->headers['content-type'];
                 }
-                $official = trim(strtolower($official));
+                $official = strtolower(trim($official));
 
                 if($official === 'unknown/unknown' || $official === 'application/unknown')
                 {
@@ -34,16 +34,13 @@
                 }
                 elseif(substr($official, -4) === '+xml' || $official === 'text/xml' || $official === 'application/xml')
                 {
-                    return $official;
                 }
-                elseif(substr($official, 0, 6) === 'image/')
+                elseif(strpos($official, 'image/') === 0)
                 {
                     if($return = $this->image())
                     {
                         return $return;
                     }
-
-                    return $official;
                 }
                 elseif($official === 'text/html')
                 {
@@ -58,9 +55,8 @@
 
         public function text_or_binary()
         {
-            if(substr($this->file->body, 0, 2) === "\xFE\xFF" || substr($this->file->body, 0, 2) === "\xFF\xFE" || substr($this->file->body, 0, 4) === "\x00\x00\xFE\xFF" || substr($this->file->body, 0, 3) === "\xEF\xBB\xBF")
+            if(strpos($this->file->body, "\xFE\xFF") === 0 || strpos($this->file->body, "\xFF\xFE") === 0 || strpos($this->file->body, "\x00\x00\xFE\xFF") === 0 || strpos($this->file->body, "\xEF\xBB\xBF") === 0)
             {
-                return 'text/plain';
             }
             elseif(preg_match('/[\x00-\x08\x0E-\x1A\x1C-\x1F]/', $this->file->body))
             {
@@ -77,31 +73,31 @@
             {
                 return 'text/html';
             }
-            elseif(substr($this->file->body, 0, 5) === '%PDF-')
+            elseif(strpos($this->file->body, '%PDF-') === 0)
             {
                 return 'application/pdf';
             }
-            elseif(substr($this->file->body, 0, 11) === '%!PS-Adobe-')
+            elseif(strpos($this->file->body, '%!PS-Adobe-') === 0)
             {
                 return 'application/postscript';
             }
-            elseif(substr($this->file->body, 0, 6) === 'GIF87a' || substr($this->file->body, 0, 6) === 'GIF89a')
+            elseif(strpos($this->file->body, 'GIF87a') === 0 || strpos($this->file->body, 'GIF89a') === 0)
             {
                 return 'image/gif';
             }
-            elseif(substr($this->file->body, 0, 8) === "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A")
+            elseif(strpos($this->file->body, "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A") === 0)
             {
                 return 'image/png';
             }
-            elseif(substr($this->file->body, 0, 3) === "\xFF\xD8\xFF")
+            elseif(strpos($this->file->body, "\xFF\xD8\xFF") === 0)
             {
                 return 'image/jpeg';
             }
-            elseif(substr($this->file->body, 0, 2) === "\x42\x4D")
+            elseif(strpos($this->file->body, "\x42\x4D") === 0)
             {
                 return 'image/bmp';
             }
-            elseif(substr($this->file->body, 0, 4) === "\x00\x00\x01\x00")
+            elseif(strpos($this->file->body, "\x00\x00\x01\x00") === 0)
             {
                 return 'image/vnd.microsoft.icon';
             }
@@ -111,23 +107,23 @@
 
         public function image()
         {
-            if(substr($this->file->body, 0, 6) === 'GIF87a' || substr($this->file->body, 0, 6) === 'GIF89a')
+            if(strpos($this->file->body, 'GIF87a') === 0 || strpos($this->file->body, 'GIF89a') === 0)
             {
                 return 'image/gif';
             }
-            elseif(substr($this->file->body, 0, 8) === "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A")
+            elseif(strpos($this->file->body, "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A") === 0)
             {
                 return 'image/png';
             }
-            elseif(substr($this->file->body, 0, 3) === "\xFF\xD8\xFF")
+            elseif(strpos($this->file->body, "\xFF\xD8\xFF") === 0)
             {
                 return 'image/jpeg';
             }
-            elseif(substr($this->file->body, 0, 2) === "\x42\x4D")
+            elseif(strpos($this->file->body, "\x42\x4D") === 0)
             {
                 return 'image/bmp';
             }
-            elseif(substr($this->file->body, 0, 4) === "\x00\x00\x01\x00")
+            elseif(strpos($this->file->body, "\x00\x00\x01\x00") === 0)
             {
                 return 'image/vnd.microsoft.icon';
             }

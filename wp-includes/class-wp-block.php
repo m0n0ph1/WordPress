@@ -121,11 +121,7 @@
 
                         $pre_render = apply_filters('pre_render_block', null, $inner_block->parsed_block, $parent_block);
 
-                        if(! is_null($pre_render))
-                        {
-                            $block_content .= $pre_render;
-                        }
-                        else
+                        if(is_null($pre_render))
                         {
                             $source_block = $inner_block->parsed_block;
 
@@ -134,6 +130,10 @@
                             $inner_block->context = apply_filters('render_block_context', $inner_block->context, $inner_block->parsed_block, $parent_block);
 
                             $block_content .= $inner_block->render();
+                        }
+                        else
+                        {
+                            $block_content .= $pre_render;
                         }
 
                         ++$index;

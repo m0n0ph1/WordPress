@@ -60,10 +60,7 @@
                 unset($attributes['href']);
             }
 
-            $this->links[$rel][] = [
-                'href' => $href,
-                'attributes' => $attributes,
-            ];
+            $this->links[$rel][] = compact('href', 'attributes');
         }
 
         public function get_links()

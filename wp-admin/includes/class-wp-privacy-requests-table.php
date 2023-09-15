@@ -8,6 +8,7 @@
 
         public function get_columns()
         {
+            parent::get_columns();
             $columns = [
                 'cb' => '<input type="checkbox" />',
                 'email' => __('Requester'),
@@ -106,6 +107,7 @@
 
         public function prepare_items()
         {
+            parent::prepare_items();
             $this->items = [];
             $posts_per_page = $this->get_items_per_page($this->request_type.'_requests_per_page');
             $args = [
@@ -229,6 +231,7 @@
 
         public function single_row($item)
         {
+            parent::single_row($item);
             $status = $item->status;
 
             echo '<tr id="request-'.esc_attr($item->ID).'" class="status-'.esc_attr($status).'">';
@@ -255,6 +258,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'email';
         }
 

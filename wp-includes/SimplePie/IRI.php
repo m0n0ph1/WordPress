@@ -1,6 +1,6 @@
 <?php
 
-    class SimplePie_IRI
+    class IRI
     {
         protected $scheme = null;
 
@@ -136,15 +136,15 @@
             {
                 $this->scheme = null;
             }
-            elseif(! preg_match('/^[A-Za-z][0-9A-Za-z+\-.]*$/', $scheme))
+            elseif(preg_match('/^[A-Za-z][0-9A-Za-z+\-.]*$/', $scheme))
+            {
+                $this->scheme = strtolower($scheme);
+            }
+            else
             {
                 $this->scheme = null;
 
                 return false;
-            }
-            else
-            {
-                $this->scheme = strtolower($scheme);
             }
 
             return true;
@@ -383,7 +383,7 @@
 
                 return true;
             }
-            elseif(substr($ihost, 0, 1) === '[' && substr($ihost, -1) === ']')
+            elseif(strpos($ihost, '[') === 0 && substr($ihost, -1) === ']')
             {
                 if(SimplePie_Net_IPv6::check_ipv6(substr($ihost, 1, -1)))
                 {
@@ -487,15 +487,15 @@
             while(strpos($input, './') !== false || strpos($input, '/.') !== false || $input === '.' || $input === '..')
             {
                 // A: If the input buffer begins with a prefix of "../" or "./", then remove that prefix from the input buffer; otherwise,
-                if(strpos($input, '../') === 0)
+                if(strncmp($input, '../', 3) === 0)
                 {
                     $input = substr($input, 3);
                 }
-                elseif(strpos($input, './') === 0)
+                elseif(strncmp($input, './', 2) === 0)
                 {
                     $input = substr($input, 2);
                 } // B: if the input buffer begins with a prefix of "/./" or "/.", where "." is a complete path segment, then replace that prefix with "/" in the input buffer; otherwise,
-                elseif(strpos($input, '/./') === 0)
+                elseif(strncmp($input, '/./', 3) === 0)
                 {
                     $input = substr($input, 2);
                 }
@@ -503,7 +503,7 @@
                 {
                     $input = '/';
                 } // C: if the input buffer begins with a prefix of "/../" or "/..", where ".." is a complete path segment, then replace that prefix with "/" in the input buffer and remove the last segment and its preceding "/" (if any) from the output buffer; otherwise,
-                elseif(strpos($input, '/../') === 0)
+                elseif(strncmp($input, '/../', 4) === 0)
                 {
                     $input = substr($input, 3);
                     $output = substr_replace($output, '', strrpos($output, '/'));
@@ -661,7 +661,7 @@
                 return true;
             }
 
-            if(! $isauthority && (substr($this->ipath, 0, 2) === '//'))
+            if(! $isauthority && (strpos($this->ipath, '//') === 0))
             {
                 return false;
             }
@@ -854,7 +854,22 @@
                 $value = hexdec($bytes[$i]);
 
                 // If we're the first byte of sequence:
-                if(! $remaining)
+                if($remaining)
+                {
+                    // Check that the byte is valid, then add it to the character:
+                    if(($value & 0xC0) === 0x80)
+                    {
+                        $remaining--;
+                        $character |= ($value & 0x3F) << ($remaining * 6);
+                    } // If it is invalid, count the sequence as invalid and reprocess the current byte as the start of a sequence:
+                    else
+                    {
+                        $valid = false;
+                        $remaining = 0;
+                        $i--;
+                    }
+                } // Continuation byte:
+                else
                 {
                     // Start position
                     $start = $i;
@@ -890,21 +905,6 @@
                     {
                         $valid = false;
                         $remaining = 0;
-                    }
-                } // Continuation byte:
-                else
-                {
-                    // Check that the byte is valid, then add it to the character:
-                    if(($value & 0xC0) === 0x80)
-                    {
-                        $remaining--;
-                        $character |= ($value & 0x3F) << ($remaining * 6);
-                    } // If it is invalid, count the sequence as invalid and reprocess the current byte as the start of a sequence:
-                    else
-                    {
-                        $valid = false;
-                        $remaining = 0;
-                        $i--;
                     }
                 }
 

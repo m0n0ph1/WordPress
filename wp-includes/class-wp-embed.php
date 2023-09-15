@@ -56,10 +56,7 @@
 
         public function register_handler($id, $regex, $callback, $priority = 10)
         {
-            $this->handlers[$priority][$id] = [
-                'regex' => $regex,
-                'callback' => $callback,
-            ];
+            $this->handlers[$priority][$id] = compact('regex', 'callback');
         }
 
         public function unregister_handler($id, $priority = 10)

@@ -13,6 +13,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base.'/themes/(?P<stylesheet>[\/\s%\w\.\(\)\[\]\@_\-]+)/variations', [
                 [
                     'methods' => WP_REST_Server::READABLE,

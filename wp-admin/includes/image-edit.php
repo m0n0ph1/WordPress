@@ -151,7 +151,7 @@
                             <div class="imgedit-crop-grid"></div>
                             <img id="image-preview-<?php echo $post_id; ?>"
                                  onload="imageEdit.imgLoaded('<?php echo $post_id; ?>')"
-                                 src="<?php echo esc_url(admin_url('admin-ajax.php', 'relative')).'?action=imgedit-preview&amp;_ajax_nonce='.$nonce.'&amp;postid='.$post_id.'&amp;rand='.rand(1, 99999); ?>"
+                                 src="<?php echo esc_url(admin_url('admin-ajax.php', 'relative')).'?action=imgedit-preview&amp;_ajax_nonce='.$nonce.'&amp;postid='.$post_id.'&amp;rand='.random_int(1, 99999); ?>"
                                  alt=""/>
                         </div>
                     </div>
@@ -586,7 +586,12 @@
     {
         $max = max($w, $h);
 
-        return $max > 600 ? (600 / $max) : 1;
+        if($max > 600)
+        {
+            return 600 / $max;
+        }
+
+        return 1;
     }
 
     function _rotate_image_resource($img, $angle)
@@ -636,13 +641,10 @@
     {
         $dst = wp_imagecreatetruecolor($w, $h);
 
-        if(is_gd_image($dst))
+        if(is_gd_image($dst) && imagecopy($dst, $img, 0, 0, $x, $y, $w, $h))
         {
-            if(imagecopy($dst, $img, 0, 0, $x, $y, $w, $h))
-            {
-                imagedestroy($img);
-                $img = $dst;
-            }
+            imagedestroy($img);
+            $img = $dst;
         }
 
         return $img;
@@ -840,7 +842,7 @@
         }
 
         $parts = pathinfo($file);
-        $suffix = time().rand(100, 999);
+        $suffix = time().random_int(100, 999);
         $default_sizes = get_intermediate_image_sizes();
 
         if(isset($backup_sizes['full-orig']) && is_array($backup_sizes['full-orig']))
@@ -913,11 +915,7 @@
             return $msg;
         }
 
-        if(! $restored)
-        {
-            $msg->error = __('Image metadata is inconsistent.');
-        }
-        else
+        if($restored)
         {
             $msg->msg = __('Image restored successfully.');
 
@@ -925,6 +923,10 @@
             {
                 delete_post_meta($post_id, '_wp_attachment_backup_sizes');
             }
+        }
+        else
+        {
+            $msg->error = __('Image metadata is inconsistent.');
         }
 
         return $msg;
@@ -974,13 +976,9 @@
             {
                 // Check if it has roughly the same w / h ratio.
                 $diff = round($original_width / $original_height, 2) - round($full_width / $full_height, 2);
-                if(-0.1 < $diff && $diff < 0.1)
+                if(-0.1 < $diff && $diff < 0.1 && $img->resize($full_width, $full_height))
                 {
-                    // Scale the full size image.
-                    if($img->resize($full_width, $full_height))
-                    {
-                        $scaled = true;
-                    }
+                    $scaled = true;
                 }
 
                 if(! $scaled)
@@ -1028,7 +1026,7 @@
         $dirname = pathinfo($path, PATHINFO_DIRNAME);
         $ext = pathinfo($path, PATHINFO_EXTENSION);
         $filename = pathinfo($path, PATHINFO_FILENAME);
-        $suffix = time().rand(100, 999);
+        $suffix = time().random_int(100, 999);
 
         if(defined('IMAGE_EDIT_OVERWRITE') && IMAGE_EDIT_OVERWRITE && isset($backup_sizes['full-orig']) && $backup_sizes['full-orig']['file'] !== $basename)
         {
@@ -1182,11 +1180,7 @@
                     $crop = ($nocrop) ? false : get_option("{$size}_crop");
                 }
 
-                $_sizes[$size] = [
-                    'width' => $width,
-                    'height' => $height,
-                    'crop' => $crop,
-                ];
+                $_sizes[$size] = compact('width', 'height', 'crop');
             }
 
             $meta['sizes'] = array_merge($meta['sizes'], $img->multi_resize($_sizes));

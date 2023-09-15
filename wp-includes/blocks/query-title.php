@@ -13,15 +13,15 @@
         if($is_archive)
         {
             $show_prefix = isset($attributes['showPrefix']) ? $attributes['showPrefix'] : true;
-            if(! $show_prefix)
+            if($show_prefix)
+            {
+                $title = get_the_archive_title();
+            }
+            else
             {
                 add_filter('get_the_archive_title_prefix', '__return_empty_string', 1);
                 $title = get_the_archive_title();
                 remove_filter('get_the_archive_title_prefix', '__return_empty_string', 1);
-            }
-            else
-            {
-                $title = get_the_archive_title();
             }
         }
         if($is_search)

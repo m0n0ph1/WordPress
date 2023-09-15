@@ -1,20 +1,20 @@
 <?php
 
-    class SimplePie_XML_Declaration_Parser
+    class Parser
     {
-        var $version = '1.0';
+        public $version = '1.0';
 
-        var $encoding = 'UTF-8';
+        public $encoding = 'UTF-8';
 
-        var $standalone = false;
+        public $standalone = false;
 
-        var $state = 'before_version_name';
+        public $state = 'before_version_name';
 
-        var $data = '';
+        public $data = '';
 
-        var $data_length = 0;
+        public $data_length = 0;
 
-        var $position = 0;
+        public $position = 0;
 
         public function __construct($data)
         {

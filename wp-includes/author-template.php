@@ -53,14 +53,14 @@
     {
         $original_user_id = $user_id;
 
-        if(! $user_id)
+        if($user_id)
         {
-            global $authordata;
-            $user_id = isset($authordata->ID) ? $authordata->ID : 0;
+            $authordata = get_userdata($user_id);
         }
         else
         {
-            $authordata = get_userdata($user_id);
+            global $authordata;
+            $user_id = isset($authordata->ID) ? $authordata->ID : 0;
         }
 
         if(

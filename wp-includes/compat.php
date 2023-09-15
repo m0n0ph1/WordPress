@@ -53,7 +53,12 @@
          */
         if(! in_array($encoding, ['utf8', 'utf-8', 'UTF8', 'UTF-8'], true))
         {
-            return is_null($length) ? substr($str, $start) : substr($str, $start, $length);
+            if(is_null($length))
+            {
+                return substr($str, $start);
+            }
+
+            return substr($str, $start, $length);
         }
 
         if(_wp_can_use_pcre_u())

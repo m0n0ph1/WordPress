@@ -2,11 +2,11 @@
 
     class WP_Customize_Nav_Menu_Setting extends WP_Customize_Setting
     {
-        const ID_PATTERN = '/^nav_menu\[(?P<id>-?\d+)\]$/';
+        public const ID_PATTERN = '/^nav_menu\[(?P<id>-?\d+)\]$/';
 
-        const TAXONOMY = 'nav_menu';
+        public const TAXONOMY = 'nav_menu';
 
-        const TYPE = 'nav_menu';
+        public const TYPE = 'nav_menu';
 
         public $type = self::TYPE;
 
@@ -37,12 +37,12 @@
         {
             if(empty($manager->nav_menus))
             {
-                throw new Exception('Expected WP_Customize_Manager::$nav_menus to be set.');
+                throw new \RuntimeException('Expected WP_Customize_Manager::$nav_menus to be set.');
             }
 
             if(! preg_match(self::ID_PATTERN, $id, $matches))
             {
-                throw new Exception("Illegal widget setting ID: $id");
+                throw new \RuntimeException("Illegal widget setting ID: $id");
             }
 
             $this->term_id = (int) $matches['id'];
@@ -243,7 +243,7 @@
 
             if($auto_add && false === $i)
             {
-                array_push($nav_menu_options['auto_add'], $this->term_id);
+                $nav_menu_options['auto_add'][] = $this->term_id;
             }
             elseif(! $auto_add && false !== $i)
             {
@@ -372,7 +372,7 @@
                 $name_conflict_suffix = 1;
                 while(is_wp_error($r) && 'menu_exists' === $r->get_error_code())
                 {
-                    $name_conflict_suffix += 1;
+                    ++$name_conflict_suffix;
                     /* translators: 1: Original menu name, 2: Duplicate count. */
                     $menu_data['menu-name'] = sprintf(__('%1$s (%2$d)'), $original_name, $name_conflict_suffix);
                     $r = wp_update_nav_menu_object($menu_id, wp_slash($menu_data));

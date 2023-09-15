@@ -2,15 +2,15 @@
 
     class WP_HTML_Tag_Processor
     {
-        const MAX_BOOKMARKS = 10;
+        public const MAX_BOOKMARKS = 10;
 
-        const MAX_SEEK_OPS = 1000;
+        public const MAX_SEEK_OPS = 1000;
 
-        const ADD_CLASS = true;
+        public const ADD_CLASS = true;
 
-        const REMOVE_CLASS = false;
+        public const REMOVE_CLASS = false;
 
-        const SKIP_CLASS = null;
+        public const SKIP_CLASS = null;
 
         protected $html;
 
@@ -261,7 +261,7 @@
                 {
                     $modified = true;
 
-                    $class .= strlen($class) > 0 ? ' ' : '';
+                    $class .= $class !== '' ? ' ' : '';
                     $class .= $name;
                 }
             }
@@ -272,7 +272,7 @@
                 return;
             }
 
-            if(strlen($class) > 0)
+            if($class !== '')
             {
                 $this->set_attribute('class', $class);
             }

@@ -31,10 +31,7 @@
             return $id;
         }
 
-        return wp_insert_category([
-                                      'cat_name' => $cat_name,
-                                      'category_parent' => $category_parent,
-                                  ]);
+        return wp_insert_category(compact('cat_name', 'category_parent'));
     }
 
     function wp_create_categories($categories, $post_id = '')
@@ -79,13 +76,13 @@
 
         if('' === trim($catarr['cat_name']))
         {
-            if(! $wp_error)
+            if($wp_error)
             {
-                return 0;
+                return new WP_Error('cat_name', __('You did not enter a category name.'));
             }
             else
             {
-                return new WP_Error('cat_name', __('You did not enter a category name.'));
+                return 0;
             }
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-    class Twenty_Eleven_Ephemera_Widget extends WP_Widget
+    class widgets extends WP_Widget
     {
         public function Twenty_Eleven_Ephemera_Widget()
         {
@@ -23,6 +23,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             $cache = wp_cache_get('widget_twentyeleven_ephemera', 'widget');
 
             if(! is_array($cache))
@@ -150,6 +151,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $title = isset($instance['title']) ? esc_attr($instance['title']) : '';
             $number = isset($instance['number']) ? absint($instance['number']) : 10;
             ?>

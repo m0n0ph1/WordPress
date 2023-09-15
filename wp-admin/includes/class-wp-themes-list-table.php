@@ -17,11 +17,13 @@
         public function ajax_user_can()
         {
             // Do not check edit_theme_options here. Ajax calls for available themes require switch_themes.
+            parent::ajax_user_can();
             return current_user_can('switch_themes');
         }
 
         public function prepare_items()
         {
+            parent::prepare_items();
             $themes = wp_get_themes(['allowed' => true]);
 
             if(! empty($_REQUEST['s']))
@@ -108,6 +110,7 @@
 
         public function display()
         {
+            parent::display();
             wp_nonce_field('fetch-list-'.get_class($this), '_ajax_fetch_list_nonce');
             ?>
             <?php $this->tablenav('top'); ?>
@@ -151,6 +154,7 @@
 
         public function display_rows()
         {
+            parent::display_rows();
             $themes = $this->items;
 
             foreach($themes as $theme) :
@@ -237,6 +241,7 @@
 
         public function no_items()
         {
+            parent::no_items();
             if($this->search_terms || $this->features)
             {
                 _e('No items found.');
@@ -276,6 +281,7 @@
 
         public function get_columns()
         {
+            parent::get_columns();
             return [];
         }
 

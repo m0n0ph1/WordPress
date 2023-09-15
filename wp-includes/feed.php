@@ -16,7 +16,12 @@
     {
         $default_feed = apply_filters('default_feed', 'rss2');
 
-        return ('rss' === $default_feed) ? 'rss2' : $default_feed;
+        if('rss' === $default_feed)
+        {
+            return 'rss2';
+        }
+
+        return $default_feed;
     }
 
     function get_wp_title_rss($deprecated = '&#8211;')
@@ -299,25 +304,25 @@
 
         if(! $code)
         {
-            if(! str_contains($data, '<'))
-            {
-                return ['text', $data];
-            }
-            else
+            if(str_contains($data, '<'))
             {
                 $data = "<div xmlns='http://www.w3.org/1999/xhtml'>$data</div>";
 
                 return ['xhtml', $data];
             }
+            else
+            {
+                return ['text', $data];
+            }
         }
 
-        if(! str_contains($data, ']]>'))
+        if(str_contains($data, ']]>'))
         {
-            return ['html', "<![CDATA[$data]]>"];
+            return ['html', htmlspecialchars($data)];
         }
         else
         {
-            return ['html', htmlspecialchars($data)];
+            return ['html', "<![CDATA[$data]]>"];
         }
     }
 

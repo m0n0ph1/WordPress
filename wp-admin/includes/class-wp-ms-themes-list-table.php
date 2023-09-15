@@ -38,7 +38,7 @@
 
             $page = $this->get_pagenum();
 
-            $this->is_site_themes = ('site-themes-network' === $this->screen->id) ? true : false;
+            $this->is_site_themes = 'site-themes-network' === $this->screen->id;
 
             if($this->is_site_themes)
             {
@@ -50,6 +50,7 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             if($this->is_site_themes)
             {
                 return current_user_can('manage_sites');
@@ -62,7 +63,8 @@
 
         public function prepare_items()
         {
-            global $status, $totals, $page, $orderby, $order, $s;
+            global parent::prepare_items();
+            $status, $totals, $page, $orderby, $order, $s;
 
             wp_reset_vars(['orderby', 'order', 's']);
 
@@ -257,17 +259,7 @@
                 }
             }
 
-            if(false !== stripos($theme->get_stylesheet(), $term))
-            {
-                return true;
-            }
-
-            if(false !== stripos($theme->get_template(), $term))
-            {
-                return true;
-            }
-
-            return false;
+            return false !== stripos($theme->get_stylesheet(), $term) || false !== stripos($theme->get_template(), $term);
         }
 
         public function _order_callback($theme_a, $theme_b)
@@ -284,11 +276,21 @@
 
             if('DESC' === $order)
             {
-                return ($a < $b) ? 1 : -1;
+                if($a < $b)
+                {
+                    return 1;
+                }
+
+                return -1;
             }
             else
             {
-                return ($a < $b) ? -1 : 1;
+                if($a < $b)
+                {
+                    return -1;
+                }
+
+                return 1;
             }
         }
 
@@ -296,6 +298,7 @@
 
         public function no_items()
         {
+            parent::no_items();
             if($this->has_items)
             {
                 _e('No themes found.');
@@ -308,6 +311,7 @@
 
         public function get_columns()
         {
+            parent::get_columns();
             $columns = [
                 'cb' => '<input type="checkbox" />',
                 'name' => __('Theme'),
@@ -324,6 +328,7 @@
 
         public function display_rows()
         {
+            parent::display_rows();
             foreach($this->items as $theme)
             {
                 $this->single_row($theme);
@@ -332,7 +337,8 @@
 
         public function single_row($theme)
         {
-            global $status, $totals;
+            global parent::single_row($item);
+            $status, $totals;
 
             if($this->is_site_themes)
             {
@@ -492,7 +498,29 @@
             $stylesheet = $theme->get_stylesheet();
             $theme_key = urlencode($stylesheet);
 
-            if(! $allowed)
+            if($allowed)
+            {
+                $url = add_query_arg([
+                                         'action' => 'disable',
+                                         'theme' => $theme_key,
+                                         'paged' => $page,
+                                         's' => $s,
+                                     ], $url);
+
+                if($this->is_site_themes)
+                {
+                    /* translators: %s: Theme name. */
+                    $aria_label = sprintf(__('Disable %s'), $theme->display('Name'));
+                }
+                else
+                {
+                    /* translators: %s: Theme name. */
+                    $aria_label = sprintf(__('Network Disable %s'), $theme->display('Name'));
+                }
+
+                $actions['disable'] = sprintf('<a href="%s" aria-label="%s">%s</a>', esc_url(wp_nonce_url($url, 'disable-theme_'.$stylesheet)), esc_attr($aria_label), ($this->is_site_themes ? __('Disable') : __('Network Disable')));
+            }
+            else
             {
                 if(! $theme->errors())
                 {
@@ -516,28 +544,6 @@
 
                     $actions['enable'] = sprintf('<a href="%s" class="edit" aria-label="%s">%s</a>', esc_url(wp_nonce_url($url, 'enable-theme_'.$stylesheet)), esc_attr($aria_label), ($this->is_site_themes ? __('Enable') : __('Network Enable')));
                 }
-            }
-            else
-            {
-                $url = add_query_arg([
-                                         'action' => 'disable',
-                                         'theme' => $theme_key,
-                                         'paged' => $page,
-                                         's' => $s,
-                                     ], $url);
-
-                if($this->is_site_themes)
-                {
-                    /* translators: %s: Theme name. */
-                    $aria_label = sprintf(__('Disable %s'), $theme->display('Name'));
-                }
-                else
-                {
-                    /* translators: %s: Theme name. */
-                    $aria_label = sprintf(__('Network Disable %s'), $theme->display('Name'));
-                }
-
-                $actions['disable'] = sprintf('<a href="%s" aria-label="%s">%s</a>', esc_url(wp_nonce_url($url, 'disable-theme_'.$stylesheet)), esc_attr($aria_label), ($this->is_site_themes ? __('Disable') : __('Network Disable')));
             }
 
             if(! $allowed && ! $this->is_site_themes && current_user_can('delete_themes') && get_option('stylesheet') !== $stylesheet && get_option('template') !== $stylesheet)
@@ -735,6 +741,7 @@
 
         protected function get_primary_column_name()
         {
+            parent::get_primary_column_name();
             return 'name';
         }
 

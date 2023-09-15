@@ -115,13 +115,13 @@
         _deprecated_function(__FUNCTION__, '3.1.0', 'get_users()');
 
         global $wpdb;
-        if(! is_multisite())
+        if(is_multisite())
         {
-            $level_key = $wpdb->get_blog_prefix().'user_level';
+            $level_key = $wpdb->get_blog_prefix().'capabilities';
         }
         else
         {
-            $level_key = $wpdb->get_blog_prefix().'capabilities';
+            $level_key = $wpdb->get_blog_prefix().'user_level';
         } // WPMU site admins don't have user_levels.
 
         return $wpdb->get_col($wpdb->prepare("SELECT user_id FROM $wpdb->usermeta WHERE meta_key = %s AND meta_value != '0'", $level_key));
@@ -135,14 +135,14 @@
 
         $editable = get_editable_user_ids($user_id);
 
-        if(! $editable)
-        {
-            return false;
-        }
-        else
+        if($editable)
         {
             $editable = join(',', $editable);
             $authors = $wpdb->get_results("SELECT * FROM $wpdb->users WHERE ID IN ($editable) ORDER BY display_name");
+        }
+        else
+        {
+            return false;
         }
 
         return apply_filters('get_editable_authors', $authors);
@@ -172,13 +172,13 @@
             }
         }
 
-        if(! is_multisite())
+        if(is_multisite())
         {
-            $level_key = $wpdb->get_blog_prefix().'user_level';
+            $level_key = $wpdb->get_blog_prefix().'capabilities';
         }
         else
         {
-            $level_key = $wpdb->get_blog_prefix().'capabilities';
+            $level_key = $wpdb->get_blog_prefix().'user_level';
         } // WPMU site admins don't have user_levels.
 
         $query = $wpdb->prepare("SELECT user_id FROM $wpdb->usermeta WHERE meta_key = %s", $level_key);
@@ -196,13 +196,13 @@
 
         global $wpdb;
 
-        if(! is_multisite())
+        if(is_multisite())
         {
-            $level_key = $wpdb->get_blog_prefix().'user_level';
+            $level_key = $wpdb->get_blog_prefix().'capabilities';
         }
         else
         {
-            $level_key = $wpdb->get_blog_prefix().'capabilities';
+            $level_key = $wpdb->get_blog_prefix().'user_level';
         } // WPMU site admins don't have user_levels.
 
         return $wpdb->get_col($wpdb->prepare("SELECT user_id FROM $wpdb->usermeta WHERE meta_key = %s AND meta_value = '0'", $level_key));
@@ -212,39 +212,39 @@
 
         class WP_User_Search
         {
-            var $results;
+            public $results;
 
-            var $search_term;
+            public $search_term;
 
-            var $page;
+            public $page;
 
-            var $role;
+            public $role;
 
-            var $raw_page;
+            public $raw_page;
 
-            var $users_per_page = 50;
+            public $users_per_page = 50;
 
-            var $first_user;
+            public $first_user;
 
-            var $last_user;
+            public $last_user;
 
-            var $query_limit;
+            public $query_limit;
 
-            var $query_orderby;
+            public $query_orderby;
 
-            var $query_from;
+            public $query_from;
 
-            var $query_where;
+            public $query_where;
 
-            var $total_users_for_query = 0;
+            public $total_users_for_query = 0;
 
-            var $too_many_total_users = false;
+            public $too_many_total_users = false;
 
-            var $search_errors;
+            public $search_errors;
 
-            var $paging_text;
+            public $paging_text;
 
-            function __construct($search_term = '', $page = '', $role = '')
+            public function __construct($search_term = '', $page = '', $role = '')
             {
                 _deprecated_class('WP_User_Search', '3.1.0', 'WP_User_Query');
 
@@ -261,7 +261,7 @@
             public function WP_User_Search($search_term = '', $page = '', $role = '')
             {
                 _deprecated_constructor('WP_User_Search', '3.1.0', get_class($this));
-                self::__construct($search_term, $page, $role);
+                $this->__construct($search_term, $page, $role);
             }
 
             public function prepare_query()
@@ -319,7 +319,7 @@
                 }
             }
 
-            function prepare_vars_for_template_usage() {}
+            public function prepare_vars_for_template_usage() {}
 
             public function do_paging()
             {
@@ -354,12 +354,12 @@
                 return (array) $this->results;
             }
 
-            function page_links()
+            public function page_links()
             {
                 echo $this->paging_text;
             }
 
-            function results_are_paged()
+            public function results_are_paged()
             {
                 if($this->paging_text)
                 {
@@ -369,7 +369,7 @@
                 return false;
             }
 
-            function is_search()
+            public function is_search()
             {
                 if($this->search_term)
                 {
@@ -400,14 +400,14 @@
 
         $dir = ('pending' == $type) ? 'ASC' : 'DESC';
 
-        if(! $editable)
-        {
-            $other_unpubs = '';
-        }
-        else
+        if($editable)
         {
             $editable = join(',', $editable);
             $other_unpubs = $wpdb->get_results($wpdb->prepare("SELECT ID, post_title, post_author FROM $wpdb->posts WHERE post_type = 'post' AND $type_sql AND post_author IN ($editable) AND post_author != %d ORDER BY post_modified $dir", $user_id));
+        }
+        else
+        {
+            $other_unpubs = '';
         }
 
         return apply_filters('get_others_drafts', $other_unpubs);
@@ -891,7 +891,7 @@
 
     class WP_Privacy_Data_Export_Requests_Table extends WP_Privacy_Data_Export_Requests_List_Table
     {
-        function __construct($args)
+        public function __construct($args)
         {
             _deprecated_function(__CLASS__, '5.3.0', 'WP_Privacy_Data_Export_Requests_List_Table');
 
@@ -906,7 +906,7 @@
 
     class WP_Privacy_Data_Removal_Requests_Table extends WP_Privacy_Data_Removal_Requests_List_Table
     {
-        function __construct($args)
+        public function __construct($args)
         {
             _deprecated_function(__CLASS__, '5.3.0', 'WP_Privacy_Data_Removal_Requests_List_Table');
 

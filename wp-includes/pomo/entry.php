@@ -56,7 +56,7 @@
             public function Translation_Entry($args = [])
             {
                 _deprecated_constructor(self::class, '5.4.0', static::class);
-                self::__construct($args);
+                $this->__construct($args);
             }
 
             public function key()

@@ -340,11 +340,7 @@
 
                 if(! empty($this->query_vars[$wpvar]))
                 {
-                    if(! is_array($this->query_vars[$wpvar]))
-                    {
-                        $this->query_vars[$wpvar] = (string) $this->query_vars[$wpvar];
-                    }
-                    else
+                    if(is_array($this->query_vars[$wpvar]))
                     {
                         foreach($this->query_vars[$wpvar] as $vkey => $v)
                         {
@@ -353,6 +349,10 @@
                                 $this->query_vars[$wpvar][$vkey] = (string) $v;
                             }
                         }
+                    }
+                    else
+                    {
+                        $this->query_vars[$wpvar] = (string) $this->query_vars[$wpvar];
                     }
 
                     if(isset($post_type_query_vars[$wpvar]))
@@ -393,16 +393,16 @@
             {
                 $queryable_post_types = get_post_types(['publicly_queryable' => true]);
 
-                if(! is_array($this->query_vars['post_type']))
+                if(is_array($this->query_vars['post_type']))
+                {
+                    $this->query_vars['post_type'] = array_intersect($this->query_vars['post_type'], $queryable_post_types);
+                }
+                else
                 {
                     if(! in_array($this->query_vars['post_type'], $queryable_post_types, true))
                     {
                         unset($this->query_vars['post_type']);
                     }
-                }
-                else
-                {
-                    $this->query_vars['post_type'] = array_intersect($this->query_vars['post_type'], $queryable_post_types);
                 }
             }
 
@@ -444,7 +444,7 @@
             {
                 if('' !== $this->query_vars[$wpvar])
                 {
-                    $this->query_string .= (strlen($this->query_string) < 1) ? '' : '&';
+                    $this->query_string .= ($this->query_string === '') ? '' : '&';
 
                     if(! is_scalar($this->query_vars[$wpvar]))
                     { // Discard non-scalars.
@@ -468,13 +468,8 @@
         {
             global $wp_query;
 
-            if(false !== apply_filters('pre_handle_404', false, $wp_query))
-            {
-                return;
-            }
-
             // If we've already issued a 404, bail.
-            if(is_404())
+            if(false !== apply_filters('pre_handle_404', false, $wp_query) || is_404())
             {
                 return;
             }

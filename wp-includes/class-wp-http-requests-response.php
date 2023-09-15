@@ -8,6 +8,7 @@
 
         public function __construct(WpOrg\Requests\Response $response, $filename = '')
         {
+            parent::__construct($data, $status, null);
             $this->response = $response;
             $this->filename = $filename;
         }

@@ -503,7 +503,12 @@
 
     function twentyseventeen_front_page_template($template)
     {
-        return is_home() ? '' : $template;
+        if(is_home())
+        {
+            return '';
+        }
+
+        return $template;
     }
 
     add_filter('frontpage_template', 'twentyseventeen_front_page_template');

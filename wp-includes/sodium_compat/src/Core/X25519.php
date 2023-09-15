@@ -5,7 +5,7 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core_X25519 extends ParagonIE_Sodium_Core_Curve25519
+    abstract class X25519 extends ParagonIE_Sodium_Core_Curve25519
     {
         public static function crypto_scalarmult_curve25519_ref10($n, $p)
         {

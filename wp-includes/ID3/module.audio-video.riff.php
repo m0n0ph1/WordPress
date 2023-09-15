@@ -26,7 +26,7 @@
     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.audio.ac3.php', __FILE__, true);
     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.audio.dts.php', __FILE__, true);
 
-    class getid3_riff extends getid3_handler
+    class module extends getid3_handler
     {
         protected $container = 'riff'; // default
 
@@ -115,13 +115,10 @@
                             }
                         }
                         $nextRIFFheader = $this->fread(12);
-                        if($nextRIFFoffset == ($info['avdataend'] - 1))
+                        if($nextRIFFoffset == ($info['avdataend'] - 1) && strpos($nextRIFFheader, "\x00") === 0)
                         {
-                            if(substr($nextRIFFheader, 0, 1) == "\x00")
-                            {
-                                // RIFF padded to WORD boundary, we're actually already at the end
-                                break;
-                            }
+                            // RIFF padded to WORD boundary, we're actually already at the end
+                            break;
                         }
                         $nextRIFFheaderID = substr($nextRIFFheader, 0, 4);
                         $nextRIFFsize = $this->EitherEndian2Int(substr($nextRIFFheader, 4, 4));
@@ -221,7 +218,7 @@
                         $thisfile_audio['streams'][$streamindex] = $thisfile_riff_audio[$streamindex];
 
                         $thisfile_audio = (array) getid3_lib::array_merge_noclobber($thisfile_audio, $thisfile_riff_audio[$streamindex]);
-                        if(substr($thisfile_audio['codec'], 0, strlen('unknown: 0x')) == 'unknown: 0x')
+                        if(strpos($thisfile_audio['codec'], 'unknown: 0x') === 0)
                         {
                             $this->warning('Audio codec = '.$thisfile_audio['codec']);
                         }
@@ -377,7 +374,7 @@
                         $thisfile_riff_WAVE_MEXT_0['flags']['homogenous'] = (bool) ($thisfile_riff_WAVE_MEXT_0['raw']['sound_information'] & 0x0001);
                         if($thisfile_riff_WAVE_MEXT_0['flags']['homogenous'])
                         {
-                            $thisfile_riff_WAVE_MEXT_0['flags']['padding'] = ($thisfile_riff_WAVE_MEXT_0['raw']['sound_information'] & 0x0002) ? false : true;
+                            $thisfile_riff_WAVE_MEXT_0['flags']['padding'] = ! ($thisfile_riff_WAVE_MEXT_0['raw']['sound_information'] & 0x0002);
                             $thisfile_riff_WAVE_MEXT_0['flags']['22_or_44'] = (bool) ($thisfile_riff_WAVE_MEXT_0['raw']['sound_information'] & 0x0004);
                             $thisfile_riff_WAVE_MEXT_0['flags']['free_format'] = (bool) ($thisfile_riff_WAVE_MEXT_0['raw']['sound_information'] & 0x0008);
 
@@ -485,44 +482,40 @@
                         }
                     }
 
-                    if(isset($thisfile_riff_WAVE['iXML'][0]['data']))
+                    if(isset($thisfile_riff_WAVE['iXML'][0]['data']) && $parsedXML = getid3_lib::XML2array($thisfile_riff_WAVE['iXML'][0]['data']))
                     {
-                        // requires functions simplexml_load_string and get_object_vars
-                        if($parsedXML = getid3_lib::XML2array($thisfile_riff_WAVE['iXML'][0]['data']))
+                        $thisfile_riff_WAVE['iXML'][0]['parsed'] = $parsedXML;
+                        if(isset($parsedXML['SPEED']['MASTER_SPEED']))
                         {
-                            $thisfile_riff_WAVE['iXML'][0]['parsed'] = $parsedXML;
-                            if(isset($parsedXML['SPEED']['MASTER_SPEED']))
-                            {
-                                @list($numerator, $denominator) = explode('/', $parsedXML['SPEED']['MASTER_SPEED']);
-                                $thisfile_riff_WAVE['iXML'][0]['master_speed'] = $numerator / ($denominator ? $denominator : 1000);
-                            }
-                            if(isset($parsedXML['SPEED']['TIMECODE_RATE']))
-                            {
-                                @list($numerator, $denominator) = explode('/', $parsedXML['SPEED']['TIMECODE_RATE']);
-                                $thisfile_riff_WAVE['iXML'][0]['timecode_rate'] = $numerator / ($denominator ? $denominator : 1000);
-                            }
-                            if(isset($parsedXML['SPEED']['TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_LO']) && ! empty($parsedXML['SPEED']['TIMESTAMP_SAMPLE_RATE']) && ! empty($thisfile_riff_WAVE['iXML'][0]['timecode_rate']))
-                            {
-                                $samples_since_midnight = floatval(ltrim($parsedXML['SPEED']['TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_HI'].$parsedXML['SPEED']['TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_LO'], '0'));
-                                $timestamp_sample_rate = (is_array($parsedXML['SPEED']['TIMESTAMP_SAMPLE_RATE']) ? max($parsedXML['SPEED']['TIMESTAMP_SAMPLE_RATE']) : $parsedXML['SPEED']['TIMESTAMP_SAMPLE_RATE']); // XML could possibly contain more than one TIMESTAMP_SAMPLE_RATE tag, returning as array instead of integer [why? does it make sense? perhaps doesn't matter but getID3 needs to deal with it] - see https://github.com/JamesHeinrich/getID3/issues/105
-                                $thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] = $samples_since_midnight / $timestamp_sample_rate;
-                                $h = floor($thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] / 3600);
-                                $m = floor(($thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] - ($h * 3600)) / 60);
-                                $s = floor($thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] - ($h * 3600) - ($m * 60));
-                                $f = ($thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] - ($h * 3600) - ($m * 60) - $s) * $thisfile_riff_WAVE['iXML'][0]['timecode_rate'];
-                                $thisfile_riff_WAVE['iXML'][0]['timecode_string'] = sprintf('%02d:%02d:%02d:%05.2f', $h, $m, $s, $f);
-                                $thisfile_riff_WAVE['iXML'][0]['timecode_string_round'] = sprintf('%02d:%02d:%02d:%02d', $h, $m, $s, round($f));
-                                unset($samples_since_midnight, $timestamp_sample_rate, $h, $m, $s, $f);
-                            }
-                            unset($parsedXML);
+                            @list($numerator, $denominator) = explode('/', $parsedXML['SPEED']['MASTER_SPEED']);
+                            $thisfile_riff_WAVE['iXML'][0]['master_speed'] = $numerator / ($denominator ? $denominator : 1000);
                         }
+                        if(isset($parsedXML['SPEED']['TIMECODE_RATE']))
+                        {
+                            @list($numerator, $denominator) = explode('/', $parsedXML['SPEED']['TIMECODE_RATE']);
+                            $thisfile_riff_WAVE['iXML'][0]['timecode_rate'] = $numerator / ($denominator ? $denominator : 1000);
+                        }
+                        if(isset($parsedXML['SPEED']['TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_LO']) && ! empty($parsedXML['SPEED']['TIMESTAMP_SAMPLE_RATE']) && ! empty($thisfile_riff_WAVE['iXML'][0]['timecode_rate']))
+                        {
+                            $samples_since_midnight = floatval(ltrim($parsedXML['SPEED']['TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_HI'].$parsedXML['SPEED']['TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_LO'], '0'));
+                            $timestamp_sample_rate = (is_array($parsedXML['SPEED']['TIMESTAMP_SAMPLE_RATE']) ? max($parsedXML['SPEED']['TIMESTAMP_SAMPLE_RATE']) : $parsedXML['SPEED']['TIMESTAMP_SAMPLE_RATE']); // XML could possibly contain more than one TIMESTAMP_SAMPLE_RATE tag, returning as array instead of integer [why? does it make sense? perhaps doesn't matter but getID3 needs to deal with it] - see https://github.com/JamesHeinrich/getID3/issues/105
+                            $thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] = $samples_since_midnight / $timestamp_sample_rate;
+                            $h = floor($thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] / 3600);
+                            $m = floor(($thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] - ($h * 3600)) / 60);
+                            $s = floor($thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] - ($h * 3600) - ($m * 60));
+                            $f = ($thisfile_riff_WAVE['iXML'][0]['timecode_seconds'] - ($h * 3600) - ($m * 60) - $s) * $thisfile_riff_WAVE['iXML'][0]['timecode_rate'];
+                            $thisfile_riff_WAVE['iXML'][0]['timecode_string'] = sprintf('%02d:%02d:%02d:%05.2f', $h, $m, $s, $f);
+                            $thisfile_riff_WAVE['iXML'][0]['timecode_string_round'] = sprintf('%02d:%02d:%02d:%02d', $h, $m, $s, round($f));
+                            unset($samples_since_midnight, $timestamp_sample_rate, $h, $m, $s, $f);
+                        }
+                        unset($parsedXML);
                     }
 
                     if(isset($thisfile_riff_WAVE['guan'][0]['data']))
                     {
                         // shortcut
                         $thisfile_riff_WAVE_guan_0 = &$thisfile_riff_WAVE['guan'][0];
-                        if(! empty($thisfile_riff_WAVE_guan_0['data']) && (substr($thisfile_riff_WAVE_guan_0['data'], 0, 14) == 'GUANO|Version:'))
+                        if(! empty($thisfile_riff_WAVE_guan_0['data']) && (strpos($thisfile_riff_WAVE_guan_0['data'], 'GUANO|Version:') === 0))
                         {
                             $thisfile_riff['guano'] = [];
                             foreach(explode("\n", $thisfile_riff_WAVE_guan_0['data']) as $line)
@@ -530,18 +523,15 @@
                                 if($line)
                                 {
                                     @list($key, $value) = explode(':', $line, 2);
-                                    if(substr($value, 0, 3) == '[{"')
+                                    if(strpos($value, '[{"') === 0 && $decoded = @json_decode($value, true))
                                     {
-                                        if($decoded = @json_decode($value, true))
+                                        if(! empty($decoded) && (count($decoded) == 1))
                                         {
-                                            if(! empty($decoded) && (count($decoded) == 1))
-                                            {
-                                                $value = $decoded[0];
-                                            }
-                                            else
-                                            {
-                                                $value = $decoded;
-                                            }
+                                            $value = $decoded[0];
+                                        }
+                                        else
+                                        {
+                                            $value = $decoded;
                                         }
                                     }
                                     $thisfile_riff['guano'] = array_merge_recursive($thisfile_riff['guano'], getid3_lib::CreateDeepArray($key, '|', $value));
@@ -696,11 +686,11 @@
                                 //$riff_litewave['quality_factor'] = intval(round((2000 - $riff_litewave_raw['m_dwScale']) / 20));
                                 $riff_litewave['quality_factor'] = $riff_litewave_raw['m_wQuality'];
 
-                                $riff_litewave['flags']['raw_source'] = ($riff_litewave_raw['compression_flags'] & 0x01) ? false : true;
-                                $riff_litewave['flags']['vbr_blocksize'] = ($riff_litewave_raw['compression_flags'] & 0x02) ? false : true;
+                                $riff_litewave['flags']['raw_source'] = ! ($riff_litewave_raw['compression_flags'] & 0x01);
+                                $riff_litewave['flags']['vbr_blocksize'] = ! ($riff_litewave_raw['compression_flags'] & 0x02);
                                 $riff_litewave['flags']['seekpoints'] = (bool) ($riff_litewave_raw['compression_flags'] & 0x04);
 
-                                $thisfile_audio['lossless'] = (($riff_litewave_raw['m_wQuality'] == 100) ? true : false);
+                                $thisfile_audio['lossless'] = ($riff_litewave_raw['m_wQuality'] == 100);
                                 $thisfile_audio['encoder_options'] = '-q'.$riff_litewave['quality_factor'];
                                 break;
 
@@ -735,7 +725,7 @@
                                 break;
 
                             default:
-                                if((($info['avdataend'] - $info['filesize']) == 1) && (($thisfile_riff[$RIFFsubtype]['data'][0]['size'] % 2) == 0) && ((($info['filesize'] - $info['avdataoffset']) % 2) == 1))
+                                if((($info['avdataend'] - $info['filesize']) == 1) && (($thisfile_riff[$RIFFsubtype]['data'][0]['size'] % 2) === 0) && ((($info['filesize'] - $info['avdataoffset']) % 2) === 1))
                                 {
                                     // output file appears to be incorrectly *not* padded to nearest WORD boundary
                                     // Output less severe warning
@@ -751,13 +741,10 @@
                                 break;
                         }
                     }
-                    if(! empty($info['mpeg']['audio']['LAME']['audio_bytes']))
+                    if(! empty($info['mpeg']['audio']['LAME']['audio_bytes']) && (($info['avdataend'] - $info['avdataoffset']) - $info['mpeg']['audio']['LAME']['audio_bytes']) == 1)
                     {
-                        if((($info['avdataend'] - $info['avdataoffset']) - $info['mpeg']['audio']['LAME']['audio_bytes']) == 1)
-                        {
-                            $info['avdataend']--;
-                            $this->warning('Extra null byte at end of MP3 data assumed to be RIFF padding and therefore ignored');
-                        }
+                        $info['avdataend']--;
+                        $this->warning('Extra null byte at end of MP3 data assumed to be RIFF padding and therefore ignored');
                     }
                     if(isset($thisfile_audio_dataformat) && ($thisfile_audio_dataformat == 'ac3'))
                     {
@@ -901,193 +888,190 @@
                         $thisfile_riff_video_current['frame_rate'] = round(1000000 / $thisfile_riff_raw_avih['dwMicroSecPerFrame'], 3);
                         $thisfile_video['frame_rate'] = $thisfile_riff_video_current['frame_rate'];
                     }
-                    if(isset($thisfile_riff['AVI ']['hdrl']['strl']['strh'][0]['data']))
+                    if(isset($thisfile_riff['AVI ']['hdrl']['strl']['strh'][0]['data']) && is_array($thisfile_riff['AVI ']['hdrl']['strl']['strh']))
                     {
-                        if(is_array($thisfile_riff['AVI ']['hdrl']['strl']['strh']))
+                        $thisfile_riff_raw_strf_strhfccType_streamindex = null;
+                        for($i = 0, $iMax = count($thisfile_riff['AVI ']['hdrl']['strl']['strh']); $i < $iMax; $i++)
                         {
-                            $thisfile_riff_raw_strf_strhfccType_streamindex = null;
-                            for($i = 0; $i < count($thisfile_riff['AVI ']['hdrl']['strl']['strh']); $i++)
+                            if(isset($thisfile_riff['AVI ']['hdrl']['strl']['strh'][$i]['data']))
                             {
-                                if(isset($thisfile_riff['AVI ']['hdrl']['strl']['strh'][$i]['data']))
+                                $strhData = $thisfile_riff['AVI ']['hdrl']['strl']['strh'][$i]['data'];
+                                $strhfccType = substr($strhData, 0, 4);
+
+                                if(isset($thisfile_riff['AVI ']['hdrl']['strl']['strf'][$i]['data']))
                                 {
-                                    $strhData = $thisfile_riff['AVI ']['hdrl']['strl']['strh'][$i]['data'];
-                                    $strhfccType = substr($strhData, 0, 4);
+                                    $strfData = $thisfile_riff['AVI ']['hdrl']['strl']['strf'][$i]['data'];
 
-                                    if(isset($thisfile_riff['AVI ']['hdrl']['strl']['strf'][$i]['data']))
+                                    if(! isset($thisfile_riff_raw['strf'][$strhfccType][$streamindex]))
                                     {
-                                        $strfData = $thisfile_riff['AVI ']['hdrl']['strl']['strf'][$i]['data'];
-
-                                        if(! isset($thisfile_riff_raw['strf'][$strhfccType][$streamindex]))
-                                        {
-                                            $thisfile_riff_raw['strf'][$strhfccType][$streamindex] = null;
-                                        }
-                                        // shortcut
-                                        $thisfile_riff_raw_strf_strhfccType_streamindex = &$thisfile_riff_raw['strf'][$strhfccType][$streamindex];
-
-                                        switch($strhfccType)
-                                        {
-                                            case 'auds':
-                                                $thisfile_audio['bitrate_mode'] = 'cbr';
-                                                $thisfile_audio_dataformat = 'wav';
-                                                if(isset($thisfile_riff_audio) && is_array($thisfile_riff_audio))
-                                                {
-                                                    $streamindex = count($thisfile_riff_audio);
-                                                }
-
-                                                $thisfile_riff_audio[$streamindex] = self::parseWAVEFORMATex($strfData);
-                                                $thisfile_audio['wformattag'] = $thisfile_riff_audio[$streamindex]['raw']['wFormatTag'];
-
-                                                // shortcut
-                                                $thisfile_audio['streams'][$streamindex] = $thisfile_riff_audio[$streamindex];
-                                                $thisfile_audio_streams_currentstream = &$thisfile_audio['streams'][$streamindex];
-
-                                                if($thisfile_audio_streams_currentstream['bits_per_sample'] == 0)
-                                                {
-                                                    unset($thisfile_audio_streams_currentstream['bits_per_sample']);
-                                                }
-                                                $thisfile_audio_streams_currentstream['wformattag'] = $thisfile_audio_streams_currentstream['raw']['wFormatTag'];
-                                                unset($thisfile_audio_streams_currentstream['raw']);
-
-                                                // shortcut
-                                                $thisfile_riff_raw['strf'][$strhfccType][$streamindex] = $thisfile_riff_audio[$streamindex]['raw'];
-
-                                                unset($thisfile_riff_audio[$streamindex]['raw']);
-                                                $thisfile_audio = getid3_lib::array_merge_noclobber($thisfile_audio, $thisfile_riff_audio[$streamindex]);
-
-                                                $thisfile_audio['lossless'] = false;
-                                                switch($thisfile_riff_raw_strf_strhfccType_streamindex['wFormatTag'])
-                                                {
-                                                    case 0x0001:  // PCM
-                                                        $thisfile_audio_dataformat = 'wav';
-                                                        $thisfile_audio['lossless'] = true;
-                                                        break;
-
-                                                    case 0x0050: // MPEG Layer 2 or Layer 1
-                                                        $thisfile_audio_dataformat = 'mp2'; // Assume Layer-2
-                                                        break;
-
-                                                    case 0x0055: // MPEG Layer 3
-                                                        $thisfile_audio_dataformat = 'mp3';
-                                                        break;
-
-                                                    case 0x00FF: // AAC
-                                                        $thisfile_audio_dataformat = 'aac';
-                                                        break;
-
-                                                    case 0x0161: // Windows Media v7 / v8 / v9
-                                                    case 0x0162: // Windows Media Professional v9
-                                                    case 0x0163: // Windows Media Lossess v9
-                                                        $thisfile_audio_dataformat = 'wma';
-                                                        break;
-
-                                                    case 0x2000: // AC-3
-                                                        $thisfile_audio_dataformat = 'ac3';
-                                                        break;
-
-                                                    case 0x2001: // DTS
-                                                        $thisfile_audio_dataformat = 'dts';
-                                                        break;
-
-                                                    default:
-                                                        $thisfile_audio_dataformat = 'wav';
-                                                        break;
-                                                }
-                                                $thisfile_audio_streams_currentstream['dataformat'] = $thisfile_audio_dataformat;
-                                                $thisfile_audio_streams_currentstream['lossless'] = $thisfile_audio['lossless'];
-                                                $thisfile_audio_streams_currentstream['bitrate_mode'] = $thisfile_audio['bitrate_mode'];
-                                                break;
-
-                                            case 'iavs':
-                                            case 'vids':
-                                                // shortcut
-                                                $thisfile_riff_raw['strh'][$i] = [];
-                                                $thisfile_riff_raw_strh_current = &$thisfile_riff_raw['strh'][$i];
-
-                                                $thisfile_riff_raw_strh_current['fccType'] = substr($strhData, 0, 4);  // same as $strhfccType;
-                                                $thisfile_riff_raw_strh_current['fccHandler'] = substr($strhData, 4, 4);
-                                                $thisfile_riff_raw_strh_current['dwFlags'] = $this->EitherEndian2Int(substr($strhData, 8, 4)); // Contains AVITF_* flags
-                                                $thisfile_riff_raw_strh_current['wPriority'] = $this->EitherEndian2Int(substr($strhData, 12, 2));
-                                                $thisfile_riff_raw_strh_current['wLanguage'] = $this->EitherEndian2Int(substr($strhData, 14, 2));
-                                                $thisfile_riff_raw_strh_current['dwInitialFrames'] = $this->EitherEndian2Int(substr($strhData, 16, 4));
-                                                $thisfile_riff_raw_strh_current['dwScale'] = $this->EitherEndian2Int(substr($strhData, 20, 4));
-                                                $thisfile_riff_raw_strh_current['dwRate'] = $this->EitherEndian2Int(substr($strhData, 24, 4));
-                                                $thisfile_riff_raw_strh_current['dwStart'] = $this->EitherEndian2Int(substr($strhData, 28, 4));
-                                                $thisfile_riff_raw_strh_current['dwLength'] = $this->EitherEndian2Int(substr($strhData, 32, 4));
-                                                $thisfile_riff_raw_strh_current['dwSuggestedBufferSize'] = $this->EitherEndian2Int(substr($strhData, 36, 4));
-                                                $thisfile_riff_raw_strh_current['dwQuality'] = $this->EitherEndian2Int(substr($strhData, 40, 4));
-                                                $thisfile_riff_raw_strh_current['dwSampleSize'] = $this->EitherEndian2Int(substr($strhData, 44, 4));
-                                                $thisfile_riff_raw_strh_current['rcFrame'] = $this->EitherEndian2Int(substr($strhData, 48, 4));
-
-                                                $thisfile_riff_video_current['codec'] = self::fourccLookup($thisfile_riff_raw_strh_current['fccHandler']);
-                                                $thisfile_video['fourcc'] = $thisfile_riff_raw_strh_current['fccHandler'];
-                                                if(! $thisfile_riff_video_current['codec'] && isset($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc']) && self::fourccLookup($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc']))
-                                                {
-                                                    $thisfile_riff_video_current['codec'] = self::fourccLookup($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc']);
-                                                    $thisfile_video['fourcc'] = $thisfile_riff_raw_strf_strhfccType_streamindex['fourcc'];
-                                                }
-                                                $thisfile_video['codec'] = $thisfile_riff_video_current['codec'];
-                                                $thisfile_video['pixel_aspect_ratio'] = (float) 1;
-                                                switch($thisfile_riff_raw_strh_current['fccHandler'])
-                                                {
-                                                    case 'HFYU': // Huffman Lossless Codec
-                                                    case 'IRAW': // Intel YUV Uncompressed
-                                                    case 'YUY2': // Uncompressed YUV 4:2:2
-                                                        $thisfile_video['lossless'] = true;
-                                                        break;
-
-                                                    default:
-                                                        $thisfile_video['lossless'] = false;
-                                                        break;
-                                                }
-
-                                                switch($strhfccType)
-                                                {
-                                                    case 'vids':
-                                                        $thisfile_riff_raw_strf_strhfccType_streamindex = self::ParseBITMAPINFOHEADER(substr($strfData, 0, 40), ($this->container == 'riff'));
-                                                        $thisfile_video['bits_per_sample'] = $thisfile_riff_raw_strf_strhfccType_streamindex['biBitCount'];
-
-                                                        if($thisfile_riff_video_current['codec'] == 'DV')
-                                                        {
-                                                            $thisfile_riff_video_current['dv_type'] = 2;
-                                                        }
-                                                        break;
-
-                                                    case 'iavs':
-                                                        $thisfile_riff_video_current['dv_type'] = 1;
-                                                        break;
-                                                }
-                                                break;
-
-                                            default:
-                                                $this->warning('Unhandled fccType for stream ('.$i.'): "'.$strhfccType.'"');
-                                                break;
-                                        }
+                                        $thisfile_riff_raw['strf'][$strhfccType][$streamindex] = null;
                                     }
-                                }
+                                    // shortcut
+                                    $thisfile_riff_raw_strf_strhfccType_streamindex = &$thisfile_riff_raw['strf'][$strhfccType][$streamindex];
 
-                                if(isset($thisfile_riff_raw_strf_strhfccType_streamindex) && isset($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc']))
-                                {
-                                    $thisfile_video['fourcc'] = $thisfile_riff_raw_strf_strhfccType_streamindex['fourcc'];
-                                    if(self::fourccLookup($thisfile_video['fourcc']))
+                                    switch($strhfccType)
                                     {
-                                        $thisfile_riff_video_current['codec'] = self::fourccLookup($thisfile_video['fourcc']);
-                                        $thisfile_video['codec'] = $thisfile_riff_video_current['codec'];
-                                    }
+                                        case 'auds':
+                                            $thisfile_audio['bitrate_mode'] = 'cbr';
+                                            $thisfile_audio_dataformat = 'wav';
+                                            if(isset($thisfile_riff_audio) && is_array($thisfile_riff_audio))
+                                            {
+                                                $streamindex = count($thisfile_riff_audio);
+                                            }
 
-                                    switch($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc'])
-                                    {
-                                        case 'HFYU': // Huffman Lossless Codec
-                                        case 'IRAW': // Intel YUV Uncompressed
-                                        case 'YUY2': // Uncompressed YUV 4:2:2
-                                            $thisfile_video['lossless'] = true;
-                                            //$thisfile_video['bits_per_sample'] = 24;
+                                            $thisfile_riff_audio[$streamindex] = self::parseWAVEFORMATex($strfData);
+                                            $thisfile_audio['wformattag'] = $thisfile_riff_audio[$streamindex]['raw']['wFormatTag'];
+
+                                            // shortcut
+                                            $thisfile_audio['streams'][$streamindex] = $thisfile_riff_audio[$streamindex];
+                                            $thisfile_audio_streams_currentstream = &$thisfile_audio['streams'][$streamindex];
+
+                                            if($thisfile_audio_streams_currentstream['bits_per_sample'] == 0)
+                                            {
+                                                unset($thisfile_audio_streams_currentstream['bits_per_sample']);
+                                            }
+                                            $thisfile_audio_streams_currentstream['wformattag'] = $thisfile_audio_streams_currentstream['raw']['wFormatTag'];
+                                            unset($thisfile_audio_streams_currentstream['raw']);
+
+                                            // shortcut
+                                            $thisfile_riff_raw['strf'][$strhfccType][$streamindex] = $thisfile_riff_audio[$streamindex]['raw'];
+
+                                            unset($thisfile_riff_audio[$streamindex]['raw']);
+                                            $thisfile_audio = getid3_lib::array_merge_noclobber($thisfile_audio, $thisfile_riff_audio[$streamindex]);
+
+                                            $thisfile_audio['lossless'] = false;
+                                            switch($thisfile_riff_raw_strf_strhfccType_streamindex['wFormatTag'])
+                                            {
+                                                case 0x0001:  // PCM
+                                                    $thisfile_audio_dataformat = 'wav';
+                                                    $thisfile_audio['lossless'] = true;
+                                                    break;
+
+                                                case 0x0050: // MPEG Layer 2 or Layer 1
+                                                    $thisfile_audio_dataformat = 'mp2'; // Assume Layer-2
+                                                    break;
+
+                                                case 0x0055: // MPEG Layer 3
+                                                    $thisfile_audio_dataformat = 'mp3';
+                                                    break;
+
+                                                case 0x00FF: // AAC
+                                                    $thisfile_audio_dataformat = 'aac';
+                                                    break;
+
+                                                case 0x0161: // Windows Media v7 / v8 / v9
+                                                case 0x0162: // Windows Media Professional v9
+                                                case 0x0163: // Windows Media Lossess v9
+                                                    $thisfile_audio_dataformat = 'wma';
+                                                    break;
+
+                                                case 0x2000: // AC-3
+                                                    $thisfile_audio_dataformat = 'ac3';
+                                                    break;
+
+                                                case 0x2001: // DTS
+                                                    $thisfile_audio_dataformat = 'dts';
+                                                    break;
+
+                                                default:
+                                                    $thisfile_audio_dataformat = 'wav';
+                                                    break;
+                                            }
+                                            $thisfile_audio_streams_currentstream['dataformat'] = $thisfile_audio_dataformat;
+                                            $thisfile_audio_streams_currentstream['lossless'] = $thisfile_audio['lossless'];
+                                            $thisfile_audio_streams_currentstream['bitrate_mode'] = $thisfile_audio['bitrate_mode'];
+                                            break;
+
+                                        case 'iavs':
+                                        case 'vids':
+                                            // shortcut
+                                            $thisfile_riff_raw['strh'][$i] = [];
+                                            $thisfile_riff_raw_strh_current = &$thisfile_riff_raw['strh'][$i];
+
+                                            $thisfile_riff_raw_strh_current['fccType'] = substr($strhData, 0, 4);  // same as $strhfccType;
+                                            $thisfile_riff_raw_strh_current['fccHandler'] = substr($strhData, 4, 4);
+                                            $thisfile_riff_raw_strh_current['dwFlags'] = $this->EitherEndian2Int(substr($strhData, 8, 4)); // Contains AVITF_* flags
+                                            $thisfile_riff_raw_strh_current['wPriority'] = $this->EitherEndian2Int(substr($strhData, 12, 2));
+                                            $thisfile_riff_raw_strh_current['wLanguage'] = $this->EitherEndian2Int(substr($strhData, 14, 2));
+                                            $thisfile_riff_raw_strh_current['dwInitialFrames'] = $this->EitherEndian2Int(substr($strhData, 16, 4));
+                                            $thisfile_riff_raw_strh_current['dwScale'] = $this->EitherEndian2Int(substr($strhData, 20, 4));
+                                            $thisfile_riff_raw_strh_current['dwRate'] = $this->EitherEndian2Int(substr($strhData, 24, 4));
+                                            $thisfile_riff_raw_strh_current['dwStart'] = $this->EitherEndian2Int(substr($strhData, 28, 4));
+                                            $thisfile_riff_raw_strh_current['dwLength'] = $this->EitherEndian2Int(substr($strhData, 32, 4));
+                                            $thisfile_riff_raw_strh_current['dwSuggestedBufferSize'] = $this->EitherEndian2Int(substr($strhData, 36, 4));
+                                            $thisfile_riff_raw_strh_current['dwQuality'] = $this->EitherEndian2Int(substr($strhData, 40, 4));
+                                            $thisfile_riff_raw_strh_current['dwSampleSize'] = $this->EitherEndian2Int(substr($strhData, 44, 4));
+                                            $thisfile_riff_raw_strh_current['rcFrame'] = $this->EitherEndian2Int(substr($strhData, 48, 4));
+
+                                            $thisfile_riff_video_current['codec'] = self::fourccLookup($thisfile_riff_raw_strh_current['fccHandler']);
+                                            $thisfile_video['fourcc'] = $thisfile_riff_raw_strh_current['fccHandler'];
+                                            if(! $thisfile_riff_video_current['codec'] && isset($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc']) && self::fourccLookup($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc']))
+                                            {
+                                                $thisfile_riff_video_current['codec'] = self::fourccLookup($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc']);
+                                                $thisfile_video['fourcc'] = $thisfile_riff_raw_strf_strhfccType_streamindex['fourcc'];
+                                            }
+                                            $thisfile_video['codec'] = $thisfile_riff_video_current['codec'];
+                                            $thisfile_video['pixel_aspect_ratio'] = (float) 1;
+                                            switch($thisfile_riff_raw_strh_current['fccHandler'])
+                                            {
+                                                case 'HFYU': // Huffman Lossless Codec
+                                                case 'IRAW': // Intel YUV Uncompressed
+                                                case 'YUY2': // Uncompressed YUV 4:2:2
+                                                    $thisfile_video['lossless'] = true;
+                                                    break;
+
+                                                default:
+                                                    $thisfile_video['lossless'] = false;
+                                                    break;
+                                            }
+
+                                            switch($strhfccType)
+                                            {
+                                                case 'vids':
+                                                    $thisfile_riff_raw_strf_strhfccType_streamindex = self::ParseBITMAPINFOHEADER(substr($strfData, 0, 40), ($this->container == 'riff'));
+                                                    $thisfile_video['bits_per_sample'] = $thisfile_riff_raw_strf_strhfccType_streamindex['biBitCount'];
+
+                                                    if($thisfile_riff_video_current['codec'] == 'DV')
+                                                    {
+                                                        $thisfile_riff_video_current['dv_type'] = 2;
+                                                    }
+                                                    break;
+
+                                                case 'iavs':
+                                                    $thisfile_riff_video_current['dv_type'] = 1;
+                                                    break;
+                                            }
                                             break;
 
                                         default:
-                                            $thisfile_video['lossless'] = false;
-                                            //$thisfile_video['bits_per_sample'] = 24;
+                                            $this->warning('Unhandled fccType for stream ('.$i.'): "'.$strhfccType.'"');
                                             break;
                                     }
+                                }
+                            }
+
+                            if(isset($thisfile_riff_raw_strf_strhfccType_streamindex) && isset($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc']))
+                            {
+                                $thisfile_video['fourcc'] = $thisfile_riff_raw_strf_strhfccType_streamindex['fourcc'];
+                                if(self::fourccLookup($thisfile_video['fourcc']))
+                                {
+                                    $thisfile_riff_video_current['codec'] = self::fourccLookup($thisfile_video['fourcc']);
+                                    $thisfile_video['codec'] = $thisfile_riff_video_current['codec'];
+                                }
+
+                                switch($thisfile_riff_raw_strf_strhfccType_streamindex['fourcc'])
+                                {
+                                    case 'HFYU': // Huffman Lossless Codec
+                                    case 'IRAW': // Intel YUV Uncompressed
+                                    case 'YUY2': // Uncompressed YUV 4:2:2
+                                        $thisfile_video['lossless'] = true;
+                                        //$thisfile_video['bits_per_sample'] = 24;
+                                        break;
+
+                                    default:
+                                        $thisfile_video['lossless'] = false;
+                                        //$thisfile_video['bits_per_sample'] = 24;
+                                        break;
                                 }
                             }
                         }
@@ -1161,7 +1145,7 @@
                         $info['avdataend'] = $info['avdataoffset'] + $thisfile_riff[$RIFFsubtype]['SSND'][0]['size'];
                         if($info['avdataend'] > $info['filesize'])
                         {
-                            if(($info['avdataend'] == ($info['filesize'] + 1)) && (($info['filesize'] % 2) == 1))
+                            if(($info['avdataend'] == ($info['filesize'] + 1)) && (($info['filesize'] % 2) === 1))
                             {
                                 // structures rounded to 2-byte boundary, but dumb encoders
                                 // forget to pad end of file to make this actually work
@@ -1445,7 +1429,7 @@
                         $this->fseek($thisfile_riff['WEBP']['VP8L'][0]['offset'] + 8); // 4 bytes "VP8L" + 4 bytes chunk size
                         $WEBP_VP8L_header = $this->fread(10);
                         $this->fseek($old_offset);
-                        if(substr($WEBP_VP8L_header, 0, 1) == "\x2F")
+                        if(strpos($WEBP_VP8L_header, "\x2F") === 0)
                         {
                             $width_height_flags = getid3_lib::LittleEndian2Bin(substr($WEBP_VP8L_header, 1, 4));
                             $thisfile_riff['WEBP']['VP8L'][0]['width'] = bindec(substr($width_height_flags, 18, 14)) + 1;
@@ -1549,12 +1533,9 @@
                         $thisfile_audio['bitrate'] = ((($info['avdataend'] - $info['avdataoffset']) / $info['playtime_seconds']) * 8);
                     }
                 }
-                elseif(! isset($thisfile_riff_audio) && isset($thisfile_riff_video))
+                elseif(! isset($thisfile_riff_audio) && isset($thisfile_riff_video) && ! isset($thisfile_video['bitrate']))
                 {
-                    if(! isset($thisfile_video['bitrate']))
-                    {
-                        $thisfile_video['bitrate'] = ((($info['avdataend'] - $info['avdataoffset']) / $info['playtime_seconds']) * 8);
-                    }
+                    $thisfile_video['bitrate'] = ((($info['avdataend'] - $info['avdataoffset']) / $info['playtime_seconds']) * 8);
                 }
             }
 
@@ -1679,7 +1660,7 @@
                         $this->warning('Chunk ('.$chunkname.') size at offset '.($this->ftell() - 4).' is zero. Aborting RIFF parsing.');
                         break;
                     }
-                    if(($chunksize % 2) != 0)
+                    if(($chunksize % 2) !== 0)
                     {
                         // all structures are packed on word boundaries
                         $chunksize++;
@@ -1817,7 +1798,7 @@
                                             unset($getid3_temp, $getid3_mp3);
                                         }
                                     }
-                                    elseif(($isRegularAC3 = (substr($testData, 0, 2) == $AC3syncwordBytes)) || substr($testData, 8, 2) == strrev($AC3syncwordBytes))
+                                    elseif(($isRegularAC3 = (strpos($testData, $AC3syncwordBytes) === 0)) || substr($testData, 8, 2) == strrev($AC3syncwordBytes))
                                     {
                                         // This is probably AC-3 data
                                         $getid3_temp = new getID3();
@@ -1886,7 +1867,7 @@
 
                                         unset($getid3_temp, $getid3_dts);
                                     }
-                                    elseif(substr($testData, 0, 4) == 'wvpk')
+                                    elseif(strpos($testData, 'wvpk') === 0)
                                     {
                                         // This is WavPack data
                                         $info['wavpack']['offset'] = $info['avdataoffset'];
@@ -2062,7 +2043,12 @@
                 }
             }
 
-            return ! empty($RIFFchunk) ? $RIFFchunk : false;
+            if(! empty($RIFFchunk))
+            {
+                return $RIFFchunk;
+            }
+
+            return false;
         }
 
         public function parseWavPackHeader($WavPackChunkData)
@@ -2158,13 +2144,13 @@
                 $this->fseek($startoffset);
                 $maxoffset = min($maxoffset, $info['avdataend']);
                 $AMVheader = $this->fread(284);
-                if(substr($AMVheader, 0, 8) != 'hdrlamvh')
+                if(strpos($AMVheader, 'hdrlamvh') !== 0)
                 {
-                    throw new Exception('expecting "hdrlamv" at offset '.($startoffset + 0).', found "'.substr($AMVheader, 0, 8).'"');
+                    throw new \RuntimeException('expecting "hdrlamv" at offset '.($startoffset + 0).', found "'.substr($AMVheader, 0, 8).'"');
                 }
                 if(substr($AMVheader, 8, 4) != "\x38\x00\x00\x00")
                 { // "amvh" chunk size, hardcoded to 0x38 = 56 bytes
-                    throw new Exception('expecting "0x38000000" at offset '.($startoffset + 8).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 8, 4)).'"');
+                    throw new \RuntimeException('expecting "0x38000000" at offset '.($startoffset + 8).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 8, 4)).'"');
                 }
                 $RIFFchunk = [];
                 $RIFFchunk['amvh']['us_per_frame'] = getid3_lib::LittleEndian2Int(substr($AMVheader, 12, 4));
@@ -2187,23 +2173,23 @@
 
                 if(substr($AMVheader, 68, 20) != 'LIST'."\x00\x00\x00\x00".'strlstrh'."\x38\x00\x00\x00")
                 {
-                    throw new Exception('expecting "LIST<0x00000000>strlstrh<0x38000000>" at offset '.($startoffset + 68).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 68, 20)).'"');
+                    throw new \RuntimeException('expecting "LIST<0x00000000>strlstrh<0x38000000>" at offset '.($startoffset + 68).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 68, 20)).'"');
                 }
                 // followed by 56 bytes of null: substr($AMVheader,  88, 56) -> 144
                 if(substr($AMVheader, 144, 8) != 'strf'."\x24\x00\x00\x00")
                 {
-                    throw new Exception('expecting "strf<0x24000000>" at offset '.($startoffset + 144).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 144, 8)).'"');
+                    throw new \RuntimeException('expecting "strf<0x24000000>" at offset '.($startoffset + 144).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 144, 8)).'"');
                 }
                 // followed by 36 bytes of null: substr($AMVheader, 144, 36) -> 180
 
                 if(substr($AMVheader, 188, 20) != 'LIST'."\x00\x00\x00\x00".'strlstrh'."\x30\x00\x00\x00")
                 {
-                    throw new Exception('expecting "LIST<0x00000000>strlstrh<0x30000000>" at offset '.($startoffset + 188).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 188, 20)).'"');
+                    throw new \RuntimeException('expecting "LIST<0x00000000>strlstrh<0x30000000>" at offset '.($startoffset + 188).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 188, 20)).'"');
                 }
                 // followed by 48 bytes of null: substr($AMVheader, 208, 48) -> 256
                 if(substr($AMVheader, 256, 8) != 'strf'."\x14\x00\x00\x00")
                 {
-                    throw new Exception('expecting "strf<0x14000000>" at offset '.($startoffset + 256).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 256, 8)).'"');
+                    throw new \RuntimeException('expecting "strf<0x14000000>" at offset '.($startoffset + 256).', found "'.getid3_lib::PrintHexBytes(substr($AMVheader, 256, 8)).'"');
                 }
                 // followed by 20 bytes of a modified WAVEFORMATEX:
                 // typedef struct {

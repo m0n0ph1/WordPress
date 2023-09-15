@@ -5,7 +5,7 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core_Curve25519 extends ParagonIE_Sodium_Core_Curve25519_H
+    abstract class Curve25519 extends ParagonIE_Sodium_Core_Curve25519_H
     {
         public static function ge_frombytes_negate_vartime($s)
         {
@@ -1025,12 +1025,9 @@
 
         public static function slide($a)
         {
-            if(self::strlen($a) < 256)
+            if(self::strlen($a) < 256 && self::strlen($a) < 16)
             {
-                if(self::strlen($a) < 16)
-                {
-                    $a = str_pad($a, 256, '0', STR_PAD_RIGHT);
-                }
+                $a = str_pad($a, 256, '0', STR_PAD_RIGHT);
             }
 
             $r = [];
@@ -1472,7 +1469,7 @@
             $h = self::ge_p3_0();
 
             //        for (i = 63; i != 0; i--) {
-            for($i = 63; $i != 0; --$i)
+            for($i = 63; $i !== 0; --$i)
             {
                 // ge25519_cmov8_cached(&t, pi, e[i]);
                 $t = self::ge_cmov8_cached($pi, $e[$i]);

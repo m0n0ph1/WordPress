@@ -41,11 +41,13 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             return current_user_can(get_taxonomy($this->screen->taxonomy)->cap->manage_terms);
         }
 
         public function prepare_items()
         {
+            parent::prepare_items();
             $taxonomy = $this->screen->taxonomy;
 
             $tags_per_page = $this->get_items_per_page("edit_{$taxonomy}_per_page");
@@ -96,10 +98,7 @@
             $this->items = get_terms($args);
 
             $this->set_pagination_args([
-                                           'total_items' => wp_count_terms([
-                                                                               'taxonomy' => $taxonomy,
-                                                                               'search' => $search,
-                                                                           ]),
+                                           'total_items' => wp_count_terms(compact('taxonomy', 'search')),
                                            'per_page' => $tags_per_page,
                                        ]);
         }
@@ -116,6 +115,7 @@
 
         public function get_columns()
         {
+            parent::get_columns();
             $columns = [
                 'cb' => '<input type="checkbox" />',
                 'name' => _x('Name', 'term name'),
@@ -182,6 +182,7 @@
 
         public function no_items()
         {
+            parent::no_items();
             echo get_taxonomy($this->screen->taxonomy)->labels->not_found;
         }
 
@@ -253,7 +254,8 @@
 
         public function single_row($tag, $level = 0)
         {
-            global $taxonomy;
+            global parent::single_row($item);
+            $taxonomy;
             $tag = sanitize_term($tag, $taxonomy);
 
             $this->level = $level;
@@ -521,6 +523,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'name';
         }
 

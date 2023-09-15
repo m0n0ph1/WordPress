@@ -1,10 +1,10 @@
 <?php
 
-    class SimplePie_Source
+    class Source
     {
-        var $item;
+        public $item;
 
-        var $data = [];
+        public $data = [];
 
         protected $registry;
 
@@ -39,23 +39,11 @@
             {
                 return $this->sanitize($return[0]['data'], $this->registry->call('Misc', 'atom_03_construct_type', [$return[0]['attribs']]), $this->get_base($return[0]));
             }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_10, 'title'))
+            elseif($this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_10, 'title') || $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_090, 'title') || $return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'title'))
             {
                 return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_MAYBE_HTML, $this->get_base($return[0]));
             }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_090, 'title'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_MAYBE_HTML, $this->get_base($return[0]));
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'title'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_MAYBE_HTML, $this->get_base($return[0]));
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_11, 'title'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_10, 'title'))
+            elseif($this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_11, 'title') || $return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_10, 'title'))
             {
                 return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
             }
@@ -386,7 +374,7 @@
                             $this->data['links'][SIMPLEPIE_IANA_LINK_RELATIONS_REGISTRY.$key] =& $this->data['links'][$key];
                         }
                     }
-                    elseif(substr($key, 0, 41) === SIMPLEPIE_IANA_LINK_RELATIONS_REGISTRY)
+                    elseif(strpos($key, SIMPLEPIE_IANA_LINK_RELATIONS_REGISTRY) === 0)
                     {
                         $this->data['links'][substr($key, 41)] =& $this->data['links'][$key];
                     }
@@ -412,31 +400,15 @@
             {
                 return $this->sanitize($return[0]['data'], $this->registry->call('Misc', 'atom_03_construct_type', [$return[0]['attribs']]), $this->get_base($return[0]));
             }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_10, 'description'))
+            elseif($this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_10, 'description') || $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_090, 'description') || $return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'description'))
             {
                 return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_MAYBE_HTML, $this->get_base($return[0]));
             }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_090, 'description'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_MAYBE_HTML, $this->get_base($return[0]));
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'description'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_MAYBE_HTML, $this->get_base($return[0]));
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_11, 'description'))
+            elseif($this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_11, 'description') || $return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_10, 'description'))
             {
                 return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
             }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_10, 'description'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_ITUNES, 'summary'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_HTML, $this->get_base($return[0]));
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_ITUNES, 'subtitle'))
+            elseif($this->get_source_tags(SIMPLEPIE_NAMESPACE_ITUNES, 'summary') || $return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_ITUNES, 'subtitle'))
             {
                 return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_HTML, $this->get_base($return[0]));
             }
@@ -454,15 +426,7 @@
             {
                 return $this->sanitize($return[0]['data'], $this->registry->call('Misc', 'atom_03_construct_type', [$return[0]['attribs']]), $this->get_base($return[0]));
             }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'copyright'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_11, 'rights'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_10, 'rights'))
+            elseif($this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'copyright') || $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_11, 'rights') || $return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_10, 'rights'))
             {
                 return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
             }
@@ -472,15 +436,7 @@
 
         public function get_language()
         {
-            if($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'language'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_11, 'language'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_10, 'language'))
+            if($this->get_source_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'language') || $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_11, 'language') || $return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_DC_10, 'language'))
             {
                 return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
             }
@@ -508,11 +464,7 @@
 
         public function get_longitude()
         {
-            if($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'long'))
-            {
-                return (float) $return[0]['data'];
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'lon'))
+            if($this->get_source_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'long') || $return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'lon'))
             {
                 return (float) $return[0]['data'];
             }
@@ -530,11 +482,7 @@
             {
                 return $this->sanitize($return[0]['attribs']['']['href'], SIMPLEPIE_CONSTRUCT_IRI);
             }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'logo'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_IRI, $this->get_base($return[0]));
-            }
-            elseif($return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'icon'))
+            elseif($this->get_source_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'logo') || $return = $this->get_source_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'icon'))
             {
                 return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_IRI, $this->get_base($return[0]));
             }

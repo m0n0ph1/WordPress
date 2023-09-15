@@ -106,14 +106,14 @@
         global $wpdb;
 
         $single = false;
-        if(! is_array($post_id))
+        if(is_array($post_id))
         {
-            $post_id_array = (array) $post_id;
-            $single = true;
+            $post_id_array = $post_id;
         }
         else
         {
-            $post_id_array = $post_id;
+            $post_id_array = (array) $post_id;
+            $single = true;
         }
         $post_id_array = array_map('intval', $post_id_array);
         $post_id_in = "'".implode("', '", $post_id_array)."'";

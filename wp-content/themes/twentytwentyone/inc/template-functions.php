@@ -104,7 +104,12 @@
     {
         function twenty_twenty_one_post_title($title)
         {
-            return '' === $title ? esc_html_x('Untitled', 'Added to posts and pages that are missing titles', 'twentytwentyone') : $title;
+            if('' === $title)
+            {
+                return esc_html_x('Untitled', 'Added to posts and pages that are missing titles', 'twentytwentyone');
+            }
+
+            return $title;
         }
     }
     add_filter('the_title', 'twenty_twenty_one_post_title');
@@ -116,8 +121,13 @@
 
     function twenty_twenty_one_change_calendar_nav_arrows($calendar_output)
     {
-        $calendar_output = str_replace('&laquo; ', is_rtl() ? twenty_twenty_one_get_icon_svg('ui', 'arrow_right') : twenty_twenty_one_get_icon_svg('ui', 'arrow_left'), $calendar_output);
-        $calendar_output = str_replace(' &raquo;', is_rtl() ? twenty_twenty_one_get_icon_svg('ui', 'arrow_left') : twenty_twenty_one_get_icon_svg('ui', 'arrow_right'), $calendar_output);
+        $calendar_output = str_replace(array(
+                                           '&laquo; ',
+                                           ' &raquo;'
+                                       ), array(
+                                           is_rtl() ? twenty_twenty_one_get_icon_svg('ui', 'arrow_right') : twenty_twenty_one_get_icon_svg('ui', 'arrow_left'),
+                                           is_rtl() ? twenty_twenty_one_get_icon_svg('ui', 'arrow_left') : twenty_twenty_one_get_icon_svg('ui', 'arrow_right')
+                                       ), $calendar_output);
 
         return $calendar_output;
     }

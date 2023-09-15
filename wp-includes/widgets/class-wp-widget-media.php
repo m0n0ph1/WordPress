@@ -112,11 +112,7 @@
                 return false;
             }
             $attachment = get_post($attachment);
-            if(! $attachment)
-            {
-                return false;
-            }
-            if('attachment' !== $attachment->post_type)
+            if(! $attachment || 'attachment' !== $attachment->post_type)
             {
                 return false;
             }
@@ -138,6 +134,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             $instance = wp_parse_args($instance, wp_list_pluck($this->get_instance_schema(), 'default'));
 
             // Short-circuit if no media is selected.
@@ -249,6 +246,7 @@
 
         final public function form($instance)
         {
+            parent::form($instance);
             $instance_schema = $this->get_instance_schema();
             $instance = wp_array_slice_assoc(wp_parse_args((array) $instance, wp_list_pluck($instance_schema, 'default')), array_keys($instance_schema));
 

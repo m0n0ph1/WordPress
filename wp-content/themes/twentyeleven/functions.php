@@ -534,7 +534,12 @@
             $has_url = twentyeleven_url_grabber();
         }
 
-        return ($has_url) ? $has_url : apply_filters('the_permalink', get_permalink());
+        if($has_url)
+        {
+            return $has_url;
+        }
+
+        return apply_filters('the_permalink', get_permalink());
     }
 
     function twentyeleven_url_grabber()

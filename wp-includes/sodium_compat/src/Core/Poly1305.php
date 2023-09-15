@@ -5,9 +5,9 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core_Poly1305 extends ParagonIE_Sodium_Core_Util
+    abstract class Poly1305 extends ParagonIE_Sodium_Core_Util
     {
-        const BLOCK_SIZE = 16;
+        public const BLOCK_SIZE = 16;
 
         public static function onetimeauth($m, $key)
         {

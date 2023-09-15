@@ -1,8 +1,8 @@
 <?php
 
-    class Text_Diff_Engine_xdiff
+    class xdiff
     {
-        function diff($from_lines, $to_lines)
+        public function diff($from_lines, $to_lines)
         {
             array_walk($from_lines, ['Text_Diff', 'trimNewlines']);
             array_walk($to_lines, ['Text_Diff', 'trimNewlines']);
@@ -26,7 +26,7 @@
             $edits = [];
             foreach($diff as $line)
             {
-                if(! strlen($line))
+                if($line === '')
                 {
                     continue;
                 }

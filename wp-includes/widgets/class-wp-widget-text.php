@@ -117,7 +117,8 @@
 
         public function widget($args, $instance)
         {
-            global $post;
+            global parent::widget($args, $instance);
+            $post;
 
             $title = ! empty($instance['title']) ? $instance['title'] : '';
 
@@ -304,12 +305,48 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $instance = wp_parse_args((array) $instance, [
                 'title' => '',
                 'text' => '',
             ]);
             ?>
-            <?php if(! $this->is_legacy_instance($instance)) : ?>
+            <?php if($this->is_legacy_instance($instance)) : ?>
+                <input id="<?php echo $this->get_field_id('visual'); ?>"
+                       name="<?php echo $this->get_field_name('visual'); ?>"
+                       class="visual"
+                       type="hidden"
+                       value="">
+                <p>
+                    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
+                    <input class="widefat"
+                           id="<?php echo $this->get_field_id('title'); ?>"
+                           name="<?php echo $this->get_field_name('title'); ?>"
+                           type="text"
+                           value="<?php echo esc_attr($instance['title']); ?>"/>
+                </p>
+                <div class="notice inline notice-info notice-alt">
+                    <?php if(isset($instance['visual'])) : ?>
+                        <p><?php _e('This widget may have contained code that may work better in the &#8220;Custom HTML&#8221; widget. If you have not yet, how about trying that widget instead?'); ?></p>
+                    <?php else : ?>
+                        <p><?php _e('This widget may contain code that may work better in the &#8220;Custom HTML&#8221; widget. How about trying that widget instead?'); ?></p>
+                    <?php endif; ?>
+                </div>
+                <p>
+                    <label for="<?php echo $this->get_field_id('text'); ?>"><?php _e('Content:'); ?></label>
+                    <textarea class="widefat"
+                              rows="16"
+                              cols="20"
+                              id="<?php echo $this->get_field_id('text'); ?>"
+                              name="<?php echo $this->get_field_name('text'); ?>"><?php echo esc_textarea($instance['text']); ?></textarea>
+                </p>
+                <p>
+                    <input id="<?php echo $this->get_field_id('filter'); ?>"
+                           name="<?php echo $this->get_field_name('filter'); ?>"
+                           type="checkbox"<?php checked(! empty($instance['filter'])); ?> />&nbsp;<label
+                            for="<?php echo $this->get_field_id('filter'); ?>"><?php _e('Automatically add paragraphs'); ?></label>
+                </p>
+            <?php else : ?>
             <?php
 
             if(user_can_richedit())
@@ -353,41 +390,6 @@
                    class="visual sync-input"
                    type="hidden"
                    value="on">
-        <?php else : ?>
-            <input id="<?php echo $this->get_field_id('visual'); ?>"
-                   name="<?php echo $this->get_field_name('visual'); ?>"
-                   class="visual"
-                   type="hidden"
-                   value="">
-            <p>
-                <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
-                <input class="widefat"
-                       id="<?php echo $this->get_field_id('title'); ?>"
-                       name="<?php echo $this->get_field_name('title'); ?>"
-                       type="text"
-                       value="<?php echo esc_attr($instance['title']); ?>"/>
-            </p>
-            <div class="notice inline notice-info notice-alt">
-                <?php if(! isset($instance['visual'])) : ?>
-                    <p><?php _e('This widget may contain code that may work better in the &#8220;Custom HTML&#8221; widget. How about trying that widget instead?'); ?></p>
-                <?php else : ?>
-                    <p><?php _e('This widget may have contained code that may work better in the &#8220;Custom HTML&#8221; widget. If you have not yet, how about trying that widget instead?'); ?></p>
-                <?php endif; ?>
-            </div>
-            <p>
-                <label for="<?php echo $this->get_field_id('text'); ?>"><?php _e('Content:'); ?></label>
-                <textarea class="widefat"
-                          rows="16"
-                          cols="20"
-                          id="<?php echo $this->get_field_id('text'); ?>"
-                          name="<?php echo $this->get_field_name('text'); ?>"><?php echo esc_textarea($instance['text']); ?></textarea>
-            </p>
-            <p>
-                <input id="<?php echo $this->get_field_id('filter'); ?>"
-                       name="<?php echo $this->get_field_name('filter'); ?>"
-                       type="checkbox"<?php checked(! empty($instance['filter'])); ?> />&nbsp;<label
-                        for="<?php echo $this->get_field_id('filter'); ?>"><?php _e('Automatically add paragraphs'); ?></label>
-            </p>
         <?php
         endif;
         }
@@ -422,13 +424,8 @@
             }
 
             // If an HTML comment is present, assume legacy mode.
-            if(str_contains($instance['text'], '<!--'))
-            {
-                return true;
-            }
-
             // In the rare case that DOMDocument is not available we cannot reliably sniff content and so we assume legacy.
-            if(! class_exists('DOMDocument'))
+            if(str_contains($instance['text'], '<!--') || ! class_exists('DOMDocument'))
             {
                 // @codeCoverageIgnoreStart
                 return true;

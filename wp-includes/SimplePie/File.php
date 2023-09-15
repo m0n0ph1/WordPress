@@ -1,26 +1,26 @@
 <?php
 
-    class SimplePie_File
+    class File
     {
-        var $url;
+        public $url;
 
-        var $useragent;
+        public $useragent;
 
-        var $success = true;
+        public $success = true;
 
-        var $headers = [];
+        public $headers = [];
 
-        var $body;
+        public $body;
 
-        var $status_code;
+        public $status_code;
 
-        var $redirects = 0;
+        public $redirects = 0;
 
-        var $error;
+        public $error;
 
-        var $method = SIMPLEPIE_FILE_SOURCE_NONE;
+        public $method = SIMPLEPIE_FILE_SOURCE_NONE;
 
-        var $permanent_url;
+        public $permanent_url;
 
         public function __construct(
             $url, $timeout = 10, $redirects = 5, $headers = null, $useragent = null, $force_fsockopen = false, $curl_options = []
@@ -135,12 +135,7 @@
                         $url_parts['port'] = 80;
                     }
                     $fp = @fsockopen($socket_host, $url_parts['port'], $errno, $errstr, $timeout);
-                    if(! $fp)
-                    {
-                        $this->error = 'fsockopen error: '.$errstr;
-                        $this->success = false;
-                    }
-                    else
+                    if($fp)
                     {
                         stream_set_timeout($fp, $timeout);
                         if(isset($url_parts['path']))
@@ -185,7 +180,12 @@
                             $this->headers .= fread($fp, 1160);
                             $info = stream_get_meta_data($fp);
                         }
-                        if(! $info['timed_out'])
+                        if($info['timed_out'])
+                        {
+                            $this->error = 'fsocket timed out';
+                            $this->success = false;
+                        }
+                        else
                         {
                             $parser = new SimplePie_HTTP_Parser($this->headers);
                             if($parser->parse())
@@ -263,12 +263,12 @@
                                 }
                             }
                         }
-                        else
-                        {
-                            $this->error = 'fsocket timed out';
-                            $this->success = false;
-                        }
                         fclose($fp);
+                    }
+                    else
+                    {
+                        $this->error = 'fsockopen error: '.$errstr;
+                        $this->success = false;
                     }
                 }
             }

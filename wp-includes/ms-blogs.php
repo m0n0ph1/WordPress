@@ -156,13 +156,13 @@
             {
                 $blog_id = get_current_blog_id();
             }
-            elseif(! is_numeric($fields))
+            elseif(is_numeric($fields))
             {
-                $blog_id = get_id_from_blogname($fields);
+                $blog_id = $fields;
             }
             else
             {
-                $blog_id = $fields;
+                $blog_id = get_id_from_blogname($fields);
             }
         }
 
@@ -173,7 +173,11 @@
 
         if($details)
         {
-            if(! is_object($details))
+            if(is_object($details))
+            {
+                return $details;
+            }
+            else
             {
                 if(-1 == $details)
                 {
@@ -185,10 +189,6 @@
                     wp_cache_delete($blog_id.$all, 'blog-details');
                     unset($details);
                 }
-            }
-            else
-            {
-                return $details;
             }
         }
 
@@ -203,7 +203,11 @@
             // If short was requested and full cache is set, we can return.
             if($details)
             {
-                if(! is_object($details))
+                if(is_object($details))
+                {
+                    return $details;
+                }
+                else
                 {
                     if(-1 == $details)
                     {
@@ -215,10 +219,6 @@
                         wp_cache_delete($blog_id, 'blog-details');
                         unset($details);
                     }
-                }
-                else
-                {
-                    return $details;
                 }
             }
         }
@@ -587,12 +587,7 @@
 
     function wp_switch_roles_and_user($new_site_id, $old_site_id)
     {
-        if($new_site_id == $old_site_id)
-        {
-            return;
-        }
-
-        if(! did_action('init'))
+        if($new_site_id == $old_site_id || ! did_action('init'))
         {
             return;
         }
@@ -706,12 +701,7 @@
         $post = get_post($post_id);
 
         $post_type_obj = get_post_type_object($post->post_type);
-        if(! $post_type_obj || ! $post_type_obj->public)
-        {
-            return;
-        }
-
-        if('publish' !== $post->post_status)
+        if(! $post_type_obj || ! $post_type_obj->public || 'publish' !== $post->post_status)
         {
             return;
         }
@@ -731,12 +721,7 @@
 
     function _update_posts_count_on_transition_post_status($new_status, $old_status, $post = null)
     {
-        if($new_status === $old_status)
-        {
-            return;
-        }
-
-        if('post' !== get_post_type($post))
+        if($new_status === $old_status || 'post' !== get_post_type($post))
         {
             return;
         }

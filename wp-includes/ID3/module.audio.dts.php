@@ -19,9 +19,9 @@
         exit;
     }
 
-    class getid3_dts extends getid3_handler
+    class module extends getid3_handler
     {
-        const syncword = "\x7F\xFE\x80\x01";
+        public const syncword = "\x7F\xFE\x80\x01";
 
         public static $syncwords = [
             0 => "\x7F\xFE\x80\x01",  // raw big-endian
@@ -62,7 +62,7 @@
 
             // decode header
             $fhBS = '';
-            for($word_offset = 0; $word_offset <= strlen($DTSheader); $word_offset += 2)
+            for($word_offset = 0, $word_offsetMax = strlen($DTSheader); $word_offset <= $word_offsetMax; $word_offset += 2)
             {
                 switch($encoding)
                 {
@@ -116,7 +116,7 @@
             $info['dts']['bits_per_sample'] = self::bitPerSampleLookup($info['dts']['raw']['bits_per_sample']);
             $info['dts']['sample_rate'] = self::sampleRateLookup($info['dts']['raw']['sample_frequency']);
             $info['dts']['dialog_normalization'] = self::dialogNormalization($info['dts']['raw']['dialog_normalization'], $info['dts']['raw']['encoder_soft_version']);
-            $info['dts']['flags']['lossless'] = (($info['dts']['raw']['bitrate'] == 31) ? true : false);
+            $info['dts']['flags']['lossless'] = ($info['dts']['raw']['bitrate'] == 31);
             $info['dts']['bitrate_mode'] = (($info['dts']['raw']['bitrate'] == 30) ? 'vbr' : 'cbr');
             $info['dts']['channels'] = self::numChannelsLookup($info['dts']['raw']['channel_arrangement']);
             $info['dts']['channel_arrangement'] = self::channelArrangementLookup($info['dts']['raw']['channel_arrangement']);

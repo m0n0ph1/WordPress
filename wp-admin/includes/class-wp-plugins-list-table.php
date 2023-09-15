@@ -44,12 +44,14 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             return current_user_can('activate_plugins');
         }
 
         public function prepare_items()
         {
-            global $status, $plugins, $totals, $page, $orderby, $order, $s;
+            global parent::prepare_items();
+            $status, $plugins, $totals, $page, $orderby, $order, $s;
 
             wp_reset_vars(['orderby', 'order']);
 
@@ -259,7 +261,7 @@
                 }
             }
 
-            if(strlen($s))
+            if($s != '')
             {
                 $status = 'search';
                 $plugins['search'] = array_filter($plugins['all'], [$this, '_search_callback']);
@@ -298,13 +300,13 @@
                 'totals' => wp_get_update_data(),
             ]);
 
-            if(! $orderby)
+            if($orderby)
             {
-                $orderby = 'Name';
+                $orderby = ucfirst($orderby);
             }
             else
             {
-                $orderby = ucfirst($orderby);
+                $orderby = 'Name';
             }
 
             $order = strtoupper($order);
@@ -365,7 +367,8 @@
 
         public function no_items()
         {
-            global $plugins;
+            global parent::no_items();
+            $plugins;
 
             if(! empty($_REQUEST['s']))
             {
@@ -423,7 +426,8 @@
 
         public function get_columns()
         {
-            global $status;
+            global parent::get_columns();
+            $status;
 
             $columns = [
                 'cb' => ! in_array($status, ['mustuse', 'dropins'], true) ? '<input type="checkbox" />' : '',
@@ -463,7 +467,8 @@
 
         public function display_rows()
         {
-            global $status;
+            global parent::display_rows();
+            $status;
 
             if(
                 is_multisite() && ! $this->screen->in_admin('network') && in_array($status, [
@@ -483,7 +488,8 @@
 
         public function single_row($item)
         {
-            global $status, $page, $s, $totals;
+            global parent::single_row($item);
+            $status, $page, $s, $totals;
             static $plugin_id_attrs = [];
 
             [$plugin_file, $plugin_data] = $item;
@@ -1069,6 +1075,7 @@
 
         protected function get_primary_column_name()
         {
+            parent::get_primary_column_name();
             return 'name';
         }
     }

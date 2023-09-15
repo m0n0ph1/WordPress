@@ -19,7 +19,7 @@
         exit;
     }
 
-    class getid3_id3v1 extends getid3_handler
+    class module extends getid3_handler
     {
         public static function StandardiseID3v1GenreName($OriginalGenre)
         {
@@ -320,7 +320,7 @@
                 $id3v1tag = $this->fread(128);
             }
 
-            if(substr($id3v1tag, 0, 3) == 'TAG')
+            if(strpos($id3v1tag, 'TAG') === 0)
             {
                 $info['avdataend'] = $info['filesize'] - 128;
 
@@ -404,7 +404,7 @@
                 $info['id3v1']['encoding'] = $ID3v1encoding;
             }
 
-            if(substr($preid3v1, 0, 3) == 'TAG')
+            if(strpos($preid3v1, 'TAG') === 0)
             {
                 // The way iTunes handles tags is, well, brain-damaged.
                 // It completely ignores v1 if ID3v2 is present.
@@ -447,7 +447,7 @@
             {
                 $ID3v1Tag .= str_pad(trim(substr($comment, 0, 28)), 28, "\x00", STR_PAD_RIGHT);
                 $ID3v1Tag .= "\x00";
-                if(gettype($track) == 'string')
+                if(is_string($track))
                 {
                     $track = (int) $track;
                 }

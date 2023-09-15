@@ -1,34 +1,34 @@
 <?php
 
-    class SimplePie_Locator
+    class Locator
     {
-        var $useragent;
+        public $useragent;
 
-        var $timeout;
+        public $timeout;
 
-        var $file;
+        public $file;
 
-        var $local = [];
+        public $local = [];
 
-        var $elsewhere = [];
+        public $elsewhere = [];
 
-        var $cached_entities = [];
+        public $cached_entities = [];
 
-        var $http_base;
+        public $http_base;
 
-        var $base;
+        public $base;
 
-        var $base_location = 0;
+        public $base_location = 0;
 
-        var $checked_feeds = 0;
+        public $checked_feeds = 0;
 
-        var $max_checked_feeds = 10;
+        public $max_checked_feeds = 10;
 
-        var $force_fsockopen = false;
+        public $force_fsockopen = false;
 
-        var $curl_options = [];
+        public $curl_options = [];
 
-        var $dom;
+        public $dom;
 
         protected $registry;
 

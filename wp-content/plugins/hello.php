@@ -43,7 +43,7 @@ Dolly'll never go away again";
         $lyrics = explode("\n", $lyrics);
 
         // And then randomly choose a line.
-        return wptexturize($lyrics[mt_rand(0, count($lyrics) - 1)]);
+        return wptexturize($lyrics[random_int(0, count($lyrics) - 1)]);
     }
 
 // This just echoes the chosen line, we'll position it later.
@@ -51,7 +51,7 @@ Dolly'll never go away again";
     {
         $chosen = hello_dolly_get_lyric();
         $lang = '';
-        if('en_' !== substr(get_user_locale(), 0, 3))
+        if(strpos(get_user_locale(), 'en_') !== 0)
         {
             $lang = ' lang="en"';
         }

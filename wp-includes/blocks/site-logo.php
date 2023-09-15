@@ -93,7 +93,12 @@
     {
         $site_logo = get_option('site_logo');
 
-        return false === $site_logo ? $custom_logo : $site_logo;
+        if(false === $site_logo)
+        {
+            return $custom_logo;
+        }
+
+        return $site_logo;
     }
 
     add_filter('theme_mod_custom_logo', '_override_custom_logo_theme_mod');

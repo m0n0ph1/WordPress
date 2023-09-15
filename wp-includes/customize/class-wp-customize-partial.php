@@ -38,7 +38,7 @@
 
             $this->component = $component;
             $this->id = $id;
-            $this->id_data['keys'] = preg_split('/\[/', str_replace(']', '', $this->id));
+            $this->id_data['keys'] = explode("\[", str_replace(']', '', $this->id));
             $this->id_data['base'] = array_shift($this->id_data['keys']);
 
             if(empty($this->render_callback))

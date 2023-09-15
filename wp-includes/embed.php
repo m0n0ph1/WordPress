@@ -229,12 +229,7 @@
         $post = get_post($post);
         $width = absint($width);
 
-        if(! $post)
-        {
-            return false;
-        }
-
-        if(! is_post_publicly_viewable($post))
+        if(! $post || ! is_post_publicly_viewable($post))
         {
             return false;
         }
@@ -336,7 +331,12 @@
             restore_current_blog();
         }
 
-        return $data ? (object) $data : false;
+        if($data)
+        {
+            return (object) $data;
+        }
+
+        return false;
     }
 
     function get_oembed_response_data_rich($data, $post, $width, $height)
@@ -395,12 +395,7 @@
     {
         $params = $request->get_params();
 
-        if('/oembed/1.0/embed' !== $request->get_route() || 'GET' !== $request->get_method())
-        {
-            return $served;
-        }
-
-        if(! isset($params['format']) || 'xml' !== $params['format'])
+        if('/oembed/1.0/embed' !== $request->get_route() || 'GET' !== $request->get_method() || ! isset($params['format']) || 'xml' !== $params['format'])
         {
             return $served;
         }
@@ -569,8 +564,13 @@
             $url = esc_url("{$results[2]}#?secret=$secret");
             $q = $results[1];
 
-            $html = str_replace($results[0], ' src='.$q.$url.$q.' data-secret='.$q.$secret.$q, $html);
-            $html = str_replace('<blockquote', "<blockquote data-secret=\"$secret\"", $html);
+            $html = str_replace(array(
+                                    $results[0],
+                                    '<blockquote'
+                                ), array(
+                                    ' src='.$q.$url.$q.' data-secret='.$q.$secret.$q,
+                                    "<blockquote data-secret=\"$secret\""
+                                ), $html);
         }
 
         $allowed_html['blockquote']['data-secret'] = true;
@@ -581,8 +581,13 @@
         if(! empty($content[1]))
         {
             // We have a blockquote to fall back on. Hide the iframe by default.
-            $html = str_replace('<iframe', '<iframe style="position: absolute; clip: rect(1px, 1px, 1px, 1px);"', $html);
-            $html = str_replace('<blockquote', '<blockquote class="wp-embedded-content"', $html);
+            $html = str_replace(array(
+                                    '<iframe',
+                                    '<blockquote'
+                                ), array(
+                                    '<iframe style="position: absolute; clip: rect(1px, 1px, 1px, 1px);"',
+                                    '<blockquote class="wp-embedded-content"'
+                                ), $html);
         }
 
         $html = str_ireplace('<iframe', '<iframe class="wp-embedded-content" sandbox="allow-scripts" security="restricted"', $html);

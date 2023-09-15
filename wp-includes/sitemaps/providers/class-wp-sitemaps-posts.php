@@ -116,6 +116,11 @@
 
             $min_num_pages = ('page' === $post_type && 'posts' === get_option('show_on_front')) ? 1 : 0;
 
-            return isset($query->max_num_pages) ? max($min_num_pages, $query->max_num_pages) : 1;
+            if(isset($query->max_num_pages))
+            {
+                return max($min_num_pages, $query->max_num_pages);
+            }
+
+            return 1;
         }
     }

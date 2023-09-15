@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core32_SipHash extends ParagonIE_Sodium_Core32_Util
+    class SipHash extends ParagonIE_Sodium_Core32_Util
     {
         public static function sipHash24($in, $key)
         {

@@ -170,7 +170,7 @@
                 $parsed = self::parse($header, '', $time);
 
                 // Default domain/path attributes
-                if(empty($parsed->attributes['domain']) && ! empty($origin))
+                if(empty($parsed->attributes['domain']) && $origin !== null)
                 {
                     $parsed->attributes['domain'] = $origin->host;
                     $parsed->flags['host-only'] = true;
@@ -181,12 +181,12 @@
                 }
 
                 $path_is_valid = (! empty($parsed->attributes['path']) && $parsed->attributes['path'][0] === '/');
-                if(! $path_is_valid && ! empty($origin))
+                if(! $path_is_valid && $origin !== null)
                 {
                     $path = $origin->path;
 
                     // Default path normalization as per RFC 6265 section 5.1.4
-                    if(substr($path, 0, 1) !== '/')
+                    if(strpos($path, '/') !== 0)
                     {
                         // If the uri-path is empty or if the first character of
                         // the uri-path is not a %x2F ("/") character, output
@@ -212,7 +212,7 @@
                 }
 
                 // Reject invalid cookie domains
-                if(! empty($origin) && ! $parsed->domain_matches($origin->host))
+                if($origin !== null && ! $parsed->domain_matches($origin->host))
                 {
                     continue;
                 }
@@ -242,7 +242,11 @@
             {
                 $value = $cookie_header;
             }
-            elseif(strpos($kvparts, '=') === false)
+            elseif(strpos($kvparts, '=') !== false)
+            {
+                [$name, $value] = explode('=', $kvparts, 2);
+            }
+            else
             {
                 // Some sites might only have a value without the equals separator.
                 // Deviate from RFC 6265 and pretend it was actually a blank name
@@ -251,10 +255,6 @@
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=169091
                 $name = '';
                 $value = $kvparts;
-            }
-            else
-            {
-                [$name, $value] = explode('=', $kvparts, 2);
             }
 
             $name = trim($name);
@@ -267,15 +267,15 @@
             {
                 foreach($parts as $part)
                 {
-                    if(strpos($part, '=') === false)
-                    {
-                        $part_key = $part;
-                        $part_value = true;
-                    }
-                    else
+                    if(strpos($part, '=') !== false)
                     {
                         [$part_key, $part_value] = explode('=', $part, 2);
                         $part_value = trim($part_value);
+                    }
+                    else
+                    {
+                        $part_key = $part;
+                        $part_value = true;
                     }
 
                     $part_key = trim($part_key);
@@ -309,19 +309,7 @@
 
             // If the cookie is marked as host-only and we don't have an exact
             // match, reject the cookie
-            if($this->flags['host-only'] === true)
-            {
-                return false;
-            }
-
-            if(strlen($domain) <= strlen($cookie_domain))
-            {
-                // For obvious reasons, the cookie domain cannot be a suffix if the passed domain
-                // is shorter than the cookie domain
-                return false;
-            }
-
-            if(substr($domain, -1 * strlen($cookie_domain)) !== $cookie_domain)
+            if($this->flags['host-only'] === true || strlen($domain) <= strlen($cookie_domain) || substr($domain, -1 * strlen($cookie_domain)) !== $cookie_domain)
             {
                 // The cookie domain should be a suffix of the passed domain.
                 return false;
@@ -369,12 +357,7 @@
 
         public function uri_matches(Iri $uri)
         {
-            if(! $this->domain_matches($uri->host))
-            {
-                return false;
-            }
-
-            if(! $this->path_matches($uri->path))
+            if(! $this->domain_matches($uri->host) || ! $this->path_matches($uri->path))
             {
                 return false;
             }
@@ -410,16 +393,9 @@
                 return true;
             }
 
-            if(strlen($request_path) > strlen($cookie_path) && substr($request_path, 0, strlen($cookie_path)) === $cookie_path)
+            if(strlen($request_path) > strlen($cookie_path) && strpos($request_path, $cookie_path) === 0)
             {
-                if(substr($cookie_path, -1) === '/')
-                {
-                    // The cookie-path is a prefix of the request-path, and the last
-                    // character of the cookie-path is %x2F ("/").
-                    return true;
-                }
-
-                if(substr($request_path, strlen($cookie_path), 1) === '/')
+                if(substr($cookie_path, -1) === '/' || substr($request_path, strlen($cookie_path), 1) === '/')
                 {
                     // The cookie-path is a prefix of the request-path, and the
                     // first character of the request-path that is not included in

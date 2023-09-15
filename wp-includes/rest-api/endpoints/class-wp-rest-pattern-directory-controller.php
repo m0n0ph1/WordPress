@@ -10,6 +10,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base.'/patterns', [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -156,17 +157,17 @@
                 {
                     $raw_patterns = $wporg_response;
                 }
-                elseif(! is_array($raw_patterns))
+                elseif(is_array($raw_patterns))
+                {
+                    // Response has valid data.
+                    $cache_ttl = HOUR_IN_SECONDS;
+                }
+                else
                 {
                     // HTTP request succeeded, but response data is invalid.
                     $raw_patterns = new WP_Error('pattern_api_failed', sprintf(/* translators: %s: Support forums URL. */ __('An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.'), __('https://wordpress.org/support/forums/')), [
                         'response' => wp_remote_retrieve_body($wporg_response),
                     ]);
-                }
-                else
-                {
-                    // Response has valid data.
-                    $cache_ttl = HOUR_IN_SECONDS;
                 }
 
                 set_site_transient($transient_key, $raw_patterns, $cache_ttl);

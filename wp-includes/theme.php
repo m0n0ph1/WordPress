@@ -422,16 +422,9 @@
         if($stylesheet_or_template)
         {
             $theme_root = get_raw_theme_root($stylesheet_or_template);
-            if($theme_root)
+            if($theme_root && ! in_array($theme_root, (array) $wp_theme_directories, true))
             {
-                /*
-			 * Always prepend WP_CONTENT_DIR unless the root currently registered as a theme directory.
-			 * This gives relative theme roots the benefit of the doubt when things go haywire.
-			 */
-                if(! in_array($theme_root, (array) $wp_theme_directories, true))
-                {
-                    $theme_root = WP_CONTENT_DIR.$theme_root;
-                }
+                $theme_root = WP_CONTENT_DIR.$theme_root;
             }
         }
 
@@ -752,15 +745,11 @@
             return apply_filters("theme_mod_{$name}", $mods[$name]);
         }
 
-        if(is_string($default_value))
+        if(is_string($default_value) && preg_match('#(?<!%)%(?:\d+\$?)?s#', $default_value))
         {
-            // Only run the replacement if an sprintf() string format pattern was found.
-            if(preg_match('#(?<!%)%(?:\d+\$?)?s#', $default_value))
-            {
-                // Remove a single trailing percent sign.
-                $default_value = preg_replace('#(?<!%)%$#', '', $default_value);
-                $default_value = sprintf($default_value, get_template_directory_uri(), get_stylesheet_directory_uri());
-            }
+            // Remove a single trailing percent sign.
+            $default_value = preg_replace('#(?<!%)%$#', '', $default_value);
+            $default_value = sprintf($default_value, get_template_directory_uri(), get_stylesheet_directory_uri());
         }
 
         return apply_filters("theme_mod_{$name}", $default_value);
@@ -1262,12 +1251,7 @@
 
     function has_custom_header()
     {
-        if(has_header_image() || (has_header_video() && is_header_video_active()))
-        {
-            return true;
-        }
-
-        return false;
+        return has_header_image() || (has_header_video() && is_header_video_active());
     }
 
     function is_header_video_active()
@@ -2586,7 +2570,12 @@
             return null;
         }
 
-        return isset($_wp_registered_theme_features[$feature]) ? $_wp_registered_theme_features[$feature] : null;
+        if(isset($_wp_registered_theme_features[$feature]))
+        {
+            return $_wp_registered_theme_features[$feature];
+        }
+
+        return null;
     }
 
     function _delete_attachment_theme_mod($id)
@@ -2788,13 +2777,9 @@
 
     function _wp_customize_changeset_filter_insert_post_data($post_data, $supplied_post_data)
     {
-        if(isset($post_data['post_type']) && 'customize_changeset' === $post_data['post_type'])
+        if(isset($post_data['post_type']) && 'customize_changeset' === $post_data['post_type'] && empty($post_data['post_name']) && ! empty($supplied_post_data['post_name']))
         {
-            // Prevent post_name from being dropped, such as when contributor saves a changeset post as pending.
-            if(empty($post_data['post_name']) && ! empty($supplied_post_data['post_name']))
-            {
-                $post_data['post_name'] = $supplied_post_data['post_name'];
-            }
+            $post_data['post_name'] = $supplied_post_data['post_name'];
         }
 
         return $post_data;

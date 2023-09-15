@@ -5,7 +5,7 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core32_Curve25519 extends ParagonIE_Sodium_Core32_Curve25519_H
+    abstract class Curve25519 extends ParagonIE_Sodium_Core32_Curve25519_H
     {
         public static function ge_frombytes_negate_vartime($s)
         {
@@ -1101,12 +1101,9 @@
 
         public static function slide($a)
         {
-            if(self::strlen($a) < 256)
+            if(self::strlen($a) < 256 && self::strlen($a) < 16)
             {
-                if(self::strlen($a) < 16)
-                {
-                    $a = str_pad($a, 256, '0', STR_PAD_RIGHT);
-                }
+                $a = str_pad($a, 256, '0', STR_PAD_RIGHT);
             }
 
             $r = [];
@@ -1613,7 +1610,12 @@
         {
             if(is_int($char))
             {
-                return $char < 0 ? 1 : 0;
+                if($char < 0)
+                {
+                    return 1;
+                }
+
+                return 0;
             }
 
             $x = self::chrToInt(self::substr($char, 0, 1));
@@ -1643,11 +1645,7 @@
             $h = [];
             for($i = 0; $i < 10; ++$i)
             {
-                if(! ($f[$i] instanceof ParagonIE_Sodium_Core32_Int32))
-                {
-                    throw new TypeError('Expected Int32');
-                }
-                if(! ($g[$i] instanceof ParagonIE_Sodium_Core32_Int32))
+                if(! ($f[$i] instanceof ParagonIE_Sodium_Core32_Int32) || ! ($g[$i] instanceof ParagonIE_Sodium_Core32_Int32))
                 {
                     throw new TypeError('Expected Int32');
                 }

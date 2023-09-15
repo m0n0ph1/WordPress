@@ -1,16 +1,16 @@
 <?php
 
-    class SimplePie_Sanitize
+    class Sanitize
     {
         // Private vars
-        var $base;
+        public $base;
 
         // Options
-        var $remove_div = true;
+        public $remove_div = true;
 
-        var $image_handler = '';
+        public $image_handler = '';
 
-        var $strip_htmltags = [
+        public $strip_htmltags = [
             'base',
             'blink',
             'body',
@@ -32,9 +32,9 @@
             'style'
         ];
 
-        var $encode_instead_of_strip = false;
+        public $encode_instead_of_strip = false;
 
-        var $strip_attributes = [
+        public $strip_attributes = [
             'bgsound',
             'expr',
             'id',
@@ -50,33 +50,33 @@
             'dynsrc'
         ];
 
-        var $add_attributes = [
+        public $add_attributes = [
             'audio' => ['preload' => 'none'],
             'iframe' => ['sandbox' => 'allow-scripts allow-same-origin'],
             'video' => ['preload' => 'none']
         ];
 
-        var $strip_comments = false;
+        public $strip_comments = false;
 
-        var $output_encoding = 'UTF-8';
+        public $output_encoding = 'UTF-8';
 
-        var $enable_cache = true;
+        public $enable_cache = true;
 
-        var $cache_location = './cache';
+        public $cache_location = './cache';
 
-        var $cache_name_function = 'md5';
+        public $cache_name_function = 'md5';
 
-        var $timeout = 10;
+        public $timeout = 10;
 
-        var $useragent = '';
+        public $useragent = '';
 
-        var $force_fsockopen = false;
+        public $force_fsockopen = false;
 
-        var $replace_url_attributes = null;
+        public $replace_url_attributes = null;
 
-        var $registry;
+        public $registry;
 
-        var $https_domains = [];
+        public $https_domains = [];
 
         public function __construct()
         {
@@ -636,8 +636,12 @@
 
         public function https_url($url)
         {
-            return (strtolower(substr($url, 0, 7)) === 'http://') && $this->is_https_domain(parse_url($url, PHP_URL_HOST)) ? substr_replace($url, 's', 4, 0) :    // Add the 's' to HTTPS
-                $url;
+            if((stripos($url, 'http://') === 0) && $this->is_https_domain(parse_url($url, PHP_URL_HOST)))
+            {
+                return substr_replace($url, 's', 4, 0);
+            }
+
+            return $url;
         }
 
         protected function is_https_domain($domain)

@@ -2,17 +2,7 @@
 
     function check_upload_size($file)
     {
-        if(get_site_option('upload_space_check_disabled'))
-        {
-            return $file;
-        }
-
-        if($file['error'] > 0)
-        { // There's already an error.
-            return $file;
-        }
-
-        if(defined('WP_IMPORTING'))
+        if(get_site_option('upload_space_check_disabled') || $file['error'] > 0 || defined('WP_IMPORTING'))
         {
             return $file;
         }
@@ -602,19 +592,7 @@
 
     function avoid_blog_page_permalink_collision($data, $postarr)
     {
-        if(is_subdomain_install())
-        {
-            return $data;
-        }
-        if('page' !== $data['post_type'])
-        {
-            return $data;
-        }
-        if(! isset($data['post_name']) || '' === $data['post_name'])
-        {
-            return $data;
-        }
-        if(! is_main_site())
+        if(is_subdomain_install() || 'page' !== $data['post_type'] || ! isset($data['post_name']) || '' === $data['post_name'] || ! is_main_site())
         {
             return $data;
         }
@@ -628,7 +606,7 @@
 
         while($c < 10 && get_id_from_blogname($post_name))
         {
-            $post_name .= mt_rand(1, 10);
+            $post_name .= random_int(1, 10);
             ++$c;
         }
 

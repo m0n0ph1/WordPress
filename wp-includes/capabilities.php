@@ -921,13 +921,13 @@
 
     function is_super_admin($user_id = false)
     {
-        if(! $user_id)
+        if($user_id)
         {
-            $user = wp_get_current_user();
+            $user = get_userdata($user_id);
         }
         else
         {
-            $user = get_userdata($user_id);
+            $user = wp_get_current_user();
         }
 
         if(! $user || ! $user->exists())

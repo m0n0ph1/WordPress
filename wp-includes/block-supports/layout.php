@@ -715,7 +715,7 @@
 
         $inner_content_classnames = '';
 
-        if(isset($block['innerContent'][0]) && 'string' === gettype($block['innerContent'][0]) && count($block['innerContent']) > 1)
+        if(isset($block['innerContent'][0]) && is_string($block['innerContent'][0]) && count($block['innerContent']) > 1)
         {
             $tags = new WP_HTML_Tag_Processor($block['innerContent'][0]);
             $last_classnames = '';

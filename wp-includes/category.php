@@ -49,8 +49,7 @@
     function get_category_by_path($category_path, $full_match = true, $output = OBJECT)
     {
         $category_path = rawurlencode(urldecode($category_path));
-        $category_path = str_replace('%2F', '/', $category_path);
-        $category_path = str_replace('%20', ' ', $category_path);
+        $category_path = str_replace(array('%2F', '%20'), array('/', ' '), $category_path);
         $category_paths = '/'.trim($category_path, '/');
         $leaf_path = sanitize_title(basename($category_paths));
         $category_paths = explode('/', $category_paths);

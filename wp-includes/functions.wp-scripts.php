@@ -42,12 +42,9 @@
 
         _wp_scripts_maybe_doing_it_wrong(__FUNCTION__);
 
-        if(! ($wp_scripts instanceof WP_Scripts))
+        if(! ($wp_scripts instanceof WP_Scripts) && ! $handles)
         {
-            if(! $handles)
-            {
-                return []; // No need to instantiate if nothing is there.
-            }
+            return []; // No need to instantiate if nothing is there.
         }
 
         return wp_scripts()->do_items($handles);

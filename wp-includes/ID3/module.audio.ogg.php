@@ -20,7 +20,7 @@
     }
     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.audio.flac.php', __FILE__, true);
 
-    class getid3_ogg extends getid3_handler
+    class module extends getid3_handler
     {
         public function Analyze()
         {
@@ -61,7 +61,7 @@
             $filedata = $this->fread($oggpageinfo['page_length']);
             $filedataoffset = 0;
 
-            if(substr($filedata, 0, 4) == 'fLaC')
+            if(strpos($filedata, 'fLaC') === 0)
             {
                 $info['audio']['dataformat'] = 'flac';
                 $info['audio']['bitrate_mode'] = 'vbr';
@@ -71,14 +71,14 @@
             {
                 $this->ParseVorbisPageHeader($filedata, $filedataoffset, $oggpageinfo);
             }
-            elseif(substr($filedata, 0, 8) == 'OpusHead')
+            elseif(strpos($filedata, 'OpusHead') === 0)
             {
                 if($this->ParseOpusPageHeader($filedata, $filedataoffset, $oggpageinfo) === false)
                 {
                     return false;
                 }
             }
-            elseif(substr($filedata, 0, 8) == 'Speex   ')
+            elseif(strpos($filedata, 'Speex   ') === 0)
             {
                 // http://www.speex.org/manual/node10.html
 
@@ -131,18 +131,18 @@
                     $info['audio']['bitrate_mode'] = 'vbr';
                 }
             }
-            elseif(substr($filedata, 0, 7) == "\x80".'theora')
+            elseif(strpos($filedata, "\x80".'theora') === 0)
             {
                 // http://www.theora.org/doc/Theora.pdf (section 6.2)
 
                 $info['ogg']['pageheader']['theora']['theora_magic'] = substr($filedata, $filedataoffset, 7); // hard-coded to "\x80.'theora'
                 $filedataoffset += 7;
                 $info['ogg']['pageheader']['theora']['version_major'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 1));
-                $filedataoffset += 1;
+                ++$filedataoffset;
                 $info['ogg']['pageheader']['theora']['version_minor'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 1));
-                $filedataoffset += 1;
+                ++$filedataoffset;
                 $info['ogg']['pageheader']['theora']['version_revision'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 1));
-                $filedataoffset += 1;
+                ++$filedataoffset;
                 $info['ogg']['pageheader']['theora']['frame_width_macroblocks'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 2));
                 $filedataoffset += 2;
                 $info['ogg']['pageheader']['theora']['frame_height_macroblocks'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 2));
@@ -152,9 +152,9 @@
                 $info['ogg']['pageheader']['theora']['resolution_y'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 3));
                 $filedataoffset += 3;
                 $info['ogg']['pageheader']['theora']['picture_offset_x'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 1));
-                $filedataoffset += 1;
+                ++$filedataoffset;
                 $info['ogg']['pageheader']['theora']['picture_offset_y'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 1));
-                $filedataoffset += 1;
+                ++$filedataoffset;
                 $info['ogg']['pageheader']['theora']['frame_rate_numerator'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 4));
                 $filedataoffset += 4;
                 $info['ogg']['pageheader']['theora']['frame_rate_denominator'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 4));
@@ -164,7 +164,7 @@
                 $info['ogg']['pageheader']['theora']['pixel_aspect_denominator'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 3));
                 $filedataoffset += 3;
                 $info['ogg']['pageheader']['theora']['color_space_id'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 1));
-                $filedataoffset += 1;
+                ++$filedataoffset;
                 $info['ogg']['pageheader']['theora']['nominal_bitrate'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 3));
                 $filedataoffset += 3;
                 $info['ogg']['pageheader']['theora']['flags'] = getid3_lib::BigEndian2Int(substr($filedata, $filedataoffset, 2));
@@ -193,7 +193,7 @@
                 }
                 $this->warning('Ogg Theora (v3) not fully supported in this version of getID3 ['.$this->getid3->version().'] -- bitrate, playtime and all audio data are currently unavailable');
             }
-            elseif(substr($filedata, 0, 8) == "fishead\x00")
+            elseif(strpos($filedata, "fishead\x00") === 0)
             {
                 // Ogg Skeleton version 3.0 Format Specification
                 // http://xiph.org/ogg/doc/skeleton.html
@@ -226,7 +226,7 @@
                     $filedata = $this->fread($oggpageinfo['page_length']);
                     $this->fseek($oggpageinfo['page_end_offset']);
 
-                    if(substr($filedata, 0, 8) == "fisbone\x00")
+                    if(strpos($filedata, "fisbone\x00") === 0)
                     {
                         $filedataoffset = 8;
                         $info['ogg']['skeleton']['fisbone']['raw']['message_header_offset'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 4));
@@ -244,7 +244,7 @@
                         $info['ogg']['skeleton']['fisbone']['raw']['preroll'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 4));
                         $filedataoffset += 4;
                         $info['ogg']['skeleton']['fisbone']['raw']['granuleshift'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 1));
-                        $filedataoffset += 1;
+                        ++$filedataoffset;
                         $info['ogg']['skeleton']['fisbone']['raw']['padding'] = substr($filedata, $filedataoffset, 3);
                         $filedataoffset += 3;
                     }
@@ -266,7 +266,7 @@
                     }
                     //} while ($oggpageinfo['page_seqno'] == 0);
                 }
-                while(($oggpageinfo['page_seqno'] == 0) && (substr($filedata, 0, 8) != "fisbone\x00"));
+                while(($oggpageinfo['page_seqno'] == 0) && (strpos($filedata, "fisbone\x00") !== 0));
 
                 $this->fseek($oggpageinfo['page_start_offset']);
 
@@ -274,7 +274,7 @@
                 // return false;
 
             }
-            elseif(substr($filedata, 0, 5) == "\x7F".'FLAC')
+            elseif(strpos($filedata, "\x7F".'FLAC') === 0)
             {
                 // https://xiph.org/flac/ogg_mapping.html
 
@@ -345,7 +345,7 @@
                 case 'opus':
                     $filedata = $this->fread($info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['page_length']);
                     $info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['stream_type'] = substr($filedata, 0, 8); // hard-coded to 'OpusTags'
-                    if(substr($filedata, 0, 8) != 'OpusTags')
+                    if(strpos($filedata, 'OpusTags') !== 0)
                     {
                         $this->error('Expected "OpusTags" as header but got "'.substr($filedata, 0, 8).'"');
 
@@ -357,11 +357,7 @@
             }
 
             // Last Page - Number of Samples
-            if(! getid3_lib::intValueSupported($info['avdataend']))
-            {
-                $this->warning('Unable to parse Ogg end chunk file (PHP does not support file operations beyond '.round(PHP_INT_MAX / 1073741824).'GB)');
-            }
-            else
+            if(getid3_lib::intValueSupported($info['avdataend']))
             {
                 $this->fseek(max($info['avdataend'] - $this->getid3->fread_buffer_size(), 0));
                 $LastChunkOfOgg = strrev($this->fread($this->getid3->fread_buffer_size()));
@@ -382,6 +378,10 @@
                         $info['ogg']['bitrate_average'] = (($info['avdataend'] - $info['avdataoffset']) * 8) / ($info['ogg']['samples'] / $info['audio']['sample_rate']);
                     }
                 }
+            }
+            else
+            {
+                $this->warning('Unable to parse Ogg end chunk file (PHP does not support file operations beyond '.round(PHP_INT_MAX / 1073741824).'GB)');
             }
 
             if(! empty($info['ogg']['bitrate_average']))
@@ -466,9 +466,9 @@
             $filedataoffset += strlen('OggS') - 1; // page, delimited by 'OggS'
 
             $oggheader['stream_structver'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 1));
-            $filedataoffset += 1;
+            ++$filedataoffset;
             $oggheader['flags_raw'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 1));
-            $filedataoffset += 1;
+            ++$filedataoffset;
             $oggheader['flags']['fresh'] = (bool) ($oggheader['flags_raw'] & 0x01); // fresh packet
             $oggheader['flags']['bos'] = (bool) ($oggheader['flags_raw'] & 0x02); // first page of logical bitstream (bos)
             $oggheader['flags']['eos'] = (bool) ($oggheader['flags_raw'] & 0x04); // last page of logical bitstream (eos)
@@ -482,12 +482,12 @@
             $oggheader['page_checksum'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 4));
             $filedataoffset += 4;
             $oggheader['page_segments'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 1));
-            $filedataoffset += 1;
+            ++$filedataoffset;
             $oggheader['page_length'] = 0;
             for($i = 0; $i < $oggheader['page_segments']; $i++)
             {
                 $oggheader['segment_table'][$i] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 1));
-                $filedataoffset += 1;
+                ++$filedataoffset;
                 $oggheader['page_length'] += $oggheader['segment_table'][$i];
             }
             $oggheader['header_end_offset'] = $oggheader['page_start_offset'] + $filedataoffset;
@@ -504,13 +504,13 @@
             $info['audio']['lossless'] = false;
 
             $info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['packet_type'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 1));
-            $filedataoffset += 1;
+            ++$filedataoffset;
             $info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['stream_type'] = substr($filedata, $filedataoffset, 6); // hard-coded to 'vorbis'
             $filedataoffset += 6;
             $info['ogg']['bitstreamversion'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 4));
             $filedataoffset += 4;
             $info['ogg']['numberofchannels'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 1));
-            $filedataoffset += 1;
+            ++$filedataoffset;
             $info['audio']['channels'] = $info['ogg']['numberofchannels'];
             $info['ogg']['samplerate'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 4));
             $filedataoffset += 4;
@@ -565,7 +565,7 @@
             $info['ogg']['pageheader']['opus']['opus_magic'] = substr($filedata, $filedataoffset, 8); // hard-coded to 'OpusHead'
             $filedataoffset += 8;
             $info['ogg']['pageheader']['opus']['version'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 1));
-            $filedataoffset += 1;
+            ++$filedataoffset;
 
             if($info['ogg']['pageheader']['opus']['version'] < 1 || $info['ogg']['pageheader']['opus']['version'] > 15)
             {
@@ -575,7 +575,7 @@
             }
 
             $info['ogg']['pageheader']['opus']['out_channel_count'] = getid3_lib::LittleEndian2Int(substr($filedata, $filedataoffset, 1));
-            $filedataoffset += 1;
+            ++$filedataoffset;
 
             if($info['ogg']['pageheader']['opus']['out_channel_count'] == 0)
             {
@@ -717,30 +717,27 @@
 
                 $ThisFileInfo_ogg_comments_raw[$i]['dataoffset'] = $CommentStartOffset + $commentdataoffset;
 
-                if($this->ftell() < ($ThisFileInfo_ogg_comments_raw[$i]['dataoffset'] + 4))
+                if($this->ftell() < ($ThisFileInfo_ogg_comments_raw[$i]['dataoffset'] + 4) && $oggpageinfo = $this->ParseOggPageHeader())
                 {
-                    if($oggpageinfo = $this->ParseOggPageHeader())
-                    {
-                        $info['ogg']['pageheader'][$oggpageinfo['page_seqno']] = $oggpageinfo;
+                    $info['ogg']['pageheader'][$oggpageinfo['page_seqno']] = $oggpageinfo;
 
-                        $VorbisCommentPage++;
+                    $VorbisCommentPage++;
 
-                        // First, save what we haven't read yet
-                        $AsYetUnusedData = substr($commentdata, $commentdataoffset);
+                    // First, save what we haven't read yet
+                    $AsYetUnusedData = substr($commentdata, $commentdataoffset);
 
-                        // Then take that data off the end
-                        $commentdata = substr($commentdata, 0, $commentdataoffset);
+                    // Then take that data off the end
+                    $commentdata = substr($commentdata, 0, $commentdataoffset);
 
-                        // Add [headerlength] bytes of dummy data for the Ogg Page Header, just to keep absolute offsets correct
-                        $commentdata .= str_repeat("\x00", 27 + $info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['page_segments']);
-                        $commentdataoffset += (27 + $info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['page_segments']);
+                    // Add [headerlength] bytes of dummy data for the Ogg Page Header, just to keep absolute offsets correct
+                    $commentdata .= str_repeat("\x00", 27 + $info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['page_segments']);
+                    $commentdataoffset += (27 + $info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['page_segments']);
 
-                        // Finally, stick the unused data back on the end
-                        $commentdata .= $AsYetUnusedData;
+                    // Finally, stick the unused data back on the end
+                    $commentdata .= $AsYetUnusedData;
 
-                        //$commentdata .= $this->fread($info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['page_length']);
-                        $commentdata .= $this->fread($this->OggPageSegmentLength($info['ogg']['pageheader'][$VorbisCommentPage], 1));
-                    }
+                    //$commentdata .= $this->fread($info['ogg']['pageheader'][$oggpageinfo['page_seqno']]['page_length']);
+                    $commentdata .= $this->fread($this->OggPageSegmentLength($info['ogg']['pageheader'][$VorbisCommentPage], 1));
                 }
                 $ThisFileInfo_ogg_comments_raw[$i]['size'] = getid3_lib::LittleEndian2Int(substr($commentdata, $commentdataoffset, 4));
 

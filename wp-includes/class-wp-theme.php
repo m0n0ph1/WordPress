@@ -94,7 +94,12 @@
 
         public function errors()
         {
-            return is_wp_error($this->errors) ? $this->errors : false;
+            if(is_wp_error($this->errors))
+            {
+                return $this->errors;
+            }
+
+            return false;
         }
 
         public static function get_allowed($blog_id = null)
@@ -610,7 +615,12 @@
                 case 'version':
                     return $this->get('Version');
                 case 'parent_theme':
-                    return $this->parent() ? $this->parent()->get('Name') : '';
+                    if($this->parent())
+                    {
+                        return $this->parent()->get('Name');
+                    }
+
+                    return '';
                 case 'template_dir':
                     return $this->get_template_directory();
                 case 'stylesheet_dir':
@@ -640,7 +650,12 @@
 
         public function parent()
         {
-            return isset($this->parent) ? $this->parent : false;
+            if(isset($this->parent))
+            {
+                return $this->parent;
+            }
+
+            return false;
         }
 
         public function get_template_directory()
@@ -761,7 +776,12 @@
                 case 'Theme Root URI':
                     return $this->get_theme_root_uri();
                 case 'Parent Theme':
-                    return $this->parent() ? $this->parent()->get('Name') : '';
+                    if($this->parent())
+                    {
+                        return $this->parent()->get('Name');
+                    }
+
+                    return '';
                 default:
                     return null;
             }
@@ -945,13 +965,13 @@
             elseif(! file_exists($this->theme_root.'/'.$theme_file))
             {
                 $this->headers['Name'] = $this->stylesheet;
-                if(! file_exists($this->theme_root.'/'.$this->stylesheet))
+                if(file_exists($this->theme_root.'/'.$this->stylesheet))
                 {
-                    $this->errors = new WP_Error('theme_not_found', sprintf(/* translators: %s: Theme directory name. */ __('The theme directory "%s" does not exist.'), esc_html($this->stylesheet)));
+                    $this->errors = new WP_Error('theme_no_stylesheet', __('Stylesheet is missing.'));
                 }
                 else
                 {
-                    $this->errors = new WP_Error('theme_no_stylesheet', __('Stylesheet is missing.'));
+                    $this->errors = new WP_Error('theme_not_found', sprintf(/* translators: %s: Theme directory name. */ __('The theme directory "%s" does not exist.'), esc_html($this->stylesheet)));
                 }
                 $this->template = $this->stylesheet;
                 $this->block_theme = false;
@@ -969,7 +989,20 @@
 
                 return;
             }
-            elseif(! is_readable($this->theme_root.'/'.$theme_file))
+            elseif(is_readable($this->theme_root.'/'.$theme_file))
+            {
+                $this->headers = get_file_data($this->theme_root.'/'.$theme_file, self::$file_headers, 'theme');
+                /*
+                 * Default themes always trump their pretenders.
+                 * Properly identify default themes that are inside a directory within wp-content/themes.
+                 */
+                $default_theme_slug = array_search($this->headers['Name'], self::$default_themes, true);
+                if($default_theme_slug && basename($this->stylesheet) != $default_theme_slug)
+                {
+                    $this->headers['Name'] .= '/'.$this->stylesheet;
+                }
+            }
+            else
             {
                 $this->headers['Name'] = $this->stylesheet;
                 $this->errors = new WP_Error('theme_stylesheet_not_readable', __('Stylesheet is not readable.'));
@@ -984,22 +1017,6 @@
                 ]);
 
                 return;
-            }
-            else
-            {
-                $this->headers = get_file_data($this->theme_root.'/'.$theme_file, self::$file_headers, 'theme');
-                /*
-                 * Default themes always trump their pretenders.
-                 * Properly identify default themes that are inside a directory within wp-content/themes.
-                 */
-                $default_theme_slug = array_search($this->headers['Name'], self::$default_themes, true);
-                if($default_theme_slug)
-                {
-                    if(basename($this->stylesheet) != $default_theme_slug)
-                    {
-                        $this->headers['Name'] .= '/'.$this->stylesheet;
-                    }
-                }
             }
 
             if(! $this->template && $this->stylesheet === $this->headers['Template'])

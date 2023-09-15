@@ -326,11 +326,7 @@
     {
         global $wp_list_table;
 
-        $content = apply_filters('wp_comment_reply', '', [
-            'position' => $position,
-            'checkbox' => $checkbox,
-            'mode' => $mode,
-        ]);
+        $content = apply_filters('wp_comment_reply', '', compact('position', 'checkbox', 'mode'));
 
         if(! empty($content))
         {
@@ -718,7 +714,7 @@
 
         $month = '<label><span class="screen-reader-text">'./* translators: Hidden accessibility text. */
             __('Month').'</span><select class="form-required" '.($multi ? '' : 'id="mm" ').'name="mm"'.$tab_index_attribute.">\n";
-        for($i = 1; $i < 13; $i = $i + 1)
+        for($i = 1; $i < 13; ++$i)
         {
             $monthnum = zeroise($i, 2);
             $monthtext = $wp_locale->get_month_abbrev($wp_locale->get_month($i));
@@ -1434,12 +1430,7 @@
             $page = 'reading';
         }
 
-        $wp_settings_fields[$page][$section][$id] = [
-            'id' => $id,
-            'title' => $title,
-            'callback' => $callback,
-            'args' => $args,
-        ];
+        $wp_settings_fields[$page][$section][$id] = compact('id', 'title', 'callback', 'args');
     }
 
     function do_settings_sections($page)
@@ -1530,12 +1521,7 @@
     {
         global $wp_settings_errors;
 
-        $wp_settings_errors[] = [
-            'setting' => $setting,
-            'code' => $code,
-            'message' => $message,
-            'type' => $type,
-        ];
+        $wp_settings_errors[] = compact('setting', 'code', 'message', 'type');
     }
 
     function get_settings_errors($setting = '', $sanitize = false)

@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core_Curve25519_Fe implements ArrayAccess
+    class Fe implements ArrayAccess
     {
         protected $container = [];
 
@@ -34,7 +34,7 @@
             }
             else
             {
-                for($i = 0; $i < $count; ++$i)
+                foreach($array as $i => $iValue)
                 {
                     $obj->offsetSet($i, $array[$i]);
                 }

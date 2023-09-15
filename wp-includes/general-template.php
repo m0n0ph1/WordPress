@@ -181,13 +181,13 @@
 
     function wp_loginout($redirect = '', $display = true)
     {
-        if(! is_user_logged_in())
+        if(is_user_logged_in())
         {
-            $link = '<a href="'.esc_url(wp_login_url($redirect)).'">'.__('Log in').'</a>';
+            $link = '<a href="'.esc_url(wp_logout_url($redirect)).'">'.__('Log out').'</a>';
         }
         else
         {
-            $link = '<a href="'.esc_url(wp_logout_url($redirect)).'">'.__('Log out').'</a>';
+            $link = '<a href="'.esc_url(wp_login_url($redirect)).'">'.__('Log in').'</a>';
         }
 
         if($display)
@@ -1772,16 +1772,16 @@
     {
         $post = get_post($post);
 
-        if(! $post)
-        {
-            // For backward compatibility, failures go through the filter below.
-            $the_time = false;
-        }
-        else
+        if($post)
         {
             $_format = ! empty($format) ? $format : get_option('date_format');
 
             $the_time = get_post_modified_time($_format, false, $post, true);
+        }
+        else
+        {
+            // For backward compatibility, failures go through the filter below.
+            $the_time = false;
         }
 
         return apply_filters('get_the_modified_date', $the_time, $format, $post);
@@ -1910,16 +1910,16 @@
     {
         $post = get_post($post);
 
-        if(! $post)
-        {
-            // For backward compatibility, failures go through the filter below.
-            $the_time = false;
-        }
-        else
+        if($post)
         {
             $_format = ! empty($format) ? $format : get_option('time_format');
 
             $the_time = get_post_modified_time($_format, false, $post, true);
+        }
+        else
+        {
+            // For backward compatibility, failures go through the filter below.
+            $the_time = false;
         }
 
         return apply_filters('get_the_modified_time', $the_time, $format, $post);
@@ -2344,13 +2344,13 @@
 
                     $value = ('href' === $attr) ? esc_url($value) : esc_attr($value);
 
-                    if(! is_string($attr))
+                    if(is_string($attr))
                     {
-                        $html .= " $value";
+                        $html .= " $attr='$value'";
                     }
                     else
                     {
-                        $html .= " $attr='$value'";
+                        $html .= " $value";
                     }
                 }
 
@@ -2441,13 +2441,13 @@
                     'https'
                 ]) : esc_attr($resource_value);
 
-                if(! is_string($resource_key))
+                if(is_string($resource_key))
                 {
-                    $html .= " $resource_value";
+                    $html .= " $resource_key='$resource_value'";
                 }
                 else
                 {
-                    $html .= " $resource_key='$resource_value'";
+                    $html .= " $resource_value";
                 }
             }
             $html = trim($html);
@@ -3074,8 +3074,10 @@
         $dots = false;
 
         if($args['prev_next'] && $current && 1 < $current) :
-            $link = str_replace('%_%', 2 == $current ? '' : $args['format'], $args['base']);
-            $link = str_replace('%#%', $current - 1, $link);
+            $link = str_replace(array('%_%', '%#%'), array(
+                2 === $current ? '' : $args['format'],
+                $current - 1
+            ),                  $args['base']);
             if($add_args)
             {
                 $link = add_query_arg($add_args, $link);
@@ -3088,14 +3090,13 @@
         endif;
 
         for($n = 1; $n <= $total; $n++) :
-            if($n == $current) :
+            if($n === $current) :
                 $page_links[] = sprintf('<span aria-current="%s" class="page-numbers current">%s</span>', esc_attr($args['aria_current']), $args['before_page_number'].number_format_i18n($n).$args['after_page_number']);
 
                 $dots = true;
             else :
                 if($args['show_all'] || ($n <= $end_size || ($current && $n >= $current - $mid_size && $n <= $current + $mid_size) || $n > $total - $end_size)) :
-                    $link = str_replace('%_%', 1 == $n ? '' : $args['format'], $args['base']);
-                    $link = str_replace('%#%', $n, $link);
+                    $link = str_replace(array('%_%', '%#%'), array(1 === $n ? '' : $args['format'], $n), $args['base']);
                     if($add_args)
                     {
                         $link = add_query_arg($add_args, $link);
@@ -3114,8 +3115,7 @@
         endfor;
 
         if($args['prev_next'] && $current && $current < $total) :
-            $link = str_replace('%_%', $args['format'], $args['base']);
-            $link = str_replace('%#%', $current + 1, $link);
+            $link = str_replace(array('%_%', '%#%'), array($args['format'], $current + 1), $args['base']);
             if($add_args)
             {
                 $link = add_query_arg($add_args, $link);

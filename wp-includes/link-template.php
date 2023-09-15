@@ -1,4 +1,19 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
 
     function the_permalink($post = 0)
     {
@@ -104,19 +119,23 @@
             $sample = false;
         }
 
+        /** @noinspection NativeMemberUsageInspection */
         if(empty($post->ID))
         {
             return false;
         }
 
+        /** @noinspection NativeMemberUsageInspection */
         if('page' === $post->post_type)
         {
             return get_page_link($post, $leavename, $sample);
         }
+        /** @noinspection NativeMemberUsageInspection */
         elseif('attachment' === $post->post_type)
         {
             return get_attachment_link($post, $leavename);
         }
+        /** @noinspection NativeMemberUsageInspection */
         elseif(in_array($post->post_type, get_post_types(['_builtin' => false]), true))
         {
             return get_post_permalink($post, $leavename, $sample);
@@ -131,6 +150,7 @@
             $category = '';
             if(str_contains($permalink, '%category%'))
             {
+                /** @noinspection NativeMemberUsageInspection */
                 $cats = get_the_category($post->ID);
                 if($cats)
                 {
@@ -164,6 +184,7 @@
             $author = '';
             if(str_contains($permalink, '%author%'))
             {
+                /** @noinspection NativeMemberUsageInspection */
                 $authordata = get_userdata($post->post_author);
                 $author = $authordata->user_nicename;
             }
@@ -172,8 +193,12 @@
 		 * This is not an API call because the permalink is based on the stored post_date value,
 		 * which should be parsed as local time regardless of the default PHP timezone.
 		 */
+            /** @noinspection NativeMemberUsageInspection */
             $date = explode(' ', str_replace(['-', ':'], ' ', $post->post_date));
 
+            /** @noinspection NativeMemberUsageInspection */
+            /** @noinspection NativeMemberUsageInspection */
+            /** @noinspection NativeMemberUsageInspection */
             $rewritereplace = [
                 $date[0],
                 $date[1],
@@ -193,6 +218,7 @@
         }
         else
         { // If they're not using the fancy permalink option.
+            /** @noinspection NativeMemberUsageInspection */
             $permalink = home_url('?p='.$post->ID);
         }
 
@@ -1002,12 +1028,7 @@
 
         $post_type_object = get_post_type_object($post->post_type);
 
-        if(! $post_type_object)
-        {
-            return;
-        }
-
-        if(! current_user_can('edit_post', $post->ID))
+        if(! $post_type_object || ! current_user_can('edit_post', $post->ID))
         {
             return;
         }
@@ -1073,12 +1094,7 @@
 
         $post_type_object = get_post_type_object($post->post_type);
 
-        if(! $post_type_object)
-        {
-            return;
-        }
-
-        if(! current_user_can('delete_post', $post->ID))
+        if(! $post_type_object || ! current_user_can('delete_post', $post->ID))
         {
             return;
         }
@@ -1380,6 +1396,7 @@
             $post_title = $previous ? __('Previous Post') : __('Next Post');
         }
 
+        /** @noinspection NativeMemberUsageInspection */
         $date = mysql2date(get_option('date_format'), $post->post_date);
 
         $title = str_replace('%title', $post_title, $title);
@@ -1523,15 +1540,19 @@
         }
         else
         {
+            /** @noinspection NativeMemberUsageInspection */
             $title = $post->post_title;
 
+            /** @noinspection NativeMemberUsageInspection */
             if(empty($post->post_title))
             {
                 $title = $previous ? __('Previous Post') : __('Next Post');
             }
 
+            /** @noinspection NativeMemberUsageInspection */
             $title = apply_filters('the_title', $title, $post->ID);
 
+            /** @noinspection NativeMemberUsageInspection */
             $date = mysql2date(get_option('date_format'), $post->post_date);
             $rel = $previous ? 'prev' : 'next';
 
@@ -2543,12 +2564,7 @@
     {
         $post = get_post($post);
 
-        if(! $post)
-        {
-            return false;
-        }
-
-        if('publish' !== $post->post_status)
+        if(! $post || 'publish' !== $post->post_status)
         {
             return false;
         }
@@ -2874,7 +2890,7 @@
         }
         else
         {
-            $gravatar_server = rand(0, 2);
+            $gravatar_server = random_int(0, 2);
         }
 
         $url_args = [

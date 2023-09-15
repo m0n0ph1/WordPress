@@ -460,12 +460,7 @@
         {
             $path = untrailingslashit($path);
 
-            if(empty($path))
-            {
-                return false;
-            }
-
-            if(! $this->ftp->mkdir($path))
+            if(empty($path) || ! $this->ftp->mkdir($path))
             {
                 return false;
             }

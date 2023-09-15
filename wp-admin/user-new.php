@@ -71,16 +71,16 @@
                                                         'role' => $_REQUEST['role'],
                                                     ]);
 
-                if(! is_wp_error($result))
+                if(is_wp_error($result))
+                {
+                    $redirect = add_query_arg(['update' => 'could_not_add'], 'user-new.php');
+                }
+                else
                 {
                     $redirect = add_query_arg([
                                                   'update' => 'addnoconfirmation',
                                                   'user_id' => $user_id,
                                               ], 'user-new.php');
-                }
-                else
-                {
-                    $redirect = add_query_arg(['update' => 'could_not_add'], 'user-new.php');
                 }
             }
             else
@@ -148,29 +148,7 @@ Please click the following link to confirm the invite:
             wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to create users.').'</p>', 403);
         }
 
-        if(! is_multisite())
-        {
-            $user_id = edit_user();
-
-            if(is_wp_error($user_id))
-            {
-                $add_user_errors = $user_id;
-            }
-            else
-            {
-                if(current_user_can('list_users'))
-                {
-                    $redirect = 'users.php?update=add&id='.$user_id;
-                }
-                else
-                {
-                    $redirect = add_query_arg('update', 'add', 'user-new.php');
-                }
-                wp_redirect($redirect);
-                die();
-            }
-        }
-        else
+        if(is_multisite())
         {
             // Adding a new user to this site.
             $new_user_email = wp_unslash($_REQUEST['email']);
@@ -199,21 +177,43 @@ Please click the following link to confirm the invite:
                     {
                         $redirect = add_query_arg(['update' => 'addnoconfirmation'], 'user-new.php');
                     }
-                    elseif(! is_user_member_of_blog($new_user['user_id']))
-                    {
-                        $redirect = add_query_arg(['update' => 'created_could_not_add'], 'user-new.php');
-                    }
-                    else
+                    elseif(is_user_member_of_blog($new_user['user_id']))
                     {
                         $redirect = add_query_arg([
                                                       'update' => 'addnoconfirmation',
                                                       'user_id' => $new_user['user_id'],
                                                   ], 'user-new.php');
                     }
+                    else
+                    {
+                        $redirect = add_query_arg(['update' => 'created_could_not_add'], 'user-new.php');
+                    }
                 }
                 else
                 {
                     $redirect = add_query_arg(['update' => 'newuserconfirmation'], 'user-new.php');
+                }
+                wp_redirect($redirect);
+                die();
+            }
+        }
+        else
+        {
+            $user_id = edit_user();
+
+            if(is_wp_error($user_id))
+            {
+                $add_user_errors = $user_id;
+            }
+            else
+            {
+                if(current_user_can('list_users'))
+                {
+                    $redirect = 'users.php?update=add&id='.$user_id;
+                }
+                else
+                {
+                    $redirect = add_query_arg('update', 'add', 'user-new.php');
                 }
                 wp_redirect($redirect);
                 die();
@@ -389,17 +389,17 @@ Please click the following link to confirm the invite:
                 {
                     echo '<h2 id="add-existing-user">'.__('Add Existing User').'</h2>';
                 }
-                if(! current_user_can('manage_network_users'))
-                {
-                    echo '<p>'.__('Enter the email address of an existing user on this network to invite them to this site. That person will be sent an email asking them to confirm the invite.').'</p>';
-                    $label = __('Email');
-                    $type = 'email';
-                }
-                else
+                if(current_user_can('manage_network_users'))
                 {
                     echo '<p>'.__('Enter the email address or username of an existing user on this network to invite them to this site. That person will be sent an email asking them to confirm the invite.').'</p>';
                     $label = __('Email or Username');
                     $type = 'text';
+                }
+                else
+                {
+                    echo '<p>'.__('Enter the email address of an existing user on this network to invite them to this site. That person will be sent an email asking them to confirm the invite.').'</p>';
+                    $label = __('Email');
+                    $type = 'email';
                 }
                 ?>
                 <form method="post" name="adduser" id="adduser" class="validate" novalidate="novalidate"
@@ -472,7 +472,7 @@ Please click the following link to confirm the invite:
                         $new_user_email = $creating && isset($_POST['email']) ? wp_unslash($_POST['email']) : '';
                         $new_user_uri = $creating && isset($_POST['url']) ? wp_unslash($_POST['url']) : '';
                         $new_user_role = $creating && isset($_POST['role']) ? wp_unslash($_POST['role']) : '';
-                        $new_user_send_notification = $creating && ! isset($_POST['send_user_notification']) ? false : true;
+                        $new_user_send_notification = ! ($creating && ! isset($_POST['send_user_notification']));
                         $new_user_ignore_pass = $creating && isset($_POST['noconfirmation']) ? wp_unslash($_POST['noconfirmation']) : '';
 
                     ?>

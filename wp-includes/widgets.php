@@ -550,7 +550,11 @@
 	 * If loading from front page, consult $_wp_sidebars_widgets rather than options
 	 * to see if wp_convert_widget_settings() has made manipulations in memory.
 	 */
-        if(! is_admin())
+        if(is_admin())
+        {
+            $sidebars_widgets = get_option('sidebars_widgets', []);
+        }
+        else
         {
             if(empty($_wp_sidebars_widgets))
             {
@@ -558,10 +562,6 @@
             }
 
             $sidebars_widgets = $_wp_sidebars_widgets;
-        }
-        else
-        {
-            $sidebars_widgets = get_option('sidebars_widgets', []);
         }
 
         if(is_array($sidebars_widgets) && isset($sidebars_widgets['array_version']))

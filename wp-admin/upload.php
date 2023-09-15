@@ -249,12 +249,9 @@
 
         $location = 'upload.php';
         $referer = wp_get_referer();
-        if($referer)
+        if($referer && str_contains($referer, 'upload.php'))
         {
-            if(str_contains($referer, 'upload.php'))
-            {
-                $location = remove_query_arg(['trashed', 'untrashed', 'deleted', 'message', 'ids', 'posted'], $referer);
-            }
+            $location = remove_query_arg(['trashed', 'untrashed', 'deleted', 'message', 'ids', 'posted'], $referer);
         }
 
         switch($doaction)

@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core_ChaCha20_Ctx extends ParagonIE_Sodium_Core_Util implements ArrayAccess
+    class Ctx extends ParagonIE_Sodium_Core_Util implements ArrayAccess
     {
         protected $container;
 
@@ -52,11 +52,7 @@
         #[ReturnTypeWillChange]
         public function offsetSet($offset, $value)
         {
-            if(! is_int($offset))
-            {
-                throw new InvalidArgumentException('Expected an integer');
-            }
-            if(! is_int($value))
+            if(! is_int($offset) || ! is_int($value))
             {
                 throw new InvalidArgumentException('Expected an integer');
             }
@@ -78,6 +74,11 @@
         #[ReturnTypeWillChange]
         public function offsetGet($offset)
         {
-            return isset($this->container[$offset]) ? $this->container[$offset] : null;
+            if(isset($this->container[$offset]))
+            {
+                return $this->container[$offset];
+            }
+
+            return null;
         }
     }

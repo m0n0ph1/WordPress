@@ -225,7 +225,12 @@
 
         private static function colord_clamp($number, $min = 0, $max = 1)
         {
-            return $number > $max ? $max : ($number > $min ? $number : $min);
+            if($number > $max)
+            {
+                return $max;
+            }
+
+            return $number > $min ? $number : $min;
         }
 
         private static function colord_parse_hsla_string($input)
@@ -280,7 +285,12 @@
         {
             $degrees = is_finite($degrees) ? $degrees % 360 : 0;
 
-            return $degrees > 0 ? $degrees : $degrees + 360;
+            if($degrees > 0)
+            {
+                return $degrees;
+            }
+
+            return $degrees + 360;
         }
 
         private static function colord_parse_hue($value, $unit = 'deg')
@@ -485,7 +495,12 @@
             {
                 $root_selector = wp_get_block_css_selector($block_type);
 
-                return is_string($experimental_duotone) ? WP_Theme_JSON::scope_selector($root_selector, $experimental_duotone) : $root_selector;
+                if(is_string($experimental_duotone))
+                {
+                    return WP_Theme_JSON::scope_selector($root_selector, $experimental_duotone);
+                }
+
+                return $root_selector;
             }
 
             // Regular filter.duotone support uses filter.duotone selectors with fallbacks.
@@ -538,7 +553,12 @@
             // Uses Branch Reset Groups `(?|…)` to return one capture group.
             preg_match('/(?|var:preset\|duotone\|(\S+)|var\(--wp--preset--duotone--(\S+)\))/', $duotone_attr, $matches);
 
-            return ! empty($matches[1]) ? $matches[1] : '';
+            if(! empty($matches[1]))
+            {
+                return $matches[1];
+            }
+
+            return '';
         }
 
         private static function is_preset($duotone_attr)

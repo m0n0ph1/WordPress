@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core_Poly1305_State extends ParagonIE_Sodium_Core_Util
+    class State extends ParagonIE_Sodium_Core_Util
     {
         public $h;
 

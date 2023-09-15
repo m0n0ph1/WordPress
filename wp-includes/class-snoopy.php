@@ -8,77 +8,77 @@
         {
             /* user definable vars */
 
-            var $host = "www.php.net";        // host name we are connecting to
+            public $host = "www.php.net";        // host name we are connecting to
 
-            var $port = 80;                    // port we are connecting to
+            public $port = 80;                    // port we are connecting to
 
-            var $proxy_host = "";                    // proxy host to use
+            public $proxy_host = "";                    // proxy host to use
 
-            var $proxy_port = "";                    // proxy port to use
+            public $proxy_port = "";                    // proxy port to use
 
-            var $proxy_user = "";                    // proxy user to use
+            public $proxy_user = "";                    // proxy user to use
 
-            var $proxy_pass = "";                    // proxy password to use
+            public $proxy_pass = "";                    // proxy password to use
 
-            var $agent = "Snoopy v1.2.4";    // agent we masquerade as
+            public $agent = "Snoopy v1.2.4";    // agent we masquerade as
 
-            var $referer = "";                    // referer info to pass
+            public $referer = "";                    // referer info to pass
 
-            var $cookies = [];            // array of cookies to pass
+            public $cookies = [];            // array of cookies to pass
 
             // $cookies["username"]="joe";
-            var $rawheaders = [];            // array of raw headers to send
+            public $rawheaders = [];            // array of raw headers to send
 
             // $rawheaders["Content-Type"]="text/html";
 
-            var $maxredirs = 5;                    // http redirection depth maximum. 0 = disallow
+            public $maxredirs = 5;                    // http redirection depth maximum. 0 = disallow
 
-            var $lastredirectaddr = "";                // contains address of last redirected address
+            public $lastredirectaddr = "";                // contains address of last redirected address
 
-            var $offsiteok = true;                // allows redirection off-site
+            public $offsiteok = true;                // allows redirection off-site
 
-            var $maxframes = 0;                    // frame content depth maximum. 0 = disallow
+            public $maxframes = 0;                    // frame content depth maximum. 0 = disallow
 
-            var $expandlinks = true;                // expand links to fully qualified URLs.
+            public $expandlinks = true;                // expand links to fully qualified URLs.
 
             // this only applies to fetchlinks()
             // submitlinks(), and submittext()
-            var $passcookies = true;                // pass set cookies back through redirects
+            public $passcookies = true;                // pass set cookies back through redirects
 
             // NOTE: this currently does not respect
             // dates, domains or paths.
 
-            var $user = "";                    // user for http authentication
+            public $user = "";                    // user for http authentication
 
-            var $pass = "";                    // password for http authentication
+            public $pass = "";                    // password for http authentication
 
             // http accept types
-            var $accept = "image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*";
+            public $accept = "image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*";
 
-            var $results = "";                    // where the content is put
+            public $results = "";                    // where the content is put
 
-            var $error = "";                    // error messages sent here
+            public $error = "";                    // error messages sent here
 
-            var $response_code = "";                    // response code returned from server
+            public $response_code = "";                    // response code returned from server
 
-            var $headers = [];            // headers returned from server sent here
+            public $headers = [];            // headers returned from server sent here
 
-            var $maxlength = 500000;                // max return data length (body)
+            public $maxlength = 500000;                // max return data length (body)
 
-            var $read_timeout = 0;                    // timeout on read operations, in seconds
+            public $read_timeout = 0;                    // timeout on read operations, in seconds
 
             // supported only since PHP 4 Beta 4
             // set to 0 to disallow timeouts
-            var $timed_out = false;                // if a read operation timed out
+            public $timed_out = false;                // if a read operation timed out
 
-            var $status = 0;                    // http request status
+            public $status = 0;                    // http request status
 
-            var $temp_dir = "/tmp";                // temporary directory that the webserver
+            public $temp_dir = "/tmp";                // temporary directory that the webserver
 
             // has permission to write to.
             // under Windows, this should be C:\temp
 
-            var $curl_path = "/usr/local/bin/curl";
+            public $curl_path = "/usr/local/bin/curl";
 
             // Snoopy will use cURL for fetching
             // SSL content if a full system path to
@@ -91,29 +91,29 @@
             // as these functions are not stable
             // as of this Snoopy release.
 
-            var $_maxlinelen = 4096;                // max line length (headers)
+            public $_maxlinelen = 4096;                // max line length (headers)
 
-            var $_httpmethod = "GET";                // default http request method
+            public $_httpmethod = "GET";                // default http request method
 
-            var $_httpversion = "HTTP/1.0";            // default http request version
+            public $_httpversion = "HTTP/1.0";            // default http request version
 
-            var $_submit_method = "POST";                // default submit method
+            public $_submit_method = "POST";                // default submit method
 
-            var $_submit_type = "application/x-www-form-urlencoded";    // default submit type
+            public $_submit_type = "application/x-www-form-urlencoded";    // default submit type
 
-            var $_mime_boundary = "";                    // MIME boundary for multipart/form-data submit type
+            public $_mime_boundary = "";                    // MIME boundary for multipart/form-data submit type
 
-            var $_redirectaddr = false;                // will be set if page fetched is a redirect
+            public $_redirectaddr = false;                // will be set if page fetched is a redirect
 
-            var $_redirectdepth = 0;                    // increments on an http redirect
+            public $_redirectdepth = 0;                    // increments on an http redirect
 
-            var $_frameurls = [];            // frame src urls
+            public $_frameurls = [];            // frame src urls
 
-            var $_framedepth = 0;                    // increments on frame depth
+            public $_framedepth = 0;                    // increments on frame depth
 
-            var $_isproxy = false;                // set if using a proxy server
+            public $_isproxy = false;                // set if using a proxy server
 
-            var $_fp_timeout = 30;                    // timeout for socket connection
+            public $_fp_timeout = 30;                    // timeout for socket connection
 
             /*======================================================================*\
                 Function:	fetch
@@ -124,7 +124,7 @@
                 Output:		$this->results	the output text from the fetch
             \*======================================================================*/
 
-            function fetch($URI)
+            public function fetch($URI)
             {
                 // preg_match("|^([^:]+)://([^:/]+)(:[\d]+)*(.*)|",$URI,$URI_PARTS);
                 $URI_PARTS = parse_url($URI);
@@ -169,19 +169,15 @@
 
                             $this->_disconnect($fp);
 
-                            if($this->_redirectaddr)
+                            if($this->_redirectaddr && $this->maxredirs > $this->_redirectdepth)
                             {
-                                /* url was redirected, check if we've hit the max depth */
-                                if($this->maxredirs > $this->_redirectdepth)
+                                // only follow redirect if it's on this site, or offsiteok is true
+                                if(preg_match("|^http://".preg_quote($this->host)."|i", $this->_redirectaddr) || $this->offsiteok)
                                 {
-                                    // only follow redirect if it's on this site, or offsiteok is true
-                                    if(preg_match("|^http://".preg_quote($this->host)."|i", $this->_redirectaddr) || $this->offsiteok)
-                                    {
-                                        /* follow the redirect */
-                                        $this->_redirectdepth++;
-                                        $this->lastredirectaddr = $this->_redirectaddr;
-                                        $this->fetch($this->_redirectaddr);
-                                    }
+                                    /* follow the redirect */
+                                    $this->_redirectdepth++;
+                                    $this->lastredirectaddr = $this->_redirectaddr;
+                                    $this->fetch($this->_redirectaddr);
                                 }
                             }
 
@@ -216,12 +212,9 @@
                         {
                             return false;
                         }
-                        if(function_exists("is_executable"))
+                        if(function_exists("is_executable") && ! is_executable($this->curl_path))
                         {
-                            if(! is_executable($this->curl_path))
-                            {
-                                return false;
-                            }
+                            return false;
                         }
                         $this->host = $URI_PARTS["host"];
                         if(! empty($URI_PARTS["port"]))
@@ -240,19 +233,15 @@
                             $this->_httpsrequest($path, $URI, $this->_httpmethod);
                         }
 
-                        if($this->_redirectaddr)
+                        if($this->_redirectaddr && $this->maxredirs > $this->_redirectdepth)
                         {
-                            /* url was redirected, check if we've hit the max depth */
-                            if($this->maxredirs > $this->_redirectdepth)
+                            // only follow redirect if it's on this site, or offsiteok is true
+                            if(preg_match("|^http://".preg_quote($this->host)."|i", $this->_redirectaddr) || $this->offsiteok)
                             {
-                                // only follow redirect if it's on this site, or offsiteok is true
-                                if(preg_match("|^http://".preg_quote($this->host)."|i", $this->_redirectaddr) || $this->offsiteok)
-                                {
-                                    /* follow the redirect */
-                                    $this->_redirectdepth++;
-                                    $this->lastredirectaddr = $this->_redirectaddr;
-                                    $this->fetch($this->_redirectaddr);
-                                }
+                                /* follow the redirect */
+                                $this->_redirectdepth++;
+                                $this->lastredirectaddr = $this->_redirectaddr;
+                                $this->fetch($this->_redirectaddr);
                             }
                         }
 
@@ -299,7 +288,7 @@
                 Output:		$this->results	the text output from the post
             \*======================================================================*/
 
-            function submit($URI, $formvars = "", $formfiles = "")
+            public function submit($URI, $formvars = "", $formfiles = "")
             {
                 unset($postdata);
 
@@ -347,30 +336,26 @@
 
                             $this->_disconnect($fp);
 
-                            if($this->_redirectaddr)
+                            if($this->_redirectaddr && $this->maxredirs > $this->_redirectdepth)
                             {
-                                /* url was redirected, check if we've hit the max depth */
-                                if($this->maxredirs > $this->_redirectdepth)
+                                if(! preg_match("|^".$URI_PARTS["scheme"]."://|", $this->_redirectaddr))
                                 {
-                                    if(! preg_match("|^".$URI_PARTS["scheme"]."://|", $this->_redirectaddr))
-                                    {
-                                        $this->_redirectaddr = $this->_expandlinks($this->_redirectaddr, $URI_PARTS["scheme"]."://".$URI_PARTS["host"]);
-                                    }
+                                    $this->_redirectaddr = $this->_expandlinks($this->_redirectaddr, $URI_PARTS["scheme"]."://".$URI_PARTS["host"]);
+                                }
 
-                                    // only follow redirect if it's on this site, or offsiteok is true
-                                    if(preg_match("|^http://".preg_quote($this->host)."|i", $this->_redirectaddr) || $this->offsiteok)
+                                // only follow redirect if it's on this site, or offsiteok is true
+                                if(preg_match("|^http://".preg_quote($this->host)."|i", $this->_redirectaddr) || $this->offsiteok)
+                                {
+                                    /* follow the redirect */
+                                    $this->_redirectdepth++;
+                                    $this->lastredirectaddr = $this->_redirectaddr;
+                                    if(strpos($this->_redirectaddr, "?") > 0)
                                     {
-                                        /* follow the redirect */
-                                        $this->_redirectdepth++;
-                                        $this->lastredirectaddr = $this->_redirectaddr;
-                                        if(strpos($this->_redirectaddr, "?") > 0)
-                                        {
-                                            $this->fetch($this->_redirectaddr);
-                                        } // the redirect has changed the request method from post to get
-                                        else
-                                        {
-                                            $this->submit($this->_redirectaddr, $formvars, $formfiles);
-                                        }
+                                        $this->fetch($this->_redirectaddr);
+                                    } // the redirect has changed the request method from post to get
+                                    else
+                                    {
+                                        $this->submit($this->_redirectaddr, $formvars, $formfiles);
                                     }
                                 }
                             }
@@ -406,12 +391,9 @@
                         {
                             return false;
                         }
-                        if(function_exists("is_executable"))
+                        if(function_exists("is_executable") && ! is_executable($this->curl_path))
                         {
-                            if(! is_executable($this->curl_path))
-                            {
-                                return false;
-                            }
+                            return false;
                         }
                         $this->host = $URI_PARTS["host"];
                         if(! empty($URI_PARTS["port"]))
@@ -430,30 +412,26 @@
                             $this->_httpsrequest($path, $URI, $this->_submit_method, $this->_submit_type, $postdata);
                         }
 
-                        if($this->_redirectaddr)
+                        if($this->_redirectaddr && $this->maxredirs > $this->_redirectdepth)
                         {
-                            /* url was redirected, check if we've hit the max depth */
-                            if($this->maxredirs > $this->_redirectdepth)
+                            if(! preg_match("|^".$URI_PARTS["scheme"]."://|", $this->_redirectaddr))
                             {
-                                if(! preg_match("|^".$URI_PARTS["scheme"]."://|", $this->_redirectaddr))
-                                {
-                                    $this->_redirectaddr = $this->_expandlinks($this->_redirectaddr, $URI_PARTS["scheme"]."://".$URI_PARTS["host"]);
-                                }
+                                $this->_redirectaddr = $this->_expandlinks($this->_redirectaddr, $URI_PARTS["scheme"]."://".$URI_PARTS["host"]);
+                            }
 
-                                // only follow redirect if it's on this site, or offsiteok is true
-                                if(preg_match("|^http://".preg_quote($this->host)."|i", $this->_redirectaddr) || $this->offsiteok)
+                            // only follow redirect if it's on this site, or offsiteok is true
+                            if(preg_match("|^http://".preg_quote($this->host)."|i", $this->_redirectaddr) || $this->offsiteok)
+                            {
+                                /* follow the redirect */
+                                $this->_redirectdepth++;
+                                $this->lastredirectaddr = $this->_redirectaddr;
+                                if(strpos($this->_redirectaddr, "?") > 0)
                                 {
-                                    /* follow the redirect */
-                                    $this->_redirectdepth++;
-                                    $this->lastredirectaddr = $this->_redirectaddr;
-                                    if(strpos($this->_redirectaddr, "?") > 0)
-                                    {
-                                        $this->fetch($this->_redirectaddr);
-                                    } // the redirect has changed the request method from post to get
-                                    else
-                                    {
-                                        $this->submit($this->_redirectaddr, $formvars, $formfiles);
-                                    }
+                                    $this->fetch($this->_redirectaddr);
+                                } // the redirect has changed the request method from post to get
+                                else
+                                {
+                                    $this->submit($this->_redirectaddr, $formvars, $formfiles);
                                 }
                             }
                         }
@@ -498,7 +476,7 @@
                 Output:		$this->results	an array of the URLs
             \*======================================================================*/
 
-            function fetchlinks($URI)
+            public function fetchlinks($URI)
             {
                 if($this->fetch($URI))
                 {
@@ -508,9 +486,9 @@
                     }
                     if(is_array($this->results))
                     {
-                        for($x = 0; $x < count($this->results); $x++)
+                        foreach($this->results as $x => $xValue)
                         {
-                            $this->results[$x] = $this->_striplinks($this->results[$x]);
+                            $this->results[$x] = $this->_striplinks($xValue);
                         }
                     }
                     else
@@ -538,15 +516,15 @@
                 Output:		$this->results	the resulting html form
             \*======================================================================*/
 
-            function fetchform($URI)
+            public function fetchform($URI)
             {
                 if($this->fetch($URI))
                 {
                     if(is_array($this->results))
                     {
-                        for($x = 0; $x < count($this->results); $x++)
+                        foreach($this->results as $x => $xValue)
                         {
-                            $this->results[$x] = $this->_stripform($this->results[$x]);
+                            $this->results[$x] = $this->_stripform($xValue);
                         }
                     }
                     else
@@ -569,15 +547,15 @@
                 Output:		$this->results	the text from the web page
             \*======================================================================*/
 
-            function fetchtext($URI)
+            public function fetchtext($URI)
             {
                 if($this->fetch($URI))
                 {
                     if(is_array($this->results))
                     {
-                        for($x = 0; $x < count($this->results); $x++)
+                        foreach($this->results as $x => $xValue)
                         {
-                            $this->results[$x] = $this->_striptext($this->results[$x]);
+                            $this->results[$x] = $this->_striptext($xValue);
                         }
                     }
                     else
@@ -600,7 +578,7 @@
                 Output:		$this->results	an array of the links from the post
             \*======================================================================*/
 
-            function submitlinks($URI, $formvars = "", $formfiles = "")
+            public function submitlinks($URI, $formvars = "", $formfiles = "")
             {
                 if($this->submit($URI, $formvars, $formfiles))
                 {
@@ -610,12 +588,12 @@
                     }
                     if(is_array($this->results))
                     {
-                        for($x = 0; $x < count($this->results); $x++)
+                        foreach($this->results as $x => $xValue)
                         {
-                            $this->results[$x] = $this->_striplinks($this->results[$x]);
+                            $this->results[$x] = $this->_striplinks($xValue);
                             if($this->expandlinks)
                             {
-                                $this->results[$x] = $this->_expandlinks($this->results[$x], $URI);
+                                $this->results[$x] = $this->_expandlinks($xValue, $URI);
                             }
                         }
                     }
@@ -643,7 +621,7 @@
                 Output:		$this->results	the text from the web page
             \*======================================================================*/
 
-            function submittext($URI, $formvars = "", $formfiles = "")
+            public function submittext($URI, $formvars = "", $formfiles = "")
             {
                 if($this->submit($URI, $formvars, $formfiles))
                 {
@@ -653,12 +631,12 @@
                     }
                     if(is_array($this->results))
                     {
-                        for($x = 0; $x < count($this->results); $x++)
+                        foreach($this->results as $x => $xValue)
                         {
-                            $this->results[$x] = $this->_striptext($this->results[$x]);
+                            $this->results[$x] = $this->_striptext($xValue);
                             if($this->expandlinks)
                             {
-                                $this->results[$x] = $this->_expandlinks($this->results[$x], $URI);
+                                $this->results[$x] = $this->_expandlinks($xValue, $URI);
                             }
                         }
                     }
@@ -684,7 +662,7 @@
                 Purpose:	Set the form submission content type to
                             multipart/form-data
             \*======================================================================*/
-            function set_submit_multipart()
+            public function set_submit_multipart()
             {
                 $this->_submit_type = "multipart/form-data";
             }
@@ -694,7 +672,7 @@
                 Purpose:	Set the form submission content type to
                             application/x-www-form-urlencoded
             \*======================================================================*/
-            function set_submit_normal()
+            public function set_submit_normal()
             {
                 $this->_submit_type = "application/x-www-form-urlencoded";
             }
@@ -713,7 +691,7 @@
                 Output:		$match		an array of the links
             \*======================================================================*/
 
-            function _striplinks($document)
+            public function _striplinks($document)
             {
                 preg_match_all(
                     "'<\s*a\s.*?href\s*=\s*			# find <a href=
@@ -752,7 +730,7 @@
                 Output:		$match		an array of the links
             \*======================================================================*/
 
-            function _stripform($document)
+            public function _stripform($document)
             {
                 preg_match_all("'<\/?(FORM|INPUT|SELECT|TEXTAREA|(OPTION))[^<>]*>(?(2)(.*(?=<\/?(option|select)[^<>]*>[\r\n]*)|(?=[\r\n]*))|(?=[\r\n]*))'Usi", $document, $elements);
 
@@ -770,7 +748,7 @@
                 Output:		$text		the resulting text
             \*======================================================================*/
 
-            function _striptext($document)
+            public function _striptext($document)
             {
                 // I didn't use preg eval (//e) since that is only available in PHP 4.0.
                 // so, list your entities one by one here. I included some of the
@@ -840,7 +818,7 @@
                 Output:		$expandedLinks	the expanded links
             \*======================================================================*/
 
-            function _expandlinks($links, $URI)
+            public function _expandlinks($links, $URI)
             {
                 preg_match("/^[^\?]+/", $URI, $match);
 
@@ -880,7 +858,7 @@
                 Output:
             \*======================================================================*/
 
-            function _httprequest($url, $fp, $URI, $http_method, $content_type = "", $body = "")
+            public function _httprequest($url, $fp, $URI, $http_method, $content_type = "", $body = "")
             {
                 $cookie_headers = '';
                 if($this->passcookies && $this->_redirectaddr)
@@ -973,7 +951,7 @@
                 // set the read timeout if needed
                 if($this->read_timeout > 0)
                 {
-                    socket_set_timeout($fp, $this->read_timeout);
+                    stream_set_timeout($fp, $this->read_timeout);
                 }
                 $this->timed_out = false;
 
@@ -1000,9 +978,13 @@
                     if(preg_match("/^(Location:|URI:)/i", $currentHeader))
                     {
                         // get URL portion of the redirect
-                        preg_match("/^(Location:|URI:)[ ]+(.*)/i", chop($currentHeader), $matches);
+                        preg_match("/^(Location:|URI:)[ ]+(.*)/i", rtrim($currentHeader), $matches);
                         // look for :// in the Location header to see if hostname is included
-                        if(! preg_match("|\:\/\/|", $matches[2]))
+                        if(preg_match("|\:\/\/|", $matches[2]))
+                        {
+                            $this->_redirectaddr = $matches[2];
+                        }
+                        else
                         {
                             // no host in the path, so prepend
                             $this->_redirectaddr = $URI_PARTS["scheme"]."://".$this->host.":".$this->port;
@@ -1015,10 +997,6 @@
                             {
                                 $this->_redirectaddr .= $matches[2];
                             }
-                        }
-                        else
-                        {
-                            $this->_redirectaddr = $matches[2];
                         }
                     }
 
@@ -1038,7 +1016,7 @@
                 do
                 {
                     $_data = fread($fp, $this->maxlength);
-                    if(strlen($_data) == 0)
+                    if($_data == '')
                     {
                         break;
                     }
@@ -1064,9 +1042,9 @@
                 if(($this->_framedepth < $this->maxframes) && preg_match_all("'<frame\s+.*src[\s]*=[\'\"]?([^\'\"\>]+)'i", $results, $match))
                 {
                     $this->results[] = $results;
-                    for($x = 0; $x < count($match[1]); $x++)
+                    foreach($match[1] as $xValue)
                     {
-                        $this->_frameurls[] = $this->_expandlinks($match[1][$x], $URI_PARTS["scheme"]."://".$this->host);
+                        $this->_frameurls[] = $this->_expandlinks($xValue, $URI_PARTS["scheme"]."://".$this->host);
                     }
                 } // have we already fetched framed content?
                 elseif(is_array($this->results))
@@ -1090,7 +1068,7 @@
                 Output:
             \*======================================================================*/
 
-            function _httpsrequest($url, $URI, $http_method, $content_type = "", $body = "")
+            public function _httpsrequest($url, $URI, $http_method, $content_type = "", $body = "")
             {
                 if($this->passcookies && $this->_redirectaddr)
                 {
@@ -1212,15 +1190,19 @@
                 $this->_redirectaddr = false;
                 unset($this->headers);
 
-                for($currentHeader = 0; $currentHeader < count($result_headers); $currentHeader++)
+                foreach($result_headers as $currentHeader => $currentHeaderValue)
                 {
                     // if a header begins with Location: or URI:, set the redirect
                     if(preg_match("/^(Location: |URI: )/i", $result_headers[$currentHeader]))
                     {
                         // get URL portion of the redirect
-                        preg_match("/^(Location: |URI:)\s+(.*)/", chop($result_headers[$currentHeader]), $matches);
+                        preg_match("/^(Location: |URI:)\s+(.*)/", rtrim($currentHeaderValue), $matches);
                         // look for :// in the Location header to see if hostname is included
-                        if(! preg_match("|\:\/\/|", $matches[2]))
+                        if(preg_match("|\:\/\/|", $matches[2]))
+                        {
+                            $this->_redirectaddr = $matches[2];
+                        }
+                        else
                         {
                             // no host in the path, so prepend
                             $this->_redirectaddr = $URI_PARTS["scheme"]."://".$this->host.":".$this->port;
@@ -1234,18 +1216,14 @@
                                 $this->_redirectaddr .= $matches[2];
                             }
                         }
-                        else
-                        {
-                            $this->_redirectaddr = $matches[2];
-                        }
                     }
 
                     if(preg_match("|^HTTP/|", $result_headers[$currentHeader]))
                     {
-                        $this->response_code = $result_headers[$currentHeader];
+                        $this->response_code = $currentHeaderValue;
                     }
 
-                    $this->headers[] = $result_headers[$currentHeader];
+                    $this->headers[] = $currentHeaderValue;
                 }
 
                 // check if there is a redirect meta tag
@@ -1259,9 +1237,9 @@
                 if(($this->_framedepth < $this->maxframes) && preg_match_all("'<frame\s+.*src[\s]*=[\'\"]?([^\'\"\>]+)'i", $results, $match))
                 {
                     $this->results[] = $results;
-                    for($x = 0; $x < count($match[1]); $x++)
+                    foreach($match[1] as $xValue)
                     {
-                        $this->_frameurls[] = $this->_expandlinks($match[1][$x], $URI_PARTS["scheme"]."://".$this->host);
+                        $this->_frameurls[] = $this->_expandlinks($xValue, $URI_PARTS["scheme"]."://".$this->host);
                     }
                 } // have we already fetched framed content?
                 elseif(is_array($this->results))
@@ -1283,9 +1261,9 @@
                 Purpose:	set cookies for a redirection
             \*======================================================================*/
 
-            function setcookies()
+            public function setcookies()
             {
-                for($x = 0; $x < count($this->headers); $x++)
+                foreach($this->headers as $x => $xValue)
                 {
                     if(preg_match('/^set-cookie:[\s]+([^=]+)=([^;]+)/i', $this->headers[$x], $match))
                     {
@@ -1300,11 +1278,11 @@
                 Input:		$fp	file pointer
             \*======================================================================*/
 
-            function _check_timeout($fp)
+            public function _check_timeout($fp)
             {
                 if($this->read_timeout > 0)
                 {
-                    $fp_status = socket_get_status($fp);
+                    $fp_status = stream_get_meta_data($fp);
                     if($fp_status["timed_out"])
                     {
                         $this->timed_out = true;
@@ -1322,7 +1300,7 @@
                 Input:		$fp	file pointer
             \*======================================================================*/
 
-            function _connect(&$fp)
+            public function _connect(&$fp)
             {
                 if(! empty($this->proxy_host) && ! empty($this->proxy_port))
                 {
@@ -1371,7 +1349,7 @@
                 Input:		$fp	file pointer
             \*======================================================================*/
 
-            function _disconnect($fp)
+            public function _disconnect($fp)
             {
                 return (fclose($fp));
             }
@@ -1384,7 +1362,7 @@
                 Output:		post body
             \*======================================================================*/
 
-            function _prepare_post_body($formvars, $formfiles)
+            public function _prepare_post_body($formvars, $formfiles)
             {
                 settype($formvars, "array");
                 settype($formfiles, "array");
@@ -1416,7 +1394,7 @@
                         break;
 
                     case "multipart/form-data":
-                        $this->_mime_boundary = "Snoopy".md5(uniqid(microtime()));
+                        $this->_mime_boundary = "Snoopy".md5(uniqid(microtime(), true));
 
                         reset($formvars);
                         foreach($formvars as $key => $val)

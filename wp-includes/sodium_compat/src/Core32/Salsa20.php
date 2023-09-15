@@ -5,9 +5,9 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core32_Salsa20 extends ParagonIE_Sodium_Core32_Util
+    abstract class Salsa20 extends ParagonIE_Sodium_Core32_Util
     {
-        const ROUNDS = 20;
+        public const ROUNDS = 20;
 
         public static function salsa20_xor_ic($m, $n, $ic, $k)
         {

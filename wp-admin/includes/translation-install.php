@@ -109,15 +109,12 @@
         echo '<option value="" lang="en" selected="selected" data-continue="Continue" data-installed="1">English (United States)</option>';
         echo "\n";
 
-        if(! empty($wp_local_package) && isset($languages[$wp_local_package]))
+        if(! empty($wp_local_package) && isset($languages[$wp_local_package]) && isset($languages[$wp_local_package]))
         {
-            if(isset($languages[$wp_local_package]))
-            {
-                $language = $languages[$wp_local_package];
-                printf('<option value="%s" lang="%s" data-continue="%s"%s>%s</option>'."\n", esc_attr($language['language']), esc_attr(current($language['iso'])), esc_attr($language['strings']['continue'] ? $language['strings']['continue'] : 'Continue'), in_array($language['language'], $installed_languages, true) ? ' data-installed="1"' : '', esc_html($language['native_name']));
+            $language = $languages[$wp_local_package];
+            printf('<option value="%s" lang="%s" data-continue="%s"%s>%s</option>'."\n", esc_attr($language['language']), esc_attr(current($language['iso'])), esc_attr($language['strings']['continue'] ? $language['strings']['continue'] : 'Continue'), in_array($language['language'], $installed_languages, true) ? ' data-installed="1"' : '', esc_html($language['native_name']));
 
-                unset($languages[$wp_local_package]);
-            }
+            unset($languages[$wp_local_package]);
         }
 
         foreach($languages as $language)
@@ -190,10 +187,5 @@
 
         $check = $upgrader->fs_connect([WP_CONTENT_DIR, WP_LANG_DIR]);
 
-        if(! $check || is_wp_error($check))
-        {
-            return false;
-        }
-
-        return true;
+        return ! (! $check || is_wp_error($check));
     }

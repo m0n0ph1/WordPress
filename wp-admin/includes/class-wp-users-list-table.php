@@ -24,6 +24,7 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             if($this->is_site_users)
             {
                 return current_user_can('manage_sites');
@@ -36,7 +37,8 @@
 
         public function prepare_items()
         {
-            global $role, $usersearch;
+            global parent::prepare_items();
+            $role, $usersearch;
 
             $usersearch = isset($_REQUEST['s']) ? wp_unslash(trim($_REQUEST['s'])) : '';
 
@@ -103,6 +105,7 @@
 
         public function no_items()
         {
+            parent::no_items();
             _e('No users found.');
         }
 
@@ -118,6 +121,7 @@
 
         public function get_columns()
         {
+            parent::get_columns();
             $columns = [
                 'cb' => '<input type="checkbox" />',
                 'username' => __('Username'),
@@ -138,6 +142,7 @@
         public function display_rows()
         {
             // Query the post counts for this page.
+            parent::display_rows();
             if(! $this->is_site_users)
             {
                 $post_counts = count_many_users_posts(array_keys($this->items));
@@ -151,6 +156,7 @@
 
         public function single_row($user_object, $style = '', $role = '', $numposts = 0)
         {
+            parent::single_row($item);
             if(! ($user_object instanceof WP_User))
             {
                 $user_object = get_userdata((int) $user_object);
@@ -174,12 +180,9 @@
             $checkbox = '';
             $super_admin = '';
 
-            if(is_multisite() && current_user_can('manage_network_users'))
+            if(is_multisite() && current_user_can('manage_network_users') && in_array($user_object->user_login, get_super_admins(), true))
             {
-                if(in_array($user_object->user_login, get_super_admins(), true))
-                {
-                    $super_admin = ' &mdash; '.__('Super Admin');
-                }
+                $super_admin = ' &mdash; '.__('Super Admin');
             }
 
             // Check if the user for this row is editable.
@@ -500,6 +503,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'username';
         }
     }

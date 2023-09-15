@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
     #[AllowDynamicProperties]
     class WP_Site_Health_Auto_Updates

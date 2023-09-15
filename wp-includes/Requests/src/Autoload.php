@@ -89,7 +89,7 @@
                 // Check that the class starts with "Requests" (PSR-0) or "WpOrg\Requests" (PSR-4).
                 $psr_4_prefix_pos = strpos($class_name, 'WpOrg\\Requests\\');
 
-                if(stripos($class_name, 'Requests') !== 0 && $psr_4_prefix_pos !== 0)
+                if(strncasecmp($class_name, 'Requests', 8) !== 0 && $psr_4_prefix_pos !== 0)
                 {
                     return false;
                 }
@@ -104,7 +104,7 @@
                 elseif($psr_4_prefix_pos === 0)
                 {
                     // PSR-4 classname.
-                    $file = __DIR__.'/'.strtr(substr($class_name, 15), '\\', '/').'.php';
+                    $file = __DIR__.'/'.str_replace('\\', '/', substr($class_name, 15)).'.php';
                 }
 
                 if(isset($file) && file_exists($file))

@@ -8,6 +8,7 @@
         public function __construct(
             $url, $timeout = 10, $redirects = 5, $headers = null, $useragent = null, $force_fsockopen = false
         ) {
+            parent::__construct($url, $timeout, $redirects, $headers, $useragent, $force_fsockopen, null);
             $this->url = $url;
             $this->timeout = $timeout;
             $this->redirects = $redirects;

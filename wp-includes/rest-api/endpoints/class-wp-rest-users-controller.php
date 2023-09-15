@@ -14,6 +14,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -1221,7 +1222,7 @@
                 return new WP_Error('rest_trash_not_supported', /* translators: %s: force=true */ sprintf(__("Users do not support trashing. Set '%s' to delete."), 'force=true'), ['status' => 501]);
             }
 
-            if(! empty($reassign))
+            if($reassign !== null)
             {
                 if($reassign === $id || ! get_userdata($reassign))
                 {

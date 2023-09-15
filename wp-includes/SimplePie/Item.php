@@ -1,10 +1,10 @@
 <?php
 
-    class SimplePie_Item
+    class Item
     {
-        var $feed;
+        public $feed;
 
-        var $data = [];
+        public $data = [];
 
         protected $registry;
 
@@ -36,23 +36,7 @@
         {
             if(! $hash)
             {
-                if($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'id'))
-                {
-                    return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-                }
-                elseif($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_03, 'id'))
-                {
-                    return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-                }
-                elseif($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'guid'))
-                {
-                    return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-                }
-                elseif($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_DC_11, 'identifier'))
-                {
-                    return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-                }
-                elseif($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_DC_10, 'identifier'))
+                if($this->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'id') || $this->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_03, 'id') || $this->get_item_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'guid') || $this->get_item_tags(SIMPLEPIE_NAMESPACE_DC_11, 'identifier') || $return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_DC_10, 'identifier'))
                 {
                     return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
                 }
@@ -172,7 +156,7 @@
                             $this->data['links'][SIMPLEPIE_IANA_LINK_RELATIONS_REGISTRY.$key] =& $this->data['links'][$key];
                         }
                     }
-                    elseif(substr($key, 0, 41) === SIMPLEPIE_IANA_LINK_RELATIONS_REGISTRY)
+                    elseif(strpos($key, SIMPLEPIE_IANA_LINK_RELATIONS_REGISTRY) === 0)
                     {
                         $this->data['links'][substr($key, 41)] =& $this->data['links'][$key];
                     }
@@ -488,12 +472,9 @@
                         $description_parent = $this->sanitize($description_parent[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
                     }
                 }
-                elseif($description_parent = $parent->get_channel_tags(SIMPLEPIE_NAMESPACE_MEDIARSS, 'description'))
+                elseif($parent->get_channel_tags(SIMPLEPIE_NAMESPACE_MEDIARSS, 'description') && isset($description_parent[0]['data']))
                 {
-                    if(isset($description_parent[0]['data']))
-                    {
-                        $description_parent = $this->sanitize($description_parent[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-                    }
+                    $description_parent = $this->sanitize($description_parent[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
                 }
 
                 // DURATION
@@ -505,16 +486,16 @@
                     if(isset($duration_parent[0]['data']))
                     {
                         $temp = explode(':', $this->sanitize($duration_parent[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT));
-                        if(sizeof($temp) > 0)
+                        if(count($temp) > 0)
                         {
                             $seconds = (int) array_pop($temp);
                         }
-                        if(sizeof($temp) > 0)
+                        if(count($temp) > 0)
                         {
                             $minutes = (int) array_pop($temp);
                             $seconds += $minutes * 60;
                         }
-                        if(sizeof($temp) > 0)
+                        if(count($temp) > 0)
                         {
                             $hours = (int) array_pop($temp);
                             $seconds += $hours * 3600;
@@ -634,12 +615,9 @@
                         $player_parent = $this->sanitize($player_parent[0]['attribs']['']['url'], SIMPLEPIE_CONSTRUCT_IRI);
                     }
                 }
-                elseif($player_parent = $parent->get_channel_tags(SIMPLEPIE_NAMESPACE_MEDIARSS, 'player'))
+                elseif($parent->get_channel_tags(SIMPLEPIE_NAMESPACE_MEDIARSS, 'player') && isset($player_parent[0]['attribs']['']['url']))
                 {
-                    if(isset($player_parent[0]['attribs']['']['url']))
-                    {
-                        $player_parent = $this->sanitize($player_parent[0]['attribs']['']['url'], SIMPLEPIE_CONSTRUCT_IRI);
-                    }
+                    $player_parent = $this->sanitize($player_parent[0]['attribs']['']['url'], SIMPLEPIE_CONSTRUCT_IRI);
                 }
 
                 // RATINGS
@@ -844,12 +822,9 @@
                         $title_parent = $this->sanitize($title_parent[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
                     }
                 }
-                elseif($title_parent = $parent->get_channel_tags(SIMPLEPIE_NAMESPACE_MEDIARSS, 'title'))
+                elseif($parent->get_channel_tags(SIMPLEPIE_NAMESPACE_MEDIARSS, 'title') && isset($title_parent[0]['data']))
                 {
-                    if(isset($title_parent[0]['data']))
-                    {
-                        $title_parent = $this->sanitize($title_parent[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-                    }
+                    $title_parent = $this->sanitize($title_parent[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
                 }
 
                 // Clear the memory
@@ -2156,70 +2131,67 @@
                     }
                 }
 
-                if($enclosure = $this->get_item_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'enclosure'))
+                if($this->get_item_tags(SIMPLEPIE_NAMESPACE_RSS_20, 'enclosure') && isset($enclosure[0]['attribs']['']['url']))
                 {
-                    if(isset($enclosure[0]['attribs']['']['url']))
+                    // Attributes
+                    $bitrate = null;
+                    $channels = null;
+                    $duration = null;
+                    $expression = null;
+                    $framerate = null;
+                    $height = null;
+                    $javascript = null;
+                    $lang = null;
+                    $length = null;
+                    $medium = null;
+                    $samplingrate = null;
+                    $type = null;
+                    $url = null;
+                    $width = null;
+
+                    $url = $this->sanitize($enclosure[0]['attribs']['']['url'], SIMPLEPIE_CONSTRUCT_IRI, $this->get_base($enclosure[0]));
+                    $url = $this->feed->sanitize->https_url($url);
+                    if(isset($enclosure[0]['attribs']['']['type']))
                     {
-                        // Attributes
-                        $bitrate = null;
-                        $channels = null;
-                        $duration = null;
-                        $expression = null;
-                        $framerate = null;
-                        $height = null;
-                        $javascript = null;
-                        $lang = null;
-                        $length = null;
-                        $medium = null;
-                        $samplingrate = null;
-                        $type = null;
-                        $url = null;
-                        $width = null;
-
-                        $url = $this->sanitize($enclosure[0]['attribs']['']['url'], SIMPLEPIE_CONSTRUCT_IRI, $this->get_base($enclosure[0]));
-                        $url = $this->feed->sanitize->https_url($url);
-                        if(isset($enclosure[0]['attribs']['']['type']))
-                        {
-                            $type = $this->sanitize($enclosure[0]['attribs']['']['type'], SIMPLEPIE_CONSTRUCT_TEXT);
-                        }
-                        if(isset($enclosure[0]['attribs']['']['length']))
-                        {
-                            $length = intval($enclosure[0]['attribs']['']['length']);
-                        }
-
-                        // Since we don't have group or content for these, we'll just pass the '*_parent' variables directly to the constructor
-                        $this->data['enclosures'][] = $this->registry->create('Enclosure', [
-                            $url,
-                            $type,
-                            $length,
-                            null,
-                            $bitrate,
-                            $captions_parent,
-                            $categories_parent,
-                            $channels,
-                            $copyrights_parent,
-                            $credits_parent,
-                            $description_parent,
-                            $duration_parent,
-                            $expression,
-                            $framerate,
-                            $hashes_parent,
-                            $height,
-                            $keywords_parent,
-                            $lang,
-                            $medium,
-                            $player_parent,
-                            $ratings_parent,
-                            $restrictions_parent,
-                            $samplingrate,
-                            $thumbnails_parent,
-                            $title_parent,
-                            $width
-                        ]);
+                        $type = $this->sanitize($enclosure[0]['attribs']['']['type'], SIMPLEPIE_CONSTRUCT_TEXT);
                     }
+                    if(isset($enclosure[0]['attribs']['']['length']))
+                    {
+                        $length = intval($enclosure[0]['attribs']['']['length']);
+                    }
+
+                    // Since we don't have group or content for these, we'll just pass the '*_parent' variables directly to the constructor
+                    $this->data['enclosures'][] = $this->registry->create('Enclosure', [
+                        $url,
+                        $type,
+                        $length,
+                        null,
+                        $bitrate,
+                        $captions_parent,
+                        $categories_parent,
+                        $channels,
+                        $copyrights_parent,
+                        $credits_parent,
+                        $description_parent,
+                        $duration_parent,
+                        $expression,
+                        $framerate,
+                        $hashes_parent,
+                        $height,
+                        $keywords_parent,
+                        $lang,
+                        $medium,
+                        $player_parent,
+                        $ratings_parent,
+                        $restrictions_parent,
+                        $samplingrate,
+                        $thumbnails_parent,
+                        $title_parent,
+                        $width
+                    ]);
                 }
 
-                if(sizeof($this->data['enclosures']) === 0 && ($url || $type || $length || $bitrate || $captions_parent || $categories_parent || $channels || $copyrights_parent || $credits_parent || $description_parent || $duration_parent || $expression || $framerate || $hashes_parent || $height || $keywords_parent || $lang || $medium || $player_parent || $ratings_parent || $restrictions_parent || $samplingrate || $thumbnails_parent || $title_parent || $width))
+                if(count($this->data['enclosures']) === 0 && ($url || $type || $length || $bitrate || $captions_parent || $categories_parent || $channels || $copyrights_parent || $credits_parent || $description_parent || $duration_parent || $expression || $framerate || $hashes_parent || $height || $keywords_parent || $lang || $medium || $player_parent || $ratings_parent || $restrictions_parent || $samplingrate || $thumbnails_parent || $title_parent || $width))
                 {
                     // Since we don't have group or content for these, we'll just pass the '*_parent' variables directly to the constructor
                     $this->data['enclosures'][] = $this->registry->create('Enclosure', [
@@ -2662,11 +2634,7 @@
             {
                 return $this->sanitize($return[0]['data'], $this->registry->call('Misc', 'atom_10_construct_type', [$return[0]['attribs']]), $this->get_base($return[0]));
             }
-            elseif($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_DC_11, 'rights'))
-            {
-                return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
-            }
-            elseif($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_DC_10, 'rights'))
+            elseif($this->get_item_tags(SIMPLEPIE_NAMESPACE_DC_11, 'rights') || $return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_DC_10, 'rights'))
             {
                 return $this->sanitize($return[0]['data'], SIMPLEPIE_CONSTRUCT_TEXT);
             }
@@ -2830,11 +2798,7 @@
 
         public function get_longitude()
         {
-            if($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'long'))
-            {
-                return (float) $return[0]['data'];
-            }
-            elseif($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'lon'))
+            if($this->get_item_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'long') || $return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'lon'))
             {
                 return (float) $return[0]['data'];
             }

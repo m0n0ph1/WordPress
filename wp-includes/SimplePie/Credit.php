@@ -1,12 +1,12 @@
 <?php
 
-    class SimplePie_Credit
+    class Credit
     {
-        var $role;
+        public $role;
 
-        var $scheme;
+        public $scheme;
 
-        var $name;
+        public $name;
 
         public function __construct($role = null, $scheme = null, $name = null)
         {

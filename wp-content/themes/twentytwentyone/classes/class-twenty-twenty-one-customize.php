@@ -51,7 +51,12 @@
                     'default' => 'excerpt',
                     'sanitize_callback' => static function($value)
                     {
-                        return 'excerpt' === $value || 'full' === $value ? $value : 'excerpt';
+                        if('excerpt' === $value || 'full' === $value)
+                        {
+                            return $value;
+                        }
+
+                        return 'excerpt';
                     },
                 ]);
 

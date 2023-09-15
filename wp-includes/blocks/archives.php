@@ -54,10 +54,7 @@
             return sprintf('<div %1$s>%2$s</div>', $wrapper_attributes, $block_content);
         }
 
-        $archives_args = apply_filters('widget_archives_args', [
-            'type' => $type,
-            'show_post_count' => $show_post_count,
-        ]);
+        $archives_args = apply_filters('widget_archives_args', compact('type', 'show_post_count'));
 
         $archives_args['echo'] = 0;
 

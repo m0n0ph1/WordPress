@@ -19,9 +19,9 @@
         exit;
     }
 
-    class getid3_ac3 extends getid3_handler
+    class module extends getid3_handler
     {
-        const syncword = 0x0B77;
+        public const syncword = 0x0B77;
 
         private $AC3header = [];
 
@@ -66,14 +66,11 @@
             $thisfile_ac3_raw_bsi['bsid'] = (getid3_lib::LittleEndian2Int(substr($tempAC3header, 5, 1)) & 0xF8) >> 3; // AC3 and E-AC3 put the "bsid" version identifier in the same place, but unfortnately the 4 bytes between the syncword and the version identifier are interpreted differently, so grab it here so the following code structure can make sense
             unset($tempAC3header);
 
-            if($this->AC3header['syncinfo'] !== self::syncword)
+            if($this->AC3header['syncinfo'] !== self::syncword && ! $this->isDependencyFor('matroska'))
             {
-                if(! $this->isDependencyFor('matroska'))
-                {
-                    unset($info['fileformat'], $info['ac3']);
+                unset($info['fileformat'], $info['ac3']);
 
-                    return $this->error('Expecting "'.dechex(self::syncword).'" at offset '.$info['avdataoffset'].', found "'.dechex($this->AC3header['syncinfo']).'"');
-                }
+                return $this->error('Expecting "'.dechex(self::syncword).'" at offset '.$info['avdataoffset'].', found "'.dechex($this->AC3header['syncinfo']).'"');
             }
 
             $info['audio']['dataformat'] = 'ac3';
@@ -311,76 +308,76 @@
                             $thisfile_ac3_raw_bsi['mixdeflen'] = $this->readHeaderBSI(5);
                             $mixdefbitsread += 5;
                             $thisfile_ac3_raw_bsi['flags']['mixdata2'] = (bool) $this->readHeaderBSI(1);
-                            $mixdefbitsread += 1;
+                            ++$mixdefbitsread;
                             if($thisfile_ac3_raw_bsi['flags']['mixdata2'])
                             {
                                 $thisfile_ac3_raw_bsi['premixcmpsel'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 $thisfile_ac3_raw_bsi['drcsrc'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 $thisfile_ac3_raw_bsi['premixcmpscl'] = $this->readHeaderBSI(3);
                                 $mixdefbitsread += 3;
                                 $thisfile_ac3_raw_bsi['flags']['extpgmlscl'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 if($thisfile_ac3_raw_bsi['flags']['extpgmlscl'])
                                 {
                                     $thisfile_ac3_raw_bsi['extpgmlscl'] = $this->readHeaderBSI(4);
                                     $mixdefbitsread += 4;
                                 }
                                 $thisfile_ac3_raw_bsi['flags']['extpgmcscl'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 if($thisfile_ac3_raw_bsi['flags']['extpgmcscl'])
                                 {
                                     $thisfile_ac3_raw_bsi['extpgmcscl'] = $this->readHeaderBSI(4);
                                     $mixdefbitsread += 4;
                                 }
                                 $thisfile_ac3_raw_bsi['flags']['extpgmrscl'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 if($thisfile_ac3_raw_bsi['flags']['extpgmrscl'])
                                 {
                                     $thisfile_ac3_raw_bsi['extpgmrscl'] = $this->readHeaderBSI(4);
                                 }
                                 $thisfile_ac3_raw_bsi['flags']['extpgmlsscl'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 if($thisfile_ac3_raw_bsi['flags']['extpgmlsscl'])
                                 {
                                     $thisfile_ac3_raw_bsi['extpgmlsscl'] = $this->readHeaderBSI(4);
                                     $mixdefbitsread += 4;
                                 }
                                 $thisfile_ac3_raw_bsi['flags']['extpgmrsscl'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 if($thisfile_ac3_raw_bsi['flags']['extpgmrsscl'])
                                 {
                                     $thisfile_ac3_raw_bsi['extpgmrsscl'] = $this->readHeaderBSI(4);
                                     $mixdefbitsread += 4;
                                 }
                                 $thisfile_ac3_raw_bsi['flags']['extpgmlfescl'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 if($thisfile_ac3_raw_bsi['flags']['extpgmlfescl'])
                                 {
                                     $thisfile_ac3_raw_bsi['extpgmlfescl'] = $this->readHeaderBSI(4);
                                     $mixdefbitsread += 4;
                                 }
                                 $thisfile_ac3_raw_bsi['flags']['dmixscl'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 if($thisfile_ac3_raw_bsi['flags']['dmixscl'])
                                 {
                                     $thisfile_ac3_raw_bsi['dmixscl'] = $this->readHeaderBSI(4);
                                     $mixdefbitsread += 4;
                                 }
                                 $thisfile_ac3_raw_bsi['flags']['addch'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 if($thisfile_ac3_raw_bsi['flags']['addch'])
                                 {
                                     $thisfile_ac3_raw_bsi['flags']['extpgmaux1scl'] = (bool) $this->readHeaderBSI(1);
-                                    $mixdefbitsread += 1;
+                                    ++$mixdefbitsread;
                                     if($thisfile_ac3_raw_bsi['flags']['extpgmaux1scl'])
                                     {
                                         $thisfile_ac3_raw_bsi['extpgmaux1scl'] = $this->readHeaderBSI(4);
                                         $mixdefbitsread += 4;
                                     }
                                     $thisfile_ac3_raw_bsi['flags']['extpgmaux2scl'] = (bool) $this->readHeaderBSI(1);
-                                    $mixdefbitsread += 1;
+                                    ++$mixdefbitsread;
                                     if($thisfile_ac3_raw_bsi['flags']['extpgmaux2scl'])
                                     {
                                         $thisfile_ac3_raw_bsi['extpgmaux2scl'] = $this->readHeaderBSI(4);
@@ -389,13 +386,13 @@
                                 }
                             }
                             $thisfile_ac3_raw_bsi['flags']['mixdata3'] = (bool) $this->readHeaderBSI(1);
-                            $mixdefbitsread += 1;
+                            ++$mixdefbitsread;
                             if($thisfile_ac3_raw_bsi['flags']['mixdata3'])
                             {
                                 $thisfile_ac3_raw_bsi['spchdat'] = $this->readHeaderBSI(5);
                                 $mixdefbitsread += 5;
                                 $thisfile_ac3_raw_bsi['flags']['addspchdat'] = (bool) $this->readHeaderBSI(1);
-                                $mixdefbitsread += 1;
+                                ++$mixdefbitsread;
                                 if($thisfile_ac3_raw_bsi['flags']['addspchdat'])
                                 {
                                     $thisfile_ac3_raw_bsi['spchdat1'] = $this->readHeaderBSI(5);
@@ -403,7 +400,7 @@
                                     $thisfile_ac3_raw_bsi['spchan1att'] = $this->readHeaderBSI(2);
                                     $mixdefbitsread += 2;
                                     $thisfile_ac3_raw_bsi['flags']['addspchdat1'] = (bool) $this->readHeaderBSI(1);
-                                    $mixdefbitsread += 1;
+                                    ++$mixdefbitsread;
                                     if($thisfile_ac3_raw_bsi['flags']['addspchdat1'])
                                     {
                                         $thisfile_ac3_raw_bsi['spchdat2'] = $this->readHeaderBSI(5);

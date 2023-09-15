@@ -15,11 +15,11 @@
             parent::__construct($manager, $id, $args);
             if('custom_css' !== $this->id_data['base'])
             {
-                throw new Exception('Expected custom_css id_base.');
+                throw new \RuntimeException('Expected custom_css id_base.');
             }
             if(1 !== count($this->id_data['keys']) || empty($this->id_data['keys'][0]))
             {
-                throw new Exception('Expected single stylesheet key.');
+                throw new \RuntimeException('Expected single stylesheet key.');
             }
             $this->stylesheet = $this->id_data['keys'][0];
         }

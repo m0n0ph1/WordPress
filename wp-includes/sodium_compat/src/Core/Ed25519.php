@@ -9,13 +9,13 @@
         require_once dirname(__FILE__).'/Curve25519.php';
     }
 
-    abstract class ParagonIE_Sodium_Core_Ed25519 extends ParagonIE_Sodium_Core_Curve25519
+    abstract class Ed25519 extends ParagonIE_Sodium_Core_Curve25519
     {
-        const KEYPAIR_BYTES = 96;
+        public const KEYPAIR_BYTES = 96;
 
-        const SEED_BYTES = 32;
+        public const SEED_BYTES = 32;
 
-        const SCALAR_BYTES = 32;
+        public const SCALAR_BYTES = 32;
 
         public static function keypair()
         {
@@ -526,14 +526,12 @@
                 ]
             ];
 
-            $countBlocklist = count($blocklist);
-
-            for($i = 0; $i < $countBlocklist; ++$i)
+            foreach($blocklist as $iValue)
             {
                 $c = 0;
                 for($j = 0; $j < 32; ++$j)
                 {
-                    $c |= self::chrToInt($R[$j]) ^ (int) $blocklist[$i][$j];
+                    $c |= self::chrToInt($R[$j]) ^ (int) $iValue[$j];
                 }
                 if($c === 0)
                 {

@@ -151,7 +151,12 @@
             }
         }
 
-        return count($templates) ? $templates[0] : null;
+        if(count($templates))
+        {
+            return $templates[0];
+        }
+
+        return null;
     }
 
     function _block_template_render_title_tag()

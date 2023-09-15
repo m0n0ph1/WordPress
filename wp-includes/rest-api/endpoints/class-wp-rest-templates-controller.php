@@ -15,6 +15,7 @@
         public function register_routes()
         {
             // Lists all templates.
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,

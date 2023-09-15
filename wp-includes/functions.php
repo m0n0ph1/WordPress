@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
     /**
      * Main WordPress API
      *
@@ -82,7 +84,12 @@
         // Don't use non-GMT timestamp, unless you know the difference and really need to.
         if('timestamp' === $type || 'U' === $type)
         {
-            return $gmt ? time() : time() + (int) (get_option('gmt_offset') * HOUR_IN_SECONDS);
+            if($gmt)
+            {
+                return time();
+            }
+
+            return time() + (int) (get_option('gmt_offset') * HOUR_IN_SECONDS);
         }
 
         if('mysql' === $type)
@@ -707,17 +714,12 @@
      */
     function maybe_serialize($data)
     {
-        if(is_array($data) || is_object($data))
-        {
-            return serialize($data);
-        }
-
         /*
 	 * Double serialization is required for backward compatibility.
 	 * See https://core.trac.wordpress.org/ticket/12930
 	 * Also the world will end. See WP 3.6.1.
 	 */
-        if(is_serialized($data, false))
+        if(is_array($data) || is_object($data) || is_serialized($data, false))
         {
             return serialize($data);
         }
@@ -770,11 +772,7 @@
         {
             return true;
         }
-        if(strlen($data) < 4)
-        {
-            return false;
-        }
-        if(':' !== $data[1])
+        if(strlen($data) < 4 || ':' !== $data[1])
         {
             return false;
         }
@@ -853,23 +851,7 @@
             return false;
         }
         $data = trim($data);
-        if(strlen($data) < 4)
-        {
-            return false;
-        }
-        elseif(':' !== $data[1])
-        {
-            return false;
-        }
-        elseif(! str_ends_with($data, ';'))
-        {
-            return false;
-        }
-        elseif('s' !== $data[0])
-        {
-            return false;
-        }
-        elseif('"' !== substr($data, -2, 1))
+        if(strlen($data) < 4 || ':' !== $data[1] || ! str_ends_with($data, ';') || 's' !== $data[0] || '"' !== substr($data, -2, 1))
         {
             return false;
         }
@@ -2065,13 +2047,8 @@
         $installed = ! empty($installed);
         wp_cache_set('is_blog_installed', $installed);
 
-        if($installed)
-        {
-            return true;
-        }
-
         // If visiting repair.php, return true and let it take over.
-        if(defined('WP_REPAIRING'))
+        if($installed || defined('WP_REPAIRING'))
         {
             return true;
         }
@@ -2618,12 +2595,12 @@
         if('/' === $path[strlen($path) - 1])
         {
             // If it looks like a directory, check a random file within the directory.
-            return win_is_writable($path.uniqid(mt_rand()).'.tmp');
+            return win_is_writable($path.uniqid(random_int()).'.tmp');
         }
         elseif(is_dir($path))
         {
             // If it's a directory (and not a file), check a random file within the directory.
-            return win_is_writable($path.'/'.uniqid(mt_rand()).'.tmp');
+            return win_is_writable($path.'/'.uniqid(random_int()).'.tmp');
         }
 
         // Check tmp file for read/write capabilities.
@@ -4799,13 +4776,16 @@ EOD;
 
         if(function_exists('is_wp_error') && is_wp_error($message))
         {
+            /** @noinspection NativeMemberUsageInspection */
             if(! empty($message->errors))
             {
                 $errors = [];
+                /** @noinspection NativeMemberUsageInspection */
                 foreach((array) $message->errors as $error_code => $error_messages)
                 {
                     foreach((array) $error_messages as $error_message)
                     {
+                        /** @noinspection NativeMemberUsageInspection */
                         $errors[] = [
                             'code' => $error_code,
                             'message' => $error_message,
@@ -5734,13 +5714,8 @@ EOD;
     function _wp_array_set(&$input_array, $path, $value = null)
     {
         // Confirm $input_array is valid.
-        if(! is_array($input_array))
-        {
-            return;
-        }
-
         // Confirm $path is valid.
-        if(! is_array($path))
+        if(! is_array($input_array) || ! is_array($path))
         {
             return;
         }
@@ -6730,7 +6705,6 @@ EOD;
         if(empty($loaded_mods) && function_exists('phpinfo') && ! str_contains(ini_get('disable_functions'), 'phpinfo'))
         {
             ob_start();
-            phpinfo(INFO_MODULES);
             $phpinfo = ob_get_clean();
 
             if(str_contains($phpinfo, $mod))
@@ -7818,7 +7792,12 @@ EOD;
             // Tortoise got lapped - must be a loop.
             if($tortoise === $evanescent_hare || $tortoise === $hare)
             {
-                return $_return_loop ? $return : $tortoise;
+                if($_return_loop)
+                {
+                    return $return;
+                }
+
+                return $tortoise;
             }
 
             // Increment tortoise by one step.
@@ -8697,7 +8676,7 @@ EOD;
      */
     function wp_generate_uuid4()
     {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0x0fff) | 0x4000, random_int(0, 0x3fff) | 0x8000, random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff));
     }
 
     /**

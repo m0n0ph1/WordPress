@@ -78,6 +78,5 @@
         _deprecated_function(__FUNCTION__, '3.4.0', 'error_log()');
         if(! empty($GLOBALS['xmlrpc_logging']))
         {
-            error_log($io.' - '.$msg);
         }
     }

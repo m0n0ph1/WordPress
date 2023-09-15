@@ -31,7 +31,12 @@
         {
             $current_node = end($this->stack);
 
-            return $current_node ? $current_node : null;
+            if($current_node)
+            {
+                return $current_node;
+            }
+
+            return null;
         }
 
         public function has_element_in_scope($tag_name)
@@ -204,9 +209,7 @@
 
         public function walk_down()
         {
-            $count = count($this->stack);
-
-            for($i = 0; $i < $count; $i++)
+            foreach($this->stack as $i => $iValue)
             {
                 yield $this->stack[$i];
             }

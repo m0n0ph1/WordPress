@@ -158,17 +158,17 @@
             }
             else
             {
-                if(! is_array($headers))
+                if(is_array($headers))
+                {
+                    $tempheaders = $headers;
+                }
+                else
                 {
                     /*
 				 * Explode the headers out, so this function can take
 				 * both string headers and an array of headers.
 				 */
                     $tempheaders = explode("\n", str_replace("\r\n", "\n", $headers));
-                }
-                else
-                {
-                    $tempheaders = $headers;
                 }
                 $headers = [];
 
@@ -343,13 +343,10 @@
                         // Break $recipient into name and address parts if in the format "Foo <bar@baz.com>".
                         $recipient_name = '';
 
-                        if(preg_match('/(.*)<(.+)>/', $address, $matches))
+                        if(preg_match('/(.*)<(.+)>/', $address, $matches) && count($matches) === 3)
                         {
-                            if(count($matches) === 3)
-                            {
-                                $recipient_name = $matches[1];
-                                $address = $matches[2];
-                            }
+                            $recipient_name = $matches[1];
+                            $address = $matches[2];
                         }
 
                         switch($address_header)
@@ -1148,13 +1145,13 @@
             }
 
             // If there's no email to send the comment to, bail, otherwise flip array back around for use below.
-            if(! count($emails))
+            if(count($emails))
             {
-                return false;
+                $emails = array_flip($emails);
             }
             else
             {
-                $emails = array_flip($emails);
+                return false;
             }
 
             $switched_locale = switch_to_locale(get_locale());
@@ -1309,12 +1306,9 @@
             $user = get_userdata($post->post_author);
             // Send to the administration and to the post author if the author can modify the comment.
             $emails = [get_option('admin_email')];
-            if($user && user_can($user->ID, 'edit_comment', $comment_id) && ! empty($user->user_email))
+            if($user && user_can($user->ID, 'edit_comment', $comment_id) && ! empty($user->user_email) && 0 !== strcasecmp($user->user_email, get_option('admin_email')))
             {
-                if(0 !== strcasecmp($user->user_email, get_option('admin_email')))
-                {
-                    $emails[] = $user->user_email;
-                }
+                $emails[] = $user->user_email;
             }
 
             $switched_locale = switch_to_locale(get_locale());
@@ -1869,7 +1863,7 @@
                 {
                     $seed = get_transient('random_seed');
                 }
-                $rnd_value = md5(uniqid(microtime().mt_rand(), true).$seed);
+                $rnd_value = md5(uniqid(microtime().random_int(), true).$seed);
                 $rnd_value .= sha1($rnd_value);
                 $rnd_value .= sha1($rnd_value.$seed);
                 $seed = md5($seed.$rnd_value);

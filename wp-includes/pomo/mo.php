@@ -57,17 +57,7 @@
 
             public function is_entry_good_for_export($entry)
             {
-                if(empty($entry->translations))
-                {
-                    return false;
-                }
-
-                if(! array_filter($entry->translations))
-                {
-                    return false;
-                }
-
-                return true;
+                return ! (empty($entry->translations) || ! array_filter($entry->translations));
             }
 
             public function export_to_file_handle($fh)
@@ -138,7 +128,12 @@
             public function export_translations($entry)
             {
                 // TODO: Warnings for control characters.
-                return $entry->is_plural ? implode("\0", $entry->translations) : $entry->translations[0];
+                if($entry->is_plural)
+                {
+                    return implode("\0", $entry->translations);
+                }
+
+                return $entry->translations[0];
             }
 
             public function export_headers()
@@ -177,7 +172,7 @@
 
             public function import_from_reader($reader)
             {
-                $endian_string = MO::get_byteorder($reader->readint32());
+                $endian_string = $this->get_byteorder($reader->readint32());
                 if(false === $endian_string)
                 {
                     return false;
@@ -194,13 +189,8 @@
 
                 // Parse header.
                 $header = unpack("{$endian}revision/{$endian}total/{$endian}originals_lengths_addr/{$endian}translations_lengths_addr/{$endian}hash_length/{$endian}hash_addr", $header);
-                if(! is_array($header))
-                {
-                    return false;
-                }
-
                 // Support revision 0 of MO format specs, only.
-                if(0 !== $header['revision'])
+                if(! is_array($header) || 0 !== $header['revision'])
                 {
                     return false;
                 }

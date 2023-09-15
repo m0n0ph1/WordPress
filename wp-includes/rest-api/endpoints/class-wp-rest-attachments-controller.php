@@ -370,7 +370,7 @@
                 $overrides['action'] = 'wp_handle_mock_upload';
             }
 
-            $size_check = self::check_upload_size($files['file']);
+            $size_check = $this->check_upload_size($files['file']);
             if(is_wp_error($size_check))
             {
                 return $size_check;
@@ -391,12 +391,7 @@
 
         protected function check_upload_size($file)
         {
-            if(! is_multisite())
-            {
-                return true;
-            }
-
-            if(get_site_option('upload_space_check_disabled'))
+            if(! is_multisite() || get_site_option('upload_space_check_disabled'))
             {
                 return true;
             }
@@ -489,7 +484,7 @@
                 'type' => $type,
             ];
 
-            $size_check = self::check_upload_size($file_data);
+            $size_check = $this->check_upload_size($file_data);
             if(is_wp_error($size_check))
             {
                 return $size_check;

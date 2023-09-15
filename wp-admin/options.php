@@ -140,7 +140,14 @@
         $allowed_options['writing'][] = 'use_balanceTags';
     }
 
-    if(! is_multisite())
+    if(is_multisite())
+    {
+        if(apply_filters('enable_post_by_email_configuration', true))
+        {
+            $allowed_options['writing'] = array_merge($allowed_options['writing'], $mail_options);
+        }
+    }
+    else
     {
         if(! defined('WP_SITEURL'))
         {
@@ -168,13 +175,6 @@
         {
             $allowed_options['media'][] = 'upload_path';
             $allowed_options['media'][] = 'upload_url_path';
-        }
-    }
-    else
-    {
-        if(apply_filters('enable_post_by_email_configuration', true))
-        {
-            $allowed_options['writing'] = array_merge($allowed_options['writing'], $mail_options);
         }
     }
 

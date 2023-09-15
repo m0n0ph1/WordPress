@@ -16,12 +16,7 @@
 
         protected function check_has_read_only_access($request)
         {
-            if(current_user_can('edit_theme_options'))
-            {
-                return true;
-            }
-
-            if(current_user_can('edit_posts'))
+            if(current_user_can('edit_theme_options') || current_user_can('edit_posts'))
             {
                 return true;
             }
@@ -130,7 +125,27 @@
             $menu_item_db_id = $request['id'];
             $menu_item_obj = $this->get_nav_menu_item($menu_item_db_id);
             // Need to persist the menu item data. See https://core.trac.wordpress.org/ticket/28138
-            if(! is_wp_error($menu_item_obj))
+            if(is_wp_error($menu_item_obj))
+            {
+                $prepared_nav_item = [
+                    'menu-id' => 0,
+                    'menu-item-db-id' => 0,
+                    'menu-item-object-id' => 0,
+                    'menu-item-object' => '',
+                    'menu-item-parent-id' => 0,
+                    'menu-item-position' => 1,
+                    'menu-item-type' => 'custom',
+                    'menu-item-title' => '',
+                    'menu-item-url' => '',
+                    'menu-item-description' => '',
+                    'menu-item-attr-title' => '',
+                    'menu-item-target' => '',
+                    'menu-item-classes' => [],
+                    'menu-item-xfn' => [],
+                    'menu-item-status' => 'publish',
+                ];
+            }
+            else
             {
                 // Correct the menu position if this was the first item. See https://core.trac.wordpress.org/ticket/28140
                 $position = (0 === $menu_item_obj->menu_order) ? 1 : $menu_item_obj->menu_order;
@@ -152,26 +167,6 @@
                     'menu-item-xfn' => explode(' ', $menu_item_obj->xfn),
                     'menu-item-status' => $menu_item_obj->post_status,
                     'menu-id' => $this->get_menu_id($menu_item_db_id),
-                ];
-            }
-            else
-            {
-                $prepared_nav_item = [
-                    'menu-id' => 0,
-                    'menu-item-db-id' => 0,
-                    'menu-item-object-id' => 0,
-                    'menu-item-object' => '',
-                    'menu-item-parent-id' => 0,
-                    'menu-item-position' => 1,
-                    'menu-item-type' => 'custom',
-                    'menu-item-title' => '',
-                    'menu-item-url' => '',
-                    'menu-item-description' => '',
-                    'menu-item-attr-title' => '',
-                    'menu-item-target' => '',
-                    'menu-item-classes' => [],
-                    'menu-item-xfn' => [],
-                    'menu-item-status' => 'publish',
                 ];
             }
 
@@ -326,6 +321,7 @@
 
         public function get_item_schema()
         {
+            parent::get_item_schema();
             if($this->schema)
             {
                 return $this->add_additional_fields_schema($this->schema);
@@ -472,12 +468,7 @@
                 'arg_options' => [
                     'validate_callback' => static function($url)
                     {
-                        if('' === $url)
-                        {
-                            return true;
-                        }
-
-                        if(sanitize_url($url))
+                        if('' === $url || sanitize_url($url))
                         {
                             return true;
                         }
@@ -569,6 +560,7 @@
         public function prepare_item_for_response($item, $request)
         {
             // Base fields for every post.
+            parent::prepare_item_for_response($item, $request);
             $fields = $this->get_fields_for_response($request);
             $menu_item = $this->get_nav_menu_item($item->ID);
             $data = [];
@@ -770,6 +762,7 @@
 
         public function update_item($request)
         {
+            parent::update_item($request);
             $valid_check = $this->get_nav_menu_item($request['id']);
             if(is_wp_error($valid_check))
             {
@@ -845,6 +838,7 @@
 
         public function delete_item($request)
         {
+            parent::delete_item($request);
             $menu_item = $this->get_nav_menu_item($request['id']);
             if(is_wp_error($menu_item))
             {

@@ -5,7 +5,7 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core_Util
+    abstract class Util
     {
         public static function abs($integer, $size = 0)
         {
@@ -201,12 +201,9 @@
                 case 'array':
                     if(! is_array($mixedVar))
                     {
-                        if(is_object($mixedVar))
+                        if(is_object($mixedVar) && $mixedVar instanceof ArrayAccess)
                         {
-                            if($mixedVar instanceof ArrayAccess)
-                            {
-                                return;
-                            }
+                            return;
                         }
                         throw new TypeError('Argument '.$argumentIndex.' must be an array, '.$realType.' given.');
                     }
@@ -625,11 +622,7 @@
         public static function verify_16($a, $b)
         {
             /* Type checks: */
-            if(! is_string($a))
-            {
-                throw new TypeError('String expected');
-            }
-            if(! is_string($b))
+            if(! is_string($a) || ! is_string($b))
             {
                 throw new TypeError('String expected');
             }
@@ -640,11 +633,7 @@
         public static function verify_32($a, $b)
         {
             /* Type checks: */
-            if(! is_string($a))
-            {
-                throw new TypeError('String expected');
-            }
-            if(! is_string($b))
+            if(! is_string($a) || ! is_string($b))
             {
                 throw new TypeError('String expected');
             }

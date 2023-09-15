@@ -14,11 +14,7 @@
 
             if($is_ssl)
             {
-                if(! extension_loaded('openssl'))
-                {
-                    return false;
-                }
-                if(! function_exists('openssl_x509_parse'))
+                if(! extension_loaded('openssl') || ! function_exists('openssl_x509_parse'))
                 {
                     return false;
                 }
@@ -85,14 +81,7 @@
 
             if(isset($parsed_args['headers']['Host']) || isset($parsed_args['headers']['host']))
             {
-                if(isset($parsed_args['headers']['Host']))
-                {
-                    $parsed_url['host'] = $parsed_args['headers']['Host'];
-                }
-                else
-                {
-                    $parsed_url['host'] = $parsed_args['headers']['host'];
-                }
+                $parsed_url['host'] = $parsed_args['headers']['Host'];
                 unset($parsed_args['headers']['Host'], $parsed_args['headers']['host']);
             }
 
@@ -149,7 +138,18 @@
             // Store error string.
             $connection_error_str = null;
 
-            if(! WP_DEBUG)
+            if(WP_DEBUG)
+            {
+                if($proxy->is_enabled() && $proxy->send_through_proxy($url))
+                {
+                    $handle = stream_socket_client('tcp://'.$proxy->host().':'.$proxy->port(), $connection_error, $connection_error_str, $connect_timeout, STREAM_CLIENT_CONNECT, $context);
+                }
+                else
+                {
+                    $handle = stream_socket_client($connect_host.':'.$parsed_url['port'], $connection_error, $connection_error_str, $connect_timeout, STREAM_CLIENT_CONNECT, $context);
+                }
+            }
+            else
             {
                 // In the event that the SSL connection fails, silence the many PHP warnings.
                 if($secure_transport)
@@ -173,17 +173,6 @@
                     error_reporting($error_reporting);
                 }
             }
-            else
-            {
-                if($proxy->is_enabled() && $proxy->send_through_proxy($url))
-                {
-                    $handle = stream_socket_client('tcp://'.$proxy->host().':'.$proxy->port(), $connection_error, $connection_error_str, $connect_timeout, STREAM_CLIENT_CONNECT, $context);
-                }
-                else
-                {
-                    $handle = stream_socket_client($connect_host.':'.$parsed_url['port'], $connection_error, $connection_error_str, $connect_timeout, STREAM_CLIENT_CONNECT, $context);
-                }
-            }
 
             if(false === $handle)
             {
@@ -197,12 +186,9 @@
             }
 
             // Verify that the SSL certificate is valid for this request.
-            if($secure_transport && $ssl_verify && ! $proxy->is_enabled())
+            if($secure_transport && $ssl_verify && ! $proxy->is_enabled() && ! self::verify_ssl_certificate($handle, $parsed_url['host']))
             {
-                if(! self::verify_ssl_certificate($handle, $parsed_url['host']))
-                {
-                    return new WP_Error('http_request_failed', __('The SSL certificate for the host could not be verified.'));
-                }
+                return new WP_Error('http_request_failed', __('The SSL certificate for the host could not be verified.'));
             }
 
             stream_set_timeout($handle, $timeout, $utimeout);
@@ -289,13 +275,13 @@
             // If streaming to a file setup the file handle.
             if($parsed_args['stream'])
             {
-                if(! WP_DEBUG)
+                if(WP_DEBUG)
                 {
-                    $stream_handle = @fopen($parsed_args['filename'], 'w+');
+                    $stream_handle = fopen($parsed_args['filename'], 'w+');
                 }
                 else
                 {
-                    $stream_handle = fopen($parsed_args['filename'], 'w+');
+                    $stream_handle = @fopen($parsed_args['filename'], 'w+');
                 }
 
                 if(! $stream_handle)
@@ -456,13 +442,8 @@
             }
 
             // IP's can't be wildcards, Stop processing.
-            if('ip' === $host_type)
-            {
-                return false;
-            }
-
             // Test to see if the domain is at least 2 deep for wildcard support.
-            if(substr_count($host, '.') < 2)
+            if('ip' === $host_type || substr_count($host, '.') < 2)
             {
                 return false;
             }

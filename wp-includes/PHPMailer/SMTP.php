@@ -4,27 +4,27 @@
 
     class SMTP
     {
-        const VERSION = '6.8.1';
+        public const VERSION = '6.8.1';
 
-        const LE = "\r\n";
+        public const LE = "\r\n";
 
-        const DEFAULT_PORT = 25;
+        public const DEFAULT_PORT = 25;
 
-        const DEFAULT_SECURE_PORT = 465;
+        public const DEFAULT_SECURE_PORT = 465;
 
-        const MAX_LINE_LENGTH = 998;
+        public const MAX_LINE_LENGTH = 998;
 
-        const MAX_REPLY_LENGTH = 512;
+        public const MAX_REPLY_LENGTH = 512;
 
-        const DEBUG_OFF = 0;
+        public const DEBUG_OFF = 0;
 
-        const DEBUG_CLIENT = 1;
+        public const DEBUG_CLIENT = 1;
 
-        const DEBUG_SERVER = 2;
+        public const DEBUG_SERVER = 2;
 
-        const DEBUG_CONNECTION = 3;
+        public const DEBUG_CONNECTION = 3;
 
-        const DEBUG_LOWLEVEL = 4;
+        public const DEBUG_LOWLEVEL = 4;
 
         public $do_debug = self::DEBUG_OFF;
 
@@ -161,7 +161,6 @@
             {
                 case 'error_log':
                     // Don't output, just log
-                    error_log($str);
                     break;
                 case 'html':
                     // Cleans up output a bit for a better looking, HTML-safe output
@@ -229,7 +228,7 @@
 
             // SMTP server can take longer to respond, give longer timeout for first read
             // Windows does not have support for this timeout function
-            if(strpos(PHP_OS, 'WIN') !== 0)
+            if(strncmp(PHP_OS, 'WIN', 3) !== 0)
             {
                 $max = (int) ini_get('max_execution_time');
                 // Don't bother if unlimited, or if set_time_limit is disabled
@@ -521,14 +520,10 @@
             {
                 case 'PLAIN':
                     // Start authentication
-                    if(! $this->sendCommand('AUTH', 'AUTH PLAIN', 334))
-                    {
-                        return false;
-                    }
                     // Send encoded username and password
                     if(// Format from https://tools.ietf.org/html/rfc4616#section-2
                         // We skip the first field (it's forgery), so the string starts with a null byte
-                    ! $this->sendCommand('User & Password', base64_encode("\0".$username."\0".$password), 235)
+                        ! $this->sendCommand('AUTH', 'AUTH PLAIN', 334) || ! $this->sendCommand('User & Password', base64_encode("\0".$username."\0".$password), 235)
                     )
                     {
                         return false;
@@ -536,15 +531,7 @@
                     break;
                 case 'LOGIN':
                     // Start authentication
-                    if(! $this->sendCommand('AUTH', 'AUTH LOGIN', 334))
-                    {
-                        return false;
-                    }
-                    if(! $this->sendCommand('Username', base64_encode($username), 334))
-                    {
-                        return false;
-                    }
-                    if(! $this->sendCommand('Password', base64_encode($password), 235))
+                    if(! $this->sendCommand('AUTH', 'AUTH LOGIN', 334) || ! $this->sendCommand('Username', base64_encode($username), 334) || ! $this->sendCommand('Password', base64_encode($password), 235))
                     {
                         return false;
                     }
@@ -661,19 +648,19 @@
                     // so as to avoid breaking in the middle of a word
                     $pos = strrpos(substr($line, 0, self::MAX_LINE_LENGTH), ' ');
                     // Deliberately matches both false and 0
-                    if(! $pos)
-                    {
-                        // No nice break found, add a hard break
-                        $pos = self::MAX_LINE_LENGTH - 1;
-                        $lines_out[] = substr($line, 0, $pos);
-                        $line = substr($line, $pos);
-                    }
-                    else
+                    if($pos)
                     {
                         // Break at the found point
                         $lines_out[] = substr($line, 0, $pos);
                         // Move along by the amount we dealt with
                         $line = substr($line, $pos + 1);
+                    }
+                    else
+                    {
+                        // No nice break found, add a hard break
+                        $pos = self::MAX_LINE_LENGTH - 1;
+                        $lines_out[] = substr($line, 0, $pos);
+                        $line = substr($line, $pos);
                     }
                     // If processing headers add a LWSP-char to the front of new line RFC822 section 3.1.1
                     if($in_headers)
@@ -747,7 +734,7 @@
             }
 
             // Some servers shut down the SMTP service here (RFC 5321)
-            if(substr($this->helo_rply, 0, 3) == '421')
+            if(strpos($this->helo_rply, '421') === 0)
             {
                 return false;
             }
@@ -787,12 +774,7 @@
                 $fields = explode(' ', $s);
                 if(! empty($fields))
                 {
-                    if(! $n)
-                    {
-                        $name = $type;
-                        $fields = $fields[0];
-                    }
-                    else
+                    if($n)
                     {
                         $name = array_shift($fields);
                         switch($name)
@@ -809,6 +791,11 @@
                             default:
                                 $fields = true;
                         }
+                    }
+                    else
+                    {
+                        $name = $type;
+                        $fields = $fields[0];
                     }
                     $this->server_caps[$name] = $fields;
                 }

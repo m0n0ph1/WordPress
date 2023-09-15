@@ -52,7 +52,7 @@
             $this->id = $id;
 
             // Parse the ID for array keys.
-            $this->id_data['keys'] = preg_split('/\[/', str_replace(']', '', $this->id));
+            $this->id_data['keys'] = explode("\[", str_replace(']', '', $this->id));
             $this->id_data['base'] = array_shift($this->id_data['keys']);
 
             // Rebuild the ID.
@@ -209,11 +209,7 @@
             switch($this->type)
             {
                 case 'theme_mod':
-                    if(! $is_multidimensional)
-                    {
-                        add_filter("theme_mod_{$id_base}", [$this, '_preview_filter']);
-                    }
-                    else
+                    if($is_multidimensional)
                     {
                         if(empty(self::$aggregated_multidimensionals[$this->type][$id_base]['previewed_instances']))
                         {
@@ -222,13 +218,13 @@
                         }
                         self::$aggregated_multidimensionals[$this->type][$id_base]['previewed_instances'][$this->id] = $this;
                     }
+                    else
+                    {
+                        add_filter("theme_mod_{$id_base}", [$this, '_preview_filter']);
+                    }
                     break;
                 case 'option':
-                    if(! $is_multidimensional)
-                    {
-                        add_filter("pre_option_{$id_base}", [$this, '_preview_filter']);
-                    }
-                    else
+                    if($is_multidimensional)
                     {
                         if(empty(self::$aggregated_multidimensionals[$this->type][$id_base]['previewed_instances']))
                         {
@@ -237,6 +233,10 @@
                             add_filter("default_option_{$id_base}", $multidimensional_filter);
                         }
                         self::$aggregated_multidimensionals[$this->type][$id_base]['previewed_instances'][$this->id] = $this;
+                    }
+                    else
+                    {
+                        add_filter("pre_option_{$id_base}", [$this, '_preview_filter']);
                     }
                     break;
                 default:
@@ -259,12 +259,22 @@
         {
             if(empty($keys))
             { // If there are no keys, test the root.
-                return isset($root) ? $root : $default_value;
+                if(isset($root))
+                {
+                    return $root;
+                }
+
+                return $default_value;
             }
 
             $result = $this->multidimensional($root, $keys);
 
-            return isset($result) ? $result['node'][$result['key']] : $default_value;
+            if(isset($result))
+            {
+                return $result['node'][$result['key']];
+            }
+
+            return $default_value;
         }
 
         final protected function multidimensional(&$root, $keys, $create = false)
@@ -496,17 +506,17 @@
             $id_base = $this->id_data['base'];
             if('option' === $this->type || 'theme_mod' === $this->type)
             {
-                if(! $this->is_multidimensional_aggregated)
-                {
-                    return $this->set_root_value($value);
-                }
-                else
+                if($this->is_multidimensional_aggregated)
                 {
                     $root = self::$aggregated_multidimensionals[$this->type][$id_base]['root_value'];
                     $root = $this->multidimensional_replace($root, $this->id_data['keys'], $value);
                     self::$aggregated_multidimensionals[$this->type][$id_base]['root_value'] = $root;
 
                     return $this->set_root_value($root);
+                }
+                else
+                {
+                    return $this->set_root_value($value);
                 }
             }
             else

@@ -15,7 +15,7 @@
         $classnames = classnames_for_block_core_search($attributes);
         $show_label = (! empty($attributes['showLabel'])) ? true : false;
         $use_icon_button = (! empty($attributes['buttonUseIcon'])) ? true : false;
-        $show_button = (! empty($attributes['buttonPosition']) && 'no-button' === $attributes['buttonPosition']) ? false : true;
+        $show_button = ! (! empty($attributes['buttonPosition']) && 'no-button' === $attributes['buttonPosition']);
         $button_position = $show_button ? $attributes['buttonPosition'] : null;
         $query_params = (! empty($attributes['query'])) ? $attributes['query'] : [];
         $button_behavior = (! empty($attributes['buttonBehavior'])) ? $attributes['buttonBehavior'] : 'default';
@@ -115,19 +115,19 @@
             {
                 $button_classes[] = $border_color_classes;
             }
-            if(! $use_icon_button)
-            {
-                if(! empty($attributes['buttonText']))
-                {
-                    $button_internal_markup = wp_kses_post($attributes['buttonText']);
-                }
-            }
-            else
+            if($use_icon_button)
             {
                 $button_classes[] = 'has-icon';
                 $button_internal_markup = '<svg class="search-icon" viewBox="0 0 24 24" width="24" height="24">
 					<path d="M13 5c-3.3 0-6 2.7-6 6 0 1.4.5 2.7 1.3 3.7l-3.8 3.8 1.1 1.1 3.8-3.8c1 .8 2.3 1.3 3.7 1.3 3.3 0 6-2.7 6-6S16.3 5 13 5zm0 10.5c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5z"></path>
 				</svg>';
+            }
+            else
+            {
+                if(! empty($attributes['buttonText']))
+                {
+                    $button_internal_markup = wp_kses_post($attributes['buttonText']);
+                }
             }
 
             // Include the button element class.
@@ -197,18 +197,15 @@
             }
         }
 
-        if(isset($attributes['buttonUseIcon']))
+        if(isset($attributes['buttonUseIcon']) && ! empty($attributes['buttonPosition']) && 'no-button' !== $attributes['buttonPosition'])
         {
-            if(! empty($attributes['buttonPosition']) && 'no-button' !== $attributes['buttonPosition'])
+            if($attributes['buttonUseIcon'])
             {
-                if($attributes['buttonUseIcon'])
-                {
-                    $classnames[] = 'wp-block-search__icon-button';
-                }
-                else
-                {
-                    $classnames[] = 'wp-block-search__text-button';
-                }
+                $classnames[] = 'wp-block-search__icon-button';
+            }
+            else
+            {
+                $classnames[] = 'wp-block-search__text-button';
             }
         }
 

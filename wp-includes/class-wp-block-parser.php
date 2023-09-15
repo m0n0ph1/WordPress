@@ -102,7 +102,7 @@
 
                 case 'block-opener':
                     // track all newly-opened blocks on the stack.
-                    array_push($this->stack, new WP_Block_Parser_Frame(new WP_Block_Parser_Block($block_name, $attrs, [], '', []), $start_offset, $token_length, $start_offset + $token_length, $leading_html_start));
+                    $this->stack[] = new WP_Block_Parser_Frame(new WP_Block_Parser_Block($block_name, $attrs, [], '', []), $start_offset, $token_length, $start_offset + $token_length, $leading_html_start);
                     $this->offset = $start_offset + $token_length;
 
                     return true;
@@ -171,13 +171,8 @@
             $has_match = preg_match('/<!--\s+(?P<closer>\/)?wp:(?P<namespace>[a-z][a-z0-9_-]*\/)?(?P<name>[a-z][a-z0-9_-]*)\s+(?P<attrs>{(?:(?:[^}]+|}+(?=})|(?!}\s+\/?-->).)*+)?}\s+)?(?P<void>\/)?-->/s', $this->document, $matches, PREG_OFFSET_CAPTURE, $this->offset);
 
             // if we get here we probably have catastrophic backtracking or out-of-memory in the PCRE.
-            if(false === $has_match)
-            {
-                return ['no-more-tokens', null, null, null, null];
-            }
-
             // we have no more tokens.
-            if(0 === $has_match)
+            if(false === $has_match || 0 === $has_match)
             {
                 return ['no-more-tokens', null, null, null, null];
             }

@@ -5,13 +5,13 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Core32_BLAKE2b extends ParagonIE_Sodium_Core_Util
+    abstract class BLAKE2b extends ParagonIE_Sodium_Core_Util
     {
-        const BLOCKBYTES = 128;
+        public const BLOCKBYTES = 128;
 
-        const OUTBYTES = 64;
+        public const OUTBYTES = 64;
 
-        const KEYBYTES = 64;
+        public const KEYBYTES = 64;
 
         public static $iv;
 

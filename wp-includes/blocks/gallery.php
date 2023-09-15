@@ -6,12 +6,9 @@
         {
             foreach($parsed_block['innerBlocks'] as $key => $inner_block)
             {
-                if('core/image' === $inner_block['blockName'])
+                if('core/image' === $inner_block['blockName'] && ! isset($parsed_block['innerBlocks'][$key]['attrs']['data-id']) && isset($inner_block['attrs']['id']))
                 {
-                    if(! isset($parsed_block['innerBlocks'][$key]['attrs']['data-id']) && isset($inner_block['attrs']['id']))
-                    {
-                        $parsed_block['innerBlocks'][$key]['attrs']['data-id'] = esc_attr($inner_block['attrs']['id']);
-                    }
+                    $parsed_block['innerBlocks'][$key]['attrs']['data-id'] = esc_attr($inner_block['attrs']['id']);
                 }
             }
         }

@@ -297,7 +297,7 @@
 
             public static function sanitize_checkbox($checked)
             {
-                return ((isset($checked) && true === $checked) ? true : false);
+                return ((isset($checked) && true === $checked));
             }
         }
 

@@ -4,6 +4,7 @@
     {
         public function get_columns()
         {
+            parent::get_columns();
             return [
                 'name' => __('Name'),
                 'created' => __('Created'),
@@ -15,7 +16,8 @@
 
         public function prepare_items()
         {
-            global $user_id;
+            global parent::prepare_items();
+            $user_id;
             $this->items = array_reverse(WP_Application_Passwords::get_user_application_passwords($user_id));
         }
 
@@ -68,6 +70,7 @@
 
         public function single_row($item)
         {
+            parent::single_row($item);
             echo '<tr data-uuid="'.esc_attr($item['uuid']).'">';
             $this->single_row_columns($item);
             echo '</tr>';
@@ -161,6 +164,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'name';
         }
     }

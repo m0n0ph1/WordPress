@@ -2,17 +2,17 @@
 
     class WP_REST_Search_Controller extends WP_REST_Controller
     {
-        const PROP_ID = 'id';
+        public const PROP_ID = 'id';
 
-        const PROP_TITLE = 'title';
+        public const PROP_TITLE = 'title';
 
-        const PROP_URL = 'url';
+        public const PROP_URL = 'url';
 
-        const PROP_TYPE = 'type';
+        public const PROP_TYPE = 'type';
 
-        const PROP_SUBTYPE = 'subtype';
+        public const PROP_SUBTYPE = 'subtype';
 
-        const TYPE_ANY = 'any';
+        public const TYPE_ANY = 'any';
 
         protected $search_handlers = [];
 
@@ -35,6 +35,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,

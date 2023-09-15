@@ -4,6 +4,7 @@
     {
         public function display($output_empty = false)
         {
+            parent::display();
             $singular = $this->_args['singular'];
 
             wp_nonce_field('fetch-list-'.get_class($this), '_ajax_fetch_list_nonce');
@@ -44,6 +45,7 @@
 
         protected function get_column_info()
         {
+            parent::get_column_info();
             return [
                 [
                     'author' => __('Author'),

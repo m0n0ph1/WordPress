@@ -1,6 +1,6 @@
 <?php
 
-    class SimplePie_Cache_Memcache implements SimplePie_Cache_Base
+    class Memcache implements SimplePie_Cache_Base
     {
         protected $cache;
 

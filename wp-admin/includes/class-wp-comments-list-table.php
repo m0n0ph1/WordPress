@@ -39,12 +39,14 @@
 
         public function ajax_user_can()
         {
+            parent::ajax_user_can();
             return current_user_can('edit_posts');
         }
 
         public function prepare_items()
         {
-            global $mode, $post_id, $comment_status, $comment_type, $search;
+            global parent::prepare_items();
+            $mode, $post_id, $comment_status, $comment_type, $search;
 
             if(! empty($_REQUEST['mode']))
             {
@@ -161,7 +163,8 @@
 
         public function no_items()
         {
-            global $comment_status;
+            global parent::no_items();
+            $comment_status;
 
             if('moderated' === $comment_status)
             {
@@ -189,7 +192,8 @@
 
         public function get_columns()
         {
-            global $post_id;
+            global parent::get_columns();
+            $post_id;
 
             $columns = [];
 
@@ -214,6 +218,7 @@
 
         public function display()
         {
+            parent::display();
             wp_nonce_field('fetch-list-'.get_class($this), '_ajax_fetch_list_nonce');
             static $has_items;
 
@@ -232,14 +237,14 @@
             ?>
             <table class="wp-list-table <?php echo implode(' ', $this->get_table_classes()); ?>">
                 <?php
-                    if(! isset($_GET['orderby']))
+                    if(isset($_GET['orderby']))
                     {
-                        // In the initial view, Comments are ordered by comment's date but there's no column for that.
-                        echo '<caption class="screen-reader-text">'./* translators: Hidden accessibility text. */ __('Ordered by Comment Date, descending.').'</caption>';
+                        $this->print_table_description();
                     }
                     else
                     {
-                        $this->print_table_description();
+                        // In the initial view, Comments are ordered by comment's date but there's no column for that.
+                        echo '<caption class="screen-reader-text">'./* translators: Hidden accessibility text. */ __('Ordered by Comment Date, descending.').'</caption>';
                     }
                 ?>
                 <thead>
@@ -279,7 +284,8 @@
 
         public function single_row($item)
         {
-            global $post, $comment;
+            global parent::single_row($item);
+            $post, $comment;
 
             $comment = $item;
 
@@ -714,6 +720,7 @@
 
         protected function get_default_primary_column_name()
         {
+            parent::get_default_primary_column_name();
             return 'comment';
         }
 
@@ -721,12 +728,7 @@
         {
             global $comment_status;
 
-            if($primary !== $column_name)
-            {
-                return '';
-            }
-
-            if(! $this->user_can)
+            if($primary !== $column_name || ! $this->user_can)
             {
                 return '';
             }

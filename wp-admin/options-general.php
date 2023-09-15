@@ -55,15 +55,15 @@
             </tr>
 
             <?php
-                if(! is_multisite())
-                {
-                    /* translators: Site tagline. */
-                    $sample_tagline = __('Just another WordPress site');
-                }
-                else
+                if(is_multisite())
                 {
                     /* translators: %s: Network title. */
                     $sample_tagline = sprintf(__('Just another %s site'), get_network()->site_name);
+                }
+                else
+                {
+                    /* translators: Site tagline. */
+                    $sample_tagline = __('Just another WordPress site');
                 }
                 $tagline_description = sprintf(/* translators: %s: Site tagline example. */ __('In a few words, explain what this site is about. Example: &#8220;%s.&#8221;'), $sample_tagline);
             ?>

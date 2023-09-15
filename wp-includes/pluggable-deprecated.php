@@ -44,8 +44,10 @@
         }
     endif;
 
-    if(! function_exists('wp_setcookie')) :
+    if(function_exists('wp_setcookie')) :
 
+        _deprecated_function('wp_setcookie', '2.5.0', 'wp_set_auth_cookie()');
+    else :
         function wp_setcookie(
             $username, $password = '', $already_md5 = false, $home = '', $siteurl = '', $remember = false
         ) {
@@ -53,35 +55,35 @@
             $user = get_user_by('login', $username);
             wp_set_auth_cookie($user->ID, $remember);
         }
-    else :
-        _deprecated_function('wp_setcookie', '2.5.0', 'wp_set_auth_cookie()');
     endif;
 
-    if(! function_exists('wp_clearcookie')) :
+    if(function_exists('wp_clearcookie')) :
 
+        _deprecated_function('wp_clearcookie', '2.5.0', 'wp_clear_auth_cookie()');
+    else :
         function wp_clearcookie()
         {
             _deprecated_function(__FUNCTION__, '2.5.0', 'wp_clear_auth_cookie()');
             wp_clear_auth_cookie();
         }
-    else :
-        _deprecated_function('wp_clearcookie', '2.5.0', 'wp_clear_auth_cookie()');
     endif;
 
-    if(! function_exists('wp_get_cookie_login')):
+    if(function_exists('wp_get_cookie_login')):
 
+        _deprecated_function('wp_get_cookie_login', '2.5.0');
+    else :
         function wp_get_cookie_login()
         {
             _deprecated_function(__FUNCTION__, '2.5.0');
 
             return false;
         }
-    else :
-        _deprecated_function('wp_get_cookie_login', '2.5.0');
     endif;
 
-    if(! function_exists('wp_login')) :
+    if(function_exists('wp_login')) :
 
+        _deprecated_function('wp_login', '2.5.0', 'wp_signon()');
+    else :
         function wp_login($username, $password, $deprecated = '')
         {
             _deprecated_function(__FUNCTION__, '2.5.0', 'wp_signon()');
@@ -98,8 +100,6 @@
 
             return false;
         }
-    else :
-        _deprecated_function('wp_login', '2.5.0', 'wp_signon()');
     endif;
 
     if(! class_exists('wp_atom_server', false))

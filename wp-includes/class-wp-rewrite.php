@@ -208,8 +208,7 @@
                 return false;
             }
 
-            $structure = str_replace('%monthnum%', '', $structure);
-            $structure = str_replace('%day%', '', $structure);
+            $structure = str_replace(array('%monthnum%', '%day%'), '', $structure);
             $structure = preg_replace('#/+#', '/', $structure);
 
             return $structure;
@@ -455,18 +454,17 @@
              */
             $structure = trim($structure, '/');
             $dirs = $walk_dirs ? explode('/', $structure) : [$structure];
-            $num_dirs = count($dirs);
 
             // Strip slashes from the front of $front.
-            $front = preg_replace('|^/+|', '', $front);
+            $front = ltrim($front, '/');
 
             // The main workhorse loop.
             $post_rewrite = [];
             $struct = $front;
-            for($j = 0; $j < $num_dirs; ++$j)
+            foreach($dirs as $jValue)
             {
                 // Get the struct for this dir, and trim slashes off the front.
-                $struct .= $dirs[$j].'/'; // Accumulate. see comment near explode('/', $structure) above.
+                $struct .= $jValue.'/'; // Accumulate. see comment near explode('/', $structure) above.
                 $struct = ltrim($struct, '/');
 
                 // Replace tags with regexes.
@@ -479,7 +477,7 @@
                 $query = (! empty($num_toks) && isset($queries[$num_toks - 1])) ? $queries[$num_toks - 1] : '';
 
                 // Set up $ep_mask_specific which is used to match more specific URL types.
-                switch($dirs[$j])
+                switch($jValue)
                 {
                     case '%year%':
                         $ep_mask_specific = EP_YEAR;
@@ -787,17 +785,17 @@
 
             $this->rewrite_rules();
 
-            if(! did_action('wp_loaded'))
+            if(did_action('wp_loaded'))
+            {
+                update_option('rewrite_rules', $this->rules);
+            }
+            else
             {
                 /*
                  * Is not safe to save the results right now, as the rules may be partial.
                  * Need to give all rules the chance to register.
                  */
                 add_action('wp_loaded', [$this, 'flush_rules']);
-            }
-            else
-            {
-                update_option('rewrite_rules', $this->rules);
             }
         }
 

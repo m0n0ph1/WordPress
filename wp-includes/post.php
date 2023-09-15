@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
 
 //
 // Post Type registration.
@@ -895,12 +896,7 @@
     {
         $post = get_post($post);
 
-        if(! $post)
-        {
-            return '';
-        }
-
-        if(! isset($post->$field))
+        if(! $post || ! isset($post->$field))
         {
             return '';
         }
@@ -1658,7 +1654,12 @@
 
         $custom = get_post_custom($post_id);
 
-        return isset($custom[$key]) ? $custom[$key] : null;
+        if(isset($custom[$key]))
+        {
+            return $custom[$key];
+        }
+
+        return null;
     }
 
     function is_sticky($post_id = 0)
@@ -2557,10 +2558,20 @@
                 $results[$key] = get_object_vars($result);
             }
 
-            return $results ? $results : [];
+            if($results)
+            {
+                return $results;
+            }
+
+            return [];
         }
 
-        return $results ? $results : false;
+        if($results)
+        {
+            return $results;
+        }
+
+        return false;
     }
 
     function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
@@ -2805,12 +2816,9 @@
                     $post_status = 'future';
                 }
             }
-            elseif('future' === $post_status)
+            elseif('future' === $post_status && strtotime($post_date_gmt) - strtotime($now) < MINUTE_IN_SECONDS)
             {
-                if(strtotime($post_date_gmt) - strtotime($now) < MINUTE_IN_SECONDS)
-                {
-                    $post_status = 'publish';
-                }
+                $post_status = 'publish';
             }
         }
 
@@ -2869,7 +2877,7 @@
 
         $new_postarr = array_merge([
                                        'ID' => $post_id,
-                                   ], compact(array_diff(array_keys($defaults), ['context', 'filter'])));
+                                   ], compact());
 
         $post_parent = apply_filters('wp_insert_post_parent', $post_parent, $post_id, $new_postarr, $postarr);
 
@@ -3304,12 +3312,7 @@
 
         $post = get_post($post);
 
-        if(! $post)
-        {
-            return;
-        }
-
-        if('publish' === $post->post_status)
+        if(! $post || 'publish' === $post->post_status)
         {
             return;
         }
@@ -3372,12 +3375,7 @@
     {
         $post = get_post($post);
 
-        if(! $post)
-        {
-            return;
-        }
-
-        if('future' !== $post->post_status)
+        if(! $post || 'future' !== $post->post_status)
         {
             return;
         }
@@ -3994,8 +3992,10 @@
             return false;
         }
 
+        /** @noinspection NativeMemberUsageInspection */
         $uri = $page->post_name;
 
+        /** @noinspection NativeMemberUsageInspection */
         foreach($page->ancestors as $parent)
         {
             $parent = get_post($parent);
@@ -4097,7 +4097,7 @@
                 foreach($post_authors as $post_author)
                 {
                     // Do we have an author id or an author login?
-                    if(0 == (int) $post_author)
+                    if(0 === (int) $post_author)
                     {
                         $post_author = get_user_by('login', $post_author);
                         if(empty($post_author))
@@ -4331,22 +4331,18 @@
         $uploadpath = wp_get_upload_dir();
         $deleted = true;
 
-        if(! empty($meta['thumb']))
+        if(! empty($meta['thumb']) && ! $wpdb->get_row($wpdb->prepare("SELECT meta_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attachment_metadata' AND meta_value LIKE %s AND post_id <> %d", '%'.$wpdb->esc_like($meta['thumb']).'%', $post_id)))
         {
-            // Don't delete the thumb if another attachment uses it.
-            if(! $wpdb->get_row($wpdb->prepare("SELECT meta_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attachment_metadata' AND meta_value LIKE %s AND post_id <> %d", '%'.$wpdb->esc_like($meta['thumb']).'%', $post_id)))
+            $thumbfile = str_replace(wp_basename($file), $meta['thumb'], $file);
+
+            if(! empty($thumbfile))
             {
-                $thumbfile = str_replace(wp_basename($file), $meta['thumb'], $file);
+                $thumbfile = path_join($uploadpath['basedir'], $thumbfile);
+                $thumbdir = path_join($uploadpath['basedir'], dirname($file));
 
-                if(! empty($thumbfile))
+                if(! wp_delete_file_from_directory($thumbfile, $thumbdir))
                 {
-                    $thumbfile = path_join($uploadpath['basedir'], $thumbfile);
-                    $thumbdir = path_join($uploadpath['basedir'], dirname($file));
-
-                    if(! wp_delete_file_from_directory($thumbfile, $thumbdir))
-                    {
-                        $deleted = false;
-                    }
+                    $deleted = false;
                 }
             }
         }
@@ -4481,12 +4477,7 @@
 
         $post = get_post($attachment_id);
 
-        if(! $post)
-        {
-            return false;
-        }
-
-        if('attachment' !== $post->post_type)
+        if(! $post || 'attachment' !== $post->post_type)
         {
             return false;
         }
@@ -4549,12 +4540,7 @@
         $post_id = (int) $post_id;
         $post = get_post($post_id);
 
-        if(! $post)
-        {
-            return false;
-        }
-
-        if('attachment' !== $post->post_type)
+        if(! $post || 'attachment' !== $post->post_type)
         {
             return false;
         }
@@ -4766,13 +4752,8 @@
     function wp_check_for_changed_slugs($post_id, $post, $post_before)
     {
         // Don't bother if it hasn't changed.
-        if($post->post_name == $post_before->post_name)
-        {
-            return;
-        }
-
         // We're only concerned with published, non-hierarchical objects.
-        if(! ('publish' === $post->post_status || ('attachment' === get_post_type($post) && 'inherit' === $post->post_status)) || is_post_type_hierarchical($post->post_type))
+        if($post->post_name == $post_before->post_name || ! ('publish' === $post->post_status || ('attachment' === get_post_type($post) && 'inherit' === $post->post_status)) || is_post_type_hierarchical($post->post_type))
         {
             return;
         }
@@ -4798,13 +4779,8 @@
         $new_date = gmdate('Y-m-d', strtotime($post->post_date));
 
         // Don't bother if it hasn't changed.
-        if($new_date == $previous_date)
-        {
-            return;
-        }
-
         // We're only concerned with published, non-hierarchical objects.
-        if(! ('publish' === $post->post_status || ('attachment' === get_post_type($post) && 'inherit' === $post->post_status)) || is_post_type_hierarchical($post->post_type))
+        if($new_date == $previous_date || ! ('publish' === $post->post_status || ('attachment' === get_post_type($post) && 'inherit' === $post->post_status)) || is_post_type_hierarchical($post->post_type))
         {
             return;
         }
@@ -4889,7 +4865,12 @@
 
         if(empty($post_type_clauses))
         {
-            return $full ? 'WHERE 1 = 0' : '1 = 0';
+            if($full)
+            {
+                return 'WHERE 1 = 0';
+            }
+
+            return '1 = 0';
         }
 
         $sql = '( '.implode(' OR ', $post_type_clauses).' )';
@@ -5562,12 +5543,7 @@
 
     function use_block_editor_for_post_type($post_type)
     {
-        if(! post_type_exists($post_type))
-        {
-            return false;
-        }
-
-        if(! post_type_supports($post_type, 'editor'))
+        if(! post_type_exists($post_type) || ! post_type_supports($post_type, 'editor'))
         {
             return false;
         }

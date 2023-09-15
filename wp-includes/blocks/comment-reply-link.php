@@ -30,10 +30,7 @@
             $parent_id = get_comment($parent_id)->comment_parent;
         }
 
-        $comment_reply_link = get_comment_reply_link([
-                                                         'depth' => $depth,
-                                                         'max_depth' => $max_depth,
-                                                     ], $comment);
+        $comment_reply_link = get_comment_reply_link(compact('depth', 'max_depth'), $comment);
 
         // Render nothing if the generated reply link is empty.
         if(empty($comment_reply_link))

@@ -12,7 +12,7 @@
 // define a constant rather than looking up every time it is needed
     if(! defined('GETID3_OS_ISWINDOWS'))
     {
-        define('GETID3_OS_ISWINDOWS', (stripos(PHP_OS, 'WIN') === 0));
+        define('GETID3_OS_ISWINDOWS', (strncasecmp(PHP_OS, 'WIN', 3) === 0));
     }
 // Get base path of getID3() - ONCE
     if(! defined('GETID3_INCLUDEPATH'))
@@ -93,16 +93,16 @@
          * Settings
          */
 
-        const VERSION = '1.9.22-202207161647';
+        public const VERSION = '1.9.22-202207161647';
 
-        const FREAD_BUFFER_SIZE = 32768;
+        public const FREAD_BUFFER_SIZE = 32768;
 
-        const ATTACHMENTS_NONE = false;
+        public const ATTACHMENTS_NONE = false;
 
         /*
          * Optional tag checks - disable for speed.
          */
-        const ATTACHMENTS_INLINE = true;
+        public const ATTACHMENTS_INLINE = true;
 
         public $encoding = 'UTF-8';
 
@@ -255,25 +255,17 @@
             }
 
             // check for magic quotes in PHP < 7.4.0 (when these functions became deprecated)
-            if(version_compare(PHP_VERSION, '7.4.0', '<'))
+            if(PHP_VERSION_ID < 70400)
             {
                 // Check for magic_quotes_runtime
-                if(function_exists('get_magic_quotes_runtime'))
+                if(function_exists('get_magic_quotes_runtime') && get_magic_quotes_runtime())
                 {
-                    // phpcs:ignore PHPCompatibility.FunctionUse.RemovedFunctions.get_magic_quotes_runtimeDeprecated
-                    if(get_magic_quotes_runtime())
-                    {
-                        $this->startup_error .= 'magic_quotes_runtime must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_runtime(0) and set_magic_quotes_runtime(1).'."\n";
-                    }
+                    $this->startup_error .= 'magic_quotes_runtime must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_runtime(0) and set_magic_quotes_runtime(1).'."\n";
                 }
                 // Check for magic_quotes_gpc
-                if(function_exists('get_magic_quotes_gpc'))
+                if(function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc())
                 {
-                    // phpcs:ignore PHPCompatibility.FunctionUse.RemovedFunctions.get_magic_quotes_gpcDeprecated
-                    if(get_magic_quotes_gpc())
-                    {
-                        $this->startup_error .= 'magic_quotes_gpc must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_gpc(0) and set_magic_quotes_gpc(1).'."\n";
-                    }
+                    $this->startup_error .= 'magic_quotes_gpc must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_gpc(0) and set_magic_quotes_gpc(1).'."\n";
                 }
             }
 
@@ -321,7 +313,7 @@
                                     if(preg_match('#^([0-9/]{10}) +([0-9:]{4,5}( [AP]M)?) +(<DIR>|[0-9,]+) +([^ ]{0,11}) +(.+)$#', $line, $matches))
                                     {
                                         [$dummy, $date, $time, $ampm, $filesize, $shortname, $filename] = $matches;
-                                        if((strtoupper($filesize) == '<DIR>') && (strtolower($filename) == strtolower($value)))
+                                        if((strtoupper($filesize) == '<DIR>') && (strtolower($filename) === strtolower($value)))
                                         {
                                             $value = $shortname;
                                         }
@@ -441,7 +433,7 @@
                 {
                     fseek($this->fp, 0);
                     $header = fread($this->fp, 10);
-                    if((substr($header, 0, 3) == 'ID3') && (strlen($header) == 10))
+                    if((strpos($header, 'ID3') === 0) && (strlen($header) == 10))
                     {
                         $this->info['id3v2']['header'] = true;
                         $this->info['id3v2']['majorversion'] = ord($header[3]);
@@ -1533,13 +1525,13 @@
                             }
                             if(isset($value) && $value !== "")
                             {
-                                if(! is_numeric($key))
+                                if(is_numeric($key))
                                 {
-                                    $this->info['tags'][trim($tag_name)][trim($tag_key)][$key] = $value;
+                                    $this->info['tags'][trim($tag_name)][trim($tag_key)][] = $value;
                                 }
                                 else
                                 {
-                                    $this->info['tags'][trim($tag_name)][trim($tag_key)][] = $value;
+                                    $this->info['tags'][trim($tag_name)][trim($tag_key)][$key] = $value;
                                 }
                             }
                         }
@@ -1693,20 +1685,12 @@
             if(isset($this->info['video']['dataformat']) && $this->info['video']['dataformat'] && (! isset($this->info['video']['bitrate']) || ($this->info['video']['bitrate'] == 0)))
             {
                 // if video bitrate not set
-                if(isset($this->info['audio']['bitrate']) && ($this->info['audio']['bitrate'] > 0) && ($this->info['audio']['bitrate'] == $this->info['bitrate']))
+                if(isset($this->info['audio']['bitrate']) && ($this->info['audio']['bitrate'] > 0) && ($this->info['audio']['bitrate'] == $this->info['bitrate']) && isset($this->info['playtime_seconds']) && ($this->info['playtime_seconds'] > 0))
                 {
-                    // AND if audio bitrate is set to same as overall bitrate
-                    if(isset($this->info['playtime_seconds']) && ($this->info['playtime_seconds'] > 0))
-                    {
-                        // AND if playtime is set
-                        if(isset($this->info['avdataend']) && isset($this->info['avdataoffset']))
-                        {
-                            // AND if AV data offset start/end is known
-                            // THEN we can calculate the video bitrate
-                            $this->info['bitrate'] = round((($this->info['avdataend'] - $this->info['avdataoffset']) * 8) / $this->info['playtime_seconds']);
-                            $this->info['video']['bitrate'] = $this->info['bitrate'] - $this->info['audio']['bitrate'];
-                        }
-                    }
+                    // AND if AV data offset start/end is known
+                    // THEN we can calculate the video bitrate
+                    $this->info['bitrate'] = round((($this->info['avdataend'] - $this->info['avdataoffset']) * 8) / $this->info['playtime_seconds']);
+                    $this->info['video']['bitrate'] = $this->info['bitrate'] - $this->info['audio']['bitrate'];
                 }
             }
 
@@ -1742,15 +1726,7 @@
 
         public function CalculateCompressionRatioVideo()
         {
-            if(empty($this->info['video']))
-            {
-                return false;
-            }
-            if(empty($this->info['video']['resolution_x']) || empty($this->info['video']['resolution_y']))
-            {
-                return false;
-            }
-            if(empty($this->info['video']['bits_per_sample']))
+            if(empty($this->info['video']) || empty($this->info['video']['resolution_x']) || empty($this->info['video']['resolution_y']) || empty($this->info['video']['bits_per_sample']))
             {
                 return false;
             }
@@ -2043,7 +2019,8 @@
 
             // Reset some info
             $this->getid3->info['avdataoffset'] = 0;
-            $this->getid3->info['avdataend'] = $this->getid3->info['filesize'] = $this->data_string_length;
+            $this->getid3->info['filesize'] = $this->data_string_length;
+            $this->getid3->info['avdataend'] = $this->getid3->info['filesize'];
 
             // Analyze
             $this->Analyze();
@@ -2193,7 +2170,7 @@ ected function warning($text)
                         $attachment = $this->fread($length); // get whole data in one pass, till it is anyway stored in memory
                         if($attachment === false || strlen($attachment) != $length)
                         {
-                            throw new Exception('failed to read attachment data');
+                            throw new \RuntimeException('failed to read attachment data');
                         }
                         // assume directory path is given
                     }
@@ -2208,14 +2185,14 @@ ected function warning($text)
                         );
                         if(! is_dir($dir) || ! getID3::is_writable($dir))
                         { // check supplied directory
-                            throw new Exception('supplied path ('.$dir.') does not exist, or is not writable');
+                            throw new \RuntimeException('supplied path ('.$dir.') does not exist, or is not writable');
                         }
                         $dest = $dir.DIRECTORY_SEPARATOR.$name.($image_mime ? '.'.getid3_lib::ImageExtFromMime($image_mime) : '');
 
                         // create dest file
                         if(($fp_dest = fopen($dest, 'wb')) == false)
                         {
-                            throw new Exception('failed to create file '.$dest);
+                            throw new \RuntimeException('failed to create file '.$dest);
                         }
 
                         // copy data
@@ -2226,7 +2203,7 @@ ected function warning($text)
                         {
                             if(($buffer = $this->fread(min($buffersize, $bytesleft))) === false || ($byteswritten = fwrite($fp_dest, $buffer)) === false || ($byteswritten === 0))
                             {
-                                throw new Exception($buffer === false ? 'not enough data to read' : 'failed to write to destination file, may be not enough disk space');
+                                throw new \RuntimeException($buffer === false ? 'not enough data to read' : 'failed to write to destination file, may be not enough disk space');
                             }
                             $bytesleft -= $byteswritten;
                         }

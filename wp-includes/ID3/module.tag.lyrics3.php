@@ -19,7 +19,7 @@
         exit;
     }
 
-    class getid3_lyrics3 extends getid3_handler
+    class module extends getid3_handler
     {
         public function Analyze()
         {
@@ -60,7 +60,7 @@
                 $lyrics3offset = $info['filesize'] - 128 - $lyrics3size;
                 $lyrics3version = 2;
             }
-            elseif(substr(strrev($lyrics3_id3v1), 0, 9) == strrev('LYRICSEND'))
+            elseif(strpos(strrev($lyrics3_id3v1), strrev('LYRICSEND')) === 0)
             {
                 // Lyrics3v1, no ID3v1, no APE
 
@@ -69,7 +69,7 @@
                 $lyrics3version = 1;
                 $lyrics3offset = $info['filesize'] - $lyrics3size;
             }
-            elseif(substr(strrev($lyrics3_id3v1), 0, 9) == strrev('LYRICS200'))
+            elseif(strpos(strrev($lyrics3_id3v1), strrev('LYRICS200')) === 0)
             {
                 // Lyrics3v2, no ID3v1, no APE
 
@@ -170,7 +170,7 @@
             $ParsedLyrics3['tag_offset_start'] = $endoffset;
             $ParsedLyrics3['tag_offset_end'] = $endoffset + $length - 1;
 
-            if(substr($rawdata, 0, 11) != 'LYRICSBEGIN')
+            if(strpos($rawdata, 'LYRICSBEGIN') !== 0)
             {
                 if(strpos($rawdata, 'LYRICSBEGIN') !== false)
                 {
@@ -210,7 +210,7 @@
                     {
                         $ParsedLyrics3['raw']['unparsed'] = substr($rawdata, 11, strlen($rawdata) - 11 - 9 - 6); // LYRICSBEGIN + LYRICS200 + LSZ
                         $rawdata = $ParsedLyrics3['raw']['unparsed'];
-                        while(strlen($rawdata) > 0)
+                        while($rawdata != '')
                         {
                             $fieldname = substr($rawdata, 0, 3);
                             $fieldsize = (int) substr($rawdata, 3, 5);

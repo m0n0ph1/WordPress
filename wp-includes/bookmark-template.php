@@ -39,14 +39,11 @@
             $name = esc_attr(sanitize_bookmark_field('link_name', $bookmark->link_name, $bookmark->link_id, 'display'));
             $title = $desc;
 
-            if($parsed_args['show_updated'])
+            if($parsed_args['show_updated'] && ! str_starts_with($bookmark->link_updated_f, '00'))
             {
-                if(! str_starts_with($bookmark->link_updated_f, '00'))
-                {
-                    $title .= ' (';
-                    $title .= sprintf(/* translators: %s: Date and time of last update. */ __('Last updated: %s'), gmdate(get_option('links_updated_date_format'), $bookmark->link_updated_f + (get_option('gmt_offset') * HOUR_IN_SECONDS)));
-                    $title .= ')';
-                }
+                $title .= ' (';
+                $title .= sprintf(/* translators: %s: Date and time of last update. */ __('Last updated: %s'), gmdate(get_option('links_updated_date_format'), $bookmark->link_updated_f + (get_option('gmt_offset') * HOUR_IN_SECONDS)));
+                $title .= ')';
             }
             $alt = ' alt="'.$name.($parsed_args['show_description'] ? ' '.$title : '').'"';
 

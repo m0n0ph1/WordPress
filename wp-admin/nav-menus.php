@@ -87,13 +87,10 @@
 
                     foreach((array) $ordered_menu_items as $ordered_menu_item_object)
                     {
-                        if(isset($ordered_menu_item_object->ID))
+                        if(isset($ordered_menu_item_object->ID) && isset($ordered_menu_item_object->menu_order))
                         {
-                            if(isset($ordered_menu_item_object->menu_order))
-                            {
-                                $dbids_to_orders[$ordered_menu_item_object->ID] = $ordered_menu_item_object->menu_order;
-                                $orders_to_dbids[$ordered_menu_item_object->menu_order] = $ordered_menu_item_object->ID;
-                            }
+                            $dbids_to_orders[$ordered_menu_item_object->ID] = $ordered_menu_item_object->menu_order;
+                            $orders_to_dbids[$ordered_menu_item_object->menu_order] = $ordered_menu_item_object->ID;
                         }
                     }
 
@@ -131,8 +128,8 @@
                         }
                         else
                         {
-                            $next_item_data['menu_order'] = $next_item_data['menu_order'] - 1;
-                            $menu_item_data['menu_order'] = $menu_item_data['menu_order'] + 1;
+                            --$next_item_data['menu_order'];
+                            ++$menu_item_data['menu_order'];
 
                             $menu_item_data['menu_item_parent'] = $next_item_data['ID'];
 
@@ -188,13 +185,10 @@
 
                     foreach((array) $ordered_menu_items as $ordered_menu_item_object)
                     {
-                        if(isset($ordered_menu_item_object->ID))
+                        if(isset($ordered_menu_item_object->ID) && isset($ordered_menu_item_object->menu_order))
                         {
-                            if(isset($ordered_menu_item_object->menu_order))
-                            {
-                                $dbids_to_orders[$ordered_menu_item_object->ID] = $ordered_menu_item_object->menu_order;
-                                $orders_to_dbids[$ordered_menu_item_object->menu_order] = $ordered_menu_item_object->ID;
-                            }
+                            $dbids_to_orders[$ordered_menu_item_object->ID] = $ordered_menu_item_object->menu_order;
+                            $orders_to_dbids[$ordered_menu_item_object->menu_order] = $ordered_menu_item_object->ID;
                         }
                     }
 
@@ -202,7 +196,7 @@
                     if(! empty($dbids_to_orders[$menu_item_id]) && ! empty($orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1]))
                     {
                         // If this menu item is a child of the previous.
-                        if(! empty($menu_item_data['menu_item_parent']) && in_array((int) $menu_item_data['menu_item_parent'], array_keys($dbids_to_orders), true) && isset($orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1]) && ((int) $menu_item_data['menu_item_parent'] === $orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1]))
+                        if(! empty($menu_item_data['menu_item_parent']) && array_key_exists((int) $menu_item_data['menu_item_parent'], $dbids_to_orders) && isset($orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1]) && ((int) $menu_item_data['menu_item_parent'] === $orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1]))
                         {
                             if(in_array((int) $menu_item_data['menu_item_parent'], $orders_to_dbids, true))
                             {
@@ -235,7 +229,7 @@
                                 {
                                     $_possible_parent_id = (int) get_post_meta($orders_to_dbids[$dbids_to_orders[$parent_db_id] - 1], '_menu_item_menu_item_parent', true);
 
-                                    if(in_array($_possible_parent_id, array_keys($dbids_to_orders), true))
+                                    if(array_key_exists($_possible_parent_id, $dbids_to_orders))
                                     {
                                         $menu_item_data['menu_item_parent'] = $_possible_parent_id;
                                     }
@@ -251,10 +245,10 @@
                                 }
 
                                 // Set former parent's [menu_order] to that of menu-item's.
-                                $parent_data['menu_order'] = $parent_data['menu_order'] + 1;
+                                ++$parent_data['menu_order'];
 
                                 // Set menu-item's [menu_order] to that of former parent.
-                                $menu_item_data['menu_order'] = $menu_item_data['menu_order'] - 1;
+                                --$menu_item_data['menu_order'];
 
                                 // Save changes.
                                 update_post_meta($menu_item_data['ID'], '_menu_item_menu_item_parent', (int) $menu_item_data['menu_item_parent']);
@@ -263,7 +257,7 @@
                             }
                             // Else this menu item is not a child of the previous.
                         }
-                        elseif(empty($menu_item_data['menu_order']) || empty($menu_item_data['menu_item_parent']) || ! in_array((int) $menu_item_data['menu_item_parent'], array_keys($dbids_to_orders), true) || empty($orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1]) || $orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1] !== (int) $menu_item_data['menu_item_parent'])
+                        elseif(empty($menu_item_data['menu_order']) || empty($menu_item_data['menu_item_parent']) || ! array_key_exists((int) $menu_item_data['menu_item_parent'], $dbids_to_orders) || empty($orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1]) || $orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1] !== (int) $menu_item_data['menu_item_parent'])
                         {
                             // Just make it a child of the previous; keep the order.
                             $menu_item_data['menu_item_parent'] = (int) $orders_to_dbids[$dbids_to_orders[$menu_item_id] - 1];
@@ -547,9 +541,9 @@
     $menu_count = count($nav_menus);
 
     // Are we on the add new screen?
-    $add_new_screen = (isset($_GET['menu']) && 0 === (int) $_GET['menu']) ? true : false;
+    $add_new_screen = (isset($_GET['menu']) && 0 === (int) $_GET['menu']);
 
-    $locations_screen = (isset($_GET['action']) && 'locations' === $_GET['action']) ? true : false;
+    $locations_screen = (isset($_GET['action']) && 'locations' === $_GET['action']);
 
     $page_count = wp_count_posts('page');
 
@@ -700,7 +694,18 @@
         ]);
     }
 
-    if(! $locations_screen) : // Main tab.
+    if($locations_screen) : // Main tab.
+        $locations_overview = '<p>'.__('This screen is used for globally assigning menus to locations defined by your theme.').'</p>';
+        $locations_overview .= '<ul><li>'.__('To assign menus to one or more theme locations, <strong>select a menu from each location&#8217;s dropdown</strong>. When you are finished, <strong>click Save Changes</strong>').'</li>';
+        $locations_overview .= '<li>'.__('To edit a menu currently assigned to a theme location, <strong>click the adjacent &#8217;Edit&#8217; link</strong>').'</li>';
+        $locations_overview .= '<li>'.__('To add a new menu instead of assigning an existing one, <strong>click the &#8217;Use new menu&#8217; link</strong>. Your new menu will be automatically assigned to that theme location').'</li></ul>';
+
+        get_current_screen()->add_help_tab([
+                                               'id' => 'locations-overview',
+                                               'title' => __('Overview'),
+                                               'content' => $locations_overview,
+                                           ]);
+    else : // Locations tab.
         $overview = '<p>'.__('This screen is used for managing your navigation menus.').'</p>';
         $overview .= '<p>'.sprintf(/* translators: 1: URL to Widgets screen, 2 and 3: The names of the default themes. */ __('Menus can be displayed in locations defined by your theme, even used in sidebars by adding a &#8220;Navigation Menu&#8221; widget on the <a href="%1$s">Widgets</a> screen. If your theme does not support the navigation menus feature (the default themes, %2$s and %3$s, do), you can learn about adding this support by following the documentation link to the side.'), admin_url('widgets.php'), 'Twenty Twenty', 'Twenty Twenty-One').'</p>';
         $overview .= '<p>'.__('From this screen you can:').'</p>';
@@ -735,17 +740,6 @@
                                                'id' => 'editing-menus',
                                                'title' => __('Editing Menus'),
                                                'content' => $editing_menus,
-                                           ]);
-    else : // Locations tab.
-        $locations_overview = '<p>'.__('This screen is used for globally assigning menus to locations defined by your theme.').'</p>';
-        $locations_overview .= '<ul><li>'.__('To assign menus to one or more theme locations, <strong>select a menu from each location&#8217;s dropdown</strong>. When you are finished, <strong>click Save Changes</strong>').'</li>';
-        $locations_overview .= '<li>'.__('To edit a menu currently assigned to a theme location, <strong>click the adjacent &#8217;Edit&#8217; link</strong>').'</li>';
-        $locations_overview .= '<li>'.__('To add a new menu instead of assigning an existing one, <strong>click the &#8217;Use new menu&#8217; link</strong>. Your new menu will be automatically assigned to that theme location').'</li></ul>';
-
-        get_current_screen()->add_help_tab([
-                                               'id' => 'locations-overview',
-                                               'title' => __('Overview'),
-                                               'content' => $locations_overview,
                                            ]);
     endif;
 
@@ -1173,7 +1167,7 @@
                                                     {
                                                         $auto_add = false;
                                                     }
-                                                    elseif(false !== array_search($nav_menu_selected_id, $auto_add['auto_add'], true))
+                                                    elseif(in_array($nav_menu_selected_id, $auto_add['auto_add'], true))
                                                     {
                                                         $auto_add = true;
                                                     }

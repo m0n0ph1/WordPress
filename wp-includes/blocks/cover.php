@@ -7,7 +7,29 @@
             return $content;
         }
 
-        if(! ($attributes['hasParallax'] || $attributes['isRepeated']))
+        if($attributes['hasParallax'] || $attributes['isRepeated'])
+        {
+            if(in_the_loop())
+            {
+                update_post_thumbnail_cache();
+            }
+            $current_featured_image = get_the_post_thumbnail_url();
+            if(! $current_featured_image)
+            {
+                return $content;
+            }
+
+            $processor = new WP_HTML_Tag_Processor($content);
+            $processor->next_tag();
+
+            $styles = $processor->get_attribute('style');
+            $merged_styles = ! empty($styles) ? $styles.';' : '';
+            $merged_styles .= 'background-image:url('.esc_url($current_featured_image).');';
+
+            $processor->set_attribute('style', $merged_styles);
+            $content = $processor->get_updated_html();
+        }
+        else
         {
             $attr = [
                 'class' => 'wp-block-cover__image-background',
@@ -33,28 +55,6 @@
                 $offset = $matches[0][1];
                 $content = substr($content, 0, $offset).$image.substr($content, $offset);
             }
-        }
-        else
-        {
-            if(in_the_loop())
-            {
-                update_post_thumbnail_cache();
-            }
-            $current_featured_image = get_the_post_thumbnail_url();
-            if(! $current_featured_image)
-            {
-                return $content;
-            }
-
-            $processor = new WP_HTML_Tag_Processor($content);
-            $processor->next_tag();
-
-            $styles = $processor->get_attribute('style');
-            $merged_styles = ! empty($styles) ? $styles.';' : '';
-            $merged_styles .= 'background-image:url('.esc_url($current_featured_image).');';
-
-            $processor->set_attribute('style', $merged_styles);
-            $content = $processor->get_updated_html();
         }
 
         return $content;

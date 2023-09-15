@@ -68,13 +68,8 @@
                 $lock_result = get_option($lock_option);
 
                 // If a lock couldn't be created, and there isn't a lock, bail.
-                if(! $lock_result)
-                {
-                    return false;
-                }
-
                 // Check to see if the lock is still valid. If it is, bail.
-                if($lock_result > (time() - $release_timeout))
+                if(! $lock_result || $lock_result > (time() - $release_timeout))
                 {
                     return false;
                 }
@@ -632,12 +627,9 @@
             else
             {
                 // Create destination if needed.
-                if(! $wp_filesystem->exists($remote_destination))
+                if(! $wp_filesystem->exists($remote_destination) && ! $wp_filesystem->mkdir($remote_destination, FS_CHMOD_DIR))
                 {
-                    if(! $wp_filesystem->mkdir($remote_destination, FS_CHMOD_DIR))
-                    {
-                        return new WP_Error('mkdir_failed_destination', $this->strings['mkdir_failed'], $remote_destination);
-                    }
+                    return new WP_Error('mkdir_failed_destination', $this->strings['mkdir_failed'], $remote_destination);
                 }
                 $result = copy_dir($source, $remote_destination);
             }
@@ -678,11 +670,6 @@
         {
             global $wp_filesystem;
 
-            if(empty($args['slug']) || empty($args['src']) || empty($args['dir']))
-            {
-                return false;
-            }
-
             /*
              * Skip any plugin that has "." as its slug.
              * A slug of "." will result in a `$src` value ending in a period.
@@ -690,7 +677,7 @@
              * On Windows, this will cause the 'plugins' folder to be moved,
              * and will cause a failure when attempting to call `mkdir()`.
              */
-            if('.' === $args['slug'])
+            if(empty($args['slug']) || empty($args['src']) || empty($args['dir']) || '.' === $args['slug'])
             {
                 return false;
             }
@@ -866,7 +853,12 @@
                 }
             }
 
-            return $errors->has_errors() ? $errors : true;
+            if($errors->has_errors())
+            {
+                return $errors;
+            }
+
+            return true;
         }
 
         public function delete_temp_backup()
@@ -898,7 +890,12 @@
                 }
             }
 
-            return $errors->has_errors() ? $errors : true;
+            if($errors->has_errors())
+            {
+                return $errors;
+            }
+
+            return true;
         }
     }
 

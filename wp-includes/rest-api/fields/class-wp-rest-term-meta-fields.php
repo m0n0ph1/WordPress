@@ -11,7 +11,12 @@
 
         public function get_rest_field_type()
         {
-            return 'post_tag' === $this->taxonomy ? 'tag' : $this->taxonomy;
+            if('post_tag' === $this->taxonomy)
+            {
+                return 'tag';
+            }
+
+            return $this->taxonomy;
         }
 
         protected function get_meta_type()

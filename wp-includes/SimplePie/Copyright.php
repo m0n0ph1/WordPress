@@ -1,10 +1,10 @@
 <?php
 
-    class SimplePie_Copyright
+    class Copyright
     {
-        var $url;
+        public $url;
 
-        var $label;
+        public $label;
 
         public function __construct($url = null, $label = null)
         {

@@ -3,7 +3,7 @@
     #[AllowDynamicProperties]
     class WP_Block_Type
     {
-        const GLOBAL_ATTRIBUTES = [
+        public const GLOBAL_ATTRIBUTES = [
             'lock' => ['type' => 'object'],
         ];
 
@@ -122,7 +122,12 @@
                 return $this->{$new_name};
             }
 
-            return isset($this->{$new_name}[0]) ? $this->{$new_name}[0] : null;
+            if(isset($this->{$new_name}[0]))
+            {
+                return $this->{$new_name}[0];
+            }
+
+            return null;
         }
 
         public function __set($name, $value)
@@ -234,6 +239,11 @@
 
         public function get_attributes()
         {
-            return is_array($this->attributes) ? $this->attributes : [];
+            if(is_array($this->attributes))
+            {
+                return $this->attributes;
+            }
+
+            return [];
         }
     }

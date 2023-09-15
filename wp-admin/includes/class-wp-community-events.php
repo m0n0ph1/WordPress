@@ -155,7 +155,7 @@
                     // Decode HTML entities from the event title.
                     $event['title'] = html_entity_decode($event['title'], ENT_QUOTES, 'UTF-8');
 
-                    array_push($future_events, $event);
+                    $future_events[] = $event;
                 }
             }
 
@@ -172,7 +172,7 @@
             if($future_wordcamps && ! in_array('wordcamp', $trimmed_event_types, true))
             {
                 array_pop($trimmed_events);
-                array_push($trimmed_events, $future_wordcamps[0]);
+                $trimmed_events[] = $future_wordcamps[0];
             }
 
             return $trimmed_events;
@@ -345,7 +345,5 @@
             {
                 return;
             }
-
-            error_log(sprintf('%s: %s. Details: %s', __METHOD__, trim($message, '.'), wp_json_encode($details)));
         }
     }

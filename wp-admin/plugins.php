@@ -67,17 +67,17 @@
                     }
                 }
 
-                if(! is_network_admin())
-                {
-                    $recent = (array) get_option('recently_activated');
-                    unset($recent[$plugin]);
-                    update_option('recently_activated', $recent);
-                }
-                else
+                if(is_network_admin())
                 {
                     $recent = (array) get_site_option('recently_activated');
                     unset($recent[$plugin]);
                     update_site_option('recently_activated', $recent);
+                }
+                else
+                {
+                    $recent = (array) get_option('recently_activated');
+                    unset($recent[$plugin]);
+                    update_option('recently_activated', $recent);
                 }
 
                 if(isset($_GET['from']) && 'import' === $_GET['from'])
@@ -142,13 +142,13 @@
 
                 activate_plugins($plugins, self_admin_url('plugins.php?error=true'), is_network_admin());
 
-                if(! is_network_admin())
+                if(is_network_admin())
                 {
-                    $recent = (array) get_option('recently_activated');
+                    $recent = (array) get_site_option('recently_activated');
                 }
                 else
                 {
-                    $recent = (array) get_site_option('recently_activated');
+                    $recent = (array) get_option('recently_activated');
                 }
 
                 foreach($plugins as $plugin)
@@ -156,13 +156,13 @@
                     unset($recent[$plugin]);
                 }
 
-                if(! is_network_admin())
+                if(is_network_admin())
                 {
-                    update_option('recently_activated', $recent);
+                    update_site_option('recently_activated', $recent);
                 }
                 else
                 {
-                    update_site_option('recently_activated', $recent);
+                    update_option('recently_activated', $recent);
                 }
 
                 wp_redirect(self_admin_url("plugins.php?activate-multi=true&plugin_status=$status&paged=$page&s=$s"));
@@ -244,13 +244,13 @@
 
                 deactivate_plugins($plugin, false, is_network_admin());
 
-                if(! is_network_admin())
+                if(is_network_admin())
                 {
-                    update_option('recently_activated', [$plugin => time()] + (array) get_option('recently_activated'));
+                    update_site_option('recently_activated', [$plugin => time()] + (array) get_site_option('recently_activated'));
                 }
                 else
                 {
-                    update_site_option('recently_activated', [$plugin => time()] + (array) get_site_option('recently_activated'));
+                    update_option('recently_activated', [$plugin => time()] + (array) get_option('recently_activated'));
                 }
 
                 if(headers_sent())
@@ -305,13 +305,13 @@
                     $deactivated[$plugin] = time();
                 }
 
-                if(! is_network_admin())
+                if(is_network_admin())
                 {
-                    update_option('recently_activated', $deactivated + (array) get_option('recently_activated'));
+                    update_site_option('recently_activated', $deactivated + (array) get_site_option('recently_activated'));
                 }
                 else
                 {
-                    update_site_option('recently_activated', $deactivated + (array) get_site_option('recently_activated'));
+                    update_option('recently_activated', $deactivated + (array) get_option('recently_activated'));
                 }
 
                 wp_redirect(self_admin_url("plugins.php?deactivate-multi=true&plugin_status=$status&paged=$page&s=$s"));
@@ -353,7 +353,11 @@
 
                 $parent_file = 'plugins.php';
 
-                if(! isset($_REQUEST['verify-delete']))
+                if(isset($_REQUEST['verify-delete']))
+                {
+                    $plugins_to_delete = count($plugins);
+                }
+                else
                 {
                     wp_enqueue_script('jquery');
                     require_once ABSPATH.'wp-admin/admin-header.php';
@@ -488,10 +492,6 @@
 
                     require_once ABSPATH.'wp-admin/admin-footer.php';
                     exit;
-                }
-                else
-                {
-                    $plugins_to_delete = count($plugins);
                 } // End if verify-delete.
 
                 $delete_result = delete_plugins($plugins);
@@ -501,13 +501,13 @@
                 wp_redirect(self_admin_url("plugins.php?deleted=$plugins_to_delete&plugin_status=$status&paged=$page&s=$s"));
                 exit;
             case 'clear-recent-list':
-                if(! is_network_admin())
+                if(is_network_admin())
                 {
-                    update_option('recently_activated', []);
+                    update_site_option('recently_activated', []);
                 }
                 else
                 {
-                    update_site_option('recently_activated', []);
+                    update_option('recently_activated', []);
                 }
 
                 break;

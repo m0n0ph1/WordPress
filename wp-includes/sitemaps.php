@@ -55,7 +55,7 @@
             return false;
         }
 
-        if($subtype_name && ! in_array($subtype_name, array_keys($provider->get_object_subtypes()), true))
+        if($subtype_name && ! array_key_exists($subtype_name, $provider->get_object_subtypes()))
         {
             return false;
         }

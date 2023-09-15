@@ -4,71 +4,71 @@
 
     class PHPMailer
     {
-        const CHARSET_ASCII = 'us-ascii';
+        public const CHARSET_ASCII = 'us-ascii';
 
-        const CHARSET_ISO88591 = 'iso-8859-1';
+        public const CHARSET_ISO88591 = 'iso-8859-1';
 
-        const CHARSET_UTF8 = 'utf-8';
+        public const CHARSET_UTF8 = 'utf-8';
 
-        const CONTENT_TYPE_PLAINTEXT = 'text/plain';
+        public const CONTENT_TYPE_PLAINTEXT = 'text/plain';
 
-        const CONTENT_TYPE_TEXT_CALENDAR = 'text/calendar';
+        public const CONTENT_TYPE_TEXT_CALENDAR = 'text/calendar';
 
-        const CONTENT_TYPE_TEXT_HTML = 'text/html';
+        public const CONTENT_TYPE_TEXT_HTML = 'text/html';
 
-        const CONTENT_TYPE_MULTIPART_ALTERNATIVE = 'multipart/alternative';
+        public const CONTENT_TYPE_MULTIPART_ALTERNATIVE = 'multipart/alternative';
 
-        const CONTENT_TYPE_MULTIPART_MIXED = 'multipart/mixed';
+        public const CONTENT_TYPE_MULTIPART_MIXED = 'multipart/mixed';
 
-        const CONTENT_TYPE_MULTIPART_RELATED = 'multipart/related';
+        public const CONTENT_TYPE_MULTIPART_RELATED = 'multipart/related';
 
-        const ENCODING_7BIT = '7bit';
+        public const ENCODING_7BIT = '7bit';
 
-        const ENCODING_8BIT = '8bit';
+        public const ENCODING_8BIT = '8bit';
 
-        const ENCODING_BASE64 = 'base64';
+        public const ENCODING_BASE64 = 'base64';
 
-        const ENCODING_BINARY = 'binary';
+        public const ENCODING_BINARY = 'binary';
 
-        const ENCODING_QUOTED_PRINTABLE = 'quoted-printable';
+        public const ENCODING_QUOTED_PRINTABLE = 'quoted-printable';
 
-        const ENCRYPTION_STARTTLS = 'tls';
+        public const ENCRYPTION_STARTTLS = 'tls';
 
-        const ENCRYPTION_SMTPS = 'ssl';
+        public const ENCRYPTION_SMTPS = 'ssl';
 
-        const ICAL_METHOD_REQUEST = 'REQUEST';
+        public const ICAL_METHOD_REQUEST = 'REQUEST';
 
-        const ICAL_METHOD_PUBLISH = 'PUBLISH';
+        public const ICAL_METHOD_PUBLISH = 'PUBLISH';
 
-        const ICAL_METHOD_REPLY = 'REPLY';
+        public const ICAL_METHOD_REPLY = 'REPLY';
 
-        const ICAL_METHOD_ADD = 'ADD';
+        public const ICAL_METHOD_ADD = 'ADD';
 
-        const ICAL_METHOD_CANCEL = 'CANCEL';
+        public const ICAL_METHOD_CANCEL = 'CANCEL';
 
-        const ICAL_METHOD_REFRESH = 'REFRESH';
+        public const ICAL_METHOD_REFRESH = 'REFRESH';
 
-        const ICAL_METHOD_COUNTER = 'COUNTER';
+        public const ICAL_METHOD_COUNTER = 'COUNTER';
 
-        const ICAL_METHOD_DECLINECOUNTER = 'DECLINECOUNTER';
+        public const ICAL_METHOD_DECLINECOUNTER = 'DECLINECOUNTER';
 
-        const VERSION = '6.8.1';
+        public const VERSION = '6.8.1';
 
-        const STOP_MESSAGE = 0;
+        public const STOP_MESSAGE = 0;
 
-        const STOP_CONTINUE = 1;
+        public const STOP_CONTINUE = 1;
 
-        const STOP_CRITICAL = 2;
+        public const STOP_CRITICAL = 2;
 
-        const CRLF = "\r\n";
+        public const CRLF = "\r\n";
 
-        const FWS = ' ';
+        public const FWS = ' ';
 
-        const MAIL_MAX_LINE_LENGTH = 63;
+        public const MAIL_MAX_LINE_LENGTH = 63;
 
-        const MAX_LINE_LENGTH = 998;
+        public const MAX_LINE_LENGTH = 998;
 
-        const STD_LINE_LENGTH = 76;
+        public const STD_LINE_LENGTH = 76;
 
         public static $validator = 'php';
 
@@ -282,13 +282,13 @@
         {
             $ini_sendmail_path = ini_get('sendmail_path');
 
-            if(false === stripos($ini_sendmail_path, 'sendmail'))
+            if(false !== stripos($ini_sendmail_path, 'sendmail'))
             {
-                $this->Sendmail = '/usr/sbin/sendmail';
+                $this->Sendmail = $ini_sendmail_path;
             }
             else
             {
-                $this->Sendmail = $ini_sendmail_path;
+                $this->Sendmail = '/usr/sbin/sendmail';
             }
             $this->Mailer = 'sendmail';
         }
@@ -297,13 +297,13 @@
         {
             $ini_sendmail_path = ini_get('sendmail_path');
 
-            if(false === stripos($ini_sendmail_path, 'qmail'))
+            if(false !== stripos($ini_sendmail_path, 'qmail'))
             {
-                $this->Sendmail = '/var/qmail/bin/qmail-inject';
+                $this->Sendmail = $ini_sendmail_path;
             }
             else
             {
-                $this->Sendmail = $ini_sendmail_path;
+                $this->Sendmail = '/var/qmail/bin/qmail-inject';
             }
             $this->Mailer = 'qmail';
         }
@@ -487,11 +487,7 @@
                     }
                 }
 
-                if($foundFile === false)
-                {
-                    $foundlang = false;
-                }
-                else
+                if($foundFile !== false)
                 {
                     $lines = file($lang_file);
                     foreach($lines as $line)
@@ -511,6 +507,10 @@
                         }
                     }
                 }
+                else
+                {
+                    $foundlang = false;
+                }
             }
             $this->language = $PHPMAILER_LANG;
 
@@ -525,7 +525,7 @@
             }
             $readable = is_file($path);
             // If not a UNC path (expected to start with \\), check read permission, see #2069
-            if(strpos($path, '\\\\') !== 0)
+            if(strncmp($path, '\\\\', 2) !== 0)
             {
                 $readable = $readable && is_readable($path);
             }
@@ -737,7 +737,7 @@
 
         public function preSend()
         {
-            if('smtp' === $this->Mailer || ('mail' === $this->Mailer && (\PHP_VERSION_ID >= 80000 || stripos(PHP_OS, 'WIN') === 0)))
+            if('smtp' === $this->Mailer || ('mail' === $this->Mailer && (\PHP_VERSION_ID >= 80000 || strncasecmp(PHP_OS, 'WIN', 3) === 0)))
             {
                 // SMTP mandates RFC-compliant line endings
                 // and it's also used with mail() on Windows
@@ -749,7 +749,7 @@
                 static::setLE(PHP_EOL);
             }
             // Check for buggy PHP versions that add a header with an incorrect line break
-            if('mail' === $this->Mailer && ((\PHP_VERSION_ID >= 70000 && \PHP_VERSION_ID < 70017) || (\PHP_VERSION_ID >= 70100 && \PHP_VERSION_ID < 70103)) && ini_get('mail.add_x_header') === '1' && stripos(PHP_OS, 'WIN') === 0)
+            if('mail' === $this->Mailer && ((\PHP_VERSION_ID >= 70000 && \PHP_VERSION_ID < 70017) || (\PHP_VERSION_ID >= 70100 && \PHP_VERSION_ID < 70103)) && ini_get('mail.add_x_header') === '1' && strncasecmp(PHP_OS, 'WIN', 3) === 0)
             {
                 trigger_error($this->lang('buggy_php'), E_USER_WARNING);
             }
@@ -2084,7 +2084,7 @@
                 return false;
             }
             // Looks like a bracketed IPv6 address
-            if(strlen($host) > 2 && substr($host, 0, 1) === '[' && substr($host, -1, 1) === ']')
+            if(strlen($host) > 2 && strpos($host, '[') === 0 && substr($host, -1, 1) === ']')
             {
                 return filter_var(substr($host, 1, -1), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
             }
@@ -2504,13 +2504,8 @@
             // It's not possible to use shell commands safely (which includes the mail() function) without escapeshellarg,
             // but some hosting providers disable it, creating a security problem that we don't want to have to deal with,
             // so we don't.
-            if(! function_exists('escapeshellarg') || ! function_exists('escapeshellcmd'))
-            {
-                return false;
-            }
-
             if(
-                escapeshellcmd($string) !== $string || ! in_array(escapeshellarg($string), [
+                ! function_exists('escapeshellarg') || ! function_exists('escapeshellcmd') || escapeshellcmd($string) !== $string || ! in_array(escapeshellarg($string), [
                     "'$string'",
                     "\"$string\""
                 ])
@@ -2580,18 +2575,7 @@
                 {
                     $address = trim($address);
                     // Is there a separate name part?
-                    if(strpos($address, '<') === false)
-                    {
-                        // No separate name, just use the whole thing
-                        if(static::validateAddress($address))
-                        {
-                            $addresses[] = [
-                                'name' => '',
-                                'address' => $address,
-                            ];
-                        }
-                    }
-                    else
+                    if(strpos($address, '<') !== false)
                     {
                         [$name, $email] = explode('<', $address);
                         $email = trim(str_replace('>', '', $email));
@@ -2614,6 +2598,17 @@
                                 // Remove any surrounding quotes and spaces from the name
                                 'name' => trim($name, '\'" '),
                                 'address' => $email,
+                            ];
+                        }
+                    }
+                    else
+                    {
+                        // No separate name, just use the whole thing
+                        if(static::validateAddress($address))
+                        {
+                            $addresses[] = [
+                                'name' => '',
+                                'address' => $address,
                             ];
                         }
                     }
@@ -2660,15 +2655,15 @@
             {
                 foreach($togroup as $to)
                 {
-                    if(! $this->smtp->recipient($to[0], $this->dsn))
+                    if($this->smtp->recipient($to[0], $this->dsn))
+                    {
+                        $isSent = true;
+                    }
+                    else
                     {
                         $error = $this->smtp->getError();
                         $bad_rcpt[] = ['to' => $to[0], 'error' => $error['detail']];
                         $isSent = false;
-                    }
-                    else
-                    {
-                        $isSent = true;
                     }
 
                     $callbacks[] = ['issent' => $isSent, 'to' => $to[0], 'name' => $to[1]];
@@ -3459,7 +3454,7 @@
                     if(// Only process relative URLs if a basedir is provided (i.e. no absolute local paths)
                         ! empty($basedir) // Ignore URLs containing parent dir traversal (..)
                         && (strpos($url, '..') === false) // Do not change urls that are already inline images
-                        && 0 !== strpos($url, 'cid:') // Do not change absolute URLs, including anonymous protocol
+                        && 0 !== strncmp($url, 'cid:', 4) // Do not change absolute URLs, including anonymous protocol
                         && ! preg_match('#^[a-z][a-z0-9+.-]*:?//#i', $url)
                     )
                     {

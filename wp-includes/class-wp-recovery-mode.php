@@ -3,7 +3,7 @@
     #[AllowDynamicProperties]
     class WP_Recovery_Mode
     {
-        const EXIT_ACTION = 'exit_recovery_mode';
+        public const EXIT_ACTION = 'exit_recovery_mode';
 
         private $cookie_service;
 
@@ -149,12 +149,7 @@
         {
             global $wp_theme_directories;
 
-            if(! isset($error['file']))
-            {
-                return false;
-            }
-
-            if(! defined('WP_PLUGIN_DIR'))
+            if(! isset($error['file']) || ! defined('WP_PLUGIN_DIR'))
             {
                 return false;
             }
@@ -199,12 +194,7 @@
 
         protected function is_network_plugin($extension)
         {
-            if('plugin' !== $extension['type'])
-            {
-                return false;
-            }
-
-            if(! is_multisite())
+            if('plugin' !== $extension['type'] || ! is_multisite())
             {
                 return false;
             }

@@ -6,11 +6,11 @@
 
     final class Curl extends Transport
     {
-        const EASY = 'cURLEasy';
+        public const EASY = 'cURLEasy';
 
-        const MULTI = 'cURLMulti';
+        public const MULTI = 'cURLMulti';
 
-        const SHARE = 'cURLShare';
+        public const SHARE = 'cURLShare';
 
         protected $code = -1;
 

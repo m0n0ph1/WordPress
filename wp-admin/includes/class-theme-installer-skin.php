@@ -42,22 +42,12 @@
 
         public function hide_process_failed($wp_error)
         {
-            if('upload' === $this->type && '' === $this->overwrite && $wp_error->get_error_code() === 'folder_exists')
-            {
-                return true;
-            }
-
-            return false;
+            return 'upload' === $this->type && '' === $this->overwrite && $wp_error->get_error_code() === 'folder_exists';
         }
 
         public function after()
         {
-            if($this->do_overwrite())
-            {
-                return;
-            }
-
-            if(empty($this->upgrader->result['destination_name']))
+            if($this->do_overwrite() || empty($this->upgrader->result['destination_name']))
             {
                 return;
             }
@@ -168,7 +158,7 @@
             $is_invalid_parent = false;
             if(! empty($new_theme_data['Template']))
             {
-                $is_invalid_parent = ! in_array($new_theme_data['Template'], array_keys($all_themes), true);
+                $is_invalid_parent = ! array_key_exists($new_theme_data['Template'], $all_themes);
             }
 
             $rows = [

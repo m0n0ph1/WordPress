@@ -17,6 +17,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             $title = ! empty($instance['title']) ? $instance['title'] : '';
 
             $title = apply_filters('widget_title', $title, $instance, $this->id_base);
@@ -51,6 +52,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $instance = wp_parse_args((array) $instance, ['title' => '']);
             ?>
             <p>

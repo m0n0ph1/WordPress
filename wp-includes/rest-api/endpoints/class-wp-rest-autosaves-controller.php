@@ -12,6 +12,7 @@
 
         public function __construct($parent_post_type)
         {
+            parent::__construct($parent_post_type);
             $this->parent_post_type = $parent_post_type;
             $post_type_object = get_post_type_object($parent_post_type);
             $parent_controller = $post_type_object->get_rest_controller();
@@ -30,6 +31,7 @@
 
         public function register_routes()
         {
+            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->parent_base.'/(?P<id>[\d]+)/'.$this->rest_base, [
                 'args' => [
                     'parent' => [
@@ -222,6 +224,7 @@
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
+            parent::prepare_item_for_response($item, $request);
             $post = $item;
 
             $response = $this->revisions_controller->prepare_item_for_response($post, $request);
@@ -296,6 +299,7 @@
 
         public function get_item_schema()
         {
+            parent::get_item_schema();
             if($this->schema)
             {
                 return $this->add_additional_fields_schema($this->schema);

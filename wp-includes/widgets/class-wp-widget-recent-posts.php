@@ -16,6 +16,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             if(! isset($args['widget_id']))
             {
                 $args['widget_id'] = $this->id;
@@ -111,6 +112,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $title = isset($instance['title']) ? esc_attr($instance['title']) : '';
             $number = isset($instance['number']) ? absint($instance['number']) : 5;
             $show_date = isset($instance['show_date']) ? (bool) $instance['show_date'] : false;

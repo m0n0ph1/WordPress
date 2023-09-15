@@ -247,12 +247,7 @@
             }
 
             $decoded = base64_decode($value['encoded_serialized_instance'], true);
-            if(false === $decoded)
-            {
-                return;
-            }
-
-            if(! hash_equals($this->get_instance_hash_key($decoded), $value['instance_hash_key']))
+            if(false === $decoded || ! hash_equals($this->get_instance_hash_key($decoded), $value['instance_hash_key']))
             {
                 return;
             }
@@ -1185,16 +1180,7 @@
                     return new WP_Error('widget_setting_unsanitized');
                 }
 
-                if(! is_null($parsed_id['number']))
-                {
-                    $value = [];
-                    $value[$parsed_id['number']] = $instance;
-                    $key = 'widget-'.$parsed_id['id_base'];
-                    $_REQUEST[$key] = wp_slash($value);
-                    $_POST[$key] = $_REQUEST[$key];
-                    $added_input_vars[] = $key;
-                }
-                else
+                if(is_null($parsed_id['number']))
                 {
                     foreach($instance as $key => $value)
                     {
@@ -1202,6 +1188,15 @@
                         $_POST[$key] = $_REQUEST[$key];
                         $added_input_vars[] = $key;
                     }
+                }
+                else
+                {
+                    $value = [];
+                    $value[$parsed_id['number']] = $instance;
+                    $key = 'widget-'.$parsed_id['id_base'];
+                    $_REQUEST[$key] = wp_slash($value);
+                    $_POST[$key] = $_REQUEST[$key];
+                    $added_input_vars[] = $key;
                 }
             }
 
@@ -1439,7 +1434,7 @@
             {
                 $this->sidebar_instance_count[$index] = 0;
             }
-            $this->sidebar_instance_count[$index] += 1;
+            ++$this->sidebar_instance_count[$index];
             if(! $this->manager->selective_refresh->is_render_partials_request())
             {
                 printf("\n<!--dynamic_sidebar_before:%s:%d-->\n", esc_html($index), (int) $this->sidebar_instance_count[$index]);

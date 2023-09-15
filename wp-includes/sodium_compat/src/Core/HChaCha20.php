@@ -5,7 +5,7 @@
         return;
     }
 
-    class ParagonIE_Sodium_Core_HChaCha20 extends ParagonIE_Sodium_Core_ChaCha20
+    class HChaCha20 extends ParagonIE_Sodium_Core_ChaCha20
     {
         public static function hChaCha20($in = '', $key = '', $c = null)
         {

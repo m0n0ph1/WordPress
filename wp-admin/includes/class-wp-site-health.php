@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection ALL */
+
+    /** @noinspection ALL */
 
     #[AllowDynamicProperties]
     class WP_Site_Health
@@ -1788,8 +1790,6 @@
                 $result['status'] = 'critical';
                 $result['label'] = __('The upgrade directory cannot be created');
                 $result['description'] = sprintf(/* translators: 1: wp-content/upgrade, 2: wp-content. */ '<p>'.__('The %1$s directory does not exist, and the server does not have write permissions in %2$s to create it. This directory is used for plugin and theme updates. Please make sure the server has write permissions in %2$s.').'</p>', '<code>wp-content/upgrade</code>', '<code>wp-content</code>');
-
-                return $result;
             }
 
             return $result;
@@ -2053,8 +2053,6 @@
                 {
                     $result['description'] = sprintf('<p>%s</p>', sprintf(/* translators: 1: post_max_size, 2: upload_max_filesize */ __('The setting for %1$s is smaller than %2$s, this could cause some problems when trying to upload files.'), '<code>post_max_size</code>', '<code>upload_max_filesize</code>'));
                 }
-
-                return $result;
             }
 
             return $result;
@@ -2131,6 +2129,8 @@
             {
                 $result['label'] = __('Unable to detect the presence of page cache');
                 $result['status'] = 'recommended';
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
                 $error_info = sprintf(/* translators: 1: Error message, 2: Error code. */ __('Unable to detect page cache due to possible loopback request problem. Please verify that the loopback request test is passing. Error: %1$s (Code: %2$s)'), $page_cache_detail->get_error_message(), $page_cache_detail->get_error_code());
                 $result['description'] = wp_kses_post("<p>$error_info</p>").$result['description'];
 
@@ -2429,12 +2429,7 @@
 
             $alloptions = wp_load_alloptions();
 
-            if($thresholds['alloptions_count'] < count($alloptions))
-            {
-                return true;
-            }
-
-            if($thresholds['alloptions_bytes'] < strlen(serialize($alloptions)))
+            if($thresholds['alloptions_count'] < count($alloptions) || $thresholds['alloptions_bytes'] < strlen(serialize($alloptions)))
             {
                 return true;
             }

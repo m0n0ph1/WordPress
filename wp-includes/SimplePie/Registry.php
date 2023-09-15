@@ -1,6 +1,6 @@
 <?php
 
-    class SimplePie_Registry
+    class Registry
     {
         protected $default = [
             'Cache' => 'SimplePie_Cache',
@@ -68,14 +68,14 @@
                 }
             }
 
-            if(! method_exists($class, '__construct'))
-            {
-                $instance = new $class();
-            }
-            else
+            if(method_exists($class, '__construct'))
             {
                 $reflector = new ReflectionClass($class);
                 $instance = $reflector->newInstanceArgs($parameters);
+            }
+            else
+            {
+                $instance = new $class();
             }
 
             if(method_exists($instance, 'set_registry'))

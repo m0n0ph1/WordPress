@@ -5,73 +5,73 @@
         return;
     }
 
-    abstract class ParagonIE_Sodium_Crypto
+    abstract class Crypto
     {
-        const aead_chacha20poly1305_KEYBYTES = 32;
+        public const aead_chacha20poly1305_KEYBYTES = 32;
 
-        const aead_chacha20poly1305_NSECBYTES = 0;
+        public const aead_chacha20poly1305_NSECBYTES = 0;
 
-        const aead_chacha20poly1305_NPUBBYTES = 8;
+        public const aead_chacha20poly1305_NPUBBYTES = 8;
 
-        const aead_chacha20poly1305_ABYTES = 16;
+        public const aead_chacha20poly1305_ABYTES = 16;
 
-        const aead_chacha20poly1305_IETF_KEYBYTES = 32;
+        public const aead_chacha20poly1305_IETF_KEYBYTES = 32;
 
-        const aead_chacha20poly1305_IETF_NSECBYTES = 0;
+        public const aead_chacha20poly1305_IETF_NSECBYTES = 0;
 
-        const aead_chacha20poly1305_IETF_NPUBBYTES = 12;
+        public const aead_chacha20poly1305_IETF_NPUBBYTES = 12;
 
-        const aead_chacha20poly1305_IETF_ABYTES = 16;
+        public const aead_chacha20poly1305_IETF_ABYTES = 16;
 
-        const aead_xchacha20poly1305_IETF_KEYBYTES = 32;
+        public const aead_xchacha20poly1305_IETF_KEYBYTES = 32;
 
-        const aead_xchacha20poly1305_IETF_NSECBYTES = 0;
+        public const aead_xchacha20poly1305_IETF_NSECBYTES = 0;
 
-        const aead_xchacha20poly1305_IETF_NPUBBYTES = 24;
+        public const aead_xchacha20poly1305_IETF_NPUBBYTES = 24;
 
-        const aead_xchacha20poly1305_IETF_ABYTES = 16;
+        public const aead_xchacha20poly1305_IETF_ABYTES = 16;
 
-        const box_curve25519xsalsa20poly1305_SEEDBYTES = 32;
+        public const box_curve25519xsalsa20poly1305_SEEDBYTES = 32;
 
-        const box_curve25519xsalsa20poly1305_PUBLICKEYBYTES = 32;
+        public const box_curve25519xsalsa20poly1305_PUBLICKEYBYTES = 32;
 
-        const box_curve25519xsalsa20poly1305_SECRETKEYBYTES = 32;
+        public const box_curve25519xsalsa20poly1305_SECRETKEYBYTES = 32;
 
-        const box_curve25519xsalsa20poly1305_BEFORENMBYTES = 32;
+        public const box_curve25519xsalsa20poly1305_BEFORENMBYTES = 32;
 
-        const box_curve25519xsalsa20poly1305_NONCEBYTES = 24;
+        public const box_curve25519xsalsa20poly1305_NONCEBYTES = 24;
 
-        const box_curve25519xsalsa20poly1305_MACBYTES = 16;
+        public const box_curve25519xsalsa20poly1305_MACBYTES = 16;
 
-        const box_curve25519xsalsa20poly1305_BOXZEROBYTES = 16;
+        public const box_curve25519xsalsa20poly1305_BOXZEROBYTES = 16;
 
-        const box_curve25519xsalsa20poly1305_ZEROBYTES = 32;
+        public const box_curve25519xsalsa20poly1305_ZEROBYTES = 32;
 
-        const onetimeauth_poly1305_BYTES = 16;
+        public const onetimeauth_poly1305_BYTES = 16;
 
-        const onetimeauth_poly1305_KEYBYTES = 32;
+        public const onetimeauth_poly1305_KEYBYTES = 32;
 
-        const secretbox_xsalsa20poly1305_KEYBYTES = 32;
+        public const secretbox_xsalsa20poly1305_KEYBYTES = 32;
 
-        const secretbox_xsalsa20poly1305_NONCEBYTES = 24;
+        public const secretbox_xsalsa20poly1305_NONCEBYTES = 24;
 
-        const secretbox_xsalsa20poly1305_MACBYTES = 16;
+        public const secretbox_xsalsa20poly1305_MACBYTES = 16;
 
-        const secretbox_xsalsa20poly1305_BOXZEROBYTES = 16;
+        public const secretbox_xsalsa20poly1305_BOXZEROBYTES = 16;
 
-        const secretbox_xsalsa20poly1305_ZEROBYTES = 32;
+        public const secretbox_xsalsa20poly1305_ZEROBYTES = 32;
 
-        const secretbox_xchacha20poly1305_KEYBYTES = 32;
+        public const secretbox_xchacha20poly1305_KEYBYTES = 32;
 
-        const secretbox_xchacha20poly1305_NONCEBYTES = 24;
+        public const secretbox_xchacha20poly1305_NONCEBYTES = 24;
 
-        const secretbox_xchacha20poly1305_MACBYTES = 16;
+        public const secretbox_xchacha20poly1305_MACBYTES = 16;
 
-        const secretbox_xchacha20poly1305_BOXZEROBYTES = 16;
+        public const secretbox_xchacha20poly1305_BOXZEROBYTES = 16;
 
-        const secretbox_xchacha20poly1305_ZEROBYTES = 32;
+        public const secretbox_xchacha20poly1305_ZEROBYTES = 32;
 
-        const stream_salsa20_KEYBYTES = 32;
+        public const stream_salsa20_KEYBYTES = 32;
 
         public static function aead_chacha20poly1305_decrypt(
             $message = '', $ad = '', $nonce = '', $key = ''

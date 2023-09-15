@@ -189,12 +189,7 @@
 
     function _register_remote_theme_patterns()
     {
-        if(! apply_filters('should_load_remote_block_patterns', true))
-        {
-            return;
-        }
-
-        if(! wp_theme_has_theme_json())
+        if(! apply_filters('should_load_remote_block_patterns', true) || ! wp_theme_has_theme_json())
         {
             return;
         }

@@ -555,7 +555,7 @@
         // Max-depth is 1-based.
         $max_depth = isset($args->depth) ? (int) $args->depth : 0;
         // Depth is 0-based so needs to be increased by one.
-        $depth = $depth + 1;
+        ++$depth;
 
         // Complete menu tree is displayed.
         if(0 === $max_depth)

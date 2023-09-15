@@ -30,24 +30,7 @@
         wp_die('', 400);
     }
 
-    if(! is_user_logged_in())
-    {
-        if(empty($action))
-        {
-            do_action('admin_post_nopriv');
-        }
-        else
-        {
-            // If no action is registered, return a Bad Request response.
-            if(! has_action("admin_post_nopriv_{$action}"))
-            {
-                wp_die('', 400);
-            }
-
-            do_action("admin_post_nopriv_{$action}");
-        }
-    }
-    else
+    if(is_user_logged_in())
     {
         if(empty($action))
         {
@@ -62,5 +45,22 @@
             }
 
             do_action("admin_post_{$action}");
+        }
+    }
+    else
+    {
+        if(empty($action))
+        {
+            do_action('admin_post_nopriv');
+        }
+        else
+        {
+            // If no action is registered, return a Bad Request response.
+            if(! has_action("admin_post_nopriv_{$action}"))
+            {
+                wp_die('', 400);
+            }
+
+            do_action("admin_post_nopriv_{$action}");
         }
     }

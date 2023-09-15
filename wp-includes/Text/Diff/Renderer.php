@@ -1,17 +1,17 @@
 <?php
 
-    class Text_Diff_Renderer
+    class Renderer
     {
-        var $_leading_context_lines = 0;
+        public $_leading_context_lines = 0;
 
-        var $_trailing_context_lines = 0;
+        public $_trailing_context_lines = 0;
 
         public function Text_Diff_Renderer($params = [])
         {
-            self::__construct($params);
+            $this->__construct($params);
         }
 
-        function __construct($params = [])
+        public function __construct($params = [])
         {
             foreach($params as $param => $value)
             {
@@ -23,7 +23,7 @@
             }
         }
 
-        function getParams()
+        public function getParams()
         {
             $params = [];
             foreach(get_object_vars($this) as $k => $v)
@@ -37,9 +37,10 @@
             return $params;
         }
 
-        function render($diff)
+        public function render($diff)
         {
-            $xi = $yi = 1;
+            $yi = 1;
+            $xi = 1;
             $block = false;
             $context = [];
 
@@ -121,12 +122,12 @@
             return $output.$this->_endDiff();
         }
 
-        function _startDiff()
+        public function _startDiff()
         {
             return '';
         }
 
-        function _block($xbeg, $xlen, $ybeg, $ylen, &$edits)
+        public function _block($xbeg, $xlen, $ybeg, $ylen, &$edits)
         {
             $output = $this->_startBlock($this->_blockHeader($xbeg, $xlen, $ybeg, $ylen));
 
@@ -155,12 +156,12 @@
             return $output.$this->_endBlock();
         }
 
-        function _startBlock($header)
+        public function _startBlock($header)
         {
             return $header."\n";
         }
 
-        function _blockHeader($xbeg, $xlen, $ybeg, $ylen)
+        public function _blockHeader($xbeg, $xlen, $ybeg, $ylen)
         {
             if($xlen > 1)
             {
@@ -184,37 +185,37 @@
             return $xbeg.($xlen ? ($ylen ? 'c' : 'd') : 'a').$ybeg;
         }
 
-        function _context($lines)
+        public function _context($lines)
         {
             return $this->_lines($lines, '  ');
         }
 
-        function _lines($lines, $prefix = ' ')
+        public function _lines($lines, $prefix = ' ')
         {
             return $prefix.implode("\n$prefix", $lines)."\n";
         }
 
-        function _added($lines)
+        public function _added($lines)
         {
             return $this->_lines($lines, '> ');
         }
 
-        function _deleted($lines)
+        public function _deleted($lines)
         {
             return $this->_lines($lines, '< ');
         }
 
-        function _changed($orig, $final)
+        public function _changed($orig, $final)
         {
             return $this->_deleted($orig)."---\n".$this->_added($final);
         }
 
-        function _endBlock()
+        public function _endBlock()
         {
             return '';
         }
 
-        function _endDiff()
+        public function _endDiff()
         {
             return '';
         }

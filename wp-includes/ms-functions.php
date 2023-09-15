@@ -27,14 +27,14 @@
         $first_blog = current($blogs);
         if(false !== $primary_blog)
         {
-            if(! isset($blogs[$primary_blog]))
+            if(isset($blogs[$primary_blog]))
             {
-                update_user_meta($user_id, 'primary_blog', $first_blog->userblog_id);
-                $primary = get_site($first_blog->userblog_id);
+                $primary = get_site($primary_blog);
             }
             else
             {
-                $primary = get_site($primary_blog);
+                update_user_meta($user_id, 'primary_blog', $first_blog->userblog_id);
+                $primary = get_site($first_blog->userblog_id);
             }
         }
         else
@@ -438,12 +438,7 @@
             }
         }
 
-        $result = [
-            'user_name' => $user_name,
-            'orig_username' => $orig_username,
-            'user_email' => $user_email,
-            'errors' => $errors,
-        ];
+        $result = compact('user_name', 'orig_username', 'user_email', 'errors');
 
         return apply_filters('wpmu_validate_user_signup', $result);
     }
@@ -743,13 +738,13 @@
 
         $user_id = username_exists($signup->user_login);
 
-        if(! $user_id)
+        if($user_id)
         {
-            $user_id = wpmu_create_user($signup->user_login, $password, $signup->user_email);
+            $user_already_exists = true;
         }
         else
         {
-            $user_already_exists = true;
+            $user_id = wpmu_create_user($signup->user_login, $password, $signup->user_email);
         }
 
         if(! $user_id)
@@ -773,11 +768,7 @@
 
             do_action('wpmu_activate_user', $user_id, $password, $meta);
 
-            return [
-                'user_id' => $user_id,
-                'password' => $password,
-                'meta' => $meta,
-            ];
+            return compact('user_id', 'password', 'meta');
         }
 
         $blog_id = wpmu_create_blog($signup->domain, $signup->path, $signup->title, $user_id, $meta, get_current_network_id());
@@ -867,11 +858,7 @@
 
         $allowed_data_fields = ['public', 'archived', 'mature', 'spam', 'deleted', 'lang_id'];
 
-        $site_data = array_merge([
-                                     'domain' => $domain,
-                                     'path' => $path,
-                                     'network_id' => $network_id,
-                                 ], array_intersect_key($options, array_flip($allowed_data_fields)));
+        $site_data = array_merge(compact('domain', 'path', 'network_id'), array_intersect_key($options, array_flip($allowed_data_fields)));
 
         // Data to pass to wp_initialize_site().
         $site_initialization_data = [
@@ -1024,10 +1011,11 @@ We hope you enjoy your new site. Thanks!
         $url = get_blogaddress_by_id($blog_id);
 
         $welcome_email = str_replace('SITE_NAME', $current_network->site_name, $welcome_email);
-        $welcome_email = str_replace('BLOG_TITLE', $title, $welcome_email);
-        $welcome_email = str_replace('BLOG_URL', $url, $welcome_email);
-        $welcome_email = str_replace('USERNAME', $user->user_login, $welcome_email);
-        $welcome_email = str_replace('PASSWORD', $password, $welcome_email);
+        $welcome_email = str_replace(array('BLOG_TITLE', 'BLOG_URL'), array($title, $url), $welcome_email);
+        $welcome_email = str_replace(array('USERNAME', 'PASSWORD'), array(
+            $user->user_login,
+            $password
+        ),                           $welcome_email);
 
         $welcome_email = apply_filters('update_welcome_email', $welcome_email, $blog_id, $user_id, $password, $title, $meta);
 
@@ -1068,12 +1056,7 @@ We hope you enjoy your new site. Thanks!
         $user = get_userdata($user_id);
         $email = get_site_option('admin_email');
 
-        if(! $site || ! $user || ! $email)
-        {
-            return false;
-        }
-
-        if(! apply_filters('send_new_site_email', true, $site, $user))
+        if(! $site || ! $user || ! $email || ! apply_filters('send_new_site_email', true, $site, $user))
         {
             return false;
         }
@@ -1139,10 +1122,11 @@ Name: %3$s'
         $switched_locale = switch_to_user_locale($user_id);
 
         $welcome_email = apply_filters('update_welcome_user_email', $welcome_email, $user_id, $password, $meta);
-        $welcome_email = str_replace('SITE_NAME', $current_network->site_name, $welcome_email);
-        $welcome_email = str_replace('USERNAME', $user->user_login, $welcome_email);
-        $welcome_email = str_replace('PASSWORD', $password, $welcome_email);
-        $welcome_email = str_replace('LOGINLINK', wp_login_url(), $welcome_email);
+        $welcome_email = str_replace(array('SITE_NAME', 'USERNAME'), array(
+            $current_network->site_name,
+            $user->user_login
+        ),                           $welcome_email);
+        $welcome_email = str_replace(array('PASSWORD', 'LOGINLINK'), array($password, wp_login_url()), $welcome_email);
 
         $admin_email = get_site_option('admin_email');
 
@@ -1300,7 +1284,7 @@ Name: %3$s'
 
     function signup_nonce_fields()
     {
-        $id = mt_rand();
+        $id = random_int();
         echo "<input type='hidden' name='signup_form_id' value='{$id}' />";
         wp_nonce_field('signup_form_'.$id, '_signup_form', false);
     }
@@ -1680,7 +1664,7 @@ Thanks!
             return;
         }
 
-        $hash = md5($value.time().mt_rand());
+        $hash = md5($value.time().random_int());
         $new_admin_email = [
             'hash' => $hash,
             'newemail' => $value,
@@ -1713,10 +1697,20 @@ All at ###SITENAME###
 
         $current_user = wp_get_current_user();
         $content = str_replace('###USERNAME###', $current_user->user_login, $content);
-        $content = str_replace('###ADMIN_URL###', esc_url(network_admin_url('settings.php?network_admin_hash='.$hash)), $content);
-        $content = str_replace('###EMAIL###', $value, $content);
-        $content = str_replace('###SITENAME###', wp_specialchars_decode(get_site_option('site_name'), ENT_QUOTES), $content);
-        $content = str_replace('###SITEURL###', network_home_url(), $content);
+        $content = str_replace(array(
+                                   '###ADMIN_URL###',
+                                   '###EMAIL###'
+                               ), array(
+                                   esc_url(network_admin_url('settings.php?network_admin_hash='.$hash)),
+                                   $value
+                               ), $content);
+        $content = str_replace(array(
+                                   '###SITENAME###',
+                                   '###SITEURL###'
+                               ), array(
+                                   wp_specialchars_decode(get_site_option('site_name'), ENT_QUOTES),
+                                   network_home_url()
+                               ), $content);
 
         wp_mail($value, sprintf(/* translators: Email change notification email subject. %s: Network title. */ __('[%s] Network Admin Email Change Request'), wp_specialchars_decode(get_site_option('site_name'), ENT_QUOTES)), $content);
 

@@ -122,13 +122,8 @@
                 foreach($ipv6 as $ipv6_part)
                 {
                     // The section can't be empty
-                    if($ipv6_part === '')
-                    {
-                        return false;
-                    }
-
                     // Nor can it be over four characters
-                    if(strlen($ipv6_part) > 4)
+                    if($ipv6_part === '' || strlen($ipv6_part) > 4)
                     {
                         return false;
                     }

@@ -1,6 +1,6 @@
 <?php
 
-    class Twenty_Fourteen_Ephemera_Widget extends WP_Widget
+    class widgets extends WP_Widget
     {
         private $formats = ['aside', 'image', 'video', 'audio', 'quote', 'link', 'gallery'];
 
@@ -33,6 +33,7 @@
 
         public function widget($args, $instance)
         {
+            parent::widget($args, $instance);
             $format = isset($instance['format']) ? $instance['format'] : '';
 
             if(! $format || ! in_array($format, $this->formats, true))
@@ -221,6 +222,7 @@
 
         public function form($instance)
         {
+            parent::form($instance);
             $title = ! empty($instance['title']) ? esc_attr($instance['title']) : '';
             $number = ! empty($instance['number']) ? absint($instance['number']) : 2;
             $format = isset($instance['format']) ? $instance['format'] : '';

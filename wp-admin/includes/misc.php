@@ -57,12 +57,7 @@
     {
         if(! file_exists($filename))
         {
-            if(! is_writable(dirname($filename)))
-            {
-                return false;
-            }
-
-            if(! touch($filename))
+            if(! is_writable(dirname($filename)) || ! touch($filename))
             {
                 return false;
             }
@@ -515,12 +510,7 @@ Any changes to the directives between these markers will be overwritten.'
 
     function wp_doc_link_parse($content)
     {
-        if(! is_string($content) || empty($content))
-        {
-            return [];
-        }
-
-        if(! function_exists('token_get_all'))
+        if(! is_string($content) || empty($content) || ! function_exists('token_get_all'))
         {
             return [];
         }
@@ -602,8 +592,7 @@ Any changes to the directives between these markers will be overwritten.'
         }
 
         $map_option = $option;
-        $type = str_replace('edit_', '', $map_option);
-        $type = str_replace('_per_page', '', $type);
+        $type = str_replace(array('edit_', '_per_page'), '', $map_option);
 
         if(in_array($type, get_taxonomies(), true))
         {
@@ -677,12 +666,7 @@ Any changes to the directives between these markers will be overwritten.'
 
     function iis7_rewrite_rule_exists($filename)
     {
-        if(! file_exists($filename))
-        {
-            return false;
-        }
-
-        if(! class_exists('DOMDocument', false))
+        if(! file_exists($filename) || ! class_exists('DOMDocument', false))
         {
             return false;
         }
@@ -697,12 +681,7 @@ Any changes to the directives between these markers will be overwritten.'
         $xpath = new DOMXPath($doc);
         $rules = $xpath->query('/configuration/system.webServer/rewrite/rules/rule[starts-with(@name,\'wordpress\')] | /configuration/system.webServer/rewrite/rules/rule[starts-with(@name,\'WordPress\')]');
 
-        if(0 === $rules->length)
-        {
-            return false;
-        }
-
-        return true;
+        return 0 !== $rules->length;
     }
 
     function iis7_delete_rewrite_rule($filename)
@@ -1024,12 +1003,7 @@ Any changes to the directives between these markers will be overwritten.'
 
             $post_id = absint($received['post_id']);
 
-            if(! $post_id)
-            {
-                return $response;
-            }
-
-            if(! current_user_can('edit_post', $post_id))
+            if(! $post_id || ! current_user_can('edit_post', $post_id))
             {
                 return $response;
             }
@@ -1079,12 +1053,7 @@ Any changes to the directives between these markers will be overwritten.'
 
             $post_id = absint($received['post_id']);
 
-            if(! $post_id)
-            {
-                return $response;
-            }
-
-            if(! current_user_can('edit_post', $post_id))
+            if(! $post_id || ! current_user_can('edit_post', $post_id))
             {
                 return $response;
             }
@@ -1113,12 +1082,7 @@ Any changes to the directives between these markers will be overwritten.'
         $received = $data['wp-refresh-metabox-loader-nonces'];
         $post_id = (int) $received['post_id'];
 
-        if(! $post_id)
-        {
-            return $response;
-        }
-
-        if(! current_user_can('edit_post', $post_id))
+        if(! $post_id || ! current_user_can('edit_post', $post_id))
         {
             return $response;
         }
@@ -1274,10 +1238,17 @@ All at ###SITENAME###
 
         $current_user = wp_get_current_user();
         $content = str_replace('###USERNAME###', $current_user->user_login, $content);
-        $content = str_replace('###ADMIN_URL###', esc_url(self_admin_url('options.php?adminhash='.$hash)), $content);
-        $content = str_replace('###EMAIL###', $value, $content);
-        $content = str_replace('###SITENAME###', wp_specialchars_decode(get_option('blogname'), ENT_QUOTES), $content);
-        $content = str_replace('###SITEURL###', home_url(), $content);
+        $content = str_replace(array(
+                                   '###ADMIN_URL###',
+                                   '###EMAIL###'
+                               ), array(esc_url(self_admin_url('options.php?adminhash='.$hash)), $value), $content);
+        $content = str_replace(array(
+                                   '###SITENAME###',
+                                   '###SITEURL###'
+                               ), array(
+                                   wp_specialchars_decode(get_option('blogname'), ENT_QUOTES),
+                                   home_url()
+                               ), $content);
 
         if('' !== get_option('blogname'))
         {

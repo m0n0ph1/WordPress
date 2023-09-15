@@ -700,12 +700,7 @@
     {
         global $_wp_suspend_cache_invalidation;
 
-        if(! empty($_wp_suspend_cache_invalidation))
-        {
-            return;
-        }
-
-        if(empty($blog))
+        if(! empty($_wp_suspend_cache_invalidation) || empty($blog))
         {
             return;
         }

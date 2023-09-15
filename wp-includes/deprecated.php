@@ -165,14 +165,7 @@
         $post = get_post($post_id);
         $post_author_data = get_userdata($post->post_author);
 
-        if((($user_id == $post_author_data->ID) && ! ($post->post_status == 'publish' && $author_data->user_level < 2)) || ($author_data->user_level > $post_author_data->user_level) || ($author_data->user_level >= 10))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (($user_id == $post_author_data->ID) && ! ($post->post_status == 'publish' && $author_data->user_level < 2)) || ($author_data->user_level > $post_author_data->user_level) || ($author_data->user_level >= 10);
     }
 
     function user_can_delete_post($user_id, $post_id, $blog_id = 1)
@@ -223,14 +216,8 @@
 
         $user = get_userdata($user_id);
         $other = get_userdata($other_user);
-        if($user->user_level > $other->user_level || $user->user_level > 8 || $user->ID == $other->ID)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+
+        return $user->user_level > $other->user_level || $user->user_level > 8 || $user->ID == $other->ID;
     }
 
     function get_linksbyname(
@@ -286,7 +273,7 @@
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'get_bookmarks()');
 
-        $links = get_bookmarks(['category' => $category, 'orderby' => $orderby, 'limit' => $limit]);
+        $links = get_bookmarks(compact('category', 'orderby', 'limit'));
 
         $links_array = [];
         foreach($links as $link)
@@ -513,13 +500,7 @@
             $category = '';
         }
 
-        $results = get_bookmarks([
-                                     'category' => $category,
-                                     'orderby' => $orderby,
-                                     'order' => $order,
-                                     'show_updated' => $show_updated,
-                                     'limit' => $limit
-                                 ]);
+        $results = get_bookmarks(compact('category', 'orderby', 'order', 'show_updated', 'limit'));
 
         if(! $results)
         {
@@ -554,12 +535,9 @@
             $name = esc_attr(sanitize_bookmark_field('link_name', $row->link_name, $row->link_id, 'display'));
             $title = $desc;
 
-            if($show_updated)
+            if($show_updated && ! str_starts_with($row->link_updated_f, '00'))
             {
-                if(! str_starts_with($row->link_updated_f, '00'))
-                {
-                    $title .= ' ('.__('Last updated').' '.gmdate(get_option('links_updated_date_format'), $row->link_updated_f + (get_option('gmt_offset') * HOUR_IN_SECONDS)).')';
-                }
+                $title .= ' ('.__('Last updated').' '.gmdate(get_option('links_updated_date_format'), $row->link_updated_f + (get_option('gmt_offset') * HOUR_IN_SECONDS)).')';
             }
 
             if('' != $title)
@@ -1035,7 +1013,7 @@
             $link_url = $matches[2][$i];
             $link_text = $matches[4][$i];
             $content = str_replace($link_match, $link_text.' '.$link_number, $content);
-            $link_url = ((strtolower(substr($link_url, 0, 7)) !== 'http://') && (strtolower(substr($link_url, 0, 8)) !== 'https://')) ? get_option('home').$link_url : $link_url;
+            $link_url = ((stripos($link_url, 'http://') !== 0) && (stripos($link_url, 'https://') !== 0)) ? get_option('home').$link_url : $link_url;
             $links_summary .= "\n".$link_number.' '.$link_url;
         }
         $content = strip_tags($content);
@@ -1153,12 +1131,7 @@
     {
         _deprecated_function(__FUNCTION__, '2.5.0', 'wp_get_attachment_image()');
         $id = (int) $id;
-        if(! $post = get_post($id))
-        {
-            return false;
-        }
-
-        if(! $src = get_attachment_icon_src($post->ID, $fullsize))
+        if(get_post($id) || ! $src = get_attachment_icon_src($post->ID, $fullsize))
         {
             return false;
         }
@@ -1484,13 +1457,13 @@
         clean_user_cache($user_id);
         wp_cache_delete($user_id, 'user_meta');
 
-        if(! $cur)
+        if($cur)
         {
-            do_action('added_usermeta', $wpdb->insert_id, $user_id, $meta_key, $meta_value);
+            do_action('updated_usermeta', $cur->umeta_id, $user_id, $meta_key, $meta_value);
         }
         else
         {
-            do_action('updated_usermeta', $cur->umeta_id, $user_id, $meta_key, $meta_value);
+            do_action('added_usermeta', $wpdb->insert_id, $user_id, $meta_key, $meta_value);
         }
 
         return true;
@@ -1702,8 +1675,7 @@
 
         $date = mysql2date(get_option('date_format'), $post->post_date);
 
-        $title = str_replace('%title', $post->post_title, $title);
-        $title = str_replace('%date', $date, $title);
+        $title = str_replace(array('%title', '%date'), array($post->post_title, $date), $title);
         $title = apply_filters('the_title', $title, $post->ID);
 
         $link = $start ? "<link rel='start' title='" : "<link rel='end' title='";
@@ -1754,8 +1726,7 @@
 
         $date = mysql2date(get_option('date_format'), $post->post_date);
 
-        $title = str_replace('%title', $post->post_title, $title);
-        $title = str_replace('%date', $date, $title);
+        $title = str_replace(array('%title', '%date'), array($post->post_title, $date), $title);
         $title = apply_filters('the_title', $title, $post->ID);
 
         $link = "<link rel='up' title='";
@@ -1818,7 +1789,6 @@
         _deprecated_function(__FUNCTION__, '3.4.0', 'error_log()');
         if(! empty($GLOBALS['debug']))
         {
-            error_log($message);
         }
     }
 
@@ -1895,8 +1865,7 @@
         }
 
         $text = str_replace(['<br />', '<br/>', '<br>'], ['', '', ''], $text);
-        $text = str_replace('<p>', "\n", $text);
-        $text = str_replace('</p>', '', $text);
+        $text = str_replace(array('<p>', '</p>'), array("\n", ''), $text);
 
         return $text;
     }
@@ -2428,12 +2397,7 @@
 
         _deprecated_function(__FUNCTION__, '4.7.0', 'wp_list_sort()');
 
-        if(empty($_menu_item_sort_prop))
-        {
-            return 0;
-        }
-
-        if(! isset($a->$_menu_item_sort_prop) || ! isset($b->$_menu_item_sort_prop))
+        if(empty($_menu_item_sort_prop) || ! isset($a->$_menu_item_sort_prop) || ! isset($b->$_menu_item_sort_prop))
         {
             return 0;
         }
@@ -2447,7 +2411,12 @@
         }
         elseif($_a == $a->$_menu_item_sort_prop && $_b == $b->$_menu_item_sort_prop)
         {
-            return $_a < $_b ? -1 : 1;
+            if($_a < $_b)
+            {
+                return -1;
+            }
+
+            return 1;
         }
         else
         {
@@ -2550,7 +2519,12 @@
 
     function addslashes_strings_only($value)
     {
-        return is_string($value) ? addslashes($value) : $value;
+        if(is_string($value))
+        {
+            return addslashes($value);
+        }
+
+        return $value;
     }
 
     function noindex()
@@ -2939,7 +2913,6 @@
             }
 
             // For elements after the threshold, lazy-load them as usual.
-            return 'lazy';
         }
 
         // Lazy-load by default for any unknown context.
@@ -2979,7 +2952,7 @@
     function wp_tinycolor_bound01($n, $max)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
-        if('string' === gettype($n) && str_contains($n, '.') && 1 === (float) $n)
+        if(is_string($n) && str_contains($n, '.') && 1 === (float) $n)
         {
             $n = '100%';
         }
@@ -2987,7 +2960,7 @@
         $n = min($max, max(0, (float) $n));
 
         // Automatically convert percentage into number.
-        if('string' === gettype($n) && str_contains($n, '%'))
+        if(is_string($n) && str_contains($n, '%'))
         {
             $n = (int) ($n * $max) / 100;
         }
@@ -3416,12 +3389,7 @@
         _deprecated_function(__FUNCTION__, '6.4.0', 'wp_print_font_faces');
 
         // Block themes are unavailable during installation.
-        if(wp_installing())
-        {
-            return;
-        }
-
-        if(! wp_theme_has_theme_json())
+        if(wp_installing() || ! wp_theme_has_theme_json())
         {
             return;
         }

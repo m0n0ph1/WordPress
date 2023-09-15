@@ -1,4 +1,14 @@
-<?php
+<?php /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
+    /** @noinspection ALL */
 
     _deprecated_file(basename(__FILE__), '3.0.0', WPINC.'/class-simplepie.php');
 
@@ -103,7 +113,6 @@
             }
             else
             {
-                error_log($errormsg, 0);
             }
         }
 
@@ -476,6 +485,7 @@
                     $rss = $cache->get($url);
                     if(isset($rss) and $rss)
                     {
+                        /** @noinspection NativeMemberUsageInspection */
                         $rss->from_cache = 1;
                         if(MAGPIE_DEBUG > 1)
                         {
@@ -492,9 +502,13 @@
                 if($cache_status == 'STALE')
                 {
                     $rss = $cache->get($url);
+                    /** @noinspection NativeMemberUsageInspection */
+                    /** @noinspection NativeMemberUsageInspection */
                     if(isset($rss->etag) and $rss->last_modified)
                     {
+                        /** @noinspection NativeMemberUsageInspection */
                         $request_headers['If-None-Match'] = $rss->etag;
+                        /** @noinspection NativeMemberUsageInspection */
                         $request_headers['If-Last-Modified'] = $rss->last_modified;
                     }
                 }
@@ -859,7 +873,6 @@
             }
             else
             {
-                error_log($errormsg, 0);
             }
         }
 
@@ -974,9 +987,12 @@
 
                 if($num_items !== -1)
                 {
+                    /** @noinspection NativeMemberUsageInspection */
+                    /** @noinspection NativeMemberUsageInspection */
                     $rss->items = array_slice($rss->items, 0, $num_items);
                 }
 
+                /** @noinspection NativeMemberUsageInspection */
                 foreach((array) $rss->items as $item)
                 {
                     printf('<li><a href="%1$s" title="%2$s">%3$s</a></li>', esc_url($item['link']), esc_attr(strip_tags($item['description'])), esc_html($item['title']));
@@ -998,7 +1014,10 @@
             $rss = fetch_rss($url);
             if($rss)
             {
+                /** @noinspection NativeMemberUsageInspection */
+                /** @noinspection NativeMemberUsageInspection */
                 $rss->items = array_slice($rss->items, 0, $num_items);
+                /** @noinspection NativeMemberUsageInspection */
                 foreach((array) $rss->items as $item)
                 {
                     echo "<li>\n";

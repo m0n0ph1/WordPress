@@ -218,13 +218,13 @@
             switch($handle)
             {
                 case 'wp-block-library':
-                    array_push($dependencies, 'editor');
+                    $dependencies[] = 'editor';
                     break;
                 case 'wp-edit-post':
                     array_push($dependencies, 'media-models', 'media-views', 'postbox', 'wp-dom-ready');
                     break;
                 case 'wp-preferences':
-                    array_push($dependencies, 'wp-preferences-persistence');
+                    $dependencies[] = 'wp-preferences-persistence';
                     break;
             }
 
@@ -552,10 +552,7 @@
             $suffix = SCRIPT_DEBUG ? '' : '.min';
             $dev_suffix = $develop_src ? '' : '.min';
 
-            $suffixes = [
-                'suffix' => $suffix,
-                'dev_suffix' => $dev_suffix,
-            ];
+            $suffixes = compact('suffix', 'dev_suffix');
         }
 
         if('dev' === $type)
@@ -1868,12 +1865,7 @@
 
         $jquery = array_search('jquery', $js_array, true);
 
-        if(false === $jquery)
-        {
-            return $js_array;
-        }
-
-        if($prototype < $jquery)
+        if(false === $jquery || $prototype < $jquery)
         {
             return $js_array;
         }
@@ -2602,12 +2594,7 @@
                 {
                     continue;
                 }
-                $styles[] = [
-                    'handle' => $handle,
-                    'src' => $src,
-                    'path' => $path,
-                    'size' => $size,
-                ];
+                $styles[] = compact('handle', 'src', 'path', 'size');
             }
         }
 
@@ -2616,7 +2603,12 @@
             // Reorder styles array based on size.
             usort($styles, static function($a, $b)
             {
-                return ($a['size'] <= $b['size']) ? -1 : 1;
+                if($a['size'] <= $b['size'])
+                {
+                    return -1;
+                }
+
+                return 1;
             });
 
             /*

@@ -238,17 +238,17 @@
                 return false;
             }
 
-            if(! $action)
-            {
-                return true;
-            }
-            else
+            if($action)
             {
                 /*
 			 * Note: we can't just use doing_action( "wp_ajax_{$action}" ) because we need
 			 * to check before admin-ajax.php gets to that point.
 			 */
                 return isset($_REQUEST['action']) && wp_unslash($_REQUEST['action']) === $action;
+            }
+            else
+            {
+                return true;
             }
         }
 
@@ -259,13 +259,13 @@
             // Check permissions for customize.php access since this method is called before customize.php can run any code.
             if('customize.php' === $pagenow && ! current_user_can('customize'))
             {
-                if(! is_user_logged_in())
+                if(is_user_logged_in())
                 {
-                    auth_redirect();
+                    wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to customize this site.').'</p>', 403);
                 }
                 else
                 {
-                    wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to customize this site.').'</p>', 403);
+                    auth_redirect();
                 }
 
                 return;
@@ -800,18 +800,18 @@
                     'instance_number' => 'ASC',
                 ]);
 
-                if(! $section->panel)
-                {
-                    // Top-level section.
-                    $sections[$section->id] = $section;
-                }
-                else
+                if($section->panel)
                 {
                     // This section belongs to a panel.
                     if(isset($this->panels [$section->panel]))
                     {
                         $this->panels[$section->panel]->sections[$section->id] = $section;
                     }
+                }
+                else
+                {
+                    // Top-level section.
+                    $sections[$section->id] = $section;
                 }
             }
             $this->sections = $sections;
@@ -925,7 +925,7 @@
                             $max_widget_numbers[$id_base] = 1;
                         }
                     }
-                    $max_widget_numbers[$id_base] += 1;
+                    ++$max_widget_numbers[$id_base];
 
                     $widget_id = sprintf('%s-%d', $id_base, $max_widget_numbers[$id_base]);
                     $setting_id = sprintf('widget_%s[%d]', $id_base, $max_widget_numbers[$id_base]);
@@ -1513,11 +1513,7 @@
                 return $this->_changeset_data;
             }
             $changeset_post_id = $this->changeset_post_id();
-            if(! $changeset_post_id)
-            {
-                $this->_changeset_data = [];
-            }
-            else
+            if($changeset_post_id)
             {
                 if($this->autosaved() && is_user_logged_in())
                 {
@@ -1536,15 +1532,19 @@
                 if(! isset($this->_changeset_data))
                 {
                     $data = $this->get_changeset_post_data($changeset_post_id);
-                    if(! is_wp_error($data))
-                    {
-                        $this->_changeset_data = $data;
-                    }
-                    else
+                    if(is_wp_error($data))
                     {
                         $this->_changeset_data = [];
                     }
+                    else
+                    {
+                        $this->_changeset_data = $data;
+                    }
                 }
+            }
+            else
+            {
+                $this->_changeset_data = [];
             }
 
             return $this->_changeset_data;
@@ -3310,13 +3310,13 @@
                             wp_send_json_error('cannot_delete_autosave_revision', 403);
                         }
 
-                        if(! wp_delete_post($revision->ID, true))
+                        if(wp_delete_post($revision->ID, true))
                         {
-                            wp_send_json_error('autosave_revision_deletion_failure', 500);
+                            wp_send_json_success('autosave_revision_deleted');
                         }
                         else
                         {
-                            wp_send_json_success('autosave_revision_deleted');
+                            wp_send_json_error('autosave_revision_deletion_failure', 500);
                         }
                     }
                     else
@@ -4710,31 +4710,31 @@
             $args = [];
 
             // Define query filters based on user input.
-            if(! array_key_exists('search', $_POST))
-            {
-                $args['search'] = '';
-            }
-            else
+            if(array_key_exists('search', $_POST))
             {
                 $args['search'] = sanitize_text_field(wp_unslash($_POST['search']));
             }
-
-            if(! array_key_exists('tags', $_POST))
-            {
-                $args['tag'] = '';
-            }
             else
+            {
+                $args['search'] = '';
+            }
+
+            if(array_key_exists('tags', $_POST))
             {
                 $args['tag'] = array_map('sanitize_text_field', wp_unslash((array) $_POST['tags']));
             }
-
-            if(! array_key_exists('page', $_POST))
+            else
             {
-                $args['page'] = 1;
+                $args['tag'] = '';
+            }
+
+            if(array_key_exists('page', $_POST))
+            {
+                $args['page'] = absint($_POST['page']);
             }
             else
             {
-                $args['page'] = absint($_POST['page']);
+                $args['page'] = 1;
             }
 
             require_once ABSPATH.'wp-admin/includes/theme.php';
@@ -4979,12 +4979,9 @@
         public function _validate_external_header_video($validity, $value)
         {
             $video = sanitize_url($value);
-            if($video)
+            if($video && ! preg_match('#^https?://(?:www\.)?(?:youtube\.com/watch|youtu\.be/)#', $video))
             {
-                if(! preg_match('#^https?://(?:www\.)?(?:youtube\.com/watch|youtu\.be/)#', $video))
-                {
-                    $validity->add('invalid_url', __('Please enter a valid YouTube URL.'));
-                }
+                $validity->add('invalid_url', __('Please enter a valid YouTube URL.'));
             }
 
             return $validity;

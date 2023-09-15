@@ -113,11 +113,7 @@
 // List of allowable extensions.
     $editable_extensions = wp_get_plugin_file_editable_extensions($plugin);
 
-    if(! is_file($real_file))
-    {
-        wp_die(sprintf('<p>%s</p>', __('File does not exist! Please double check the name and try again.')));
-    }
-    else
+    if(is_file($real_file))
     {
         // Get the extension of the file.
         if(preg_match('/\.([^.]+)$/', $real_file, $matches))
@@ -129,6 +125,10 @@
                 wp_die(sprintf('<p>%s</p>', __('Files of this type are not editable.')));
             }
         }
+    }
+    else
+    {
+        wp_die(sprintf('<p>%s</p>', __('File does not exist! Please double check the name and try again.')));
     }
 
     get_current_screen()->add_help_tab([

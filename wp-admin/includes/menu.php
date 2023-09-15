@@ -160,13 +160,9 @@
         }
 
         // If submenu is empty...
-        if(empty($submenu[$data[2]]))
+        if(empty($submenu[$data[2]]) && isset($_wp_menu_nopriv[$data[2]]))
         {
-            // And user doesn't have privs, remove menu.
-            if(isset($_wp_menu_nopriv[$data[2]]))
-            {
-                unset($menu[$id]);
-            }
+            unset($menu[$id]);
         }
     }
     unset($id, $data, $subs, $first_sub);
@@ -271,11 +267,21 @@
                     return 0;
                 }
 
-                return ($menu_order[$a] < $menu_order[$b]) ? -1 : 1;
+                if($menu_order[$a] < $menu_order[$b])
+                {
+                    return -1;
+                }
+
+                return 1;
             }
             else
             {
-                return ($default_menu_order[$a] <= $default_menu_order[$b]) ? -1 : 1;
+                if($default_menu_order[$a] <= $default_menu_order[$b])
+                {
+                    return -1;
+                }
+
+                return 1;
             }
         }
 
@@ -287,12 +293,7 @@
     $prev_menu_was_separator = false;
     foreach($menu as $id => $data)
     {
-        if(false === stristr($data[4], 'wp-menu-separator'))
-        {
-            // This item is not a separator, so falsey the toggler and do nothing.
-            $prev_menu_was_separator = false;
-        }
-        else
+        if(false !== stristr($data[4], 'wp-menu-separator'))
         {
             // The previous item was a separator, so unset this one.
             if(true === $prev_menu_was_separator)
@@ -302,6 +303,11 @@
 
             // This item is a separator, so truthy the toggler and move on.
             $prev_menu_was_separator = true;
+        }
+        else
+        {
+            // This item is not a separator, so falsey the toggler and do nothing.
+            $prev_menu_was_separator = false;
         }
     }
     unset($id, $data, $prev_menu_was_separator);

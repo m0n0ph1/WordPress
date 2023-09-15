@@ -3,7 +3,7 @@
     #[AllowDynamicProperties]
     class WP_Theme_JSON_Schema
     {
-        const V1_TO_V2_RENAMED_PATHS = [
+        public const V1_TO_V2_RENAMED_PATHS = [
             'border.customRadius' => 'border.radius',
             'spacing.customMargin' => 'spacing.margin',
             'spacing.customPadding' => 'spacing.padding',

@@ -10,15 +10,7 @@
 
         WP_Taxonomy::reset_default_labels();
 
-        if(! did_action('init'))
-        {
-            $rewrite = [
-                'category' => false,
-                'post_tag' => false,
-                'post_format' => false,
-            ];
-        }
-        else
+        if(did_action('init'))
         {
             $post_format_base = apply_filters('post_format_rewrite_base', 'type');
             $rewrite = [
@@ -35,6 +27,14 @@
                     'ep_mask' => EP_TAGS,
                 ],
                 'post_format' => $post_format_base ? ['slug' => $post_format_base] : false,
+            ];
+        }
+        else
+        {
+            $rewrite = [
+                'category' => false,
+                'post_tag' => false,
+                'post_format' => false,
             ];
         }
 
@@ -367,12 +367,7 @@
     {
         global $wp_taxonomies;
 
-        if(! isset($wp_taxonomies[$taxonomy]))
-        {
-            return false;
-        }
-
-        if(! get_post_type_object($object_type))
+        if(! isset($wp_taxonomies[$taxonomy]) || ! get_post_type_object($object_type))
         {
             return false;
         }
@@ -394,12 +389,7 @@
     {
         global $wp_taxonomies;
 
-        if(! isset($wp_taxonomies[$taxonomy]))
-        {
-            return false;
-        }
-
-        if(! get_post_type_object($object_type))
+        if(! isset($wp_taxonomies[$taxonomy]) || ! get_post_type_object($object_type))
         {
             return false;
         }
@@ -456,14 +446,14 @@
         $last_changed = wp_cache_get_last_changed('terms');
         $cache_key = 'get_objects_in_term:'.md5($sql).":$last_changed";
         $cache = wp_cache_get($cache_key, 'term-queries');
-        if(false === $cache)
+        if(false !== $cache)
         {
-            $object_ids = $wpdb->get_col($sql);
-            wp_cache_set($cache_key, $object_ids, 'term-queries');
+            $object_ids = (array) $cache;
         }
         else
         {
-            $object_ids = (array) $cache;
+            $object_ids = $wpdb->get_col($sql);
+            wp_cache_set($cache_key, $object_ids, 'term-queries');
         }
 
         if(! $object_ids)
@@ -564,7 +554,7 @@
         {
             $value = (string) $value;
 
-            if(0 === strlen($value))
+            if($value === '')
             {
                 return false;
             }
@@ -665,12 +655,7 @@
             return $term;
         }
 
-        if(! is_object($term))
-        {
-            return '';
-        }
-
-        if(! isset($term->$field))
+        if(! is_object($term) || ! isset($term->$field))
         {
             return '';
         }
@@ -747,12 +732,7 @@
         $terms = $term_query->query($args);
 
         // Count queries are not filtered, for legacy reasons.
-        if(! is_array($terms))
-        {
-            return $terms;
-        }
-
-        if($suppress_filter)
+        if(! is_array($terms) || $suppress_filter)
         {
             return $terms;
         }
@@ -1407,13 +1387,13 @@
         $parent = (int) $args['parent'];
 
         $slug_provided = ! empty($args['slug']);
-        if(! $slug_provided)
+        if($slug_provided)
         {
-            $slug = sanitize_title($name);
+            $slug = $args['slug'];
         }
         else
         {
-            $slug = $args['slug'];
+            $slug = sanitize_title($name);
         }
 
         $term_group = 0;
@@ -1616,17 +1596,17 @@
             $terms = [$terms];
         }
 
-        if(! $append)
+        if($append)
+        {
+            $old_tt_ids = [];
+        }
+        else
         {
             $old_tt_ids = wp_get_object_terms($object_id, $taxonomy, [
                 'fields' => 'tt_ids',
                 'orderby' => 'none',
                 'update_term_meta_cache' => false,
             ]);
-        }
-        else
-        {
-            $old_tt_ids = [];
         }
 
         $tt_ids = [];
@@ -1722,12 +1702,9 @@
                 }
             }
 
-            if($values)
+            if($values && false === $wpdb->query("INSERT INTO $wpdb->term_relationships (object_id, term_taxonomy_id, term_order) VALUES ".implode(',', $values).' ON DUPLICATE KEY UPDATE term_order = VALUES(term_order)'))
             {
-                if(false === $wpdb->query("INSERT INTO $wpdb->term_relationships (object_id, term_taxonomy_id, term_order) VALUES ".implode(',', $values).' ON DUPLICATE KEY UPDATE term_order = VALUES(term_order)'))
-                {
-                    return new WP_Error('db_insert_error', __('Could not insert term relationship into the database.'), $wpdb->last_error);
-                }
+                return new WP_Error('db_insert_error', __('Could not insert term relationship into the database.'), $wpdb->last_error);
             }
         }
 
@@ -1770,13 +1747,9 @@
             }
 
             $term_info = term_exists($term, $taxonomy);
-            if(! $term_info)
+            if(! $term_info && is_int($term))
             {
-                // Skip if a non-existent term ID is passed.
-                if(is_int($term))
-                {
-                    continue;
-                }
+                continue;
             }
 
             if(is_wp_error($term_info))
@@ -3202,16 +3175,7 @@
             {
                 // Only check numeric strings against term_id, to avoid false matches due to type juggling.
                 $numeric_strs = array_map('intval', array_filter($strs, 'is_numeric'));
-                if(in_array($object_term->term_id, $numeric_strs, true))
-                {
-                    return true;
-                }
-
-                if(in_array($object_term->name, $strs, true))
-                {
-                    return true;
-                }
-                if(in_array($object_term->slug, $strs, true))
+                if(in_array($object_term->term_id, $numeric_strs, true) || in_array($object_term->name, $strs, true) || in_array($object_term->slug, $strs, true))
                 {
                     return true;
                 }
@@ -3286,13 +3250,8 @@
     function wp_check_term_hierarchy_for_loops($parent_term, $term_id, $taxonomy)
     {
         // Nothing fancy here - bail.
-        if(! $parent_term)
-        {
-            return 0;
-        }
-
         // Can't be its own parent.
-        if($parent_term === $term_id)
+        if(! $parent_term || $parent_term === $term_id)
         {
             return 0;
         }

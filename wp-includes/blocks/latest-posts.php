@@ -32,7 +32,12 @@
 
             /* translators: %1$s is a URL to a post, excerpt truncation character, default … */
 
-            return $use_excerpt ? sprintf(__(' … <a href="%1$s" rel="noopener noreferrer">Read more</a>'), esc_url(get_permalink())) : $more;
+            if($use_excerpt)
+            {
+                return sprintf(__(' … <a href="%1$s" rel="noopener noreferrer">Read more</a>'), esc_url(get_permalink()));
+            }
+
+            return $more;
         };
 
         add_filter('excerpt_more', $filter_latest_posts_excerpt_more);

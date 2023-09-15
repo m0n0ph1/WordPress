@@ -70,7 +70,7 @@
                 $max_width = min((int) $content_width, $max_width);
             }
         }
-        elseif(! empty($_wp_additional_image_sizes) && in_array($size, array_keys($_wp_additional_image_sizes), true))
+        elseif(! empty($_wp_additional_image_sizes) && array_key_exists($size, $_wp_additional_image_sizes))
         {
             $max_width = (int) $_wp_additional_image_sizes[$size]['width'];
             $max_height = (int) $_wp_additional_image_sizes[$size]['height'];
@@ -799,7 +799,12 @@
     {
         $image = wp_get_attachment_image_src($attachment_id, $size, $icon);
 
-        return isset($image[0]) ? $image[0] : false;
+        if(isset($image[0]))
+        {
+            return $image[0];
+        }
+
+        return false;
     }
 
     function _wp_get_attachment_relative_path($file)
@@ -2804,12 +2809,7 @@
 
     function is_gd_image($image)
     {
-        if($image instanceof GdImage || is_resource($image) && 'gd' === get_resource_type($image))
-        {
-            return true;
-        }
-
-        return false;
+        return $image instanceof GdImage || is_resource($image) && 'gd' === get_resource_type($image);
     }
 
     function wp_imagecreatetruecolor($width, $height)
@@ -3033,12 +3033,7 @@
     {
         $attachment = get_post($attachment);
 
-        if(! $attachment)
-        {
-            return;
-        }
-
-        if('attachment' !== $attachment->post_type)
+        if(! $attachment || 'attachment' !== $attachment->post_type)
         {
             return;
         }
@@ -3877,7 +3872,12 @@
     {
         $gallery = get_post_gallery($post, false);
 
-        return empty($gallery['src']) ? [] : $gallery['src'];
+        if(empty($gallery['src']))
+        {
+            return [];
+        }
+
+        return $gallery['src'];
     }
 
     function wp_maybe_generate_attachment_metadata($attachment)
@@ -4126,13 +4126,8 @@
 
         $magic = file_get_contents($filename, false, null, 0, 40);
 
-        if(false === $magic)
-        {
-            return compact('width', 'height', 'type');
-        }
-
         // Make sure we got enough bytes.
-        if(strlen($magic) < 40)
+        if(false === $magic || strlen($magic) < 40)
         {
             return compact('width', 'height', 'type');
         }
@@ -4252,7 +4247,11 @@
 		 * the most important in-viewport image should have `fetchpriority` set
 		 * to "high".
 		 */
-            if(false === $maybe_in_viewport)
+            if(false !== $maybe_in_viewport)
+            {
+                $maybe_in_viewport = true;
+            }
+            else
             {
                 _doing_it_wrong(__FUNCTION__, __('An image should not be lazy-loaded and marked as high priority at the same time.'), '6.3.0');
                 /*
@@ -4261,10 +4260,6 @@
 			 * incorrect.
 			 */
                 $loading_attrs['fetchpriority'] = 'high';
-            }
-            else
-            {
-                $maybe_in_viewport = true;
             }
         }
 

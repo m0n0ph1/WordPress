@@ -2,16 +2,16 @@
 
     class IXR_Value
     {
-        var $data;
+        public $data;
 
-        var $type;
+        public $type;
 
         public function IXR_Value($data, $type = false)
         {
-            self::__construct($data, $type);
+            $this->__construct($data, $type);
         }
 
-        function __construct($data, $type = false)
+        public function __construct($data, $type = false)
         {
             $this->data = $data;
             if(! $type)
@@ -29,24 +29,24 @@
             }
             if($type == 'array')
             {
-                for($i = 0, $j = count($this->data); $i < $j; $i++)
+                foreach($this->data as $i => $iValue)
                 {
                     $this->data[$i] = new IXR_Value($this->data[$i]);
                 }
             }
         }
 
-        function calculateType()
+        public function calculateType()
         {
             if($this->data === true || $this->data === false)
             {
                 return 'boolean';
             }
-            if(is_integer($this->data))
+            if(is_int($this->data))
             {
                 return 'int';
             }
-            if(is_double($this->data))
+            if(is_float($this->data))
             {
                 return 'double';
             }
@@ -84,7 +84,7 @@
             }
         }
 
-        function isStruct($array)
+        public function isStruct($array)
         {
             $expected = 0;
             foreach($array as $key => $value)
@@ -99,7 +99,7 @@
             return false;
         }
 
-        function getXml()
+        public function getXml()
         {
             // Return XML for this value
             switch($this->type)

@@ -406,7 +406,7 @@
                 $processed_scripts = [];
                 if(is_array($scripts))
                 {
-                    for($index = 0; $index < count($scripts); $index++)
+                    for($index = 0, $indexMax = count($scripts); $index < $indexMax; $index++)
                     {
                         $result = register_block_script_handle($metadata, $metadata_field_name, $index);
                         if($result)
@@ -439,7 +439,7 @@
                 $processed_styles = [];
                 if(is_array($styles))
                 {
-                    for($index = 0; $index < count($styles); $index++)
+                    for($index = 0, $indexMax = count($styles); $index < $indexMax; $index++)
                     {
                         $result = register_block_style_handle($metadata, $metadata_field_name, $index);
                         if($result)
@@ -604,7 +604,7 @@
     function serialize_block_attributes($block_attributes)
     {
         $encoded_attributes = wp_json_encode($block_attributes, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        $encoded_attributes = preg_replace('/--/', '\\u002d\\u002d', $encoded_attributes);
+        $encoded_attributes = str_replace("--", '\\u002d\\u002d', $encoded_attributes);
         $encoded_attributes = preg_replace('/</', '\\u003c', $encoded_attributes);
         $encoded_attributes = preg_replace('/>/', '\\u003e', $encoded_attributes);
         $encoded_attributes = preg_replace('/&/', '\\u0026', $encoded_attributes);
@@ -919,7 +919,12 @@
 
     function block_version($content)
     {
-        return has_blocks($content) ? 1 : 0;
+        if(has_blocks($content))
+        {
+            return 1;
+        }
+
+        return 0;
     }
 
     function register_block_style($block_name, $style_properties)
