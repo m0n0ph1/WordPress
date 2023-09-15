@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -102,7 +102,7 @@
 
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) {
+            ({__proto__: []} instanceof Array && function (d, b) {
                 d.__proto__ = b;
             }) ||
             function (d, b) {
@@ -111,12 +111,12 @@
         return extendStatics(d, b);
     };
 
-    function __extends (d, b) {
+    function __extends(d, b) {
         if (typeof b !== 'function' && b !== null)
             throw new TypeError('Class extends value ' + String(b) + ' is not a constructor or null');
         extendStatics(d, b);
 
-        function __ () {
+        function __() {
             this.constructor = d;
         }
 
@@ -124,7 +124,7 @@
     }
 
     var __assign = function () {
-        __assign = Object.assign || function __assign (t) {
+        __assign = Object.assign || function __assign(t) {
             for (var s, i = 1, n = arguments.length; i < n; i++) {
                 s = arguments[i];
                 for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
@@ -134,7 +134,7 @@
         return __assign.apply(this, arguments);
     };
 
-    function __rest (s, e) {
+    function __rest(s, e) {
         var t = {};
         for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
             t[p] = s[p];
@@ -146,7 +146,7 @@
         return t;
     }
 
-    function __decorate (decorators, target, key, desc) {
+    function __decorate(decorators, target, key, desc) {
         var c = arguments.length,
             r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function') r = Reflect.decorate(decorators, target, key, desc);
@@ -154,14 +154,14 @@
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     }
 
-    function __param (paramIndex, decorator) {
+    function __param(paramIndex, decorator) {
         return function (target, key) {
             decorator(target, key, paramIndex);
         };
     }
 
-    function __esDecorate (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-        function accept (f) {
+    function __esDecorate(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+        function accept(f) {
             if (f !== void 0 && typeof f !== 'function') throw new TypeError('Function expected');
             return f;
         }
@@ -197,7 +197,7 @@
         done = true;
     };
 
-    function __runInitializers (thisArg, initializers, value) {
+    function __runInitializers(thisArg, initializers, value) {
         var useValue = arguments.length > 2;
         for (var i = 0; i < initializers.length; i++) {
             value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
@@ -205,11 +205,11 @@
         return useValue ? value : void 0;
     };
 
-    function __propKey (x) {
+    function __propKey(x) {
         return typeof x === 'symbol' ? x : ''.concat(x);
     };
 
-    function __setFunctionName (f, name, prefix) {
+    function __setFunctionName(f, name, prefix) {
         if (typeof name === 'symbol') name = name.description ? '['.concat(name.description, ']') : '';
         return Object.defineProperty(f, 'name', {
             configurable: true,
@@ -217,27 +217,35 @@
         });
     };
 
-    function __metadata (metadataKey, metadataValue) {
+    function __metadata(metadataKey, metadataValue) {
         if (typeof Reflect === 'object' && typeof Reflect.metadata === 'function') return Reflect.metadata(metadataKey, metadataValue);
     }
 
-    function __awaiter (thisArg, _arguments, P, generator) {
-        function adopt (value) {
+    function __awaiter(thisArg, _arguments, P, generator) {
+        function adopt(value) {
             return value instanceof P ? value : new P(function (resolve) {
                 resolve(value);
             });
         }
 
         return new (P || (P = Promise))(function (resolve, reject) {
-            function fulfilled (value) {
-                try { step(generator.next(value)); } catch (e) { reject(e); }
+            function fulfilled(value) {
+                try {
+                    step(generator.next(value));
+                } catch (e) {
+                    reject(e);
+                }
             }
 
-            function rejected (value) {
-                try { step(generator['throw'](value)); } catch (e) { reject(e); }
+            function rejected(value) {
+                try {
+                    step(generator['throw'](value));
+                } catch (e) {
+                    reject(e);
+                }
             }
 
-            function step (result) {
+            function step(result) {
                 result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
             }
 
@@ -245,7 +253,7 @@
         });
     }
 
-    function __generator (thisArg, body) {
+    function __generator(thisArg, body) {
         var _ = {
             label: 0, sent: function () {
                 if (t[0] & 1) throw t[1];
@@ -260,13 +268,13 @@
             return this;
         }), g;
 
-        function verb (n) {
+        function verb(n) {
             return function (v) {
                 return step([n, v]);
             };
         }
 
-        function step (op) {
+        function step(op) {
             if (f) throw new TypeError('Generator is already executing.');
             while (g && (g = 0, op[0] && (_ = 0)), _) try {
                 if (f = 1, y && (t = op[0] & 2 ? y['return'] : op[0] ? y['throw'] || ((t = y['return']) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
@@ -278,7 +286,7 @@
                         break;
                     case 4:
                         _.label++;
-                        return { value: op[1], done: false };
+                        return {value: op[1], done: false};
                     case 5:
                         _.label++;
                         y = op[1];
@@ -315,9 +323,11 @@
             } catch (e) {
                 op = [6, e];
                 y = 0;
-            } finally { f = t = 0; }
+            } finally {
+                f = t = 0;
+            }
             if (op[0] & 5) throw op[1];
-            return { value: op[0] ? op[1] : void 0, done: true };
+            return {value: op[0] ? op[1] : void 0, done: true};
         }
     }
 
@@ -337,45 +347,49 @@
         o[k2] = m[k];
     });
 
-    function __exportStar (m, o) {
+    function __exportStar(m, o) {
         for (var p in m) if (p !== 'default' && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
     }
 
-    function __values (o) {
+    function __values(o) {
         var s = typeof Symbol === 'function' && Symbol.iterator, m = s && o[s], i = 0;
         if (m) return m.call(o);
         if (o && typeof o.length === 'number') return {
             next: function () {
                 if (o && i >= o.length) o = void 0;
-                return { value: o && o[i++], done: !o };
+                return {value: o && o[i++], done: !o};
             }
         };
         throw new TypeError(s ? 'Object is not iterable.' : 'Symbol.iterator is not defined.');
     }
 
-    function __read (o, n) {
+    function __read(o, n) {
         var m = typeof Symbol === 'function' && o[Symbol.iterator];
         if (!m) return o;
         var i = m.call(o), r, ar = [], e;
         try {
             while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-        } catch (error) { e = { error: error }; } finally {
+        } catch (error) {
+            e = {error: error};
+        } finally {
             try {
                 if (r && !r.done && (m = i['return'])) m.call(i);
-            } finally { if (e) throw e.error; }
+            } finally {
+                if (e) throw e.error;
+            }
         }
         return ar;
     }
 
     /** @deprecated */
-    function __spread () {
+    function __spread() {
         for (var ar = [], i = 0; i < arguments.length; i++)
             ar = ar.concat(__read(arguments[i]));
         return ar;
     }
 
     /** @deprecated */
-    function __spreadArrays () {
+    function __spreadArrays() {
         for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
         for (var r = Array(s), k = 0, i = 0; i < il; i++)
             for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -383,7 +397,7 @@
         return r;
     }
 
-    function __spreadArray (to, from, pack) {
+    function __spreadArray(to, from, pack) {
         if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
             if (ar || !(i in from)) {
                 if (!ar) ar = Array.prototype.slice.call(from, 0, i);
@@ -393,18 +407,18 @@
         return to.concat(ar || Array.prototype.slice.call(from));
     }
 
-    function __await (v) {
+    function __await(v) {
         return this instanceof __await ? (this.v = v, this) : new __await(v);
     }
 
-    function __asyncGenerator (thisArg, _arguments, generator) {
+    function __asyncGenerator(thisArg, _arguments, generator) {
         if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
         var g = generator.apply(thisArg, _arguments || []), i, q = [];
         return i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
             return this;
         }, i;
 
-        function verb (n) {
+        function verb(n) {
             if (g[n]) i[n] = function (v) {
                 return new Promise(function (a, b) {
                     q.push([n, v, a, b]) > 1 || resume(n, v);
@@ -412,28 +426,32 @@
             };
         }
 
-        function resume (n, v) {
-            try { step(g[n](v)); } catch (e) { settle(q[0][3], e); }
+        function resume(n, v) {
+            try {
+                step(g[n](v));
+            } catch (e) {
+                settle(q[0][3], e);
+            }
         }
 
-        function step (r) {
+        function step(r) {
             r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
         }
 
-        function fulfill (value) {
+        function fulfill(value) {
             resume('next', value);
         }
 
-        function reject (value) {
+        function reject(value) {
             resume('throw', value);
         }
 
-        function settle (f, v) {
+        function settle(f, v) {
             if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]);
         }
     }
 
-    function __asyncDelegator (o) {
+    function __asyncDelegator(o) {
         var i, p;
         return i = {}, verb('next'), verb('throw', function (e) {
             throw e;
@@ -441,21 +459,21 @@
             return this;
         }, i;
 
-        function verb (n, f) {
+        function verb(n, f) {
             i[n] = o[n] ? function (v) {
-                return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
+                return (p = !p) ? {value: __await(o[n](v)), done: false} : f ? f(v) : v;
             } : f;
         }
     }
 
-    function __asyncValues (o) {
+    function __asyncValues(o) {
         if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
         var m = o[Symbol.asyncIterator], i;
         return m ? m.call(o) : (o = typeof __values === 'function' ? __values(o) : o[Symbol.iterator](), i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
             return this;
         }, i);
 
-        function verb (n) {
+        function verb(n) {
             i[n] = o[n] && function (v) {
                 return new Promise(function (resolve, reject) {
                     v = o[n](v), settle(resolve, reject, v.done, v.value);
@@ -463,25 +481,29 @@
             };
         }
 
-        function settle (resolve, reject, d, v) {
+        function settle(resolve, reject, d, v) {
             Promise.resolve(v).then(function (v) {
-                resolve({ value: v, done: d });
+                resolve({value: v, done: d});
             }, reject);
         }
     }
 
-    function __makeTemplateObject (cooked, raw) {
-        if (Object.defineProperty) { Object.defineProperty(cooked, 'raw', { value: raw }); } else { cooked.raw = raw; }
+    function __makeTemplateObject(cooked, raw) {
+        if (Object.defineProperty) {
+            Object.defineProperty(cooked, 'raw', {value: raw});
+        } else {
+            cooked.raw = raw;
+        }
         return cooked;
     };
 
     var __setModuleDefault = Object.create ? (function (o, v) {
-        Object.defineProperty(o, 'default', { enumerable: true, value: v });
+        Object.defineProperty(o, 'default', {enumerable: true, value: v});
     }) : function (o, v) {
         o['default'] = v;
     };
 
-    function __importStar (mod) {
+    function __importStar(mod) {
         if (mod && mod.__esModule) return mod;
         var result = {};
         if (mod != null) for (var k in mod) if (k !== 'default' && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
@@ -489,29 +511,29 @@
         return result;
     }
 
-    function __importDefault (mod) {
-        return (mod && mod.__esModule) ? mod : { default: mod };
+    function __importDefault(mod) {
+        return (mod && mod.__esModule) ? mod : {default: mod};
     }
 
-    function __classPrivateFieldGet (receiver, state, kind, f) {
+    function __classPrivateFieldGet(receiver, state, kind, f) {
         if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a getter');
         if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot read private member from an object whose class did not declare it');
         return kind === 'm' ? f : kind === 'a' ? f.call(receiver) : f ? f.value : state.get(receiver);
     }
 
-    function __classPrivateFieldSet (receiver, state, value, kind, f) {
+    function __classPrivateFieldSet(receiver, state, value, kind, f) {
         if (kind === 'm') throw new TypeError('Private method is not writable');
         if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a setter');
         if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot write private member to an object whose class did not declare it');
         return (kind === 'a' ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
     }
 
-    function __classPrivateFieldIn (state, receiver) {
+    function __classPrivateFieldIn(state, receiver) {
         if (receiver === null || (typeof receiver !== 'object' && typeof receiver !== 'function')) throw new TypeError('Cannot use \'in\' operator on non-object');
         return typeof state === 'function' ? receiver === state : state.has(receiver);
     }
 
-    function __addDisposableResource (env, value, async) {
+    function __addDisposableResource(env, value, async) {
         if (value !== null && value !== void 0) {
             if (typeof value !== 'object') throw new TypeError('Object expected.');
             var dispose;
@@ -524,9 +546,9 @@
                 dispose = value[Symbol.dispose];
             }
             if (typeof dispose !== 'function') throw new TypeError('Object not disposable.');
-            env.stack.push({ value: value, dispose: dispose, async: async });
+            env.stack.push({value: value, dispose: dispose, async: async});
         } else if (async) {
-            env.stack.push({ async: true });
+            env.stack.push({async: true});
         }
         return value;
     }
@@ -536,13 +558,13 @@
         return e.name = 'SuppressedError', e.error = error, e.suppressed = suppressed, e;
     };
 
-    function __disposeResources (env) {
-        function fail (e) {
+    function __disposeResources(env) {
+        function fail(e) {
             env.error = env.hasError ? new _SuppressedError(e, env.error, 'An error was suppressed during disposal.') : e;
             env.hasError = true;
         }
 
-        function next () {
+        function next() {
             while (env.stack.length) {
                 var rec = env.stack.pop();
                 try {
@@ -629,7 +651,7 @@
     /**
      * Localized lower case.
      */
-    function localeLowerCase (str, locale) {
+    function localeLowerCase(str, locale) {
         var lang = SUPPORTED_LOCALE[locale.toLowerCase()];
         if (lang)
             return lowerCase(str.replace(lang.regexp, function (m) {
@@ -641,7 +663,7 @@
     /**
      * Lower case as a function.
      */
-    function lowerCase (str) {
+    function lowerCase(str) {
         return str.toLowerCase();
     }
 
@@ -655,8 +677,10 @@
     /**
      * Normalize the string into something other libraries can manipulate easier.
      */
-    function noCase (input, options) {
-        if (options === void 0) { options = {}; }
+    function noCase(input, options) {
+        if (options === void 0) {
+            options = {};
+        }
         var _a = options.splitRegexp, splitRegexp = _a === void 0 ? DEFAULT_SPLIT_REGEXP : _a, _b = options.stripRegexp,
             stripRegexp = _b === void 0 ? DEFAULT_STRIP_REGEXP : _b, _c = options.transform,
             transform = _c === void 0 ? lowerCase : _c, _d = options.delimiter, delimiter = _d === void 0 ? ' ' : _d;
@@ -675,7 +699,7 @@
     /**
      * Replace `re` in the input string with the replacement value.
      */
-    function replace (input, re, value) {
+    function replace(input, re, value) {
         if (re instanceof RegExp)
             return input.replace(re, value);
         return re.reduce(function (input, re) {
@@ -685,16 +709,20 @@
 
     ;// CONCATENATED MODULE: ./node_modules/dot-case/dist.es2015/index.js
 
-    function dotCase (input, options) {
-        if (options === void 0) { options = {}; }
-        return noCase(input, __assign({ delimiter: '.' }, options));
+    function dotCase(input, options) {
+        if (options === void 0) {
+            options = {};
+        }
+        return noCase(input, __assign({delimiter: '.'}, options));
     }
 
     ;// CONCATENATED MODULE: ./node_modules/param-case/dist.es2015/index.js
 
-    function paramCase (input, options) {
-        if (options === void 0) { options = {}; }
-        return dotCase(input, __assign({ delimiter: '-' }, options));
+    function paramCase(input, options) {
+        if (options === void 0) {
+            options = {};
+        }
+        return dotCase(input, __assign({delimiter: '-'}, options));
     }
 
     ;// CONCATENATED MODULE: external ["wp","apiFetch"]
@@ -708,7 +736,7 @@
      * @param {string} content     File Content.
      * @param {string} contentType File mime type.
      */
-    function download (fileName, content, contentType) {
+    function download(fileName, content, contentType) {
         const file = new window.Blob([content], {
             type: contentType
         }); // IE11 can't use the click to download technique
@@ -734,7 +762,7 @@
      * @return {Promise<string>}  Content of the file.
      */
 
-    function readTextFile (file) {
+    function readTextFile(file) {
         const reader = new window.FileReader();
         return new Promise(resolve => {
             reader.onload = () => {
@@ -764,7 +792,7 @@
      * @param {number} id
      */
 
-    async function exportReusableBlock (id) {
+    async function exportReusableBlock(id) {
         const postType = await external_wp_apiFetch_default()({
             path: `/wp/v2/types/wp_block`
         });
@@ -807,7 +835,7 @@
      * @return {Promise} Promise returning the imported reusable block.
      */
 
-    async function importReusableBlock (file) {
+    async function importReusableBlock(file) {
         const fileContent = await readTextFile(file);
         let parsedContent;
 
@@ -854,10 +882,10 @@
 
 
 
-    function ImportForm ({
-                             instanceId,
-                             onUpload
-                         }) {
+    function ImportForm({
+                            instanceId,
+                            onUpload
+                        }) {
         const inputId = 'list-reusable-blocks-import-form-' + instanceId;
         const formRef = (0, external_wp_element_namespaceObject.useRef)();
         const [isLoading, setIsLoading] = (0, external_wp_element_namespaceObject.useState)(false);
@@ -953,9 +981,9 @@
 
 
 
-    function ImportDropdown ({
-                                 onUpload
-                             }) {
+    function ImportDropdown({
+                                onUpload
+                            }) {
         return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Dropdown, {
             popoverProps: {
                 placement: 'bottom-start'

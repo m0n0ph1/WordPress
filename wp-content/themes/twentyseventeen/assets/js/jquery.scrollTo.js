@@ -32,12 +32,12 @@
         limit: true
     };
 
-    function isWin (elem) {
+    function isWin(elem) {
         return !elem.nodeName ||
             $.inArray(elem.nodeName.toLowerCase(), ['iframe', '#document', 'html', 'body']) !== -1;
     }
 
-    function isFunction (obj) {
+    function isFunction(obj) {
         // Brought from jQuery since it's deprecated
         return typeof obj === 'function';
     }
@@ -48,7 +48,7 @@
             duration = 0;
         }
         if (typeof settings === 'function') {
-            settings = { onAfter: settings };
+            settings = {onAfter: settings};
         }
         if (target === 'max') {
             target = 9e9;
@@ -152,7 +152,7 @@
 
             animate(settings.onAfter);
 
-            function animate (callback) {
+            function animate(callback) {
                 var opts = $.extend({}, settings, {
                     // The queue setting conflicts with animate()
                     // Force it to always be true
@@ -184,8 +184,8 @@
         return Math.max(html[scroll], body[scroll]) - Math.min(html[size], body[size]);
     };
 
-    function both (val) {
-        return isFunction(val) || $.isPlainObject(val) ? val : { top: val, left: val };
+    function both(val) {
+        return isFunction(val) || $.isPlainObject(val) ? val : {top: val, left: val};
     }
 
     // Add special hooks so that window scroll properties can be animated

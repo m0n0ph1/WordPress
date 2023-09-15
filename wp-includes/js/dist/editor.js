@@ -17,7 +17,9 @@
                         __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
                             (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
                     __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-                } else { var mod; }
+                } else {
+                    var mod;
+                }
             })(this, function (module, exports) {
                 'use strict';
 
@@ -26,19 +28,19 @@
                     var values = [];
 
                     return {
-                        has: function has (key) {
+                        has: function has(key) {
                             return keys.indexOf(key) > -1;
                         },
-                        get: function get (key) {
+                        get: function get(key) {
                             return values[keys.indexOf(key)];
                         },
-                        set: function set (key, value) {
+                        set: function set(key, value) {
                             if (keys.indexOf(key) === -1) {
                                 keys.push(key);
                                 values.push(value);
                             }
                         },
-                        delete: function _delete (key) {
+                        delete: function _delete(key) {
                             var index = keys.indexOf(key);
                             if (index > -1) {
                                 keys.splice(index, 1);
@@ -48,28 +50,28 @@
                     };
                 }();
 
-                var createEvent = function createEvent (name) {
-                    return new Event(name, { bubbles: true });
+                var createEvent = function createEvent(name) {
+                    return new Event(name, {bubbles: true});
                 };
                 try {
                     new Event('test');
                 } catch (e) {
                     // IE does not support `new Event()`
-                    createEvent = function createEvent (name) {
+                    createEvent = function createEvent(name) {
                         var evt = document.createEvent('Event');
                         evt.initEvent(name, true, false);
                         return evt;
                     };
                 }
 
-                function assign (ta) {
+                function assign(ta) {
                     if (!ta || !ta.nodeName || ta.nodeName !== 'TEXTAREA' || map.has(ta)) return;
 
                     var heightOffset = null;
                     var clientWidth = null;
                     var cachedHeight = null;
 
-                    function init () {
+                    function init() {
                         var style = window.getComputedStyle(ta, null);
 
                         if (style.resize === 'vertical') {
@@ -91,7 +93,7 @@
                         update();
                     }
 
-                    function changeOverflow (value) {
+                    function changeOverflow(value) {
                         {
                             // Chrome/Safari-specific fix:
                             // When the textarea y-overflow is hidden, Chrome/Safari do not reflow the text to account for the space
@@ -108,7 +110,7 @@
                         ta.style.overflowY = value;
                     }
 
-                    function getParentOverflows (el) {
+                    function getParentOverflows(el) {
                         var arr = [];
 
                         while (el && el.parentNode && el.parentNode instanceof Element) {
@@ -124,7 +126,7 @@
                         return arr;
                     }
 
-                    function resize () {
+                    function resize() {
                         if (ta.scrollHeight === 0) {
                             // If the scrollHeight is 0, then the element probably has display:none or is detached from the DOM.
                             return;
@@ -149,7 +151,7 @@
                         }
                     }
 
-                    function update () {
+                    function update() {
                         resize();
 
                         var styleHeight = Math.round(parseFloat(ta.style.height));
@@ -187,7 +189,7 @@
                         }
                     }
 
-                    var pageResize = function pageResize () {
+                    var pageResize = function pageResize() {
                         if (ta.clientWidth !== clientWidth) {
                             update();
                         }
@@ -236,14 +238,14 @@
                     init();
                 }
 
-                function destroy (ta) {
+                function destroy(ta) {
                     var methods = map.get(ta);
                     if (methods) {
                         methods.destroy();
                     }
                 }
 
-                function update (ta) {
+                function update(ta) {
                     var methods = map.get(ta);
                     if (methods) {
                         methods.update();
@@ -254,7 +256,7 @@
 
                 // Do nothing in Node.js environment and IE8 (or lower)
                 if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'function') {
-                    autosize = function autosize (el) {
+                    autosize = function autosize(el) {
                         return el;
                     };
                     autosize.destroy = function (el) {
@@ -264,7 +266,7 @@
                         return el;
                     };
                 } else {
-                    autosize = function autosize (el, options) {
+                    autosize = function autosize(el, options) {
                         if (el) {
                             Array.prototype.forEach.call(el.length ? el : [el], function (x) {
                                 return assign(x, options);
@@ -309,7 +311,7 @@
                 var hasOwn = {}.hasOwnProperty;
                 var nativeCodeString = '[native code]';
 
-                function classNames () {
+                function classNames() {
                     var classes = [];
 
                     for (var i = 0; i < arguments.length; i++) {
@@ -353,7 +355,8 @@
                         return classNames;
                     }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
                     __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-                } else {}
+                } else {
+                }
             }());
 
             /***/
@@ -404,7 +407,7 @@
              * @param {HTMLElement} node Element to calculate line height of. Must be in the DOM.
              * @returns {Number} `line-height` of the element in pixels
              */
-            function lineHeight (node) {
+            function lineHeight(node) {
                 // Grab the line-height via style
                 var lnHeightStr = computedStyle(node, 'line-height');
                 var lnHeight = parseFloat(lnHeightStr, 10);
@@ -512,16 +515,16 @@
 
             var ReactPropTypesSecret = __webpack_require__(9567);
 
-            function emptyFunction () {
+            function emptyFunction() {
             }
 
-            function emptyFunctionWithReset () {
+            function emptyFunctionWithReset() {
             }
 
             emptyFunctionWithReset.resetWarningCache = emptyFunction;
 
             module.exports = function () {
-                function shim (props, propName, componentName, location, propFullName, secret) {
+                function shim(props, propName, componentName, location, propFullName, secret) {
                     if (secret === ReactPropTypesSecret) {
                         // It is still safe when called from React.
                         return;
@@ -536,7 +539,7 @@
                 };
                 shim.isRequired = shim;
 
-                function getShim () {
+                function getShim() {
                     return shim;
                 };
                 // Important!
@@ -585,7 +588,9 @@
              * LICENSE file in the root directory of this source tree.
              */
 
-            if (false) { var throwOnDirectAccess, ReactIs; } else {
+            if (false) {
+                var throwOnDirectAccess, ReactIs;
+            } else {
                 // By explicitly using `prop-types` you are opting into new production behavior.
                 // http://fb.me/prop-types-in-prod
                 module.exports = __webpack_require__(5372)();
@@ -621,7 +626,7 @@
 
             var __extends = (this && this.__extends) || (function () {
                 var extendStatics = Object.setPrototypeOf ||
-                    ({ __proto__: [] } instanceof Array && function (d, b) {
+                    ({__proto__: []} instanceof Array && function (d, b) {
                         d.__proto__ = b;
                     }) ||
                     function (d, b) {
@@ -630,7 +635,7 @@
                 return function (d, b) {
                     extendStatics(d, b);
 
-                    function __ () {
+                    function __() {
                         this.constructor = d;
                     }
 
@@ -668,7 +673,7 @@
             var TextareaAutosizeClass = /** @class */ (function (_super) {
                 __extends(TextareaAutosizeClass, _super);
 
-                function TextareaAutosizeClass () {
+                function TextareaAutosizeClass() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
                     _this.state = {
                         lineHeight: null
@@ -731,7 +736,7 @@
                     var maxHeight = maxRows && lineHeight ? lineHeight * maxRows : null;
                     return (React.createElement('textarea', __assign({}, props, {
                         onChange: this.onChange,
-                        style: maxHeight ? __assign({}, style, { maxHeight: maxHeight }) : style,
+                        style: maxHeight ? __assign({}, style, {maxHeight: maxHeight}) : style,
                         ref: function (element) {
                             _this.textarea = element;
                             if (typeof _this.props.innerRef === 'function') {
@@ -759,7 +764,7 @@
                 return TextareaAutosizeClass;
             }(React.Component));
             exports.TextareaAutosize = React.forwardRef(function (props, ref) {
-                return React.createElement(TextareaAutosizeClass, __assign({}, props, { innerRef: ref }));
+                return React.createElement(TextareaAutosizeClass, __assign({}, props, {innerRef: ref}));
             });
 
             /***/
@@ -1192,7 +1197,7 @@
             var allAccents = new RegExp(chars, 'g');
             var firstAccent = new RegExp(chars, '');
 
-            function matcher (match) {
+            function matcher(match) {
                 return characterMap[match];
             }
 
@@ -1229,7 +1234,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -1271,7 +1276,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -1290,7 +1295,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -1317,11 +1322,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -1714,7 +1719,7 @@
          * @return {*} Raw value.
          */
 
-        function getPostRawValue (value) {
+        function getPostRawValue(value) {
             if (value && 'object' === typeof value && 'raw' in value) {
                 return value.raw;
             }
@@ -1732,7 +1737,7 @@
          * @return {boolean} Whether the two objects have the same keys.
          */
 
-        function hasSameKeys (a, b) {
+        function hasSameKeys(a, b) {
             const keysA = Object.keys(a).sort();
             const keysB = Object.keys(b).sort();
             return keysA.length === keysB.length && keysA.every((key, index) => keysB[index] === key);
@@ -1749,7 +1754,7 @@
          * @return {boolean} Whether actions are updating the same post property.
          */
 
-        function isUpdatingSamePostProperty (action, previousAction) {
+        function isUpdatingSamePostProperty(action, previousAction) {
             return action.type === 'EDIT_POST' && hasSameKeys(action.edits, previousAction.edits);
         }
 
@@ -1764,7 +1769,7 @@
          * @return {boolean} Whether to overwrite present state.
          */
 
-        function shouldOverwriteState (action, previousAction) {
+        function shouldOverwriteState(action, previousAction) {
             if (action.type === 'RESET_EDITOR_BLOCKS') {
                 return !action.shouldCreateUndoLevel;
             }
@@ -1776,7 +1781,7 @@
             return isUpdatingSamePostProperty(action, previousAction);
         }
 
-        function postId (state = null, action) {
+        function postId(state = null, action) {
             switch (action.type) {
                 case 'SETUP_EDITOR_STATE':
                     return action.post.id;
@@ -1785,7 +1790,7 @@
             return state;
         }
 
-        function postType (state = null, action) {
+        function postType(state = null, action) {
             switch (action.type) {
                 case 'SETUP_EDITOR_STATE':
                     return action.post.type;
@@ -1803,7 +1808,7 @@
          * @return {boolean} Updated state.
          */
 
-        function template (state = {
+        function template(state = {
             isValid: true
         }, action) {
             switch (action.type) {
@@ -1827,7 +1832,7 @@
          * @return {Object} Updated state.
          */
 
-        function saving (state = {}, action) {
+        function saving(state = {}, action) {
             switch (action.type) {
                 case 'REQUEST_POST_UPDATE_START':
                 case 'REQUEST_POST_UPDATE_FINISH':
@@ -1849,7 +1854,7 @@
          * @return {Object} Updated state.
          */
 
-        function deleting (state = {}, action) {
+        function deleting(state = {}, action) {
             switch (action.type) {
                 case 'REQUEST_POST_DELETE_START':
                 case 'REQUEST_POST_DELETE_FINISH':
@@ -1881,7 +1886,7 @@
          * @return {PostLockState} Updated state.
          */
 
-        function postLock (state = {
+        function postLock(state = {
             isLocked: false
         }, action) {
             switch (action.type) {
@@ -1903,7 +1908,7 @@
          * @return {PostLockState} Updated state.
          */
 
-        function postSavingLock (state = {}, action) {
+        function postSavingLock(state = {}, action) {
             switch (action.type) {
                 case 'LOCK_POST_SAVING':
                     return {
@@ -1934,7 +1939,7 @@
          * @return {PostLockState} Updated state.
          */
 
-        function postAutosavingLock (state = {}, action) {
+        function postAutosavingLock(state = {}, action) {
             switch (action.type) {
                 case 'LOCK_POST_AUTOSAVING':
                     return {
@@ -1965,7 +1970,7 @@
          * @return {boolean} Updated state.
          */
 
-        function isReady (state = false, action) {
+        function isReady(state = false, action) {
             switch (action.type) {
                 case 'SETUP_EDITOR_STATE':
                     return true;
@@ -1986,7 +1991,7 @@
          * @return {Object} Updated state.
          */
 
-        function editorSettings (state = EDITOR_SETTINGS_DEFAULTS, action) {
+        function editorSettings(state = EDITOR_SETTINGS_DEFAULTS, action) {
             switch (action.type) {
                 case 'UPDATE_EDITOR_SETTINGS':
                     return {
@@ -2063,7 +2068,7 @@
          *
          * @return {[T]} Value returned as entry in array.
          */
-        function arrayOf (value) {
+        function arrayOf(value) {
             return [value];
         }
 
@@ -2075,7 +2080,7 @@
          *
          * @return {boolean} Whether value is object-like.
          */
-        function isObjectLike (value) {
+        function isObjectLike(value) {
             return !!value && 'object' === typeof value;
         }
 
@@ -2084,7 +2089,7 @@
          *
          * @return {Cache} Cache object.
          */
-        function createCache () {
+        function createCache() {
             /** @type {Cache} */
             var cache = {
                 clear: function () {
@@ -2105,7 +2110,7 @@
          *
          * @return {boolean} Whether arrays are shallowly equal.
          */
-        function isShallowEqual (a, b, fromIndex) {
+        function isShallowEqual(a, b, fromIndex) {
             var i;
 
             if (a.length !== b.length) {
@@ -2137,7 +2142,7 @@
          */
 
         /* harmony default export */
-        function rememo (selector, getDependants) {
+        function rememo(selector, getDependants) {
             /** @type {WeakMap<*,*>} */
             var rootCache;
 
@@ -2162,7 +2167,7 @@
              *
              * @return {Cache} Cache object.
              */
-            function getCache (dependants) {
+            function getCache(dependants) {
                 var caches = rootCache,
                     isUniqueByDependants = true,
                     i,
@@ -2205,7 +2210,7 @@
             /**
              * Resets root memoization cache.
              */
-            function clear () {
+            function clear() {
                 rootCache = new WeakMap();
             }
 
@@ -2221,7 +2226,7 @@
              */
 
             /* eslint-enable jsdoc/check-param-names */
-            function callSelector (/* source, ...extraArgs */) {
+            function callSelector(/* source, ...extraArgs */) {
                 var len = arguments.length,
                     cache,
                     node,
@@ -2433,7 +2438,7 @@
          * @return {Object} The corresponding icon.
          */
 
-        function getTemplatePartIcon (iconName) {
+        function getTemplatePartIcon(iconName) {
             if ('header' === iconName) {
                 return library_header;
             } else if ('footer' === iconName) {
@@ -2509,7 +2514,7 @@
          * @return {boolean} Whether the post is new.
          */
 
-        function isEditedPostNew (state) {
+        function isEditedPostNew(state) {
             return getCurrentPost(state).status === 'auto-draft';
         }
 
@@ -2521,7 +2526,7 @@
          * @return {boolean} Whether content includes unsaved changes.
          */
 
-        function hasChangedContent (state) {
+        function hasChangedContent(state) {
             const edits = getPostEdits(state);
             return 'content' in edits;
         }
@@ -2576,7 +2581,7 @@
          * @return {boolean} Whether new post and unsaved values exist.
          */
 
-        function isCleanNewPost (state) {
+        function isCleanNewPost(state) {
             return !isEditedPostDirty(state) && isEditedPostNew(state);
         }
 
@@ -2612,7 +2617,7 @@
          * @return {string} Post type.
          */
 
-        function getCurrentPostType (state) {
+        function getCurrentPostType(state) {
             return state.postType;
         }
 
@@ -2625,7 +2630,7 @@
          * @return {?number} ID of current post.
          */
 
-        function getCurrentPostId (state) {
+        function getCurrentPostId(state) {
             return state.postId;
         }
 
@@ -2637,7 +2642,7 @@
          * @return {number} Number of revisions.
          */
 
-        function getCurrentPostRevisionsCount (state) {
+        function getCurrentPostRevisionsCount(state) {
             var _getCurrentPost$_link;
 
             return (_getCurrentPost$_link = getCurrentPost(state)._links?.['version-history']?.[0]?.count) !== null && _getCurrentPost$_link !== void 0 ? _getCurrentPost$_link : 0;
@@ -2652,7 +2657,7 @@
          * @return {?number} ID of the last revision.
          */
 
-        function getCurrentPostLastRevisionId (state) {
+        function getCurrentPostLastRevisionId(state) {
             var _getCurrentPost$_link2;
 
             return (_getCurrentPost$_link2 = getCurrentPost(state)._links?.['predecessor-version']?.[0]?.id) !== null && _getCurrentPost$_link2 !== void 0 ? _getCurrentPost$_link2 : null;
@@ -2682,7 +2687,7 @@
          * @return {*} Post attribute value.
          */
 
-        function getCurrentPostAttribute (state, attributeName) {
+        function getCurrentPostAttribute(state, attributeName) {
             switch (attributeName) {
                 case 'type':
                     return getCurrentPostType(state);
@@ -2737,7 +2742,7 @@
          */
 
 
-        function getEditedPostAttribute (state, attributeName) {
+        function getEditedPostAttribute(state, attributeName) {
             // Special cases.
             switch (attributeName) {
                 case 'content':
@@ -2797,7 +2802,7 @@
          * @return {string} Post visibility.
          */
 
-        function getEditedPostVisibility (state) {
+        function getEditedPostVisibility(state) {
             const status = getEditedPostAttribute(state, 'status');
 
             if (status === 'private') {
@@ -2821,7 +2826,7 @@
          * @return {boolean} Whether current post is pending review.
          */
 
-        function isCurrentPostPending (state) {
+        function isCurrentPostPending(state) {
             return getCurrentPost(state).status === 'pending';
         }
 
@@ -2834,7 +2839,7 @@
          * @return {boolean} Whether the post has been published.
          */
 
-        function isCurrentPostPublished (state, currentPost) {
+        function isCurrentPostPublished(state, currentPost) {
             const post = currentPost || getCurrentPost(state);
             return ['publish', 'private'].indexOf(post.status) !== -1 || post.status === 'future' && !(0, external_wp_date_namespaceObject.isInTheFuture)(new Date(Number((0, external_wp_date_namespaceObject.getDate)(post.date)) - ONE_MINUTE_IN_MS));
         }
@@ -2847,7 +2852,7 @@
          * @return {boolean} Whether current post is scheduled to be posted.
          */
 
-        function isCurrentPostScheduled (state) {
+        function isCurrentPostScheduled(state) {
             return getCurrentPost(state).status === 'future' && !isCurrentPostPublished(state);
         }
 
@@ -2859,7 +2864,7 @@
          * @return {boolean} Whether the post can been published.
          */
 
-        function isEditedPostPublishable (state) {
+        function isEditedPostPublishable(state) {
             const post = getCurrentPost(state); // TODO: Post being publishable should be superset of condition of post
             // being saveable. Currently this restriction is imposed at UI.
             //
@@ -2877,7 +2882,7 @@
          * @return {boolean} Whether the post can be saved.
          */
 
-        function isEditedPostSaveable (state) {
+        function isEditedPostSaveable(state) {
             if (isSavingPost(state)) {
                 return false;
             } // TODO: Post should not be saveable if not dirty. Cannot be added here at
@@ -2903,7 +2908,7 @@
          * @return {boolean} Whether post has content.
          */
 
-        function isEditedPostEmpty (state) {
+        function isEditedPostEmpty(state) {
             // While the condition of truthy content string is sufficient to determine
             // emptiness, testing saveable blocks length is a trivial operation. Since
             // this function can be called frequently, optimize for the fast case as a
@@ -2997,7 +3002,7 @@
          * @return {boolean} Whether the post has been published.
          */
 
-        function isEditedPostBeingScheduled (state) {
+        function isEditedPostBeingScheduled(state) {
             const date = getEditedPostAttribute(state, 'date'); // Offset the date by one minute (network latency).
 
             const checkedDate = new Date(Number((0, external_wp_date_namespaceObject.getDate)(date)) - ONE_MINUTE_IN_MS);
@@ -3018,7 +3023,7 @@
          * @return {boolean} Whether the edited post has a floating date value.
          */
 
-        function isEditedPostDateFloating (state) {
+        function isEditedPostDateFloating(state) {
             const date = getEditedPostAttribute(state, 'date');
             const modified = getEditedPostAttribute(state, 'modified'); // This should be the status of the persisted post
             // It shouldn't use the "edited" status otherwise it breaks the
@@ -3042,7 +3047,7 @@
          * @return {boolean} Whether post is being deleted.
          */
 
-        function isDeletingPost (state) {
+        function isDeletingPost(state) {
             return !!state.deleting.pending;
         }
 
@@ -3113,7 +3118,7 @@
          * @return {boolean} Whether the post is autosaving.
          */
 
-        function isAutosavingPost (state) {
+        function isAutosavingPost(state) {
             if (!isSavingPost(state)) {
                 return false;
             }
@@ -3129,7 +3134,7 @@
          * @return {boolean} Whether the post is being previewed.
          */
 
-        function isPreviewingPost (state) {
+        function isPreviewingPost(state) {
             if (!isSavingPost(state)) {
                 return false;
             }
@@ -3145,7 +3150,7 @@
          * @return {string | undefined} Preview Link.
          */
 
-        function getEditedPostPreviewLink (state) {
+        function getEditedPostPreviewLink(state) {
             if (state.saving.pending || isSavingPost(state)) {
                 return;
             }
@@ -3187,7 +3192,7 @@
          * @return {?string} Suggested post format.
          */
 
-        function getSuggestedPostFormat (state) {
+        function getSuggestedPostFormat(state) {
             const blocks = getEditorBlocks(state);
             if (blocks.length > 2) return null;
             let name; // If there is only one block in the content of the post grab its name
@@ -3268,7 +3273,7 @@
          * @return {boolean} Whether post is being published.
          */
 
-        function isPublishingPost (state) {
+        function isPublishingPost(state) {
             return isSavingPost(state) && !isCurrentPostPublished(state) && getEditedPostAttribute(state, 'status') === 'publish';
         }
 
@@ -3280,7 +3285,7 @@
          * @return {boolean} Whether or not the permalink is editable.
          */
 
-        function isPermalinkEditable (state) {
+        function isPermalinkEditable(state) {
             const permalinkTemplate = getEditedPostAttribute(state, 'permalink_template');
             return PERMALINK_POSTNAME_REGEX.test(permalinkTemplate);
         }
@@ -3293,7 +3298,7 @@
          * @return {?string} The permalink, or null if the post is not viewable.
          */
 
-        function getPermalink (state) {
+        function getPermalink(state) {
             const permalinkParts = getPermalinkParts(state);
 
             if (!permalinkParts) {
@@ -3323,7 +3328,7 @@
          * @return {string} The current slug to be displayed in the editor
          */
 
-        function getEditedPostSlug (state) {
+        function getEditedPostSlug(state) {
             return getEditedPostAttribute(state, 'slug') || (0, external_wp_url_namespaceObject.cleanForSlug)(getEditedPostAttribute(state, 'title')) || getCurrentPostId(state);
         }
 
@@ -3337,7 +3342,7 @@
          *                  the permalink, or null if the post is not viewable.
          */
 
-        function getPermalinkParts (state) {
+        function getPermalinkParts(state) {
             const permalinkTemplate = getEditedPostAttribute(state, 'permalink_template');
 
             if (!permalinkTemplate) {
@@ -3361,7 +3366,7 @@
          * @return {boolean} Is locked.
          */
 
-        function isPostLocked (state) {
+        function isPostLocked(state) {
             return state.postLock.isLocked;
         }
 
@@ -3373,7 +3378,7 @@
          * @return {boolean} Is locked.
          */
 
-        function isPostSavingLocked (state) {
+        function isPostSavingLocked(state) {
             return Object.keys(state.postSavingLock).length > 0;
         }
 
@@ -3385,7 +3390,7 @@
          * @return {boolean} Is locked.
          */
 
-        function isPostAutosavingLocked (state) {
+        function isPostAutosavingLocked(state) {
             return Object.keys(state.postAutosavingLock).length > 0;
         }
 
@@ -3397,7 +3402,7 @@
          * @return {boolean} Is post lock takeover.
          */
 
-        function isPostLockTakeover (state) {
+        function isPostLockTakeover(state) {
             return state.postLock.isTakeover;
         }
 
@@ -3409,7 +3414,7 @@
          * @return {Object} A user object.
          */
 
-        function getPostLockUser (state) {
+        function getPostLockUser(state) {
             return state.postLock.user;
         }
 
@@ -3421,7 +3426,7 @@
          * @return {Object} The lock object.
          */
 
-        function getActivePostLock (state) {
+        function getActivePostLock(state) {
             return state.postLock.activePostLock;
         }
 
@@ -3433,7 +3438,7 @@
          * @return {boolean} Whether the user can or can't post unfiltered HTML.
          */
 
-        function canUserUseUnfilteredHTML (state) {
+        function canUserUseUnfilteredHTML(state) {
             return Boolean(getCurrentPost(state)._links?.hasOwnProperty('wp:action-unfiltered-html'));
         }
 
@@ -3453,7 +3458,7 @@
          * @return {Array} Block list.
          */
 
-        function getEditorBlocks (state) {
+        function getEditorBlocks(state) {
             return getEditedPostAttribute(state, 'blocks') || EMPTY_ARRAY;
         }
 
@@ -3477,7 +3482,7 @@
          * @deprecated since Gutenberg 10.0.0.
          */
 
-        function getEditorSelectionStart (state) {
+        function getEditorSelectionStart(state) {
             external_wp_deprecated_default()('select(\'core/editor\').getEditorSelectionStart', {
                 since: '5.8',
                 alternative: 'select(\'core/editor\').getEditorSelection'
@@ -3494,7 +3499,7 @@
          * @deprecated since Gutenberg 10.0.0.
          */
 
-        function getEditorSelectionEnd (state) {
+        function getEditorSelectionEnd(state) {
             external_wp_deprecated_default()('select(\'core/editor\').getEditorSelectionStart', {
                 since: '5.8',
                 alternative: 'select(\'core/editor\').getEditorSelection'
@@ -3509,7 +3514,7 @@
          * @return {WPBlockSelection} The selection end.
          */
 
-        function getEditorSelection (state) {
+        function getEditorSelection(state) {
             return getEditedPostAttribute(state, 'selection');
         }
 
@@ -3520,7 +3525,7 @@
          * @return {boolean} is Ready.
          */
 
-        function __unstableIsEditorReady (state) {
+        function __unstableIsEditorReady(state) {
             return state.isReady;
         }
 
@@ -3532,7 +3537,7 @@
          * @return {Object} The editor settings object.
          */
 
-        function getEditorSettings (state) {
+        function getEditorSettings(state) {
             return state.editorSettings;
         }
 
@@ -3547,7 +3552,7 @@
          * @deprecated since Gutenberg 9.7.0.
          */
 
-        function getStateBeforeOptimisticTransaction () {
+        function getStateBeforeOptimisticTransaction() {
             external_wp_deprecated_default()('select(\'core/editor\').getStateBeforeOptimisticTransaction', {
                 since: '5.7',
                 hint: 'No state history is kept on this store anymore'
@@ -3562,7 +3567,7 @@
          * @deprecated since Gutenberg 9.7.0.
          */
 
-        function inSomeHistory () {
+        function inSomeHistory() {
             external_wp_deprecated_default()('select(\'core/editor\').inSomeHistory', {
                 since: '5.7',
                 hint: 'No state history is kept on this store anymore'
@@ -3570,7 +3575,7 @@
             return false;
         }
 
-        function getBlockEditorSelector (name) {
+        function getBlockEditorSelector(name) {
             return (0, external_wp_data_namespaceObject.createRegistrySelector)(select => (state, ...args) => {
                 external_wp_deprecated_default()('`wp.data.select( \'core/editor\' ).' + name + '`', {
                     since: '5.3',
@@ -3846,7 +3851,7 @@
          * @return {Object} The template types.
          */
 
-        function __experimentalGetDefaultTemplateTypes (state) {
+        function __experimentalGetDefaultTemplateTypes(state) {
             return getEditorSettings(state)?.defaultTemplateTypes;
         }
 
@@ -3897,7 +3902,7 @@
          * @return {Object} Information about the template, including title, description, and icon.
          */
 
-        function __experimentalGetTemplateInfo (state, template) {
+        function __experimentalGetTemplateInfo(state, template) {
             if (!template) {
                 return EMPTY_OBJECT;
             }
@@ -3960,15 +3965,15 @@
          *
          * @return {string} sessionStorage key
          */
-        function postKey (postId, isPostNew) {
+        function postKey(postId, isPostNew) {
             return `wp-autosave-block-editor-post-${isPostNew ? 'auto-draft' : postId}`;
         }
 
-        function localAutosaveGet (postId, isPostNew) {
+        function localAutosaveGet(postId, isPostNew) {
             return window.sessionStorage.getItem(postKey(postId, isPostNew));
         }
 
-        function localAutosaveSet (postId, isPostNew, title, content, excerpt) {
+        function localAutosaveSet(postId, isPostNew, title, content, excerpt) {
             window.sessionStorage.setItem(postKey(postId, isPostNew), JSON.stringify({
                 post_title: title,
                 content,
@@ -3976,7 +3981,7 @@
             }));
         }
 
-        function localAutosaveClear (postId, isPostNew) {
+        function localAutosaveClear(postId, isPostNew) {
             window.sessionStorage.removeItem(postKey(postId, isPostNew));
         }
 
@@ -4000,7 +4005,7 @@
          *                 notification should be sent.
          */
 
-        function getNotificationArgumentsForSaveSuccess (data) {
+        function getNotificationArgumentsForSaveSuccess(data) {
             var _postType$viewable;
 
             const {
@@ -4070,7 +4075,7 @@
          *                 notification should be sent.
          */
 
-        function getNotificationArgumentsForSaveFail (data) {
+        function getNotificationArgumentsForSaveFail(data) {
             const {
                 post,
                 edits,
@@ -4112,7 +4117,7 @@
          * @return {Array} Arguments for dispatch.
          */
 
-        function getNotificationArgumentsForTrashFail (data) {
+        function getNotificationArgumentsForTrashFail(data) {
             return [data.error.message && data.error.code !== 'unknown_error' ? data.error.message : (0, external_wp_i18n_namespaceObject.__)('Trashing failed'), {
                 id: TRASH_POST_NOTICE_ID
             }];
@@ -4178,7 +4183,7 @@
          * @return {Object} Action object.
          */
 
-        function __experimentalTearDownEditor () {
+        function __experimentalTearDownEditor() {
             return {
                 type: 'TEAR_DOWN_EDITOR'
             };
@@ -4191,7 +4196,7 @@
          * @deprecated Since WordPress 6.0.
          */
 
-        function resetPost () {
+        function resetPost() {
             external_wp_deprecated_default()('wp.data.dispatch( \'core/editor\' ).resetPost', {
                 since: '6.0',
                 version: '6.3',
@@ -4210,7 +4215,7 @@
          * @deprecated since Gutenberg 9.7.0.
          */
 
-        function updatePost () {
+        function updatePost() {
             external_wp_deprecated_default()('wp.data.dispatch( \'core/editor\' ).updatePost', {
                 since: '5.7',
                 alternative: 'Use the core entities store instead'
@@ -4229,7 +4234,7 @@
          * @return {Object} Action object.
          */
 
-        function setupEditorState (post) {
+        function setupEditorState(post) {
             return {
                 type: 'SETUP_EDITOR_STATE',
                 post
@@ -4332,7 +4337,7 @@
          * @deprecated Since WordPress 6.0.
          */
 
-        function refreshPost () {
+        function refreshPost() {
             external_wp_deprecated_default()('wp.data.dispatch( \'core/editor\' ).refreshPost', {
                 since: '6.0',
                 version: '6.3',
@@ -4435,7 +4440,7 @@
          * @deprecated Since WordPress 6.0
          */
 
-        function createUndoLevel () {
+        function createUndoLevel() {
             external_wp_deprecated_default()('wp.data.dispatch( \'core/editor\' ).createUndoLevel', {
                 since: '6.0',
                 version: '6.3',
@@ -4453,7 +4458,7 @@
          * @return {Object} Action object.
          */
 
-        function updatePostLock (lock) {
+        function updatePostLock(lock) {
             return {
                 type: 'UPDATE_POST_LOCK',
                 lock
@@ -4523,7 +4528,7 @@
          * @return {Object} Action object
          */
 
-        function lockPostSaving (lockName) {
+        function lockPostSaving(lockName) {
             return {
                 type: 'LOCK_POST_SAVING',
                 lockName
@@ -4544,7 +4549,7 @@
          * @return {Object} Action object
          */
 
-        function unlockPostSaving (lockName) {
+        function unlockPostSaving(lockName) {
             return {
                 type: 'UNLOCK_POST_SAVING',
                 lockName
@@ -4565,7 +4570,7 @@
          * @return {Object} Action object
          */
 
-        function lockPostAutosaving (lockName) {
+        function lockPostAutosaving(lockName) {
             return {
                 type: 'LOCK_POST_AUTOSAVING',
                 lockName
@@ -4586,7 +4591,7 @@
          * @return {Object} Action object
          */
 
-        function unlockPostAutosaving (lockName) {
+        function unlockPostAutosaving(lockName) {
             return {
                 type: 'UNLOCK_POST_AUTOSAVING',
                 lockName
@@ -4645,7 +4650,7 @@
  * @return {Object} Action object
  */
 
-        function updateEditorSettings (settings) {
+        function updateEditorSettings(settings) {
             return {
                 type: 'UPDATE_EDITOR_SETTINGS',
                 settings
@@ -4931,7 +4936,7 @@
          */
 
 
-        function shimAttributeSource (settings) {
+        function shimAttributeSource(settings) {
             var _settings$attributes;
 
             /** @type {WPMetaAttributeMapping} */
@@ -4979,7 +4984,7 @@
 
         /** @typedef {import('@wordpress/components').WPCompleter} WPCompleter */
 
-        function getUserLabel (user) {
+        function getUserLabel(user) {
             const avatar = user.avatar_urls && user.avatar_urls[24] ? (0, external_wp_element_namespaceObject.createElement)('img', {
                 className: 'editor-autocompleters__user-avatar',
                 alt: '',
@@ -5006,7 +5011,7 @@
             className: 'editor-autocompleters__user',
             triggerPrefix: '@',
 
-            useItems (filterValue) {
+            useItems(filterValue) {
                 const users = (0, external_wp_data_namespaceObject.useSelect)(select => {
                     const {
                         getUsers
@@ -5024,7 +5029,7 @@
                 return [options];
             },
 
-            getOptionCompletion (user) {
+            getOptionCompletion(user) {
                 return `@${user.slug}`;
             }
 
@@ -5041,7 +5046,7 @@
 
 
 
-        function setDefaultCompleters (completers = []) {
+        function setDefaultCompleters(completers = []) {
             // Provide copies so filters may directly modify them.
             completers.push({
                 ...user
@@ -5080,18 +5085,18 @@
          */
 
         class AutosaveMonitor extends external_wp_element_namespaceObject.Component {
-            constructor (props) {
+            constructor(props) {
                 super(props);
                 this.needsAutosave = !!(props.isDirty && props.isAutosaveable);
             }
 
-            componentDidMount () {
+            componentDidMount() {
                 if (!this.props.disableIntervalChecks) {
                     this.setAutosaveTimer();
                 }
             }
 
-            componentDidUpdate (prevProps) {
+            componentDidUpdate(prevProps) {
                 if (this.props.disableIntervalChecks) {
                     if (this.props.editsReference !== prevProps.editsReference) {
                         this.props.autosave();
@@ -5120,17 +5125,17 @@
                 }
             }
 
-            componentWillUnmount () {
+            componentWillUnmount() {
                 clearTimeout(this.timerId);
             }
 
-            setAutosaveTimer (timeout = this.props.interval * 1000) {
+            setAutosaveTimer(timeout = this.props.interval * 1000) {
                 this.timerId = setTimeout(() => {
                     this.autosaveTimerHandler();
                 }, timeout);
             }
 
-            autosaveTimerHandler () {
+            autosaveTimerHandler() {
                 if (!this.props.isAutosaveable) {
                     this.setAutosaveTimer(1000);
                     return;
@@ -5144,7 +5149,7 @@
                 this.setAutosaveTimer();
             }
 
-            render () {
+            render() {
                 return null;
             }
 
@@ -5172,7 +5177,7 @@
                 interval
             };
         }), (0, external_wp_data_namespaceObject.withDispatch)((dispatch, ownProps) => ({
-            autosave () {
+            autosave() {
                 const {
                     autosave = dispatch(store_store).autosave
                 } = ownProps;
@@ -5357,10 +5362,10 @@
 
 
 
-        function DocumentOutlineCheck ({
-                                           blocks,
-                                           children
-                                       }) {
+        function DocumentOutlineCheck({
+                                          blocks,
+                                          children
+                                      }) {
             const headings = blocks.filter(block => block.name === 'core/heading');
 
             if (headings.length < 1) {
@@ -5388,9 +5393,9 @@
 
 
 
-        function SaveShortcut ({
-                                   resetBlocksOnSave
-                               }) {
+        function SaveShortcut({
+                                  resetBlocksOnSave
+                              }) {
             const {
                 resetEditorBlocks,
                 savePost
@@ -5451,7 +5456,7 @@
 
 
 
-        function VisualEditorGlobalKeyboardShortcuts () {
+        function VisualEditorGlobalKeyboardShortcuts() {
             const {
                 redo,
                 undo
@@ -5476,7 +5481,7 @@
          * Internal dependencies
          */
 
-        function TextEditorGlobalKeyboardShortcuts () {
+        function TextEditorGlobalKeyboardShortcuts() {
             return (0, external_wp_element_namespaceObject.createElement)(save_shortcut, {
                 resetBlocksOnSave: true
             });
@@ -5496,7 +5501,7 @@
 
 
 
-        function EditorKeyboardShortcutsRegister () {
+        function EditorKeyboardShortcutsRegister() {
             // Registering the shortcuts.
             const {
                 registerShortcut
@@ -5588,7 +5593,7 @@
 
 
 
-        function EditorHistoryRedo (props, ref) {
+        function EditorHistoryRedo(props, ref) {
             const shortcut = (0, external_wp_keycodes_namespaceObject.isAppleOS)() ? external_wp_keycodes_namespaceObject.displayShortcut.primaryShift('z') : external_wp_keycodes_namespaceObject.displayShortcut.primary('y');
             const hasRedo = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).hasEditorRedo(), []);
             const {
@@ -5626,7 +5631,7 @@
 
 
 
-        function EditorHistoryUndo (props, ref) {
+        function EditorHistoryUndo(props, ref) {
             const hasUndo = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).hasEditorUndo(), []);
             const {
                 undo
@@ -5662,10 +5667,10 @@
 
 
 
-        function TemplateValidationNotice ({
-                                               isValid,
-                                               ...props
-                                           }) {
+        function TemplateValidationNotice({
+                                              isValid,
+                                              ...props
+                                          }) {
             if (isValid) {
                 return null;
             }
@@ -5716,10 +5721,10 @@
          */
 
 
-        function EditorNotices ({
-                                    notices,
-                                    onRemove
-                                }) {
+        function EditorNotices({
+                                   notices,
+                                   onRemove
+                               }) {
             const dismissibleNotices = notices.filter(({
                                                            isDismissible,
                                                            type
@@ -5753,7 +5758,7 @@
 
 
 
-        function EditorSnackbars () {
+        function EditorSnackbars() {
             const notices = (0, external_wp_data_namespaceObject.useSelect)(select => select(external_wp_notices_namespaceObject.store).getNotices(), []);
             const {
                 removeNotice
@@ -5781,12 +5786,12 @@
          */
 
 
-        function EntityRecordItem ({
-                                       record,
-                                       checked,
-                                       onChange,
-                                       closePanel
-                                   }) {
+        function EntityRecordItem({
+                                      record,
+                                      checked,
+                                      onChange,
+                                      closePanel
+                                  }) {
             const {
                 name,
                 kind,
@@ -5853,7 +5858,7 @@
 
 
 
-        function getEntityDescription (entity, count) {
+        function getEntityDescription(entity, count) {
             switch (entity) {
                 case 'site':
                     return 1 === count ? (0, external_wp_i18n_namespaceObject.__)('This change will affect your whole site.') : (0, external_wp_i18n_namespaceObject.__)('These changes will affect your whole site.');
@@ -5867,12 +5872,12 @@
             }
         }
 
-        function EntityTypeList ({
-                                     list,
-                                     unselectedEntities,
-                                     setUnselectedEntities,
-                                     closePanel
-                                 }) {
+        function EntityTypeList({
+                                    list,
+                                    unselectedEntities,
+                                    setUnselectedEntities,
+                                    closePanel
+                                }) {
             const count = list.length;
             const firstRecord = list[0];
             const entityConfig = (0, external_wp_data_namespaceObject.useSelect)(select => select(external_wp_coreData_namespaceObject.store).getEntityConfig(firstRecord.kind, firstRecord.name), [firstRecord.kind, firstRecord.name]);
@@ -5989,13 +5994,13 @@
             name: 'wp_navigation'
         }];
 
-        function identity (values) {
+        function identity(values) {
             return values;
         }
 
-        function EntitiesSavedStates ({
-                                          close
-                                      }) {
+        function EntitiesSavedStates({
+                                         close
+                                     }) {
             const isDirtyProps = useIsDirty();
             return (0, external_wp_element_namespaceObject.createElement)(EntitiesSavedStatesExtensible, {
                 close: close,
@@ -6003,17 +6008,17 @@
             });
         }
 
-        function EntitiesSavedStatesExtensible ({
-                                                    additionalPrompt = undefined,
-                                                    close,
-                                                    onSave = identity,
-                                                    saveEnabled: saveEnabledProp = undefined,
-                                                    saveLabel = (0, external_wp_i18n_namespaceObject.__)('Save'),
-                                                    dirtyEntityRecords,
-                                                    isDirty,
-                                                    setUnselectedEntities,
-                                                    unselectedEntities
-                                                }) {
+        function EntitiesSavedStatesExtensible({
+                                                   additionalPrompt = undefined,
+                                                   close,
+                                                   onSave = identity,
+                                                   saveEnabled: saveEnabledProp = undefined,
+                                                   saveLabel = (0, external_wp_i18n_namespaceObject.__)('Save'),
+                                                   dirtyEntityRecords,
+                                                   isDirty,
+                                                   setUnselectedEntities,
+                                                   unselectedEntities
+                                               }) {
             const saveButtonRef = (0, external_wp_element_namespaceObject.useRef)();
             const {
                 editEntityRecord,
@@ -6154,7 +6159,7 @@
 
 
 
-        function getContent () {
+        function getContent() {
             try {
                 // While `select` in a component is generally discouraged, it is
                 // used here because it (a) reduces the chance of data loss in the
@@ -6163,13 +6168,14 @@
                 // content serialization throughout the lifetime of a non-erroring
                 // application.
                 return (0, external_wp_data_namespaceObject.select)(store_store).getEditedPostContent();
-            } catch (error) {}
+            } catch (error) {
+            }
         }
 
-        function CopyButton ({
-                                 text,
-                                 children
-                             }) {
+        function CopyButton({
+                                text,
+                                children
+                            }) {
             const ref = (0, external_wp_compose_namespaceObject.useCopyToClipboard)(text);
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Button, {
                 variant: 'secondary',
@@ -6178,24 +6184,24 @@
         }
 
         class ErrorBoundary extends external_wp_element_namespaceObject.Component {
-            constructor () {
+            constructor() {
                 super(...arguments);
                 this.state = {
                     error: null
                 };
             }
 
-            static getDerivedStateFromError (error) {
+            static getDerivedStateFromError(error) {
                 return {
                     error
                 };
             }
 
-            componentDidCatch (error) {
+            componentDidCatch(error) {
                 (0, external_wp_hooks_namespaceObject.doAction)('editor.ErrorBoundary.errorLogged', error);
             }
 
-            render () {
+            render() {
                 const {
                     error
                 } = this.state;
@@ -6268,7 +6274,7 @@
          */
 
 
-        function useAutosaveNotice () {
+        function useAutosaveNotice() {
             const {
                 postId,
                 isEditedPostNew,
@@ -6337,7 +6343,7 @@
                     actions: [{
                         label: (0, external_wp_i18n_namespaceObject.__)('Restore the backup'),
 
-                        onClick () {
+                        onClick() {
                             const {
                                 content: editsContent,
                                 ...editsWithoutContent
@@ -6357,7 +6363,7 @@
          */
 
 
-        function useAutosavePurge () {
+        function useAutosavePurge() {
             const {
                 postId,
                 isEditedPostNew,
@@ -6391,7 +6397,7 @@
             }, [isEditedPostNew, postId]);
         }
 
-        function LocalAutosaveMonitor () {
+        function LocalAutosaveMonitor() {
             const {
                 autosave
             } = (0, external_wp_data_namespaceObject.useDispatch)(store_store);
@@ -6422,9 +6428,9 @@
          */
 
 
-        function PageAttributesCheck ({
-                                          children
-                                      }) {
+        function PageAttributesCheck({
+                                         children
+                                     }) {
             const supportsPageAttributes = (0, external_wp_data_namespaceObject.useSelect)(select => {
                 const {
                     getEditedPostAttribute
@@ -6469,11 +6475,11 @@
          * @return {WPComponent} The component to be rendered.
          */
 
-        function PostTypeSupportCheck ({
-                                           postType,
-                                           children,
-                                           supportKeys
-                                       }) {
+        function PostTypeSupportCheck({
+                                          postType,
+                                          children,
+                                          supportKeys
+                                      }) {
             let isSupported = true;
 
             if (postType) {
@@ -6539,7 +6545,7 @@
             })));
         };
 
-        function PageAttributesOrderWithChecks (props) {
+        function PageAttributesOrderWithChecks(props) {
             return (0, external_wp_element_namespaceObject.createElement)(post_type_support_check, {
                 supportKeys: 'page-attributes'
             }, (0, external_wp_element_namespaceObject.createElement)(PageAttributesOrder, {
@@ -6553,7 +6559,7 @@
                 order: select(store_store).getEditedPostAttribute('menu_order')
             };
         }), (0, external_wp_data_namespaceObject.withDispatch)(dispatch => ({
-            onUpdateOrder (order) {
+            onUpdateOrder(order) {
                 dispatch(store_store).editPost({
                     menu_order: order
                 });
@@ -6577,7 +6583,7 @@
          * @return {Array} Array of terms in tree format.
          */
 
-        function buildTermsTree (flatTerms) {
+        function buildTermsTree(flatTerms) {
             const flatTermsWithParentAndChildren = flatTerms.map(term => {
                 return {
                     children: [],
@@ -6665,7 +6671,7 @@
 
 
 
-        function getTitle (post) {
+        function getTitle(post) {
             return post?.title?.rendered ? (0, external_wp_htmlEntities_namespaceObject.decodeEntities)(post.title.rendered) : `#${post.id} (${(0, external_wp_i18n_namespaceObject.__)('no title')})`;
         }
 
@@ -6684,7 +6690,7 @@
             return Infinity;
         };
 
-        function PageAttributesParent () {
+        function PageAttributesParent() {
             const {
                 editPost
             } = (0, external_wp_data_namespaceObject.useDispatch)(store_store);
@@ -6825,7 +6831,7 @@
          */
 
 
-        function PostTemplate () {
+        function PostTemplate() {
             const {
                 availableTemplates,
                 selectedTemplate,
@@ -6896,7 +6902,7 @@
 
 
 
-        function PostAuthorCombobox () {
+        function PostAuthorCombobox() {
             const [fieldValue, setFieldValue] = (0, external_wp_element_namespaceObject.useState)();
             const {
                 authorId,
@@ -7012,7 +7018,7 @@
 
 
 
-        function PostAuthorSelect () {
+        function PostAuthorSelect() {
             const {
                 editPost
             } = (0, external_wp_data_namespaceObject.useDispatch)(store_store);
@@ -7069,7 +7075,7 @@
 
         const minimumUsersForCombobox = 25;
 
-        function PostAuthor () {
+        function PostAuthor() {
             const showCombobox = (0, external_wp_data_namespaceObject.useSelect)(select => {
                 const authors = select(external_wp_coreData_namespaceObject.store).getUsers(AUTHORS_QUERY);
                 return authors?.length >= minimumUsersForCombobox;
@@ -7098,9 +7104,9 @@
 
 
 
-        function PostAuthorCheck ({
-                                      children
-                                  }) {
+        function PostAuthorCheck({
+                                     children
+                                 }) {
             const {
                 hasAssignAuthorAction,
                 hasAuthors
@@ -7136,10 +7142,10 @@
 
 
 
-        function PostComments ({
-                                   commentStatus = 'open',
-                                   ...props
-                               }) {
+        function PostComments({
+                                  commentStatus = 'open',
+                                  ...props
+                              }) {
             const onToggleComments = () => props.editPost({
                 comment_status: commentStatus === 'open' ? 'closed' : 'open'
             });
@@ -7173,10 +7179,10 @@
 
 
 
-        function PostExcerpt ({
-                                  excerpt,
-                                  onUpdateExcerpt
-                              }) {
+        function PostExcerpt({
+                                 excerpt,
+                                 onUpdateExcerpt
+                             }) {
             return (0, external_wp_element_namespaceObject.createElement)('div', {
                 className: 'editor-post-excerpt'
             }, (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.TextareaControl, {
@@ -7196,7 +7202,7 @@
                 excerpt: select(store_store).getEditedPostAttribute('excerpt')
             };
         }), (0, external_wp_data_namespaceObject.withDispatch)(dispatch => ({
-            onUpdateExcerpt (excerpt) {
+            onUpdateExcerpt(excerpt) {
                 dispatch(store_store).editPost({
                     excerpt
                 });
@@ -7211,7 +7217,7 @@
          */
 
 
-        function PostExcerptCheck (props) {
+        function PostExcerptCheck(props) {
             return (0, external_wp_element_namespaceObject.createElement)(post_type_support_check, {
                 ...props,
                 supportKeys: 'excerpt'
@@ -7233,12 +7239,12 @@
          */
 
 
-        function ThemeSupportCheck ({
-                                        themeSupports,
-                                        children,
-                                        postType,
-                                        supportKeys
-                                    }) {
+        function ThemeSupportCheck({
+                                       themeSupports,
+                                       children,
+                                       postType,
+                                       supportKeys
+                                   }) {
             const isSupported = (Array.isArray(supportKeys) ? supportKeys : [supportKeys]).some(key => {
                 var _themeSupports$key;
 
@@ -7283,7 +7289,7 @@
 
 
 
-        function PostFeaturedImageCheck (props) {
+        function PostFeaturedImageCheck(props) {
             return (0, external_wp_element_namespaceObject.createElement)(theme_support_check, {
                 supportKeys: 'post-thumbnails'
             }, (0, external_wp_element_namespaceObject.createElement)(post_type_support_check, {
@@ -7315,7 +7321,7 @@
 
         const instructions = (0, external_wp_element_namespaceObject.createElement)('p', null, (0, external_wp_i18n_namespaceObject.__)('To edit the featured image, you need permission to upload media.'));
 
-        function getMediaDetails (media, postId) {
+        function getMediaDetails(media, postId) {
             var _media$media_details$, _media$media_details$2;
 
             if (!media) {
@@ -7349,16 +7355,16 @@
             };
         }
 
-        function PostFeaturedImage ({
-                                        currentPostId,
-                                        featuredImageId,
-                                        onUpdateImage,
-                                        onRemoveImage,
-                                        media,
-                                        postType,
-                                        noticeUI,
-                                        noticeOperations
-                                    }) {
+        function PostFeaturedImage({
+                                       currentPostId,
+                                       featuredImageId,
+                                       onUpdateImage,
+                                       onRemoveImage,
+                                       media,
+                                       postType,
+                                       noticeUI,
+                                       noticeOperations
+                                   }) {
             const toggleRef = (0, external_wp_element_namespaceObject.useRef)();
             const [isLoading, setIsLoading] = (0, external_wp_element_namespaceObject.useState)(false);
             const mediaUpload = (0, external_wp_data_namespaceObject.useSelect)(select => {
@@ -7370,12 +7376,12 @@
                 mediaSourceUrl
             } = getMediaDetails(media, currentPostId);
 
-            function onDropFiles (filesList) {
+            function onDropFiles(filesList) {
                 mediaUpload({
                     allowedTypes: ['image'],
                     filesList,
 
-                    onFileChange ([image]) {
+                    onFileChange([image]) {
                         if ((0, external_wp_blob_namespaceObject.isBlobURL)(image?.url)) {
                             setIsLoading(true);
                             return;
@@ -7385,7 +7391,7 @@
                         setIsLoading(false);
                     },
 
-                    onError (message) {
+                    onError(message) {
                         noticeOperations.removeAllNotices();
                         noticeOperations.createErrorNotice(message);
                     }
@@ -7473,24 +7479,24 @@
                 editPost
             } = dispatch(store_store);
             return {
-                onUpdateImage (image) {
+                onUpdateImage(image) {
                     editPost({
                         featured_media: image.id
                     });
                 },
 
-                onDropImage (filesList) {
+                onDropImage(filesList) {
                     select(external_wp_blockEditor_namespaceObject.store).getSettings().mediaUpload({
                         allowedTypes: ['image'],
                         filesList,
 
-                        onFileChange ([image]) {
+                        onFileChange([image]) {
                             editPost({
                                 featured_media: image.id
                             });
                         },
 
-                        onError (message) {
+                        onError(message) {
                             noticeOperations.removeAllNotices();
                             noticeOperations.createErrorNotice(message);
                         }
@@ -7498,7 +7504,7 @@
                     });
                 },
 
-                onRemoveImage () {
+                onRemoveImage() {
                     editPost({
                         featured_media: 0
                     });
@@ -7522,10 +7528,10 @@
 
 
 
-        function PostFormatCheck ({
-                                      disablePostFormats,
-                                      ...props
-                                  }) {
+        function PostFormatCheck({
+                                     disablePostFormats,
+                                     ...props
+                                 }) {
             return !disablePostFormats && (0, external_wp_element_namespaceObject.createElement)(post_type_support_check, {
                 ...props,
                 supportKeys: 'post-formats'
@@ -7598,7 +7604,7 @@
                 return 0;
             });
 
-        function PostFormat () {
+        function PostFormat() {
             const instanceId = (0, external_wp_compose_namespaceObject.useInstanceId)(PostFormat);
             const postFormatSelectorId = `post-format-selector-${instanceId}`;
             const {
@@ -7683,11 +7689,11 @@
 
 
 
-        function PostLastRevisionCheck ({
-                                            lastRevisionId,
-                                            revisionsCount,
-                                            children
-                                        }) {
+        function PostLastRevisionCheck({
+                                           lastRevisionId,
+                                           revisionsCount,
+                                           children
+                                       }) {
             if (!lastRevisionId || revisionsCount < 2) {
                 return null;
             }
@@ -7722,10 +7728,10 @@
 
 
 
-        function LastRevision ({
-                                   lastRevisionId,
-                                   revisionsCount
-                               }) {
+        function LastRevision({
+                                  lastRevisionId,
+                                  revisionsCount
+                              }) {
             return (0, external_wp_element_namespaceObject.createElement)(post_last_revision_check, null, (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Button, {
                 href: (0, external_wp_url_namespaceObject.addQueryArgs)('revision.php', {
                     revision: lastRevisionId,
@@ -7761,7 +7767,7 @@
          */
 
 
-        function PostLockedModal () {
+        function PostLockedModal() {
             const instanceId = (0, external_wp_compose_namespaceObject.useInstanceId)(PostLockedModal);
             const hookName = 'core/editor/post-locked-modal-' + instanceId;
             const {
@@ -7811,7 +7817,7 @@
                  *
                  * @param {Object} data Data to send in the heartbeat request.
                  */
-                function sendPostLock (data) {
+                function sendPostLock(data) {
                     if (isLocked) {
                         return;
                     }
@@ -7829,7 +7835,7 @@
                  */
 
 
-                function receivePostLock (data) {
+                function receivePostLock(data) {
                     if (!data['wp-refresh-post-lock']) {
                         return;
                     }
@@ -7860,7 +7866,7 @@
                  */
 
 
-                function releasePostLock () {
+                function releasePostLock() {
                     if (isLocked || !activePostLock) {
                         return;
                     }
@@ -7962,11 +7968,11 @@
          */
 
 
-        function PostPendingStatusCheck ({
-                                             hasPublishAction,
-                                             isPublished,
-                                             children
-                                         }) {
+        function PostPendingStatusCheck({
+                                            hasPublishAction,
+                                            isPublished,
+                                            children
+                                        }) {
             if (isPublished || !hasPublishAction) {
                 return null;
             }
@@ -8002,10 +8008,10 @@
 
 
 
-        function PostPendingStatus ({
-                                        status,
-                                        onUpdateStatus
-                                    }) {
+        function PostPendingStatus({
+                                       status,
+                                       onUpdateStatus
+                                   }) {
             const togglePendingStatus = () => {
                 const updatedStatus = status === 'pending' ? 'draft' : 'pending';
                 onUpdateStatus(updatedStatus);
@@ -8023,7 +8029,7 @@
         const post_pending_status = ((0, external_wp_compose_namespaceObject.compose)((0, external_wp_data_namespaceObject.withSelect)(select => ({
             status: select(store_store).getEditedPostAttribute('status')
         })), (0, external_wp_data_namespaceObject.withDispatch)(dispatch => ({
-            onUpdateStatus (status) {
+            onUpdateStatus(status) {
                 dispatch(store_store).editPost({
                     status
                 });
@@ -8043,10 +8049,10 @@
 
 
 
-        function PostPingbacks ({
-                                    pingStatus = 'open',
-                                    ...props
-                                }) {
+        function PostPingbacks({
+                                   pingStatus = 'open',
+                                   ...props
+                               }) {
             const onTogglePingback = () => props.editPost({
                 ping_status: pingStatus === 'open' ? 'closed' : 'open'
             });
@@ -8084,7 +8090,7 @@
 
 
 
-        function writeInterstitialMessage (targetDocument) {
+        function writeInterstitialMessage(targetDocument) {
             let markup = (0, external_wp_element_namespaceObject.renderToString)((0, external_wp_element_namespaceObject.createElement)('div', {
                 className: 'editor-post-preview-button__interstitial-message'
             }, (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.SVG, {
@@ -8166,13 +8172,13 @@
         }
 
         class PostPreviewButton extends external_wp_element_namespaceObject.Component {
-            constructor () {
+            constructor() {
                 super(...arguments);
                 this.buttonRef = (0, external_wp_element_namespaceObject.createRef)();
                 this.openPreviewWindow = this.openPreviewWindow.bind(this);
             }
 
-            componentDidUpdate (prevProps) {
+            componentDidUpdate(prevProps) {
                 const {
                     previewLink
                 } = this.props; // This relies on the window being responsible to unset itself when
@@ -8192,7 +8198,7 @@
              */
 
 
-            setPreviewWindowLink (url) {
+            setPreviewWindowLink(url) {
                 const {
                     previewWindow
                 } = this;
@@ -8206,14 +8212,14 @@
                 }
             }
 
-            getWindowTarget () {
+            getWindowTarget() {
                 const {
                     postId
                 } = this.props;
                 return `wp-preview-${postId}`;
             }
 
-            openPreviewWindow (event) {
+            openPreviewWindow(event) {
                 // Our Preview button has its 'href' and 'target' set correctly for a11y
                 // purposes. Unfortunately, though, we can't rely on the default 'click'
                 // handler since sometimes it incorrectly opens a new tab instead of reusing
@@ -8252,7 +8258,7 @@
                 writeInterstitialMessage(this.previewWindow.document);
             }
 
-            render () {
+            render() {
                 const {
                     previewLink,
                     currentPostLink,
@@ -8332,15 +8338,15 @@
          */
 
 
-        function PublishButtonLabel ({
-                                         isPublished,
-                                         isBeingScheduled,
-                                         isSaving,
-                                         isPublishing,
-                                         hasPublishAction,
-                                         isAutosaving,
-                                         hasNonPostEntityChanges
-                                     }) {
+        function PublishButtonLabel({
+                                        isPublished,
+                                        isBeingScheduled,
+                                        isSaving,
+                                        isPublishing,
+                                        hasPublishAction,
+                                        isAutosaving,
+                                        hasNonPostEntityChanges
+                                    }) {
             if (isPublishing) {
                 /* translators: button label text should, if possible, be under 16 characters. */
                 return (0, external_wp_i18n_namespaceObject.__)('Publishing…');
@@ -8410,7 +8416,7 @@
         };
 
         class PostPublishButton extends external_wp_element_namespaceObject.Component {
-            constructor (props) {
+            constructor(props) {
                 super(props);
                 this.buttonNode = (0, external_wp_element_namespaceObject.createRef)();
                 this.createOnClick = this.createOnClick.bind(this);
@@ -8420,7 +8426,7 @@
                 };
             }
 
-            componentDidMount () {
+            componentDidMount() {
                 if (this.props.focusOnMount) {
                     // This timeout is necessary to make sure the `useEffect` hook of
                     // `useFocusReturn` gets the correct element (the button that opens the
@@ -8431,11 +8437,11 @@
                 }
             }
 
-            componentWillUnmount () {
+            componentWillUnmount() {
                 clearTimeout(this.timeoutID);
             }
 
-            createOnClick (callback) {
+            createOnClick(callback) {
                 return (...args) => {
                     const {
                         hasNonPostEntityChanges,
@@ -8465,7 +8471,7 @@
                 };
             }
 
-            closeEntitiesSavedStates (savedEntities) {
+            closeEntitiesSavedStates(savedEntities) {
                 const {
                     postType,
                     postId
@@ -8483,7 +8489,7 @@
                 });
             }
 
-            render () {
+            render() {
                 const {
                     forceIsDirty,
                     forceIsSaving,
@@ -8684,9 +8690,9 @@
 
 
 
-        function PostVisibility ({
-                                     onClose
-                                 }) {
+        function PostVisibility({
+                                    onClose
+                                }) {
             const instanceId = (0, external_wp_compose_namespaceObject.useInstanceId)(PostVisibility);
             const {
                 status,
@@ -8794,13 +8800,13 @@
             }, (0, external_wp_i18n_namespaceObject.__)('Would you like to privately publish this post now?')));
         }
 
-        function PostVisibilityChoice ({
-                                           instanceId,
-                                           value,
-                                           label,
-                                           info,
-                                           ...props
-                                       }) {
+        function PostVisibilityChoice({
+                                          instanceId,
+                                          value,
+                                          label,
+                                          info,
+                                          ...props
+                                      }) {
             return (0, external_wp_element_namespaceObject.createElement)('div', {
                 className: 'editor-post-visibility__choice'
             }, (0, external_wp_element_namespaceObject.createElement)('input', {
@@ -8831,17 +8837,17 @@
 
 
 
-        function PostVisibilityLabel () {
+        function PostVisibilityLabel() {
             return usePostVisibilityLabel();
         }
 
-        function usePostVisibilityLabel () {
+        function usePostVisibilityLabel() {
             const visibility = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).getEditedPostVisibility());
             return visibilityOptions[visibility]?.label;
         }
 
         ;// CONCATENATED MODULE: ./node_modules/date-fns/node_modules/@babel/runtime/helpers/esm/typeof.js
-        function _typeof (obj) {
+        function _typeof(obj) {
             '@babel/helpers - typeof';
 
             return _typeof = 'function' == typeof Symbol && 'symbol' == typeof Symbol.iterator ? function (obj) {
@@ -8851,7 +8857,7 @@
             }, _typeof(obj);
         }
         ;// CONCATENATED MODULE: ./node_modules/date-fns/esm/_lib/requiredArgs/index.js
-        function requiredArgs (required, args) {
+        function requiredArgs(required, args) {
             if (args.length < required) {
                 throw new TypeError(required + ' argument' + (required > 1 ? 's' : '') + ' required, but only ' + args.length + ' present');
             }
@@ -8888,7 +8894,7 @@
          * const result = toDate(1392098430000)
          * //=> Tue Feb 11 2014 11:30:30
          */
-        function toDate (argument) {
+        function toDate(argument) {
             requiredArgs(1, arguments);
             var argStr = Object.prototype.toString.call(argument);
 
@@ -8928,7 +8934,7 @@
          * const result = startOfMonth(new Date(2014, 8, 2, 11, 55, 0))
          * //=> Mon Sep 01 2014 00:00:00
          */
-        function startOfMonth (dirtyDate) {
+        function startOfMonth(dirtyDate) {
             requiredArgs(1, arguments);
             var date = toDate(dirtyDate);
             date.setDate(1);
@@ -8955,7 +8961,7 @@
          * const result = endOfMonth(new Date(2014, 8, 2, 11, 55, 0))
          * //=> Tue Sep 30 2014 23:59:59.999
          */
-        function endOfMonth (dirtyDate) {
+        function endOfMonth(dirtyDate) {
             requiredArgs(1, arguments);
             var date = toDate(dirtyDate);
             var month = date.getMonth();
@@ -9148,7 +9154,7 @@
          */
         var secondsInQuarter = secondsInMonth * 3;
         ;// CONCATENATED MODULE: ./node_modules/date-fns/esm/_lib/toInteger/index.js
-        function toInteger (dirtyNumber) {
+        function toInteger(dirtyNumber) {
             if (dirtyNumber === null || dirtyNumber === true || dirtyNumber === false) {
                 return NaN;
             }
@@ -9192,7 +9198,7 @@
          * const result = parseISO('+02014101', { additionalDigits: 1 })
          * //=> Fri Apr 11 2014 00:00:00
          */
-        function parseISO (argument, options) {
+        function parseISO(argument, options) {
             var _options$additionalDi;
             requiredArgs(1, arguments);
             var additionalDigits = toInteger((_options$additionalDi = options === null || options === void 0 ? void 0 : options.additionalDigits) !== null && _options$additionalDi !== void 0 ? _options$additionalDi : 2);
@@ -9249,7 +9255,7 @@
         var timeRegex = /^(\d{2}(?:[.,]\d*)?)(?::?(\d{2}(?:[.,]\d*)?))?(?::?(\d{2}(?:[.,]\d*)?))?$/;
         var timezoneRegex = /^([+-])(\d{2})(?::?(\d{2}))?$/;
 
-        function splitDateString (dateString) {
+        function splitDateString(dateString) {
             var dateStrings = {};
             var array = dateString.split(patterns.dateTimeDelimiter);
             var timeString;
@@ -9281,7 +9287,7 @@
             return dateStrings;
         }
 
-        function parseYear (dateString, additionalDigits) {
+        function parseYear(dateString, additionalDigits) {
             var regex = new RegExp('^(?:(\\d{4}|[+-]\\d{' + (4 + additionalDigits) + '})|(\\d{2}|[+-]\\d{' + (2 + additionalDigits) + '})$)');
             var captures = dateString.match(regex);
             // Invalid ISO-formatted year
@@ -9299,7 +9305,7 @@
             };
         }
 
-        function parseDate (dateString, year) {
+        function parseDate(dateString, year) {
             // Invalid ISO-formatted year
             if (year === null) return new Date(NaN);
             var captures = dateString.match(dateRegex);
@@ -9326,11 +9332,11 @@
             }
         }
 
-        function parseDateUnit (value) {
+        function parseDateUnit(value) {
             return value ? parseInt(value) : 1;
         }
 
-        function parseTime (timeString) {
+        function parseTime(timeString) {
             var captures = timeString.match(timeRegex);
             if (!captures) return NaN; // Invalid ISO-formatted time
 
@@ -9343,11 +9349,11 @@
             return hours * millisecondsInHour + minutes * millisecondsInMinute + seconds * 1000;
         }
 
-        function parseTimeUnit (value) {
+        function parseTimeUnit(value) {
             return value && parseFloat(value.replace(',', '.')) || 0;
         }
 
-        function parseTimezone (timezoneString) {
+        function parseTimezone(timezoneString) {
             if (timezoneString === 'Z') return 0;
             var captures = timezoneString.match(timezoneRegex);
             if (!captures) return 0;
@@ -9360,7 +9366,7 @@
             return sign * (hours * millisecondsInHour + minutes * millisecondsInMinute);
         }
 
-        function dayOfISOWeekYear (isoWeekYear, week, day) {
+        function dayOfISOWeekYear(isoWeekYear, week, day) {
             var date = new Date(0);
             date.setUTCFullYear(isoWeekYear, 0, 4);
             var fourthOfJanuaryDay = date.getUTCDay() || 7;
@@ -9374,30 +9380,30 @@
 // February is null to handle the leap year (using ||)
         var daysInMonths = [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-        function isLeapYearIndex (year) {
+        function isLeapYearIndex(year) {
             return year % 400 === 0 || year % 4 === 0 && year % 100 !== 0;
         }
 
-        function validateDate (year, month, date) {
+        function validateDate(year, month, date) {
             return month >= 0 && month <= 11 && date >= 1 && date <= (daysInMonths[month] || (isLeapYearIndex(year) ? 29 : 28));
         }
 
-        function validateDayOfYearDate (year, dayOfYear) {
+        function validateDayOfYearDate(year, dayOfYear) {
             return dayOfYear >= 1 && dayOfYear <= (isLeapYearIndex(year) ? 366 : 365);
         }
 
-        function validateWeekDate (_year, week, day) {
+        function validateWeekDate(_year, week, day) {
             return week >= 1 && week <= 53 && day >= 0 && day <= 6;
         }
 
-        function validateTime (hours, minutes, seconds) {
+        function validateTime(hours, minutes, seconds) {
             if (hours === 24) {
                 return minutes === 0 && seconds === 0;
             }
             return seconds >= 0 && seconds < 60 && minutes >= 0 && minutes < 60 && hours >= 0 && hours < 25;
         }
 
-        function validateTimezone (_hours, minutes) {
+        function validateTimezone(_hours, minutes) {
             return minutes >= 0 && minutes <= 59;
         }
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/editor/build-module/components/post-schedule/index.js
@@ -9415,9 +9421,9 @@
          */
 
 
-        function PostSchedule ({
-                                   onClose
-                               }) {
+        function PostSchedule({
+                                  onClose
+                              }) {
             const {
                 postDate,
                 postType
@@ -9475,13 +9481,13 @@
          */
 
 
-        function PostScheduleLabel (props) {
+        function PostScheduleLabel(props) {
             return usePostScheduleLabel(props);
         }
 
-        function usePostScheduleLabel ({
-                                           full = false
-                                       } = {}) {
+        function usePostScheduleLabel({
+                                          full = false
+                                      } = {}) {
             const {
                 date,
                 isFloating
@@ -9494,7 +9500,7 @@
             });
         }
 
-        function getFullPostScheduleLabel (dateAttribute) {
+        function getFullPostScheduleLabel(dateAttribute) {
             const date = (0, external_wp_date_namespaceObject.getDate)(dateAttribute);
             const timezoneAbbreviation = getTimezoneAbbreviation();
             const formattedDate = (0, external_wp_date_namespaceObject.dateI18n)( // translators: If using a space between 'g:i' and 'a', use a non-breaking sapce.
@@ -9502,7 +9508,7 @@
             return (0, external_wp_i18n_namespaceObject.isRTL)() ? `${timezoneAbbreviation} ${formattedDate}` : `${formattedDate} ${timezoneAbbreviation}`;
         }
 
-        function getPostScheduleLabel (dateAttribute, {
+        function getPostScheduleLabel(dateAttribute, {
             isFloating = false,
             now = new Date()
         } = {}) {
@@ -9541,7 +9547,7 @@
                 (0, external_wp_i18n_namespaceObject._x)('F j, Y g:i\xa0a', 'post schedule full date format'), date);
         }
 
-        function getTimezoneAbbreviation () {
+        function getTimezoneAbbreviation() {
             const {
                 timezone
             } = (0, external_wp_date_namespaceObject.getSettings)();
@@ -9554,7 +9560,7 @@
             return `UTC${symbol}${timezone.offset}`;
         }
 
-        function isTimezoneSameAsSiteTimezone (date) {
+        function isTimezoneSameAsSiteTimezone(date) {
             const {
                 timezone
             } = (0, external_wp_date_namespaceObject.getSettings)();
@@ -9563,7 +9569,7 @@
             return siteOffset === dateOffset;
         }
 
-        function isSameDay (left, right) {
+        function isSameDay(left, right) {
             return left.getDate() === right.getDate() && left.getMonth() === right.getMonth() && left.getFullYear() === right.getFullYear();
         }
 
@@ -9590,10 +9596,10 @@
             context: 'view'
         };
 
-        function MostUsedTerms ({
-                                    onSelect,
-                                    taxonomy
-                                }) {
+        function MostUsedTerms({
+                                   onSelect,
+                                   taxonomy
+                               }) {
             const {
                 _terms,
                 showTerms
@@ -9661,9 +9667,9 @@
             return names.map(termName => terms.find(term => isSameTermName(term.name, termName)).id);
         };
 
-        function FlatTermSelector ({
-                                       slug
-                                   }) {
+        function FlatTermSelector({
+                                      slug
+                                  }) {
             var _taxonomy$labels$add_, _taxonomy$labels$sing2;
 
             const [values, setValues] = (0, external_wp_element_namespaceObject.useState)([]);
@@ -9744,7 +9750,7 @@
                 return null;
             }
 
-            async function findOrCreateTerm (term) {
+            async function findOrCreateTerm(term) {
                 try {
                     const newTerm = await saveEntityRecord('taxonomy', slug, term, {
                         throwOnError: true
@@ -9762,13 +9768,13 @@
                 }
             }
 
-            function onUpdateTerms (newTermIds) {
+            function onUpdateTerms(newTermIds) {
                 editPost({
                     [taxonomy.rest_base]: newTermIds
                 });
             }
 
-            function onChange (termNames) {
+            function onChange(termNames) {
                 const availableTerms = [...(terms !== null && terms !== void 0 ? terms : []), ...(searchResults !== null && searchResults !== void 0 ? searchResults : [])];
                 const uniqueTerms = termNames.reduce((acc, name) => {
                     if (!acc.some(n => n.toLowerCase() === name.toLowerCase())) {
@@ -9798,7 +9804,7 @@
                 });
             }
 
-            function appendTerm (newTerm) {
+            function appendTerm(newTerm) {
                 var _taxonomy$labels$sing;
 
                 if (termIds.includes(newTerm.id)) {
@@ -9873,7 +9879,7 @@
         };
 
         class MaybeTagsPanel extends external_wp_element_namespaceObject.Component {
-            constructor (props) {
+            constructor(props) {
                 super(props);
                 this.state = {
                     hadTagsWhenOpeningThePanel: props.hasTags
@@ -9891,7 +9897,7 @@
    * more than one tag.
    */
 
-            render () {
+            render() {
                 if (!this.state.hadTagsWhenOpeningThePanel) {
                     return (0, external_wp_element_namespaceObject.createElement)(TagsPanel, null);
                 }
@@ -9943,7 +9949,7 @@
             onClick: () => onUpdatePostFormat(suggestedPostFormat)
         }, suggestionText);
 
-        function PostFormatPanel () {
+        function PostFormatPanel() {
             const {
                 currentPostFormat,
                 suggestion
@@ -10022,7 +10028,7 @@
          * @return {Object[]} Sorted array of terms.
          */
 
-        function sortBySelected (termsTree, terms) {
+        function sortBySelected(termsTree, terms) {
             const treeHasSelection = termTree => {
                 if (terms.indexOf(termTree.id) !== -1) {
                     return true;
@@ -10068,7 +10074,7 @@
          * @return {Object} Term object.
          */
 
-        function findTerm (terms, parent, name) {
+        function findTerm(terms, parent, name) {
             return terms.find(term => {
                 return (!term.parent && !parent || parseInt(term.parent) === parseInt(parent)) && term.name.toLowerCase() === name.toLowerCase();
             });
@@ -10081,7 +10087,7 @@
          * @return {(function(Object): (Object|boolean))} Matcher function.
          */
 
-        function getFilterMatcher (filterValue) {
+        function getFilterMatcher(filterValue) {
             const matchTermsForFilter = originalTerm => {
                 if ('' === filterValue) {
                     return originalTerm;
@@ -10117,9 +10123,9 @@
          * @return {WPElement}        Hierarchical term selector component.
          */
 
-        function HierarchicalTermSelector ({
-                                               slug
-                                           }) {
+        function HierarchicalTermSelector({
+                                              slug
+                                          }) {
             var _taxonomy$labels$sear, _taxonomy$name;
 
             const [adding, setAdding] = (0, external_wp_element_namespaceObject.useState)(false);
@@ -10389,7 +10395,7 @@
 
 
 
-        function MaybeCategoryPanel () {
+        function MaybeCategoryPanel() {
             const hasNoCategory = (0, external_wp_data_namespaceObject.useSelect)(select => {
                 const postType = select(store_store).getCurrentPostType();
                 const {
@@ -10462,7 +10468,7 @@
 
 
 
-        function flattenBlocks (blocks) {
+        function flattenBlocks(blocks) {
             const result = [];
             blocks.forEach(block => {
                 result.push(block);
@@ -10471,7 +10477,7 @@
             return result;
         }
 
-        function Image (block) {
+        function Image(block) {
             const {
                 selectBlock
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_blockEditor_namespaceObject.store);
@@ -10511,7 +10517,7 @@
             });
         }
 
-        function maybe_upload_media_PostFormatPanel () {
+        function maybe_upload_media_PostFormatPanel() {
             const [isUploading, setIsUploading] = (0, external_wp_element_namespaceObject.useState)(false);
             const {
                 editorBlocks,
@@ -10534,7 +10540,7 @@
                 key: 'label'
             }, (0, external_wp_i18n_namespaceObject.__)('External media'))];
 
-            function uploadImages () {
+            function uploadImages() {
                 setIsUploading(true);
                 Promise.all(externalImages.map(image => window.fetch(image.attributes.url.includes('?') ? image.attributes.url : image.attributes.url + '?').then(response => response.blob()).then(blob => new Promise((resolve, reject) => {
                     mediaUpload({
@@ -10551,7 +10557,7 @@
                             resolve();
                         },
 
-                        onError () {
+                        onError() {
                             reject();
                         }
 
@@ -10602,9 +10608,9 @@
 
 
 
-        function PostPublishPanelPrepublish ({
-                                                 children
-                                             }) {
+        function PostPublishPanelPrepublish({
+                                                children
+                                            }) {
             const {
                 isBeingScheduled,
                 isRequestingSiteIcon,
@@ -10730,11 +10736,11 @@
             return post.permalink_template;
         };
 
-        function postpublish_CopyButton ({
-                                             text,
-                                             onCopy,
-                                             children
-                                         }) {
+        function postpublish_CopyButton({
+                                            text,
+                                            onCopy,
+                                            children
+                                        }) {
             const ref = (0, external_wp_compose_namespaceObject.useCopyToClipboard)(text, onCopy);
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Button, {
                 variant: 'secondary',
@@ -10743,7 +10749,7 @@
         }
 
         class PostPublishPanelPostpublish extends external_wp_element_namespaceObject.Component {
-            constructor () {
+            constructor() {
                 super(...arguments);
                 this.state = {
                     showCopyConfirmation: false
@@ -10753,17 +10759,17 @@
                 this.postLink = (0, external_wp_element_namespaceObject.createRef)();
             }
 
-            componentDidMount () {
+            componentDidMount() {
                 if (this.props.focusOnMount) {
                     this.postLink.current.focus();
                 }
             }
 
-            componentWillUnmount () {
+            componentWillUnmount() {
                 clearTimeout(this.dismissCopyConfirmation);
             }
 
-            onCopy () {
+            onCopy() {
                 this.setState({
                     showCopyConfirmation: true
                 });
@@ -10775,11 +10781,11 @@
                 }, 4000);
             }
 
-            onSelectInput (event) {
+            onSelectInput(event) {
                 event.target.select();
             }
 
-            render () {
+            render() {
                 const {
                     children,
                     isScheduled,
@@ -10860,12 +10866,12 @@
          */
 
         class PostPublishPanel extends external_wp_element_namespaceObject.Component {
-            constructor () {
+            constructor() {
                 super(...arguments);
                 this.onSubmit = this.onSubmit.bind(this);
             }
 
-            componentDidUpdate (prevProps) {
+            componentDidUpdate(prevProps) {
                 // Automatically collapse the publish sidebar when a post
                 // is published and the user makes an edit.
                 if (prevProps.isPublished && !this.props.isSaving && this.props.isDirty) {
@@ -10873,7 +10879,7 @@
                 }
             }
 
-            onSubmit () {
+            onSubmit() {
                 const {
                     onClose,
                     hasPublishAction,
@@ -10885,7 +10891,7 @@
                 }
             }
 
-            render () {
+            render() {
                 const {
                     forceIsDirty,
                     forceIsSaving,
@@ -11030,11 +11036,11 @@
          * @return {JSX.Element}  Icon component
          */
 
-        function Icon ({
-                           icon,
-                           size = 24,
-                           ...props
-                       }) {
+        function Icon({
+                          icon,
+                          size = 24,
+                          ...props
+                      }) {
             return (0, external_wp_element_namespaceObject.cloneElement)(icon, {
                 width: size,
                 height: size,
@@ -11102,11 +11108,11 @@
          * @return {import('@wordpress/element').WPComponent} The component.
          */
 
-        function PostSavedState ({
-                                     forceIsDirty,
-                                     forceIsSaving,
-                                     showIconLabels = false
-                                 }) {
+        function PostSavedState({
+                                    forceIsDirty,
+                                    forceIsSaving,
+                                    showIconLabels = false
+                                }) {
             const [forceSavedMessage, setForceSavedMessage] = (0, external_wp_element_namespaceObject.useState)(false);
             const isLargeViewport = (0, external_wp_compose_namespaceObject.useViewportMatch)('small');
             const {
@@ -11239,10 +11245,10 @@
          */
 
 
-        function PostScheduleCheck ({
-                                        hasPublishAction,
-                                        children
-                                    }) {
+        function PostScheduleCheck({
+                                       hasPublishAction,
+                                       children
+                                   }) {
             if (!hasPublishAction) {
                 return null;
             }
@@ -11270,9 +11276,9 @@
          * Internal dependencies
          */
 
-        function PostSlugCheck ({
-                                    children
-                                }) {
+        function PostSlugCheck({
+                                   children
+                               }) {
             return (0, external_wp_element_namespaceObject.createElement)(post_type_support_check, {
                 supportKeys: 'slug'
             }, children);
@@ -11289,11 +11295,11 @@
          */
 
         class PostSlug extends external_wp_element_namespaceObject.Component {
-            constructor ({
-                             postSlug,
-                             postTitle,
-                             postID
-                         }) {
+            constructor({
+                            postSlug,
+                            postTitle,
+                            postID
+                        }) {
                 super(...arguments);
                 this.state = {
                     editedSlug: (0, external_wp_url_namespaceObject.safeDecodeURIComponent)(postSlug) || (0, external_wp_url_namespaceObject.cleanForSlug)(postTitle) || postID
@@ -11301,7 +11307,7 @@
                 this.setSlug = this.setSlug.bind(this);
             }
 
-            setSlug (event) {
+            setSlug(event) {
                 const {
                     postSlug,
                     onUpdateSlug
@@ -11318,7 +11324,7 @@
                 onUpdateSlug(editedSlug);
             }
 
-            render () {
+            render() {
                 const {
                     editedSlug
                 } = this.state;
@@ -11357,7 +11363,7 @@
                 editPost
             } = dispatch(store_store);
             return {
-                onUpdateSlug (slug) {
+                onUpdateSlug(slug) {
                     editPost({
                         slug
                     });
@@ -11376,11 +11382,11 @@
          */
 
 
-        function PostStickyCheck ({
-                                      hasStickyAction,
-                                      postType,
-                                      children
-                                  }) {
+        function PostStickyCheck({
+                                     hasStickyAction,
+                                     postType,
+                                     children
+                                 }) {
             if (postType !== 'post' || !hasStickyAction) {
                 return null;
             }
@@ -11411,10 +11417,10 @@
 
 
 
-        function PostSticky ({
-                                 onUpdateSticky,
-                                 postSticky = false
-                             }) {
+        function PostSticky({
+                                onUpdateSticky,
+                                postSticky = false
+                            }) {
             return (0, external_wp_element_namespaceObject.createElement)(post_sticky_check, null, (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.CheckboxControl, {
                 __nextHasNoMarginBottom: true,
                 label: (0, external_wp_i18n_namespaceObject.__)('Stick to the top of the blog'),
@@ -11430,7 +11436,7 @@
             };
         }), (0, external_wp_data_namespaceObject.withDispatch)(dispatch => {
             return {
-                onUpdateSticky (postSticky) {
+                onUpdateSticky(postSticky) {
                     dispatch(store_store).editPost({
                         sticky: postSticky
                     });
@@ -11451,12 +11457,12 @@
 
 
 
-        function PostSwitchToDraftButton ({
-                                              isSaving,
-                                              isPublished,
-                                              isScheduled,
-                                              onClick
-                                          }) {
+        function PostSwitchToDraftButton({
+                                             isSaving,
+                                             isPublished,
+                                             isScheduled,
+                                             onClick
+                                         }) {
             const [showConfirmDialog, setShowConfirmDialog] = (0, external_wp_element_namespaceObject.useState)(false);
 
             if (!isPublished && !isScheduled) {
@@ -11545,7 +11551,7 @@
 
 
 
-        function PostSyncStatus () {
+        function PostSyncStatus() {
             const {
                 syncStatus,
                 postType,
@@ -11571,7 +11577,7 @@
             }, (0, external_wp_element_namespaceObject.createElement)('span', null, (0, external_wp_i18n_namespaceObject.__)('Sync status')), (0, external_wp_element_namespaceObject.createElement)('div', null, currentSyncStatus === 'unsynced' ? (0, external_wp_i18n_namespaceObject.__)('Not synced') : (0, external_wp_i18n_namespaceObject.__)('Fully synced')));
         }
 
-        function PostSyncStatusModal () {
+        function PostSyncStatusModal() {
             const {
                 editPost
             } = (0, external_wp_data_namespaceObject.useDispatch)(store_store);
@@ -11658,11 +11664,11 @@
 
         const post_taxonomies_identity = x => x;
 
-        function PostTaxonomies ({
-                                     postType,
-                                     taxonomies,
-                                     taxonomyWrapper = post_taxonomies_identity
-                                 }) {
+        function PostTaxonomies({
+                                    postType,
+                                    taxonomies,
+                                    taxonomyWrapper = post_taxonomies_identity
+                                }) {
             const availableTaxonomies = (taxonomies !== null && taxonomies !== void 0 ? taxonomies : []).filter(taxonomy => taxonomy.types.includes(postType));
             const visibleTaxonomies = availableTaxonomies.filter( // In some circumstances .visibility can end up as undefined so optional chaining operator required.
                 // https://github.com/WordPress/gutenberg/issues/40326
@@ -11697,11 +11703,11 @@
          */
 
 
-        function PostTaxonomiesCheck ({
-                                          postType,
-                                          taxonomies,
-                                          children
-                                      }) {
+        function PostTaxonomiesCheck({
+                                         postType,
+                                         taxonomies,
+                                         children
+                                     }) {
             const hasTaxonomies = taxonomies?.some(taxonomy => taxonomy.types.includes(postType));
 
             if (!hasTaxonomies) {
@@ -11738,7 +11744,7 @@
          */
 
 
-        function PostTextEditor () {
+        function PostTextEditor() {
             const postContent = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).getEditedPostContent(), []);
             const {
                 editPost,
@@ -11834,7 +11840,7 @@
 
         const REGEXP_NEWLINES = /[\r\n]+/g;
 
-        function PostTitle (_, forwardedRef) {
+        function PostTitle(_, forwardedRef) {
             const ref = (0, external_wp_element_namespaceObject.useRef)();
             const [isSelected, setIsSelected] = (0, external_wp_element_namespaceObject.useState)(false);
             const {
@@ -11900,15 +11906,15 @@
                 }
             }, [isCleanNewPost]);
 
-            function onEnterPress () {
+            function onEnterPress() {
                 insertDefaultBlock(undefined, undefined, 0);
             }
 
-            function onInsertBlockAfter (blocks) {
+            function onInsertBlockAfter(blocks) {
                 insertBlocks(blocks, 0);
             }
 
-            function onUpdate (newTitle) {
+            function onUpdate(newTitle) {
                 editPost({
                     title: newTitle
                 });
@@ -11916,28 +11922,28 @@
 
             const [selection, setSelection] = (0, external_wp_element_namespaceObject.useState)({});
 
-            function onSelect () {
+            function onSelect() {
                 setIsSelected(true);
                 clearSelectedBlock();
             }
 
-            function onUnselect () {
+            function onUnselect() {
                 setIsSelected(false);
                 setSelection({});
             }
 
-            function onChange (value) {
+            function onChange(value) {
                 onUpdate(value.replace(REGEXP_NEWLINES, ' '));
             }
 
-            function onKeyDown (event) {
+            function onKeyDown(event) {
                 if (event.keyCode === external_wp_keycodes_namespaceObject.ENTER) {
                     event.preventDefault();
                     onEnterPress();
                 }
             }
 
-            function onPaste (event) {
+            function onPaste(event) {
                 const clipboardData = event.clipboardData;
                 let plainText = '';
                 let html = ''; // IE11 only supports `Text` as an argument for `getData` and will
@@ -12016,7 +12022,7 @@
                 selectionStart: selection.start,
                 selectionEnd: selection.end,
 
-                onSelectionChange (newStart, newEnd) {
+                onSelectionChange(newStart, newEnd) {
                     setSelection(sel => {
                         const {
                             start,
@@ -12071,7 +12077,7 @@
          */
 
 
-        function PostTrash () {
+        function PostTrash() {
             const {
                 isNew,
                 isDeleting,
@@ -12113,12 +12119,12 @@
 
 
 
-        function PostTrashCheck ({
-                                     isNew,
-                                     postId,
-                                     canUserDelete,
-                                     children
-                                 }) {
+        function PostTrashCheck({
+                                    isNew,
+                                    postId,
+                                    canUserDelete,
+                                    children
+                                }) {
             if (isNew || !postId || !canUserDelete) {
                 return null;
             }
@@ -12159,9 +12165,9 @@
          */
 
 
-        function PostURL ({
-                              onClose
-                          }) {
+        function PostURL({
+                             onClose
+                         }) {
             const {
                 isEditable,
                 postSlug,
@@ -12258,9 +12264,9 @@
          */
 
 
-        function PostURLCheck ({
-                                   children
-                               }) {
+        function PostURLCheck({
+                                  children
+                              }) {
             const isVisible = (0, external_wp_data_namespaceObject.useSelect)(select => {
                 const postTypeSlug = select(store_store).getCurrentPostType();
                 const postType = select(external_wp_coreData_namespaceObject.store).getPostType(postTypeSlug);
@@ -12301,11 +12307,11 @@
          */
 
 
-        function PostURLLabel () {
+        function PostURLLabel() {
             return usePostURLLabel();
         }
 
-        function usePostURLLabel () {
+        function usePostURLLabel() {
             const postLink = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).getPermalink(), []);
             return (0, external_wp_url_namespaceObject.filterURLForDisplay)((0, external_wp_url_namespaceObject.safeDecodeURIComponent)(postLink));
         }
@@ -12320,10 +12326,10 @@
          */
 
 
-        function PostVisibilityCheck ({
-                                          hasPublishAction,
-                                          render
-                                      }) {
+        function PostVisibilityCheck({
+                                         hasPublishAction,
+                                         render
+                                     }) {
             const canEdit = hasPublishAction;
             return render({
                 canEdit
@@ -12372,7 +12378,7 @@
          */
 
 
-        function WordCount () {
+        function WordCount() {
             const content = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).getEditedPostAttribute('content'), []);
             /*
    * translators: If your word count is based on single characters (e.g. East Asian characters),
@@ -12407,7 +12413,7 @@
 
         const AVERAGE_READING_RATE = 189;
 
-        function TimeToRead () {
+        function TimeToRead() {
             const content = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).getEditedPostAttribute('content'), []);
             /*
    * translators: If your word count is based on single characters (e.g. East Asian characters),
@@ -12440,7 +12446,7 @@
          */
 
 
-        function CharacterCount () {
+        function CharacterCount() {
             const content = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).getEditedPostAttribute('content'), []);
             return (0, external_wp_wordcount_namespaceObject.count)(content, 'characters_including_spaces');
         }
@@ -12460,10 +12466,10 @@
 
 
 
-        function TableOfContentsPanel ({
-                                           hasOutlineItemsDisabled,
-                                           onRequestClose
-                                       }) {
+        function TableOfContentsPanel({
+                                          hasOutlineItemsDisabled,
+                                          onRequestClose
+                                      }) {
             const {
                 headingCount,
                 paragraphCount,
@@ -12539,11 +12545,11 @@
 
 
 
-        function TableOfContents ({
-                                      hasOutlineItemsDisabled,
-                                      repositionDropdown,
-                                      ...props
-                                  }, ref) {
+        function TableOfContents({
+                                     hasOutlineItemsDisabled,
+                                     repositionDropdown,
+                                     ...props
+                                 }, ref) {
             const hasBlocks = (0, external_wp_data_namespaceObject.useSelect)(select => !!select(external_wp_blockEditor_namespaceObject.store).getBlockCount(), []);
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Dropdown, {
                 popoverProps: {
@@ -12591,7 +12597,7 @@
          * @return {WPComponent} The component.
          */
 
-        function UnsavedChangesWarning () {
+        function UnsavedChangesWarning() {
             const isDirty = (0, external_wp_data_namespaceObject.useSelect)(select => {
                 return () => {
                     const {
@@ -12800,7 +12806,7 @@
             },
             mediaType: 'image',
 
-            async fetch (query = {}) {
+            async fetch(query = {}) {
                 return coreMediaFetch({
                     ...query,
                     media_type: 'image'
@@ -12815,7 +12821,7 @@
             },
             mediaType: 'video',
 
-            async fetch (query = {}) {
+            async fetch(query = {}) {
                 return coreMediaFetch({
                     ...query,
                     media_type: 'video'
@@ -12830,7 +12836,7 @@
             },
             mediaType: 'audio',
 
-            async fetch (query = {}) {
+            async fetch(query = {}) {
                 return coreMediaFetch({
                     ...query,
                     media_type: 'audio'
@@ -12845,7 +12851,7 @@
             },
             mediaType: 'image',
 
-            async fetch (query = {}) {
+            async fetch(query = {}) {
                 const defaultArgs = {
                     mature: false,
                     excluded_source: 'flickr,inaturalist,wikimedia',
@@ -12921,14 +12927,14 @@
          */
 
 
-        function mediaUpload ({
-                                  additionalData = {},
-                                  allowedTypes,
-                                  filesList,
-                                  maxUploadFileSize,
-                                  onError = media_upload_noop,
-                                  onFileChange
-                              }) {
+        function mediaUpload({
+                                 additionalData = {},
+                                 allowedTypes,
+                                 filesList,
+                                 maxUploadFileSize,
+                                 onError = media_upload_noop,
+                                 onFileChange
+                             }) {
             const {
                 getCurrentPostId,
                 getEditorSettings
@@ -12975,7 +12981,7 @@
          * @return {Object} Block Editor Settings.
          */
 
-        function useBlockEditorSettings (settings, hasTemplate) {
+        function useBlockEditorSettings(settings, hasTemplate) {
             var _settings$__experimen, _settings$__experimen2;
 
             const {
@@ -13197,7 +13203,7 @@
             }, children, (0, external_wp_element_namespaceObject.createElement)(external_wp_reusableBlocks_namespaceObject.ReusableBlocksMenuItems, null)))));
         });
 
-        function EditorProvider (props) {
+        function EditorProvider(props) {
             return (0, external_wp_element_namespaceObject.createElement)(ExperimentalEditorProvider, {
                 ...props,
                 BlockEditorProviderComponent: external_wp_blockEditor_namespaceObject.BlockEditorProvider
@@ -13222,7 +13228,7 @@
 
 
 
-        function deprecateComponent (name, Wrapped, staticsToHoist = []) {
+        function deprecateComponent(name, Wrapped, staticsToHoist = []) {
             const Component = (0, external_wp_element_namespaceObject.forwardRef)((props, ref) => {
                 external_wp_deprecated_default()('wp.editor.' + name, {
                     since: '5.3',
@@ -13240,7 +13246,7 @@
             return Component;
         }
 
-        function deprecateFunction (name, func) {
+        function deprecateFunction(name, func) {
             return (...args) => {
                 external_wp_deprecated_default()('wp.editor.' + name, {
                     since: '5.3',
@@ -13334,7 +13340,7 @@
          * @return {string} Processed string
          */
 
-        function cleanForSlug (string) {
+        function cleanForSlug(string) {
             external_wp_deprecated_default()('wp.editor.cleanForSlug', {
                 since: '12.7',
                 plugin: 'Gutenberg',

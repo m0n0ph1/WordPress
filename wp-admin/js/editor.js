@@ -12,11 +12,11 @@ window.wp = window.wp || {};
      *
      * @since 2.5.0
      */
-    function SwitchEditors () {
+    function SwitchEditors() {
         var tinymce, $$,
             exports = {};
 
-        function init () {
+        function init() {
             if (!tinymce && window.tinymce) {
                 tinymce = window.tinymce;
                 $$ = tinymce.$;
@@ -50,7 +50,7 @@ window.wp = window.wp || {};
          * @return {number} If the height is between 10 and 200 return the height,
          * else return 30.
          */
-        function getToolbarHeight (editor) {
+        function getToolbarHeight(editor) {
             var node = $$('.mce-toolbar-grp', editor.getContainer())[0],
                 height = node && node.clientHeight;
 
@@ -72,7 +72,7 @@ window.wp = window.wp || {};
          * @param {string} mode The mode you want to switch to. Default: `toggle`.
          * @return {void}
          */
-        function switchEditor (id, mode) {
+        function switchEditor(id, mode) {
             id = id || 'content';
             mode = mode || 'toggle';
 
@@ -180,7 +180,7 @@ window.wp = window.wp || {};
                 } else {
                     // There is probably a JS error on the page.
                     // The TinyMCE editor instance doesn't exist. Show the textarea.
-                    $textarea.css({ 'display': '', 'visibility': '' });
+                    $textarea.css({'display': '', 'visibility': ''});
                 }
 
                 wrap.removeClass('tmce-active').addClass('html-active');
@@ -206,7 +206,7 @@ window.wp = window.wp || {};
          *
          * @return {(null|Object)} Null if cursor is not in a tag, Object if the cursor is inside a tag.
          */
-        function getContainingTagInfo (content, cursorPosition) {
+        function getContainingTagInfo(content, cursorPosition) {
             var lastLtPos = content.lastIndexOf('<', cursorPosition - 1),
                 lastGtPos = content.lastIndexOf('>', cursorPosition);
 
@@ -252,7 +252,7 @@ window.wp = window.wp || {};
          * @return {(undefined|Object)} Undefined if the cursor is not wrapped in a shortcode tag.
          *                              Information about the wrapping shortcode tag if it's wrapped in one.
          */
-        function getShortcodeWrapperInfo (content, cursorPosition) {
+        function getShortcodeWrapperInfo(content, cursorPosition) {
             var contentShortcodes = getShortCodePositionsInText(content);
 
             for (var i = 0; i < contentShortcodes.length; i++) {
@@ -269,7 +269,7 @@ window.wp = window.wp || {};
          *
          * @param {string} content The content we want to scan for shortcodes.
          */
-        function getShortcodesInText (content) {
+        function getShortcodesInText(content) {
             var shortcodes = content.match(/\[+([\w_-])+/g),
                 result = [];
 
@@ -302,7 +302,7 @@ window.wp = window.wp || {};
          *
          * @param {string} content The content we want to scan for shortcodes
          */
-        function getShortCodePositionsInText (content) {
+        function getShortCodePositionsInText(content) {
             var allShortcodes = getShortcodesInText(content), shortcodeInfo;
 
             if (allShortcodes.length === 0) {
@@ -373,13 +373,13 @@ window.wp = window.wp || {};
          * @param {Object} domLib DOM library instance.
          * @param {string} content The content to insert into the cursor marker element.
          */
-        function getCursorMarkerSpan (domLib, content) {
+        function getCursorMarkerSpan(domLib, content) {
             return domLib('<span>').css({
-                    display: 'inline-block',
-                    width: 0,
-                    overflow: 'hidden',
-                    'line-height': 0
-                })
+                display: 'inline-block',
+                width: 0,
+                overflow: 'hidden',
+                'line-height': 0
+            })
                 .html(content ? content : '');
         }
 
@@ -397,7 +397,7 @@ window.wp = window.wp || {};
          *
          * @return {{cursorStart: number, cursorEnd: number}}
          */
-        function adjustTextAreaSelectionCursors (content, cursorPositions) {
+        function adjustTextAreaSelectionCursors(content, cursorPositions) {
             var voidElements = [
                 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
                 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
@@ -475,7 +475,7 @@ window.wp = window.wp || {};
          *
          * @param {Object} $textarea TinyMCE's textarea wrapped as a DomQuery object
          */
-        function addHTMLBookmarkInTextAreaContent ($textarea) {
+        function addHTMLBookmarkInTextAreaContent($textarea) {
             if (!$textarea || !$textarea.length) {
                 // If no valid $textarea object is provided, there's nothing we can do.
                 return;
@@ -526,7 +526,7 @@ window.wp = window.wp || {};
          *
          * @param {Object} editor TinyMCE editor instance.
          */
-        function focusHTMLBookmarkInVisualEditor (editor) {
+        function focusHTMLBookmarkInVisualEditor(editor) {
             var startNode = editor.$('.mce_SELRES_start').attr('data-mce-bogus', 1),
                 endNode = editor.$('.mce_SELRES_end').attr('data-mce-bogus', 1);
 
@@ -563,7 +563,7 @@ window.wp = window.wp || {};
          *
          * @param {Object} $marker The marker to be removed from the editor DOM, wrapped in an instnce of `editor.$`
          */
-        function removeSelectionMarker ($marker) {
+        function removeSelectionMarker($marker) {
             var $markerParent = $marker.parent();
 
             $marker.remove();
@@ -587,7 +587,7 @@ window.wp = window.wp || {};
          * @param {Object} editor TinyMCE editor instance.
          * @param {Object} element HTMLElement that should be scrolled into view.
          */
-        function scrollVisualModeToStartElement (editor, element) {
+        function scrollVisualModeToStartElement(editor, element) {
             var elementTop = editor.$(element).offset().top,
                 TinyMCEContentAreaTop = editor.$(editor.getContentAreaContainer()).offset().top,
 
@@ -644,7 +644,7 @@ window.wp = window.wp || {};
          *
          * @param {Object} event TinyMCE event object.
          */
-        function fixTextAreaContent (event) {
+        function fixTextAreaContent(event) {
             // Keep empty paragraphs :(
             event.content = event.content.replace(/<p>(?:<br ?\/?>|\u00a0|\uFEFF| )*<\/p>/g, '<p>&nbsp;</p>');
         }
@@ -663,7 +663,7 @@ window.wp = window.wp || {};
          * @param {Object} editor The editor where we must find the selection.
          * @return {(null|Object)} The selection range position in the editor.
          */
-        function findBookmarkedPosition (editor) {
+        function findBookmarkedPosition(editor) {
             // Get the TinyMCE `window` reference, since we need to access the raw selection.
             var TinyMCEWindow = editor.getWin(),
                 selection = TinyMCEWindow.getSelection();
@@ -827,7 +827,7 @@ window.wp = window.wp || {};
          * @param {Object} editor TinyMCE's editor instance.
          * @param {Object} selection Selection data.
          */
-        function selectTextInTextArea (editor, selection) {
+        function selectTextInTextArea(editor, selection) {
             // Only valid in the text area mode and if we have selection.
             if (!selection) {
                 return;
@@ -871,7 +871,7 @@ window.wp = window.wp || {};
          * @param {string} html The content from the editor.
          * @return {string} The content with stripped paragraph tags.
          */
-        function removep (html) {
+        function removep(html) {
             var blocklist = 'blockquote|ul|ol|li|dl|dt|dd|table|thead|tbody|tfoot|tr|th|td|h[1-6]|fieldset|figure',
                 blocklist1 = blocklist + '|div|p',
                 blocklist2 = blocklist + '|pre',
@@ -1008,7 +1008,7 @@ window.wp = window.wp || {};
          * @param {string} text The text input.
          * @return {string} The formatted text.
          */
-        function autop (text) {
+        function autop(text) {
             var preserve_linebreaks = false,
                 preserve_br = false,
                 blocklist = 'table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre' +
@@ -1135,8 +1135,8 @@ window.wp = window.wp || {};
          * @param {string} html The content from the visual editor.
          * @return {string} the filtered content.
          */
-        function pre_wpautop (html) {
-            var obj = { o: exports, data: html, unfiltered: html };
+        function pre_wpautop(html) {
+            var obj = {o: exports, data: html, unfiltered: html};
 
             if ($) {
                 $('body').trigger('beforePreWpautop', [obj]);
@@ -1161,8 +1161,8 @@ window.wp = window.wp || {};
          * @param {string} text The content from the text editor.
          * @return {string} filtered content.
          */
-        function wpautop (text) {
-            var obj = { o: exports, data: text, unfiltered: text };
+        function wpautop(text) {
+            var obj = {o: exports, data: text, unfiltered: text};
 
             if ($) {
                 $('body').trigger('beforeWpautop', [obj]);

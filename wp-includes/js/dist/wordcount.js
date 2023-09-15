@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -175,7 +175,7 @@
      *
      * @return {string} The manipulated text.
      */
-    function stripTags (settings, text) {
+    function stripTags(settings, text) {
         return text.replace(settings.HTMLRegExp, '\n');
     }
 
@@ -188,7 +188,7 @@
      *
      * @return {string} The manipulated text.
      */
-    function transposeAstralsToCountableChar (settings, text) {
+    function transposeAstralsToCountableChar(settings, text) {
         return text.replace(settings.astralRegExp, 'a');
     }
 
@@ -201,7 +201,7 @@
      *
      * @return {string} The manipulated text.
      */
-    function stripHTMLEntities (settings, text) {
+    function stripHTMLEntities(settings, text) {
         return text.replace(settings.HTMLEntityRegExp, '');
     }
 
@@ -214,7 +214,7 @@
      *
      * @return {string} The manipulated text.
      */
-    function stripConnectors (settings, text) {
+    function stripConnectors(settings, text) {
         return text.replace(settings.connectorRegExp, ' ');
     }
 
@@ -227,7 +227,7 @@
      *
      * @return {string} The manipulated text.
      */
-    function stripRemovables (settings, text) {
+    function stripRemovables(settings, text) {
         return text.replace(settings.removeRegExp, '');
     }
 
@@ -240,7 +240,7 @@
      *
      * @return {string} The manipulated text.
      */
-    function stripHTMLComments (settings, text) {
+    function stripHTMLComments(settings, text) {
         return text.replace(settings.HTMLcommentRegExp, '');
     }
 
@@ -253,7 +253,7 @@
      *
      * @return {string} The manipulated text.
      */
-    function stripShortcodes (settings, text) {
+    function stripShortcodes(settings, text) {
         if (settings.shortcodesRegExp) {
             return text.replace(settings.shortcodesRegExp, '\n');
         }
@@ -270,7 +270,7 @@
      *
      * @return {string} The manipulated text.
      */
-    function stripSpaces (settings, text) {
+    function stripSpaces(settings, text) {
         return text.replace(settings.spaceRegExp, ' ');
     }
 
@@ -283,7 +283,7 @@
      *
      * @return {string} The manipulated text.
      */
-    function transposeHTMLEntitiesToCountableChars (settings, text) {
+    function transposeHTMLEntitiesToCountableChars(settings, text) {
         return text.replace(settings.HTMLEntityRegExp, 'a');
     }
 
@@ -312,7 +312,7 @@
      * @return {WPWordCountSettings} The combined settings object to be used.
      */
 
-    function loadSettings (type, userSettings) {
+    function loadSettings(type, userSettings) {
         var _settings$l10n$shortc;
 
         const settings = Object.assign({}, defaultSettings, userSettings);
@@ -342,7 +342,7 @@
      */
 
 
-    function countWords (text, regex, settings) {
+    function countWords(text, regex, settings) {
         var _text$match$length;
 
         text = [stripTags.bind(null, settings), stripHTMLComments.bind(null, settings), stripShortcodes.bind(null, settings), stripSpaces.bind(null, settings), stripHTMLEntities.bind(null, settings), stripConnectors.bind(null, settings), stripRemovables.bind(null, settings)].reduce((result, fn) => fn(result), text);
@@ -361,7 +361,7 @@
      */
 
 
-    function countCharacters (text, regex, settings) {
+    function countCharacters(text, regex, settings) {
         var _text$match$length2;
 
         text = [stripTags.bind(null, settings), stripHTMLComments.bind(null, settings), stripShortcodes.bind(null, settings), transposeAstralsToCountableChar.bind(null, settings), stripSpaces.bind(null, settings), transposeHTMLEntitiesToCountableChars.bind(null, settings)].reduce((result, fn) => fn(result), text);
@@ -386,7 +386,7 @@
      */
 
 
-    function count (text, type, userSettings) {
+    function count(text, type, userSettings) {
         const settings = loadSettings(type, userSettings);
         let matchRegExp;
 

@@ -2,11 +2,11 @@
     /**
      * SVG Icons class
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Twenty_One
-     * @since Twenty Twenty-One 1.0
+     * @since      Twenty Twenty-One 1.0
      */
-    
+
     /**
      * This class is in charge of displaying SVG icons across the site.
      *
@@ -21,7 +21,6 @@
      */
     class Twenty_Twenty_One_SVG_Icons
     {
-        
         /**
          * User Interface icons – svg sources.
          *
@@ -37,7 +36,7 @@
             'plus' => '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 11.2h-5.2V6h-1.6v5.2H6v1.6h5.2V18h1.6v-5.2H18z" fill="currentColor"/></svg>',
             'minus' => '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 11h12v2H6z" fill="currentColor"/></svg>',
         ];
-        
+
         /**
          * Social Icons – svg sources.
          *
@@ -85,7 +84,7 @@
             'yelp' => '<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M12.271,16.718v1.417q-.011,3.257-.067,3.4a.707.707,0,0,1-.569.446,4.637,4.637,0,0,1-2.024-.424A4.609,4.609,0,0,1,7.8,20.565a.844.844,0,0,1-.19-.4.692.692,0,0,1,.044-.29,3.181,3.181,0,0,1,.379-.524q.335-.412,2.019-2.409.011,0,.669-.781a.757.757,0,0,1,.44-.274.965.965,0,0,1,.552.039.945.945,0,0,1,.418.324.732.732,0,0,1,.139.468Zm-1.662-2.8a.783.783,0,0,1-.58.781l-1.339.435q-3.067.981-3.257.981a.711.711,0,0,1-.6-.4,2.636,2.636,0,0,1-.19-.836,9.134,9.134,0,0,1,.011-1.857,3.559,3.559,0,0,1,.335-1.389.659.659,0,0,1,.625-.357,22.629,22.629,0,0,1,2.253.859q.781.324,1.283.524l.937.379a.771.771,0,0,1,.4.34A.982.982,0,0,1,10.609,13.917Zm9.213,3.313a4.467,4.467,0,0,1-1.021,1.8,4.559,4.559,0,0,1-1.512,1.417.671.671,0,0,1-.7-.078q-.156-.112-2.052-3.2l-.524-.859a.761.761,0,0,1-.128-.513.957.957,0,0,1,.217-.513.774.774,0,0,1,.926-.29q.011.011,1.327.446,2.264.736,2.7.887a2.082,2.082,0,0,1,.524.229.673.673,0,0,1,.245.68Zm-7.5-7.049q.056,1.137-.6,1.361-.647.19-1.272-.792L6.237,4.08a.7.7,0,0,1,.212-.691,5.788,5.788,0,0,1,2.314-1,5.928,5.928,0,0,1,2.5-.352.681.681,0,0,1,.547.5q.034.2.245,3.407T12.327,10.181Zm7.384,1.2a.679.679,0,0,1-.29.658q-.167.112-3.67.959-.747.167-1.015.257l.011-.022a.769.769,0,0,1-.513-.044.914.914,0,0,1-.413-.357.786.786,0,0,1,0-.971q.011-.011.836-1.137,1.394-1.908,1.673-2.275a2.423,2.423,0,0,1,.379-.435A.7.7,0,0,1,17.435,8a4.482,4.482,0,0,1,1.372,1.489,4.81,4.81,0,0,1,.9,1.868v.034Z"></path></svg>',
             'youtube' => '<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M21.8,8.001c0,0-0.195-1.378-0.795-1.985c-0.76-0.797-1.613-0.801-2.004-0.847c-2.799-0.202-6.997-0.202-6.997-0.202 h-0.009c0,0-4.198,0-6.997,0.202C4.608,5.216,3.756,5.22,2.995,6.016C2.395,6.623,2.2,8.001,2.2,8.001S2,9.62,2,11.238v1.517 c0,1.618,0.2,3.237,0.2,3.237s0.195,1.378,0.795,1.985c0.761,0.797,1.76,0.771,2.205,0.855c1.6,0.153,6.8,0.201,6.8,0.201 s4.203-0.006,7.001-0.209c0.391-0.047,1.243-0.051,2.004-0.847c0.6-0.607,0.795-1.985,0.795-1.985s0.2-1.618,0.2-3.237v-1.517 C22,9.62,21.8,8.001,21.8,8.001z M9.935,14.594l-0.001-5.62l5.404,2.82L9.935,14.594z"></path></svg>',
         ];
-        
+
         /**
          * Social Icons – domain mappings.
          *
@@ -151,14 +150,15 @@
                 'wordpress.org',
             ],
         ];
-        
+
         /**
          * Detects the social network from a URL and returns the SVG code for its icon.
          *
          * @static
          *
-         * @param string $uri Social link.
-         * @param int $size The icon-size in pixels.
+         * @param string $uri  Social link.
+         * @param int    $size The icon-size in pixels.
+         *
          * @return string|null
          * @since Twenty Twenty-One 1.0
          *
@@ -166,10 +166,11 @@
         public static function get_social_link_svg($uri, $size)
         {
             static $regex_map; // Only compute regex map once, for performance.
-            
-            if (!isset($regex_map)) {
+
+            if(! isset($regex_map))
+            {
                 $regex_map = [];
-                
+
                 /**
                  * Filters Twenty Twenty-Ones's array of domain mappings for social icons.
                  *
@@ -177,59 +178,69 @@
                  * specify all the domains it covers (including the .com TLD too, if applicable).
                  *
                  * @param array $social_icons_map Array of default social icons.
+                 *
                  * @since Twenty Twenty-One 1.0
                  *
                  */
                 $map = apply_filters('twenty_twenty_one_social_icons_map', self::$social_icons_map);
-                
+
                 /**
                  * Filters Twenty Twenty-One's array of social icons.
                  *
                  * @param array $social_icons Array of default social icons.
+                 *
                  * @since Twenty Twenty-One 1.0
                  *
                  */
                 $social_icons = apply_filters('twenty_twenty_one_svg_icons_social', self::$social_icons);
-                
-                foreach (array_keys($social_icons) as $icon) {
+
+                foreach(array_keys($social_icons) as $icon)
+                {
                     $domains = array_key_exists($icon, $map) ? $map[$icon] : [sprintf('%s.com', $icon)];
-                    $domains = array_map('trim',
-                        $domains); // Remove leading/trailing spaces, to prevent regex from failing to match.
+                    $domains = array_map('trim', $domains); // Remove leading/trailing spaces, to prevent regex from failing to match.
                     $domains = array_map('preg_quote', $domains);
                     $regex_map[$icon] = sprintf('/(%s)/i', implode('|', $domains));
                 }
             }
-            foreach ($regex_map as $icon => $regex) {
-                if (preg_match($regex, $uri)) {
-                    return self::get_svg('social', $icon, $size) . '<span class="screen-reader-text">';
+            foreach($regex_map as $icon => $regex)
+            {
+                if(preg_match($regex, $uri))
+                {
+                    return self::get_svg('social', $icon, $size).'<span class="screen-reader-text">';
                 }
             }
-            
+
             return null;
         }
-        
+
         /**
          * Gets the SVG code for a given icon.
          *
          * @static
          *
          * @param string $group The icon group.
-         * @param string $icon The icon.
-         * @param int $size The icon-size in pixels.
+         * @param string $icon  The icon.
+         * @param int    $size  The icon-size in pixels.
+         *
          * @return string
          * @since Twenty Twenty-One 1.0
          *
          */
         public static function get_svg($group, $icon, $size)
         {
-            if ('ui' === $group) {
+            if('ui' === $group)
+            {
                 $arr = self::$icons;
-            } elseif ('social' === $group) {
+            }
+            elseif('social' === $group)
+            {
                 $arr = self::$social_icons;
-            } else {
+            }
+            else
+            {
                 $arr = [];
             }
-            
+
             /**
              * Filters Twenty Twenty-Ones's array of icons.
              *
@@ -237,19 +248,20 @@
              * the name of the group of icons, either "ui" or "social".
              *
              * @param array $arr Array of icons.
+             *
              * @since Twenty Twenty-One 1.0
              *
              */
             $arr = apply_filters("twenty_twenty_one_svg_icons_{$group}", $arr);
-            
+
             $svg = '';
-            if (array_key_exists($icon, $arr)) {
-                $repl = sprintf('<svg class="svg-icon" width="%d" height="%d" aria-hidden="true" role="img" focusable="false" ',
-                    $size, $size);
-                
+            if(array_key_exists($icon, $arr))
+            {
+                $repl = sprintf('<svg class="svg-icon" width="%d" height="%d" aria-hidden="true" role="img" focusable="false" ', $size, $size);
+
                 $svg = preg_replace('/^<svg /', $repl, trim($arr[$icon])); // Add extra attributes to SVG code.
             }
-            
+
             // @phpstan-ignore-next-line.
             return $svg;
         }

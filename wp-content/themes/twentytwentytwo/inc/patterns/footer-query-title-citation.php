@@ -26,12 +26,7 @@
 					<!-- wp:group {"layout":{"type":"flex","justifyContent":"right"}} -->
 					<div class="wp-block-group">
 					<!-- wp:paragraph -->
-					<p>' .
-            sprintf(
-            /* Translators: WordPress link. */
-                esc_html__('Proudly powered by %s', 'twentytwentytwo'),
-                '<a href="' . esc_url(__('https://wordpress.org', 'twentytwentytwo')) . '" rel="nofollow">WordPress</a>'
-            ) . '</p>
+					<p>'.sprintf(/* Translators: WordPress link. */ esc_html__('Proudly powered by %s', 'twentytwentytwo'), '<a href="'.esc_url(__('https://wordpress.org', 'twentytwentytwo')).'" rel="nofollow">WordPress</a>').'</p>
 					<!-- /wp:paragraph --></div>
 					<!-- /wp:group --></div>
 					<!-- /wp:group --></div>

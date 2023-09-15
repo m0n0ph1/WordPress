@@ -21,14 +21,12 @@
 					<!-- /wp:group -->
 
 					<!-- wp:heading {"align":"wide","style":{"typography":{"fontSize":"clamp(3.25rem, 8vw, 6.25rem)","lineHeight":"1.15"}}} -->
-					<h2 class="alignwide" style="font-size:clamp(3.25rem, 8vw, 6.25rem);line-height:1.15">' . wp_kses_post(__('<em>The Hatchery</em>: a blog about my adventures in bird watching',
-                'twentytwentytwo')) . '</h2>
+					<h2 class="alignwide" style="font-size:clamp(3.25rem, 8vw, 6.25rem);line-height:1.15">'.wp_kses_post(__('<em>The Hatchery</em>: a blog about my adventures in bird watching', 'twentytwentytwo')).'</h2>
 					<!-- /wp:heading --></div>
 					<!-- /wp:group -->
 
 					<!-- wp:image {"align":"full","sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image alignfull size-full"><img src="' . esc_url(get_template_directory_uri()) . '/assets/images/flight-path-on-transparent-c.png" alt="' . esc_attr__('Illustration of a bird flying.',
-                'twentytwentytwo') . '"/></figure>
+					<figure class="wp-block-image alignfull size-full"><img src="'.esc_url(get_template_directory_uri()).'/assets/images/flight-path-on-transparent-c.png" alt="'.esc_attr__('Illustration of a bird flying.', 'twentytwentytwo').'"/></figure>
 					<!-- /wp:image --></div>
 					<!-- /wp:group --><!-- wp:spacer {"height":66} -->
 					<div style="height:66px" aria-hidden="true" class="wp-block-spacer"></div>

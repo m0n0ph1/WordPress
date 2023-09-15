@@ -2,12 +2,12 @@
     /**
      * The template for displaying Author info
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Twenty
-     * @since Twenty Twenty 1.0
+     * @since      Twenty Twenty 1.0
      */
-    
-    if ((bool) get_the_author_meta('description') && (bool) get_theme_mod('show_author_bio', true)) :
+
+    if((bool) get_the_author_meta('description') && (bool) get_theme_mod('show_author_bio', true)) :
         ?>
         <div class="author-bio">
             <div class="author-title-wrapper">
@@ -16,11 +16,7 @@
                 </div>
                 <h2 class="author-title heading-size-4">
                     <?php
-                        printf(
-                        /* translators: %s: Author name. */
-                            __('By %s', 'twentytwenty'),
-                            esc_html(get_the_author())
-                        );
+                        printf(/* translators: %s: Author name. */ __('By %s', 'twentytwenty'), esc_html(get_the_author()));
                     ?>
                 </h2>
             </div><!-- .author-name -->

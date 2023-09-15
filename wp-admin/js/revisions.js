@@ -14,7 +14,7 @@ window.wp = window.wp || {};
     /**
      * Expose the module in window.wp.revisions.
      */
-    revisions = wp.revisions = { model: {}, view: {}, controller: {} };
+    revisions = wp.revisions = {model: {}, view: {}, controller: {}};
 
     // Link post revisions data served from the back end.
     revisions.settings = window._wpRevisionsSettings || {};
@@ -36,7 +36,7 @@ window.wp = window.wp || {};
 
     // Handy functions to help with positioning.
     $.fn.allOffsets = function () {
-        var offset = this.offset() || { top: 0, left: 0 }, win = $(window);
+        var offset = this.offset() || {top: 0, left: 0}, win = $(window);
         return _.extend(offset, {
             right: win.width() - offset.left - this.outerWidth(),
             bottom: win.height() - offset.top - this.outerHeight()
@@ -44,7 +44,7 @@ window.wp = window.wp || {};
     };
 
     $.fn.allPositions = function () {
-        var position = this.position() || { top: 0, left: 0 }, parent = this.parent();
+        var position = this.position() || {top: 0, left: 0}, parent = this.parent();
         return _.extend(position, {
             right: parent.outerWidth() - position.left - this.outerWidth(),
             bottom: parent.outerHeight() - position.top - this.outerHeight()
@@ -124,7 +124,7 @@ window.wp = window.wp || {};
 
         // Called when `compareTwoMode` changes.
         updateMode: function (model, value) {
-            this.set({ compareTwoMode: value });
+            this.set({compareTwoMode: value});
         },
 
         // Called when `from` or `to` changes in the local model.
@@ -142,7 +142,7 @@ window.wp = window.wp || {};
                 return;
             }
 
-            this.set({ from: from, to: to }, { silent: true });
+            this.set({from: from, to: to}, {silent: true});
             this.trigger('update:revisions', from, to);
         }
 
@@ -167,15 +167,15 @@ window.wp = window.wp || {};
         },
 
         updateRevision: function (revision) {
-            this.set({ revision: revision });
+            this.set({revision: revision});
         },
 
         setHovering: function (model, value) {
-            this.set({ hovering: value });
+            this.set({hovering: value});
         },
 
         setScrubbing: function (model, value) {
-            this.set({ scrubbing: value });
+            this.set({scrubbing: value});
         }
     });
 
@@ -317,7 +317,7 @@ window.wp = window.wp || {};
         load: function (comparisons) {
             wp.revisions.log('load', comparisons);
             // Our collection should only ever grow, never shrink, so `remove: false`.
-            return this.fetch({ data: { compare: comparisons }, remove: false }).done(function () {
+            return this.fetch({data: {compare: comparisons}, remove: false}).done(function () {
                 wp.revisions.log('load:complete', comparisons);
             });
         },
@@ -410,11 +410,11 @@ window.wp = window.wp || {};
 
             // Start the router if browser supports History API.
             if (window.history && window.history.pushState) {
-                this.router = new revisions.Router({ model: this });
+                this.router = new revisions.Router({model: this});
                 if (Backbone.History.started) {
                     Backbone.history.stop();
                 }
-                Backbone.history.start({ pushState: true });
+                Backbone.history.start({pushState: true});
             }
         },
 
@@ -639,7 +639,7 @@ window.wp = window.wp || {};
         ready: function () {
             this.top = this.$el.offset().top;
             this.window = $(window);
-            this.window.on('scroll.wp.revisions', { controls: this }, function (e) {
+            this.window.on('scroll.wp.revisions', {controls: this}, function (e) {
                 var controls = e.data.controls,
                     container = controls.$el.parent(),
                     scrolled = controls.window.scrollTop(),
@@ -649,7 +649,7 @@ window.wp = window.wp || {};
                     if (!frame.$el.hasClass('pinned')) {
                         controls.setWidth();
                         container.css('height', container.height() + 'px');
-                        controls.window.on('resize.wp.revisions.pinning click.wp.revisions.pinning', { controls: controls }, function (e) {
+                        controls.window.on('resize.wp.revisions.pinning click.wp.revisions.pinning', {controls: controls}, function (e) {
                             e.data.controls.setWidth();
                         });
                     }
@@ -703,7 +703,7 @@ window.wp = window.wp || {};
                     rightPlusWidth: offset.right + tick.outerWidth()
                 });
             }
-            this.model.set({ offset: offset });
+            this.model.set({offset: offset});
         },
 
         ready: function () {
@@ -797,7 +797,7 @@ window.wp = window.wp || {};
         // Toggle the compare two mode feature when the compare two checkbox is checked.
         compareTwoToggle: function () {
             // Activate compare two mode?
-            this.model.set({ compareTwoMode: $('.compare-two-revisions').prop('checked') });
+            this.model.set({compareTwoMode: $('.compare-two-revisions').prop('checked')});
         }
     });
 
@@ -817,7 +817,7 @@ window.wp = window.wp || {};
             if (_.isNull(this.model.get('revision'))) {
                 return;
             } else {
-                return _.extend({ type: 'tooltip' }, {
+                return _.extend({type: 'tooltip'}, {
                     attributes: this.model.get('revision').toJSON()
                 });
             }
@@ -890,7 +890,7 @@ window.wp = window.wp || {};
             if (toIndex) {
                 attributes.from = this.model.revisions.at(toIndex - 1);
             } else {
-                this.model.unset('from', { silent: true });
+                this.model.unset('from', {silent: true});
             }
 
             this.model.set(attributes);
@@ -971,15 +971,15 @@ window.wp = window.wp || {};
             }
 
             // Update the tooltip mode.
-            this.model.set({ hoveredRevision: this.model.revisions.at(currentModelIndex) });
+            this.model.set({hoveredRevision: this.model.revisions.at(currentModelIndex)});
         },
 
         mouseLeave: function () {
-            this.model.set({ hovering: false });
+            this.model.set({hovering: false});
         },
 
         mouseEnter: function () {
-            this.model.set({ hovering: true });
+            this.model.set({hovering: true});
         },
 
         applySliderSettings: function () {
@@ -1000,11 +1000,11 @@ window.wp = window.wp || {};
         },
 
         start: function (event, ui) {
-            this.model.set({ scrubbing: true });
+            this.model.set({scrubbing: true});
 
             // Track the mouse position to enable smooth dragging,
             // overrides default jQuery UI step behavior.
-            $(window).on('mousemove.wp.revisions', { view: this }, function (e) {
+            $(window).on('mousemove.wp.revisions', {view: this}, function (e) {
                 var handles,
                     view = e.data.view,
                     leftDragBoundary = view.$el.offset().left,
@@ -1085,7 +1085,7 @@ window.wp = window.wp || {};
         stop: function () {
             $(window).off('mousemove.wp.revisions');
             this.model.updateSliderSettings(); // To snap us back to a tick mark.
-            this.model.set({ scrubbing: false });
+            this.model.set({scrubbing: false});
         }
     });
 
@@ -1097,7 +1097,7 @@ window.wp = window.wp || {};
 
         // Generate the options to be passed to the template.
         prepare: function () {
-            return _.extend({ fields: this.model.fields.toJSON() }, this.options);
+            return _.extend({fields: this.model.fields.toJSON()}, this.options);
         }
     });
 
@@ -1120,9 +1120,9 @@ window.wp = window.wp || {};
             var from = this.model.has('from') ? this.model.get('from').id : 0,
                 to = this.model.get('to').id;
             if (this.model.get('compareTwoMode')) {
-                this.navigate(this.baseUrl('?from=' + from + '&to=' + to), { replace: true });
+                this.navigate(this.baseUrl('?from=' + from + '&to=' + to), {replace: true});
             } else {
-                this.navigate(this.baseUrl('?revision=' + to), { replace: true });
+                this.navigate(this.baseUrl('?revision=' + to), {replace: true});
             }
         },
 

@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -109,7 +109,7 @@
      */
 
 
-    function htmlSplit (input) {
+    function htmlSplit(input) {
         const parts = [];
         let workingInput = input;
         let match;
@@ -144,7 +144,7 @@
      */
 
 
-    function replaceInHtmlTags (haystack, replacePairs) {
+    function replaceInHtmlTags(haystack, replacePairs) {
         // Find all elements.
         const textArr = htmlSplit(haystack);
         let changed = false; // Extract all needles.
@@ -192,7 +192,7 @@
      */
 
 
-    function autop (text, br = true) {
+    function autop(text, br = true) {
         const preTags = [];
 
         if (text.trim() === '') {
@@ -340,7 +340,7 @@
      * @return {string} The content with stripped paragraph tags.
      */
 
-    function removep (html) {
+    function removep(html) {
         const blocklist = 'blockquote|ul|ol|li|dl|dt|dd|table|thead|tbody|tfoot|tr|th|td|h[1-6]|fieldset|figure';
         const blocklist1 = blocklist + '|div|p';
         const blocklist2 = blocklist + '|pre';

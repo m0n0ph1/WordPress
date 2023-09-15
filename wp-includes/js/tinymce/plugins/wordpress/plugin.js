@@ -21,7 +21,7 @@
             $(document).triggerHandler('tinymce-editor-setup', [editor]);
         }
 
-        function toggleToolbars (state) {
+        function toggleToolbars(state) {
             var initial, toolbars, iframeHeight,
                 pixels = 0,
                 classicBlockToolbar = tinymce.$('.block-library-classic__toolbar');
@@ -267,7 +267,7 @@
                 return;
             }
 
-            function tr (row, columns) {
+            function tr(row, columns) {
                 var out = '<tr>';
                 var i = 0;
 
@@ -348,20 +348,20 @@
                 html = html +
                     '<h2>' + __('When starting a new paragraph with one of these formatting shortcuts followed by a space, the formatting will be applied automatically. Press Backspace or Escape to undo.') + '</h2>' +
                     '<table class="wp-help-th-center fixed">' +
-                    tr({ '*': 'Bullet list', '1.': 'Numbered list' }) +
-                    tr({ '-': 'Bullet list', '1)': 'Numbered list' }) +
+                    tr({'*': 'Bullet list', '1.': 'Numbered list'}) +
+                    tr({'-': 'Bullet list', '1)': 'Numbered list'}) +
                     '</table>';
 
                 html = html +
                     '<h2>' + __('The following formatting shortcuts are replaced when pressing Enter. Press Escape or the Undo button to undo.') + '</h2>' +
                     '<table class="wp-help-single">' +
-                    tr({ '>': 'Blockquote' }) +
-                    tr({ '##': 'Heading 2' }) +
-                    tr({ '###': 'Heading 3' }) +
-                    tr({ '####': 'Heading 4' }) +
-                    tr({ '#####': 'Heading 5' }) +
-                    tr({ '######': 'Heading 6' }) +
-                    tr({ '---': 'Horizontal line' }) +
+                    tr({'>': 'Blockquote'}) +
+                    tr({'##': 'Heading 2'}) +
+                    tr({'###': 'Heading 3'}) +
+                    tr({'####': 'Heading 4'}) +
+                    tr({'#####': 'Heading 5'}) +
+                    tr({'######': 'Heading 6'}) +
+                    tr({'---': 'Horizontal line'}) +
                     '</table>';
             }
 
@@ -369,10 +369,10 @@
             html = html +
                 '<h2>' + __('Focus shortcuts:') + '</h2>' +
                 '<table class="wp-help-single">' +
-                tr({ 'Alt + F8': 'Inline toolbar (when an image, link or preview is selected)' }) +
-                tr({ 'Alt + F9': 'Editor menu (when enabled)' }) +
-                tr({ 'Alt + F10': 'Editor toolbar' }) +
-                tr({ 'Alt + F11': 'Elements path' }) +
+                tr({'Alt + F8': 'Inline toolbar (when an image, link or preview is selected)'}) +
+                tr({'Alt + F9': 'Editor menu (when enabled)'}) +
+                tr({'Alt + F10': 'Editor toolbar'}) +
+                tr({'Alt + F11': 'Elements path'}) +
                 '</table>' +
                 '<p>' + __('To move focus to other buttons use Tab or the arrow keys. To return focus to the editor press Escape or use one of the buttons.') + '</p>';
 
@@ -480,7 +480,7 @@
         editor.on('BeforeExecCommand', function (e) {
             if (tinymce.Env.webkit && (e.command === 'InsertUnorderedList' || e.command === 'InsertOrderedList')) {
                 if (!style) {
-                    style = editor.dom.create('style', { 'type': 'text/css' },
+                    style = editor.dom.create('style', {'type': 'text/css'},
                         '#tinymce,#tinymce span,#tinymce li,#tinymce li>span,#tinymce p,#tinymce p>span{font:medium sans-serif;color:#000;line-height:normal;}');
                 }
 
@@ -700,7 +700,7 @@
             }
         });
 
-        function prepareTooltips () {
+        function prepareTooltips() {
             var access = 'Shift+Alt+';
             var meta = 'Ctrl+';
 
@@ -728,7 +728,7 @@
             }
         }
 
-        function getTooltip (tooltip) {
+        function getTooltip(tooltip) {
             var translated = editor.translate(tooltip);
             var label;
 
@@ -745,7 +745,7 @@
             return label ? translated + ' (' + label + ')' : translated;
         }
 
-        function replaceButtonsTooltips (buttons) {
+        function replaceButtonsTooltips(buttons) {
 
             if (!buttons) {
                 return;
@@ -766,7 +766,7 @@
             });
         }
 
-        function addShortcutsToListbox () {
+        function addShortcutsToListbox() {
             // listbox for the "blocks" drop-down.
             each(editor.theme.panel.find('listbox'), function (listbox) {
                 if (listbox && listbox.settings.text === 'Paragraph') {
@@ -806,7 +806,7 @@
                 wpStatusbar = document.getElementById('post-status-info');
             }
 
-            function create (buttons, bottom) {
+            function create(buttons, bottom) {
                 var toolbar,
                     toolbarItems = [],
                     buttonGroup;
@@ -815,7 +815,7 @@
                     var itemName;
                     var tooltip;
 
-                    function bindSelectorChanged () {
+                    function bindSelectorChanged() {
                         var selection = editor.selection;
 
                         if (itemName === 'bullist') {
@@ -939,7 +939,7 @@
 
                 toolbar.bottom = bottom;
 
-                function reposition () {
+                function reposition() {
                     if (!currentSelection) {
                         return this;
                     }
@@ -1110,7 +1110,7 @@
                 }
             });
 
-            function hide (event) {
+            function hide(event) {
                 var win;
                 var size;
 
@@ -1193,7 +1193,7 @@
             editor.wp._createToolbar = create;
         }, true);
 
-        function noop () {
+        function noop() {
         }
 
         // Expose some functions (back-compat).

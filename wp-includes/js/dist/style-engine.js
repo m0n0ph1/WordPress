@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -93,7 +93,7 @@
      * @return GeneratedCSSRule[] CSS rules.
      */
 
-    function generateRule (style, options, path, ruleKey) {
+    function generateRule(style, options, path, ruleKey) {
         const styleValue = (0, external_lodash_namespaceObject.get)(style, path);
         return styleValue ? [{
             selector: options?.selector,
@@ -114,7 +114,7 @@
      * @return GeneratedCSSRule[]  CSS rules.
      */
 
-    function generateBoxRules (style, options, path, ruleKeys, individualProperties = ['top', 'right', 'bottom', 'left']) {
+    function generateBoxRules(style, options, path, ruleKeys, individualProperties = ['top', 'right', 'bottom', 'left']) {
         const boxStyle = (0, external_lodash_namespaceObject.get)(style, path);
 
         if (!boxStyle) {
@@ -157,7 +157,7 @@
      * @return string A CSS var value.
      */
 
-    function getCSSVarFromStyleValue (styleValue) {
+    function getCSSVarFromStyleValue(styleValue) {
         if (typeof styleValue === 'string' && styleValue.startsWith(VARIABLE_REFERENCE_PREFIX)) {
             const variable = styleValue.slice(VARIABLE_REFERENCE_PREFIX.length).split(VARIABLE_PATH_SEPARATOR_TOKEN_ATTRIBUTE).map(presetVariable => (0, external_lodash_namespaceObject.kebabCase)(presetVariable)).join(VARIABLE_PATH_SEPARATOR_TOKEN_STYLE);
             return `var(--wp--${variable})`;
@@ -174,7 +174,7 @@
      * @return String with the first letter capitalized.
      */
 
-    function upperFirst (string) {
+    function upperFirst(string) {
         const [firstLetter, ...rest] = string;
         return firstLetter.toUpperCase() + rest.join('');
     }
@@ -187,7 +187,7 @@
      * @return camelCase string.
      */
 
-    function camelCaseJoin (strings) {
+    function camelCaseJoin(strings) {
         const [firstItem, ...rest] = strings;
         return firstItem.toLowerCase() + rest.map(upperFirst).join('');
     }
@@ -205,7 +205,7 @@
      * @return A function that generates CSS rules.
      */
 
-    function createBorderGenerateFunction (path) {
+    function createBorderGenerateFunction(path) {
         return (style, options) => generateRule(style, options, path, camelCaseJoin(path));
     }
 
@@ -218,7 +218,7 @@
      */
 
 
-    function createBorderEdgeGenerateFunction (edge) {
+    function createBorderEdgeGenerateFunction(edge) {
         return (style, options) => {
             return ['color', 'style', 'width'].flatMap(key => {
                 const path = ['border', edge, key];
@@ -514,7 +514,7 @@
      * @return A generated stylesheet or inline style declarations.
      */
 
-    function compileCSS (style, options = {}) {
+    function compileCSS(style, options = {}) {
         const rules = getCSSRules(style, options); // If no selector is provided, treat generated rules as inline styles to be returned as a single string.
 
         if (!options?.selector) {
@@ -559,7 +559,7 @@
      * @return A collection of objects containing the selector, if any, the CSS property key (camelcase) and parsed CSS value.
      */
 
-    function getCSSRules (style, options = {}) {
+    function getCSSRules(style, options = {}) {
         const rules = [];
         styleDefinitions.forEach(definition => {
             if (typeof definition.generate === 'function') {

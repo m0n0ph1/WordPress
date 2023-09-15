@@ -50,7 +50,7 @@ if ('undefined' === typeof window.wp.codeEditor) {
      *
      * @return {void}
      */
-    function configureLinting (editor, settings) { // eslint-disable-line complexity
+    function configureLinting(editor, settings) { // eslint-disable-line complexity
         var currentErrorAnnotations = [], previouslyShownErrorAnnotations = [];
 
         /**
@@ -58,7 +58,7 @@ if ('undefined' === typeof window.wp.codeEditor) {
          *
          * @return {void}
          */
-        function updateErrorNotice () {
+        function updateErrorNotice() {
             if (settings.onUpdateErrorNotice && !_.isEqual(currentErrorAnnotations, previouslyShownErrorAnnotations)) {
                 settings.onUpdateErrorNotice(currentErrorAnnotations, editor);
                 previouslyShownErrorAnnotations = currentErrorAnnotations;
@@ -70,7 +70,7 @@ if ('undefined' === typeof window.wp.codeEditor) {
          *
          * @return {Object} Lint options.
          */
-        function getLintOptions () { // eslint-disable-line complexity
+        function getLintOptions() { // eslint-disable-line complexity
             var options = editor.getOption('lint');
 
             if (!options) {
@@ -224,13 +224,13 @@ if ('undefined' === typeof window.wp.codeEditor) {
      *
      * @return {void}
      */
-    function configureTabbing (codemirror, settings) {
+    function configureTabbing(codemirror, settings) {
         var $textarea = $(codemirror.getTextArea());
 
         codemirror.on('blur', function () {
             $textarea.data('next-tab-blurs', false);
         });
-        codemirror.on('keydown', function onKeydown (editor, event) {
+        codemirror.on('keydown', function onKeydown(editor, event) {
             var tabKeyCode = 9, escKeyCode = 27;
 
             // Take note of the ESC keypress so that the next TAB can focus outside the editor.
@@ -283,7 +283,7 @@ if ('undefined' === typeof window.wp.codeEditor) {
      *
      * @return {CodeEditorInstance} Instance.
      */
-    wp.codeEditor.initialize = function initialize (textarea, settings) {
+    wp.codeEditor.initialize = function initialize(textarea, settings) {
         var $textarea, codemirror, instanceSettings, instance;
         if ('string' === typeof textarea) {
             $textarea = $('#' + textarea);
@@ -336,7 +336,7 @@ if ('undefined' === typeof window.wp.codeEditor) {
                     shouldAutocomplete = 'keyword' === token.type || 'variable' === token.type;
                 }
                 if (shouldAutocomplete) {
-                    codemirror.showHint({ completeSingle: false });
+                    codemirror.showHint({completeSingle: false});
                 }
             });
         }

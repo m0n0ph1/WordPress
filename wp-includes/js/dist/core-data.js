@@ -8,7 +8,7 @@
         /***/ 2167:
         /***/ ((module) => {
 
-            function _typeof (obj) {
+            function _typeof(obj) {
                 if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
                     _typeof = function (obj) {
                         return typeof obj;
@@ -22,13 +22,13 @@
                 return _typeof(obj);
             }
 
-            function _classCallCheck (instance, Constructor) {
+            function _classCallCheck(instance, Constructor) {
                 if (!(instance instanceof Constructor)) {
                     throw new TypeError('Cannot call a class as a function');
                 }
             }
 
-            function _defineProperties (target, props) {
+            function _defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
                     var descriptor = props[i];
                     descriptor.enumerable = descriptor.enumerable || false;
@@ -38,7 +38,7 @@
                 }
             }
 
-            function _createClass (Constructor, protoProps, staticProps) {
+            function _createClass(Constructor, protoProps, staticProps) {
                 if (protoProps) _defineProperties(Constructor.prototype, protoProps);
                 if (staticProps) _defineProperties(Constructor, staticProps);
                 return Constructor;
@@ -55,7 +55,7 @@
              *
              * @return {?Array} Value pair, if exists.
              */
-            function getValuePair (instance, key) {
+            function getValuePair(instance, key) {
                 var _map = instance._map,
                     _arrayTreeMap = instance._arrayTreeMap,
                     _objectTreeMap = instance._objectTreeMap; // Map keeps a reference to the last object-like key used to set the
@@ -116,7 +116,7 @@
                      *
                      * @param {Iterable.<*>} iterable Initial pair of key, value for map.
                      */
-                    function EquivalentKeyMap (iterable) {
+                    function EquivalentKeyMap(iterable) {
                         _classCallCheck(this, EquivalentKeyMap);
 
                         this.clear();
@@ -154,7 +154,7 @@
                          *
                          * @return {EquivalentKeyMap} Map instance.
                          */
-                        value: function set (key, value) {
+                        value: function set(key, value) {
                             // Shortcut non-object-like to set on internal Map.
                             if (key === null || _typeof(key) !== 'object') {
                                 this._map.set(key, value);
@@ -210,7 +210,7 @@
 
                     }, {
                         key: 'get',
-                        value: function get (key) {
+                        value: function get(key) {
                             // Shortcut non-object-like to get from internal Map.
                             if (key === null || _typeof(key) !== 'object') {
                                 return this._map.get(key);
@@ -233,7 +233,7 @@
 
                     }, {
                         key: 'has',
-                        value: function has (key) {
+                        value: function has(key) {
                             if (key === null || _typeof(key) !== 'object') {
                                 return this._map.has(key);
                             } // Test on the _presence_ of the pair, not its value, as even undefined
@@ -252,7 +252,7 @@
 
                     }, {
                         key: 'delete',
-                        value: function _delete (key) {
+                        value: function _delete(key) {
                             if (!this.has(key)) {
                                 return false;
                             } // This naive implementation will leave orphaned child trees. A better
@@ -272,7 +272,7 @@
 
                     }, {
                         key: 'forEach',
-                        value: function forEach (callback) {
+                        value: function forEach(callback) {
                             var _this = this;
 
                             var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
@@ -292,14 +292,14 @@
 
                     }, {
                         key: 'clear',
-                        value: function clear () {
+                        value: function clear() {
                             this._map = new Map();
                             this._arrayTreeMap = new Map();
                             this._objectTreeMap = new Map();
                         }
                     }, {
                         key: 'size',
-                        get: function get () {
+                        get: function get() {
                             return this._map.size;
                         }
                     }]);
@@ -319,7 +319,7 @@
 
             var envHasBigInt64Array = typeof BigInt64Array !== 'undefined';
 
-            module.exports = function equal (a, b) {
+            module.exports = function equal(a, b) {
                 if (a === b) return true;
 
                 if (a && b && typeof a == 'object' && typeof b == 'object') {
@@ -394,7 +394,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -436,7 +436,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -455,7 +455,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -482,11 +482,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -691,7 +691,7 @@
          * @return {Object} Minimally modified merged item.
          */
 
-        function conservativeMapItem (item, nextItem) {
+        function conservativeMapItem(item, nextItem) {
             // Return next item in its entirety if there is no original item.
             if (!item) {
                 return nextItem;
@@ -778,7 +778,7 @@
 
         var extendStatics = function (d, b) {
             extendStatics = Object.setPrototypeOf ||
-                ({ __proto__: [] } instanceof Array && function (d, b) {
+                ({__proto__: []} instanceof Array && function (d, b) {
                     d.__proto__ = b;
                 }) ||
                 function (d, b) {
@@ -787,12 +787,12 @@
             return extendStatics(d, b);
         };
 
-        function __extends (d, b) {
+        function __extends(d, b) {
             if (typeof b !== 'function' && b !== null)
                 throw new TypeError('Class extends value ' + String(b) + ' is not a constructor or null');
             extendStatics(d, b);
 
-            function __ () {
+            function __() {
                 this.constructor = d;
             }
 
@@ -800,7 +800,7 @@
         }
 
         var __assign = function () {
-            __assign = Object.assign || function __assign (t) {
+            __assign = Object.assign || function __assign(t) {
                 for (var s, i = 1, n = arguments.length; i < n; i++) {
                     s = arguments[i];
                     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
@@ -810,7 +810,7 @@
             return __assign.apply(this, arguments);
         };
 
-        function __rest (s, e) {
+        function __rest(s, e) {
             var t = {};
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
                 t[p] = s[p];
@@ -822,7 +822,7 @@
             return t;
         }
 
-        function __decorate (decorators, target, key, desc) {
+        function __decorate(decorators, target, key, desc) {
             var c = arguments.length,
                 r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
             if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function') r = Reflect.decorate(decorators, target, key, desc);
@@ -830,14 +830,14 @@
             return c > 3 && r && Object.defineProperty(target, key, r), r;
         }
 
-        function __param (paramIndex, decorator) {
+        function __param(paramIndex, decorator) {
             return function (target, key) {
                 decorator(target, key, paramIndex);
             };
         }
 
-        function __esDecorate (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-            function accept (f) {
+        function __esDecorate(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+            function accept(f) {
                 if (f !== void 0 && typeof f !== 'function') throw new TypeError('Function expected');
                 return f;
             }
@@ -873,7 +873,7 @@
             done = true;
         };
 
-        function __runInitializers (thisArg, initializers, value) {
+        function __runInitializers(thisArg, initializers, value) {
             var useValue = arguments.length > 2;
             for (var i = 0; i < initializers.length; i++) {
                 value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
@@ -881,11 +881,11 @@
             return useValue ? value : void 0;
         };
 
-        function __propKey (x) {
+        function __propKey(x) {
             return typeof x === 'symbol' ? x : ''.concat(x);
         };
 
-        function __setFunctionName (f, name, prefix) {
+        function __setFunctionName(f, name, prefix) {
             if (typeof name === 'symbol') name = name.description ? '['.concat(name.description, ']') : '';
             return Object.defineProperty(f, 'name', {
                 configurable: true,
@@ -893,27 +893,35 @@
             });
         };
 
-        function __metadata (metadataKey, metadataValue) {
+        function __metadata(metadataKey, metadataValue) {
             if (typeof Reflect === 'object' && typeof Reflect.metadata === 'function') return Reflect.metadata(metadataKey, metadataValue);
         }
 
-        function __awaiter (thisArg, _arguments, P, generator) {
-            function adopt (value) {
+        function __awaiter(thisArg, _arguments, P, generator) {
+            function adopt(value) {
                 return value instanceof P ? value : new P(function (resolve) {
                     resolve(value);
                 });
             }
 
             return new (P || (P = Promise))(function (resolve, reject) {
-                function fulfilled (value) {
-                    try { step(generator.next(value)); } catch (e) { reject(e); }
+                function fulfilled(value) {
+                    try {
+                        step(generator.next(value));
+                    } catch (e) {
+                        reject(e);
+                    }
                 }
 
-                function rejected (value) {
-                    try { step(generator['throw'](value)); } catch (e) { reject(e); }
+                function rejected(value) {
+                    try {
+                        step(generator['throw'](value));
+                    } catch (e) {
+                        reject(e);
+                    }
                 }
 
-                function step (result) {
+                function step(result) {
                     result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
                 }
 
@@ -921,7 +929,7 @@
             });
         }
 
-        function __generator (thisArg, body) {
+        function __generator(thisArg, body) {
             var _ = {
                 label: 0, sent: function () {
                     if (t[0] & 1) throw t[1];
@@ -936,13 +944,13 @@
                 return this;
             }), g;
 
-            function verb (n) {
+            function verb(n) {
                 return function (v) {
                     return step([n, v]);
                 };
             }
 
-            function step (op) {
+            function step(op) {
                 if (f) throw new TypeError('Generator is already executing.');
                 while (g && (g = 0, op[0] && (_ = 0)), _) try {
                     if (f = 1, y && (t = op[0] & 2 ? y['return'] : op[0] ? y['throw'] || ((t = y['return']) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
@@ -954,7 +962,7 @@
                             break;
                         case 4:
                             _.label++;
-                            return { value: op[1], done: false };
+                            return {value: op[1], done: false};
                         case 5:
                             _.label++;
                             y = op[1];
@@ -991,9 +999,11 @@
                 } catch (e) {
                     op = [6, e];
                     y = 0;
-                } finally { f = t = 0; }
+                } finally {
+                    f = t = 0;
+                }
                 if (op[0] & 5) throw op[1];
-                return { value: op[0] ? op[1] : void 0, done: true };
+                return {value: op[0] ? op[1] : void 0, done: true};
             }
         }
 
@@ -1013,45 +1023,49 @@
             o[k2] = m[k];
         });
 
-        function __exportStar (m, o) {
+        function __exportStar(m, o) {
             for (var p in m) if (p !== 'default' && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
         }
 
-        function __values (o) {
+        function __values(o) {
             var s = typeof Symbol === 'function' && Symbol.iterator, m = s && o[s], i = 0;
             if (m) return m.call(o);
             if (o && typeof o.length === 'number') return {
                 next: function () {
                     if (o && i >= o.length) o = void 0;
-                    return { value: o && o[i++], done: !o };
+                    return {value: o && o[i++], done: !o};
                 }
             };
             throw new TypeError(s ? 'Object is not iterable.' : 'Symbol.iterator is not defined.');
         }
 
-        function __read (o, n) {
+        function __read(o, n) {
             var m = typeof Symbol === 'function' && o[Symbol.iterator];
             if (!m) return o;
             var i = m.call(o), r, ar = [], e;
             try {
                 while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-            } catch (error) { e = { error: error }; } finally {
+            } catch (error) {
+                e = {error: error};
+            } finally {
                 try {
                     if (r && !r.done && (m = i['return'])) m.call(i);
-                } finally { if (e) throw e.error; }
+                } finally {
+                    if (e) throw e.error;
+                }
             }
             return ar;
         }
 
         /** @deprecated */
-        function __spread () {
+        function __spread() {
             for (var ar = [], i = 0; i < arguments.length; i++)
                 ar = ar.concat(__read(arguments[i]));
             return ar;
         }
 
         /** @deprecated */
-        function __spreadArrays () {
+        function __spreadArrays() {
             for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
             for (var r = Array(s), k = 0, i = 0; i < il; i++)
                 for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -1059,7 +1073,7 @@
             return r;
         }
 
-        function __spreadArray (to, from, pack) {
+        function __spreadArray(to, from, pack) {
             if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
                 if (ar || !(i in from)) {
                     if (!ar) ar = Array.prototype.slice.call(from, 0, i);
@@ -1069,18 +1083,18 @@
             return to.concat(ar || Array.prototype.slice.call(from));
         }
 
-        function __await (v) {
+        function __await(v) {
             return this instanceof __await ? (this.v = v, this) : new __await(v);
         }
 
-        function __asyncGenerator (thisArg, _arguments, generator) {
+        function __asyncGenerator(thisArg, _arguments, generator) {
             if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
             var g = generator.apply(thisArg, _arguments || []), i, q = [];
             return i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
                 return this;
             }, i;
 
-            function verb (n) {
+            function verb(n) {
                 if (g[n]) i[n] = function (v) {
                     return new Promise(function (a, b) {
                         q.push([n, v, a, b]) > 1 || resume(n, v);
@@ -1088,28 +1102,32 @@
                 };
             }
 
-            function resume (n, v) {
-                try { step(g[n](v)); } catch (e) { settle(q[0][3], e); }
+            function resume(n, v) {
+                try {
+                    step(g[n](v));
+                } catch (e) {
+                    settle(q[0][3], e);
+                }
             }
 
-            function step (r) {
+            function step(r) {
                 r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
             }
 
-            function fulfill (value) {
+            function fulfill(value) {
                 resume('next', value);
             }
 
-            function reject (value) {
+            function reject(value) {
                 resume('throw', value);
             }
 
-            function settle (f, v) {
+            function settle(f, v) {
                 if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]);
             }
         }
 
-        function __asyncDelegator (o) {
+        function __asyncDelegator(o) {
             var i, p;
             return i = {}, verb('next'), verb('throw', function (e) {
                 throw e;
@@ -1117,21 +1135,21 @@
                 return this;
             }, i;
 
-            function verb (n, f) {
+            function verb(n, f) {
                 i[n] = o[n] ? function (v) {
-                    return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
+                    return (p = !p) ? {value: __await(o[n](v)), done: false} : f ? f(v) : v;
                 } : f;
             }
         }
 
-        function __asyncValues (o) {
+        function __asyncValues(o) {
             if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
             var m = o[Symbol.asyncIterator], i;
             return m ? m.call(o) : (o = typeof __values === 'function' ? __values(o) : o[Symbol.iterator](), i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
                 return this;
             }, i);
 
-            function verb (n) {
+            function verb(n) {
                 i[n] = o[n] && function (v) {
                     return new Promise(function (resolve, reject) {
                         v = o[n](v), settle(resolve, reject, v.done, v.value);
@@ -1139,25 +1157,29 @@
                 };
             }
 
-            function settle (resolve, reject, d, v) {
+            function settle(resolve, reject, d, v) {
                 Promise.resolve(v).then(function (v) {
-                    resolve({ value: v, done: d });
+                    resolve({value: v, done: d});
                 }, reject);
             }
         }
 
-        function __makeTemplateObject (cooked, raw) {
-            if (Object.defineProperty) { Object.defineProperty(cooked, 'raw', { value: raw }); } else { cooked.raw = raw; }
+        function __makeTemplateObject(cooked, raw) {
+            if (Object.defineProperty) {
+                Object.defineProperty(cooked, 'raw', {value: raw});
+            } else {
+                cooked.raw = raw;
+            }
             return cooked;
         };
 
         var __setModuleDefault = Object.create ? (function (o, v) {
-            Object.defineProperty(o, 'default', { enumerable: true, value: v });
+            Object.defineProperty(o, 'default', {enumerable: true, value: v});
         }) : function (o, v) {
             o['default'] = v;
         };
 
-        function __importStar (mod) {
+        function __importStar(mod) {
             if (mod && mod.__esModule) return mod;
             var result = {};
             if (mod != null) for (var k in mod) if (k !== 'default' && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
@@ -1165,29 +1187,29 @@
             return result;
         }
 
-        function __importDefault (mod) {
-            return (mod && mod.__esModule) ? mod : { default: mod };
+        function __importDefault(mod) {
+            return (mod && mod.__esModule) ? mod : {default: mod};
         }
 
-        function __classPrivateFieldGet (receiver, state, kind, f) {
+        function __classPrivateFieldGet(receiver, state, kind, f) {
             if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a getter');
             if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot read private member from an object whose class did not declare it');
             return kind === 'm' ? f : kind === 'a' ? f.call(receiver) : f ? f.value : state.get(receiver);
         }
 
-        function __classPrivateFieldSet (receiver, state, value, kind, f) {
+        function __classPrivateFieldSet(receiver, state, value, kind, f) {
             if (kind === 'm') throw new TypeError('Private method is not writable');
             if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a setter');
             if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot write private member to an object whose class did not declare it');
             return (kind === 'a' ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
         }
 
-        function __classPrivateFieldIn (state, receiver) {
+        function __classPrivateFieldIn(state, receiver) {
             if (receiver === null || (typeof receiver !== 'object' && typeof receiver !== 'function')) throw new TypeError('Cannot use \'in\' operator on non-object');
             return typeof state === 'function' ? receiver === state : state.has(receiver);
         }
 
-        function __addDisposableResource (env, value, async) {
+        function __addDisposableResource(env, value, async) {
             if (value !== null && value !== void 0) {
                 if (typeof value !== 'object') throw new TypeError('Object expected.');
                 var dispose;
@@ -1200,9 +1222,9 @@
                     dispose = value[Symbol.dispose];
                 }
                 if (typeof dispose !== 'function') throw new TypeError('Object not disposable.');
-                env.stack.push({ value: value, dispose: dispose, async: async });
+                env.stack.push({value: value, dispose: dispose, async: async});
             } else if (async) {
-                env.stack.push({ async: true });
+                env.stack.push({async: true});
             }
             return value;
         }
@@ -1212,13 +1234,13 @@
             return e.name = 'SuppressedError', e.error = error, e.suppressed = suppressed, e;
         };
 
-        function __disposeResources (env) {
-            function fail (e) {
+        function __disposeResources(env) {
+            function fail(e) {
                 env.error = env.hasError ? new _SuppressedError(e, env.error, 'An error was suppressed during disposal.') : e;
                 env.hasError = true;
             }
 
-            function next () {
+            function next() {
                 while (env.stack.length) {
                     var rec = env.stack.pop();
                     try {
@@ -1305,7 +1327,7 @@
         /**
          * Localized lower case.
          */
-        function localeLowerCase (str, locale) {
+        function localeLowerCase(str, locale) {
             var lang = SUPPORTED_LOCALE[locale.toLowerCase()];
             if (lang)
                 return lowerCase(str.replace(lang.regexp, function (m) {
@@ -1317,7 +1339,7 @@
         /**
          * Lower case as a function.
          */
-        function lowerCase (str) {
+        function lowerCase(str) {
             return str.toLowerCase();
         }
 
@@ -1331,8 +1353,10 @@
         /**
          * Normalize the string into something other libraries can manipulate easier.
          */
-        function noCase (input, options) {
-            if (options === void 0) { options = {}; }
+        function noCase(input, options) {
+            if (options === void 0) {
+                options = {};
+            }
             var _a = options.splitRegexp, splitRegexp = _a === void 0 ? DEFAULT_SPLIT_REGEXP : _a,
                 _b = options.stripRegexp, stripRegexp = _b === void 0 ? DEFAULT_STRIP_REGEXP : _b,
                 _c = options.transform, transform = _c === void 0 ? lowerCase : _c, _d = options.delimiter,
@@ -1352,7 +1376,7 @@
         /**
          * Replace `re` in the input string with the replacement value.
          */
-        function replace (input, re, value) {
+        function replace(input, re, value) {
             if (re instanceof RegExp)
                 return input.replace(re, value);
             return re.reduce(function (input, re) {
@@ -1364,24 +1388,26 @@
         /**
          * Upper case the first character of an input string.
          */
-        function upperCaseFirst (input) {
+        function upperCaseFirst(input) {
             return input.charAt(0).toUpperCase() + input.substr(1);
         }
 
         ;// CONCATENATED MODULE: ./node_modules/capital-case/dist.es2015/index.js
 
-        function capitalCaseTransform (input) {
+        function capitalCaseTransform(input) {
             return upperCaseFirst(input.toLowerCase());
         }
 
-        function capitalCase (input, options) {
-            if (options === void 0) { options = {}; }
-            return noCase(input, __assign({ delimiter: ' ', transform: capitalCaseTransform }, options));
+        function capitalCase(input, options) {
+            if (options === void 0) {
+                options = {};
+            }
+            return noCase(input, __assign({delimiter: ' ', transform: capitalCaseTransform}, options));
         }
 
         ;// CONCATENATED MODULE: ./node_modules/pascal-case/dist.es2015/index.js
 
-        function pascalCaseTransform (input, index) {
+        function pascalCaseTransform(input, index) {
             var firstChar = input.charAt(0);
             var lowerChars = input.substr(1).toLowerCase();
             if (index > 0 && firstChar >= '0' && firstChar <= '9') {
@@ -1390,13 +1416,15 @@
             return '' + firstChar.toUpperCase() + lowerChars;
         }
 
-        function dist_es2015_pascalCaseTransformMerge (input) {
+        function dist_es2015_pascalCaseTransformMerge(input) {
             return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
         }
 
-        function pascalCase (input, options) {
-            if (options === void 0) { options = {}; }
-            return noCase(input, __assign({ delimiter: '', transform: pascalCaseTransform }, options));
+        function pascalCase(input, options) {
+            if (options === void 0) {
+                options = {};
+            }
+            return noCase(input, __assign({delimiter: '', transform: pascalCaseTransform}, options));
         }
 
         ;// CONCATENATED MODULE: external ["wp","apiFetch"]
@@ -1411,7 +1439,7 @@
         var getRandomValues;
         var rnds8 = new Uint8Array(16);
 
-        function rng () {
+        function rng() {
             // lazy load so that environments that need to polyfill have a chance to do so
             if (!getRandomValues) {
                 // getRandomValues needs to be invoked in a context where "this" is a Crypto implementation. Also,
@@ -1430,7 +1458,7 @@
         const regex = (/^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i);
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/core-data/node_modules/uuid/dist/esm-browser/validate.js
 
-        function validate (uuid) {
+        function validate(uuid) {
             return typeof uuid === 'string' && regex.test(uuid);
         }
 
@@ -1449,7 +1477,7 @@
             byteToHex.push((i + 0x100).toString(16).substr(1));
         }
 
-        function stringify (arr) {
+        function stringify(arr) {
             var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
             // Note: Be careful editing this code!  It's been tuned for performance
             // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
@@ -1470,7 +1498,7 @@
         const esm_browser_stringify = (stringify);
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/core-data/node_modules/uuid/dist/esm-browser/v4.js
 
-        function v4 (options, buf, offset) {
+        function v4(options, buf, offset) {
             options = options || {};
             var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
 
@@ -1506,7 +1534,7 @@
          *
          * @return {Object} Action object.
          */
-        function receiveItems (items, edits) {
+        function receiveItems(items, edits) {
             return {
                 type: 'RECEIVE_ITEMS',
                 items: Array.isArray(items) ? items : [items],
@@ -1525,7 +1553,7 @@
          * @return {Object} Action object.
          */
 
-        function removeItems (kind, name, records, invalidateCache = false) {
+        function removeItems(kind, name, records, invalidateCache = false) {
             return {
                 type: 'REMOVE_ITEMS',
                 itemIds: Array.isArray(records) ? records : [records],
@@ -1546,7 +1574,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveQueriedItems (items, query = {}, edits) {
+        function receiveQueriedItems(items, query = {}, edits) {
             return {
                 ...receiveItems(items, edits),
                 query
@@ -1567,7 +1595,7 @@
 
         let maxItems = null;
 
-        function chunk (arr, chunkSize) {
+        function chunk(arr, chunkSize) {
             const tmp = [...arr];
             const cache = [];
 
@@ -1589,7 +1617,7 @@
          */
 
 
-        async function defaultProcessor (requests) {
+        async function defaultProcessor(requests) {
             if (maxItems === null) {
                 const preflightResponse = await external_wp_apiFetch_default()({
                     path: '/batch/v1',
@@ -1680,7 +1708,7 @@
          *                               either `output` or `error`.
          */
 
-        function createBatch (processor = defaultProcessor) {
+        function createBatch(processor = defaultProcessor) {
             let lastId = 0;
             /** @type {Array<{ input: any; resolve: ( value: any ) => void; reject: ( error: any ) => void }>} */
 
@@ -1713,7 +1741,7 @@
                  *                       processed. If given a thunk, returns the return
                  *                       value of that thunk.
                  */
-                add (inputOrThunk) {
+                add(inputOrThunk) {
                     const id = ++lastId;
                     pending.add(id);
 
@@ -1742,7 +1770,7 @@
                  * @return {Promise<boolean>} A promise that resolves to a boolean that is true
                  *                   if the processor returned no errors.
                  */
-                async run () {
+                async run() {
                     if (pending.size) {
                         await new Promise(resolve => {
                             const unsubscribe = pending.subscribe(() => {
@@ -1795,28 +1823,28 @@
         }
 
         class ObservableSet {
-            constructor (...args) {
+            constructor(...args) {
                 this.set = new Set(...args);
                 this.subscribers = new Set();
             }
 
-            get size () {
+            get size() {
                 return this.set.size;
             }
 
-            add (value) {
+            add(value) {
                 this.set.add(value);
                 this.subscribers.forEach(subscriber => subscriber());
                 return this;
             }
 
-            delete (value) {
+            delete(value) {
                 const isSuccess = this.set.delete(value);
                 this.subscribers.forEach(subscriber => subscriber());
                 return isSuccess;
             }
 
-            subscribe (subscriber) {
+            subscribe(subscriber) {
                 this.subscribers.add(subscriber);
                 return () => {
                     this.subscribers.delete(subscriber);
@@ -1847,7 +1875,7 @@
          *
          * @return The edit.
          */
-        function getUndoEdits (state) {
+        function getUndoEdits(state) {
             return state.undo.list[state.undo.list.length - 1 + state.undo.offset];
         }
 
@@ -1860,7 +1888,7 @@
          * @return The edit.
          */
 
-        function getRedoEdits (state) {
+        function getRedoEdits(state) {
             return state.undo.list[state.undo.list.length + state.undo.offset];
         }
 
@@ -1871,7 +1899,7 @@
          * @return The ID for the fallback Navigation post.
          */
 
-        function getNavigationFallbackId (state) {
+        function getNavigationFallbackId(state) {
             return state.navigationFallbackId;
         }
 
@@ -1900,7 +1928,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveUserQuery (queryID, users) {
+        function receiveUserQuery(queryID, users) {
             return {
                 type: 'RECEIVE_USER_QUERY',
                 users: Array.isArray(users) ? users : [users],
@@ -1919,7 +1947,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveCurrentUser (currentUser) {
+        function receiveCurrentUser(currentUser) {
             return {
                 type: 'RECEIVE_CURRENT_USER',
                 currentUser
@@ -1934,7 +1962,7 @@
          * @return {Object} Action object.
          */
 
-        function addEntities (entities) {
+        function addEntities(entities) {
             return {
                 type: 'ADD_ENTITIES',
                 entities
@@ -1953,7 +1981,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveEntityRecords (kind, name, records, query, invalidateCache = false, edits) {
+        function receiveEntityRecords(kind, name, records, query, invalidateCache = false, edits) {
             // Auto drafts should not have titles, but some plugins rely on them so we can't filter this
             // on the server.
             if (kind === 'postType') {
@@ -1990,7 +2018,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveCurrentTheme (currentTheme) {
+        function receiveCurrentTheme(currentTheme) {
             return {
                 type: 'RECEIVE_CURRENT_THEME',
                 currentTheme
@@ -2008,7 +2036,7 @@
          * @return {Object} Action object.
          */
 
-        function __experimentalReceiveCurrentGlobalStylesId (currentGlobalStylesId) {
+        function __experimentalReceiveCurrentGlobalStylesId(currentGlobalStylesId) {
             return {
                 type: 'RECEIVE_CURRENT_GLOBAL_STYLES_ID',
                 id: currentGlobalStylesId
@@ -2027,7 +2055,7 @@
          * @return {Object} Action object.
          */
 
-        function __experimentalReceiveThemeBaseGlobalStyles (stylesheet, globalStyles) {
+        function __experimentalReceiveThemeBaseGlobalStyles(stylesheet, globalStyles) {
             return {
                 type: 'RECEIVE_THEME_GLOBAL_STYLES',
                 stylesheet,
@@ -2047,7 +2075,7 @@
          * @return {Object} Action object.
          */
 
-        function __experimentalReceiveThemeGlobalStyleVariations (stylesheet, variations) {
+        function __experimentalReceiveThemeGlobalStyleVariations(stylesheet, variations) {
             return {
                 type: 'RECEIVE_THEME_GLOBAL_STYLE_VARIATIONS',
                 stylesheet,
@@ -2063,7 +2091,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveThemeSupports () {
+        function receiveThemeSupports() {
             external_wp_deprecated_default()('wp.data.dispatch( \'core\' ).receiveThemeSupports', {
                 since: '5.9'
             });
@@ -2084,7 +2112,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveThemeGlobalStyleRevisions (currentId, revisions) {
+        function receiveThemeGlobalStyleRevisions(currentId, revisions) {
             return {
                 type: 'RECEIVE_THEME_GLOBAL_STYLE_REVISIONS',
                 currentId,
@@ -2105,7 +2133,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveEmbedPreview (url, preview) {
+        function receiveEmbedPreview(url, preview) {
             return {
                 type: 'RECEIVE_EMBED_PREVIEW',
                 url,
@@ -2302,7 +2330,7 @@
          * @return {Object} Action object.
          */
 
-        function __unstableCreateUndoLevel () {
+        function __unstableCreateUndoLevel() {
             return {
                 type: 'CREATE_UNDO_LEVEL'
             };
@@ -2502,21 +2530,21 @@
                                                        }) => {
             const batch = createBatch();
             const api = {
-                saveEntityRecord (kind, name, record, options) {
+                saveEntityRecord(kind, name, record, options) {
                     return batch.add(add => dispatch.saveEntityRecord(kind, name, record, {
                         ...options,
                         __unstableFetch: add
                     }));
                 },
 
-                saveEditedEntityRecord (kind, name, recordId, options) {
+                saveEditedEntityRecord(kind, name, recordId, options) {
                     return batch.add(add => dispatch.saveEditedEntityRecord(kind, name, recordId, {
                         ...options,
                         __unstableFetch: add
                     }));
                 },
 
-                deleteEntityRecord (kind, name, recordId, query, options) {
+                deleteEntityRecord(kind, name, recordId, query, options) {
                     return batch.add(add => dispatch.deleteEntityRecord(kind, name, recordId, query, {
                         ...options,
                         __unstableFetch: add
@@ -2600,7 +2628,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveUploadPermissions (hasUploadPermissions) {
+        function receiveUploadPermissions(hasUploadPermissions) {
             external_wp_deprecated_default()('wp.data.dispatch( \'core\' ).receiveUploadPermissions', {
                 since: '5.9',
                 alternative: 'receiveUserPermission'
@@ -2621,7 +2649,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveUserPermission (key, isAllowed) {
+        function receiveUserPermission(key, isAllowed) {
             return {
                 type: 'RECEIVE_USER_PERMISSION',
                 key,
@@ -2642,7 +2670,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveAutosaves (postId, autosaves) {
+        function receiveAutosaves(postId, autosaves) {
             return {
                 type: 'RECEIVE_AUTOSAVES',
                 postId,
@@ -2658,7 +2686,7 @@
          * @return {Object} Action object.
          */
 
-        function receiveNavigationFallbackId (fallbackId) {
+        function receiveNavigationFallbackId(fallbackId) {
             return {
                 type: 'RECEIVE_NAVIGATION_FALLBACK_ID',
                 fallbackId
@@ -2876,7 +2904,7 @@
          * @return {Promise} Entities promise
          */
 
-        async function loadPostTypeEntities () {
+        async function loadPostTypeEntities() {
             const postTypes = await external_wp_apiFetch_default()({
                 path: '/wp/v2/types?context=view'
             });
@@ -2919,7 +2947,7 @@
          */
 
 
-        async function loadTaxonomyEntities () {
+        async function loadTaxonomyEntities() {
             const taxonomies = await external_wp_apiFetch_default()({
                 path: '/wp/v2/taxonomies?context=view'
             });
@@ -3006,7 +3034,7 @@
          *
          * @return {?(string[])} Normalized field value.
          */
-        function getNormalizedCommaSeparable (value) {
+        function getNormalizedCommaSeparable(value) {
             if (typeof value === 'string') {
                 return value.split(',');
             } else if (Array.isArray(value)) {
@@ -3029,7 +3057,7 @@
          *
          * @return {Function} Enhanced caching function.
          */
-        function withWeakMapCache (fn) {
+        function withWeakMapCache(fn) {
             const cache = new WeakMap();
             return key => {
                 let value;
@@ -3088,7 +3116,7 @@
          * @return {WPQueriedDataQueryParts} Query parts.
          */
 
-        function getQueryParts (query) {
+        function getQueryParts(query) {
             /**
              * @type {WPQueriedDataQueryParts}
              */
@@ -3177,7 +3205,7 @@
 
 
 
-        function getContextFromAction (action) {
+        function getContextFromAction(action) {
             const {
                 query
             } = action;
@@ -3203,7 +3231,7 @@
          */
 
 
-        function getMergedItemIds (itemIds, nextItemIds, page, perPage) {
+        function getMergedItemIds(itemIds, nextItemIds, page, perPage) {
             var _itemIds$length;
 
             const receivedAllIds = page === 1 && perPage === -1;
@@ -3238,7 +3266,7 @@
          * @return {Object} Filtered entities.
          */
 
-        function removeEntitiesById (entities, ids) {
+        function removeEntitiesById(entities, ids) {
             return Object.fromEntries(Object.entries(entities).filter(([id]) => !ids.some(itemId => {
                 if (Number.isInteger(itemId)) {
                     return itemId === +id;
@@ -3259,7 +3287,7 @@
          */
 
 
-        function items (state = {}, action) {
+        function items(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_ITEMS': {
                     const context = getContextFromAction(action);
@@ -3297,7 +3325,7 @@
          * @return {Object<string,Object<string,boolean>>} Next state.
          */
 
-        function itemIsComplete (state = {}, action) {
+        function itemIsComplete(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_ITEMS': {
                     const context = getContextFromAction(action);
@@ -3436,7 +3464,7 @@
          * @return {Object} Updated state.
          */
 
-        function terms (state = {}, action) {
+        function terms(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_TERMS':
                     return {
@@ -3457,7 +3485,7 @@
          * @return {Object} Updated state.
          */
 
-        function users (state = {
+        function users(state = {
             byId: {},
             queries: {}
         }, action) {
@@ -3491,7 +3519,7 @@
          * @return {Object} Updated state.
          */
 
-        function currentUser (state = {}, action) {
+        function currentUser(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_CURRENT_USER':
                     return action.currentUser;
@@ -3509,7 +3537,7 @@
          * @return {Object} Updated state.
          */
 
-        function taxonomies (state = [], action) {
+        function taxonomies(state = [], action) {
             switch (action.type) {
                 case 'RECEIVE_TAXONOMIES':
                     return action.taxonomies;
@@ -3527,7 +3555,7 @@
          * @return {string|undefined} Updated state.
          */
 
-        function currentTheme (state = undefined, action) {
+        function currentTheme(state = undefined, action) {
             switch (action.type) {
                 case 'RECEIVE_CURRENT_THEME':
                     return action.currentTheme.stylesheet;
@@ -3545,7 +3573,7 @@
          * @return {string|undefined} Updated state.
          */
 
-        function currentGlobalStylesId (state = undefined, action) {
+        function currentGlobalStylesId(state = undefined, action) {
             switch (action.type) {
                 case 'RECEIVE_CURRENT_GLOBAL_STYLES_ID':
                     return action.id;
@@ -3563,7 +3591,7 @@
          * @return {Record<string, object>} Updated state.
          */
 
-        function themeBaseGlobalStyles (state = {}, action) {
+        function themeBaseGlobalStyles(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_THEME_GLOBAL_STYLES':
                     return {
@@ -3584,7 +3612,7 @@
          * @return {Record<string, object>} Updated state.
          */
 
-        function themeGlobalStyleVariations (state = {}, action) {
+        function themeGlobalStyleVariations(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_THEME_GLOBAL_STYLE_VARIATIONS':
                     return {
@@ -3639,7 +3667,7 @@
          */
 
 
-        function entity (entityConfig) {
+        function entity(entityConfig) {
             return (0, external_wp_compose_namespaceObject.compose)([withMultiEntityRecordEdits, // Limit to matching action type so we don't attempt to replace action on
                 // an unhandled action.
                 if_matching_action(action => action.name && action.kind && action.name === entityConfig.name && action.kind === entityConfig.kind), // Inject the entity config into the action.
@@ -3763,7 +3791,7 @@
          */
 
 
-        function entitiesConfig (state = rootEntitiesConfig, action) {
+        function entitiesConfig(state = rootEntitiesConfig, action) {
             switch (action.type) {
                 case 'ADD_ENTITIES':
                     return [...state, ...action.entities];
@@ -3851,7 +3879,7 @@
          * @return {UndoState} Updated state.
          */
 
-        function reducer_undo (state = UNDO_INITIAL_STATE, action) {
+        function reducer_undo(state = UNDO_INITIAL_STATE, action) {
             const omitPendingRedos = currentState => {
                 return {
                     ...currentState,
@@ -3984,7 +4012,7 @@
          * @return {Object} Updated state.
          */
 
-        function embedPreviews (state = {}, action) {
+        function embedPreviews(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_EMBED_PREVIEW':
                     const {
@@ -4010,7 +4038,7 @@
          * @return {Object} Updated state.
          */
 
-        function userPermissions (state = {}, action) {
+        function userPermissions(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_USER_PERMISSION':
                     return {
@@ -4031,7 +4059,7 @@
          * @return {Object} Updated state.
          */
 
-        function autosaves (state = {}, action) {
+        function autosaves(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_AUTOSAVES':
                     const {
@@ -4047,7 +4075,7 @@
             return state;
         }
 
-        function blockPatterns (state = [], action) {
+        function blockPatterns(state = [], action) {
             switch (action.type) {
                 case 'RECEIVE_BLOCK_PATTERNS':
                     return action.patterns;
@@ -4056,7 +4084,7 @@
             return state;
         }
 
-        function blockPatternCategories (state = [], action) {
+        function blockPatternCategories(state = [], action) {
             switch (action.type) {
                 case 'RECEIVE_BLOCK_PATTERN_CATEGORIES':
                     return action.categories;
@@ -4065,7 +4093,7 @@
             return state;
         }
 
-        function navigationFallbackId (state = null, action) {
+        function navigationFallbackId(state = null, action) {
             switch (action.type) {
                 case 'RECEIVE_NAVIGATION_FALLBACK_ID':
                     return action.fallbackId;
@@ -4083,7 +4111,7 @@
          * @return {Record<string, object>} Updated state.
          */
 
-        function themeGlobalStyleRevisions (state = {}, action) {
+        function themeGlobalStyleRevisions(state = {}, action) {
             switch (action.type) {
                 case 'RECEIVE_THEME_GLOBAL_STYLE_REVISIONS':
                     return {
@@ -4167,7 +4195,7 @@
          *
          * @return {[T]} Value returned as entry in array.
          */
-        function arrayOf (value) {
+        function arrayOf(value) {
             return [value];
         }
 
@@ -4179,7 +4207,7 @@
          *
          * @return {boolean} Whether value is object-like.
          */
-        function isObjectLike (value) {
+        function isObjectLike(value) {
             return !!value && 'object' === typeof value;
         }
 
@@ -4188,7 +4216,7 @@
          *
          * @return {Cache} Cache object.
          */
-        function createCache () {
+        function createCache() {
             /** @type {Cache} */
             var cache = {
                 clear: function () {
@@ -4209,7 +4237,7 @@
          *
          * @return {boolean} Whether arrays are shallowly equal.
          */
-        function isShallowEqual (a, b, fromIndex) {
+        function isShallowEqual(a, b, fromIndex) {
             var i;
 
             if (a.length !== b.length) {
@@ -4241,7 +4269,7 @@
          */
 
         /* harmony default export */
-        function rememo (selector, getDependants) {
+        function rememo(selector, getDependants) {
             /** @type {WeakMap<*,*>} */
             var rootCache;
 
@@ -4266,7 +4294,7 @@
              *
              * @return {Cache} Cache object.
              */
-            function getCache (dependants) {
+            function getCache(dependants) {
                 var caches = rootCache,
                     isUniqueByDependants = true,
                     i,
@@ -4309,7 +4337,7 @@
             /**
              * Resets root memoization cache.
              */
-            function clear () {
+            function clear() {
                 rootCache = new WeakMap();
             }
 
@@ -4325,7 +4353,7 @@
              */
 
             /* eslint-enable jsdoc/check-param-names */
-            function callSelector (/* source, ...extraArgs */) {
+            function callSelector(/* source, ...extraArgs */) {
                 var len = arguments.length,
                     cache,
                     node,
@@ -4436,7 +4464,7 @@
          * @param {Array}  path   Path of the property to set.
          * @param {*}      value  Value to set.
          */
-        function setNestedValue (object, path, value) {
+        function setNestedValue(object, path, value) {
             if (!object || typeof object !== 'object') {
                 return object;
             }
@@ -4487,7 +4515,7 @@
          * @return {?Array} Query items.
          */
 
-        function getQueriedItemsUncached (state, query) {
+        function getQueriedItemsUncached(state, query) {
             const {
                 stableKey,
                 page,
@@ -4594,7 +4622,7 @@
          *
          * @return {boolean} Is the attribute raw
          */
-        function isRawAttribute (entity, attribute) {
+        function isRawAttribute(entity, attribute) {
             return (entity.rawAttributes || []).includes(attribute);
         }
 
@@ -4649,7 +4677,7 @@
          * @return Authors list.
          */
 
-        function getAuthors (state, query) {
+        function getAuthors(state, query) {
             external_wp_deprecated_default()('select( \'core\' ).getAuthors()', {
                 since: '5.9',
                 alternative: 'select( \'core\' ).getUsers({ who: \'authors\' })'
@@ -4666,7 +4694,7 @@
          * @return Current user object.
          */
 
-        function getCurrentUser (state) {
+        function getCurrentUser(state) {
             return state.currentUser;
         }
 
@@ -4696,7 +4724,7 @@
          * @return Array of entities with config matching kind.
          */
 
-        function getEntitiesByKind (state, kind) {
+        function getEntitiesByKind(state, kind) {
             external_wp_deprecated_default()('wp.data.select( \'core\' ).getEntitiesByKind()', {
                 since: '6.0',
                 alternative: 'wp.data.select( \'core\' ).getEntitiesConfig()'
@@ -4713,7 +4741,7 @@
          * @return Array of entities with config matching kind.
          */
 
-        function getEntitiesConfig (state, kind) {
+        function getEntitiesConfig(state, kind) {
             return state.entities.config.filter(entity => entity.kind === kind);
         }
 
@@ -4728,7 +4756,7 @@
          * @return Entity config
          */
 
-        function getEntity (state, kind, name) {
+        function getEntity(state, kind, name) {
             external_wp_deprecated_default()('wp.data.select( \'core\' ).getEntity()', {
                 since: '6.0',
                 alternative: 'wp.data.select( \'core\' ).getEntityConfig()'
@@ -4746,7 +4774,7 @@
          * @return Entity config
          */
 
-        function getEntityConfig (state, kind, name) {
+        function getEntityConfig(state, kind, name) {
             return state.entities.config?.find(config => config.kind === kind && config.name === name);
         }
 
@@ -4848,7 +4876,7 @@
          * @return Record.
          */
 
-        function __experimentalGetEntityRecordNoResolver (state, kind, name, key) {
+        function __experimentalGetEntityRecordNoResolver(state, kind, name, key) {
             return getEntityRecord(state, kind, name, key);
         }
 
@@ -4899,7 +4927,7 @@
          * @return  Whether entity records have been received.
          */
 
-        function hasEntityRecords (state, kind, name, query) {
+        function hasEntityRecords(state, kind, name, query) {
             return Array.isArray(getEntityRecords(state, kind, name, query));
         }
 
@@ -5022,7 +5050,7 @@
          * @return The entity record's edits.
          */
 
-        function getEntityRecordEdits (state, kind, name, recordId) {
+        function getEntityRecordEdits(state, kind, name, recordId) {
             return state.entities.records?.[kind]?.[name]?.edits?.[recordId];
         }
 
@@ -5072,7 +5100,7 @@
          * @return Whether the entity record has edits or not.
          */
 
-        function hasEditsForEntityRecord (state, kind, name, recordId) {
+        function hasEditsForEntityRecord(state, kind, name, recordId) {
             return isSavingEntityRecord(state, kind, name, recordId) || Object.keys(getEntityRecordNonTransientEdits(state, kind, name, recordId)).length > 0;
         }
 
@@ -5108,7 +5136,7 @@
          * @return Whether the entity record is autosaving or not.
          */
 
-        function isAutosavingEntityRecord (state, kind, name, recordId) {
+        function isAutosavingEntityRecord(state, kind, name, recordId) {
             var _state$entities$recor;
 
             const {
@@ -5129,7 +5157,7 @@
          * @return Whether the entity record is saving or not.
          */
 
-        function isSavingEntityRecord (state, kind, name, recordId) {
+        function isSavingEntityRecord(state, kind, name, recordId) {
             var _state$entities$recor2;
 
             return (_state$entities$recor2 = state.entities.records?.[kind]?.[name]?.saving?.[recordId]?.pending) !== null && _state$entities$recor2 !== void 0 ? _state$entities$recor2 : false;
@@ -5146,7 +5174,7 @@
          * @return Whether the entity record is deleting or not.
          */
 
-        function isDeletingEntityRecord (state, kind, name, recordId) {
+        function isDeletingEntityRecord(state, kind, name, recordId) {
             var _state$entities$recor3;
 
             return (_state$entities$recor3 = state.entities.records?.[kind]?.[name]?.deleting?.[recordId]?.pending) !== null && _state$entities$recor3 !== void 0 ? _state$entities$recor3 : false;
@@ -5163,7 +5191,7 @@
          * @return The entity record's save error.
          */
 
-        function getLastEntitySaveError (state, kind, name, recordId) {
+        function getLastEntitySaveError(state, kind, name, recordId) {
             return state.entities.records?.[kind]?.[name]?.saving?.[recordId]?.error;
         }
 
@@ -5178,7 +5206,7 @@
          * @return The entity record's save error.
          */
 
-        function getLastEntityDeleteError (state, kind, name, recordId) {
+        function getLastEntityDeleteError(state, kind, name, recordId) {
             return state.entities.records?.[kind]?.[name]?.deleting?.[recordId]?.error;
         }
 
@@ -5194,7 +5222,7 @@
          * @return The current undo offset.
          */
 
-        function getCurrentUndoOffset (state) {
+        function getCurrentUndoOffset(state) {
             return state.undo.offset;
         }
 
@@ -5210,7 +5238,7 @@
          */
 
 
-        function getUndoEdit (state) {
+        function getUndoEdit(state) {
             external_wp_deprecated_default()('select( \'core\' ).getUndoEdit()', {
                 since: '6.3'
             });
@@ -5228,7 +5256,7 @@
          * @return The edit.
          */
 
-        function getRedoEdit (state) {
+        function getRedoEdit(state) {
             external_wp_deprecated_default()('select( \'core\' ).getRedoEdit()', {
                 since: '6.3'
             });
@@ -5244,7 +5272,7 @@
          * @return Whether there is a previous edit or not.
          */
 
-        function hasUndo (state) {
+        function hasUndo(state) {
             return Boolean(getUndoEdits(state));
         }
 
@@ -5257,7 +5285,7 @@
          * @return Whether there is a next edit or not.
          */
 
-        function hasRedo (state) {
+        function hasRedo(state) {
             return Boolean(getRedoEdits(state));
         }
 
@@ -5269,7 +5297,7 @@
          * @return The current theme.
          */
 
-        function getCurrentTheme (state) {
+        function getCurrentTheme(state) {
             return getEntityRecord(state, 'root', 'theme', state.currentTheme);
         }
 
@@ -5281,7 +5309,7 @@
          * @return The current global styles ID.
          */
 
-        function __experimentalGetCurrentGlobalStylesId (state) {
+        function __experimentalGetCurrentGlobalStylesId(state) {
             return state.currentGlobalStylesId;
         }
 
@@ -5293,7 +5321,7 @@
          * @return Index data.
          */
 
-        function getThemeSupports (state) {
+        function getThemeSupports(state) {
             var _getCurrentTheme$them;
 
             return (_getCurrentTheme$them = getCurrentTheme(state)?.theme_supports) !== null && _getCurrentTheme$them !== void 0 ? _getCurrentTheme$them : EMPTY_OBJECT;
@@ -5308,7 +5336,7 @@
          * @return Undefined if the preview has not been fetched, otherwise, the preview fetched from the embed preview API.
          */
 
-        function getEmbedPreview (state, url) {
+        function getEmbedPreview(state, url) {
             return state.embedPreviews[url];
         }
 
@@ -5325,7 +5353,7 @@
          * @return Is the preview for the URL an oEmbed link fallback.
          */
 
-        function isPreviewEmbedFallback (state, url) {
+        function isPreviewEmbedFallback(state, url) {
             const preview = state.embedPreviews[url];
             const oEmbedLinkCheck = '<a href="' + url + '">' + url + '</a>';
 
@@ -5354,7 +5382,7 @@
          *                             or `undefined` if the OPTIONS request is still being made.
          */
 
-        function canUser (state, action, resource, id) {
+        function canUser(state, action, resource, id) {
             const key = [action, resource, id].filter(Boolean).join('/');
             return state.userPermissions[key];
         }
@@ -5375,7 +5403,7 @@
          * or `undefined` if the OPTIONS request is still being made.
          */
 
-        function canUserEditEntityRecord (state, kind, name, recordId) {
+        function canUserEditEntityRecord(state, kind, name, recordId) {
             const entityConfig = getEntityConfig(state, kind, name);
 
             if (!entityConfig) {
@@ -5399,7 +5427,7 @@
          * @return An array of autosaves for the post, or undefined if there is none.
          */
 
-        function getAutosaves (state, postType, postId) {
+        function getAutosaves(state, postType, postId) {
             return state.autosaves[postId];
         }
 
@@ -5414,7 +5442,7 @@
          * @return The autosave for the post and author.
          */
 
-        function getAutosave (state, postType, postId, authorId) {
+        function getAutosave(state, postType, postId, authorId) {
             if (authorId === undefined) {
                 return;
             }
@@ -5467,7 +5495,7 @@
          * @return The template record.
          */
 
-        function __experimentalGetTemplateForLink (state, link) {
+        function __experimentalGetTemplateForLink(state, link) {
             const records = getEntityRecords(state, 'postType', 'wp_template', {
                 'find-template': link
             });
@@ -5487,7 +5515,7 @@
          * @return The Global Styles object.
          */
 
-        function __experimentalGetCurrentThemeBaseGlobalStyles (state) {
+        function __experimentalGetCurrentThemeBaseGlobalStyles(state) {
             const currentTheme = getCurrentTheme(state);
 
             if (!currentTheme) {
@@ -5505,7 +5533,7 @@
          * @return The current global styles ID.
          */
 
-        function __experimentalGetCurrentThemeGlobalStylesVariations (state) {
+        function __experimentalGetCurrentThemeGlobalStylesVariations(state) {
             const currentTheme = getCurrentTheme(state);
 
             if (!currentTheme) {
@@ -5523,7 +5551,7 @@
          * @return Block pattern list.
          */
 
-        function getBlockPatterns (state) {
+        function getBlockPatterns(state) {
             return state.blockPatterns;
         }
 
@@ -5535,7 +5563,7 @@
          * @return Block pattern category list.
          */
 
-        function getBlockPatternCategories (state) {
+        function getBlockPatternCategories(state) {
             return state.blockPatternCategories;
         }
 
@@ -5547,7 +5575,7 @@
          * @return The current global styles.
          */
 
-        function getCurrentThemeGlobalStylesRevisions (state) {
+        function getCurrentThemeGlobalStylesRevisions(state) {
             const currentGlobalStylesId = __experimentalGetCurrentGlobalStylesId(state);
 
             if (!currentGlobalStylesId) {
@@ -5559,21 +5587,23 @@
 
         ;// CONCATENATED MODULE: ./node_modules/camel-case/dist.es2015/index.js
 
-        function camelCaseTransform (input, index) {
+        function camelCaseTransform(input, index) {
             if (index === 0)
                 return input.toLowerCase();
             return pascalCaseTransform(input, index);
         }
 
-        function camelCaseTransformMerge (input, index) {
+        function camelCaseTransformMerge(input, index) {
             if (index === 0)
                 return input.toLowerCase();
             return pascalCaseTransformMerge(input);
         }
 
-        function camelCase (input, options) {
-            if (options === void 0) { options = {}; }
-            return pascalCase(input, __assign({ transform: camelCaseTransform }, options));
+        function camelCase(input, options) {
+            if (options === void 0) {
+                options = {};
+            }
+            return pascalCase(input, __assign({transform: camelCaseTransform}, options));
         }
 
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/core-data/build-module/utils/forward-resolver.js
@@ -6120,7 +6150,7 @@
         };
 
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/core-data/build-module/locks/utils.js
-        function deepCopyLocksTreePath (tree, path) {
+        function deepCopyLocksTreePath(tree, path) {
             const newTree = {
                 ...tree
             };
@@ -6141,7 +6171,7 @@
             return newTree;
         }
 
-        function getNode (tree, path) {
+        function getNode(tree, path) {
             let currentNode = tree;
 
             for (const branchName of path) {
@@ -6157,7 +6187,7 @@
             return currentNode;
         }
 
-        function * iteratePath (tree, path) {
+        function* iteratePath(tree, path) {
             let currentNode = tree;
             yield currentNode;
 
@@ -6173,7 +6203,7 @@
             }
         }
 
-        function * iterateDescendants (node) {
+        function* iterateDescendants(node) {
             const stack = Object.values(node.children);
 
             while (stack.length) {
@@ -6183,9 +6213,9 @@
             }
         }
 
-        function hasConflictingLock ({
-                                         exclusive
-                                     }, locks) {
+        function hasConflictingLock({
+                                        exclusive
+                                    }, locks) {
             if (exclusive && locks.length) {
                 return true;
             }
@@ -6219,7 +6249,7 @@
          * @return {Object} Updated state.
          */
 
-        function locks (state = DEFAULT_STATE, action) {
+        function locks(state = DEFAULT_STATE, action) {
             switch (action.type) {
                 case 'ENQUEUE_LOCK_REQUEST': {
                     const {
@@ -6274,11 +6304,11 @@
          * Internal dependencies
          */
 
-        function getPendingLockRequests (state) {
+        function getPendingLockRequests(state) {
             return state.requests;
         }
 
-        function isLockAvailable (state, store, path, {
+        function isLockAvailable(state, store, path, {
             exclusive
         }) {
             const storePath = [store, ...path];
@@ -6316,12 +6346,12 @@
          */
 
 
-        function createLocks () {
+        function createLocks() {
             let state = locks(undefined, {
                 type: '@@INIT'
             });
 
-            function processPendingLockRequests () {
+            function processPendingLockRequests() {
                 for (const request of getPendingLockRequests(state)) {
                     const {
                         store,
@@ -6348,7 +6378,7 @@
                 }
             }
 
-            function acquire (store, path, exclusive) {
+            function acquire(store, path, exclusive) {
                 return new Promise(resolve => {
                     state = locks(state, {
                         type: 'ENQUEUE_LOCK_REQUEST',
@@ -6363,7 +6393,7 @@
                 });
             }
 
-            function release (lock) {
+            function release(lock) {
                 state = locks(state, {
                     type: 'RELEASE_LOCK',
                     lock
@@ -6382,16 +6412,16 @@
          * Internal dependencies
          */
 
-        function createLocksActions () {
+        function createLocksActions() {
             const locks = createLocks();
 
-            function __unstableAcquireStoreLock (store, path, {
+            function __unstableAcquireStoreLock(store, path, {
                 exclusive
             }) {
                 return () => locks.acquire(store, path, exclusive);
             }
 
-            function __unstableReleaseStoreLock (lock) {
+            function __unstableReleaseStoreLock(lock) {
                 return () => locks.release(lock);
             }
 
@@ -6484,12 +6514,12 @@
          */
 
 
-        function EntityProvider ({
-                                     kind,
-                                     type: name,
-                                     id,
-                                     children
-                                 }) {
+        function EntityProvider({
+                                    kind,
+                                    type: name,
+                                    id,
+                                    children
+                                }) {
             const Provider = getEntityContext(kind, name).Provider;
             return (0, external_wp_element_namespaceObject.createElement)(Provider, {
                 value: id
@@ -6504,7 +6534,7 @@
          * @param {string} name The entity name.
          */
 
-        function useEntityId (kind, name) {
+        function useEntityId(kind, name) {
             return (0, external_wp_element_namespaceObject.useContext)(getEntityContext(kind, name));
         }
 
@@ -6526,7 +6556,7 @@
          *                              `protected` props.
          */
 
-        function useEntityProp (kind, name, prop, _id) {
+        function useEntityProp(kind, name, prop, _id) {
             const providerId = useEntityId(kind, name);
             const id = _id !== null && _id !== void 0 ? _id : providerId;
             const {
@@ -6575,7 +6605,7 @@
          * @return {[WPBlock[], Function, Function]} The block array and setters.
          */
 
-        function useEntityBlockEditor (kind, name, {
+        function useEntityBlockEditor(kind, name, {
             id: _id
         } = {}) {
             const providerId = useEntityId(kind, name);
@@ -6646,7 +6676,7 @@
                     content: ''
                 });
 
-                function updateAttributes (attributes) {
+                function updateAttributes(attributes) {
                     attributes = {
                         ...attributes
                     };
@@ -6683,7 +6713,7 @@
                     return attributes;
                 }
 
-                function updateBlocksAttributes (__blocks) {
+                function updateBlocksAttributes(__blocks) {
                     return __blocks.map(block => {
                         return {
                             ...block,
@@ -7082,7 +7112,7 @@
          *
          * @return {((...args: Parameters<F>) => ReturnType<F>) & MemizeMemoizedFunction} Memoized function.
          */
-        function memize (fn, options) {
+        function memize(fn, options) {
             var size = 0;
 
             /** @type {?MemizeCacheNode|undefined} */
@@ -7093,7 +7123,7 @@
 
             options = options || {};
 
-            function memoized (/* ...args */) {
+            function memoized(/* ...args */) {
                 var node = head,
                     len = arguments.length,
                     args,
@@ -7277,7 +7307,7 @@
          *
          * @return {QuerySelectResponse} Queried data.
          */
-        function useQuerySelect (mapQuerySelect, deps) {
+        function useQuerySelect(mapQuerySelect, deps) {
             return (0, external_wp_data_namespaceObject.useSelect)((select, registry) => {
                 const resolve = store => enrichSelectors(select(store));
 
@@ -7433,7 +7463,7 @@
          * @return Entity record data.
          * @template RecordType
          */
-        function useEntityRecord (kind, name, recordId, options = {
+        function useEntityRecord(kind, name, recordId, options = {
             enabled: true
         }) {
             const {
@@ -7475,7 +7505,7 @@
             };
         }
 
-        function __experimentalUseEntityRecord (kind, name, recordId, options) {
+        function __experimentalUseEntityRecord(kind, name, recordId, options) {
             external_wp_deprecated_default()(`wp.data.__experimentalUseEntityRecord`, {
                 alternative: 'wp.data.useEntityRecord',
                 since: '6.1'
@@ -7537,7 +7567,7 @@
          * @template RecordType
          */
 
-        function useEntityRecords (kind, name, queryArgs = {}, options = {
+        function useEntityRecords(kind, name, queryArgs = {}, options = {
             enabled: true
         }) {
             // Serialize queryArgs to a string that can be safely used as a React dep.
@@ -7564,7 +7594,7 @@
             };
         }
 
-        function __experimentalUseEntityRecords (kind, name, queryArgs, options) {
+        function __experimentalUseEntityRecords(kind, name, queryArgs, options) {
             external_wp_deprecated_default()(`wp.data.__experimentalUseEntityRecords`, {
                 alternative: 'wp.data.useEntityRecords',
                 since: '6.1'
@@ -7649,7 +7679,7 @@
          * @return Entity records data.
          * @template IdType
          */
-        function useResourcePermissions (resource, id) {
+        function useResourcePermissions(resource, id) {
             return useQuerySelect(resolve => {
                 const {
                     canUser
@@ -7704,7 +7734,7 @@
             }, [resource, id]);
         }
 
-        function __experimentalUseResourcePermissions (resource, id) {
+        function __experimentalUseResourcePermissions(resource, id) {
             external_wp_deprecated_default()(`wp.data.__experimentalUseResourcePermissions`, {
                 alternative: 'wp.data.useResourcePermissions',
                 since: '6.1'

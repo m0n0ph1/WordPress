@@ -2,11 +2,11 @@
     /**
      * The template for displaying the 404 template in the Twenty Twenty theme.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Twenty
-     * @since Twenty Twenty 1.0
+     * @since      Twenty Twenty 1.0
      */
-    
+
     get_header();
 ?>
 
@@ -17,15 +17,13 @@
             <h1 class="entry-title"><?php _e('Page Not Found', 'twentytwenty'); ?></h1>
 
             <div class="intro-text">
-                <p><?php _e('The page you were looking for could not be found. It might have been removed, renamed, or did not exist in the first place.',
-                        'twentytwenty'); ?></p></div>
-            
+                <p><?php _e('The page you were looking for could not be found. It might have been removed, renamed, or did not exist in the first place.', 'twentytwenty'); ?></p>
+            </div>
+
             <?php
-                get_search_form(
-                    [
-                        'aria_label' => __('404 not found', 'twentytwenty'),
-                    ]
-                );
+                get_search_form([
+                                    'aria_label' => __('404 not found', 'twentytwenty'),
+                                ]);
             ?>
 
         </div><!-- .section-inner -->

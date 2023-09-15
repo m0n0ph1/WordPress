@@ -134,7 +134,7 @@
             // Set up the toggle button and insert it before the wrapping label.
             self.toggler = $(_before)
                 .insertBefore(self.wrappingLabel)
-                .css({ backgroundColor: self.initialValue });
+                .css({backgroundColor: self.initialValue});
             // Set the toggle button span element text.
             self.toggler.find('.wp-color-result-text').text(__('Select Color'));
             // Set up the Iris container and insert it after the wrapping label.
@@ -187,7 +187,7 @@
                  * @return {void}
                  */
                 change: function (event, ui) {
-                    self.toggler.css({ backgroundColor: ui.color.toString() });
+                    self.toggler.css({backgroundColor: ui.color.toString()});
 
                     if (typeof self.options.change === 'function') {
                         self.options.change.call(this, event, ui);

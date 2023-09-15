@@ -2,40 +2,38 @@
     /**
      * List Table API: WP_Links_List_Table class
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
-     * @since 3.1.0
+     * @since      3.1.0
      */
-    
+
     /**
      * Core class used to implement displaying links in a list table.
      *
      * @since 3.1.0
      *
-     * @see WP_List_Table
+     * @see   WP_List_Table
      */
     class WP_Links_List_Table extends WP_List_Table
     {
-        
         /**
          * Constructor.
          *
          * @param array $args An associative array of arguments.
-         * @see WP_List_Table::__construct() for more information on default arguments.
+         *
+         * @see   WP_List_Table::__construct() for more information on default arguments.
          *
          * @since 3.1.0
          *
          */
         public function __construct($args = [])
         {
-            parent::__construct(
-                [
-                    'plural' => 'bookmarks',
-                    'screen' => isset($args['screen']) ? $args['screen'] : null,
-                ]
-            );
+            parent::__construct([
+                                    'plural' => 'bookmarks',
+                                    'screen' => isset($args['screen']) ? $args['screen'] : null,
+                                ]);
         }
-        
+
         /**
          * @return bool
          */
@@ -43,9 +41,9 @@
         {
             return current_user_can('manage_links');
         }
-        
+
         /**
-         * @global int $cat_id
+         * @global int    $cat_id
          * @global string $s
          * @global string $orderby
          * @global string $order
@@ -53,37 +51,41 @@
         public function prepare_items()
         {
             global $cat_id, $s, $orderby, $order;
-            
+
             wp_reset_vars(['action', 'cat_id', 'link_id', 'orderby', 'order', 's']);
-            
+
             $args = [
                 'hide_invisible' => 0,
                 'hide_empty' => 0,
             ];
-            
-            if ('all' !== $cat_id) {
+
+            if('all' !== $cat_id)
+            {
                 $args['category'] = $cat_id;
             }
-            if (!empty($s)) {
+            if(! empty($s))
+            {
                 $args['search'] = $s;
             }
-            if (!empty($orderby)) {
+            if(! empty($orderby))
+            {
                 $args['orderby'] = $orderby;
             }
-            if (!empty($order)) {
+            if(! empty($order))
+            {
                 $args['order'] = $order;
             }
-            
+
             $this->items = get_bookmarks($args);
         }
-        
+
         /**
          */
         public function no_items()
         {
             _e('No links found.');
         }
-        
+
         /**
          * @return string[] Array of column titles keyed by their column name.
          */
@@ -99,11 +101,12 @@
                 'rating' => __('Rating'),
             ];
         }
-        
+
         /**
          * Handles the checkbox column output.
          *
          * @param object $item The current link object.
+         *
          * @since 5.9.0 Renamed `$link` to `$item` to match parent class for PHP 8 named parameter support.
          *
          * @since 4.3.0
@@ -112,7 +115,7 @@
         {
             // Restores the more descriptive, specific name for use within this method.
             $link = $item;
-            
+
             ?>
             <label class="label-covers-full-cell" for="cb-select-<?php echo $link->link_id; ?>">
 			<span class="screen-reader-text">
@@ -128,30 +131,26 @@
                    value="<?php echo esc_attr($link->link_id); ?>"/>
             <?php
         }
-        
+
         /**
          * Handles the link name column output.
          *
          * @param object $link The current link object.
+         *
          * @since 4.3.0
          *
          */
         public function column_name($link)
         {
             $edit_link = get_edit_bookmark_link($link);
-            printf(
-                '<strong><a class="row-title" href="%s" aria-label="%s">%s</a></strong>',
-                $edit_link,
-                /* translators: %s: Link name. */
-                esc_attr(sprintf(__('Edit &#8220;%s&#8221;'), $link->link_name)),
-                $link->link_name
-            );
+            printf('<strong><a class="row-title" href="%s" aria-label="%s">%s</a></strong>', $edit_link, /* translators: %s: Link name. */ esc_attr(sprintf(__('Edit &#8220;%s&#8221;'), $link->link_name)), $link->link_name);
         }
-        
+
         /**
          * Handles the link URL column output.
          *
          * @param object $link The current link object.
+         *
          * @since 4.3.0
          *
          */
@@ -160,12 +159,13 @@
             $short_url = url_shorten($link->link_url);
             echo "<a href='$link->link_url'>$short_url</a>";
         }
-        
+
         /**
          * Handles the link categories column output.
          *
          * @param object $link The current link object.
-         * @global int $cat_id
+         *
+         * @global int   $cat_id
          *
          * @since 4.3.0
          *
@@ -173,26 +173,30 @@
         public function column_categories($link)
         {
             global $cat_id;
-            
+
             $cat_names = [];
-            foreach ($link->link_category as $category) {
+            foreach($link->link_category as $category)
+            {
                 $cat = get_term($category, 'link_category', OBJECT, 'display');
-                if (is_wp_error($cat)) {
+                if(is_wp_error($cat))
+                {
                     echo $cat->get_error_message();
                 }
                 $cat_name = $cat->name;
-                if ((int) $cat_id !== $category) {
+                if((int) $cat_id !== $category)
+                {
                     $cat_name = "<a href='link-manager.php?cat_id=$category'>$cat_name</a>";
                 }
                 $cat_names[] = $cat_name;
             }
             echo implode(', ', $cat_names);
         }
-        
+
         /**
          * Handles the link relation column output.
          *
          * @param object $link The current link object.
+         *
          * @since 4.3.0
          *
          */
@@ -200,27 +204,32 @@
         {
             echo empty($link->link_rel) ? '<br />' : $link->link_rel;
         }
-        
+
         /**
          * Handles the link visibility column output.
          *
          * @param object $link The current link object.
+         *
          * @since 4.3.0
          *
          */
         public function column_visible($link)
         {
-            if ('Y' === $link->link_visible) {
+            if('Y' === $link->link_visible)
+            {
                 _e('Yes');
-            } else {
+            }
+            else
+            {
                 _e('No');
             }
         }
-        
+
         /**
          * Handles the link rating column output.
          *
          * @param object $link The current link object.
+         *
          * @since 4.3.0
          *
          */
@@ -228,12 +237,13 @@
         {
             echo $link->link_rating;
         }
-        
+
         /**
          * Handles the default column output.
          *
-         * @param object $item Link object.
+         * @param object $item        Link object.
          * @param string $column_name Current column name.
+         *
          * @since 4.3.0
          * @since 5.9.0 Renamed `$link` to `$item` to match parent class for PHP 8 named parameter support.
          *
@@ -242,21 +252,23 @@
         {
             // Restores the more descriptive, specific name for use within this method.
             $link = $item;
-            
+
             /**
              * Fires for each registered custom link column.
              *
              * @param string $column_name Name of the custom column.
-             * @param int $link_id Link ID.
+             * @param int    $link_id     Link ID.
+             *
              * @since 2.1.0
              *
              */
             do_action('manage_link_custom_column', $column_name, $link->link_id);
         }
-        
+
         public function display_rows()
         {
-            foreach ($this->items as $link) {
+            foreach($this->items as $link)
+            {
                 $link = sanitize_bookmark($link);
                 $link->link_name = esc_attr($link->link_name);
                 $link->link_category = wp_get_link_cats($link->link_id);
@@ -267,7 +279,7 @@
                 <?php
             }
         }
-        
+
         /**
          * @return array
          */
@@ -275,19 +287,21 @@
         {
             $actions = [];
             $actions['delete'] = __('Delete');
-            
+
             return $actions;
         }
-        
+
         /**
          * @param string $which
-         * @global int $cat_id
+         *
+         * @global int   $cat_id
          */
         protected function extra_tablenav($which)
         {
             global $cat_id;
-            
-            if ('top' !== $which) {
+
+            if('top' !== $which)
+            {
                 return;
             }
             ?>
@@ -303,17 +317,17 @@
                         'show_count' => 0,
                         'orderby' => 'name',
                     ];
-                    
-                    echo '<label class="screen-reader-text" for="cat_id">' . get_taxonomy('link_category')->labels->filter_by_item . '</label>';
-                    
+
+                    echo '<label class="screen-reader-text" for="cat_id">'.get_taxonomy('link_category')->labels->filter_by_item.'</label>';
+
                     wp_dropdown_categories($dropdown_options);
-                    
+
                     submit_button(__('Filter'), '', 'filter_action', false, ['id' => 'post-query-submit']);
                 ?>
             </div>
             <?php
         }
-        
+
         /**
          * @return array
          */
@@ -326,7 +340,7 @@
                 'rating' => ['rating', false, __('Rating'), __('Table ordered by Rating.')],
             ];
         }
-        
+
         /**
          * Gets the name of the default primary column.
          *
@@ -338,13 +352,14 @@
         {
             return 'name';
         }
-        
+
         /**
          * Generates and displays row action links.
          *
-         * @param object $item Link being acted upon.
+         * @param object $item        Link being acted upon.
          * @param string $column_name Current column name.
-         * @param string $primary Primary column name.
+         * @param string $primary     Primary column name.
+         *
          * @return string Row actions output for links, or an empty string
          *                if the current column is not the primary column.
          * @since 4.3.0
@@ -353,26 +368,20 @@
          */
         protected function handle_row_actions($item, $column_name, $primary)
         {
-            if ($primary !== $column_name) {
+            if($primary !== $column_name)
+            {
                 return '';
             }
-            
+
             // Restores the more descriptive, specific name for use within this method.
             $link = $item;
-            
+
             $edit_link = get_edit_bookmark_link($link);
-            
+
             $actions = [];
-            $actions['edit'] = '<a href="' . $edit_link . '">' . __('Edit') . '</a>';
-            $actions['delete'] = sprintf(
-                '<a class="submitdelete" href="%s" onclick="return confirm( \'%s\' );">%s</a>',
-                wp_nonce_url("link.php?action=delete&amp;link_id=$link->link_id", 'delete-bookmark_' . $link->link_id),
-                /* translators: %s: Link name. */
-                esc_js(sprintf(__("You are about to delete this link '%s'\n  'Cancel' to stop, 'OK' to delete."),
-                    $link->link_name)),
-                __('Delete')
-            );
-            
+            $actions['edit'] = '<a href="'.$edit_link.'">'.__('Edit').'</a>';
+            $actions['delete'] = sprintf('<a class="submitdelete" href="%s" onclick="return confirm( \'%s\' );">%s</a>', wp_nonce_url("link.php?action=delete&amp;link_id=$link->link_id", 'delete-bookmark_'.$link->link_id), /* translators: %s: Link name. */ esc_js(sprintf(__("You are about to delete this link '%s'\n  'Cancel' to stop, 'OK' to delete."), $link->link_name)), __('Delete'));
+
             return $this->row_actions($actions);
         }
     }

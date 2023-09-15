@@ -4,7 +4,7 @@
      *
      * @since Twenty Twenty-Two 1.0
      */
-    
+
     /**
      * Registers block patterns and categories.
      *
@@ -21,31 +21,32 @@
             'query' => ['label' => __('Query', 'twentytwentytwo')],
             'pages' => ['label' => __('Pages', 'twentytwentytwo')],
         ];
-        
+
         /**
          * Filters the theme block pattern categories.
          *
          * @param array[] $block_pattern_categories {
-         *     An associative array of block pattern categories, keyed by category name.
+         *                                          An associative array of block pattern categories, keyed by category name.
          *
-         * @type array[] $properties {
-         *         An array of block category properties.
+         * @type array[]  $properties               {
+         *                                          An array of block category properties.
          *
-         * @type string $label A human-readable label for the pattern category.
-         *     }
-         * }
+         * @type string   $label                    A human-readable label for the pattern category.
+         *                                          }
+         *                                          }
          * @since Twenty Twenty-Two 1.0
          *
          */
-        $block_pattern_categories = apply_filters('twentytwentytwo_block_pattern_categories',
-            $block_pattern_categories);
-        
-        foreach ($block_pattern_categories as $name => $properties) {
-            if (!WP_Block_Pattern_Categories_Registry::get_instance()->is_registered($name)) {
+        $block_pattern_categories = apply_filters('twentytwentytwo_block_pattern_categories', $block_pattern_categories);
+
+        foreach($block_pattern_categories as $name => $properties)
+        {
+            if(! WP_Block_Pattern_Categories_Registry::get_instance()->is_registered($name))
+            {
                 register_block_pattern_category($name, $properties);
             }
         }
-        
+
         $block_patterns = [
             'footer-default',
             'footer-dark',
@@ -115,24 +116,23 @@
             'query-large-titles',
             'query-irregular-grid',
         ];
-        
+
         /**
          * Filters the theme block patterns.
          *
          * @param array $block_patterns List of block patterns by name.
+         *
          * @since Twenty Twenty-Two 1.0
          *
          */
         $block_patterns = apply_filters('twentytwentytwo_block_patterns', $block_patterns);
-        
-        foreach ($block_patterns as $block_pattern) {
-            $pattern_file = get_theme_file_path('/inc/patterns/' . $block_pattern . '.php');
-            
-            register_block_pattern(
-                'twentytwentytwo/' . $block_pattern,
-                require $pattern_file
-            );
+
+        foreach($block_patterns as $block_pattern)
+        {
+            $pattern_file = get_theme_file_path('/inc/patterns/'.$block_pattern.'.php');
+
+            register_block_pattern('twentytwentytwo/'.$block_pattern, require $pattern_file);
         }
     }
-    
+
     add_action('init', 'twentytwentytwo_register_block_patterns', 9);

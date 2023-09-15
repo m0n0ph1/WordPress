@@ -253,7 +253,7 @@
                     }
 
                     item = ui.item.data('ui-autocomplete-item');
-                    if (false !== this._trigger('focus', event, { item: item })) {
+                    if (false !== this._trigger('focus', event, {item: item})) {
 
                         // use value to match what will end up in the input, if it was a key event
                         if (event.originalEvent && /^key/.test(event.originalEvent.type)) {
@@ -288,7 +288,7 @@
                         });
                     }
 
-                    if (false !== this._trigger('select', event, { item: item })) {
+                    if (false !== this._trigger('select', event, {item: item})) {
                         this._value(item.value);
                     }
 
@@ -443,7 +443,7 @@
             this._addClass('ui-autocomplete-loading');
             this.cancelSearch = false;
 
-            this.source({ term: value }, this._response());
+            this.source({term: value}, this._response());
         },
 
         _response: function () {
@@ -465,7 +465,7 @@
             if (content) {
                 content = this._normalize(content);
             }
-            this._trigger('response', null, { content: content });
+            this._trigger('response', null, {content: content});
             if (!this.options.disabled && content && content.length && !this.cancelSearch) {
                 this._suggest(content);
                 this._trigger('open');
@@ -496,7 +496,7 @@
 
         _change: function (event) {
             if (this.previous !== this._value()) {
-                this._trigger('change', event, { item: this.selectedItem });
+                this._trigger('change', event, {item: this.selectedItem});
             }
         },
 

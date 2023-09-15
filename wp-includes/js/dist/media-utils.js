@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -113,7 +113,7 @@
              * @param {Object} toolbar toolbar for featured image state
              * @return {void}
              */
-            featuredImageToolbar (toolbar) {
+            featuredImageToolbar(toolbar) {
                 this.createSelectToolbar(toolbar, {
                     text: wp.media.view.l10n.setFeaturedImage,
                     state: this.options.state
@@ -125,7 +125,7 @@
              *
              * @return {void}
              */
-            editState () {
+            editState() {
                 const selection = this.state('featured-image').get('selection');
                 const view = new wp.media.view.EditImage({
                     model: selection.single(),
@@ -142,7 +142,7 @@
              *
              * @return {void}
              */
-            createStates: function createStates () {
+            createStates: function createStates() {
                 this.on('toolbar:create:featured-image', this.featuredImageToolbar, this);
                 this.on('content:render:edit-image', this.editState, this);
                 this.states.add([new wp.media.controller.FeaturedImage(), new wp.media.controller.EditImage({
@@ -176,7 +176,7 @@
              *
              * @return {void}
              */
-            galleryToolbar () {
+            galleryToolbar() {
                 const editing = this.state().get('editing');
                 this.toolbar.set(new wp.media.view.Toolbar({
                     controller: this,
@@ -192,7 +192,7 @@
                             /**
                              * @fires wp.media.controller.State#update
                              */
-                            click () {
+                            click() {
                                 const controller = this.controller,
                                     state = controller.state();
                                 controller.close();
@@ -212,7 +212,7 @@
              *
              * @return {void}
              */
-            editState () {
+            editState() {
                 const selection = this.state('gallery').get('selection');
                 const view = new wp.media.view.EditImage({
                     model: selection.single(),
@@ -229,7 +229,7 @@
              *
              * @return {void}
              */
-            createStates: function createStates () {
+            createStates: function createStates() {
                 this.on('toolbar:create:main-gallery', this.galleryToolbar, this);
                 this.on('content:render:edit-image', this.editState, this);
                 this.states.add([new wp.media.controller.Library({
@@ -284,14 +284,14 @@
     };
 
     class MediaUpload extends external_wp_element_namespaceObject.Component {
-        constructor ({
-                         allowedTypes,
-                         gallery = false,
-                         unstableFeaturedImageFlow = false,
-                         modalClass,
-                         multiple = false,
-                         title = (0, external_wp_i18n_namespaceObject.__)('Select or Upload Media')
-                     }) {
+        constructor({
+                        allowedTypes,
+                        gallery = false,
+                        unstableFeaturedImageFlow = false,
+                        modalClass,
+                        multiple = false,
+                        title = (0, external_wp_i18n_namespaceObject.__)('Select or Upload Media')
+                    }) {
             super(...arguments);
             this.openModal = this.openModal.bind(this);
             this.onOpen = this.onOpen.bind(this);
@@ -330,7 +330,7 @@
             this.initializeListeners();
         }
 
-        initializeListeners () {
+        initializeListeners() {
             // When an image is selected in the media frame...
             this.frame.on('select', this.onSelect);
             this.frame.on('update', this.onUpdate);
@@ -345,7 +345,7 @@
          */
 
 
-        buildAndSetGalleryFrame () {
+        buildAndSetGalleryFrame() {
             const {
                 addToGallery = false,
                 allowedTypes,
@@ -402,7 +402,7 @@
          */
 
 
-        buildAndSetFeatureImageFrame () {
+        buildAndSetFeatureImageFrame() {
             const {
                 wp
             } = window;
@@ -421,11 +421,11 @@
             wp.media.frame = this.frame;
         }
 
-        componentWillUnmount () {
+        componentWillUnmount() {
             this.frame.remove();
         }
 
-        onUpdate (selections) {
+        onUpdate(selections) {
             const {
                 onSelect,
                 multiple = false
@@ -444,7 +444,7 @@
             }
         }
 
-        onSelect () {
+        onSelect() {
             const {
                 onSelect,
                 multiple = false
@@ -454,7 +454,7 @@
             onSelect(multiple ? attachment : attachment[0]);
         }
 
-        onOpen () {
+        onOpen() {
             const {
                 wp
             } = window;
@@ -493,7 +493,7 @@
             });
         }
 
-        onClose () {
+        onClose() {
             const {
                 onClose
             } = this.props;
@@ -503,7 +503,7 @@
             }
         }
 
-        updateCollection () {
+        updateCollection() {
             const frameContent = this.frame.content.get();
 
             if (frameContent && frameContent.collection) {
@@ -517,7 +517,7 @@
             }
         }
 
-        openModal () {
+        openModal() {
             if (this.props.gallery) {
                 this.buildAndSetGalleryFrame();
             }
@@ -525,7 +525,7 @@
             this.frame.open();
         }
 
-        render () {
+        render() {
             return this.props.render({
                 open: this.openModal
             });
@@ -569,7 +569,7 @@
      */
 
 
-    function getMimeTypesArray (wpMimeTypesObject) {
+    function getMimeTypesArray(wpMimeTypesObject) {
         if (!wpMimeTypesObject) {
             return wpMimeTypesObject;
         }
@@ -597,15 +597,15 @@
      * @param {?Object}  $0.wpAllowedMimeTypes List of allowed mime types and file extensions.
      */
 
-    async function uploadMedia ({
-                                    allowedTypes,
-                                    additionalData = {},
-                                    filesList,
-                                    maxUploadFileSize,
-                                    onError = noop,
-                                    onFileChange,
-                                    wpAllowedMimeTypes = null
-                                }) {
+    async function uploadMedia({
+                                   allowedTypes,
+                                   additionalData = {},
+                                   filesList,
+                                   maxUploadFileSize,
+                                   onError = noop,
+                                   onFileChange,
+                                   wpAllowedMimeTypes = null
+                               }) {
         // Cast filesList to array.
         const files = [...filesList];
         const filesSet = [];
@@ -741,7 +741,7 @@
      * @return {Promise} Media Object Promise.
      */
 
-    function createMediaFromFile (file, additionalData) {
+    function createMediaFromFile(file, additionalData) {
         // Create upload payload.
         const data = new window.FormData();
         data.append('file', file, file.name || file.type.replace('/', '.'));

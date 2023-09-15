@@ -2,12 +2,13 @@
     /**
      * The Footer Sidebar
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Fourteen
-     * @since Twenty Fourteen 1.0
+     * @since      Twenty Fourteen 1.0
      */
-    
-    if (!is_active_sidebar('sidebar-3')) {
+
+    if(! is_active_sidebar('sidebar-3'))
+    {
         return;
     }
 ?>

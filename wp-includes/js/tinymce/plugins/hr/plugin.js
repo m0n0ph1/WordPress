@@ -9,7 +9,7 @@
                 editor.execCommand('mceInsertContent', false, '<hr />');
             });
         };
-        var Commands = { register: register };
+        var Commands = {register: register};
 
         var register$1 = function (editor) {
             editor.addButton('hr', {
@@ -24,14 +24,14 @@
                 context: 'insert'
             });
         };
-        var Buttons = { register: register$1 };
+        var Buttons = {register: register$1};
 
         global.add('hr', function (editor) {
             Commands.register(editor);
             Buttons.register(editor);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

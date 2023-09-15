@@ -4,32 +4,33 @@
      *
      * Here we keep the DB structure and option values.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
-    
+
     /**
      * Declare these as global in case schema.php is included from a function.
      *
-     * @global wpdb $wpdb WordPress database abstraction object.
-     * @global array $wp_queries
+     * @global wpdb   $wpdb WordPress database abstraction object.
+     * @global array  $wp_queries
      * @global string $charset_collate
      */
     global $wpdb, $wp_queries, $charset_collate;
-    
+
     /**
      * The database character collate.
      */
     $charset_collate = $wpdb->get_charset_collate();
-    
+
     /**
      * Retrieve the SQL for creating database tables.
      *
-     * @param string $scope Optional. The tables for which to retrieve SQL. Can be all, global, ms_global, or blog
-     *     tables. Defaults to all.
-     * @param int $blog_id Optional. The site ID for which to retrieve SQL. Default is the current site ID.
+     * @param string $scope   Optional. The tables for which to retrieve SQL. Can be all, global, ms_global, or blog
+     *                        tables. Defaults to all.
+     * @param int    $blog_id Optional. The site ID for which to retrieve SQL. Default is the current site ID.
+     *
      * @return string The SQL needed to create the requested tables.
-     * @global wpdb $wpdb WordPress database abstraction object.
+     * @global wpdb  $wpdb    WordPress database abstraction object.
      *
      * @since 3.3.0
      *
@@ -37,23 +38,24 @@
     function wp_get_db_schema($scope = 'all', $blog_id = null)
     {
         global $wpdb;
-        
+
         $charset_collate = $wpdb->get_charset_collate();
-        
-        if ($blog_id && (int) $blog_id !== $wpdb->blogid) {
+
+        if($blog_id && (int) $blog_id !== $wpdb->blogid)
+        {
             $old_blog_id = $wpdb->set_blog_id($blog_id);
         }
-        
+
         // Engage multisite if in the middle of turning it on from network.php.
         $is_multisite = is_multisite() || (defined('WP_INSTALLING_NETWORK') && WP_INSTALLING_NETWORK);
-        
+
         /*
          * Indexes have a maximum size of 767 bytes. Historically, we haven't need to be concerned about that.
          * As of 4.2, however, we moved to utf8mb4, which uses 4 bytes per character. This means that an index which
          * used to have room for floor(767/3) = 255 characters, now only has room for floor(767/4) = 191 characters.
          */
         $max_index_length = 191;
-        
+
         // Blog-specific tables.
         $blog_tables = "CREATE TABLE $wpdb->termmeta (
 	meta_id bigint(20) unsigned NOT NULL auto_increment,
@@ -188,7 +190,7 @@ CREATE TABLE $wpdb->posts (
 	KEY post_parent (post_parent),
 	KEY post_author (post_author)
 ) $charset_collate;\n";
-        
+
         // Single site users table. The multisite flavor of the users table is handled below.
         $users_single_table = "CREATE TABLE $wpdb->users (
 	ID bigint(20) unsigned NOT NULL auto_increment,
@@ -206,7 +208,7 @@ CREATE TABLE $wpdb->posts (
 	KEY user_nicename (user_nicename),
 	KEY user_email (user_email)
 ) $charset_collate;\n";
-        
+
         // Multisite users table.
         $users_multi_table = "CREATE TABLE $wpdb->users (
 	ID bigint(20) unsigned NOT NULL auto_increment,
@@ -226,7 +228,7 @@ CREATE TABLE $wpdb->posts (
 	KEY user_nicename (user_nicename),
 	KEY user_email (user_email)
 ) $charset_collate;\n";
-        
+
         // Usermeta.
         $usermeta_table = "CREATE TABLE $wpdb->usermeta (
 	umeta_id bigint(20) unsigned NOT NULL auto_increment,
@@ -237,14 +239,17 @@ CREATE TABLE $wpdb->posts (
 	KEY user_id (user_id),
 	KEY meta_key (meta_key($max_index_length))
 ) $charset_collate;\n";
-        
+
         // Global tables.
-        if ($is_multisite) {
-            $global_tables = $users_multi_table . $usermeta_table;
-        } else {
-            $global_tables = $users_single_table . $usermeta_table;
+        if($is_multisite)
+        {
+            $global_tables = $users_multi_table.$usermeta_table;
         }
-        
+        else
+        {
+            $global_tables = $users_single_table.$usermeta_table;
+        }
+
         // Multisite global tables.
         $ms_global_tables = "CREATE TABLE $wpdb->blogs (
 	blog_id bigint(20) NOT NULL auto_increment,
@@ -315,14 +320,16 @@ CREATE TABLE $wpdb->signups (
 	KEY user_login_email (user_login,user_email),
 	KEY domain_path (domain(140),path(51))
 ) $charset_collate;";
-        
-        switch ($scope) {
+
+        switch($scope)
+        {
             case 'blog':
                 $queries = $blog_tables;
                 break;
             case 'global':
                 $queries = $global_tables;
-                if ($is_multisite) {
+                if($is_multisite)
+                {
                     $queries .= $ms_global_tables;
                 }
                 break;
@@ -331,39 +338,42 @@ CREATE TABLE $wpdb->signups (
                 break;
             case 'all':
             default:
-                $queries = $global_tables . $blog_tables;
-                if ($is_multisite) {
+                $queries = $global_tables.$blog_tables;
+                if($is_multisite)
+                {
                     $queries .= $ms_global_tables;
                 }
                 break;
         }
-        
-        if (isset($old_blog_id)) {
+
+        if(isset($old_blog_id))
+        {
             $wpdb->set_blog_id($old_blog_id);
         }
-        
+
         return $queries;
     }
 
 // Populate for back compat.
     $wp_queries = wp_get_db_schema('all');
-    
+
     /**
      * Create WordPress options and set the default values.
      *
-     * @param array $options Optional. Custom option $key => $value pairs to use. Default empty array.
+     * @param array $options               Optional. Custom option $key => $value pairs to use. Default empty array.
+     *
      * @since 5.1.0 The $options parameter has been added.
      *
-     * @global wpdb $wpdb WordPress database abstraction object.
-     * @global int $wp_db_version WordPress database version.
-     * @global int $wp_current_db_version The old (current) database version.
+     * @global wpdb $wpdb                  WordPress database abstraction object.
+     * @global int  $wp_db_version         WordPress database version.
+     * @global int  $wp_current_db_version The old (current) database version.
      *
      * @since 1.5.0
      */
     function populate_options(array $options = [])
     {
         global $wpdb, $wp_db_version, $wp_current_db_version;
-        
+
         $guessurl = wp_guess_url();
         /**
          * Fires before creating WordPress options and populating their default values.
@@ -371,21 +381,23 @@ CREATE TABLE $wpdb->signups (
          * @since 2.6.0
          */
         do_action('populate_options');
-        
+
         // If WP_DEFAULT_THEME doesn't exist, fall back to the latest core default theme.
         $stylesheet = WP_DEFAULT_THEME;
         $template = WP_DEFAULT_THEME;
         $theme = wp_get_theme(WP_DEFAULT_THEME);
-        if (!$theme->exists()) {
+        if(! $theme->exists())
+        {
             $theme = WP_Theme::get_core_default_theme();
         }
-        
+
         // If we can't find a core default theme, WP_DEFAULT_THEME is the best we can do.
-        if ($theme) {
+        if($theme)
+        {
             $stylesheet = $theme->get_stylesheet();
             $template = $theme->get_template();
         }
-        
+
         $timezone_string = '';
         $gmt_offset = 0;
         /*
@@ -404,13 +416,15 @@ CREATE TABLE $wpdb->signups (
          * country code for which you want to look up the supported timezone names.
          */
         $offset_or_tz = _x('0', 'default GMT offset or timezone string');
-        if (is_numeric($offset_or_tz)) {
+        if(is_numeric($offset_or_tz))
+        {
             $gmt_offset = $offset_or_tz;
-        } elseif ($offset_or_tz && in_array($offset_or_tz, timezone_identifiers_list(DateTimeZone::ALL_WITH_BC),
-                true)) {
+        }
+        elseif($offset_or_tz && in_array($offset_or_tz, timezone_identifiers_list(DateTimeZone::ALL_WITH_BC), true))
+        {
             $timezone_string = $offset_or_tz;
         }
-        
+
         $defaults = [
             'siteurl' => $guessurl,
             'home' => $guessurl,
@@ -453,7 +467,7 @@ CREATE TABLE $wpdb->signups (
             'ping_sites' => 'http://rpc.pingomatic.com/',
             'comment_max_links' => 2,
             'gmt_offset' => $gmt_offset,
-            
+
             // 1.5.0
             'default_email_category' => 1,
             'recently_edited' => '',
@@ -461,26 +475,26 @@ CREATE TABLE $wpdb->signups (
             'stylesheet' => $stylesheet,
             'comment_registration' => 0,
             'html_type' => 'text/html',
-            
+
             // 1.5.1
             'use_trackback' => 0,
-            
+
             // 2.0.0
             'default_role' => 'subscriber',
             'db_version' => $wp_db_version,
-            
+
             // 2.0.1
             'uploads_use_yearmonth_folders' => 1,
             'upload_path' => '',
-            
+
             // 2.1.0
             'blog_public' => '1',
             'default_link_category' => 2,
             'show_on_front' => 'posts',
-            
+
             // 2.2.0
             'tag_base' => '',
-            
+
             // 2.5.0
             'show_avatars' => '1',
             'avatar_rating' => 'G',
@@ -490,10 +504,10 @@ CREATE TABLE $wpdb->signups (
             'thumbnail_crop' => 1,
             'medium_size_w' => 300,
             'medium_size_h' => 300,
-            
+
             // 2.6.0
             'avatar_default' => 'mystery',
-            
+
             // 2.7.0
             'large_size_w' => 1024,
             'large_size_h' => 1024,
@@ -513,42 +527,42 @@ CREATE TABLE $wpdb->signups (
             'widget_text' => [],
             'widget_rss' => [],
             'uninstall_plugins' => [],
-            
+
             // 2.8.0
             'timezone_string' => $timezone_string,
-            
+
             // 3.0.0
             'page_for_posts' => 0,
             'page_on_front' => 0,
-            
+
             // 3.1.0
             'default_post_format' => 0,
-            
+
             // 3.5.0
             'link_manager_enabled' => 0,
-            
+
             // 4.3.0
             'finished_splitting_shared_terms' => 1,
             'site_icon' => 0,
-            
+
             // 4.4.0
             'medium_large_size_w' => 768,
             'medium_large_size_h' => 0,
-            
+
             // 4.9.6
             'wp_page_for_privacy_policy' => 0,
-            
+
             // 4.9.8
             'show_comments_cookies_opt_in' => 1,
-            
+
             // 5.3.0
             'admin_email_lifespan' => (time() + 6 * MONTH_IN_SECONDS),
-            
+
             // 5.5.0
             'disallowed_keys' => '',
             'comment_previously_approved' => 1,
             'auto_plugin_theme_update_emails' => [],
-            
+
             // 5.6.0
             'auto_update_core_dev' => 'enabled',
             'auto_update_core_minor' => 'enabled',
@@ -557,24 +571,25 @@ CREATE TABLE $wpdb->signups (
              * See https://core.trac.wordpress.org/ticket/51742.
              */
             'auto_update_core_major' => 'enabled',
-            
+
             // 5.8.0
             'wp_force_deactivated_plugins' => [],
         ];
-        
+
         // 3.3.0
-        if (!is_multisite()) {
-            $defaults['initial_db_version'] = !empty($wp_current_db_version) && $wp_current_db_version < $wp_db_version
-                ? $wp_current_db_version : $wp_db_version;
+        if(! is_multisite())
+        {
+            $defaults['initial_db_version'] = ! empty($wp_current_db_version) && $wp_current_db_version < $wp_db_version ? $wp_current_db_version : $wp_db_version;
         }
-        
+
         // 3.0.0 multisite.
-        if (is_multisite()) {
+        if(is_multisite())
+        {
             $defaults['permalink_structure'] = '/%year%/%monthnum%/%day%/%postname%/';
         }
-        
+
         $options = wp_parse_args($options, $defaults);
-        
+
         // Set autoload to no for these options.
         $fat_options = [
             'moderation_keys',
@@ -583,43 +598,52 @@ CREATE TABLE $wpdb->signups (
             'uninstall_plugins',
             'auto_plugin_theme_update_emails',
         ];
-        
-        $keys = "'" . implode("', '", array_keys($options)) . "'";
+
+        $keys = "'".implode("', '", array_keys($options))."'";
         $existing_options = $wpdb->get_col("SELECT option_name FROM $wpdb->options WHERE option_name in ( $keys )"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        
+
         $insert = '';
-        
-        foreach ($options as $option => $value) {
-            if (in_array($option, $existing_options, true)) {
+
+        foreach($options as $option => $value)
+        {
+            if(in_array($option, $existing_options, true))
+            {
                 continue;
             }
-            
-            if (in_array($option, $fat_options, true)) {
+
+            if(in_array($option, $fat_options, true))
+            {
                 $autoload = 'no';
-            } else {
+            }
+            else
+            {
                 $autoload = 'yes';
             }
-            
-            if (is_array($value)) {
+
+            if(is_array($value))
+            {
                 $value = serialize($value);
             }
-            
-            if (!empty($insert)) {
+
+            if(! empty($insert))
+            {
                 $insert .= ', ';
             }
-            
+
             $insert .= $wpdb->prepare('(%s, %s, %s)', $option, $value, $autoload);
         }
-        
-        if (!empty($insert)) {
-            $wpdb->query("INSERT INTO $wpdb->options (option_name, option_value, autoload) VALUES " . $insert); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+        if(! empty($insert))
+        {
+            $wpdb->query("INSERT INTO $wpdb->options (option_name, option_value, autoload) VALUES ".$insert); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         }
-        
+
         // In case it is set, but blank, update "home".
-        if (!__get_option('home')) {
+        if(! __get_option('home'))
+        {
             update_option('home', $guessurl);
         }
-        
+
         // Delete unused options.
         $unusedoptions = [
             'blodotgsping_url',
@@ -699,17 +723,18 @@ CREATE TABLE $wpdb->signups (
             'gzipcompression',
             'advanced_edit',
         ];
-        foreach ($unusedoptions as $option) {
+        foreach($unusedoptions as $option)
+        {
             delete_option($option);
         }
-        
+
         // Delete obsolete magpie stuff.
         $wpdb->query("DELETE FROM $wpdb->options WHERE option_name REGEXP '^rss_[0-9a-f]{32}(_ts)?$'");
-        
+
         // Clear expired transients.
         delete_expired_transients(true);
     }
-    
+
     /**
      * Execute WordPress role creation for the various WordPress versions.
      *
@@ -726,7 +751,7 @@ CREATE TABLE $wpdb->signups (
         populate_roles_280();
         populate_roles_300();
     }
-    
+
     /**
      * Create the roles for WordPress 2.0
      *
@@ -740,7 +765,7 @@ CREATE TABLE $wpdb->signups (
         add_role('author', 'Author');
         add_role('contributor', 'Contributor');
         add_role('subscriber', 'Subscriber');
-        
+
         // Add caps for Administrator role.
         $role = get_role('administrator');
         $role->add_cap('switch_themes');
@@ -773,7 +798,7 @@ CREATE TABLE $wpdb->signups (
         $role->add_cap('level_2');
         $role->add_cap('level_1');
         $role->add_cap('level_0');
-        
+
         // Add caps for Editor role.
         $role = get_role('editor');
         $role->add_cap('moderate_comments');
@@ -795,7 +820,7 @@ CREATE TABLE $wpdb->signups (
         $role->add_cap('level_2');
         $role->add_cap('level_1');
         $role->add_cap('level_0');
-        
+
         // Add caps for Author role.
         $role = get_role('author');
         $role->add_cap('upload_files');
@@ -806,20 +831,20 @@ CREATE TABLE $wpdb->signups (
         $role->add_cap('level_2');
         $role->add_cap('level_1');
         $role->add_cap('level_0');
-        
+
         // Add caps for Contributor role.
         $role = get_role('contributor');
         $role->add_cap('edit_posts');
         $role->add_cap('read');
         $role->add_cap('level_1');
         $role->add_cap('level_0');
-        
+
         // Add caps for Subscriber role.
         $role = get_role('subscriber');
         $role->add_cap('read');
         $role->add_cap('level_0');
     }
-    
+
     /**
      * Create and modify WordPress roles for WordPress 2.1.
      *
@@ -828,12 +853,14 @@ CREATE TABLE $wpdb->signups (
     function populate_roles_210()
     {
         $roles = ['administrator', 'editor'];
-        foreach ($roles as $role) {
+        foreach($roles as $role)
+        {
             $role = get_role($role);
-            if (empty($role)) {
+            if(empty($role))
+            {
                 continue;
             }
-            
+
             $role->add_cap('edit_others_pages');
             $role->add_cap('edit_published_pages');
             $role->add_cap('publish_pages');
@@ -850,25 +877,28 @@ CREATE TABLE $wpdb->signups (
             $role->add_cap('edit_private_pages');
             $role->add_cap('read_private_pages');
         }
-        
+
         $role = get_role('administrator');
-        if (!empty($role)) {
+        if(! empty($role))
+        {
             $role->add_cap('delete_users');
             $role->add_cap('create_users');
         }
-        
+
         $role = get_role('author');
-        if (!empty($role)) {
+        if(! empty($role))
+        {
             $role->add_cap('delete_posts');
             $role->add_cap('delete_published_posts');
         }
-        
+
         $role = get_role('contributor');
-        if (!empty($role)) {
+        if(! empty($role))
+        {
             $role->add_cap('delete_posts');
         }
     }
-    
+
     /**
      * Create and modify WordPress roles for WordPress 2.3.
      *
@@ -877,12 +907,13 @@ CREATE TABLE $wpdb->signups (
     function populate_roles_230()
     {
         $role = get_role('administrator');
-        
-        if (!empty($role)) {
+
+        if(! empty($role))
+        {
             $role->add_cap('unfiltered_upload');
         }
     }
-    
+
     /**
      * Create and modify WordPress roles for WordPress 2.5.
      *
@@ -891,12 +922,13 @@ CREATE TABLE $wpdb->signups (
     function populate_roles_250()
     {
         $role = get_role('administrator');
-        
-        if (!empty($role)) {
+
+        if(! empty($role))
+        {
             $role->add_cap('edit_dashboard');
         }
     }
-    
+
     /**
      * Create and modify WordPress roles for WordPress 2.6.
      *
@@ -905,13 +937,14 @@ CREATE TABLE $wpdb->signups (
     function populate_roles_260()
     {
         $role = get_role('administrator');
-        
-        if (!empty($role)) {
+
+        if(! empty($role))
+        {
             $role->add_cap('update_plugins');
             $role->add_cap('delete_plugins');
         }
     }
-    
+
     /**
      * Create and modify WordPress roles for WordPress 2.7.
      *
@@ -920,13 +953,14 @@ CREATE TABLE $wpdb->signups (
     function populate_roles_270()
     {
         $role = get_role('administrator');
-        
-        if (!empty($role)) {
+
+        if(! empty($role))
+        {
             $role->add_cap('install_plugins');
             $role->add_cap('update_themes');
         }
     }
-    
+
     /**
      * Create and modify WordPress roles for WordPress 2.8.
      *
@@ -935,12 +969,13 @@ CREATE TABLE $wpdb->signups (
     function populate_roles_280()
     {
         $role = get_role('administrator');
-        
-        if (!empty($role)) {
+
+        if(! empty($role))
+        {
             $role->add_cap('install_themes');
         }
     }
-    
+
     /**
      * Create and modify WordPress roles for WordPress 3.0.
      *
@@ -949,8 +984,9 @@ CREATE TABLE $wpdb->signups (
     function populate_roles_300()
     {
         $role = get_role('administrator');
-        
-        if (!empty($role)) {
+
+        if(! empty($role))
+        {
             $role->add_cap('update_core');
             $role->add_cap('list_users');
             $role->add_cap('remove_users');
@@ -960,8 +996,8 @@ CREATE TABLE $wpdb->signups (
             $role->add_cap('export');
         }
     }
-    
-    if (!function_exists('install_network')) :
+
+    if(! function_exists('install_network')) :
         /**
          * Install Network.
          *
@@ -969,104 +1005,102 @@ CREATE TABLE $wpdb->signups (
          */
         function install_network()
         {
-            if (!defined('WP_INSTALLING_NETWORK')) {
+            if(! defined('WP_INSTALLING_NETWORK'))
+            {
                 define('WP_INSTALLING_NETWORK', true);
             }
-            
+
             dbDelta(wp_get_db_schema('global'));
         }
     endif;
-    
+
     /**
      * Populate network settings.
      *
-     * @param int $network_id ID of network to populate.
-     * @param string $domain The domain name for the network. Example: "example.com".
-     * @param string $email Email address for the network administrator.
-     * @param string $site_name The name of the network.
-     * @param string $path Optional. The path to append to the network's domain name. Default '/'.
-     * @param bool $subdomain_install Optional. Whether the network is a subdomain installation or a subdirectory
-     *     installation. Default false, meaning the network is a subdirectory installation.
+     * @param int         $network_id        ID of network to populate.
+     * @param string      $domain            The domain name for the network. Example: "example.com".
+     * @param string      $email             Email address for the network administrator.
+     * @param string      $site_name         The name of the network.
+     * @param string      $path              Optional. The path to append to the network's domain name. Default '/'.
+     * @param bool        $subdomain_install Optional. Whether the network is a subdomain installation or a subdirectory
+     *                                       installation. Default false, meaning the network is a subdirectory installation.
+     *
      * @return true|WP_Error True on success, or WP_Error on warning (with the installation otherwise successful,
      *                       so the error code must be checked) or failure.
      * @since 3.0.0
      *
-     * @global wpdb $wpdb WordPress database abstraction object.
-     * @global object $current_site
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
+     * @global wpdb       $wpdb              WordPress database abstraction object.
+     * @global object     $current_site
+     * @global WP_Rewrite $wp_rewrite        WordPress rewrite component.
      *
      */
     function populate_network(
-        $network_id = 1,
-        $domain = '',
-        $email = '',
-        $site_name = '',
-        $path = '/',
-        $subdomain_install = false
+        $network_id = 1, $domain = '', $email = '', $site_name = '', $path = '/', $subdomain_install = false
     ) {
         global $wpdb, $current_site, $wp_rewrite;
-        
+
         $network_id = (int) $network_id;
-        
+
         $errors = new WP_Error();
-        if ('' === $domain) {
+        if('' === $domain)
+        {
             $errors->add('empty_domain', __('You must provide a domain name.'));
         }
-        if ('' === $site_name) {
+        if('' === $site_name)
+        {
             $errors->add('empty_sitename', __('You must provide a name for your network of sites.'));
         }
-        
+
         // Check for network collision.
         $network_exists = false;
-        if (is_multisite()) {
-            if (get_network($network_id)) {
-                $errors->add('siteid_exists', __('The network already exists.'));
-            }
-        } else {
-            if ($network_id === (int) $wpdb->get_var(
-                    $wpdb->prepare("SELECT id FROM $wpdb->site WHERE id = %d", $network_id)
-                )) {
+        if(is_multisite())
+        {
+            if(get_network($network_id))
+            {
                 $errors->add('siteid_exists', __('The network already exists.'));
             }
         }
-        
-        if (!is_email($email)) {
+        else
+        {
+            if($network_id === (int) $wpdb->get_var($wpdb->prepare("SELECT id FROM $wpdb->site WHERE id = %d", $network_id)))
+            {
+                $errors->add('siteid_exists', __('The network already exists.'));
+            }
+        }
+
+        if(! is_email($email))
+        {
             $errors->add('invalid_email', __('You must provide a valid email address.'));
         }
-        
-        if ($errors->has_errors()) {
+
+        if($errors->has_errors())
+        {
             return $errors;
         }
-        
-        if (1 === $network_id) {
-            $wpdb->insert(
-                $wpdb->site,
-                [
-                    'domain' => $domain,
-                    'path' => $path,
-                ]
-            );
+
+        if(1 === $network_id)
+        {
+            $wpdb->insert($wpdb->site, [
+                'domain' => $domain,
+                'path' => $path,
+            ]);
             $network_id = $wpdb->insert_id;
-        } else {
-            $wpdb->insert(
-                $wpdb->site,
-                [
-                    'domain' => $domain,
-                    'path' => $path,
-                    'id' => $network_id,
-                ]
-            );
         }
-        
-        populate_network_meta(
-            $network_id,
-            [
-                'admin_email' => $email,
-                'site_name' => $site_name,
-                'subdomain_install' => $subdomain_install,
-            ]
-        );
-        
+        else
+        {
+            $wpdb->insert($wpdb->site, [
+                'domain' => $domain,
+                'path' => $path,
+                'id' => $network_id,
+            ]);
+        }
+
+        populate_network_meta($network_id, [
+            'admin_email' => $email,
+            'site_name' => $site_name,
+            'subdomain_install' => $subdomain_install,
+        ]);
+
         /*
          * When upgrading from single to multisite, assume the current site will
          * become the main site of the network. When using populate_network()
@@ -1074,178 +1108,182 @@ CREATE TABLE $wpdb->signups (
          * these steps since the main site of the new network has not yet been
          * created.
          */
-        if (!is_multisite()) {
+        if(! is_multisite())
+        {
             $current_site = new stdClass();
             $current_site->domain = $domain;
             $current_site->path = $path;
             $current_site->site_name = ucfirst($domain);
-            $wpdb->insert(
-                $wpdb->blogs,
-                [
-                    'site_id' => $network_id,
-                    'blog_id' => 1,
-                    'domain' => $domain,
-                    'path' => $path,
-                    'registered' => current_time('mysql'),
-                ]
-            );
+            $wpdb->insert($wpdb->blogs, [
+                'site_id' => $network_id,
+                'blog_id' => 1,
+                'domain' => $domain,
+                'path' => $path,
+                'registered' => current_time('mysql'),
+            ]);
             $current_site->blog_id = $wpdb->insert_id;
-            
+
             $site_user_id = (int) $wpdb->get_var(
                 $wpdb->prepare(
                     "SELECT meta_value
 				FROM $wpdb->sitemeta
-				WHERE meta_key = %s AND site_id = %d",
-                    'admin_user_id',
-                    $network_id
+				WHERE meta_key = %s AND site_id = %d", 'admin_user_id', $network_id
                 )
             );
-            
+
             update_user_meta($site_user_id, 'source_domain', $domain);
             update_user_meta($site_user_id, 'primary_blog', $current_site->blog_id);
-            
+
             // Unable to use update_network_option() while populating the network.
-            $wpdb->insert(
-                $wpdb->sitemeta,
-                [
-                    'site_id' => $network_id,
-                    'meta_key' => 'main_site',
-                    'meta_value' => $current_site->blog_id,
-                ]
-            );
-            
-            if ($subdomain_install) {
+            $wpdb->insert($wpdb->sitemeta, [
+                'site_id' => $network_id,
+                'meta_key' => 'main_site',
+                'meta_value' => $current_site->blog_id,
+            ]);
+
+            if($subdomain_install)
+            {
                 $wp_rewrite->set_permalink_structure('/%year%/%monthnum%/%day%/%postname%/');
-            } else {
+            }
+            else
+            {
                 $wp_rewrite->set_permalink_structure('/blog/%year%/%monthnum%/%day%/%postname%/');
             }
-            
+
             flush_rewrite_rules();
-            
-            if (!$subdomain_install) {
+
+            if(! $subdomain_install)
+            {
                 return true;
             }
-            
+
             $vhost_ok = false;
             $errstr = '';
-            $hostname = substr(md5(time()), 0, 6) . '.' . $domain; // Very random hostname!
-            $page = wp_remote_get(
-                'http://' . $hostname,
-                [
-                    'timeout' => 5,
-                    'httpversion' => '1.1',
-                ]
-            );
-            if (is_wp_error($page)) {
+            $hostname = substr(md5(time()), 0, 6).'.'.$domain; // Very random hostname!
+            $page = wp_remote_get('http://'.$hostname, [
+                'timeout' => 5,
+                'httpversion' => '1.1',
+            ]);
+            if(is_wp_error($page))
+            {
                 $errstr = $page->get_error_message();
-            } elseif (200 === wp_remote_retrieve_response_code($page)) {
+            }
+            elseif(200 === wp_remote_retrieve_response_code($page))
+            {
                 $vhost_ok = true;
             }
-            
-            if (!$vhost_ok) {
-                $msg = '<p><strong>' . __('Warning! Wildcard DNS may not be configured correctly!') . '</strong></p>';
-                
-                $msg .= '<p>' . sprintf(
-                    /* translators: %s: Host name. */
-                        __('The installer attempted to contact a random hostname (%s) on your domain.'),
-                        '<code>' . $hostname . '</code>'
-                    );
-                if (!empty($errstr)) {
+
+            if(! $vhost_ok)
+            {
+                $msg = '<p><strong>'.__('Warning! Wildcard DNS may not be configured correctly!').'</strong></p>';
+
+                $msg .= '<p>'.sprintf(/* translators: %s: Host name. */ __('The installer attempted to contact a random hostname (%s) on your domain.'), '<code>'.$hostname.'</code>');
+                if(! empty($errstr))
+                {
                     /* translators: %s: Error message. */
-                    $msg .= ' ' . sprintf(__('This resulted in an error message: %s'), '<code>' . $errstr . '</code>');
+                    $msg .= ' '.sprintf(__('This resulted in an error message: %s'), '<code>'.$errstr.'</code>');
                 }
                 $msg .= '</p>';
-                
-                $msg .= '<p>' . sprintf(
-                    /* translators: %s: Asterisk symbol (*). */
-                        __('To use a subdomain configuration, you must have a wildcard entry in your DNS. This usually means adding a %s hostname record pointing at your web server in your DNS configuration tool.'),
-                        '<code>*</code>'
-                    ) . '</p>';
-                
-                $msg .= '<p>' . __('You can still use your site but any subdomain you create may not be accessible. If you know your DNS is correct, ignore this message.') . '</p>';
-                
+
+                $msg .= '<p>'.sprintf(/* translators: %s: Asterisk symbol (*). */ __('To use a subdomain configuration, you must have a wildcard entry in your DNS. This usually means adding a %s hostname record pointing at your web server in your DNS configuration tool.'), '<code>*</code>').'</p>';
+
+                $msg .= '<p>'.__('You can still use your site but any subdomain you create may not be accessible. If you know your DNS is correct, ignore this message.').'</p>';
+
                 return new WP_Error('no_wildcard_dns', $msg);
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Creates WordPress network meta and sets the default values.
      *
-     * @param int $network_id Network ID to populate meta for.
-     * @param array $meta Optional. Custom meta $key => $value pairs to use. Default empty array.
-     * @global int $wp_db_version WordPress database version.
+     * @param int   $network_id    Network ID to populate meta for.
+     * @param array $meta          Optional. Custom meta $key => $value pairs to use. Default empty array.
+     *
+     * @global int  $wp_db_version WordPress database version.
      *
      * @since 5.1.0
      *
-     * @global wpdb $wpdb WordPress database abstraction object.
+     * @global wpdb $wpdb          WordPress database abstraction object.
      */
     function populate_network_meta($network_id, array $meta = [])
     {
         global $wpdb, $wp_db_version;
-        
+
         $network_id = (int) $network_id;
-        
-        $email = !empty($meta['admin_email']) ? $meta['admin_email'] : '';
+
+        $email = ! empty($meta['admin_email']) ? $meta['admin_email'] : '';
         $subdomain_install = isset($meta['subdomain_install']) ? (int) $meta['subdomain_install'] : 0;
-        
+
         // If a user with the provided email does not exist, default to the current user as the new network admin.
-        $site_user = !empty($email) ? get_user_by('email', $email) : false;
-        if (false === $site_user) {
+        $site_user = ! empty($email) ? get_user_by('email', $email) : false;
+        if(false === $site_user)
+        {
             $site_user = wp_get_current_user();
         }
-        
-        if (empty($email)) {
+
+        if(empty($email))
+        {
             $email = $site_user->user_email;
         }
-        
+
         $template = get_option('template');
         $stylesheet = get_option('stylesheet');
         $allowed_themes = [$stylesheet => true];
-        
-        if ($template !== $stylesheet) {
+
+        if($template !== $stylesheet)
+        {
             $allowed_themes[$template] = true;
         }
-        
-        if (WP_DEFAULT_THEME !== $stylesheet && WP_DEFAULT_THEME !== $template) {
+
+        if(WP_DEFAULT_THEME !== $stylesheet && WP_DEFAULT_THEME !== $template)
+        {
             $allowed_themes[WP_DEFAULT_THEME] = true;
         }
-        
+
         // If WP_DEFAULT_THEME doesn't exist, also include the latest core default theme.
-        if (!wp_get_theme(WP_DEFAULT_THEME)->exists()) {
+        if(! wp_get_theme(WP_DEFAULT_THEME)->exists())
+        {
             $core_default = WP_Theme::get_core_default_theme();
-            if ($core_default) {
+            if($core_default)
+            {
                 $allowed_themes[$core_default->get_stylesheet()] = true;
             }
         }
-        
-        if (function_exists('clean_network_cache')) {
+
+        if(function_exists('clean_network_cache'))
+        {
             clean_network_cache($network_id);
-        } else {
+        }
+        else
+        {
             wp_cache_delete($network_id, 'networks');
         }
-        
-        if (!is_multisite()) {
+
+        if(! is_multisite())
+        {
             $site_admins = [$site_user->user_login];
-            $users = get_users(
-                [
-                    'fields' => ['user_login'],
-                    'role' => 'administrator',
-                ]
-            );
-            if ($users) {
-                foreach ($users as $user) {
+            $users = get_users([
+                                   'fields' => ['user_login'],
+                                   'role' => 'administrator',
+                               ]);
+            if($users)
+            {
+                foreach($users as $user)
+                {
                     $site_admins[] = $user->user_login;
                 }
-                
+
                 $site_admins = array_unique($site_admins);
             }
-        } else {
+        }
+        else
+        {
             $site_admins = get_site_option('site_admins');
         }
-        
+
         /* translators: Do not translate USERNAME, SITE_NAME, BLOG_URL, PASSWORD: those are placeholders. */
         $welcome_email = __(
             'Howdy USERNAME,
@@ -1263,7 +1301,7 @@ We hope you enjoy your new site. Thanks!
 
 --The Team @ SITE_NAME'
         );
-        
+
         $misc_exts = [
             // Images.
             'jpg',
@@ -1296,7 +1334,7 @@ We hope you enjoy your new site. Thanks!
         $audio_exts = wp_get_audio_extensions();
         $video_exts = wp_get_video_extensions();
         $upload_filetypes = array_unique(array_merge($misc_exts, $audio_exts, $video_exts));
-        
+
         $sitemeta = [
             'site_name' => __('My Network'),
             'admin_email' => $email,
@@ -1313,7 +1351,7 @@ We hope you enjoy your new site. Thanks!
             /* translators: %s: Site link. */
             'first_post' => __('Welcome to %s. This is your first post. Edit or delete it, then start writing!'),
             // @todo - Network admins should have a method of editing the network siteurl (used for cookie hash).
-            'siteurl' => get_option('siteurl') . '/',
+            'siteurl' => get_option('siteurl').'/',
             'add_new_users' => '0',
             'upload_space_check_disabled' => is_multisite() ? get_site_option('upload_space_check_disabled') : '1',
             'subdomain_install' => $subdomain_install,
@@ -1323,82 +1361,94 @@ We hope you enjoy your new site. Thanks!
             'active_sitewide_plugins' => [],
             'WPLANG' => get_locale(),
         ];
-        if (!$subdomain_install) {
+        if(! $subdomain_install)
+        {
             $sitemeta['illegal_names'][] = 'blog';
         }
-        
+
         $sitemeta = wp_parse_args($meta, $sitemeta);
-        
+
         /**
          * Filters meta for a network on creation.
          *
-         * @param array $sitemeta Associative array of network meta keys and values to be inserted.
-         * @param int $network_id ID of network to populate.
+         * @param array $sitemeta   Associative array of network meta keys and values to be inserted.
+         * @param int   $network_id ID of network to populate.
+         *
          * @since 3.7.0
          *
          */
         $sitemeta = apply_filters('populate_network_meta', $sitemeta, $network_id);
-        
+
         $insert = '';
-        foreach ($sitemeta as $meta_key => $meta_value) {
-            if (is_array($meta_value)) {
+        foreach($sitemeta as $meta_key => $meta_value)
+        {
+            if(is_array($meta_value))
+            {
                 $meta_value = serialize($meta_value);
             }
-            if (!empty($insert)) {
+            if(! empty($insert))
+            {
                 $insert .= ', ';
             }
             $insert .= $wpdb->prepare('( %d, %s, %s)', $network_id, $meta_key, $meta_value);
         }
-        $wpdb->query("INSERT INTO $wpdb->sitemeta ( site_id, meta_key, meta_value ) VALUES " . $insert); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $wpdb->query("INSERT INTO $wpdb->sitemeta ( site_id, meta_key, meta_value ) VALUES ".$insert); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
     }
-    
+
     /**
      * Creates WordPress site meta and sets the default values.
      *
-     * @param int $site_id Site ID to populate meta for.
-     * @param array $meta Optional. Custom meta $key => $value pairs to use. Default empty array.
+     * @param int   $site_id Site ID to populate meta for.
+     * @param array $meta    Optional. Custom meta $key => $value pairs to use. Default empty array.
+     *
      * @since 5.1.0
      *
-     * @global wpdb $wpdb WordPress database abstraction object.
+     * @global wpdb $wpdb    WordPress database abstraction object.
      *
      */
     function populate_site_meta($site_id, array $meta = [])
     {
         global $wpdb;
-        
+
         $site_id = (int) $site_id;
-        
-        if (!is_site_meta_supported()) {
+
+        if(! is_site_meta_supported())
+        {
             return;
         }
-        
-        if (empty($meta)) {
+
+        if(empty($meta))
+        {
             return;
         }
-        
+
         /**
          * Filters meta for a site on creation.
          *
-         * @param array $meta Associative array of site meta keys and values to be inserted.
-         * @param int $site_id ID of site to populate.
+         * @param array $meta    Associative array of site meta keys and values to be inserted.
+         * @param int   $site_id ID of site to populate.
+         *
          * @since 5.2.0
          *
          */
         $site_meta = apply_filters('populate_site_meta', $meta, $site_id);
-        
+
         $insert = '';
-        foreach ($site_meta as $meta_key => $meta_value) {
-            if (is_array($meta_value)) {
+        foreach($site_meta as $meta_key => $meta_value)
+        {
+            if(is_array($meta_value))
+            {
                 $meta_value = serialize($meta_value);
             }
-            if (!empty($insert)) {
+            if(! empty($insert))
+            {
                 $insert .= ', ';
             }
             $insert .= $wpdb->prepare('( %d, %s, %s)', $site_id, $meta_key, $meta_value);
         }
-        
-        $wpdb->query("INSERT INTO $wpdb->blogmeta ( blog_id, meta_key, meta_value ) VALUES " . $insert); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        
+
+        $wpdb->query("INSERT INTO $wpdb->blogmeta ( blog_id, meta_key, meta_value ) VALUES ".$insert); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
         wp_cache_delete($site_id, 'blog_meta');
         wp_cache_set_sites_last_changed();
     }

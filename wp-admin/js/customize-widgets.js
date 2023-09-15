@@ -5,7 +5,9 @@
 /* global _wpCustomizeWidgetsSettings */
 (function (wp, $) {
 
-    if (!wp || !wp.customize) { return; }
+    if (!wp || !wp.customize) {
+        return;
+    }
 
     // Set up our namespace...
     var api = wp.customize,
@@ -253,7 +255,7 @@
          * Updates the count of the available widgets that have the `search_matched` attribute.
          */
         updateSearchMatchesCount: function () {
-            this.searchMatchesCount = this.collection.where({ search_matched: true }).length;
+            this.searchMatchesCount = this.collection.where({search_matched: true}).length;
         },
 
         /**
@@ -327,7 +329,7 @@
             this.select(widgetTpl);
 
             widgetId = $(this.selected).data('widget-id');
-            widget = this.collection.findWhere({ id: widgetId });
+            widget = this.collection.findWhere({id: widgetId});
             if (!widget) {
                 return;
             }
@@ -437,7 +439,7 @@
             if (isEnter) {
                 this.submit();
             } else if (isEsc) {
-                this.close({ returnFocus: true });
+                this.close({returnFocus: true});
             }
 
             if (this.currentSidebarControl && isTab && (isShift && isSearchFocused || !isShift && isLastWidgetFocused)) {
@@ -617,7 +619,7 @@
             // Update widget whenever model changes.
             this.setting.bind(function (to, from) {
                 if (!_(from).isEqual(to) && !self.isWidgetUpdating) {
-                    self.updateWidget({ instance: to });
+                    self.updateWidget({instance: to});
                 }
             });
         },
@@ -914,7 +916,7 @@
             $saveBtn.removeClass('button-primary');
             $saveBtn.on('click', function (e) {
                 e.preventDefault();
-                self.updateWidget({ disable_form: true }); // @todo disable_form is unused?
+                self.updateWidget({disable_form: true}); // @todo disable_form is unused?
             });
 
             updateWidgetDebounced = _.debounce(function () {
@@ -925,7 +927,7 @@
             $widgetContent.on('keydown', 'input', function (e) {
                 if (13 === e.which) { // Enter.
                     e.preventDefault();
-                    self.updateWidget({ ignoreActiveElement: true });
+                    self.updateWidget({ignoreActiveElement: true});
                 }
             });
 
@@ -1201,7 +1203,7 @@
             });
 
             if (instanceOverride) {
-                data += '&' + $.param({ 'sanitized_widget_setting': JSON.stringify(instanceOverride) });
+                data += '&' + $.param({'sanitized_widget_setting': JSON.stringify(instanceOverride)});
             } else {
                 data += '&' + $inputs.serialize();
             }
@@ -1295,7 +1297,7 @@
                     }
 
                     if (completeCallback) {
-                        completeCallback.call(self, null, { noChange: !isChanged, ajaxFinished: true });
+                        completeCallback.call(self, null, {noChange: !isChanged, ajaxFinished: true});
                     }
                 } else {
                     // General error message.
@@ -1487,7 +1489,7 @@
                     $inside.fadeOut(args.duration, complete);
                 } else {
                     $inside.slideUp(args.duration, function () {
-                        $widget.css({ width: '', margin: '' });
+                        $widget.css({width: '', margin: ''});
                         complete();
                     });
                 }
@@ -1788,7 +1790,7 @@
                 newWidgetIds = _(newWidgetIds).filter(function (newWidgetId) {
                     var parsedWidgetId = parseWidgetId(newWidgetId);
 
-                    return !!api.Widgets.availableWidgets.findWhere({ id_base: parsedWidgetId.id_base });
+                    return !!api.Widgets.availableWidgets.findWhere({id_base: parsedWidgetId.id_base});
                 });
 
                 widgetFormControls = _(newWidgetIds).map(function (widgetId) {
@@ -1873,7 +1875,7 @@
 
                         // Make old single widget available for adding again.
                         removedIdBase = parseWidgetId(removedWidgetId).id_base;
-                        widget = api.Widgets.availableWidgets.findWhere({ id_base: removedIdBase });
+                        widget = api.Widgets.availableWidgets.findWhere({id_base: removedIdBase});
                         if (widget && !widget.get('is_multi')) {
                             widget.set('is_disabled', false);
                         }
@@ -2029,7 +2031,7 @@
                     formControl.collapse();
                 });
 
-                addNewWidgetBtn.attr({ 'tabindex': '-1', 'aria-hidden': 'true' });
+                addNewWidgetBtn.attr({'tabindex': '-1', 'aria-hidden': 'true'});
                 reorderBtn.attr('aria-label', l10n.reorderLabelOff);
                 wp.a11y.speak(l10n.reorderModeOn);
                 // Hide widget titles while reordering: title is already in the reorder controls.
@@ -2071,7 +2073,7 @@
                 parsedWidgetId = parseWidgetId(widgetId),
                 widgetNumber = parsedWidgetId.number,
                 widgetIdBase = parsedWidgetId.id_base,
-                widget = api.Widgets.availableWidgets.findWhere({ id_base: widgetIdBase }),
+                widget = api.Widgets.availableWidgets.findWhere({id_base: widgetIdBase}),
                 settingId, isExistingWidget, widgetFormControl, sidebarWidgets, settingArgs, setting;
 
             if (!widget) {
@@ -2320,10 +2322,10 @@
      * @param {wp.customize.Section|wp.customize.Panel|wp.customize.Control} focusConstruct - The object to initially focus.
      * @param {wp.customize.Section|wp.customize.Panel|wp.customize.Control} returnConstruct - The object to return focus.
      */
-    function focusConstructWithBreadcrumb (focusConstruct, returnConstruct) {
+    function focusConstructWithBreadcrumb(focusConstruct, returnConstruct) {
         focusConstruct.focus();
 
-        function onceCollapsed (isExpanded) {
+        function onceCollapsed(isExpanded) {
             if (!isExpanded) {
                 focusConstruct.expanded.unbind(onceCollapsed);
                 returnConstruct.focus();
@@ -2337,7 +2339,7 @@
      * @param {string} widgetId
      * @return {Object}
      */
-    function parseWidgetId (widgetId) {
+    function parseWidgetId(widgetId) {
         var matches, parsed = {
             number: null,
             id_base: null
@@ -2359,7 +2361,7 @@
      * @param {string} widgetId
      * @return {string} settingId
      */
-    function widgetIdToSettingId (widgetId) {
+    function widgetIdToSettingId(widgetId) {
         var parsed = parseWidgetId(widgetId), settingId;
 
         settingId = 'widget_' + parsed.id_base;

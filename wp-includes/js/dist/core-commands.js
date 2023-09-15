@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -110,7 +110,7 @@
 
 
 
-    function useAdminNavigationCommands () {
+    function useAdminNavigationCommands() {
         (0, external_wp_commands_namespaceObject.useCommand)({
             name: 'core/add-new-post',
             label: (0, external_wp_i18n_namespaceObject.__)('Add new post'),
@@ -267,9 +267,9 @@
         wp_template_part: symbol_filled
     };
 
-    const getNavigationCommandLoaderPerPostType = postType => function useNavigationCommandLoader ({
-                                                                                                       search
-                                                                                                   }) {
+    const getNavigationCommandLoaderPerPostType = postType => function useNavigationCommandLoader({
+                                                                                                      search
+                                                                                                  }) {
         const history = useHistory();
         const supportsSearch = !['wp_template', 'wp_template_part'].includes(postType);
         const {
@@ -335,7 +335,7 @@
     const useTemplateNavigationCommandLoader = getNavigationCommandLoaderPerPostType('wp_template');
     const useTemplatePartNavigationCommandLoader = getNavigationCommandLoaderPerPostType('wp_template_part');
 
-    function useSiteEditorBasicNavigationCommands () {
+    function useSiteEditorBasicNavigationCommands() {
         const history = useHistory();
         const isSiteEditor = (0, external_wp_url_namespaceObject.getPath)(window.location.href)?.includes('site-editor.php');
         const commands = (0, external_wp_element_namespaceObject.useMemo)(() => {
@@ -453,7 +453,7 @@
         };
     }
 
-    function useSiteEditorNavigationCommands () {
+    function useSiteEditorNavigationCommands() {
         (0, external_wp_commands_namespaceObject.useCommandLoader)({
             name: 'core/edit-site/navigate-pages',
             hook: usePageNavigationCommandLoader
@@ -485,7 +485,7 @@
 
 
 
-    function useCommands () {
+    function useCommands() {
         useAdminNavigationCommands();
         useSiteEditorNavigationCommands();
     }

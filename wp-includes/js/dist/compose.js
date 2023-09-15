@@ -12,10 +12,11 @@
  *
  * Licensed MIT © Zeno Rocha
  */
-            (function webpackUniversalModuleDefinition (root, factory) {
+            (function webpackUniversalModuleDefinition(root, factory) {
                 if (true)
                     module.exports = factory();
-                else {}
+                else {
+                }
             })(this, function () {
                 return /******/ (function () { // webpackBootstrap
                     /******/
@@ -48,7 +49,7 @@
                              * @param {String} type
                              * @return {Boolean}
                              */
-                            function command (type) {
+                            function command(type) {
                                 try {
                                     return document.execCommand(type);
                                 } catch (err) {
@@ -63,7 +64,7 @@
                              * @return {String}
                              */
 
-                            var ClipboardActionCut = function ClipboardActionCut (target) {
+                            var ClipboardActionCut = function ClipboardActionCut(target) {
                                 var selectedText = select_default()(target);
                                 command('cut');
                                 return selectedText;
@@ -77,7 +78,7 @@
                              * @param {String} value
                              * @return {HTMLElement}
                              */
-                            function createFakeElement (value) {
+                            function createFakeElement(value) {
                                 var isRTL = document.documentElement.getAttribute('dir') === 'rtl';
                                 var fakeElement = document.createElement('textarea'); // Prevent zooming on iOS
 
@@ -105,7 +106,7 @@
                              * @return {String}
                              */
 
-                            var fakeCopyAction = function fakeCopyAction (value, options) {
+                            var fakeCopyAction = function fakeCopyAction(value, options) {
                                 var fakeElement = createFakeElement(value);
                                 options.container.appendChild(fakeElement);
                                 var selectedText = select_default()(fakeElement);
@@ -121,7 +122,7 @@
                              */
 
 
-                            var ClipboardActionCopy = function ClipboardActionCopy (target) {
+                            var ClipboardActionCopy = function ClipboardActionCopy(target) {
                                 var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
                                     container: document.body
                                 };
@@ -143,14 +144,14 @@
                             /* harmony default export */
                             var actions_copy = (ClipboardActionCopy);
                             ;// CONCATENATED MODULE: ./src/actions/default.js
-                            function _typeof (obj) {
+                            function _typeof(obj) {
                                 '@babel/helpers - typeof';
                                 if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
-                                    _typeof = function _typeof (obj) {
+                                    _typeof = function _typeof(obj) {
                                         return typeof obj;
                                     };
                                 } else {
-                                    _typeof = function _typeof (obj) {
+                                    _typeof = function _typeof(obj) {
                                         return obj && typeof Symbol === 'function' && obj.constructor === Symbol && obj !== Symbol.prototype ? 'symbol' : typeof obj;
                                     };
                                 }
@@ -163,7 +164,7 @@
                              * @param {Object} options
                              */
 
-                            var ClipboardActionDefault = function ClipboardActionDefault () {
+                            var ClipboardActionDefault = function ClipboardActionDefault() {
                                 var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
                                 // Defines base properties passed from constructor.
                                 var _options$action = options.action,
@@ -206,25 +207,27 @@
                             /* harmony default export */
                             var actions_default = (ClipboardActionDefault);
                             ;// CONCATENATED MODULE: ./src/clipboard.js
-                            function clipboard_typeof (obj) {
+                            function clipboard_typeof(obj) {
                                 '@babel/helpers - typeof';
                                 if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
-                                    clipboard_typeof = function _typeof (obj) {
+                                    clipboard_typeof = function _typeof(obj) {
                                         return typeof obj;
                                     };
                                 } else {
-                                    clipboard_typeof = function _typeof (obj) {
+                                    clipboard_typeof = function _typeof(obj) {
                                         return obj && typeof Symbol === 'function' && obj.constructor === Symbol && obj !== Symbol.prototype ? 'symbol' : typeof obj;
                                     };
                                 }
                                 return clipboard_typeof(obj);
                             }
 
-                            function _classCallCheck (instance, Constructor) {
-                                if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); }
+                            function _classCallCheck(instance, Constructor) {
+                                if (!(instance instanceof Constructor)) {
+                                    throw new TypeError('Cannot call a class as a function');
+                                }
                             }
 
-                            function _defineProperties (target, props) {
+                            function _defineProperties(target, props) {
                                 for (var i = 0; i < props.length; i++) {
                                     var descriptor = props[i];
                                     descriptor.enumerable = descriptor.enumerable || false;
@@ -234,14 +237,16 @@
                                 }
                             }
 
-                            function _createClass (Constructor, protoProps, staticProps) {
+                            function _createClass(Constructor, protoProps, staticProps) {
                                 if (protoProps) _defineProperties(Constructor.prototype, protoProps);
                                 if (staticProps) _defineProperties(Constructor, staticProps);
                                 return Constructor;
                             }
 
-                            function _inherits (subClass, superClass) {
-                                if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function'); }
+                            function _inherits(subClass, superClass) {
+                                if (typeof superClass !== 'function' && superClass !== null) {
+                                    throw new TypeError('Super expression must either be null or a function');
+                                }
                                 subClass.prototype = Object.create(superClass && superClass.prototype, {
                                     constructor: {
                                         value: subClass,
@@ -252,37 +257,43 @@
                                 if (superClass) _setPrototypeOf(subClass, superClass);
                             }
 
-                            function _setPrototypeOf (o, p) {
-                                _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf (o, p) {
+                            function _setPrototypeOf(o, p) {
+                                _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
                                     o.__proto__ = p;
                                     return o;
                                 };
                                 return _setPrototypeOf(o, p);
                             }
 
-                            function _createSuper (Derived) {
+                            function _createSuper(Derived) {
                                 var hasNativeReflectConstruct = _isNativeReflectConstruct();
-                                return function _createSuperInternal () {
+                                return function _createSuperInternal() {
                                     var Super = _getPrototypeOf(Derived), result;
                                     if (hasNativeReflectConstruct) {
                                         var NewTarget = _getPrototypeOf(this).constructor;
                                         result = Reflect.construct(Super, arguments, NewTarget);
-                                    } else { result = Super.apply(this, arguments); }
+                                    } else {
+                                        result = Super.apply(this, arguments);
+                                    }
                                     return _possibleConstructorReturn(this, result);
                                 };
                             }
 
-                            function _possibleConstructorReturn (self, call) {
-                                if (call && (clipboard_typeof(call) === 'object' || typeof call === 'function')) { return call; }
+                            function _possibleConstructorReturn(self, call) {
+                                if (call && (clipboard_typeof(call) === 'object' || typeof call === 'function')) {
+                                    return call;
+                                }
                                 return _assertThisInitialized(self);
                             }
 
-                            function _assertThisInitialized (self) {
-                                if (self === void 0) { throw new ReferenceError('this hasn\'t been initialised - super() hasn\'t been called'); }
+                            function _assertThisInitialized(self) {
+                                if (self === void 0) {
+                                    throw new ReferenceError('this hasn\'t been initialised - super() hasn\'t been called');
+                                }
                                 return self;
                             }
 
-                            function _isNativeReflectConstruct () {
+                            function _isNativeReflectConstruct() {
                                 if (typeof Reflect === 'undefined' || !Reflect.construct) return false;
                                 if (Reflect.construct.sham) return false;
                                 if (typeof Proxy === 'function') return true;
@@ -290,11 +301,13 @@
                                     Date.prototype.toString.call(Reflect.construct(Date, [], function () {
                                     }));
                                     return true;
-                                } catch (e) { return false; }
+                                } catch (e) {
+                                    return false;
+                                }
                             }
 
-                            function _getPrototypeOf (o) {
-                                _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf (o) {
+                            function _getPrototypeOf(o) {
+                                _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
                                     return o.__proto__ || Object.getPrototypeOf(o);
                                 };
                                 return _getPrototypeOf(o);
@@ -306,7 +319,7 @@
                              * @param {Element} element
                              */
 
-                            function getAttributeValue (suffix, element) {
+                            function getAttributeValue(suffix, element) {
                                 var attribute = 'data-clipboard-'.concat(suffix);
 
                                 if (!element.hasAttribute(attribute)) {
@@ -331,7 +344,7 @@
                                  * @param {String|HTMLElement|HTMLCollection|NodeList} trigger
                                  * @param {Object} options
                                  */
-                                function Clipboard (trigger, options) {
+                                function Clipboard(trigger, options) {
                                     var _this;
 
                                     _classCallCheck(this, Clipboard);
@@ -353,7 +366,7 @@
 
                                 _createClass(Clipboard, [{
                                     key: 'resolveOptions',
-                                    value: function resolveOptions () {
+                                    value: function resolveOptions() {
                                         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
                                         this.action = typeof options.action === 'function' ? options.action : this.defaultAction;
                                         this.target = typeof options.target === 'function' ? options.target : this.defaultTarget;
@@ -367,7 +380,7 @@
 
                                 }, {
                                     key: 'listenClick',
-                                    value: function listenClick (trigger) {
+                                    value: function listenClick(trigger) {
                                         var _this2 = this;
 
                                         this.listener = listen_default()(trigger, 'click', function (e) {
@@ -381,7 +394,7 @@
 
                                 }, {
                                     key: 'onClick',
-                                    value: function onClick (e) {
+                                    value: function onClick(e) {
                                         var trigger = e.delegateTarget || e.currentTarget;
                                         var action = this.action(trigger) || 'copy';
                                         var text = actions_default({
@@ -395,7 +408,7 @@
                                             action: action,
                                             text: text,
                                             trigger: trigger,
-                                            clearSelection: function clearSelection () {
+                                            clearSelection: function clearSelection() {
                                                 if (trigger) {
                                                     trigger.focus();
                                                 }
@@ -411,7 +424,7 @@
 
                                 }, {
                                     key: 'defaultAction',
-                                    value: function defaultAction (trigger) {
+                                    value: function defaultAction(trigger) {
                                         return getAttributeValue('action', trigger);
                                     }
                                     /**
@@ -421,7 +434,7 @@
 
                                 }, {
                                     key: 'defaultTarget',
-                                    value: function defaultTarget (trigger) {
+                                    value: function defaultTarget(trigger) {
                                         var selector = getAttributeValue('target', trigger);
 
                                         if (selector) {
@@ -442,7 +455,7 @@
                                      * Default `text` lookup function.
                                      * @param {Element} trigger
                                      */
-                                    value: function defaultText (trigger) {
+                                    value: function defaultText(trigger) {
                                         return getAttributeValue('text', trigger);
                                     }
                                     /**
@@ -451,12 +464,12 @@
 
                                 }, {
                                     key: 'destroy',
-                                    value: function destroy () {
+                                    value: function destroy() {
                                         this.listener.destroy();
                                     }
                                 }], [{
                                     key: 'copy',
-                                    value: function copy (target) {
+                                    value: function copy(target) {
                                         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
                                             container: document.body
                                         };
@@ -470,7 +483,7 @@
 
                                 }, {
                                     key: 'cut',
-                                    value: function cut (target) {
+                                    value: function cut(target) {
                                         return actions_cut(target);
                                     }
                                     /**
@@ -481,7 +494,7 @@
 
                                 }, {
                                     key: 'isSupported',
-                                    value: function isSupported () {
+                                    value: function isSupported() {
                                         var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ['copy', 'cut'];
                                         var actions = typeof action === 'string' ? [action] : action;
                                         var support = !!document.queryCommandSupported;
@@ -526,7 +539,7 @@
                              * @param {String} selector
                              * @return {Function}
                              */
-                            function closest (element, selector) {
+                            function closest(element, selector) {
                                 while (element && element.nodeType !== DOCUMENT_NODE_TYPE) {
                                     if (typeof element.matches === 'function' &&
                                         element.matches(selector)) {
@@ -556,7 +569,7 @@
                              * @param {Boolean} useCapture
                              * @return {Object}
                              */
-                            function _delegate (element, selector, type, callback, useCapture) {
+                            function _delegate(element, selector, type, callback, useCapture) {
                                 var listenerFn = listener.apply(this, arguments);
 
                                 element.addEventListener(type, listenerFn, useCapture);
@@ -578,7 +591,7 @@
                              * @param {Boolean} useCapture
                              * @return {Object}
                              */
-                            function delegate (elements, selector, type, callback, useCapture) {
+                            function delegate(elements, selector, type, callback, useCapture) {
                                 // Handle the regular Element usage
                                 if (typeof elements.addEventListener === 'function') {
                                     return _delegate.apply(null, arguments);
@@ -611,7 +624,7 @@
                              * @param {Function} callback
                              * @return {Function}
                              */
-                            function listener (element, selector, type, callback) {
+                            function listener(element, selector, type, callback) {
                                 return function (e) {
                                     e.delegateTarget = closest(e.target, selector);
 
@@ -697,7 +710,7 @@
                              * @param {Function} callback
                              * @return {Object}
                              */
-                            function listen (target, type, callback) {
+                            function listen(target, type, callback) {
                                 if (!target && !type && !callback) {
                                     throw new Error('Missing required arguments');
                                 }
@@ -730,7 +743,7 @@
                              * @param {Function} callback
                              * @return {Object}
                              */
-                            function listenNode (node, type, callback) {
+                            function listenNode(node, type, callback) {
                                 node.addEventListener(type, callback);
 
                                 return {
@@ -749,7 +762,7 @@
                              * @param {Function} callback
                              * @return {Object}
                              */
-                            function listenNodeList (nodeList, type, callback) {
+                            function listenNodeList(nodeList, type, callback) {
                                 Array.prototype.forEach.call(nodeList, function (node) {
                                     node.addEventListener(type, callback);
                                 });
@@ -772,7 +785,7 @@
                              * @param {Function} callback
                              * @return {Object}
                              */
-                            function listenSelector (selector, type, callback) {
+                            function listenSelector(selector, type, callback) {
                                 return delegate(document.body, selector, type, callback);
                             }
 
@@ -784,7 +797,7 @@
                         /***/ 817:
                         /***/ (function (module) {
 
-                            function select (element) {
+                            function select(element) {
                                 var selectedText;
 
                                 if (element.nodeName === 'SELECT') {
@@ -832,7 +845,7 @@
                         /***/ 279:
                         /***/ (function (module) {
 
-                            function E () {
+                            function E() {
                                 // Keep this empty so it's easier to inherit from
                                 // (via https://github.com/lipsmack from https://github.com/scottcorgan/tiny-emitter/issues/3)
                             }
@@ -852,7 +865,7 @@
                                 once: function (name, callback, ctx) {
                                     var self = this;
 
-                                    function listener () {
+                                    function listener() {
                                         self.off(name, listener);
                                         callback.apply(ctx, arguments);
                                     };
@@ -913,7 +926,7 @@
                     /******/
                     /******/ 	// The require function
                     /******/
-                    function __nested_webpack_require_24495__ (moduleId) {
+                    function __nested_webpack_require_24495__(moduleId) {
                         /******/ 		// Check if module is in cache
                         /******/
                         if (__webpack_module_cache__[moduleId]) {
@@ -957,7 +970,7 @@
                                     return module;
                                 };
                             /******/
-                            __nested_webpack_require_24495__.d(getter, { a: getter });
+                            __nested_webpack_require_24495__.d(getter, {a: getter});
                             /******/
                             return getter;
                             /******/
@@ -976,7 +989,7 @@
                                 /******/
                                 if (__nested_webpack_require_24495__.o(definition, key) && !__nested_webpack_require_24495__.o(exports, key)) {
                                     /******/
-                                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                                     /******/
                                 }
                                 /******/
@@ -1188,7 +1201,7 @@
                  * @param {Function} callback
                  * @returns void
                  */
-                function _addEvent (object, type, callback) {
+                function _addEvent(object, type, callback) {
                     if (object.addEventListener) {
                         object.addEventListener(type, callback, false);
                         return;
@@ -1203,7 +1216,7 @@
                  * @param {Event} e
                  * @return {string}
                  */
-                function _characterFromEvent (e) {
+                function _characterFromEvent(e) {
 
                     // for keypress events we should return the character as is
                     if (e.type == 'keypress') {
@@ -1249,7 +1262,7 @@
                  * @param {Array} modifiers2
                  * @returns {boolean}
                  */
-                function _modifiersMatch (modifiers1, modifiers2) {
+                function _modifiersMatch(modifiers1, modifiers2) {
                     return modifiers1.sort().join(',') === modifiers2.sort().join(',');
                 }
 
@@ -1259,7 +1272,7 @@
                  * @param {Event} e
                  * @returns {Array}
                  */
-                function _eventModifiers (e) {
+                function _eventModifiers(e) {
                     var modifiers = [];
 
                     if (e.shiftKey) {
@@ -1287,7 +1300,7 @@
                  * @param {Event} e
                  * @returns void
                  */
-                function _preventDefault (e) {
+                function _preventDefault(e) {
                     if (e.preventDefault) {
                         e.preventDefault();
                         return;
@@ -1302,7 +1315,7 @@
                  * @param {Event} e
                  * @returns void
                  */
-                function _stopPropagation (e) {
+                function _stopPropagation(e) {
                     if (e.stopPropagation) {
                         e.stopPropagation();
                         return;
@@ -1317,7 +1330,7 @@
                  * @param {string} key
                  * @returns {boolean}
                  */
-                function _isModifier (key) {
+                function _isModifier(key) {
                     return key == 'shift' || key == 'ctrl' || key == 'alt' || key == 'meta';
                 }
 
@@ -1327,7 +1340,7 @@
                  *
                  * @return {Object}
                  */
-                function _getReverseMap () {
+                function _getReverseMap() {
                     if (!_REVERSE_MAP) {
                         _REVERSE_MAP = {};
                         for (var key in _MAP) {
@@ -1353,7 +1366,7 @@
                  * @param {Array} modifiers
                  * @param {string=} action passed in
                  */
-                function _pickBestAction (key, modifiers, action) {
+                function _pickBestAction(key, modifiers, action) {
 
                     // if no action was picked in we should try to pick the one
                     // that we think would work best for this key
@@ -1376,7 +1389,7 @@
                  * @param  {string} combination like "command+shift+l"
                  * @return {Array}
                  */
-                function _keysFromString (combination) {
+                function _keysFromString(combination) {
                     if (combination === '+') {
                         return ['+'];
                     }
@@ -1392,7 +1405,7 @@
                  * @param  {string=} action
                  * @returns {Object}
                  */
-                function _getKeyInfo (combination, action) {
+                function _getKeyInfo(combination, action) {
                     var keys;
                     var key;
                     var i;
@@ -1435,7 +1448,7 @@
                     };
                 }
 
-                function _belongsTo (element, ancestor) {
+                function _belongsTo(element, ancestor) {
                     if (element === null || element === document) {
                         return false;
                     }
@@ -1447,7 +1460,7 @@
                     return _belongsTo(element.parentNode, ancestor);
                 }
 
-                function Mousetrap (targetElement) {
+                function Mousetrap(targetElement) {
                     var self = this;
 
                     targetElement = targetElement || document;
@@ -1520,7 +1533,7 @@
                      * @param {Object} doNotReset
                      * @returns void
                      */
-                    function _resetSequences (doNotReset) {
+                    function _resetSequences(doNotReset) {
                         doNotReset = doNotReset || {};
 
                         var activeSequences = false,
@@ -1551,7 +1564,7 @@
                      * @param {number=} level
                      * @returns {Array}
                      */
-                    function _getMatches (character, modifiers, e, sequenceName, combination, level) {
+                    function _getMatches(character, modifiers, e, sequenceName, combination, level) {
                         var i;
                         var callback;
                         var matches = [];
@@ -1621,7 +1634,7 @@
                      * @param {Event} e
                      * @returns void
                      */
-                    function _fireCallback (callback, e, combo, sequence) {
+                    function _fireCallback(callback, e, combo, sequence) {
 
                         // if this event should not happen stop here
                         if (self.stopCallback(e, e.target || e.srcElement, combo, sequence)) {
@@ -1728,7 +1741,7 @@
                      * @param {Event} e
                      * @returns void
                      */
-                    function _handleKeyEvent (e) {
+                    function _handleKeyEvent(e) {
 
                         // normalize e.which for key events
                         // @see http://stackoverflow.com/questions/4285627/javascript-keycode-vs-charcode-utter-confusion
@@ -1760,7 +1773,7 @@
                      *
                      * @returns void
                      */
-                    function _resetSequenceTimer () {
+                    function _resetSequenceTimer() {
                         clearTimeout(_resetTimer);
                         _resetTimer = setTimeout(_resetSequences, 1000);
                     }
@@ -1774,7 +1787,7 @@
                      * @param {string=} action
                      * @returns void
                      */
-                    function _bindSequence (combo, keys, callback, action) {
+                    function _bindSequence(combo, keys, callback, action) {
 
                         // start off by adding a sequence level record for this combination
                         // and setting the level to 0
@@ -1787,7 +1800,7 @@
                          * @param {string} nextAction
                          * @returns {Function}
                          */
-                        function _increaseSequence (nextAction) {
+                        function _increaseSequence(nextAction) {
                             return function () {
                                 _nextExpectedAction = nextAction;
                                 ++_sequenceLevels[combo];
@@ -1802,7 +1815,7 @@
                          * @param {Event} e
                          * @returns void
                          */
-                        function _callbackAndReset (e) {
+                        function _callbackAndReset(e) {
                             _fireCallback(callback, e, combo);
 
                             // we should ignore the next key up if the action is key down
@@ -1843,7 +1856,7 @@
                      * @param {number=} level - what part of the sequence the command is
                      * @returns void
                      */
-                    function _bindSingle (combination, callback, action, sequenceName, level) {
+                    function _bindSingle(combination, callback, action, sequenceName, level) {
 
                         // store a direct mapped reference for use with Mousetrap.trigger
                         self._directMap[combination + ':' + action] = callback;
@@ -1868,7 +1881,7 @@
                         self._callbacks[info.key] = self._callbacks[info.key] || [];
 
                         // remove an existing match if there is one
-                        _getMatches(info.key, info.modifiers, { type: info.action }, sequenceName, combination, level);
+                        _getMatches(info.key, info.modifiers, {type: info.action}, sequenceName, combination, level);
 
                         // add this call back to the array
                         // if it is a sequence put it at the beginning
@@ -2139,7 +2152,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -2181,7 +2194,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -2200,7 +2213,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -2227,11 +2240,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -2305,7 +2318,7 @@
 
         var extendStatics = function (d, b) {
             extendStatics = Object.setPrototypeOf ||
-                ({ __proto__: [] } instanceof Array && function (d, b) {
+                ({__proto__: []} instanceof Array && function (d, b) {
                     d.__proto__ = b;
                 }) ||
                 function (d, b) {
@@ -2314,12 +2327,12 @@
             return extendStatics(d, b);
         };
 
-        function __extends (d, b) {
+        function __extends(d, b) {
             if (typeof b !== 'function' && b !== null)
                 throw new TypeError('Class extends value ' + String(b) + ' is not a constructor or null');
             extendStatics(d, b);
 
-            function __ () {
+            function __() {
                 this.constructor = d;
             }
 
@@ -2327,7 +2340,7 @@
         }
 
         var __assign = function () {
-            __assign = Object.assign || function __assign (t) {
+            __assign = Object.assign || function __assign(t) {
                 for (var s, i = 1, n = arguments.length; i < n; i++) {
                     s = arguments[i];
                     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
@@ -2337,7 +2350,7 @@
             return __assign.apply(this, arguments);
         };
 
-        function __rest (s, e) {
+        function __rest(s, e) {
             var t = {};
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
                 t[p] = s[p];
@@ -2349,7 +2362,7 @@
             return t;
         }
 
-        function __decorate (decorators, target, key, desc) {
+        function __decorate(decorators, target, key, desc) {
             var c = arguments.length,
                 r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
             if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function') r = Reflect.decorate(decorators, target, key, desc);
@@ -2357,14 +2370,14 @@
             return c > 3 && r && Object.defineProperty(target, key, r), r;
         }
 
-        function __param (paramIndex, decorator) {
+        function __param(paramIndex, decorator) {
             return function (target, key) {
                 decorator(target, key, paramIndex);
             };
         }
 
-        function __esDecorate (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-            function accept (f) {
+        function __esDecorate(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+            function accept(f) {
                 if (f !== void 0 && typeof f !== 'function') throw new TypeError('Function expected');
                 return f;
             }
@@ -2400,7 +2413,7 @@
             done = true;
         };
 
-        function __runInitializers (thisArg, initializers, value) {
+        function __runInitializers(thisArg, initializers, value) {
             var useValue = arguments.length > 2;
             for (var i = 0; i < initializers.length; i++) {
                 value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
@@ -2408,11 +2421,11 @@
             return useValue ? value : void 0;
         };
 
-        function __propKey (x) {
+        function __propKey(x) {
             return typeof x === 'symbol' ? x : ''.concat(x);
         };
 
-        function __setFunctionName (f, name, prefix) {
+        function __setFunctionName(f, name, prefix) {
             if (typeof name === 'symbol') name = name.description ? '['.concat(name.description, ']') : '';
             return Object.defineProperty(f, 'name', {
                 configurable: true,
@@ -2420,27 +2433,35 @@
             });
         };
 
-        function __metadata (metadataKey, metadataValue) {
+        function __metadata(metadataKey, metadataValue) {
             if (typeof Reflect === 'object' && typeof Reflect.metadata === 'function') return Reflect.metadata(metadataKey, metadataValue);
         }
 
-        function __awaiter (thisArg, _arguments, P, generator) {
-            function adopt (value) {
+        function __awaiter(thisArg, _arguments, P, generator) {
+            function adopt(value) {
                 return value instanceof P ? value : new P(function (resolve) {
                     resolve(value);
                 });
             }
 
             return new (P || (P = Promise))(function (resolve, reject) {
-                function fulfilled (value) {
-                    try { step(generator.next(value)); } catch (e) { reject(e); }
+                function fulfilled(value) {
+                    try {
+                        step(generator.next(value));
+                    } catch (e) {
+                        reject(e);
+                    }
                 }
 
-                function rejected (value) {
-                    try { step(generator['throw'](value)); } catch (e) { reject(e); }
+                function rejected(value) {
+                    try {
+                        step(generator['throw'](value));
+                    } catch (e) {
+                        reject(e);
+                    }
                 }
 
-                function step (result) {
+                function step(result) {
                     result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
                 }
 
@@ -2448,7 +2469,7 @@
             });
         }
 
-        function __generator (thisArg, body) {
+        function __generator(thisArg, body) {
             var _ = {
                 label: 0, sent: function () {
                     if (t[0] & 1) throw t[1];
@@ -2463,13 +2484,13 @@
                 return this;
             }), g;
 
-            function verb (n) {
+            function verb(n) {
                 return function (v) {
                     return step([n, v]);
                 };
             }
 
-            function step (op) {
+            function step(op) {
                 if (f) throw new TypeError('Generator is already executing.');
                 while (g && (g = 0, op[0] && (_ = 0)), _) try {
                     if (f = 1, y && (t = op[0] & 2 ? y['return'] : op[0] ? y['throw'] || ((t = y['return']) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
@@ -2481,7 +2502,7 @@
                             break;
                         case 4:
                             _.label++;
-                            return { value: op[1], done: false };
+                            return {value: op[1], done: false};
                         case 5:
                             _.label++;
                             y = op[1];
@@ -2518,9 +2539,11 @@
                 } catch (e) {
                     op = [6, e];
                     y = 0;
-                } finally { f = t = 0; }
+                } finally {
+                    f = t = 0;
+                }
                 if (op[0] & 5) throw op[1];
-                return { value: op[0] ? op[1] : void 0, done: true };
+                return {value: op[0] ? op[1] : void 0, done: true};
             }
         }
 
@@ -2540,45 +2563,49 @@
             o[k2] = m[k];
         });
 
-        function __exportStar (m, o) {
+        function __exportStar(m, o) {
             for (var p in m) if (p !== 'default' && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
         }
 
-        function __values (o) {
+        function __values(o) {
             var s = typeof Symbol === 'function' && Symbol.iterator, m = s && o[s], i = 0;
             if (m) return m.call(o);
             if (o && typeof o.length === 'number') return {
                 next: function () {
                     if (o && i >= o.length) o = void 0;
-                    return { value: o && o[i++], done: !o };
+                    return {value: o && o[i++], done: !o};
                 }
             };
             throw new TypeError(s ? 'Object is not iterable.' : 'Symbol.iterator is not defined.');
         }
 
-        function __read (o, n) {
+        function __read(o, n) {
             var m = typeof Symbol === 'function' && o[Symbol.iterator];
             if (!m) return o;
             var i = m.call(o), r, ar = [], e;
             try {
                 while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-            } catch (error) { e = { error: error }; } finally {
+            } catch (error) {
+                e = {error: error};
+            } finally {
                 try {
                     if (r && !r.done && (m = i['return'])) m.call(i);
-                } finally { if (e) throw e.error; }
+                } finally {
+                    if (e) throw e.error;
+                }
             }
             return ar;
         }
 
         /** @deprecated */
-        function __spread () {
+        function __spread() {
             for (var ar = [], i = 0; i < arguments.length; i++)
                 ar = ar.concat(__read(arguments[i]));
             return ar;
         }
 
         /** @deprecated */
-        function __spreadArrays () {
+        function __spreadArrays() {
             for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
             for (var r = Array(s), k = 0, i = 0; i < il; i++)
                 for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -2586,7 +2613,7 @@
             return r;
         }
 
-        function __spreadArray (to, from, pack) {
+        function __spreadArray(to, from, pack) {
             if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
                 if (ar || !(i in from)) {
                     if (!ar) ar = Array.prototype.slice.call(from, 0, i);
@@ -2596,18 +2623,18 @@
             return to.concat(ar || Array.prototype.slice.call(from));
         }
 
-        function __await (v) {
+        function __await(v) {
             return this instanceof __await ? (this.v = v, this) : new __await(v);
         }
 
-        function __asyncGenerator (thisArg, _arguments, generator) {
+        function __asyncGenerator(thisArg, _arguments, generator) {
             if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
             var g = generator.apply(thisArg, _arguments || []), i, q = [];
             return i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
                 return this;
             }, i;
 
-            function verb (n) {
+            function verb(n) {
                 if (g[n]) i[n] = function (v) {
                     return new Promise(function (a, b) {
                         q.push([n, v, a, b]) > 1 || resume(n, v);
@@ -2615,28 +2642,32 @@
                 };
             }
 
-            function resume (n, v) {
-                try { step(g[n](v)); } catch (e) { settle(q[0][3], e); }
+            function resume(n, v) {
+                try {
+                    step(g[n](v));
+                } catch (e) {
+                    settle(q[0][3], e);
+                }
             }
 
-            function step (r) {
+            function step(r) {
                 r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
             }
 
-            function fulfill (value) {
+            function fulfill(value) {
                 resume('next', value);
             }
 
-            function reject (value) {
+            function reject(value) {
                 resume('throw', value);
             }
 
-            function settle (f, v) {
+            function settle(f, v) {
                 if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]);
             }
         }
 
-        function __asyncDelegator (o) {
+        function __asyncDelegator(o) {
             var i, p;
             return i = {}, verb('next'), verb('throw', function (e) {
                 throw e;
@@ -2644,21 +2675,21 @@
                 return this;
             }, i;
 
-            function verb (n, f) {
+            function verb(n, f) {
                 i[n] = o[n] ? function (v) {
-                    return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
+                    return (p = !p) ? {value: __await(o[n](v)), done: false} : f ? f(v) : v;
                 } : f;
             }
         }
 
-        function __asyncValues (o) {
+        function __asyncValues(o) {
             if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
             var m = o[Symbol.asyncIterator], i;
             return m ? m.call(o) : (o = typeof __values === 'function' ? __values(o) : o[Symbol.iterator](), i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
                 return this;
             }, i);
 
-            function verb (n) {
+            function verb(n) {
                 i[n] = o[n] && function (v) {
                     return new Promise(function (resolve, reject) {
                         v = o[n](v), settle(resolve, reject, v.done, v.value);
@@ -2666,25 +2697,29 @@
                 };
             }
 
-            function settle (resolve, reject, d, v) {
+            function settle(resolve, reject, d, v) {
                 Promise.resolve(v).then(function (v) {
-                    resolve({ value: v, done: d });
+                    resolve({value: v, done: d});
                 }, reject);
             }
         }
 
-        function __makeTemplateObject (cooked, raw) {
-            if (Object.defineProperty) { Object.defineProperty(cooked, 'raw', { value: raw }); } else { cooked.raw = raw; }
+        function __makeTemplateObject(cooked, raw) {
+            if (Object.defineProperty) {
+                Object.defineProperty(cooked, 'raw', {value: raw});
+            } else {
+                cooked.raw = raw;
+            }
             return cooked;
         };
 
         var __setModuleDefault = Object.create ? (function (o, v) {
-            Object.defineProperty(o, 'default', { enumerable: true, value: v });
+            Object.defineProperty(o, 'default', {enumerable: true, value: v});
         }) : function (o, v) {
             o['default'] = v;
         };
 
-        function __importStar (mod) {
+        function __importStar(mod) {
             if (mod && mod.__esModule) return mod;
             var result = {};
             if (mod != null) for (var k in mod) if (k !== 'default' && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
@@ -2692,29 +2727,29 @@
             return result;
         }
 
-        function __importDefault (mod) {
-            return (mod && mod.__esModule) ? mod : { default: mod };
+        function __importDefault(mod) {
+            return (mod && mod.__esModule) ? mod : {default: mod};
         }
 
-        function __classPrivateFieldGet (receiver, state, kind, f) {
+        function __classPrivateFieldGet(receiver, state, kind, f) {
             if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a getter');
             if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot read private member from an object whose class did not declare it');
             return kind === 'm' ? f : kind === 'a' ? f.call(receiver) : f ? f.value : state.get(receiver);
         }
 
-        function __classPrivateFieldSet (receiver, state, value, kind, f) {
+        function __classPrivateFieldSet(receiver, state, value, kind, f) {
             if (kind === 'm') throw new TypeError('Private method is not writable');
             if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a setter');
             if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot write private member to an object whose class did not declare it');
             return (kind === 'a' ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
         }
 
-        function __classPrivateFieldIn (state, receiver) {
+        function __classPrivateFieldIn(state, receiver) {
             if (receiver === null || (typeof receiver !== 'object' && typeof receiver !== 'function')) throw new TypeError('Cannot use \'in\' operator on non-object');
             return typeof state === 'function' ? receiver === state : state.has(receiver);
         }
 
-        function __addDisposableResource (env, value, async) {
+        function __addDisposableResource(env, value, async) {
             if (value !== null && value !== void 0) {
                 if (typeof value !== 'object') throw new TypeError('Object expected.');
                 var dispose;
@@ -2727,9 +2762,9 @@
                     dispose = value[Symbol.dispose];
                 }
                 if (typeof dispose !== 'function') throw new TypeError('Object not disposable.');
-                env.stack.push({ value: value, dispose: dispose, async: async });
+                env.stack.push({value: value, dispose: dispose, async: async});
             } else if (async) {
-                env.stack.push({ async: true });
+                env.stack.push({async: true});
             }
             return value;
         }
@@ -2739,13 +2774,13 @@
             return e.name = 'SuppressedError', e.error = error, e.suppressed = suppressed, e;
         };
 
-        function __disposeResources (env) {
-            function fail (e) {
+        function __disposeResources(env) {
+            function fail(e) {
                 env.error = env.hasError ? new _SuppressedError(e, env.error, 'An error was suppressed during disposal.') : e;
                 env.hasError = true;
             }
 
-            function next () {
+            function next() {
                 while (env.stack.length) {
                     var rec = env.stack.pop();
                     try {
@@ -2832,7 +2867,7 @@
         /**
          * Localized lower case.
          */
-        function localeLowerCase (str, locale) {
+        function localeLowerCase(str, locale) {
             var lang = SUPPORTED_LOCALE[locale.toLowerCase()];
             if (lang)
                 return lowerCase(str.replace(lang.regexp, function (m) {
@@ -2844,7 +2879,7 @@
         /**
          * Lower case as a function.
          */
-        function lowerCase (str) {
+        function lowerCase(str) {
             return str.toLowerCase();
         }
 
@@ -2858,8 +2893,10 @@
         /**
          * Normalize the string into something other libraries can manipulate easier.
          */
-        function noCase (input, options) {
-            if (options === void 0) { options = {}; }
+        function noCase(input, options) {
+            if (options === void 0) {
+                options = {};
+            }
             var _a = options.splitRegexp, splitRegexp = _a === void 0 ? DEFAULT_SPLIT_REGEXP : _a,
                 _b = options.stripRegexp, stripRegexp = _b === void 0 ? DEFAULT_STRIP_REGEXP : _b,
                 _c = options.transform, transform = _c === void 0 ? lowerCase : _c, _d = options.delimiter,
@@ -2879,7 +2916,7 @@
         /**
          * Replace `re` in the input string with the replacement value.
          */
-        function replace (input, re, value) {
+        function replace(input, re, value) {
             if (re instanceof RegExp)
                 return input.replace(re, value);
             return re.reduce(function (input, re) {
@@ -2889,7 +2926,7 @@
 
         ;// CONCATENATED MODULE: ./node_modules/pascal-case/dist.es2015/index.js
 
-        function pascalCaseTransform (input, index) {
+        function pascalCaseTransform(input, index) {
             var firstChar = input.charAt(0);
             var lowerChars = input.substr(1).toLowerCase();
             if (index > 0 && firstChar >= '0' && firstChar <= '9') {
@@ -2898,13 +2935,15 @@
             return '' + firstChar.toUpperCase() + lowerChars;
         }
 
-        function pascalCaseTransformMerge (input) {
+        function pascalCaseTransformMerge(input) {
             return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
         }
 
-        function pascalCase (input, options) {
-            if (options === void 0) { options = {}; }
-            return noCase(input, __assign({ delimiter: '', transform: pascalCaseTransform }, options));
+        function pascalCase(input, options) {
+            if (options === void 0) {
+                options = {};
+            }
+            return noCase(input, __assign({delimiter: '', transform: pascalCaseTransform}, options));
         }
 
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/compose/build-module/utils/create-higher-order-component/index.js
@@ -2921,7 +2960,7 @@
          *
          * @return Component class with generated display name assigned.
          */
-        function createHigherOrderComponent (mapComponent, modifierName) {
+        function createHigherOrderComponent(mapComponent, modifierName) {
             return Inner => {
                 const Outer = mapComponent(Inner);
                 Outer.displayName = hocName(modifierName, Inner);
@@ -3040,7 +3079,7 @@
                 trailing = 'trailing' in options ? !!options.trailing : trailing;
             }
 
-            function invokeFunc (time) {
+            function invokeFunc(time) {
                 const args = lastArgs;
                 const thisArg = lastThis;
                 lastArgs = undefined;
@@ -3050,17 +3089,17 @@
                 return result;
             }
 
-            function startTimer (pendingFunc, waitTime) {
+            function startTimer(pendingFunc, waitTime) {
                 timerId = setTimeout(pendingFunc, waitTime);
             }
 
-            function cancelTimer () {
+            function cancelTimer() {
                 if (timerId !== undefined) {
                     clearTimeout(timerId);
                 }
             }
 
-            function leadingEdge (time) {
+            function leadingEdge(time) {
                 // Reset any `maxWait` timer.
                 lastInvokeTime = time; // Start the timer for the trailing edge.
 
@@ -3069,18 +3108,18 @@
                 return leading ? invokeFunc(time) : result;
             }
 
-            function getTimeSinceLastCall (time) {
+            function getTimeSinceLastCall(time) {
                 return time - (lastCallTime || 0);
             }
 
-            function remainingWait (time) {
+            function remainingWait(time) {
                 const timeSinceLastCall = getTimeSinceLastCall(time);
                 const timeSinceLastInvoke = time - lastInvokeTime;
                 const timeWaiting = wait - timeSinceLastCall;
                 return maxing ? Math.min(timeWaiting, maxWait - timeSinceLastInvoke) : timeWaiting;
             }
 
-            function shouldInvoke (time) {
+            function shouldInvoke(time) {
                 const timeSinceLastCall = getTimeSinceLastCall(time);
                 const timeSinceLastInvoke = time - lastInvokeTime; // Either this is the first call, activity has stopped and we're at the
                 // trailing edge, the system time has gone backwards and we're treating
@@ -3089,7 +3128,7 @@
                 return lastCallTime === undefined || timeSinceLastCall >= wait || timeSinceLastCall < 0 || maxing && timeSinceLastInvoke >= maxWait;
             }
 
-            function timerExpired () {
+            function timerExpired() {
                 const time = Date.now();
 
                 if (shouldInvoke(time)) {
@@ -3100,11 +3139,11 @@
                 return undefined;
             }
 
-            function clearTimer () {
+            function clearTimer() {
                 timerId = undefined;
             }
 
-            function trailingEdge (time) {
+            function trailingEdge(time) {
                 clearTimer(); // Only invoke if we have `lastArgs` which means `func` has been
                 // debounced at least once.
 
@@ -3116,22 +3155,22 @@
                 return result;
             }
 
-            function cancel () {
+            function cancel() {
                 cancelTimer();
                 lastInvokeTime = 0;
                 clearTimer();
                 lastArgs = lastCallTime = lastThis = undefined;
             }
 
-            function flush () {
+            function flush() {
                 return pending() ? trailingEdge(Date.now()) : result;
             }
 
-            function pending () {
+            function pending() {
                 return timerId !== undefined;
             }
 
-            function debounced (...args) {
+            function debounced(...args) {
                 const time = Date.now();
                 const isInvoking = shouldInvoke(time);
                 lastArgs = args;
@@ -3373,7 +3412,7 @@
          * @return Higher-order component.
          */
 
-        function ifCondition (predicate) {
+        function ifCondition(predicate) {
             return createHigherOrderComponent(WrappedComponent => props => {
                 if (!predicate(props)) {
                     return null;
@@ -3413,7 +3452,7 @@
         const pure = createHigherOrderComponent(function (WrappedComponent) {
             if (WrappedComponent.prototype instanceof external_wp_element_namespaceObject.Component) {
                 return class extends WrappedComponent {
-                    shouldComponentUpdate (nextProps, nextState) {
+                    shouldComponentUpdate(nextProps, nextState) {
                         return !external_wp_isShallowEqual_default()(nextProps, this.props) || !external_wp_isShallowEqual_default()(nextState, this.state);
                     }
 
@@ -3421,11 +3460,11 @@
             }
 
             return class extends external_wp_element_namespaceObject.Component {
-                shouldComponentUpdate (nextProps) {
+                shouldComponentUpdate(nextProps) {
                     return !external_wp_isShallowEqual_default()(nextProps, this.props);
                 }
 
-                render () {
+                render() {
                     return (0, external_wp_element_namespaceObject.createElement)(WrappedComponent, {
                         ...this.props
                     });
@@ -3446,13 +3485,13 @@
          * removing the handler when no instances are listening for the event.
          */
         class Listener {
-            constructor () {
+            constructor() {
                 /** @type {any} */
                 this.listeners = {};
                 this.handleEvent = this.handleEvent.bind(this);
             }
 
-            add (
+            add(
                 /** @type {any} */
                 eventType,
                 /** @type {any} */
@@ -3466,7 +3505,7 @@
                 this.listeners[eventType].push(instance);
             }
 
-            remove (
+            remove(
                 /** @type {any} */
                 eventType,
                 /** @type {any} */
@@ -3486,7 +3525,7 @@
                 }
             }
 
-            handleEvent (
+            handleEvent(
                 /** @type {any} */
                 event) {
                 this.listeners[event.type]?.forEach((
@@ -3539,7 +3578,7 @@
          * @return {any} Higher-order component.
          */
 
-        function withGlobalEvents (eventTypesToHandlers) {
+        function withGlobalEvents(eventTypesToHandlers) {
             external_wp_deprecated_default()('wp.compose.withGlobalEvents', {
                 since: '5.7',
                 alternative: 'useEffect'
@@ -3547,7 +3586,7 @@
 
             return createHigherOrderComponent(WrappedComponent => {
                 class Wrapper extends external_wp_element_namespaceObject.Component {
-                    constructor (
+                    constructor(
                         /** @type {any} */
                         props) {
                         super(props);
@@ -3555,19 +3594,19 @@
                         this.handleRef = this.handleRef.bind(this);
                     }
 
-                    componentDidMount () {
+                    componentDidMount() {
                         Object.keys(eventTypesToHandlers).forEach(eventType => {
                             with_global_events_listener.add(eventType, this);
                         });
                     }
 
-                    componentWillUnmount () {
+                    componentWillUnmount() {
                         Object.keys(eventTypesToHandlers).forEach(eventType => {
                             with_global_events_listener.remove(eventType, this);
                         });
                     }
 
-                    handleEvent (
+                    handleEvent(
                         /** @type {any} */
                         event) {
                         const handler = eventTypesToHandlers[
@@ -3581,7 +3620,7 @@
                         }
                     }
 
-                    handleRef (
+                    handleRef(
                         /** @type {any} */
                         el) {
                         this.wrappedRef = el; // Any component using `withGlobalEvents` that is not setting a `ref`
@@ -3593,7 +3632,7 @@
                         }
                     }
 
-                    render () {
+                    render() {
                         return (0, external_wp_element_namespaceObject.createElement)(WrappedComponent, {
                             ...this.props.ownProps,
                             ref: this.handleRef
@@ -3625,7 +3664,7 @@
          * @return The instance id (index).
          */
 
-        function createId (object) {
+        function createId(object) {
             const instances = instanceMap.get(object) || 0;
             instanceMap.set(object, instances + 1);
             return instances;
@@ -3652,7 +3691,7 @@
          * @param [preferredId] Default ID to use.
          * @return The unique instance id.
          */
-        function useInstanceId (object, prefix, preferredId) {
+        function useInstanceId(object, prefix, preferredId) {
             return (0, external_wp_element_namespaceObject.useMemo)(() => {
                 if (preferredId) return preferredId;
                 const id = createId(object);
@@ -3711,18 +3750,18 @@
          */
         const withSafeTimeout = createHigherOrderComponent(OriginalComponent => {
             return class WrappedComponent extends external_wp_element_namespaceObject.Component {
-                constructor (props) {
+                constructor(props) {
                     super(props);
                     this.timeouts = [];
                     this.setTimeout = this.setTimeout.bind(this);
                     this.clearTimeout = this.clearTimeout.bind(this);
                 }
 
-                componentWillUnmount () {
+                componentWillUnmount() {
                     this.timeouts.forEach(clearTimeout);
                 }
 
-                setTimeout (fn, delay) {
+                setTimeout(fn, delay) {
                     const id = setTimeout(() => {
                         fn();
                         this.clearTimeout(id);
@@ -3731,12 +3770,12 @@
                     return id;
                 }
 
-                clearTimeout (id) {
+                clearTimeout(id) {
                     clearTimeout(id);
                     this.timeouts = this.timeouts.filter(timeoutId => timeoutId !== id);
                 }
 
-                render () {
+                render() {
                     return (// @ts-ignore
                         (0, external_wp_element_namespaceObject.createElement)(OriginalComponent, {
                             ...this.props,
@@ -3772,14 +3811,14 @@
          * @return {any} A higher order component wrapper accepting a component that takes the state props + its own props + `setState` and returning a component that only accepts the own props.
          */
 
-        function withState (initialState = {}) {
+        function withState(initialState = {}) {
             external_wp_deprecated_default()('wp.compose.withState', {
                 since: '5.8',
                 alternative: 'wp.element.useState'
             });
             return createHigherOrderComponent(OriginalComponent => {
                 return class WrappedComponent extends external_wp_element_namespaceObject.Component {
-                    constructor (
+                    constructor(
                         /** @type {any} */
                         props) {
                         super(props);
@@ -3787,7 +3826,7 @@
                         this.state = initialState;
                     }
 
-                    render () {
+                    render() {
                         return (0, external_wp_element_namespaceObject.createElement)(OriginalComponent, {
                             ...this.props,
                             ...this.state,
@@ -3832,7 +3871,7 @@
          * @return Ref callback.
          */
 
-        function useRefEffect (callback, dependencies) {
+        function useRefEffect(callback, dependencies) {
             const cleanup = (0, external_wp_element_namespaceObject.useRef)();
             return (0, external_wp_element_namespaceObject.useCallback)(node => {
                 if (node) {
@@ -3874,11 +3913,11 @@
          * ```
          */
 
-        function useConstrainedTabbing () {
+        function useConstrainedTabbing() {
             return useRefEffect((
                 /** @type {HTMLElement} */
                 node) => {
-                function onKeyDown (
+                function onKeyDown(
                     /** @type {KeyboardEvent} */
                     event) {
                     const {
@@ -3970,7 +4009,7 @@
          *                   timeout.
          */
 
-        function useCopyOnClick (ref, text, timeout = 4000) {
+        function useCopyOnClick(ref, text, timeout = 4000) {
             /* eslint-enable jsdoc/no-undefined-types */
             external_wp_deprecated_default()('wp.compose.useCopyOnClick', {
                 since: '5.8',
@@ -4041,7 +4080,7 @@
          * @return {import('react').RefObject<T>} The updated ref
          */
 
-        function useUpdatedRef (value) {
+        function useUpdatedRef(value) {
             const ref = (0, external_wp_element_namespaceObject.useRef)(value);
             ref.current = value;
             return ref;
@@ -4059,7 +4098,7 @@
          */
 
 
-        function useCopyToClipboard (text, onSuccess) {
+        function useCopyToClipboard(text, onSuccess) {
             // Store the dependencies as refs and continuously update them so they're
             // fresh when the callback is called.
             const textRef = useUpdatedRef(text);
@@ -4067,7 +4106,7 @@
             return useRefEffect(node => {
                 // Clipboard listens to click events.
                 const clipboard = new (clipboard_default())(node, {
-                    text () {
+                    text() {
                         return typeof textRef.current === 'function' ? textRef.current() : textRef.current || '';
                     }
 
@@ -4120,7 +4159,7 @@
          * ```
          */
 
-        function useFocusOnMount (focusOnMount = 'firstElement') {
+        function useFocusOnMount(focusOnMount = 'firstElement') {
             const focusOnMountRef = (0, external_wp_element_namespaceObject.useRef)(focusOnMount);
             /**
              * Sets focus on a DOM element.
@@ -4211,7 +4250,7 @@
          * ```
          */
 
-        function useFocusReturn (onFocusReturn) {
+        function useFocusReturn(onFocusReturn) {
             /** @type {import('react').MutableRefObject<null | HTMLElement>} */
             const ref = (0, external_wp_element_namespaceObject.useRef)(null);
             /** @type {import('react').MutableRefObject<null | Element>} */
@@ -4291,7 +4330,7 @@
          *
          * @return Whether the element is a button element subject to focus normalization.
          */
-        function isFocusNormalizedButton (eventTarget) {
+        function isFocusNormalizedButton(eventTarget) {
             if (!(eventTarget instanceof window.HTMLElement)) {
                 return false;
             }
@@ -4318,7 +4357,7 @@
          * @return An object containing event handlers. Bind the event handlers to a
          * wrapping element element to capture when focus moves outside that element.
          */
-        function useFocusOutside (onFocusOutside) {
+        function useFocusOutside(onFocusOutside) {
             const currentOnFocusOutside = (0, external_wp_element_namespaceObject.useRef)(onFocusOutside);
             (0, external_wp_element_namespaceObject.useEffect)(() => {
                 currentOnFocusOutside.current = onFocusOutside;
@@ -4440,7 +4479,7 @@
          * @param {T}                      value
          */
 
-        function assignRef (ref, value) {
+        function assignRef(ref, value) {
             if (typeof ref === 'function') {
                 ref(value);
             } else if (ref && ref.hasOwnProperty('current')) {
@@ -4497,7 +4536,7 @@
          */
 
 
-        function useMergeRefs (refs) {
+        function useMergeRefs(refs) {
             const element = (0, external_wp_element_namespaceObject.useRef)();
             const isAttached = (0, external_wp_element_namespaceObject.useRef)(false);
             const didElementChange = (0, external_wp_element_namespaceObject.useRef)(false);
@@ -4574,7 +4613,7 @@
          *
          * @param options Dialog Options.
          */
-        function useDialog (options) {
+        function useDialog(options) {
             const currentOptions = (0, external_wp_element_namespaceObject.useRef)();
             (0, external_wp_element_namespaceObject.useEffect)(() => {
                 currentOptions.current = options;
@@ -4645,9 +4684,9 @@
          * ```
          */
 
-        function useDisabled ({
-                                  isDisabled: isDisabledProp = false
-                              } = {}) {
+        function useDisabled({
+                                 isDisabled: isDisabledProp = false
+                             } = {}) {
             return useRefEffect(node => {
                 if (isDisabledProp) {
                     return;
@@ -4734,11 +4773,11 @@
          * @param {(e?: MouseEvent) => void}                props.onDragEnd
          */
 
-        function useDragging ({
-                                  onDragStart,
-                                  onDragMove,
-                                  onDragEnd
-                              }) {
+        function useDragging({
+                                 onDragStart,
+                                 onDragMove,
+                                 onDragEnd
+                             }) {
             const [isDragging, setIsDragging] = (0, external_wp_element_namespaceObject.useState)(false);
             const eventsRef = (0, external_wp_element_namespaceObject.useRef)({
                 onDragStart,
@@ -4828,7 +4867,7 @@
          * @param {WPKeyboardShortcutConfig}                                              options   Shortcut options.
          */
 
-        function useKeyboardShortcut (
+        function useKeyboardShortcut(
             /* eslint-enable jsdoc/valid-types */
             shortcuts, callback, {
                 bindGlobal = false,
@@ -4899,7 +4938,7 @@
          * @return {MediaQueryList|null} A new object for the media query
          */
 
-        function getMediaQueryList (query) {
+        function getMediaQueryList(query) {
             if (query && typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
                 return window.matchMedia(query);
             }
@@ -4915,12 +4954,12 @@
          */
 
 
-        function useMediaQuery (query) {
+        function useMediaQuery(query) {
             const source = (0, external_wp_element_namespaceObject.useMemo)(() => {
                 const mediaQueryList = getMediaQueryList(query);
                 return {
                     /** @type {(onStoreChange: () => void) => () => void} */
-                    subscribe (onStoreChange) {
+                    subscribe(onStoreChange) {
                         if (!mediaQueryList) {
                             return () => {
                             };
@@ -4932,7 +4971,7 @@
                         };
                     },
 
-                    getValue () {
+                    getValue() {
                         var _mediaQueryList$match;
 
                         return (_mediaQueryList$match = mediaQueryList?.matches) !== null && _mediaQueryList$match !== void 0 ? _mediaQueryList$match : false;
@@ -4957,7 +4996,7 @@
          * @return The value from the previous render.
          */
 
-        function usePrevious (value) {
+        function usePrevious(value) {
             const ref = (0, external_wp_element_namespaceObject.useRef)(); // Store current value in ref.
 
             (0, external_wp_element_namespaceObject.useEffect)(() => {
@@ -5087,7 +5126,7 @@
 // refs, but then host hooks / components could not opt out of renders.
 // This could've been exported to its own module, but the current build doesn't
 // seem to work with module imports and I had no more time to spend on this...
-        function useResolvedElement (subscriber, refOrElement) {
+        function useResolvedElement(subscriber, refOrElement) {
             const callbackRefElement = (0, external_wp_element_namespaceObject.useRef)(null);
             const lastReportRef = (0, external_wp_element_namespaceObject.useRef)(null);
             const cleanupRef = (0, external_wp_element_namespaceObject.useRef)();
@@ -5183,7 +5222,7 @@
                 entry[boxProp][sizeType];
         };
 
-        function useResizeObserver (opts = {}) {
+        function useResizeObserver(opts = {}) {
             // Saving the callback as a ref. With this, I don't need to put onResize in the
             // effect dep array, and just passing in an anonymous function without memoising
             // will not reinstantiate the hook's ResizeObserver.
@@ -5291,7 +5330,7 @@
          */
 
 
-        function useResizeAware () {
+        function useResizeAware() {
             const {
                 ref,
                 width,
@@ -5335,7 +5374,7 @@
          * @param state Current state.
          * @return First items present iin state.
          */
-        function getFirstItemsPresentInState (list, state) {
+        function getFirstItemsPresentInState(list, state) {
             const firstItems = [];
 
             for (let i = 0; i < list.length; i++) {
@@ -5362,7 +5401,7 @@
          */
 
 
-        function useAsyncList (list, config = {
+        function useAsyncList(list, config = {
             step: 1
         }) {
             const {
@@ -5424,7 +5463,7 @@
          * @param {string} prefix Just a prefix to show when console logging.
          */
 
-        function useWarnOnChange (object, prefix = 'Change detection') {
+        function useWarnOnChange(object, prefix = 'Change detection') {
             const previousValues = usePrevious(object);
             Object.entries(previousValues !== null && previousValues !== void 0 ? previousValues : []).forEach(([key, value]) => {
                 if (value !== object[
@@ -5447,7 +5486,7 @@
         const external_React_namespaceObject = window['React'];
         ;// CONCATENATED MODULE: ./node_modules/use-memo-one/dist/use-memo-one.esm.js
 
-        function areInputsEqual (newInputs, lastInputs) {
+        function areInputsEqual(newInputs, lastInputs) {
             if (newInputs.length !== lastInputs.length) {
                 return false;
             }
@@ -5461,7 +5500,7 @@
             return true;
         }
 
-        function useMemoOne (getResult, inputs) {
+        function useMemoOne(getResult, inputs) {
             var initial = (0, external_React_namespaceObject.useState)(function () {
                 return {
                     inputs: inputs,
@@ -5482,7 +5521,7 @@
             return cache.result;
         }
 
-        function useCallbackOne (callback, inputs) {
+        function useCallbackOne(callback, inputs) {
             return useMemoOne(function () {
                 return callback;
             }, inputs);
@@ -5520,7 +5559,7 @@
          * @return {import('../../utils/debounce').DebouncedFunc<TFunc>} Debounced function.
          */
 
-        function useDebounce (fn, wait, options) {
+        function useDebounce(fn, wait, options) {
             const debounced = useMemoOne(() => debounce(fn, wait !== null && wait !== void 0 ? wait : 0, options), [fn, wait, options]);
             (0, external_wp_element_namespaceObject.useEffect)(() => () => debounced.cancel(), [debounced]);
             return debounced;
@@ -5555,7 +5594,7 @@
          * @return {import('../../utils/debounce').DebouncedFunc<TFunc>} Throttled function.
          */
 
-        function useThrottle (fn, wait, options) {
+        function useThrottle(fn, wait, options) {
             const throttled = useMemoOne(() => throttle(fn, wait !== null && wait !== void 0 ? wait : 0, options), [fn, wait, options]);
             (0, external_wp_element_namespaceObject.useEffect)(() => () => throttled.cancel(), [throttled]);
             return throttled;
@@ -5578,7 +5617,7 @@
          * @return {import('react').MutableRefObject<T|null>} A ref with the value.
          */
 
-        function useFreshRef (value) {
+        function useFreshRef(value) {
             /* eslint-enable jsdoc/valid-types */
 
             /* eslint-disable jsdoc/no-undefined-types */
@@ -5614,16 +5653,16 @@
          */
 
 
-        function useDropZone ({
-                                  dropZoneElement,
-                                  isDisabled,
-                                  onDrop: _onDrop,
-                                  onDragStart: _onDragStart,
-                                  onDragEnter: _onDragEnter,
-                                  onDragLeave: _onDragLeave,
-                                  onDragEnd: _onDragEnd,
-                                  onDragOver: _onDragOver
-                              }) {
+        function useDropZone({
+                                 dropZoneElement,
+                                 isDisabled,
+                                 onDrop: _onDrop,
+                                 onDragStart: _onDragStart,
+                                 onDragEnter: _onDragEnter,
+                                 onDragLeave: _onDragLeave,
+                                 onDragEnd: _onDragEnd,
+                                 onDragOver: _onDragOver
+                             }) {
             const onDropRef = useFreshRef(_onDrop);
             const onDragStartRef = useFreshRef(_onDragStart);
             const onDragEnterRef = useFreshRef(_onDragEnter);
@@ -5651,7 +5690,7 @@
                      * @return {boolean} True if in drop zone, false if not.
                      */
 
-                    function isElementInZone (targetToCheck) {
+                    function isElementInZone(targetToCheck) {
                         const {
                             defaultView
                         } = ownerDocument;
@@ -5673,7 +5712,7 @@
                         return false;
                     }
 
-                    function maybeDragStart (
+                    function maybeDragStart(
                         /** @type {DragEvent} */
                         event) {
                         if (isDragging) {
@@ -5693,7 +5732,7 @@
                         }
                     }
 
-                    function onDragEnter (
+                    function onDragEnter(
                         /** @type {DragEvent} */
                         event) {
                         event.preventDefault(); // The `dragenter` event will also fire when entering child
@@ -5712,7 +5751,7 @@
                         }
                     }
 
-                    function onDragOver (
+                    function onDragOver(
                         /** @type {DragEvent} */
                         event) {
                         // Only call onDragOver for the innermost hovered drop zones.
@@ -5724,7 +5763,7 @@
                         event.preventDefault();
                     }
 
-                    function onDragLeave (
+                    function onDragLeave(
                         /** @type {DragEvent} */
                         event) {
                         // The `dragleave` event will also fire when leaving child
@@ -5743,7 +5782,7 @@
                         }
                     }
 
-                    function onDrop (
+                    function onDrop(
                         /** @type {DragEvent} */
                         event) {
                         // Don't handle drop if an inner drop zone already handled it.
@@ -5766,7 +5805,7 @@
                         maybeDragEnd(event);
                     }
 
-                    function maybeDragEnd (
+                    function maybeDragEnd(
                         /** @type {MouseEvent} */
                         event) {
                         if (!isDragging) {
@@ -5820,7 +5859,7 @@
          * @return Ref to pass to the iframe.
          */
 
-        function useFocusableIframe () {
+        function useFocusableIframe() {
             return useRefEffect(element => {
                 const {
                     ownerDocument
@@ -5836,7 +5875,7 @@
                  * then received focus, and dispatches a focus event.
                  */
 
-                function checkFocus () {
+                function checkFocus() {
                     if (ownerDocument && ownerDocument.activeElement === element) {
                         element.focus();
                     }
@@ -5886,7 +5925,7 @@
          * @return {[ WPFixedWindowList, setFixedListWindow:(nextWindow:WPFixedWindowList)=>void]} Array with the fixed window list and setter
          */
 
-        function useFixedWindowList (elementRef, itemHeight, totalItems, options) {
+        function useFixedWindowList(elementRef, itemHeight, totalItems, options) {
             var _options$initWindowSi, _options$useWindowing;
 
             const initWindowSize = (_options$initWindowSi = options?.initWindowSize) !== null && _options$initWindowSi !== void 0 ? _options$initWindowSi : DEFAULT_INIT_WINDOW_SIZE;

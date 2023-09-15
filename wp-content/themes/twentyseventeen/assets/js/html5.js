@@ -64,7 +64,7 @@
      * @param {String} cssText The CSS text.
      * @returns {StyleSheet} The style element.
      */
-    function addStyleSheet (ownerDocument, cssText) {
+    function addStyleSheet(ownerDocument, cssText) {
         var p = ownerDocument.createElement('p'),
             parent = ownerDocument.getElementsByTagName('head')[0] || ownerDocument.documentElement;
 
@@ -77,7 +77,7 @@
      * @private
      * @returns {Array} An array of shived element node names.
      */
-    function getElements () {
+    function getElements() {
         var elements = html5.elements;
         return typeof elements == 'string' ? elements.split(' ') : elements;
     }
@@ -88,7 +88,7 @@
      * @param {String|Array} newElements whitespace separated list or array of new element names to shiv
      * @param {Document} ownerDocument The context document.
      */
-    function addElements (newElements, ownerDocument) {
+    function addElements(newElements, ownerDocument) {
         var elements = html5.elements;
         if (typeof elements != 'string') {
             elements = elements.join(' ');
@@ -106,7 +106,7 @@
      * @param {Document} ownerDocument The document.
      * @returns {Object} An object of data.
      */
-    function getExpandoData (ownerDocument) {
+    function getExpandoData(ownerDocument) {
         var data = expandoData[ownerDocument[expando]];
         if (!data) {
             data = {};
@@ -124,7 +124,7 @@
      * @param {Document|DocumentFragment} ownerDocument The context document.
      * @returns {Object} The shived element.
      */
-    function createElement (nodeName, ownerDocument, data) {
+    function createElement(nodeName, ownerDocument, data) {
         if (!ownerDocument) {
             ownerDocument = document;
         }
@@ -160,7 +160,7 @@
      * @param {Document} ownerDocument The context document.
      * @returns {Object} The shived DocumentFragment.
      */
-    function createDocumentFragment (ownerDocument, data) {
+    function createDocumentFragment(ownerDocument, data) {
         if (!ownerDocument) {
             ownerDocument = document;
         }
@@ -184,7 +184,7 @@
      * @param {Document|DocumentFragment} ownerDocument The document.
      * @param {Object} data of the document.
      */
-    function shivMethods (ownerDocument, data) {
+    function shivMethods(ownerDocument, data) {
         if (!data.cache) {
             data.cache = {};
             data.createElem = ownerDocument.createElement;
@@ -221,7 +221,7 @@
      * @param {Document} ownerDocument The document to shiv.
      * @returns {Document} The shived document.
      */
-    function shivDocument (ownerDocument) {
+    function shivDocument(ownerDocument) {
         if (!ownerDocument) {
             ownerDocument = document;
         }

@@ -2,38 +2,32 @@
     /**
      * Discussion settings administration panel.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
     /** WordPress Administration Bootstrap */
-    require_once __DIR__ . '/admin.php';
-    
-    if (!current_user_can('manage_options')) {
+    require_once __DIR__.'/admin.php';
+
+    if(! current_user_can('manage_options'))
+    {
         wp_die(__('Sorry, you are not allowed to manage options for this site.'));
     }
-    
+
     // Used in the HTML title tag.
     $title = __('Discussion Settings');
     $parent_file = 'options-general.php';
-    
+
     add_action('admin_print_footer_scripts', 'options_discussion_add_js');
-    
-    get_current_screen()->add_help_tab(
-        [
-            'id' => 'overview',
-            'title' => __('Overview'),
-            'content' => '<p>' . __('This screen provides many options for controlling the management and display of comments and links to your posts/pages. So many, in fact, they will not all fit here! :) Use the documentation links to get information on what each discussion setting does.') . '</p>' .
-                '<p>' . __('You must click the Save Changes button at the bottom of the screen for new settings to take effect.') . '</p>',
-        ]
-    );
-    
-    get_current_screen()->set_help_sidebar(
-        '<p><strong>' . __('For more information:') . '</strong></p>' .
-        '<p>' . __('<a href="https://wordpress.org/documentation/article/settings-discussion-screen/">Documentation on Discussion Settings</a>') . '</p>' .
-        '<p>' . __('<a href="https://wordpress.org/support/forums/">Support forums</a>') . '</p>'
-    );
-    
-    require_once ABSPATH . 'wp-admin/admin-header.php';
+
+    get_current_screen()->add_help_tab([
+                                           'id' => 'overview',
+                                           'title' => __('Overview'),
+                                           'content' => '<p>'.__('This screen provides many options for controlling the management and display of comments and links to your posts/pages. So many, in fact, they will not all fit here! :) Use the documentation links to get information on what each discussion setting does.').'</p>'.'<p>'.__('You must click the Save Changes button at the bottom of the screen for new settings to take effect.').'</p>',
+                                       ]);
+
+    get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/settings-discussion-screen/">Documentation on Discussion Settings</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
+
+    require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
 
 <div class="wrap">
@@ -92,8 +86,7 @@
                         <label for="require_name_email"><input type="checkbox"
                                                                name="require_name_email"
                                                                id="require_name_email"
-                                                               value="1" <?php checked('1',
-                                get_option('require_name_email')); ?> /> <?php _e('Comment author must fill out name and email'); ?>
+                                                               value="1" <?php checked('1', get_option('require_name_email')); ?> /> <?php _e('Comment author must fill out name and email'); ?>
                         </label>
                         <br/>
                         <label for="comment_registration">
@@ -103,8 +96,9 @@
                                    value="1" <?php checked('1', get_option('comment_registration')); ?> />
                             <?php _e('Users must be registered and logged in to comment'); ?>
                             <?php
-                                if (!get_option('users_can_register') && is_multisite()) {
-                                    echo ' ' . __('(Signup has been disabled. Only members of this site can comment.)');
+                                if(! get_option('users_can_register') && is_multisite())
+                                {
+                                    echo ' '.__('(Signup has been disabled. Only members of this site can comment.)');
                                 }
                             ?>
                         </label>
@@ -116,11 +110,7 @@
                                    id="close_comments_for_old_posts"
                                    value="1" <?php checked('1', get_option('close_comments_for_old_posts')); ?> />
                             <?php
-                                printf(
-                                /* translators: %s: Number of days. */
-                                    __('Automatically close comments on posts older than %s days'),
-                                    '</label> <label for="close_comments_days_old"><input name="close_comments_days_old" type="number" min="0" step="1" id="close_comments_days_old" value="' . esc_attr(get_option('close_comments_days_old')) . '" class="small-text" />'
-                                );
+                                printf(/* translators: %s: Number of days. */ __('Automatically close comments on posts older than %s days'), '</label> <label for="close_comments_days_old"><input name="close_comments_days_old" type="number" min="0" step="1" id="close_comments_days_old" value="'.esc_attr(get_option('close_comments_days_old')).'" class="small-text" />');
                             ?>
                         </label>
                         <br/>
@@ -144,66 +134,67 @@
                                  * Filters the maximum depth of threaded/nested comments.
                                  *
                                  * @param int $max_depth The maximum depth of threaded comments. Default 10.
+                                 *
                                  * @since 2.7.0
                                  *
                                  */
                                 $maxdeep = (int) apply_filters('thread_comments_depth_max', 10);
-                                
+
                                 $thread_comments_depth = '</label> <label for="thread_comments_depth"><select name="thread_comments_depth" id="thread_comments_depth">';
-                                for ($i = 2; $i <= $maxdeep; $i++) {
-                                    $thread_comments_depth .= "<option value='" . esc_attr($i) . "'";
-                                    if ((int) get_option('thread_comments_depth') === $i) {
+                                for($i = 2; $i <= $maxdeep; $i++)
+                                {
+                                    $thread_comments_depth .= "<option value='".esc_attr($i)."'";
+                                    if((int) get_option('thread_comments_depth') === $i)
+                                    {
                                         $thread_comments_depth .= " selected='selected'";
                                     }
                                     $thread_comments_depth .= ">$i</option>";
                                 }
                                 $thread_comments_depth .= '</select>';
-                                
+
                                 /* translators: %s: Number of levels. */
                                 printf(__('Enable threaded (nested) comments %s levels deep'), $thread_comments_depth);
-                            
+
                             ?>
                         </label>
                         <br/>
                         <label for="page_comments">
-                            <input name="page_comments" type="checkbox" id="page_comments" value="1" <?php checked('1',
-                                get_option('page_comments')); ?> />
+                            <input name="page_comments" type="checkbox" id="page_comments"
+                                   value="1" <?php checked('1', get_option('page_comments')); ?> />
                             <?php
                                 $default_comments_page = '</label> <label for="default_comments_page"><select name="default_comments_page" id="default_comments_page"><option value="newest"';
-                                if ('newest' === get_option('default_comments_page')) {
+                                if('newest' === get_option('default_comments_page'))
+                                {
                                     $default_comments_page .= ' selected="selected"';
                                 }
-                                $default_comments_page .= '>' . __('last') . '</option><option value="oldest"';
-                                if ('oldest' === get_option('default_comments_page')) {
+                                $default_comments_page .= '>'.__('last').'</option><option value="oldest"';
+                                if('oldest' === get_option('default_comments_page'))
+                                {
                                     $default_comments_page .= ' selected="selected"';
                                 }
-                                $default_comments_page .= '>' . __('first') . '</option></select>';
-                                printf(
-                                /* translators: 1: Form field control for number of top level comments per page, 2: Form field control for the 'first' or 'last' page. */
-                                    __('Break comments into pages with %1$s top level comments per page and the %2$s page displayed by default'),
-                                    '</label> <label for="comments_per_page"><input name="comments_per_page" type="number" step="1" min="0" id="comments_per_page" value="' . esc_attr(get_option('comments_per_page')) . '" class="small-text" />',
-                                    $default_comments_page
-                                );
+                                $default_comments_page .= '>'.__('first').'</option></select>';
+                                printf(/* translators: 1: Form field control for number of top level comments per page, 2: Form field control for the 'first' or 'last' page. */ __('Break comments into pages with %1$s top level comments per page and the %2$s page displayed by default'), '</label> <label for="comments_per_page"><input name="comments_per_page" type="number" step="1" min="0" id="comments_per_page" value="'.esc_attr(get_option('comments_per_page')).'" class="small-text" />', $default_comments_page);
                             ?>
                         </label>
                         <br/>
                         <label for="comment_order">
                             <?php
-                                
+
                                 $comment_order = '<select name="comment_order" id="comment_order"><option value="asc"';
-                                if ('asc' === get_option('comment_order')) {
+                                if('asc' === get_option('comment_order'))
+                                {
                                     $comment_order .= ' selected="selected"';
                                 }
-                                $comment_order .= '>' . __('older') . '</option><option value="desc"';
-                                if ('desc' === get_option('comment_order')) {
+                                $comment_order .= '>'.__('older').'</option><option value="desc"';
+                                if('desc' === get_option('comment_order'))
+                                {
                                     $comment_order .= ' selected="selected"';
                                 }
-                                $comment_order .= '>' . __('newer') . '</option></select>';
-                                
+                                $comment_order .= '>'.__('newer').'</option></select>';
+
                                 /* translators: %s: Form field control for 'older' or 'newer' comments. */
-                                printf(__('Comments should be displayed with the %s comments at the top of each page'),
-                                    $comment_order);
-                            
+                                printf(__('Comments should be displayed with the %s comments at the top of each page'), $comment_order);
+
                             ?>
                         </label>
                     </fieldset>
@@ -255,8 +246,7 @@
                         <label for="comment_previously_approved"><input type="checkbox"
                                                                         name="comment_previously_approved"
                                                                         id="comment_previously_approved"
-                                                                        value="1" <?php checked('1',
-                                get_option('comment_previously_approved')); ?> /> <?php _e('Comment author must have a previously approved comment'); ?>
+                                                                        value="1" <?php checked('1', get_option('comment_previously_approved')); ?> /> <?php _e('Comment author must have a previously approved comment'); ?>
                         </label>
                     </fieldset>
                 </td>
@@ -273,11 +263,7 @@
 </span></legend>
                         <p><label for="comment_max_links">
                                 <?php
-                                    printf(
-                                    /* translators: %s: Number of links. */
-                                        __('Hold a comment in the queue if it contains %s or more links. (A common characteristic of comment spam is a large number of hyperlinks.)'),
-                                        '<input name="comment_max_links" type="number" step="1" min="0" id="comment_max_links" value="' . esc_attr(get_option('comment_max_links')) . '" class="small-text" />'
-                                    );
+                                    printf(/* translators: %s: Number of links. */ __('Hold a comment in the queue if it contains %s or more links. (A common characteristic of comment spam is a large number of hyperlinks.)'), '<input name="comment_max_links" type="number" step="1" min="0" id="comment_max_links" value="'.esc_attr(get_option('comment_max_links')).'" class="small-text" />');
                                 ?>
                             </label></p>
 
@@ -323,13 +309,14 @@
         <h2 class="title"><?php _e('Avatars'); ?></h2>
 
         <p><?php _e('An avatar is an image that can be associated with a user across multiple websites. In this area, you can choose to display avatars of users who interact with the site.'); ?></p>
-        
+
         <?php
             // The above would be a good place to link to the documentation on the Gravatar functions, for putting it in themes. Anything like that?
-            
+
             $show_avatars = get_option('show_avatars');
             $show_avatars_class = '';
-            if (!$show_avatars) {
+            if(! $show_avatars)
+            {
                 $show_avatars_class = ' hide-if-js';
             }
         ?>
@@ -357,7 +344,7 @@
         _e('Maximum Rating');
     ?>
 </span></legend>
-                        
+
                         <?php
                             $ratings = [
                                 /* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
@@ -369,9 +356,9 @@
                                 /* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
                                 'X' => __('X &#8212; Even more mature than above'),
                             ];
-                            foreach ($ratings as $key => $rating) :
+                            foreach($ratings as $key => $rating) :
                                 $selected = (get_option('avatar_rating') === $key) ? 'checked="checked"' : '';
-                                echo "\n\t<label><input type='radio' name='avatar_rating' value='" . esc_attr($key) . "' $selected/> $rating</label><br />";
+                                echo "\n\t<label><input type='radio' name='avatar_rating' value='".esc_attr($key)."' $selected/> $rating</label><br />";
                             endforeach;
                         ?>
 
@@ -393,7 +380,7 @@
                             <?php _e('For users without a custom avatar of their own, you can either display a generic logo or a generated one based on their email address.'); ?>
                             <br/>
                         </p>
-                        
+
                         <?php
                             $avatar_defaults = [
                                 'mystery' => __('Mystery Person'),
@@ -412,31 +399,33 @@
                              * and the name is the displayed avatar name.
                              *
                              * @param string[] $avatar_defaults Associative array of default avatars.
+                             *
                              * @since 2.6.0
                              *
                              */
                             $avatar_defaults = apply_filters('avatar_defaults', $avatar_defaults);
                             $default = get_option('avatar_default', 'mystery');
                             $avatar_list = '';
-                            
+
                             // Force avatars on to display these choices.
                             add_filter('pre_option_show_avatars', '__return_true', 100);
-                            
-                            foreach ($avatar_defaults as $default_key => $default_name) {
+
+                            foreach($avatar_defaults as $default_key => $default_name)
+                            {
                                 $selected = ($default === $default_key) ? 'checked="checked" ' : '';
-                                $avatar_list .= "\n\t<label><input type='radio' name='avatar_default' id='avatar_{$default_key}' value='" . esc_attr($default_key) . "' {$selected}/> ";
-                                $avatar_list .= get_avatar($user_email, 32, $default_key, '',
-                                    ['force_default' => true]);
-                                $avatar_list .= ' ' . $default_name . '</label>';
+                                $avatar_list .= "\n\t<label><input type='radio' name='avatar_default' id='avatar_{$default_key}' value='".esc_attr($default_key)."' {$selected}/> ";
+                                $avatar_list .= get_avatar($user_email, 32, $default_key, '', ['force_default' => true]);
+                                $avatar_list .= ' '.$default_name.'</label>';
                                 $avatar_list .= '<br />';
                             }
-                            
+
                             remove_filter('pre_option_show_avatars', '__return_true', 100);
-                            
+
                             /**
                              * Filters the HTML output of the default avatar list.
                              *
                              * @param string $avatar_list HTML markup of the avatar list.
+                             *
                              * @since 2.6.0
                              *
                              */
@@ -448,11 +437,11 @@
             </tr>
             <?php do_settings_fields('discussion', 'avatars'); ?>
         </table>
-        
+
         <?php do_settings_sections('discussion'); ?>
-        
+
         <?php submit_button(); ?>
     </form>
 </div>
 
-<?php require_once ABSPATH . 'wp-admin/admin-footer.php'; ?>
+<?php require_once ABSPATH.'wp-admin/admin-footer.php'; ?>

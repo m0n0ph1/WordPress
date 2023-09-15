@@ -47,7 +47,7 @@
     });
 
     // Generate the CSS for the current Color Scheme.
-    function updateCSS () {
+    function updateCSS() {
         var scheme = api('color_scheme')(), css,
             colors = _.object(colorSchemeKeys, colorScheme[scheme].colors);
 

@@ -17,8 +17,7 @@
 					<!-- /wp:spacer -->
 
 					<!-- wp:paragraph {"align":"center","style":{"typography":{"fontSize":"16px"}}} -->
-					<p class="has-text-align-center" style="font-size:16px">' . esc_html__('© Site Title',
-                'twentytwentytwo') . '</p>
+					<p class="has-text-align-center" style="font-size:16px">'.esc_html__('© Site Title', 'twentytwentytwo').'</p>
 					<!-- /wp:paragraph --></div>
 					<!-- /wp:group --></div>
 					<!-- /wp:group -->',

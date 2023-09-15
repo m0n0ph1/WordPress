@@ -194,7 +194,7 @@
             };
             this.elementOffset = this.element.offset();
 
-            position = { x: event.pageX, y: event.pageY };
+            position = {x: event.pageX, y: event.pageY};
             normValue = this._normValueFromMouse(position);
             distance = this._valueMax() - this._valueMin() + 1;
             this.handles.each(function (i) {
@@ -221,7 +221,7 @@
 
             offset = closestHandle.offset();
             mouseOverHandle = !$(event.target).parents().addBack().is('.ui-slider-handle');
-            this._clickOffset = mouseOverHandle ? { left: 0, top: 0 } : {
+            this._clickOffset = mouseOverHandle ? {left: 0, top: 0} : {
                 left: event.pageX - offset.left - (closestHandle.width() / 2),
                 top: event.pageY - offset.top -
                     (closestHandle.height() / 2) -
@@ -242,7 +242,7 @@
         },
 
         _mouseDrag: function (event) {
-            var position = { x: event.pageX, y: event.pageY },
+            var position = {x: event.pageX, y: event.pageY},
                 normValue = this._normValueFromMouse(position);
 
             this._slide(event, this._handleIndex, normValue);
@@ -583,10 +583,10 @@
 
         _refreshRange: function (orientation) {
             if (orientation === 'vertical') {
-                this.range.css({ 'width': '', 'left': '' });
+                this.range.css({'width': '', 'left': ''});
             }
             if (orientation === 'horizontal') {
-                this.range.css({ 'height': '', 'bottom': '' });
+                this.range.css({'height': '', 'bottom': ''});
             }
         },
 

@@ -100,13 +100,13 @@
         };
         var hasLinkError = false;
 
-        function getSelectedLink () {
+        function getSelectedLink() {
             var href, html,
                 node = editor.selection.getStart(),
                 link = editor.dom.getParent(node, 'a[href]');
 
             if (!link) {
-                html = editor.selection.getContent({ format: 'raw' });
+                html = editor.selection.getContent({format: 'raw'});
 
                 if (html && html.indexOf('</a>') !== -1) {
                     href = html.match(/href="([^">]+)"/);
@@ -124,7 +124,7 @@
             return link;
         }
 
-        function removePlaceholders () {
+        function removePlaceholders() {
             editor.$('a').each(function (i, element) {
                 var $element = editor.$(element);
 
@@ -136,7 +136,7 @@
             });
         }
 
-        function removePlaceholderStrings (content, dataAttr) {
+        function removePlaceholderStrings(content, dataAttr) {
             return content.replace(/(<a [^>]+>)([\s\S]*?)<\/a>/g, function (all, tag, text) {
                 if (tag.indexOf(' href="_wp_link_placeholder"') > -1) {
                     return text;
@@ -152,7 +152,7 @@
             });
         }
 
-        function checkLink (node) {
+        function checkLink(node) {
             var $link = editor.$(node);
             var href = $link.attr('href');
 
@@ -229,13 +229,13 @@
 
             if (!linkNode) {
                 removePlaceholders();
-                editor.execCommand('mceInsertLink', false, { href: '_wp_link_placeholder' });
+                editor.execCommand('mceInsertLink', false, {href: '_wp_link_placeholder'});
 
                 linkNode = editor.$('a[href="_wp_link_placeholder"]')[0];
                 editor.nodeChanged();
             }
 
-            editor.dom.setAttribs(linkNode, { 'data-wplink-edit': true });
+            editor.dom.setAttribs(linkNode, {'data-wplink-edit': true});
         });
 
         editor.addCommand('wp_link_apply', function () {
@@ -266,7 +266,7 @@
                     href = 'http://' + href;
                 }
 
-                editor.dom.setAttribs(linkNode, { href: href, 'data-wplink-edit': null });
+                editor.dom.setAttribs(linkNode, {href: href, 'data-wplink-edit': null});
 
                 if (!tinymce.trim(linkNode.innerHTML)) {
                     editor.$(linkNode).text(text || href);
@@ -401,8 +401,8 @@
                     $input = $(input);
 
                     $input.on('keydown', function () {
-                            $input.removeAttr('aria-activedescendant');
-                        })
+                        $input.removeAttr('aria-activedescendant');
+                    })
                         .autocomplete({
                             source: function (request, response) {
                                 if (last === request.term) {
@@ -479,11 +479,11 @@
                     };
 
                     $input.attr({
-                            'role': 'combobox',
-                            'aria-autocomplete': 'list',
-                            'aria-expanded': 'false',
-                            'aria-owns': $input.autocomplete('widget').attr('id')
-                        })
+                        'role': 'combobox',
+                        'aria-autocomplete': 'list',
+                        'aria-expanded': 'false',
+                        'aria-owns': $input.autocomplete('widget').attr('id')
+                    })
                         .on('focus', function () {
                             var inputValue = $input.val();
                             /*

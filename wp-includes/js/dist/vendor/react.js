@@ -36,7 +36,7 @@
     var MAYBE_ITERATOR_SYMBOL = Symbol.iterator;
     var FAUX_ITERATOR_SYMBOL = '@@iterator';
 
-    function getIteratorFn (maybeIterable) {
+    function getIteratorFn(maybeIterable) {
         if (maybeIterable === null || typeof maybeIterable !== 'object') {
             return null;
         }
@@ -93,7 +93,7 @@
     var ReactDebugCurrentFrame = {};
     var currentExtraStackFrame = null;
 
-    function setExtraStackFrame (stack) {
+    function setExtraStackFrame(stack) {
         {
             currentExtraStackFrame = stack;
         }
@@ -153,7 +153,7 @@
     // In PROD (or in packages without access to React internals),
     // they are left as they are instead.
 
-    function warn (format) {
+    function warn(format) {
         {
             {
                 for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -165,7 +165,7 @@
         }
     }
 
-    function error (format) {
+    function error(format) {
         {
             {
                 for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
@@ -177,7 +177,7 @@
         }
     }
 
-    function printWarning (level, format, args) {
+    function printWarning(level, format, args) {
         // When changing this logic, you might want to also
         // update consoleWithStackDev.www.js as well.
         {
@@ -203,7 +203,7 @@
 
     var didWarnStateUpdateForUnmountedComponent = {};
 
-    function warnNoop (publicInstance, callerName) {
+    function warnNoop(publicInstance, callerName) {
         {
             var _constructor = publicInstance.constructor;
             var componentName = _constructor && (_constructor.displayName || _constructor.name) || 'ReactClass';
@@ -302,7 +302,7 @@
      */
 
 
-    function Component (props, context, updater) {
+    function Component(props, context, updater) {
         this.props = props;
         this.context = context; // If a component has string refs, we will assign a different object later.
 
@@ -393,7 +393,7 @@
         }
     }
 
-    function ComponentDummy () {
+    function ComponentDummy() {
     }
 
     ComponentDummy.prototype = Component.prototype;
@@ -402,7 +402,7 @@
      * Convenience component with default shallow equality check for sCU.
      */
 
-    function PureComponent (props, context, updater) {
+    function PureComponent(props, context, updater) {
         this.props = props;
         this.context = context; // If a component has string refs, we will assign a different object later.
 
@@ -417,7 +417,7 @@
     pureComponentPrototype.isPureReactComponent = true;
 
     // an immutable object with a single mutable value
-    function createRef () {
+    function createRef() {
         var refObject = {
             current: null
         };
@@ -431,7 +431,7 @@
 
     var isArrayImpl = Array.isArray; // eslint-disable-next-line no-redeclare
 
-    function isArray (a) {
+    function isArray(a) {
         return isArrayImpl(a);
     }
 
@@ -446,7 +446,7 @@
      */
 
     // $FlowFixMe only called in DEV, so void return is not possible.
-    function typeName (value) {
+    function typeName(value) {
         {
             // toStringTag is needed for namespaced types like Temporal.Instant
             var hasToStringTag = typeof Symbol === 'function' && Symbol.toStringTag;
@@ -455,7 +455,7 @@
         }
     } // $FlowFixMe only called in DEV, so void return is not possible.
 
-    function willCoercionThrow (value) {
+    function willCoercionThrow(value) {
         {
             try {
                 testStringCoercion(value);
@@ -466,7 +466,7 @@
         }
     }
 
-    function testStringCoercion (value) {
+    function testStringCoercion(value) {
         // If you ended up here by following an exception call stack, here's what's
         // happened: you supplied an object or symbol value to React (as a prop, key,
         // DOM attribute, CSS property, string ref, etc.) and when React tried to
@@ -493,7 +493,7 @@
         return '' + value;
     }
 
-    function checkKeyStringCoercion (value) {
+    function checkKeyStringCoercion(value) {
         {
             if (willCoercionThrow(value)) {
                 error('The provided key is an unsupported type %s.' + ' This value must be coerced to a string before before using it here.', typeName(value));
@@ -503,7 +503,7 @@
         }
     }
 
-    function getWrappedName (outerType, innerType, wrapperName) {
+    function getWrappedName(outerType, innerType, wrapperName) {
         var displayName = outerType.displayName;
 
         if (displayName) {
@@ -514,11 +514,11 @@
         return functionName !== '' ? wrapperName + '(' + functionName + ')' : wrapperName;
     } // Keep in sync with react-reconciler/getComponentNameFromFiber
 
-    function getContextName (type) {
+    function getContextName(type) {
         return type.displayName || 'Context';
     } // Note that the reconciler package should generally prefer to use getComponentNameFromFiber() instead.
 
-    function getComponentNameFromType (type) {
+    function getComponentNameFromType(type) {
         if (type == null) {
             // Host root, text node or just invalid type.
             return null;
@@ -614,7 +614,7 @@
         didWarnAboutStringRefs = {};
     }
 
-    function hasValidRef (config) {
+    function hasValidRef(config) {
         {
             if (hasOwnProperty.call(config, 'ref')) {
                 var getter = Object.getOwnPropertyDescriptor(config, 'ref').get;
@@ -628,7 +628,7 @@
         return config.ref !== undefined;
     }
 
-    function hasValidKey (config) {
+    function hasValidKey(config) {
         {
             if (hasOwnProperty.call(config, 'key')) {
                 var getter = Object.getOwnPropertyDescriptor(config, 'key').get;
@@ -642,7 +642,7 @@
         return config.key !== undefined;
     }
 
-    function defineKeyPropWarningGetter (props, displayName) {
+    function defineKeyPropWarningGetter(props, displayName) {
         var warnAboutAccessingKey = function () {
             {
                 if (!specialPropKeyWarningShown) {
@@ -660,7 +660,7 @@
         });
     }
 
-    function defineRefPropWarningGetter (props, displayName) {
+    function defineRefPropWarningGetter(props, displayName) {
         var warnAboutAccessingRef = function () {
             {
                 if (!specialPropRefWarningShown) {
@@ -678,7 +678,7 @@
         });
     }
 
-    function warnIfStringRefCannotBeAutoConverted (config) {
+    function warnIfStringRefCannotBeAutoConverted(config) {
         {
             if (typeof config.ref === 'string' && ReactCurrentOwner.current && config.__self && ReactCurrentOwner.current.stateNode !== config.__self) {
                 var componentName = getComponentNameFromType(ReactCurrentOwner.current.type);
@@ -773,7 +773,7 @@
      * See https://reactjs.org/docs/react-api.html#createelement
      */
 
-    function createElement (type, config, children) {
+    function createElement(type, config, children) {
         var propName; // Reserved names are extracted
 
         var props = {};
@@ -857,7 +857,7 @@
         return ReactElement(type, key, ref, self, source, ReactCurrentOwner.current, props);
     }
 
-    function cloneAndReplaceKey (oldElement, newKey) {
+    function cloneAndReplaceKey(oldElement, newKey) {
         var newElement = ReactElement(oldElement.type, newKey, oldElement.ref, oldElement._self, oldElement._source, oldElement._owner, oldElement.props);
         return newElement;
     }
@@ -867,7 +867,7 @@
      * See https://reactjs.org/docs/react-api.html#cloneelement
      */
 
-    function cloneElement (element, config, children) {
+    function cloneElement(element, config, children) {
         if (element === null || element === undefined) {
             throw new Error('React.cloneElement(...): The argument must be a React element, but you passed ' + element + '.');
         }
@@ -946,7 +946,7 @@
      * @final
      */
 
-    function isValidElement (object) {
+    function isValidElement(object) {
         return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
     }
 
@@ -960,7 +960,7 @@
      * @return {string} the escaped key.
      */
 
-    function escape (key) {
+    function escape(key) {
         var escapeRegex = /[=:]/g;
         var escaperLookup = {
             '=': '=0',
@@ -981,7 +981,7 @@
     var didWarnAboutMaps = false;
     var userProvidedKeyEscapeRegex = /\/+/g;
 
-    function escapeUserProvidedKey (text) {
+    function escapeUserProvidedKey(text) {
         return text.replace(userProvidedKeyEscapeRegex, '$&/');
     }
 
@@ -994,7 +994,7 @@
      */
 
 
-    function getElementKey (element, index) {
+    function getElementKey(element, index) {
         // Do some typechecking here since we call this blindly. We want to ensure
         // that we don't block potential future ES APIs.
         if (typeof element === 'object' && element !== null && element.key != null) {
@@ -1009,7 +1009,7 @@
         return index.toString(36);
     }
 
-    function mapIntoArray (children, array, escapedPrefix, nameSoFar, callback) {
+    function mapIntoArray(children, array, escapedPrefix, nameSoFar, callback) {
         var type = typeof children;
 
         if (type === 'undefined' || type === 'boolean') {
@@ -1141,7 +1141,7 @@
      * @param {*} context Context for mapFunction.
      * @return {object} Object containing the ordered map of results.
      */
-    function mapChildren (children, func, context) {
+    function mapChildren(children, func, context) {
         if (children == null) {
             return children;
         }
@@ -1165,7 +1165,7 @@
      */
 
 
-    function countChildren (children) {
+    function countChildren(children) {
         var n = 0;
         mapChildren(children, function () {
             n++; // Don't return anything
@@ -1185,7 +1185,7 @@
      * @param {function(*, int)} forEachFunc
      * @param {*} forEachContext Context for forEachContext.
      */
-    function forEachChildren (children, forEachFunc, forEachContext) {
+    function forEachChildren(children, forEachFunc, forEachContext) {
         mapChildren(children, function () {
             forEachFunc.apply(this, arguments); // Don't return anything.
         }, forEachContext);
@@ -1199,7 +1199,7 @@
      */
 
 
-    function toArray (children) {
+    function toArray(children) {
         return mapChildren(children, function (child) {
             return child;
         }) || [];
@@ -1221,7 +1221,7 @@
      */
 
 
-    function onlyChild (children) {
+    function onlyChild(children) {
         if (!isValidElement(children)) {
             throw new Error('React.Children.only expected to receive a single React element child.');
         }
@@ -1229,7 +1229,7 @@
         return children;
     }
 
-    function createContext (defaultValue) {
+    function createContext(defaultValue) {
         // TODO: Second argument used to be an optional `calculateChangedBits`
         // function. Warn to reserve for future use?
         var context = {
@@ -1348,7 +1348,7 @@
     var Resolved = 1;
     var Rejected = 2;
 
-    function lazyInitializer (payload) {
+    function lazyInitializer(payload) {
         if (payload._status === Uninitialized) {
             var ctor = payload._result;
             var thenable = ctor(); // Transition to the next state.
@@ -1405,7 +1405,7 @@
         }
     }
 
-    function lazy (ctor) {
+    function lazy(ctor) {
         var payload = {
             // We use these fields to store the result.
             _status: Uninitialized,
@@ -1461,7 +1461,7 @@
         return lazyType;
     }
 
-    function forwardRef (render) {
+    function forwardRef(render) {
         {
             if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
                 error('forwardRef requires a render function but received a `memo` ' + 'component. Instead of forwardRef(memo(...)), use ' + 'memo(forwardRef(...)).');
@@ -1518,7 +1518,7 @@
         REACT_MODULE_REFERENCE = Symbol.for('react.module.reference');
     }
 
-    function isValidElementType (type) {
+    function isValidElementType(type) {
         if (typeof type === 'string' || typeof type === 'function') {
             return true;
         } // Note: typeof might be other than 'symbol' or 'number' (e.g. if it's a polyfill).
@@ -1540,7 +1540,7 @@
         return false;
     }
 
-    function memo (type, compare) {
+    function memo(type, compare) {
         {
             if (!isValidElementType(type)) {
                 error('memo: The first argument must be a component. Instead ' + 'received: %s', type === null ? 'null' : typeof type);
@@ -1580,7 +1580,7 @@
         return elementType;
     }
 
-    function resolveDispatcher () {
+    function resolveDispatcher() {
         var dispatcher = ReactCurrentDispatcher.current;
 
         {
@@ -1594,7 +1594,7 @@
         return dispatcher;
     }
 
-    function useContext (Context) {
+    function useContext(Context) {
         var dispatcher = resolveDispatcher();
 
         {
@@ -1614,74 +1614,74 @@
         return dispatcher.useContext(Context);
     }
 
-    function useState (initialState) {
+    function useState(initialState) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useState(initialState);
     }
 
-    function useReducer (reducer, initialArg, init) {
+    function useReducer(reducer, initialArg, init) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useReducer(reducer, initialArg, init);
     }
 
-    function useRef (initialValue) {
+    function useRef(initialValue) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useRef(initialValue);
     }
 
-    function useEffect (create, deps) {
+    function useEffect(create, deps) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useEffect(create, deps);
     }
 
-    function useInsertionEffect (create, deps) {
+    function useInsertionEffect(create, deps) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useInsertionEffect(create, deps);
     }
 
-    function useLayoutEffect (create, deps) {
+    function useLayoutEffect(create, deps) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useLayoutEffect(create, deps);
     }
 
-    function useCallback (callback, deps) {
+    function useCallback(callback, deps) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useCallback(callback, deps);
     }
 
-    function useMemo (create, deps) {
+    function useMemo(create, deps) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useMemo(create, deps);
     }
 
-    function useImperativeHandle (ref, create, deps) {
+    function useImperativeHandle(ref, create, deps) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useImperativeHandle(ref, create, deps);
     }
 
-    function useDebugValue (value, formatterFn) {
+    function useDebugValue(value, formatterFn) {
         {
             var dispatcher = resolveDispatcher();
             return dispatcher.useDebugValue(value, formatterFn);
         }
     }
 
-    function useTransition () {
+    function useTransition() {
         var dispatcher = resolveDispatcher();
         return dispatcher.useTransition();
     }
 
-    function useDeferredValue (value) {
+    function useDeferredValue(value) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useDeferredValue(value);
     }
 
-    function useId () {
+    function useId() {
         var dispatcher = resolveDispatcher();
         return dispatcher.useId();
     }
 
-    function useSyncExternalStore (subscribe, getSnapshot, getServerSnapshot) {
+    function useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot) {
         var dispatcher = resolveDispatcher();
         return dispatcher.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
     }
@@ -1699,12 +1699,12 @@
     var prevGroupCollapsed;
     var prevGroupEnd;
 
-    function disabledLog () {
+    function disabledLog() {
     }
 
     disabledLog.__reactDisabledLog = true;
 
-    function disableLogs () {
+    function disableLogs() {
         {
             if (disabledDepth === 0) {
                 /* eslint-disable react-internal/no-production-logging */
@@ -1739,7 +1739,7 @@
         }
     }
 
-    function reenableLogs () {
+    function reenableLogs() {
         {
             disabledDepth--;
 
@@ -1786,7 +1786,7 @@
     var ReactCurrentDispatcher$1 = ReactSharedInternals.ReactCurrentDispatcher;
     var prefix;
 
-    function describeBuiltInComponentFrame (name, source, ownerFn) {
+    function describeBuiltInComponentFrame(name, source, ownerFn) {
         {
             if (prefix === undefined) {
                 // Extract the VM specific prefix used by each line.
@@ -1810,7 +1810,7 @@
         componentFrameCache = new PossiblyWeakMap();
     }
 
-    function describeNativeComponentFrame (fn, construct) {
+    function describeNativeComponentFrame(fn, construct) {
         // If something asked for a stack inside a fake render, it should get ignored.
         if (!fn || reentry) {
             return '';
@@ -1966,18 +1966,18 @@
         return syntheticFrame;
     }
 
-    function describeFunctionComponentFrame (fn, source, ownerFn) {
+    function describeFunctionComponentFrame(fn, source, ownerFn) {
         {
             return describeNativeComponentFrame(fn, false);
         }
     }
 
-    function shouldConstruct (Component) {
+    function shouldConstruct(Component) {
         var prototype = Component.prototype;
         return !!(prototype && prototype.isReactComponent);
     }
 
-    function describeUnknownElementTypeFrameInDEV (type, source, ownerFn) {
+    function describeUnknownElementTypeFrameInDEV(type, source, ownerFn) {
 
         if (type == null) {
             return '';
@@ -2018,7 +2018,8 @@
                     try {
                         // Lazy may contain any component type so we recursively resolve it.
                         return describeUnknownElementTypeFrameInDEV(init(payload), source, ownerFn);
-                    } catch (x) {}
+                    } catch (x) {
+                    }
                 }
             }
         }
@@ -2029,7 +2030,7 @@
     var loggedTypeFailures = {};
     var ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
 
-    function setCurrentlyValidatingElement (element) {
+    function setCurrentlyValidatingElement(element) {
         {
             if (element) {
                 var owner = element._owner;
@@ -2041,7 +2042,7 @@
         }
     }
 
-    function checkPropTypes (typeSpecs, values, location, componentName, element) {
+    function checkPropTypes(typeSpecs, values, location, componentName, element) {
         {
             // $FlowFixMe This is okay but Flow doesn't know it.
             var has = Function.call.bind(hasOwnProperty);
@@ -2090,7 +2091,7 @@
         }
     }
 
-    function setCurrentlyValidatingElement$1 (element) {
+    function setCurrentlyValidatingElement$1(element) {
         {
             if (element) {
                 var owner = element._owner;
@@ -2108,7 +2109,7 @@
         propTypesMisspellWarningShown = false;
     }
 
-    function getDeclarationErrorAddendum () {
+    function getDeclarationErrorAddendum() {
         if (ReactCurrentOwner.current) {
             var name = getComponentNameFromType(ReactCurrentOwner.current.type);
 
@@ -2120,7 +2121,7 @@
         return '';
     }
 
-    function getSourceInfoErrorAddendum (source) {
+    function getSourceInfoErrorAddendum(source) {
         if (source !== undefined) {
             var fileName = source.fileName.replace(/^.*[\\\/]/, '');
             var lineNumber = source.lineNumber;
@@ -2130,7 +2131,7 @@
         return '';
     }
 
-    function getSourceInfoErrorAddendumForProps (elementProps) {
+    function getSourceInfoErrorAddendumForProps(elementProps) {
         if (elementProps !== null && elementProps !== undefined) {
             return getSourceInfoErrorAddendum(elementProps.__source);
         }
@@ -2147,7 +2148,7 @@
 
     var ownerHasKeyUseWarning = {};
 
-    function getCurrentComponentErrorInfo (parentType) {
+    function getCurrentComponentErrorInfo(parentType) {
         var info = getDeclarationErrorAddendum();
 
         if (!info) {
@@ -2174,7 +2175,7 @@
      */
 
 
-    function validateExplicitKey (element, parentType) {
+    function validateExplicitKey(element, parentType) {
         if (!element._store || element._store.validated || element.key != null) {
             return;
         }
@@ -2217,7 +2218,7 @@
      */
 
 
-    function validateChildKeys (node, parentType) {
+    function validateChildKeys(node, parentType) {
         if (typeof node !== 'object') {
             return;
         }
@@ -2263,7 +2264,7 @@
      */
 
 
-    function validatePropTypes (element) {
+    function validatePropTypes(element) {
         {
             var type = element.type;
 
@@ -2307,7 +2308,7 @@
      */
 
 
-    function validateFragmentProps (fragment) {
+    function validateFragmentProps(fragment) {
         {
             var keys = Object.keys(fragment.props);
 
@@ -2334,7 +2335,7 @@
         }
     }
 
-    function createElementWithValidation (type, props, children) {
+    function createElementWithValidation(type, props, children) {
         var validType = isValidElementType(type); // We warn in this case but don't throw. We expect the element creation to
         // succeed and there will likely be errors in render.
 
@@ -2399,7 +2400,7 @@
 
     var didWarnAboutDeprecatedCreateFactory = false;
 
-    function createFactoryWithValidation (type) {
+    function createFactoryWithValidation(type) {
         var validatedFactory = createElementWithValidation.bind(null, type);
         validatedFactory.type = type;
 
@@ -2426,7 +2427,7 @@
         return validatedFactory;
     }
 
-    function cloneElementWithValidation (element, props, children) {
+    function cloneElementWithValidation(element, props, children) {
         var newElement = cloneElement.apply(this, arguments);
 
         for (var i = 2; i < arguments.length; i++) {
@@ -2441,17 +2442,17 @@
     var enableProfiling = false;
     var frameYieldMs = 5;
 
-    function push (heap, node) {
+    function push(heap, node) {
         var index = heap.length;
         heap.push(node);
         siftUp(heap, node, index);
     }
 
-    function peek (heap) {
+    function peek(heap) {
         return heap.length === 0 ? null : heap[0];
     }
 
-    function pop (heap) {
+    function pop(heap) {
         if (heap.length === 0) {
             return null;
         }
@@ -2467,7 +2468,7 @@
         return first;
     }
 
-    function siftUp (heap, node, i) {
+    function siftUp(heap, node, i) {
         var index = i;
 
         while (index > 0) {
@@ -2486,7 +2487,7 @@
         }
     }
 
-    function siftDown (heap, node, i) {
+    function siftDown(heap, node, i) {
         var index = i;
         var length = heap.length;
         var halfLength = length >>> 1;
@@ -2518,7 +2519,7 @@
         }
     }
 
-    function compare (a, b) {
+    function compare(a, b) {
         // Compare sort index first, then task id.
         var diff = a.sortIndex - b.sortIndex;
         return diff !== 0 ? diff : a.id - b.id;
@@ -2531,7 +2532,7 @@
     var LowPriority = 4;
     var IdlePriority = 5;
 
-    function markTaskErrored (task, ms) {
+    function markTaskErrored(task, ms) {
     }
 
     /* eslint-disable no-var */
@@ -2582,7 +2583,7 @@
 
     var isInputPending = typeof navigator !== 'undefined' && navigator.scheduling !== undefined && navigator.scheduling.isInputPending !== undefined ? navigator.scheduling.isInputPending.bind(navigator.scheduling) : null;
 
-    function advanceTimers (currentTime) {
+    function advanceTimers(currentTime) {
         // Check for tasks that are no longer delayed and add them to the queue.
         var timer = peek(timerQueue);
 
@@ -2604,7 +2605,7 @@
         }
     }
 
-    function handleTimeout (currentTime) {
+    function handleTimeout(currentTime) {
         isHostTimeoutScheduled = false;
         advanceTimers(currentTime);
 
@@ -2622,7 +2623,7 @@
         }
     }
 
-    function flushWork (hasTimeRemaining, initialTime) {
+    function flushWork(hasTimeRemaining, initialTime) {
 
         isHostCallbackScheduled = false;
 
@@ -2659,7 +2660,7 @@
         }
     }
 
-    function workLoop (hasTimeRemaining, initialTime) {
+    function workLoop(hasTimeRemaining, initialTime) {
         var currentTime = initialTime;
         advanceTimers(currentTime);
         currentTask = peek(taskQueue);
@@ -2710,7 +2711,7 @@
         }
     }
 
-    function unstable_runWithPriority (priorityLevel, eventHandler) {
+    function unstable_runWithPriority(priorityLevel, eventHandler) {
         switch (priorityLevel) {
             case ImmediatePriority:
             case UserBlockingPriority:
@@ -2733,7 +2734,7 @@
         }
     }
 
-    function unstable_next (eventHandler) {
+    function unstable_next(eventHandler) {
         var priorityLevel;
 
         switch (currentPriorityLevel) {
@@ -2760,7 +2761,7 @@
         }
     }
 
-    function unstable_wrapCallback (callback) {
+    function unstable_wrapCallback(callback) {
         var parentPriorityLevel = currentPriorityLevel;
         return function () {
             // This is a fork of runWithPriority, inlined for performance.
@@ -2775,7 +2776,7 @@
         };
     }
 
-    function unstable_scheduleCallback (priorityLevel, callback, options) {
+    function unstable_scheduleCallback(priorityLevel, callback, options) {
         var currentTime = getCurrentTime();
         var startTime;
 
@@ -2856,10 +2857,10 @@
         return newTask;
     }
 
-    function unstable_pauseExecution () {
+    function unstable_pauseExecution() {
     }
 
-    function unstable_continueExecution () {
+    function unstable_continueExecution() {
 
         if (!isHostCallbackScheduled && !isPerformingWork) {
             isHostCallbackScheduled = true;
@@ -2867,18 +2868,18 @@
         }
     }
 
-    function unstable_getFirstCallbackNode () {
+    function unstable_getFirstCallbackNode() {
         return peek(taskQueue);
     }
 
-    function unstable_cancelCallback (task) {
+    function unstable_cancelCallback(task) {
         // remove from the queue because you can't remove arbitrary nodes from an
         // array based heap, only the first one.)
 
         task.callback = null;
     }
 
-    function unstable_getCurrentPriorityLevel () {
+    function unstable_getCurrentPriorityLevel() {
         return currentPriorityLevel;
     }
 
@@ -2892,7 +2893,7 @@
     var frameInterval = frameYieldMs;
     var startTime = -1;
 
-    function shouldYieldToHost () {
+    function shouldYieldToHost() {
         var timeElapsed = getCurrentTime() - startTime;
 
         if (timeElapsed < frameInterval) {
@@ -2904,11 +2905,11 @@
         return true;
     }
 
-    function requestPaint () {
+    function requestPaint() {
 
     }
 
-    function forceFrameRate (fps) {
+    function forceFrameRate(fps) {
         if (fps < 0 || fps > 125) {
             // Using console['error'] to evade Babel and ESLint
             console['error']('forceFrameRate takes a positive int between 0 and 125, ' + 'forcing frame rates higher than 125 fps is not supported');
@@ -2989,7 +2990,7 @@
         };
     }
 
-    function requestHostCallback (callback) {
+    function requestHostCallback(callback) {
         scheduledHostCallback = callback;
 
         if (!isMessageLoopRunning) {
@@ -2998,13 +2999,13 @@
         }
     }
 
-    function requestHostTimeout (callback, ms) {
+    function requestHostTimeout(callback, ms) {
         taskTimeoutID = localSetTimeout(function () {
             callback(getCurrentTime());
         }, ms);
     }
 
-    function cancelHostTimeout () {
+    function cancelHostTimeout() {
         localClearTimeout(taskTimeoutID);
         taskTimeoutID = -1;
     }
@@ -3030,7 +3031,7 @@
         unstable_continueExecution: unstable_continueExecution,
         unstable_pauseExecution: unstable_pauseExecution,
         unstable_getFirstCallbackNode: unstable_getFirstCallbackNode,
-        get unstable_now () {
+        get unstable_now() {
             return getCurrentTime;
         },
         unstable_forceFrameRate: forceFrameRate,
@@ -3054,7 +3055,7 @@
         ReactSharedInternals$1.ReactDebugCurrentFrame = ReactDebugCurrentFrame;
     }
 
-    function startTransition (scope, options) {
+    function startTransition(scope, options) {
         var prevTransition = ReactCurrentBatchConfig.transition;
         ReactCurrentBatchConfig.transition = {};
         var currentTransition = ReactCurrentBatchConfig.transition;
@@ -3085,7 +3086,7 @@
     var didWarnAboutMessageChannel = false;
     var enqueueTaskImpl = null;
 
-    function enqueueTask (task) {
+    function enqueueTask(task) {
         if (enqueueTaskImpl === null) {
             try {
                 // read require off the module object to get around the bundlers.
@@ -3123,7 +3124,7 @@
     var actScopeDepth = 0;
     var didWarnNoAwaitAct = false;
 
-    function act (callback) {
+    function act(callback) {
         {
             // `act` calls can be nested, so we track the depth. This represents the
             // number of `act` scopes on the stack.
@@ -3250,7 +3251,7 @@
         }
     }
 
-    function popActScope (prevActScopeDepth) {
+    function popActScope(prevActScopeDepth) {
         {
             if (prevActScopeDepth !== actScopeDepth - 1) {
                 error('You seem to have overlapping act() calls, this is not supported. ' + 'Be sure to await previous act() calls before making a new one. ');
@@ -3260,7 +3261,7 @@
         }
     }
 
-    function recursivelyFlushAsyncActWork (returnValue, resolve, reject) {
+    function recursivelyFlushAsyncActWork(returnValue, resolve, reject) {
         {
             var queue = ReactCurrentActQueue.current;
 
@@ -3288,7 +3289,7 @@
 
     var isFlushing = false;
 
-    function flushActQueue (queue) {
+    function flushActQueue(queue) {
         {
             if (!isFlushing) {
                 // Prevent re-entrance.

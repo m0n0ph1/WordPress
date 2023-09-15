@@ -23,7 +23,7 @@
          *
          * @return {void}
          */
-        createStates: function createStates () {
+        createStates: function createStates() {
             this.states.add([
                 new wp.media.controller.VideoDetails({
                     media: this.media
@@ -90,7 +90,7 @@
          * @param {Object} modelProps - Model props.
          * @return {Object} Media frame props.
          */
-        mapModelToMediaFrameProps: function mapModelToMediaFrameProps (modelProps) {
+        mapModelToMediaFrameProps: function mapModelToMediaFrameProps(modelProps) {
             var control = this, mediaFrameProps;
             mediaFrameProps = component.MediaWidgetControl.prototype.mapModelToMediaFrameProps.call(control, modelProps);
             mediaFrameProps.link = 'embed';
@@ -102,7 +102,7 @@
          *
          * @return {void}
          */
-        fetchEmbed: function fetchEmbed () {
+        fetchEmbed: function fetchEmbed() {
             var control = this, url;
             url = control.model.get('url');
 
@@ -146,7 +146,7 @@
          *
          * @return {boolean} Whether url is a supported video host.
          */
-        isHostedVideo: function isHostedVideo () {
+        isHostedVideo: function isHostedVideo() {
             return true;
         },
 
@@ -155,7 +155,7 @@
          *
          * @return {void}
          */
-        renderPreview: function renderPreview () {
+        renderPreview: function renderPreview() {
             var control = this, previewContainer, previewTemplate, attachmentId, attachmentUrl, poster, html = '',
                 isOEmbed = false, mime, error, urlParser, matches;
             attachmentId = control.model.get('attachment_id');
@@ -214,7 +214,7 @@
          *
          * @return {void}
          */
-        editMedia: function editMedia () {
+        editMedia: function editMedia() {
             var control = this, mediaFrame, metadata, updateCallback;
 
             metadata = control.mapModelToMediaFrameProps(control.model.toJSON());
@@ -236,7 +236,7 @@
                 control.model.set(_.extend(
                     _.omit(control.model.defaults(), 'title'),
                     control.mapMediaToModelProps(mediaFrameProps),
-                    { error: false }
+                    {error: false}
                 ));
             };
 

@@ -485,11 +485,11 @@
             $.each(buttons, function (name, props) {
                 var click, buttonOptions;
                 props = typeof props === 'function' ?
-                    { click: props, text: name } :
+                    {click: props, text: name} :
                     props;
 
                 // Default to a non-submitting button
-                props = $.extend({ type: 'button' }, props);
+                props = $.extend({type: 'button'}, props);
 
                 // Change the context for the click callback to be the main element
                 click = props.click;
@@ -529,7 +529,7 @@
             var that = this,
                 options = this.options;
 
-            function filteredUi (ui) {
+            function filteredUi(ui) {
                 return {
                     position: ui.position,
                     offset: ui.offset
@@ -577,7 +577,7 @@
                     handles :
                     'n,e,s,w,se,sw,ne,nw';
 
-            function filteredUi (ui) {
+            function filteredUi(ui) {
                 return {
                     originalPosition: ui.originalPosition,
                     originalSize: ui.originalSize,
@@ -587,40 +587,40 @@
             }
 
             this.uiDialog.resizable({
-                    cancel: '.ui-dialog-content',
-                    containment: 'document',
-                    alsoResize: this.element,
-                    maxWidth: options.maxWidth,
-                    maxHeight: options.maxHeight,
-                    minWidth: options.minWidth,
-                    minHeight: this._minHeight(),
-                    handles: resizeHandles,
-                    start: function (event, ui) {
-                        that._addClass($(this), 'ui-dialog-resizing');
-                        that._blockFrames();
-                        that._trigger('resizeStart', event, filteredUi(ui));
-                    },
-                    resize: function (event, ui) {
-                        that._trigger('resize', event, filteredUi(ui));
-                    },
-                    stop: function (event, ui) {
-                        var offset = that.uiDialog.offset(),
-                            left = offset.left - that.document.scrollLeft(),
-                            top = offset.top - that.document.scrollTop();
+                cancel: '.ui-dialog-content',
+                containment: 'document',
+                alsoResize: this.element,
+                maxWidth: options.maxWidth,
+                maxHeight: options.maxHeight,
+                minWidth: options.minWidth,
+                minHeight: this._minHeight(),
+                handles: resizeHandles,
+                start: function (event, ui) {
+                    that._addClass($(this), 'ui-dialog-resizing');
+                    that._blockFrames();
+                    that._trigger('resizeStart', event, filteredUi(ui));
+                },
+                resize: function (event, ui) {
+                    that._trigger('resize', event, filteredUi(ui));
+                },
+                stop: function (event, ui) {
+                    var offset = that.uiDialog.offset(),
+                        left = offset.left - that.document.scrollLeft(),
+                        top = offset.top - that.document.scrollTop();
 
-                        options.height = that.uiDialog.height();
-                        options.width = that.uiDialog.width();
-                        options.position = {
-                            my: 'left top',
-                            at: 'left' + (left >= 0 ? '+' : '') + left + ' ' +
-                                'top' + (top >= 0 ? '+' : '') + top,
-                            of: that.window
-                        };
-                        that._removeClass($(this), 'ui-dialog-resizing');
-                        that._unblockFrames();
-                        that._trigger('resizeStop', event, filteredUi(ui));
-                    }
-                })
+                    options.height = that.uiDialog.height();
+                    options.width = that.uiDialog.width();
+                    options.position = {
+                        my: 'left top',
+                        at: 'left' + (left >= 0 ? '+' : '') + left + ' ' +
+                            'top' + (top >= 0 ? '+' : '') + top,
+                        of: that.window
+                    };
+                    that._removeClass($(this), 'ui-dialog-resizing');
+                    that._unblockFrames();
+                    that._trigger('resizeStop', event, filteredUi(ui));
+                }
+            })
                 .css('position', position);
         },
 
@@ -788,9 +788,9 @@
             // Reset wrapper sizing
             // determine the height of all the non-content elements
             nonContentHeight = this.uiDialog.css({
-                    height: 'auto',
-                    width: options.width
-                })
+                height: 'auto',
+                width: options.width
+            })
                 .outerHeight();
             minContentHeight = Math.max(0, options.minHeight - nonContentHeight);
             maxContentHeight = typeof options.maxHeight === 'number' ?

@@ -100,7 +100,7 @@
      * @param {string} params.post_title - Post title to use.
      * @return {jQuery.promise} Promise resolved with the added post.
      */
-    api.Menus.insertAutoDraftPost = function insertAutoDraftPost (params) {
+    api.Menus.insertAutoDraftPost = function insertAutoDraftPost(params) {
         var request, deferred = $.Deferred();
 
         request = wp.ajax.post('customize-nav-menus-insert-auto-draft', {
@@ -248,7 +248,7 @@
                         }
                     } else {
                         self.loadItems([
-                            { type: type, object: object }
+                            {type: type, object: object}
                         ]);
                     }
                 }
@@ -315,7 +315,7 @@
             $section.addClass('loading');
             self.loading = true;
 
-            params = api.previewer.query({ excludeCustomizedSaved: true });
+            params = api.previewer.query({excludeCustomizedSaved: true});
             _.extend(params, {
                 'customize-menus-nonce': api.settings.nonce['customize-menus'],
                 'wp_customize': 'on',
@@ -397,7 +397,7 @@
             itemTemplate = wp.template('available-menu-item');
 
             if (_.isString(itemTypes) && _.isString(deprecated)) {
-                _itemTypes = [{ type: itemTypes, object: deprecated }];
+                _itemTypes = [{type: itemTypes, object: deprecated}];
             } else {
                 _itemTypes = itemTypes;
             }
@@ -424,7 +424,7 @@
 
             self.loading = true;
 
-            params = api.previewer.query({ excludeCustomizedSaved: true });
+            params = api.previewer.query({excludeCustomizedSaved: true});
             _.extend(params, {
                 'customize-menus-nonce': api.settings.nonce['customize-menus'],
                 'wp_customize': 'on',
@@ -522,7 +522,7 @@
             this.select(menuitemTpl);
 
             menuitemId = $(this.selected).data('menu-item-id');
-            menu_item = this.collection.findWhere({ id: menuitemId });
+            menu_item = this.collection.findWhere({id: menuitemId});
             if (!menu_item) {
                 return;
             }
@@ -753,7 +753,7 @@
                 this.currentMenuControl.container.find('.add-new-menu-item').focus();
                 event.preventDefault(); // Avoid additional back-tab.
             } else if (isEsc) {
-                this.close({ returnFocus: true });
+                this.close({returnFocus: true});
             }
         }
     });
@@ -1190,7 +1190,7 @@
          * @return {void}
          */
         highlightNewItemButton: function () {
-            api.utils.highlightButton(this.contentContainer.find('.add-new-menu-item'), { delay: 2000 });
+            api.utils.highlightButton(this.contentContainer.find('.add-new-menu-item'), {delay: 2000});
         }
     });
 
@@ -1202,7 +1202,7 @@
      * @param {string} [name=''] Nav menu name.
      * @return {wp.customize.Menus.MenuSection} Added nav menu.
      */
-    api.Menus.createNavMenu = function createNavMenu (name) {
+    api.Menus.createNavMenu = function createNavMenu(name) {
         var customizeId, placeholderId, setting;
         placeholderId = api.Menus.generatePlaceholderAutoIncrementId();
 
@@ -1286,7 +1286,7 @@
              * @since 4.9.0
              * @return {number} Count.
              */
-            function getNavMenuCount () {
+            function getNavMenuCount() {
                 var count = 0;
                 api.each(function (setting) {
                     if (navMenuSettingPattern.test(setting.id) && false !== setting.get()) {
@@ -1302,7 +1302,7 @@
              * @since 4.9.0
              * @return {void}
              */
-            function updateNoticeVisibility () {
+            function updateNoticeVisibility() {
                 container.find('.add-new-menu-notice').prop('hidden', getNavMenuCount() > 0);
             }
 
@@ -1313,7 +1313,7 @@
              * @param {wp.customize.Setting} setting - Added setting.
              * @return {void}
              */
-            function addChangeEventListener (setting) {
+            function addChangeEventListener(setting) {
                 if (navMenuSettingPattern.test(setting.id)) {
                     setting.bind(updateNoticeVisibility);
                     updateNoticeVisibility();
@@ -1327,7 +1327,7 @@
              * @param {wp.customize.Setting} setting - Removed setting.
              * @return {void}
              */
-            function removeChangeEventListener (setting) {
+            function removeChangeEventListener(setting) {
                 if (navMenuSettingPattern.test(setting.id)) {
                     setting.unbind(updateNoticeVisibility);
                     updateNoticeVisibility();
@@ -2353,7 +2353,7 @@
                         otherControl.setting.set(
                             $.extend(
                                 otherControlSettingValue,
-                                { position: otherControlSettingValue.position + 1 }
+                                {position: otherControlSettingValue.position + 1}
                             )
                         );
                     }
@@ -2890,7 +2890,7 @@
             this.$sectionContent.toggleClass('reordering', showOrHide);
             this.$sectionContent.sortable(this.isReordering ? 'disable' : 'enable');
             if (this.isReordering) {
-                addNewItemBtn.attr({ 'tabindex': '-1', 'aria-hidden': 'true' });
+                addNewItemBtn.attr({'tabindex': '-1', 'aria-hidden': 'true'});
                 reorderBtn.attr('aria-label', api.Menus.data.l10n.reorderLabelOff);
                 wp.a11y.speak(api.Menus.data.l10n.reorderModeOn);
                 itemsTitle.attr('aria-hidden', 'false');
@@ -3426,7 +3426,7 @@
      *
      * @param {string} menuItemId
      */
-    function menuItemIdToSettingId (menuItemId) {
+    function menuItemIdToSettingId(menuItemId) {
         return 'nav_menu_item[' + menuItemId + ']';
     }
 
@@ -3439,7 +3439,7 @@
      * @param {string} name
      * @return {string}
      */
-    function displayNavMenuName (name) {
+    function displayNavMenuName(name) {
         name = name || '';
         name = wp.sanitize.stripTagsAndEncodeText(name); // Remove any potential tags from name.
         name = name.toString().trim();

@@ -11,7 +11,7 @@
  *
  * @return {void}
  */
-function twentytwentyoneResponsiveEmbeds () {
+function twentytwentyoneResponsiveEmbeds() {
     var proportion, parentWidth;
 
     // Loop iframe elements.

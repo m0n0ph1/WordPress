@@ -2,21 +2,21 @@
     /**
      * Implement a custom header for Twenty Thirteen
      *
-     * @link https://codex.wordpress.org/Custom_Headers
+     * @link       https://codex.wordpress.org/Custom_Headers
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Thirteen
-     * @since Twenty Thirteen 1.0
+     * @since      Twenty Thirteen 1.0
      */
-    
+
     /**
      * Set up the WordPress core custom header arguments and settings.
      *
-     * @uses add_theme_support() to register support for 3.4 and up.
-     * @uses twentythirteen_header_style() to style front end.
-     * @uses twentythirteen_admin_header_style() to style wp-admin form.
-     * @uses twentythirteen_admin_header_image() to add custom markup to wp-admin form.
-     * @uses register_default_headers() to set up the bundled header images.
+     * @uses  add_theme_support() to register support for 3.4 and up.
+     * @uses  twentythirteen_header_style() to style front end.
+     * @uses  twentythirteen_admin_header_style() to style wp-admin form.
+     * @uses  twentythirteen_admin_header_image() to add custom markup to wp-admin form.
+     * @uses  register_default_headers() to set up the bundled header images.
      *
      * @since Twenty Thirteen 1.0
      */
@@ -26,46 +26,44 @@
             // Text color and image (empty to use none).
             'default-text-color' => '220e10',
             'default-image' => '%s/images/headers/circle.png',
-            
+
             // Set height and width, with a maximum value for the width.
             'height' => 230,
             'width' => 1600,
-            
+
             // Callbacks for styling the header and the admin preview.
             'wp-head-callback' => 'twentythirteen_header_style',
             'admin-head-callback' => 'twentythirteen_admin_header_style',
             'admin-preview-callback' => 'twentythirteen_admin_header_image',
         ];
-        
+
         add_theme_support('custom-header', $args);
-        
+
         /*
          * Default custom headers packaged with the theme.
          * %s is a placeholder for the theme template directory URI.
          */
-        register_default_headers(
-            [
-                'circle' => [
-                    'url' => '%s/images/headers/circle.png',
-                    'thumbnail_url' => '%s/images/headers/circle-thumbnail.png',
-                    'description' => _x('Circle', 'header image description', 'twentythirteen'),
-                ],
-                'diamond' => [
-                    'url' => '%s/images/headers/diamond.png',
-                    'thumbnail_url' => '%s/images/headers/diamond-thumbnail.png',
-                    'description' => _x('Diamond', 'header image description', 'twentythirteen'),
-                ],
-                'star' => [
-                    'url' => '%s/images/headers/star.png',
-                    'thumbnail_url' => '%s/images/headers/star-thumbnail.png',
-                    'description' => _x('Star', 'header image description', 'twentythirteen'),
-                ],
-            ]
-        );
+        register_default_headers([
+                                     'circle' => [
+                                         'url' => '%s/images/headers/circle.png',
+                                         'thumbnail_url' => '%s/images/headers/circle-thumbnail.png',
+                                         'description' => _x('Circle', 'header image description', 'twentythirteen'),
+                                     ],
+                                     'diamond' => [
+                                         'url' => '%s/images/headers/diamond.png',
+                                         'thumbnail_url' => '%s/images/headers/diamond-thumbnail.png',
+                                         'description' => _x('Diamond', 'header image description', 'twentythirteen'),
+                                     ],
+                                     'star' => [
+                                         'url' => '%s/images/headers/star.png',
+                                         'thumbnail_url' => '%s/images/headers/star-thumbnail.png',
+                                         'description' => _x('Star', 'header image description', 'twentythirteen'),
+                                     ],
+                                 ]);
     }
-    
+
     add_action('after_setup_theme', 'twentythirteen_custom_header_setup', 11);
-    
+
     /**
      * Load our special font CSS files.
      *
@@ -75,13 +73,13 @@
     {
         // Add Source Sans Pro and Bitter fonts.
         wp_enqueue_style('twentythirteen-fonts', twentythirteen_fonts_url(), [], null);
-        
+
         // Add Genericons font.
-        wp_enqueue_style('genericons', get_template_directory_uri() . '/genericons/genericons.css', [], '3.0.3');
+        wp_enqueue_style('genericons', get_template_directory_uri().'/genericons/genericons.css', [], '3.0.3');
     }
-    
+
     add_action('admin_print_styles-appearance_page_custom-header', 'twentythirteen_custom_header_fonts');
-    
+
     /**
      * Style the header text displayed on the blog.
      *
@@ -93,12 +91,13 @@
     {
         $header_image = get_header_image();
         $text_color = get_header_textcolor();
-        
+
         // If no custom options for text are set, let's bail.
-        if (empty($header_image) && get_theme_support('custom-header', 'default-text-color') === $text_color) {
+        if(empty($header_image) && get_theme_support('custom-header', 'default-text-color') === $text_color)
+        {
             return;
         }
-        
+
         // If we get this far, we have custom styles.
         ?>
         <style type="text/css" id="twentythirteen-header-css">
@@ -124,7 +123,7 @@
 
             <?php
             endif;
-    
+
             // Has the text been hidden?
         if ( ! display_header_text() ) :
             ?>
@@ -144,7 +143,7 @@
 
             <?php
         endif;
-    
+
         // If the user has set a custom color for the text, use that.
         elseif ( get_theme_support( 'custom-header', 'default-text-color' ) !== $text_color ) :
             ?>
@@ -157,7 +156,7 @@
         </style>
         <?php
     }
-    
+
     /**
      * Style the header image displayed on the Appearance > Header admin panel.
      *
@@ -229,7 +228,7 @@
         </style>
         <?php
     }
-    
+
     /**
      * Output markup to be displayed on the Appearance > Header admin panel.
      *
@@ -239,8 +238,9 @@
      */
     function twentythirteen_admin_header_image()
     {
-        $style = 'color: #' . get_header_textcolor() . ';';
-        if (!display_header_text()) {
+        $style = 'color: #'.get_header_textcolor().';';
+        if(! display_header_text())
+        {
             $style = 'display: none;';
         }
         ?>

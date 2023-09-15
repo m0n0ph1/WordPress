@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -127,7 +127,7 @@
      * @return {Object} Updated state.
      */
 
-    function defaults (state = {}, action) {
+    function defaults(state = {}, action) {
         if (action.type === 'SET_PREFERENCE_DEFAULTS') {
             const {
                 scope,
@@ -156,7 +156,7 @@
      * @return {Function} The enhanced reducer.
      */
 
-    function withPersistenceLayer (reducer) {
+    function withPersistenceLayer(reducer) {
         let persistenceLayer;
         return (state, action) => {
             // Setup the persistence layer, and return the persisted data
@@ -222,7 +222,7 @@
      * @param {string} scope The preference scope (e.g. core/edit-post).
      * @param {string} name  The preference name.
      */
-    function toggle (scope, name) {
+    function toggle(scope, name) {
         return function ({
                              select,
                              dispatch
@@ -243,7 +243,7 @@
      * @return {Object} Action object.
      */
 
-    function set (scope, name, value) {
+    function set(scope, name, value) {
         return {
             type: 'SET_PREFERENCE_VALUE',
             scope,
@@ -262,7 +262,7 @@
      * @return {Object} Action object.
      */
 
-    function setDefaults (scope, defaults) {
+    function setDefaults(scope, defaults) {
         return {
             type: 'SET_PREFERENCE_DEFAULTS',
             scope,
@@ -297,7 +297,7 @@
      * @return {Object} Action object.
      */
 
-    async function setPersistenceLayer (persistenceLayer) {
+    async function setPersistenceLayer(persistenceLayer) {
         const persistedData = await persistenceLayer.get();
         return {
             type: 'SET_PERSISTENCE_LAYER',
@@ -317,7 +317,7 @@
      *
      * @return {*} Is the feature enabled?
      */
-    function get (state, scope, name) {
+    function get(state, scope, name) {
         const value = state.preferences[scope]?.[name];
         return value !== undefined ? value : state.defaults[scope]?.[name];
     }
@@ -365,17 +365,17 @@
      */
 
 
-    function PreferenceToggleMenuItem ({
-                                           scope,
-                                           name,
-                                           label,
-                                           info,
-                                           messageActivated,
-                                           messageDeactivated,
-                                           shortcut,
-                                           onToggle = () => null,
-                                           disabled = false
-                                       }) {
+    function PreferenceToggleMenuItem({
+                                          scope,
+                                          name,
+                                          label,
+                                          info,
+                                          messageActivated,
+                                          messageDeactivated,
+                                          shortcut,
+                                          onToggle = () => null,
+                                          disabled = false
+                                      }) {
         const isActive = (0, external_wp_data_namespaceObject.useSelect)(select => !!select(store).get(scope, name), [scope, name]);
         const {
             toggle

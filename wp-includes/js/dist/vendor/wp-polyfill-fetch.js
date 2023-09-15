@@ -31,7 +31,7 @@
         arrayBuffer: 'ArrayBuffer' in g
     };
 
-    function isDataView (obj) {
+    function isDataView(obj) {
         return obj && DataView.prototype.isPrototypeOf(obj);
     }
 
@@ -55,7 +55,7 @@
             };
     }
 
-    function normalizeName (name) {
+    function normalizeName(name) {
         if (typeof name !== 'string') {
             name = String(name);
         }
@@ -65,7 +65,7 @@
         return name.toLowerCase();
     }
 
-    function normalizeValue (value) {
+    function normalizeValue(value) {
         if (typeof value !== 'string') {
             value = String(value);
         }
@@ -73,11 +73,11 @@
     }
 
     // Build a destructive iterator for the value list
-    function iteratorFor (items) {
+    function iteratorFor(items) {
         var iterator = {
             next: function () {
                 var value = items.shift();
-                return { done: value === undefined, value: value };
+                return {done: value === undefined, value: value};
             }
         };
 
@@ -90,7 +90,7 @@
         return iterator;
     }
 
-    function Headers (headers) {
+    function Headers(headers) {
         this.map = {};
 
         if (headers instanceof Headers) {
@@ -171,7 +171,7 @@
         Headers.prototype[Symbol.iterator] = Headers.prototype.entries;
     }
 
-    function consumed (body) {
+    function consumed(body) {
         if (body._noBody) return;
         if (body.bodyUsed) {
             return Promise.reject(new TypeError('Already read'));
@@ -179,7 +179,7 @@
         body.bodyUsed = true;
     }
 
-    function fileReaderReady (reader) {
+    function fileReaderReady(reader) {
         return new Promise(function (resolve, reject) {
             reader.onload = function () {
                 resolve(reader.result);
@@ -190,14 +190,14 @@
         });
     }
 
-    function readBlobAsArrayBuffer (blob) {
+    function readBlobAsArrayBuffer(blob) {
         var reader = new FileReader();
         var promise = fileReaderReady(reader);
         reader.readAsArrayBuffer(blob);
         return promise;
     }
 
-    function readBlobAsText (blob) {
+    function readBlobAsText(blob) {
         var reader = new FileReader();
         var promise = fileReaderReady(reader);
         var match = /charset=([A-Za-z0-9_-]+)/.exec(blob.type);
@@ -206,7 +206,7 @@
         return promise;
     }
 
-    function readArrayBufferAsText (buf) {
+    function readArrayBufferAsText(buf) {
         var view = new Uint8Array(buf);
         var chars = new Array(view.length);
 
@@ -216,7 +216,7 @@
         return chars.join('');
     }
 
-    function bufferClone (buf) {
+    function bufferClone(buf) {
         if (buf.slice) {
             return buf.slice(0);
         } else {
@@ -226,7 +226,7 @@
         }
     }
 
-    function Body () {
+    function Body() {
         this.bodyUsed = false;
 
         this._initBody = function (body) {
@@ -349,12 +349,12 @@
     // HTTP methods whose capitalization should be normalized
     var methods = ['CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'];
 
-    function normalizeMethod (method) {
+    function normalizeMethod(method) {
         var upcased = method.toUpperCase();
         return methods.indexOf(upcased) > -1 ? upcased : method;
     }
 
-    function Request (input, options) {
+    function Request(input, options) {
         if (!(this instanceof Request)) {
             throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
         }
@@ -418,10 +418,10 @@
     }
 
     Request.prototype.clone = function () {
-        return new Request(this, { body: this._bodyInit });
+        return new Request(this, {body: this._bodyInit});
     };
 
-    function decode (body) {
+    function decode(body) {
         var form = new FormData();
         body
             .trim()
@@ -437,7 +437,7 @@
         return form;
     }
 
-    function parseHeaders (rawHeaders) {
+    function parseHeaders(rawHeaders) {
         var headers = new Headers();
         // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
         // https://tools.ietf.org/html/rfc7230#section-3.2
@@ -467,7 +467,7 @@
 
     Body.call(Request.prototype);
 
-    function Response (bodyInit, options) {
+    function Response(bodyInit, options) {
         if (!(this instanceof Response)) {
             throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
         }
@@ -499,7 +499,7 @@
     };
 
     Response.error = function () {
-        var response = new Response(null, { status: 200, statusText: '' });
+        var response = new Response(null, {status: 200, statusText: ''});
         response.status = 0;
         response.type = 'error';
         return response;
@@ -512,7 +512,7 @@
             throw new RangeError('Invalid status code');
         }
 
-        return new Response(null, { status: status, headers: { location: url } });
+        return new Response(null, {status: status, headers: {location: url}});
     };
 
     exports.DOMException = g.DOMException;
@@ -529,7 +529,7 @@
         exports.DOMException.prototype.constructor = exports.DOMException;
     }
 
-    function fetch (input, init) {
+    function fetch(input, init) {
         return new Promise(function (resolve, reject) {
             var request = new Request(input, init);
 
@@ -539,7 +539,7 @@
 
             var xhr = new XMLHttpRequest();
 
-            function abortXhr () {
+            function abortXhr() {
                 xhr.abort();
             }
 
@@ -574,7 +574,7 @@
                 }, 0);
             };
 
-            function fixUrl (url) {
+            function fixUrl(url) {
                 try {
                     return url === '' && g.location.href ? g.location.href : url;
                 } catch (e) {
@@ -646,6 +646,6 @@
     exports.Response = Response;
     exports.fetch = fetch;
 
-    Object.defineProperty(exports, '__esModule', { value: true });
+    Object.defineProperty(exports, '__esModule', {value: true});
 
 })));

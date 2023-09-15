@@ -13,7 +13,8 @@
                         __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
                             (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
                     __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-                } else {}
+                } else {
+                }
             }(function () {
                 'use strict';
                 var scheduleStart, throttleDelay, lazytimer, lazyraf;
@@ -34,7 +35,7 @@
                 var taskStart = 0;
                 var tasklength = 0;
                 var IdleDeadline = {
-                    get didTimeout () {
+                    get didTimeout() {
                         return false;
                     },
                     timeRemaining: function () {
@@ -48,7 +49,7 @@
                     minThrottle = 0;
                 });
 
-                function debounce (fn) {
+                function debounce(fn) {
                     var id, timestamp;
                     var wait = 99;
                     var check = function () {
@@ -69,7 +70,7 @@
                     };
                 }
 
-                function abortRunning () {
+                function abortRunning() {
                     if (isRunning) {
                         if (lazyraf) {
                             cancelRequestAnimationFrame(lazyraf);
@@ -81,7 +82,7 @@
                     }
                 }
 
-                function onInputorMutation () {
+                function onInputorMutation() {
                     if (throttle != 125) {
                         remainingTime = 7;
                         throttle = 125;
@@ -95,19 +96,21 @@
                     setInactive();
                 }
 
-                function scheduleAfterRaf () {
+                function scheduleAfterRaf() {
                     lazyraf = null;
                     lazytimer = setTimeout(runTasks, 0);
                 }
 
-                function scheduleRaf () {
+                function scheduleRaf() {
                     lazytimer = null;
                     requestAnimationFrame(scheduleAfterRaf);
                 }
 
-                function scheduleLazy () {
+                function scheduleLazy() {
 
-                    if (isRunning) {return;}
+                    if (isRunning) {
+                        return;
+                    }
                     throttleDelay = throttle - (Date.now() - taskStart);
 
                     scheduleStart = Date.now();
@@ -126,7 +129,7 @@
                     }
                 }
 
-                function runTasks () {
+                function runTasks() {
                     var task, i, len;
                     var timeThreshold = remainingTime > 9 ?
                         9 :
@@ -155,14 +158,14 @@
                     }
                 }
 
-                function requestIdleCallbackShim (task) {
+                function requestIdleCallbackShim(task) {
                     index++;
                     tasks.push(task);
                     scheduleLazy();
                     return index;
                 }
 
-                function cancelIdleCallbackShim (id) {
+                function cancelIdleCallbackShim(id) {
                     var index = id - 1 - tasklength;
                     if (tasks[index]) {
                         tasks[index] = null;
@@ -180,7 +183,7 @@
                         document.addEventListener('focus', onInputorMutation, true);
                         document.addEventListener('mouseover', onInputorMutation, true);
                         ['click', 'keypress', 'touchstart', 'mousedown'].forEach(function (name) {
-                            document.addEventListener(name, onInputorMutation, { capture: true, passive: true });
+                            document.addEventListener(name, onInputorMutation, {capture: true, passive: true});
                         });
 
                         if (root.MutationObserver) {
@@ -194,7 +197,7 @@
                 } else {
                     try {
                         root.requestIdleCallback(function () {
-                        }, { timeout: 0 });
+                        }, {timeout: 0});
                     } catch (e) {
                         (function (rIC) {
                             var timeRemainingProto, timeRemaining;
@@ -206,7 +209,9 @@
                             };
                             if (root.IdleCallbackDeadline && (timeRemainingProto = IdleCallbackDeadline.prototype)) {
                                 timeRemaining = Object.getOwnPropertyDescriptor(timeRemainingProto, 'timeRemaining');
-                                if (!timeRemaining || !timeRemaining.configurable || !timeRemaining.get) {return;}
+                                if (!timeRemaining || !timeRemaining.configurable || !timeRemaining.get) {
+                                    return;
+                                }
                                 Object.defineProperty(timeRemainingProto, 'timeRemaining', {
                                     value: function () {
                                         return timeRemaining.get.call(this);
@@ -237,7 +242,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -279,7 +284,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -328,11 +333,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -366,7 +371,7 @@
          * @return {(callback: Callback) => void} RequestIdleCallback
          */
 
-        function createRequestIdleCallback () {
+        function createRequestIdleCallback() {
             if (typeof window === 'undefined') {
                 return callback => {
                     setTimeout(() => callback(Date.now()), 0);

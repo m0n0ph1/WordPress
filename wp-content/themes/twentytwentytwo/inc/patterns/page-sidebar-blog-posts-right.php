@@ -55,8 +55,7 @@
 
 					<!-- wp:column {"width":"33.33%"} -->
 					<div class="wp-block-column" style="flex-basis:33.33%"><!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
-					<figure class="wp-block-image size-large"><img src="' . esc_url(get_template_directory_uri()) . '/assets/images/flight-path-on-salmon.jpg" alt="' . esc_attr__('Illustration of a flying bird.',
-                'twentytwentytwo') . '"/></figure>
+					<figure class="wp-block-image size-large"><img src="'.esc_url(get_template_directory_uri()).'/assets/images/flight-path-on-salmon.jpg" alt="'.esc_attr__('Illustration of a flying bird.', 'twentytwentytwo').'"/></figure>
 					<!-- /wp:image -->
 
 					<!-- wp:spacer {"height":4} -->
@@ -72,13 +71,13 @@
 					<!-- /wp:spacer -->
 
 					<!-- wp:heading {"level":4,"fontSize":"large"} -->
-					<h4 class="has-large-font-size"><em>' . esc_html__('Categories', 'twentytwentytwo') . '</em></h4>
+					<h4 class="has-large-font-size"><em>'.esc_html__('Categories', 'twentytwentytwo').'</em></h4>
 					<!-- /wp:heading -->
 
 					<!-- wp:tag-cloud {"taxonomy":"category","showTagCounts":true} /-->
 
 					<!-- wp:heading {"level":4,"fontSize":"large"} -->
-					<h4 class="has-large-font-size"><em>' . esc_html__('Tags', 'twentytwentytwo') . '</em></h4>
+					<h4 class="has-large-font-size"><em>'.esc_html__('Tags', 'twentytwentytwo').'</em></h4>
 					<!-- /wp:heading -->
 
 					<!-- wp:tag-cloud {"showTagCounts":true} /--></div>

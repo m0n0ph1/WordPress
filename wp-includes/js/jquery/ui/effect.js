@@ -208,7 +208,7 @@
             class2type['[object ' + name + ']'] = name.toLowerCase();
         });
 
-    function getType (obj) {
+    function getType(obj) {
         if (obj == null) {
             return obj + '';
         }
@@ -218,7 +218,7 @@
             typeof obj;
     }
 
-    function clamp (value, prop, allowEmpty) {
+    function clamp(value, prop, allowEmpty) {
         var type = propTypes[prop.type] || {};
 
         if (value == null) {
@@ -245,7 +245,7 @@
         return Math.min(type.max, Math.max(0, value));
     }
 
-    function stringParse (string) {
+    function stringParse(string) {
         var inst = color(),
             rgba = inst._rgba = [];
 
@@ -504,7 +504,7 @@
 // hsla conversions adapted from:
 // https://code.google.com/p/maashaack/source/browse/packages/graphics/trunk/src/graphics/colors/HUE2RGB.as?r=5021
 
-    function hue2rgb (p, q, h) {
+    function hue2rgb(p, q, h) {
         h = (h + 1) % 1;
         if (h * 6 < 1) {
             return p + (q - p) * h * 6;
@@ -787,13 +787,13 @@
             }
         );
 
-        function camelCase (string) {
+        function camelCase(string) {
             return string.replace(/-([\da-z])/gi, function (all, letter) {
                 return letter.toUpperCase();
             });
         }
 
-        function getElementStyles (elem) {
+        function getElementStyles(elem) {
             var key, len,
                 style = elem.ownerDocument.defaultView ?
                     elem.ownerDocument.defaultView.getComputedStyle(elem, null) :
@@ -821,7 +821,7 @@
             return styles;
         }
 
-        function styleDifference (oldStyle, newStyle) {
+        function styleDifference(oldStyle, newStyle) {
             var diff = {},
                 name, value;
 
@@ -928,7 +928,7 @@
                 return function (classNames, speed, easing, callback) {
                     return speed ?
                         $.effects.animateClass.call(this,
-                            { add: classNames }, speed, easing, callback) :
+                            {add: classNames}, speed, easing, callback) :
                         orig.apply(this, arguments);
                 };
             })($.fn.addClass),
@@ -937,7 +937,7 @@
                 return function (classNames, speed, easing, callback) {
                     return arguments.length > 1 ?
                         $.effects.animateClass.call(this,
-                            { remove: classNames }, speed, easing, callback) :
+                            {remove: classNames}, speed, easing, callback) :
                         orig.apply(this, arguments);
                 };
             })($.fn.removeClass),
@@ -951,14 +951,14 @@
                             return orig.apply(this, arguments);
                         } else {
                             return $.effects.animateClass.call(this,
-                                (force ? { add: classNames } : { remove: classNames }),
+                                (force ? {add: classNames} : {remove: classNames}),
                                 speed, easing, callback);
                         }
                     } else {
 
                         // Without force parameter
                         return $.effects.animateClass.call(this,
-                            { toggle: classNames }, force, speed, easing);
+                            {toggle: classNames}, force, speed, easing);
                     }
                 };
             })($.fn.toggleClass),
@@ -1072,8 +1072,8 @@
 
                     // Transfer positioning properties to the wrapper
                     if (element.css('position') === 'static') {
-                        wrapper.css({ position: 'relative' });
-                        element.css({ position: 'relative' });
+                        wrapper.css({position: 'relative'});
+                        element.css({position: 'relative'});
                     } else {
                         $.extend(props, {
                             position: element.css('position'),
@@ -1242,11 +1242,11 @@
                 // see: http://jsfiddle.net/JZSMt/3/ https://bugs.webkit.org/show_bug.cgi?id=107380
                 // Support: Safari
                 element.css({
-                        marginTop: element.css('marginTop'),
-                        marginBottom: element.css('marginBottom'),
-                        marginLeft: element.css('marginLeft'),
-                        marginRight: element.css('marginRight')
-                    })
+                    marginTop: element.css('marginTop'),
+                    marginBottom: element.css('marginBottom'),
+                    marginLeft: element.css('marginLeft'),
+                    marginRight: element.css('marginRight')
+                })
                     .outerWidth(element.outerWidth())
                     .outerHeight(element.outerHeight());
 
@@ -1255,20 +1255,20 @@
 
                     placeholder = $('<' + element[0].nodeName + '>').insertAfter(element).css({
 
-                            // Convert inline to inline block to account for inline elements
-                            // that turn to inline block based on content (like img)
-                            display: /^(inline|ruby)/.test(element.css('display')) ?
-                                'inline-block' :
-                                'block',
-                            visibility: 'hidden',
+                        // Convert inline to inline block to account for inline elements
+                        // that turn to inline block based on content (like img)
+                        display: /^(inline|ruby)/.test(element.css('display')) ?
+                            'inline-block' :
+                            'block',
+                        visibility: 'hidden',
 
-                            // Margins need to be set to account for margin collapse
-                            marginTop: element.css('marginTop'),
-                            marginBottom: element.css('marginBottom'),
-                            marginLeft: element.css('marginLeft'),
-                            marginRight: element.css('marginRight'),
-                            'float': element.css('float')
-                        })
+                        // Margins need to be set to account for margin collapse
+                        marginTop: element.css('marginTop'),
+                        marginBottom: element.css('marginBottom'),
+                        marginLeft: element.css('marginLeft'),
+                        marginRight: element.css('marginRight'),
+                        'float': element.css('float')
+                    })
                         .outerWidth(element.outerWidth())
                         .outerHeight(element.outerHeight())
                         .addClass('ui-effects-placeholder');
@@ -1315,7 +1315,7 @@
         });
 
 // Return an effect options object for the given parameters:
-        function _normalizeArguments (effect, options, speed, callback) {
+        function _normalizeArguments(effect, options, speed, callback) {
 
             // Allow passing all options as the first parameter
             if ($.isPlainObject(effect)) {
@@ -1324,7 +1324,7 @@
             }
 
             // Convert to an object
-            effect = { effect: effect };
+            effect = {effect: effect};
 
             // Catch (effect, null, ...)
             if (options == null) {
@@ -1367,7 +1367,7 @@
             return effect;
         }
 
-        function standardAnimationOption (option) {
+        function standardAnimationOption(option) {
 
             // Valid standard speeds (nothing, number, named speed)
             if (!option || typeof option === 'number' || $.fx.speeds[option]) {
@@ -1444,10 +1444,10 @@
                     }
                 }
 
-                function run (next) {
+                function run(next) {
                     var elem = $(this);
 
-                    function cleanup () {
+                    function cleanup() {
                         elem.removeData(dataSpaceAnimated);
 
                         $.effects.cleanUp(elem);
@@ -1459,7 +1459,7 @@
                         done();
                     }
 
-                    function done () {
+                    function done() {
                         if (typeof complete === 'function') {
                             complete.call(elem[0]);
                         }
@@ -1594,7 +1594,7 @@
             }
         });
 
-        function parseClip (str, element) {
+        function parseClip(str, element) {
             var outerWidth = element.outerWidth(),
                 outerHeight = element.outerHeight(),
                 clipRegex = /^rect\((-?\d*\.?\d*px|-?\d+%|auto),?\s*(-?\d*\.?\d*px|-?\d+%|auto),?\s*(-?\d*\.?\d*px|-?\d+%|auto),?\s*(-?\d*\.?\d*px|-?\d+%|auto)\)$/,
@@ -1661,7 +1661,8 @@
                 var pow2,
                     bounce = 4;
 
-                while (p < ((pow2 = Math.pow(2, --bounce)) - 1) / 11) {}
+                while (p < ((pow2 = Math.pow(2, --bounce)) - 1) / 11) {
+                }
                 return 1 / Math.pow(4, 3 - bounce) - 7.5625 * Math.pow((pow2 * 3 - 2) / 22 - p, 2);
             }
         });

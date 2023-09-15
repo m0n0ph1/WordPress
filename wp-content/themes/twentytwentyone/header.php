@@ -4,11 +4,11 @@
      *
      * This is the template that displays all of the <head> section and everything up until main.
      *
-     * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
+     * @link       https://developer.wordpress.org/themes/basics/template-files/#template-partials
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Twenty_One
-     * @since Twenty Twenty-One 1.0
+     * @since      Twenty Twenty-One 1.0
      */
 
 ?>
@@ -29,7 +29,7 @@
             esc_html_e('Skip to content', 'twentytwentyone');
         ?>
     </a>
-    
+
     <?php get_template_part('template-parts/header/site-header'); ?>
 
     <div id="content" class="site-content">

@@ -39,7 +39,7 @@ wp.svgPainter = (function ($, window, document, undefined) {
             r256 = [256],
             i = 0;
 
-        function init () {
+        function init() {
             while (i < 256) {
                 c = String.fromCharCode(i);
                 a256 += c;
@@ -49,7 +49,7 @@ wp.svgPainter = (function ($, window, document, undefined) {
             }
         }
 
-        function code (s, discard, alpha, beta, w1, w2) {
+        function code(s, discard, alpha, beta, w1, w2) {
             var tmp, length,
                 buffer = 0,
                 i = 0,
@@ -82,7 +82,7 @@ wp.svgPainter = (function ($, window, document, undefined) {
             return result;
         }
 
-        function btoa (plain) {
+        function btoa(plain) {
             if (!c) {
                 init();
             }
@@ -91,7 +91,7 @@ wp.svgPainter = (function ($, window, document, undefined) {
             return plain + '===='.slice((plain.length % 4) || 4);
         }
 
-        function atob (coded) {
+        function atob(coded) {
             var i;
 
             if (!c) {
@@ -206,7 +206,8 @@ wp.svgPainter = (function ($, window, document, undefined) {
                     } else {
                         xml = base64.atob(encoded[1]);
                     }
-                } catch (error) {}
+                } catch (error) {
+                }
 
                 if (xml) {
                     // Replace `fill` attributes.

@@ -45,7 +45,7 @@
     });
 
     // Set properties of navigation.
-    function setNavProps () {
+    function setNavProps() {
         navigationHeight = $navigation.height();
         navigationOuterHeight = $navigation.outerHeight();
         navPadding = parseFloat($navWrap.css('padding-top')) * 2;
@@ -55,7 +55,7 @@
     }
 
     // Make navigation 'stick'.
-    function adjustScrollClass () {
+    function adjustScrollClass() {
 
         // Make sure we're not on a mobile screen.
         if ('none' === $menuToggle.css('display')) {
@@ -86,7 +86,7 @@
     }
 
     // Set margins of branding in header.
-    function adjustHeaderHeight () {
+    function adjustHeaderHeight() {
         if ('none' === $menuToggle.css('display')) {
 
             // The margin should be applied to different elements on front-page or home vs interior pages.
@@ -103,12 +103,12 @@
     }
 
     // Set icon for quotes.
-    function setQuotesIcon () {
+    function setQuotesIcon() {
         $(twentyseventeenScreenReaderText.quote).prependTo($formatQuote);
     }
 
     // Add 'below-entry-meta' class to elements.
-    function belowEntryMetaClass (param) {
+    function belowEntryMetaClass(param) {
         var sidebarPos, sidebarPosBottom;
 
         if (!$body.hasClass('has-sidebar') ||
@@ -143,7 +143,7 @@
      * Test if inline SVGs are supported.
      * @link https://github.com/Modernizr/Modernizr/
      */
-    function supportsInlineSVG () {
+    function supportsInlineSVG() {
         var div = document.createElement('div');
         div.innerHTML = '<svg/>';
         return 'http://www.w3.org/2000/svg' === ('undefined' !== typeof SVGRect && div.firstChild && div.firstChild.namespaceURI);
@@ -152,7 +152,7 @@
     /**
      * Test if an iOS device.
      */
-    function checkiOS () {
+    function checkiOS() {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
 
@@ -160,7 +160,7 @@
      * Test if background-attachment: fixed is supported.
      * @link http://stackoverflow.com/questions/14115080/detect-support-for-background-attachment-fixed
      */
-    function supportsFixedBackground () {
+    function supportsFixedBackground() {
         var el = document.createElement('div'),
             isSupported;
 
@@ -202,7 +202,7 @@
                 e.preventDefault();
                 $(window).scrollTo('#primary', {
                     duration: 600,
-                    offset: { top: menuTop - navigationOuterHeight }
+                    offset: {top: menuTop - navigationOuterHeight}
                 });
             });
         }

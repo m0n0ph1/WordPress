@@ -1,6 +1,6 @@
 (function () {
-    function r (e, n, t) {
-        function o (i, f) {
+    function r(e, n, t) {
+        function o(i, f) {
             if (!n[i]) {
                 if (!e[i]) {
                     var c = 'function' == typeof require && require;
@@ -9,7 +9,7 @@
                     var a = new Error('Cannot find module \'' + i + '\'');
                     throw a.code = 'MODULE_NOT_FOUND', a;
                 }
-                var p = n[i] = { exports: {} };
+                var p = n[i] = {exports: {}};
                 e[i][0].call(p.exports, function (r) {
                     var n = e[i][1][r];
                     return o(n || r);
@@ -43,7 +43,7 @@
             return it;
         };
 
-    }, { '../internals/is-object': 37 }],
+    }, {'../internals/is-object': 37}],
     3: [function (require, module, exports) {
         var wellKnownSymbol = require('../internals/well-known-symbol');
         var create = require('../internals/object-create');
@@ -90,7 +90,7 @@
             return it;
         };
 
-    }, { '../internals/is-object': 37 }],
+    }, {'../internals/is-object': 37}],
     6: [function (require, module, exports) {
         'use strict';
         var bind = require('../internals/function-bind-context');
@@ -103,7 +103,7 @@
 
 // `Array.from` method implementation
 // https://tc39.github.io/ecma262/#sec-array.from
-        module.exports = function from (arrayLike /* , mapfn = undefined, thisArg = undefined */) {
+        module.exports = function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
             var O = toObject(arrayLike);
             var C = typeof this == 'function' ? this : Array;
             var argumentsLength = arguments.length;
@@ -178,7 +178,7 @@
             indexOf: createMethod(false)
         };
 
-    }, { '../internals/to-absolute-index': 68, '../internals/to-indexed-object': 69, '../internals/to-length': 71 }],
+    }, {'../internals/to-absolute-index': 68, '../internals/to-indexed-object': 69, '../internals/to-length': 71}],
     8: [function (require, module, exports) {
         var anObject = require('../internals/an-object');
 
@@ -194,7 +194,7 @@
             }
         };
 
-    }, { '../internals/an-object': 5 }],
+    }, {'../internals/an-object': 5}],
     9: [function (require, module, exports) {
         var toString = {}.toString;
 
@@ -218,7 +218,8 @@
         var tryGet = function (it, key) {
             try {
                 return it[key];
-            } catch (error) { /* empty */ }
+            } catch (error) { /* empty */
+            }
         };
 
 // getting tag from ES6+ `Object.prototype.toString`
@@ -264,14 +265,14 @@
         var fails = require('../internals/fails');
 
         module.exports = !fails(function () {
-            function F () { /* empty */
+            function F() { /* empty */
             }
 
             F.prototype.constructor = null;
             return Object.getPrototypeOf(new F()) !== F.prototype;
         });
 
-    }, { '../internals/fails': 22 }],
+    }, {'../internals/fails': 22}],
     13: [function (require, module, exports) {
         'use strict';
         var IteratorPrototype = require('../internals/iterators-core').IteratorPrototype;
@@ -286,7 +287,7 @@
 
         module.exports = function (IteratorConstructor, NAME, next) {
             var TO_STRING_TAG = NAME + ' Iterator';
-            IteratorConstructor.prototype = create(IteratorPrototype, { next: createPropertyDescriptor(1, next) });
+            IteratorConstructor.prototype = create(IteratorPrototype, {next: createPropertyDescriptor(1, next)});
             setToStringTag(IteratorConstructor, TO_STRING_TAG, false, true);
             Iterators[TO_STRING_TAG] = returnThis;
             return IteratorConstructor;
@@ -377,15 +378,15 @@
                 if (!BUGGY_SAFARI_ITERATORS && KIND in IterablePrototype) return IterablePrototype[KIND];
                 switch (KIND) {
                     case KEYS:
-                        return function keys () {
+                        return function keys() {
                             return new IteratorConstructor(this, KIND);
                         };
                     case VALUES:
-                        return function values () {
+                        return function values() {
                             return new IteratorConstructor(this, KIND);
                         };
                     case ENTRIES:
-                        return function entries () {
+                        return function entries() {
                             return new IteratorConstructor(this, KIND);
                         };
                 }
@@ -424,7 +425,7 @@
             // fix Array#{values, @@iterator}.name in V8 / FF
             if (DEFAULT == VALUES && nativeIterator && nativeIterator.name !== VALUES) {
                 INCORRECT_VALUES_NAME = true;
-                defaultIterator = function values () {
+                defaultIterator = function values() {
                     return nativeIterator.call(this);
                 };
             }
@@ -481,7 +482,7 @@
             })[1] != 7;
         });
 
-    }, { '../internals/fails': 22 }],
+    }, {'../internals/fails': 22}],
     19: [function (require, module, exports) {
         var global = require('../internals/global');
         var isObject = require('../internals/is-object');
@@ -494,7 +495,7 @@
             return EXISTS ? document.createElement(it) : {};
         };
 
-    }, { '../internals/global': 27, '../internals/is-object': 37 }],
+    }, {'../internals/global': 27, '../internals/is-object': 37}],
     20: [function (require, module, exports) {
 // IE8- don't enum bug keys
         module.exports = [
@@ -613,7 +614,7 @@
             };
         };
 
-    }, { '../internals/a-function': 1 }],
+    }, {'../internals/a-function': 1}],
     24: [function (require, module, exports) {
         var path = require('../internals/path');
         var global = require('../internals/global');
@@ -627,7 +628,7 @@
                 : path[namespace] && path[namespace][method] || global[namespace] && global[namespace][method];
         };
 
-    }, { '../internals/global': 27, '../internals/path': 57 }],
+    }, {'../internals/global': 27, '../internals/path': 57}],
     25: [function (require, module, exports) {
         var classof = require('../internals/classof');
         var Iterators = require('../internals/iterators');
@@ -641,7 +642,7 @@
                 || Iterators[classof(it)];
         };
 
-    }, { '../internals/classof': 10, '../internals/iterators': 40, '../internals/well-known-symbol': 77 }],
+    }, {'../internals/classof': 10, '../internals/iterators': 40, '../internals/well-known-symbol': 77}],
     26: [function (require, module, exports) {
         var anObject = require('../internals/an-object');
         var getIteratorMethod = require('../internals/get-iterator-method');
@@ -654,7 +655,7 @@
             return anObject(iteratorMethod.call(it));
         };
 
-    }, { '../internals/an-object': 5, '../internals/get-iterator-method': 25 }],
+    }, {'../internals/an-object': 5, '../internals/get-iterator-method': 25}],
     27: [function (require, module, exports) {
         (function (global) {
             var check = function (it) {
@@ -690,7 +691,7 @@
 
         module.exports = getBuiltIn('document', 'documentElement');
 
-    }, { '../internals/get-built-in': 24 }],
+    }, {'../internals/get-built-in': 24}],
     31: [function (require, module, exports) {
         var DESCRIPTORS = require('../internals/descriptors');
         var fails = require('../internals/fails');
@@ -705,7 +706,7 @@
             }).a != 7;
         });
 
-    }, { '../internals/descriptors': 18, '../internals/document-create-element': 19, '../internals/fails': 22 }],
+    }, {'../internals/descriptors': 18, '../internals/document-create-element': 19, '../internals/fails': 22}],
     32: [function (require, module, exports) {
         var fails = require('../internals/fails');
         var classof = require('../internals/classof-raw');
@@ -721,7 +722,7 @@
             return classof(it) == 'String' ? split.call(it, '') : Object(it);
         } : Object;
 
-    }, { '../internals/classof-raw': 9, '../internals/fails': 22 }],
+    }, {'../internals/classof-raw': 9, '../internals/fails': 22}],
     33: [function (require, module, exports) {
         var store = require('../internals/shared-store');
 
@@ -736,7 +737,7 @@
 
         module.exports = store.inspectSource;
 
-    }, { '../internals/shared-store': 64 }],
+    }, {'../internals/shared-store': 64}],
     34: [function (require, module, exports) {
         var NATIVE_WEAK_MAP = require('../internals/native-weak-map');
         var global = require('../internals/global');
@@ -822,7 +823,7 @@
             return it !== undefined && (Iterators.Array === it || ArrayPrototype[ITERATOR] === it);
         };
 
-    }, { '../internals/iterators': 40, '../internals/well-known-symbol': 77 }],
+    }, {'../internals/iterators': 40, '../internals/well-known-symbol': 77}],
     36: [function (require, module, exports) {
         var fails = require('../internals/fails');
 
@@ -846,7 +847,7 @@
 
         module.exports = isForced;
 
-    }, { '../internals/fails': 22 }],
+    }, {'../internals/fails': 22}],
     37: [function (require, module, exports) {
         module.exports = function (it) {
             return typeof it === 'object' ? it !== null : typeof it === 'function';
@@ -907,7 +908,7 @@
     }],
     40: [function (require, module, exports) {
         arguments[4][29][0].apply(exports, arguments);
-    }, { 'dup': 29 }],
+    }, {'dup': 29}],
     41: [function (require, module, exports) {
         var fails = require('../internals/fails');
 
@@ -917,7 +918,7 @@
             return !String(Symbol());
         });
 
-    }, { '../internals/fails': 22 }],
+    }, {'../internals/fails': 22}],
     42: [function (require, module, exports) {
         var fails = require('../internals/fails');
         var wellKnownSymbol = require('../internals/well-known-symbol');
@@ -953,7 +954,7 @@
                 || new URL('http://x', undefined).host !== 'x';
         });
 
-    }, { '../internals/fails': 22, '../internals/is-pure': 38, '../internals/well-known-symbol': 77 }],
+    }, {'../internals/fails': 22, '../internals/is-pure': 38, '../internals/well-known-symbol': 77}],
     43: [function (require, module, exports) {
         var global = require('../internals/global');
         var inspectSource = require('../internals/inspect-source');
@@ -962,7 +963,7 @@
 
         module.exports = typeof WeakMap === 'function' && /native code/.test(inspectSource(WeakMap));
 
-    }, { '../internals/global': 27, '../internals/inspect-source': 33 }],
+    }, {'../internals/global': 27, '../internals/inspect-source': 33}],
     44: [function (require, module, exports) {
         'use strict';
         var DESCRIPTORS = require('../internals/descriptors');
@@ -980,7 +981,7 @@
 // https://tc39.github.io/ecma262/#sec-object.assign
         module.exports = !nativeAssign || fails(function () {
             // should have correct order of operations (Edge bug)
-            if (DESCRIPTORS && nativeAssign({ b: 1 }, nativeAssign(defineProperty({}, 'a', {
+            if (DESCRIPTORS && nativeAssign({b: 1}, nativeAssign(defineProperty({}, 'a', {
                 enumerable: true,
                 get: function () {
                     defineProperty(this, 'b', {
@@ -988,7 +989,7 @@
                         enumerable: false
                     });
                 }
-            }), { b: 2 })).b !== 1) return true;
+            }), {b: 2})).b !== 1) return true;
             // should work with symbols and should have deterministic property order (V8 bug)
             var A = {};
             var B = {};
@@ -1000,7 +1001,7 @@
                 B[chr] = chr;
             });
             return nativeAssign({}, A)[symbol] != 7 || objectKeys(nativeAssign({}, B)).join('') != alphabet;
-        }) ? function assign (target, source) { // eslint-disable-line no-unused-vars
+        }) ? function assign(target, source) { // eslint-disable-line no-unused-vars
             var T = toObject(target);
             var argumentsLength = arguments.length;
             var index = 1;
@@ -1087,7 +1088,8 @@
             try {
                 /* global ActiveXObject */
                 activeXDocument = document.domain && new ActiveXObject('htmlfile');
-            } catch (error) { /* ignore */ }
+            } catch (error) { /* ignore */
+            }
             NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
             var length = enumBugKeys.length;
             while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
@@ -1098,7 +1100,7 @@
 
 // `Object.create` method
 // https://tc39.github.io/ecma262/#sec-object.create
-        module.exports = Object.create || function create (O, Properties) {
+        module.exports = Object.create || function create(O, Properties) {
             var result;
             if (O !== null) {
                 EmptyConstructor[PROTOTYPE] = anObject(O);
@@ -1127,7 +1129,7 @@
 
 // `Object.defineProperties` method
 // https://tc39.github.io/ecma262/#sec-object.defineproperties
-        module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperties (O, Properties) {
+        module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperties(O, Properties) {
             anObject(O);
             var keys = objectKeys(Properties);
             var length = keys.length;
@@ -1153,13 +1155,14 @@
 
 // `Object.defineProperty` method
 // https://tc39.github.io/ecma262/#sec-object.defineproperty
-        exports.f = DESCRIPTORS ? nativeDefineProperty : function defineProperty (O, P, Attributes) {
+        exports.f = DESCRIPTORS ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
             anObject(O);
             P = toPrimitive(P, true);
             anObject(Attributes);
             if (IE8_DOM_DEFINE) try {
                 return nativeDefineProperty(O, P, Attributes);
-            } catch (error) { /* empty */ }
+            } catch (error) { /* empty */
+            }
             if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported');
             if ('value' in Attributes) O[P] = Attributes.value;
             return O;
@@ -1184,12 +1187,13 @@
 
 // `Object.getOwnPropertyDescriptor` method
 // https://tc39.github.io/ecma262/#sec-object.getownpropertydescriptor
-        exports.f = DESCRIPTORS ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor (O, P) {
+        exports.f = DESCRIPTORS ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
             O = toIndexedObject(O);
             P = toPrimitive(P, true);
             if (IE8_DOM_DEFINE) try {
                 return nativeGetOwnPropertyDescriptor(O, P);
-            } catch (error) { /* empty */ }
+            } catch (error) { /* empty */
+            }
             if (has(O, P)) return createPropertyDescriptor(!propertyIsEnumerableModule.f.call(O, P), O[P]);
         };
 
@@ -1210,11 +1214,11 @@
 
 // `Object.getOwnPropertyNames` method
 // https://tc39.github.io/ecma262/#sec-object.getownpropertynames
-        exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames (O) {
+        exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
             return internalObjectKeys(O, hiddenKeys);
         };
 
-    }, { '../internals/enum-bug-keys': 20, '../internals/object-keys-internal': 52 }],
+    }, {'../internals/enum-bug-keys': 20, '../internals/object-keys-internal': 52}],
     50: [function (require, module, exports) {
         exports.f = Object.getOwnPropertySymbols;
 
@@ -1276,22 +1280,22 @@
 
 // `Object.keys` method
 // https://tc39.github.io/ecma262/#sec-object.keys
-        module.exports = Object.keys || function keys (O) {
+        module.exports = Object.keys || function keys(O) {
             return internalObjectKeys(O, enumBugKeys);
         };
 
-    }, { '../internals/enum-bug-keys': 20, '../internals/object-keys-internal': 52 }],
+    }, {'../internals/enum-bug-keys': 20, '../internals/object-keys-internal': 52}],
     54: [function (require, module, exports) {
         'use strict';
         var nativePropertyIsEnumerable = {}.propertyIsEnumerable;
         var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Nashorn ~ JDK8 bug
-        var NASHORN_BUG = getOwnPropertyDescriptor && !nativePropertyIsEnumerable.call({ 1: 2 }, 1);
+        var NASHORN_BUG = getOwnPropertyDescriptor && !nativePropertyIsEnumerable.call({1: 2}, 1);
 
 // `Object.prototype.propertyIsEnumerable` method implementation
 // https://tc39.github.io/ecma262/#sec-object.prototype.propertyisenumerable
-        exports.f = NASHORN_BUG ? function propertyIsEnumerable (V) {
+        exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
             var descriptor = getOwnPropertyDescriptor(this, V);
             return !!descriptor && descriptor.enumerable;
         } : nativePropertyIsEnumerable;
@@ -1313,8 +1317,9 @@
                 setter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set;
                 setter.call(test, []);
                 CORRECT_SETTER = test instanceof Array;
-            } catch (error) { /* empty */ }
-            return function setPrototypeOf (O, proto) {
+            } catch (error) { /* empty */
+            }
+            return function setPrototypeOf(O, proto) {
                 anObject(O);
                 aPossiblePrototype(proto);
                 if (CORRECT_SETTER) setter.call(O, proto);
@@ -1323,7 +1328,7 @@
             };
         }() : undefined);
 
-    }, { '../internals/a-possible-prototype': 2, '../internals/an-object': 5 }],
+    }, {'../internals/a-possible-prototype': 2, '../internals/an-object': 5}],
     56: [function (require, module, exports) {
         var getBuiltIn = require('../internals/get-built-in');
         var getOwnPropertyNamesModule = require('../internals/object-get-own-property-names');
@@ -1331,7 +1336,7 @@
         var anObject = require('../internals/an-object');
 
 // all object keys, includes non-enumerable and symbols
-        module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys (it) {
+        module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
             var keys = getOwnPropertyNamesModule.f(anObject(it));
             var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
             return getOwnPropertySymbols ? keys.concat(getOwnPropertySymbols(it)) : keys;
@@ -1348,7 +1353,7 @@
 
         module.exports = global;
 
-    }, { '../internals/global': 27 }],
+    }, {'../internals/global': 27}],
     58: [function (require, module, exports) {
         var redefine = require('../internals/redefine');
 
@@ -1357,7 +1362,7 @@
             return target;
         };
 
-    }, { '../internals/redefine': 59 }],
+    }, {'../internals/redefine': 59}],
     59: [function (require, module, exports) {
         var global = require('../internals/global');
         var createNonEnumerableProperty = require('../internals/create-non-enumerable-property');
@@ -1390,7 +1395,7 @@
             if (simple) O[key] = value;
             else createNonEnumerableProperty(O, key, value);
 // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-        })(Function.prototype, 'toString', function toString () {
+        })(Function.prototype, 'toString', function toString() {
             return typeof this == 'function' && getInternalState(this).source || inspectSource(this);
         });
 
@@ -1424,7 +1429,7 @@
             return value;
         };
 
-    }, { '../internals/create-non-enumerable-property': 14, '../internals/global': 27 }],
+    }, {'../internals/create-non-enumerable-property': 14, '../internals/global': 27}],
     62: [function (require, module, exports) {
         var defineProperty = require('../internals/object-define-property').f;
         var has = require('../internals/has');
@@ -1434,11 +1439,11 @@
 
         module.exports = function (it, TAG, STATIC) {
             if (it && !has(it = STATIC ? it : it.prototype, TO_STRING_TAG)) {
-                defineProperty(it, TO_STRING_TAG, { configurable: true, value: TAG });
+                defineProperty(it, TO_STRING_TAG, {configurable: true, value: TAG});
             }
         };
 
-    }, { '../internals/has': 28, '../internals/object-define-property': 47, '../internals/well-known-symbol': 77 }],
+    }, {'../internals/has': 28, '../internals/object-define-property': 47, '../internals/well-known-symbol': 77}],
     63: [function (require, module, exports) {
         var shared = require('../internals/shared');
         var uid = require('../internals/uid');
@@ -1449,7 +1454,7 @@
             return keys[key] || (keys[key] = uid(key));
         };
 
-    }, { '../internals/shared': 65, '../internals/uid': 75 }],
+    }, {'../internals/shared': 65, '../internals/uid': 75}],
     64: [function (require, module, exports) {
         var global = require('../internals/global');
         var setGlobal = require('../internals/set-global');
@@ -1459,7 +1464,7 @@
 
         module.exports = store;
 
-    }, { '../internals/global': 27, '../internals/set-global': 61 }],
+    }, {'../internals/global': 27, '../internals/set-global': 61}],
     65: [function (require, module, exports) {
         var IS_PURE = require('../internals/is-pure');
         var store = require('../internals/shared-store');
@@ -1472,7 +1477,7 @@
             copyright: '© 2020 Denis Pushkarev (zloirock.ru)'
         });
 
-    }, { '../internals/is-pure': 38, '../internals/shared-store': 64 }],
+    }, {'../internals/is-pure': 38, '../internals/shared-store': 64}],
     66: [function (require, module, exports) {
         var toInteger = require('../internals/to-integer');
         var requireObjectCoercible = require('../internals/require-object-coercible');
@@ -1502,7 +1507,7 @@
             charAt: createMethod(true)
         };
 
-    }, { '../internals/require-object-coercible': 60, '../internals/to-integer': 70 }],
+    }, {'../internals/require-object-coercible': 60, '../internals/to-integer': 70}],
     67: [function (require, module, exports) {
         'use strict';
 // based on https://github.com/bestiejs/punycode.js/blob/master/punycode.js
@@ -1688,7 +1693,7 @@
             return integer < 0 ? max(integer + length, 0) : min(integer, length);
         };
 
-    }, { '../internals/to-integer': 70 }],
+    }, {'../internals/to-integer': 70}],
     69: [function (require, module, exports) {
 // toObject with fallback for non-array-like ES3 strings
         var IndexedObject = require('../internals/indexed-object');
@@ -1698,7 +1703,7 @@
             return IndexedObject(requireObjectCoercible(it));
         };
 
-    }, { '../internals/indexed-object': 32, '../internals/require-object-coercible': 60 }],
+    }, {'../internals/indexed-object': 32, '../internals/require-object-coercible': 60}],
     70: [function (require, module, exports) {
         var ceil = Math.ceil;
         var floor = Math.floor;
@@ -1721,7 +1726,7 @@
             return argument > 0 ? min(toInteger(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
         };
 
-    }, { '../internals/to-integer': 70 }],
+    }, {'../internals/to-integer': 70}],
     72: [function (require, module, exports) {
         var requireObjectCoercible = require('../internals/require-object-coercible');
 
@@ -1731,7 +1736,7 @@
             return Object(requireObjectCoercible(argument));
         };
 
-    }, { '../internals/require-object-coercible': 60 }],
+    }, {'../internals/require-object-coercible': 60}],
     73: [function (require, module, exports) {
         var isObject = require('../internals/is-object');
 
@@ -1748,7 +1753,7 @@
             throw TypeError('Can\'t convert object to primitive value');
         };
 
-    }, { '../internals/is-object': 37 }],
+    }, {'../internals/is-object': 37}],
     74: [function (require, module, exports) {
         var wellKnownSymbol = require('../internals/well-known-symbol');
 
@@ -1759,7 +1764,7 @@
 
         module.exports = String(test) === '[object z]';
 
-    }, { '../internals/well-known-symbol': 77 }],
+    }, {'../internals/well-known-symbol': 77}],
     75: [function (require, module, exports) {
         var id = 0;
         var postfix = Math.random();
@@ -1778,7 +1783,7 @@
             // eslint-disable-next-line no-undef
             && typeof Symbol.iterator == 'symbol';
 
-    }, { '../internals/native-symbol': 41 }],
+    }, {'../internals/native-symbol': 41}],
     77: [function (require, module, exports) {
         var global = require('../internals/global');
         var shared = require('../internals/shared');
@@ -1845,11 +1850,11 @@
             var index = state.index++;
             if (!target || index >= target.length) {
                 state.target = undefined;
-                return { value: undefined, done: true };
+                return {value: undefined, done: true};
             }
-            if (kind == 'keys') return { value: index, done: false };
-            if (kind == 'values') return { value: target[index], done: false };
-            return { value: [index, target[index]], done: false };
+            if (kind == 'keys') return {value: index, done: false};
+            if (kind == 'values') return {value: target[index], done: false};
+            return {value: [index, target[index]], done: false};
         }, 'values');
 
 // argumentsList[@@iterator] is %ArrayProto_values%
@@ -1889,18 +1894,18 @@
             });
 // `%StringIteratorPrototype%.next` method
 // https://tc39.github.io/ecma262/#sec-%stringiteratorprototype%.next
-        }, function next () {
+        }, function next() {
             var state = getInternalState(this);
             var string = state.string;
             var index = state.index;
             var point;
-            if (index >= string.length) return { value: undefined, done: true };
+            if (index >= string.length) return {value: undefined, done: true};
             point = charAt(string, index);
             state.index += point.length;
-            return { value: point, done: false };
+            return {value: point, done: false};
         });
 
-    }, { '../internals/define-iterator': 17, '../internals/internal-state': 34, '../internals/string-multibyte': 66 }],
+    }, {'../internals/define-iterator': 17, '../internals/internal-state': 34, '../internals/string-multibyte': 66}],
     80: [function (require, module, exports) {
         'use strict';
 // TODO: in core-js@4, move /modules/ dependencies to public entries for better optimization by tools like `preset-env`
@@ -2008,13 +2013,13 @@
             if (passed < required) throw TypeError('Not enough arguments');
         };
 
-        var URLSearchParamsIterator = createIteratorConstructor(function Iterator (params, kind) {
+        var URLSearchParamsIterator = createIteratorConstructor(function Iterator(params, kind) {
             setInternalState(this, {
                 type: URL_SEARCH_PARAMS_ITERATOR,
                 iterator: getIterator(getInternalParamsState(params).entries),
                 kind: kind
             });
-        }, 'Iterator', function next () {
+        }, 'Iterator', function next() {
             var state = getInternalIteratorState(this);
             var kind = state.kind;
             var step = state.iterator.next();
@@ -2027,7 +2032,7 @@
 
 // `URLSearchParams` constructor
 // https://url.spec.whatwg.org/#interface-urlsearchparams
-        var URLSearchParamsConstructor = function URLSearchParams (/* init */) {
+        var URLSearchParamsConstructor = function URLSearchParams(/* init */) {
             anInstance(this, URLSearchParamsConstructor, URL_SEARCH_PARAMS);
             var init = arguments.length > 0 ? arguments[0] : undefined;
             var that = this;
@@ -2056,9 +2061,9 @@
                                 (second = entryNext.call(entryIterator)).done ||
                                 !entryNext.call(entryIterator).done
                             ) throw TypeError('Expected sequence with length 2');
-                            entries.push({ key: first.value + '', value: second.value + '' });
+                            entries.push({key: first.value + '', value: second.value + ''});
                         }
-                    } else for (key in init) if (hasOwn(init, key)) entries.push({ key: key, value: init[key] + '' });
+                    } else for (key in init) if (hasOwn(init, key)) entries.push({key: key, value: init[key] + ''});
                 } else {
                     parseSearchParams(entries, typeof init === 'string' ? init.charAt(0) === '?' ? init.slice(1) : init : init + '');
                 }
@@ -2070,10 +2075,10 @@
         redefineAll(URLSearchParamsPrototype, {
             // `URLSearchParams.prototype.appent` method
             // https://url.spec.whatwg.org/#dom-urlsearchparams-append
-            append: function append (name, value) {
+            append: function append(name, value) {
                 validateArgumentsLength(arguments.length, 2);
                 var state = getInternalParamsState(this);
-                state.entries.push({ key: name + '', value: value + '' });
+                state.entries.push({key: name + '', value: value + ''});
                 state.updateURL();
             },
             // `URLSearchParams.prototype.delete` method
@@ -2092,7 +2097,7 @@
             },
             // `URLSearchParams.prototype.get` method
             // https://url.spec.whatwg.org/#dom-urlsearchparams-get
-            get: function get (name) {
+            get: function get(name) {
                 validateArgumentsLength(arguments.length, 1);
                 var entries = getInternalParamsState(this).entries;
                 var key = name + '';
@@ -2104,7 +2109,7 @@
             },
             // `URLSearchParams.prototype.getAll` method
             // https://url.spec.whatwg.org/#dom-urlsearchparams-getall
-            getAll: function getAll (name) {
+            getAll: function getAll(name) {
                 validateArgumentsLength(arguments.length, 1);
                 var entries = getInternalParamsState(this).entries;
                 var key = name + '';
@@ -2117,7 +2122,7 @@
             },
             // `URLSearchParams.prototype.has` method
             // https://url.spec.whatwg.org/#dom-urlsearchparams-has
-            has: function has (name) {
+            has: function has(name) {
                 validateArgumentsLength(arguments.length, 1);
                 var entries = getInternalParamsState(this).entries;
                 var key = name + '';
@@ -2129,7 +2134,7 @@
             },
             // `URLSearchParams.prototype.set` method
             // https://url.spec.whatwg.org/#dom-urlsearchparams-set
-            set: function set (name, value) {
+            set: function set(name, value) {
                 validateArgumentsLength(arguments.length, 1);
                 var state = getInternalParamsState(this);
                 var entries = state.entries;
@@ -2148,12 +2153,12 @@
                         }
                     }
                 }
-                if (!found) entries.push({ key: key, value: val });
+                if (!found) entries.push({key: key, value: val});
                 state.updateURL();
             },
             // `URLSearchParams.prototype.sort` method
             // https://url.spec.whatwg.org/#dom-urlsearchparams-sort
-            sort: function sort () {
+            sort: function sort() {
                 var state = getInternalParamsState(this);
                 var entries = state.entries;
                 // Array#sort is not stable in some engines
@@ -2173,7 +2178,7 @@
                 state.updateURL();
             },
             // `URLSearchParams.prototype.forEach` method
-            forEach: function forEach (callback /* , thisArg */) {
+            forEach: function forEach(callback /* , thisArg */) {
                 var entries = getInternalParamsState(this).entries;
                 var boundFunction = bind(callback, arguments.length > 1 ? arguments[1] : undefined, 3);
                 var index = 0;
@@ -2184,25 +2189,25 @@
                 }
             },
             // `URLSearchParams.prototype.keys` method
-            keys: function keys () {
+            keys: function keys() {
                 return new URLSearchParamsIterator(this, 'keys');
             },
             // `URLSearchParams.prototype.values` method
-            values: function values () {
+            values: function values() {
                 return new URLSearchParamsIterator(this, 'values');
             },
             // `URLSearchParams.prototype.entries` method
-            entries: function entries () {
+            entries: function entries() {
                 return new URLSearchParamsIterator(this, 'entries');
             }
-        }, { enumerable: true });
+        }, {enumerable: true});
 
 // `URLSearchParams.prototype[@@iterator]` method
         redefine(URLSearchParamsPrototype, ITERATOR, URLSearchParamsPrototype.entries);
 
 // `URLSearchParams.prototype.toString` method
 // https://url.spec.whatwg.org/#urlsearchparams-stringification-behavior
-        redefine(URLSearchParamsPrototype, 'toString', function toString () {
+        redefine(URLSearchParamsPrototype, 'toString', function toString() {
             var entries = getInternalParamsState(this).entries;
             var result = [];
             var index = 0;
@@ -2212,19 +2217,19 @@
                 result.push(serialize(entry.key) + '=' + serialize(entry.value));
             }
             return result.join('&');
-        }, { enumerable: true });
+        }, {enumerable: true});
 
         setToStringTag(URLSearchParamsConstructor, URL_SEARCH_PARAMS);
 
-        $({ global: true, forced: !USE_NATIVE_URL }, {
+        $({global: true, forced: !USE_NATIVE_URL}, {
             URLSearchParams: URLSearchParamsConstructor
         });
 
 // Wrap `fetch` for correct work with polyfilled `URLSearchParams`
 // https://github.com/zloirock/core-js/issues/674
         if (!USE_NATIVE_URL && typeof $fetch == 'function' && typeof Headers == 'function') {
-            $({ global: true, enumerable: true, forced: true }, {
-                fetch: function fetch (input /* , init */) {
+            $({global: true, enumerable: true, forced: true}, {
+                fetch: function fetch(input /* , init */) {
                     var args = [input];
                     var init, body, headers;
                     if (arguments.length > 1) {
@@ -3025,11 +3030,11 @@
 
 // `URL` constructor
 // https://url.spec.whatwg.org/#url-class
-        var URLConstructor = function URL (url /* , base */) {
+        var URLConstructor = function URL(url /* , base */) {
             var that = anInstance(this, URLConstructor, 'URL');
             var base = arguments.length > 1 ? arguments[1] : undefined;
             var urlString = String(url);
-            var state = setInternalState(that, { type: 'URL' });
+            var state = setInternalState(that, {type: 'URL'});
             var baseState, failure;
             if (base !== undefined) {
                 if (base instanceof URLConstructor) baseState = getInternalURLState(base);
@@ -3154,7 +3159,7 @@
         };
 
         var accessorDescriptor = function (getter, setter) {
-            return { get: getter, set: setter, configurable: true, enumerable: true };
+            return {get: getter, set: setter, configurable: true, enumerable: true};
         };
 
         if (DESCRIPTORS) {
@@ -3265,15 +3270,15 @@
 
 // `URL.prototype.toJSON` method
 // https://url.spec.whatwg.org/#dom-url-tojson
-        redefine(URLPrototype, 'toJSON', function toJSON () {
+        redefine(URLPrototype, 'toJSON', function toJSON() {
             return serializeURL.call(this);
-        }, { enumerable: true });
+        }, {enumerable: true});
 
 // `URL.prototype.toString` method
 // https://url.spec.whatwg.org/#URL-stringification-behavior
-        redefine(URLPrototype, 'toString', function toString () {
+        redefine(URLPrototype, 'toString', function toString() {
             return serializeURL.call(this);
-        }, { enumerable: true });
+        }, {enumerable: true});
 
         if (NativeURL) {
             var nativeCreateObjectURL = NativeURL.createObjectURL;
@@ -3281,20 +3286,20 @@
             // `URL.createObjectURL` method
             // https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
             // eslint-disable-next-line no-unused-vars
-            if (nativeCreateObjectURL) redefine(URLConstructor, 'createObjectURL', function createObjectURL (blob) {
+            if (nativeCreateObjectURL) redefine(URLConstructor, 'createObjectURL', function createObjectURL(blob) {
                 return nativeCreateObjectURL.apply(NativeURL, arguments);
             });
             // `URL.revokeObjectURL` method
             // https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
             // eslint-disable-next-line no-unused-vars
-            if (nativeRevokeObjectURL) redefine(URLConstructor, 'revokeObjectURL', function revokeObjectURL (url) {
+            if (nativeRevokeObjectURL) redefine(URLConstructor, 'revokeObjectURL', function revokeObjectURL(url) {
                 return nativeRevokeObjectURL.apply(NativeURL, arguments);
             });
         }
 
         setToStringTag(URLConstructor, 'URL');
 
-        $({ global: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS }, {
+        $({global: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS}, {
             URL: URLConstructor
         });
 
@@ -3322,13 +3327,13 @@
 
 // `URL.prototype.toJSON` method
 // https://url.spec.whatwg.org/#dom-url-tojson
-        $({ target: 'URL', proto: true, enumerable: true }, {
-            toJSON: function toJSON () {
+        $({target: 'URL', proto: true, enumerable: true}, {
+            toJSON: function toJSON() {
                 return URL.prototype.toString.call(this);
             }
         });
 
-    }, { '../internals/export': 21 }],
+    }, {'../internals/export': 21}],
     83: [function (require, module, exports) {
         require('../modules/web.url');
         require('../modules/web.url.to-json');

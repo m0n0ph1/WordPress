@@ -140,7 +140,7 @@
 
 // Support: IE 8 only
 // IE 8 doesn't resolve inherit to visible/hidden for computed values
-    function visible (element) {
+    function visible(element) {
         var visibility = element.css('visibility');
         while (visibility === 'inherit') {
             element = element.parent();
@@ -450,42 +450,42 @@
             rpercent = /%$/,
             _position = $.fn.position;
 
-        function getOffsets (offsets, width, height) {
+        function getOffsets(offsets, width, height) {
             return [
                 parseFloat(offsets[0]) * (rpercent.test(offsets[0]) ? width / 100 : 1),
                 parseFloat(offsets[1]) * (rpercent.test(offsets[1]) ? height / 100 : 1)
             ];
         }
 
-        function parseCss (element, property) {
+        function parseCss(element, property) {
             return parseInt($.css(element, property), 10) || 0;
         }
 
-        function isWindow (obj) {
+        function isWindow(obj) {
             return obj != null && obj === obj.window;
         }
 
-        function getDimensions (elem) {
+        function getDimensions(elem) {
             var raw = elem[0];
             if (raw.nodeType === 9) {
                 return {
                     width: elem.width(),
                     height: elem.height(),
-                    offset: { top: 0, left: 0 }
+                    offset: {top: 0, left: 0}
                 };
             }
             if (isWindow(raw)) {
                 return {
                     width: elem.width(),
                     height: elem.height(),
-                    offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
+                    offset: {top: elem.scrollTop(), left: elem.scrollLeft()}
                 };
             }
             if (raw.preventDefault) {
                 return {
                     width: 0,
                     height: 0,
-                    offset: { top: raw.pageY, left: raw.pageX }
+                    offset: {top: raw.pageY, left: raw.pageX}
                 };
             }
             return {
@@ -543,7 +543,7 @@
                     element: withinElement,
                     isWindow: isElemWindow,
                     isDocument: isDocument,
-                    offset: hasOffset ? $(element).offset() : { left: 0, top: 0 },
+                    offset: hasOffset ? $(element).offset() : {left: 0, top: 0},
                     scrollLeft: withinElement.scrollLeft(),
                     scrollTop: withinElement.scrollTop(),
                     width: withinElement.outerWidth(),
@@ -732,7 +732,7 @@
                     };
                 }
 
-                elem.offset($.extend(position, { using: using }));
+                elem.offset($.extend(position, {using: using}));
             });
         };
 
@@ -1148,11 +1148,11 @@
                 return;
             }
             proxiedPrototype[prop] = (function () {
-                function _super () {
+                function _super() {
                     return base.prototype[prop].apply(this, arguments);
                 }
 
-                function _superApply (args) {
+                function _superApply(args) {
                     return base.prototype[prop].apply(this, args);
                 }
 
@@ -1518,11 +1518,11 @@
         },
 
         enable: function () {
-            return this._setOptions({ disabled: false });
+            return this._setOptions({disabled: false});
         },
 
         disable: function () {
-            return this._setOptions({ disabled: true });
+            return this._setOptions({disabled: true});
         },
 
         _classes: function (options) {
@@ -1534,13 +1534,13 @@
                 classes: this.options.classes || {}
             }, options);
 
-            function bindRemoveEvent () {
+            function bindRemoveEvent() {
                 var nodesToBind = [];
 
                 options.element.each(function (_, element) {
                     var isTracked = $.map(that.classesElementLookup, function (elements) {
-                            return elements;
-                        })
+                        return elements;
+                    })
                         .some(function (elements) {
                             return elements.is(element);
                         });
@@ -1555,7 +1555,7 @@
                 });
             }
 
-            function processClassString (classes, checkOption) {
+            function processClassString(classes, checkOption) {
                 var current, i;
                 for (i = 0; i < classes.length; i++) {
                     current = that.classesElementLookup[classes[i]] || $();
@@ -1637,7 +1637,7 @@
             }
 
             $.each(handlers, function (event, handler) {
-                function handlerProxy () {
+                function handlerProxy() {
 
                     // Allow widgets to customize the disabled handling
                     // - disabled as an array instead of boolean
@@ -1681,7 +1681,7 @@
         },
 
         _delay: function (handler, delay) {
-            function handlerProxy () {
+            function handlerProxy() {
                 return (typeof handler === 'string' ? instance[handler] : handler)
                     .apply(instance, arguments);
             }
@@ -1745,10 +1745,10 @@
         }
     };
 
-    $.each({ show: 'fadeIn', hide: 'fadeOut' }, function (method, defaultEffect) {
+    $.each({show: 'fadeIn', hide: 'fadeOut'}, function (method, defaultEffect) {
         $.Widget.prototype['_' + method] = function (element, options, callback) {
             if (typeof options === 'string') {
-                options = { effect: options };
+                options = {effect: options};
             }
 
             var hasOptions;
@@ -1760,7 +1760,7 @@
 
             options = options || {};
             if (typeof options === 'number') {
-                options = { duration: options };
+                options = {duration: options};
             } else if (options === true) {
                 options = {};
             }

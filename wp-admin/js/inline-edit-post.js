@@ -263,7 +263,7 @@ window.wp = window.wp || {};
             // Set initial focus on the Bulk Edit region.
             $('#bulk-edit .inline-edit-wrapper').attr('tabindex', '-1').focus();
             // Scrolls to the top of the table where the editor is rendered.
-            $('html, body').animate({ scrollTop: 0 }, 'fast');
+            $('html, body').animate({scrollTop: 0}, 'fast');
         },
 
         /**

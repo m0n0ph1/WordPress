@@ -9,12 +9,12 @@ jQuery(function ($) {
     var __ = wp.i18n.__,
         copiedNoticeTimeout;
 
-    function setActionState ($action, state) {
+    function setActionState($action, state) {
         $action.children().addClass('hidden');
         $action.children('.' + state).removeClass('hidden');
     }
 
-    function clearResultsAfterRow ($requestRow) {
+    function clearResultsAfterRow($requestRow) {
         $requestRow.removeClass('has-request-results');
 
         if ($requestRow.next().hasClass('request-results')) {
@@ -22,7 +22,7 @@ jQuery(function ($) {
         }
     }
 
-    function appendResultsAfterRow ($requestRow, classes, summaryMessage, additionalMessages) {
+    function appendResultsAfterRow($requestRow, classes, summaryMessage, additionalMessages) {
         var itemList = '',
             resultRowClasses = 'request-results';
 
@@ -76,7 +76,7 @@ jQuery(function ($) {
         clearResultsAfterRow($requestRow);
         setExportProgress(0);
 
-        function onExportDoneSuccess (zipUrl) {
+        function onExportDoneSuccess(zipUrl) {
             var summaryMessage = __('This user&#8217;s personal data export link was sent.');
 
             if ('undefined' !== typeof zipUrl) {
@@ -98,7 +98,7 @@ jQuery(function ($) {
             }, 500);
         }
 
-        function onExportFailure (errorMessage) {
+        function onExportFailure(errorMessage) {
             var summaryMessage = __('An error occurred while attempting to export personal data.');
 
             setActionState($action, 'export-personal-data-failed');
@@ -112,14 +112,14 @@ jQuery(function ($) {
             }, 500);
         }
 
-        function setExportProgress (exporterIndex) {
+        function setExportProgress(exporterIndex) {
             var progress = (exportersCount > 0 ? exporterIndex / exportersCount : 0),
                 progressString = Math.round(progress * 100).toString() + '%';
 
             $progress.html(progressString);
         }
 
-        function doNextExport (exporterIndex, pageIndex) {
+        function doNextExport(exporterIndex, pageIndex) {
             $.ajax(
                 {
                     url: window.ajaxurl,
@@ -191,7 +191,7 @@ jQuery(function ($) {
         clearResultsAfterRow($requestRow);
         setErasureProgress(0);
 
-        function onErasureDoneSuccess () {
+        function onErasureDoneSuccess() {
             var summaryMessage = __('No personal data was found for this user.'),
                 classes = 'notice-success';
 
@@ -219,7 +219,7 @@ jQuery(function ($) {
             }, 500);
         }
 
-        function onErasureFailure () {
+        function onErasureFailure() {
             var summaryMessage = __('An error occurred while attempting to find and erase personal data.');
 
             setActionState($action, 'remove-personal-data-failed');
@@ -231,14 +231,14 @@ jQuery(function ($) {
             }, 500);
         }
 
-        function setErasureProgress (eraserIndex) {
+        function setErasureProgress(eraserIndex) {
             var progress = (erasersCount > 0 ? eraserIndex / erasersCount : 0),
                 progressString = Math.round(progress * 100).toString() + '%';
 
             $progress.html(progressString);
         }
 
-        function doNextErasure (eraserIndex, pageIndex) {
+        function doNextErasure(eraserIndex, pageIndex) {
             $.ajax({
                 url: window.ajaxurl,
                 data: {
@@ -340,7 +340,8 @@ jQuery(function ($) {
                     copiedNoticeTimeout = setTimeout(function () {
                         copiedNotice.removeClass('visible');
                     }, 3000);
-                } catch (er) {}
+                } catch (er) {
+                }
             }
         }
     });

@@ -21,7 +21,7 @@
          *
          * @return {void}
          */
-        createStates: function createStates () {
+        createStates: function createStates() {
             this.states.add([
                 new wp.media.controller.AudioDetails({
                     media: this.media
@@ -72,7 +72,7 @@
          * @param {Object} modelProps - Model props.
          * @return {Object} Media frame props.
          */
-        mapModelToMediaFrameProps: function mapModelToMediaFrameProps (modelProps) {
+        mapModelToMediaFrameProps: function mapModelToMediaFrameProps(modelProps) {
             var control = this, mediaFrameProps;
             mediaFrameProps = component.MediaWidgetControl.prototype.mapModelToMediaFrameProps.call(control, modelProps);
             mediaFrameProps.link = 'embed';
@@ -84,7 +84,7 @@
          *
          * @return {void}
          */
-        renderPreview: function renderPreview () {
+        renderPreview: function renderPreview() {
             var control = this, previewContainer, previewTemplate, attachmentId, attachmentUrl;
             attachmentId = control.model.get('attachment_id');
             attachmentUrl = control.model.get('url');
@@ -111,7 +111,7 @@
          *
          * @return {void}
          */
-        editMedia: function editMedia () {
+        editMedia: function editMedia() {
             var control = this, mediaFrame, metadata, updateCallback;
 
             metadata = control.mapModelToMediaFrameProps(control.model.toJSON());
@@ -133,7 +133,7 @@
                 control.model.set(_.extend(
                     control.model.defaults(),
                     control.mapMediaToModelProps(mediaFrameProps),
-                    { error: false }
+                    {error: false}
                 ));
             };
 

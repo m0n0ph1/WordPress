@@ -278,7 +278,7 @@
                 this.element[0].disabled : this.element.hasClass('ui-button-disabled');
 
             if (isDisabled !== this.options.disabled) {
-                this._setOptions({ disabled: isDisabled });
+                this._setOptions({disabled: isDisabled});
             }
 
             this._updateTooltip();
@@ -414,7 +414,7 @@
                                 return;
                             }
 
-                            $(this).checkboxradio($.extend({ icon: false }, options));
+                            $(this).checkboxradio($.extend({icon: false}, options));
                         }
                     });
                 }

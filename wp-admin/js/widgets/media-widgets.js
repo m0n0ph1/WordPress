@@ -47,7 +47,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        initialize: function initialize (options) {
+        initialize: function initialize(options) {
             _.bindAll(this, 'handleDisplaySettingChange');
             wp.media.controller.Library.prototype.initialize.call(this, options);
         },
@@ -58,7 +58,7 @@ wp.mediaWidgets = (function ($) {
          * @param {Backbone.Model} displaySettings - Modified display settings.
          * @return {void}
          */
-        handleDisplaySettingChange: function handleDisplaySettingChange (displaySettings) {
+        handleDisplaySettingChange: function handleDisplaySettingChange(displaySettings) {
             this.get('selectedDisplaySettings').set(displaySettings.attributes);
         },
 
@@ -73,7 +73,7 @@ wp.mediaWidgets = (function ($) {
          * @param {Backbone.Model} model - Display settings model.
          * @return {Backbone.Model} Display settings model.
          */
-        display: function getDisplaySettingsModel (model) {
+        display: function getDisplaySettingsModel(model) {
             var display, selectedDisplaySettings = this.get('selectedDisplaySettings');
             display = wp.media.controller.Library.prototype.display.call(this, model);
 
@@ -119,7 +119,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        refresh: function refresh () {
+        refresh: function refresh() {
             /**
              * @class wp.mediaWidgets~Constructor
              */
@@ -138,7 +138,7 @@ wp.mediaWidgets = (function ($) {
                      * @param {boolean} disabled - Disabled.
                      * @return {void}
                      */
-                    setAddToWidgetButtonDisabled: function setAddToWidgetButtonDisabled (disabled) {
+                    setAddToWidgetButtonDisabled: function setAddToWidgetButtonDisabled(disabled) {
                         this.views.parent.views.parent.views.get('.media-frame-toolbar')[0].$el.find('.media-button-select').prop('disabled', disabled);
                     },
 
@@ -148,7 +148,7 @@ wp.mediaWidgets = (function ($) {
                      * @param {string} notice - Notice.
                      * @return {void}
                      */
-                    setErrorNotice: function setErrorNotice (notice) {
+                    setErrorNotice: function setErrorNotice(notice) {
                         var embedLinkView = this, noticeContainer; // eslint-disable-line consistent-this
 
                         noticeContainer = embedLinkView.views.parent.$el.find('> .notice:first-child');
@@ -278,7 +278,7 @@ wp.mediaWidgets = (function ($) {
                      *
                      * @return {void}
                      */
-                    renderFail: function renderFail () {
+                    renderFail: function renderFail() {
                         var embedLinkView = this; // eslint-disable-line consistent-this
                         embedLinkView.controller.$el.find('#embed-url-field').addClass('invalid');
                         embedLinkView.setErrorNotice(embedLinkView.controller.options.invalidEmbedTypeError || 'ERROR');
@@ -308,7 +308,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        createStates: function createStates () {
+        createStates: function createStates() {
             var mime = this.options.mimeType, specificMimes = [];
             _.each(wp.media.view.settings.embedMimes, function (embedMime) {
                 if (0 === embedMime.indexOf(mime)) {
@@ -340,7 +340,7 @@ wp.mediaWidgets = (function ($) {
                     displayUserSettings: false // We use the display settings from the current/default widget instance props.
                 }),
 
-                new wp.media.controller.EditImage({ model: this.options.editImage }),
+                new wp.media.controller.EditImage({model: this.options.editImage}),
 
                 // Embed states.
                 new wp.media.controller.Embed({
@@ -360,13 +360,13 @@ wp.mediaWidgets = (function ($) {
          * @this {wp.media.controller.Library}
          * @return {void}
          */
-        mainInsertToolbar: function mainInsertToolbar (view) {
+        mainInsertToolbar: function mainInsertToolbar(view) {
             var controller = this; // eslint-disable-line consistent-this
             view.set('insert', {
                 style: 'primary',
                 priority: 80,
                 text: controller.options.text, // The whole reason for the fork.
-                requires: { selection: true },
+                requires: {selection: true},
 
                 /**
                  * Handle click.
@@ -376,7 +376,7 @@ wp.mediaWidgets = (function ($) {
                  * @fires wp.media.controller.State#insert()
                  * @return {void}
                  */
-                click: function onClick () {
+                click: function onClick() {
                     var state = controller.state(),
                         selection = state.get('selection');
 
@@ -395,7 +395,7 @@ wp.mediaWidgets = (function ($) {
          * @this {wp.media.controller.Library}
          * @return {void}
          */
-        mainEmbedToolbar: function mainEmbedToolbar (toolbar) {
+        mainEmbedToolbar: function mainEmbedToolbar(toolbar) {
             toolbar.view = new wp.media.view.Toolbar.Embed({
                 controller: this,
                 text: this.options.text,
@@ -410,7 +410,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        embedContent: function embedContent () {
+        embedContent: function embedContent() {
             var view = new component.MediaEmbedView({
                 controller: this,
                 model: this.state()
@@ -491,7 +491,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        initialize: function initialize (options) {
+        initialize: function initialize(options) {
             var control = this;
 
             Backbone.View.prototype.initialize.call(control, options);
@@ -549,14 +549,14 @@ wp.mediaWidgets = (function ($) {
             control.listenTo(control.model, 'change', control.render);
 
             // Update the title.
-            control.$el.on('input change', '.title', function updateTitle () {
+            control.$el.on('input change', '.title', function updateTitle() {
                 control.model.set({
                     title: $(this).val().trim()
                 });
             });
 
             // Update link_url attribute.
-            control.$el.on('input change', '.link', function updateLinkUrl () {
+            control.$el.on('input change', '.link', function updateLinkUrl() {
                 var linkUrl = $(this).val().trim(), linkType = 'custom';
                 if (control.selectedAttachment.get('linkUrl') === linkUrl || control.selectedAttachment.get('link') === linkUrl) {
                     linkType = 'post';
@@ -595,7 +595,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        updateSelectedAttachment: function updateSelectedAttachment () {
+        updateSelectedAttachment: function updateSelectedAttachment() {
             var control = this, attachment;
 
             if (0 === control.model.get('attachment_id')) {
@@ -606,11 +606,11 @@ wp.mediaWidgets = (function ($) {
                     id: control.model.get('attachment_id')
                 });
                 attachment.fetch()
-                    .done(function done () {
+                    .done(function done() {
                         control.model.set('error', false);
                         control.selectedAttachment.set(attachment.toJSON());
                     })
-                    .fail(function fail () {
+                    .fail(function fail() {
                         control.model.set('error', 'missing_attachment');
                     });
             }
@@ -621,7 +621,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        syncModelToPreviewProps: function syncModelToPreviewProps () {
+        syncModelToPreviewProps: function syncModelToPreviewProps() {
             var control = this;
             control.previewTemplateProps.set(control.mapModelToPreviewTemplateProps());
         },
@@ -631,7 +631,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        syncModelToInputs: function syncModelToInputs () {
+        syncModelToInputs: function syncModelToInputs() {
             var control = this;
             control.syncContainer.find('.media-widget-instance-property').each(function () {
                 var input = $(this), value, propertyName;
@@ -661,7 +661,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {Function} Template.
          */
-        template: function template () {
+        template: function template() {
             var control = this;
             if (!$('#tmpl-widget-media-' + control.id_base + '-control').length) {
                 throw new Error('Missing widget control template for ' + control.id_base);
@@ -674,7 +674,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        render: function render () {
+        render: function render() {
             var control = this, titleInput;
 
             if (!control.templateRendered) {
@@ -697,7 +697,7 @@ wp.mediaWidgets = (function ($) {
          * @abstract
          * @return {void}
          */
-        renderPreview: function renderPreview () {
+        renderPreview: function renderPreview() {
             throw new Error('renderPreview must be implemented');
         },
 
@@ -706,7 +706,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {boolean} Whether selected and no error.
          */
-        isSelected: function isSelected () {
+        isSelected: function isSelected() {
             var control = this;
 
             if (control.model.get('error')) {
@@ -722,7 +722,7 @@ wp.mediaWidgets = (function ($) {
          * @param {jQuery.Event} event - Event.
          * @return {void}
          */
-        handleMediaLibraryLinkClick: function handleMediaLibraryLinkClick (event) {
+        handleMediaLibraryLinkClick: function handleMediaLibraryLinkClick(event) {
             var control = this;
             event.preventDefault();
             control.selectMedia();
@@ -733,14 +733,14 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {void}
          */
-        selectMedia: function selectMedia () {
+        selectMedia: function selectMedia() {
             var control = this, selection, mediaFrame, defaultSync, mediaFrameProps, selectionModels = [];
 
             if (control.isSelected() && 0 !== control.model.get('attachment_id')) {
                 selectionModels.push(control.selectedAttachment);
             }
 
-            selection = new wp.media.model.Selection(selectionModels, { multiple: false });
+            selection = new wp.media.model.Selection(selectionModels, {multiple: false});
 
             mediaFrameProps = control.mapModelToMediaFrameProps(control.model.toJSON());
             if (mediaFrameProps.size) {
@@ -762,12 +762,12 @@ wp.mediaWidgets = (function ($) {
             wp.media.frame = mediaFrame; // See wp.media().
 
             // Handle selection of a media item.
-            mediaFrame.on('insert', function onInsert () {
+            mediaFrame.on('insert', function onInsert() {
                 var attachment = {}, state = mediaFrame.state();
 
                 // Update cached attachment object to avoid having to re-fetch. This also triggers re-rendering of preview.
                 if ('embed' === state.get('id')) {
-                    _.extend(attachment, { id: 0 }, state.props.toJSON());
+                    _.extend(attachment, {id: 0}, state.props.toJSON());
                 } else {
                     _.extend(attachment, state.get('selection').first().toJSON());
                 }
@@ -788,7 +788,7 @@ wp.mediaWidgets = (function ($) {
                     return $.Deferred().rejectWith(this).promise();
                 }
             };
-            mediaFrame.on('close', function onClose () {
+            mediaFrame.on('close', function onClose() {
                 wp.media.model.Attachment.prototype.sync = defaultSync;
             });
 
@@ -797,7 +797,7 @@ wp.mediaWidgets = (function ($) {
 
             // Clear the selected attachment when it is deleted in the media select frame.
             if (selection) {
-                selection.on('destroy', function onDestroy (attachment) {
+                selection.on('destroy', function onDestroy(attachment) {
                     if (control.model.get('attachment_id') === attachment.get('id')) {
                         control.model.set({
                             attachment_id: 0,
@@ -820,7 +820,7 @@ wp.mediaWidgets = (function ($) {
          * @param {wp.media.view.MediaFrame.Select} mediaFrame - Select frame.
          * @return {Object} Props.
          */
-        getModelPropsFromMediaFrame: function getModelPropsFromMediaFrame (mediaFrame) {
+        getModelPropsFromMediaFrame: function getModelPropsFromMediaFrame(mediaFrame) {
             var control = this, state, mediaFrameProps, modelProps;
 
             state = mediaFrame.state();
@@ -840,7 +840,7 @@ wp.mediaWidgets = (function ($) {
             } else if ('embed' === state.get('id')) {
                 mediaFrameProps = _.extend(
                     state.props.toJSON(),
-                    { attachment_id: 0 }, // Because some media frames use `attachment_id` not `id`.
+                    {attachment_id: 0}, // Because some media frames use `attachment_id` not `id`.
                     control.model.getEmbedResetProps()
                 );
             } else {
@@ -869,7 +869,7 @@ wp.mediaWidgets = (function ($) {
          * @param {Object} mediaFrameProps - Media frame props.
          * @return {Object} Model props.
          */
-        mapMediaToModelProps: function mapMediaToModelProps (mediaFrameProps) {
+        mapMediaToModelProps: function mapMediaToModelProps(mediaFrameProps) {
             var control = this, mediaFramePropToModelPropMap = {}, modelProps = {}, extension;
             _.each(control.model.schema, function (fieldSchema, modelProp) {
 
@@ -920,7 +920,7 @@ wp.mediaWidgets = (function ($) {
          * @param {Object} modelProps - Model props.
          * @return {Object} Media frame props.
          */
-        mapModelToMediaFrameProps: function mapModelToMediaFrameProps (modelProps) {
+        mapModelToMediaFrameProps: function mapModelToMediaFrameProps(modelProps) {
             var control = this, mediaFrameProps = {};
 
             _.each(modelProps, function (value, modelProp) {
@@ -944,7 +944,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {Object} Preview Template Props.
          */
-        mapModelToPreviewTemplateProps: function mapModelToPreviewTemplateProps () {
+        mapModelToPreviewTemplateProps: function mapModelToPreviewTemplateProps() {
             var control = this, previewTemplateProps = {};
             _.each(control.model.schema, function (value, prop) {
                 if (!value.hasOwnProperty('should_preview_update') || value.should_preview_update) {
@@ -963,7 +963,7 @@ wp.mediaWidgets = (function ($) {
          * @abstract
          * @return {void}
          */
-        editMedia: function editMedia () {
+        editMedia: function editMedia() {
             throw new Error('editMedia not implemented');
         }
     });
@@ -1031,7 +1031,7 @@ wp.mediaWidgets = (function ($) {
          * @param {Object}        [options] - Options when attribute name and value are passed separately.
          * @return {wp.mediaWidgets.MediaWidgetModel} This model.
          */
-        set: function set (key, val, options) {
+        set: function set(key, val, options) {
             var model = this, attrs, opts, castedAttrs; // eslint-disable-line consistent-this
             if (null === key) {
                 return model;
@@ -1085,7 +1085,7 @@ wp.mediaWidgets = (function ($) {
          *
          * @return {Object} Reset/override props.
          */
-        getEmbedResetProps: function getEmbedResetProps () {
+        getEmbedResetProps: function getEmbedResetProps() {
             return {
                 id: 0
             };
@@ -1122,7 +1122,7 @@ wp.mediaWidgets = (function ($) {
      *
      * @return {void}
      */
-    component.handleWidgetAdded = function handleWidgetAdded (event, widgetContainer) {
+    component.handleWidgetAdded = function handleWidgetAdded(event, widgetContainer) {
         var fieldContainer, syncContainer, widgetForm, idBase, ControlConstructor, ModelConstructor, modelAttributes,
             widgetControl, widgetModel, widgetId, animatedCheckDelay = 50, renderWhenAnimationDone;
         widgetForm = widgetContainer.find('> .widget-inside > .form, > .widget-inside > form'); // Note: '.form' appears in the customizer, whereas 'form' on the widgets admin screen.
@@ -1206,7 +1206,7 @@ wp.mediaWidgets = (function ($) {
      *
      * @return {void}
      */
-    component.setupAccessibleMode = function setupAccessibleMode () {
+    component.setupAccessibleMode = function setupAccessibleMode() {
         var widgetForm, widgetId, idBase, widgetControl, ControlConstructor, ModelConstructor, modelAttributes,
             fieldContainer, syncContainer;
         widgetForm = $('.editwidget > form');
@@ -1261,7 +1261,7 @@ wp.mediaWidgets = (function ($) {
      *
      * @return {void}
      */
-    component.handleWidgetUpdated = function handleWidgetUpdated (event, widgetContainer) {
+    component.handleWidgetUpdated = function handleWidgetUpdated(event, widgetContainer) {
         var widgetForm, widgetContent, widgetId, widgetControl, attributes = {};
         widgetForm = widgetContainer.find('> .widget-inside > .form, > .widget-inside > form');
         widgetId = widgetForm.find('> .widget-id').val();
@@ -1295,7 +1295,7 @@ wp.mediaWidgets = (function ($) {
      *
      * @return {void}
      */
-    component.init = function init () {
+    component.init = function init() {
         var $document = $(document);
         $document.on('widget-added', component.handleWidgetAdded);
         $document.on('widget-synced widget-updated', component.handleWidgetUpdated);
@@ -1310,13 +1310,13 @@ wp.mediaWidgets = (function ($) {
          * the same for the widgets admin screen, to invoke the widget-added
          * handler when a pre-existing media widget is expanded.
          */
-        $(function initializeExistingWidgetContainers () {
+        $(function initializeExistingWidgetContainers() {
             var widgetContainers;
             if ('widgets' !== window.pagenow) {
                 return;
             }
             widgetContainers = $('.widgets-holder-wrap:not(#available-widgets)').find('div.widget');
-            widgetContainers.one('click.toggle-widget-expanded', function toggleWidgetExpanded () {
+            widgetContainers.one('click.toggle-widget-expanded', function toggleWidgetExpanded() {
                 var widgetContainer = $(this);
                 component.handleWidgetAdded(new jQuery.Event('widget-added'), widgetContainer);
             });

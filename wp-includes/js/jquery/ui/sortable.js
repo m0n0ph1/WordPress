@@ -551,7 +551,7 @@
 
             if (this.dragging) {
 
-                this._mouseUp(new $.Event('mouseup', { target: null }));
+                this._mouseUp(new $.Event('mouseup', {target: null}));
 
                 if (this.options.helper === 'original') {
                     this.currentItem.css(this._storedCSS);
@@ -766,12 +766,12 @@
 
             queries.push([typeof this.options.items === 'function' ?
                 this.options.items
-                    .call(this.element, null, { options: this.options, item: this.currentItem }) :
+                    .call(this.element, null, {options: this.options, item: this.currentItem}) :
                 $(this.options.items, this.element)
                     .not('.ui-sortable-helper')
                     .not('.ui-sortable-placeholder'), this]);
 
-            function addItems () {
+            function addItems() {
                 items.push(this);
             }
 
@@ -806,7 +806,7 @@
             var i, j, cur, inst, targetData, _queries, item, queriesLength,
                 items = this.items,
                 queries = [[typeof this.options.items === 'function' ?
-                    this.options.items.call(this.element[0], event, { item: this.currentItem }) :
+                    this.options.items.call(this.element[0], event, {item: this.currentItem}) :
                     $(this.options.items, this.element), this]],
                 connectWith = this._connectWith();
 
@@ -819,7 +819,7 @@
                         if (inst && inst !== this && !inst.options.disabled) {
                             queries.push([typeof inst.options.items === 'function' ?
                                 inst.options.items
-                                    .call(inst.element[0], event, { item: this.currentItem }) :
+                                    .call(inst.element[0], event, {item: this.currentItem}) :
                                 $(inst.options.items, inst.element), inst]);
                             this.containers.push(inst);
                         }
@@ -923,7 +923,7 @@
                         var element = $('<' + nodeName + '>', that.document[0]);
 
                         that._addClass(element, 'ui-sortable-placeholder',
-                                className || that.currentItem[0].className)
+                            className || that.currentItem[0].className)
                             ._removeClass(element, 'ui-sortable-helper');
 
                         if (nodeName === 'tbody') {
@@ -1159,7 +1159,7 @@
                 obj = obj.split(' ');
             }
             if (Array.isArray(obj)) {
-                obj = { left: +obj[0], top: +obj[1] || 0 };
+                obj = {left: +obj[0], top: +obj[1] || 0};
             }
             if ('left' in obj) {
                 this.offset.click.left = obj.left + this.margins.left;
@@ -1199,7 +1199,7 @@
             if (this.offsetParent[0] === this.document[0].body ||
                 (this.offsetParent[0].tagName &&
                     this.offsetParent[0].tagName.toLowerCase() === 'html' && $.ui.ie)) {
-                po = { top: 0, left: 0 };
+                po = {top: 0, left: 0};
             }
 
             return {
@@ -1220,7 +1220,7 @@
                         this.scrollParent.scrollLeft()
                 };
             } else {
-                return { top: 0, left: 0 };
+                return {top: 0, left: 0};
             }
 
         },
@@ -1530,7 +1530,7 @@
             }
 
             //Post events to containers
-            function delayEvent (type, instance, container) {
+            function delayEvent(type, instance, container) {
                 return function (event) {
                     container._trigger(type, event, instance._uiHash(instance));
                 };

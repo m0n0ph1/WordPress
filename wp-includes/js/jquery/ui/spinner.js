@@ -35,7 +35,7 @@
 })(function ($) {
     'use strict';
 
-    function spinnerModifier (fn) {
+    function spinnerModifier(fn) {
         return function () {
             var previous = this.element.val();
             fn.apply(this, arguments);
@@ -171,7 +171,7 @@
                 previous = this.element[0] === $.ui.safeActiveElement(this.document[0]) ?
                     this.previous : this.element.val();
 
-                function checkFocus () {
+                function checkFocus() {
                     var isActive = this.element[0] === $.ui.safeActiveElement(this.document[0]);
                     if (!isActive) {
                         this.element.trigger('focus');
@@ -335,7 +335,7 @@
 
             value = this._adjustValue(value + step * this._increment(this.counter));
 
-            if (!this.spinning || this._trigger('spin', event, { value: value }) !== false) {
+            if (!this.spinning || this._trigger('spin', event, {value: value}) !== false) {
                 this._value(value);
                 this.counter++;
             }

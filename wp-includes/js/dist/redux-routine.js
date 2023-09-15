@@ -23,18 +23,18 @@
 
             var _dispatcher2 = _interopRequireDefault(_dispatcher);
 
-            function _interopRequireDefault (obj) {
-                return obj && obj.__esModule ? obj : { default: obj };
+            function _interopRequireDefault(obj) {
+                return obj && obj.__esModule ? obj : {default: obj};
             }
 
-            var promise = exports.promise = function promise (value, next, rungen, yieldNext, raiseNext) {
+            var promise = exports.promise = function promise(value, next, rungen, yieldNext, raiseNext) {
                 if (!_is2.default.promise(value)) return false;
                 value.then(next, raiseNext);
                 return true;
             };
 
             var forkedTasks = new Map();
-            var fork = exports.fork = function fork (value, next, rungen) {
+            var fork = exports.fork = function fork(value, next, rungen) {
                 if (!_is2.default.fork(value)) return false;
                 var task = Symbol('fork');
                 var dispatcher = (0, _dispatcher2.default)();
@@ -52,7 +52,7 @@
                 return true;
             };
 
-            var join = exports.join = function join (value, next, rungen, yieldNext, raiseNext) {
+            var join = exports.join = function join(value, next, rungen, yieldNext, raiseNext) {
                 if (!_is2.default.join(value)) return false;
                 var dispatcher = forkedTasks.get(value.task);
                 if (!dispatcher) {
@@ -68,17 +68,17 @@
                 return true;
             };
 
-            var race = exports.race = function race (value, next, rungen, yieldNext, raiseNext) {
+            var race = exports.race = function race(value, next, rungen, yieldNext, raiseNext) {
                 if (!_is2.default.race(value)) return false;
                 var finished = false;
-                var success = function success (result, k, v) {
+                var success = function success(result, k, v) {
                     if (finished) return;
                     finished = true;
                     result[k] = v;
                     next(result);
                 };
 
-                var fail = function fail (err) {
+                var fail = function fail(err) {
                     if (finished) return;
                     raiseNext(err);
                 };
@@ -109,7 +109,7 @@
                 return true;
             };
 
-            var subscribe = function subscribe (value, next) {
+            var subscribe = function subscribe(value, next) {
                 if (!_is2.default.subscribe(value)) return false;
                 if (!_is2.default.channel(value.channel)) {
                     throw new Error('the first argument of "subscribe" must be a valid channel');
@@ -139,28 +139,28 @@
 
             var _is2 = _interopRequireDefault(_is);
 
-            function _interopRequireDefault (obj) {
-                return obj && obj.__esModule ? obj : { default: obj };
+            function _interopRequireDefault(obj) {
+                return obj && obj.__esModule ? obj : {default: obj};
             }
 
-            var any = exports.any = function any (value, next, rungen, yieldNext) {
+            var any = exports.any = function any(value, next, rungen, yieldNext) {
                 yieldNext(value);
                 return true;
             };
 
-            var error = exports.error = function error (value, next, rungen, yieldNext, raiseNext) {
+            var error = exports.error = function error(value, next, rungen, yieldNext, raiseNext) {
                 if (!_is2.default.error(value)) return false;
                 raiseNext(value.error);
                 return true;
             };
 
-            var object = exports.object = function object (value, next, rungen, yieldNext, raiseNext) {
+            var object = exports.object = function object(value, next, rungen, yieldNext, raiseNext) {
                 if (!_is2.default.all(value) || !_is2.default.obj(value.value)) return false;
                 var result = {};
                 var keys = Object.keys(value.value);
                 var count = 0;
                 var hasError = false;
-                var gotResultSuccess = function gotResultSuccess (key, ret) {
+                var gotResultSuccess = function gotResultSuccess(key, ret) {
                     if (hasError) return;
                     result[key] = ret;
                     count++;
@@ -169,7 +169,7 @@
                     }
                 };
 
-                var gotResultError = function gotResultError (key, error) {
+                var gotResultError = function gotResultError(key, error) {
                     if (hasError) return;
                     hasError = true;
                     raiseNext(error);
@@ -186,12 +186,12 @@
                 return true;
             };
 
-            var array = exports.array = function array (value, next, rungen, yieldNext, raiseNext) {
+            var array = exports.array = function array(value, next, rungen, yieldNext, raiseNext) {
                 if (!_is2.default.all(value) || !_is2.default.array(value.value)) return false;
                 var result = [];
                 var count = 0;
                 var hasError = false;
-                var gotResultSuccess = function gotResultSuccess (key, ret) {
+                var gotResultSuccess = function gotResultSuccess(key, ret) {
                     if (hasError) return;
                     result[key] = ret;
                     count++;
@@ -200,7 +200,7 @@
                     }
                 };
 
-                var gotResultError = function gotResultError (key, error) {
+                var gotResultError = function gotResultError(key, error) {
                     if (hasError) return;
                     hasError = true;
                     raiseNext(error);
@@ -217,7 +217,7 @@
                 return true;
             };
 
-            var iterator = exports.iterator = function iterator (value, next, rungen, yieldNext, raiseNext) {
+            var iterator = exports.iterator = function iterator(value, next, rungen, yieldNext, raiseNext) {
                 if (!_is2.default.iterator(value)) return false;
                 rungen(value, next, raiseNext);
                 return true;
@@ -240,18 +240,22 @@
 
             var _is2 = _interopRequireDefault(_is);
 
-            function _interopRequireDefault (obj) {
-                return obj && obj.__esModule ? obj : { default: obj };
+            function _interopRequireDefault(obj) {
+                return obj && obj.__esModule ? obj : {default: obj};
             }
 
-            function _toConsumableArray (arr) {
+            function _toConsumableArray(arr) {
                 if (Array.isArray(arr)) {
-                    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; }
+                    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+                        arr2[i] = arr[i];
+                    }
                     return arr2;
-                } else { return Array.from(arr); }
+                } else {
+                    return Array.from(arr);
+                }
             }
 
-            var call = exports.call = function call (value, next, rungen, yieldNext, raiseNext) {
+            var call = exports.call = function call(value, next, rungen, yieldNext, raiseNext) {
                 if (!_is2.default.call(value)) return false;
                 try {
                     next(value.func.apply(value.context, value.args));
@@ -261,7 +265,7 @@
                 return true;
             };
 
-            var cps = exports.cps = function cps (value, next, rungen, yieldNext, raiseNext) {
+            var cps = exports.cps = function cps(value, next, rungen, yieldNext, raiseNext) {
                 var _value$func;
 
                 if (!_is2.default.cps(value)) return false;
@@ -291,30 +295,34 @@
 
             var _is2 = _interopRequireDefault(_is);
 
-            function _interopRequireDefault (obj) {
-                return obj && obj.__esModule ? obj : { default: obj };
+            function _interopRequireDefault(obj) {
+                return obj && obj.__esModule ? obj : {default: obj};
             }
 
-            function _toConsumableArray (arr) {
+            function _toConsumableArray(arr) {
                 if (Array.isArray(arr)) {
-                    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; }
+                    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+                        arr2[i] = arr[i];
+                    }
                     return arr2;
-                } else { return Array.from(arr); }
+                } else {
+                    return Array.from(arr);
+                }
             }
 
-            var create = function create () {
+            var create = function create() {
                 var userControls = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
                 var controls = [].concat(_toConsumableArray(userControls), _toConsumableArray(_builtin2.default));
 
-                var runtime = function runtime (input) {
+                var runtime = function runtime(input) {
                     var success = arguments.length <= 1 || arguments[1] === undefined ? function () {
                     } : arguments[1];
                     var error = arguments.length <= 2 || arguments[2] === undefined ? function () {
                     } : arguments[2];
 
-                    var iterate = function iterate (gen) {
-                        var yieldValue = function yieldValue (isError) {
+                    var iterate = function iterate(gen) {
+                        var yieldValue = function yieldValue(isError) {
                             return function (ret) {
                                 try {
                                     var _ref = isError ? gen.throw(ret) : gen.next(ret);
@@ -330,7 +338,7 @@
                             };
                         };
 
-                        var next = function next (ret) {
+                        var next = function next(ret) {
                             controls.some(function (control) {
                                 return control(ret, next, runtime, yieldValue(false), yieldValue(true));
                             });
@@ -339,8 +347,8 @@
                         yieldValue(false)();
                     };
 
-                    var iterator = _is2.default.iterator(input) ? input : regeneratorRuntime.mark(function _callee () {
-                        return regeneratorRuntime.wrap(function _callee$ (_context) {
+                    var iterator = _is2.default.iterator(input) ? input : regeneratorRuntime.mark(function _callee() {
+                        return regeneratorRuntime.wrap(function _callee$(_context) {
                             while (1) {
                                 switch (_context.prev = _context.next) {
                                     case 0:
@@ -383,7 +391,7 @@
                 if (key === 'default') return;
                 Object.defineProperty(exports, key, {
                     enumerable: true,
-                    get: function get () {
+                    get: function get() {
                         return _helpers[key];
                     }
                 });
@@ -401,8 +409,8 @@
 
             var _wrap2 = _interopRequireDefault(_wrap);
 
-            function _interopRequireDefault (obj) {
-                return obj && obj.__esModule ? obj : { default: obj };
+            function _interopRequireDefault(obj) {
+                return obj && obj.__esModule ? obj : {default: obj};
             }
 
             exports.create = _create2.default;
@@ -418,11 +426,11 @@
             Object.defineProperty(exports, '__esModule', ({
                 value: true
             }));
-            var createDispatcher = function createDispatcher () {
+            var createDispatcher = function createDispatcher() {
                 var listeners = [];
 
                 return {
-                    subscribe: function subscribe (listener) {
+                    subscribe: function subscribe(listener) {
                         listeners.push(listener);
                         return function () {
                             listeners = listeners.filter(function (l) {
@@ -430,7 +438,7 @@
                             });
                         };
                     },
-                    dispatch: function dispatch (action) {
+                    dispatch: function dispatch(action) {
                         listeners.slice().forEach(function (listener) {
                             return listener(action);
                         });
@@ -455,25 +463,25 @@
 
             var _keys2 = _interopRequireDefault(_keys);
 
-            function _interopRequireDefault (obj) {
-                return obj && obj.__esModule ? obj : { default: obj };
+            function _interopRequireDefault(obj) {
+                return obj && obj.__esModule ? obj : {default: obj};
             }
 
-            var all = exports.all = function all (value) {
+            var all = exports.all = function all(value) {
                 return {
                     type: _keys2.default.all,
                     value: value
                 };
             };
 
-            var error = exports.error = function error (err) {
+            var error = exports.error = function error(err) {
                 return {
                     type: _keys2.default.error,
                     error: err
                 };
             };
 
-            var fork = exports.fork = function fork (iterator) {
+            var fork = exports.fork = function fork(iterator) {
                 for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
                     args[_key - 1] = arguments[_key];
                 }
@@ -485,21 +493,21 @@
                 };
             };
 
-            var join = exports.join = function join (task) {
+            var join = exports.join = function join(task) {
                 return {
                     type: _keys2.default.join,
                     task: task
                 };
             };
 
-            var race = exports.race = function race (competitors) {
+            var race = exports.race = function race(competitors) {
                 return {
                     type: _keys2.default.race,
                     competitors: competitors
                 };
             };
 
-            var delay = exports.delay = function delay (timeout) {
+            var delay = exports.delay = function delay(timeout) {
                 return new Promise(function (resolve) {
                     setTimeout(function () {
                         return resolve(true);
@@ -507,7 +515,7 @@
                 });
             };
 
-            var invoke = exports.invoke = function invoke (func) {
+            var invoke = exports.invoke = function invoke(func) {
                 for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
                     args[_key2 - 1] = arguments[_key2];
                 }
@@ -520,7 +528,7 @@
                 };
             };
 
-            var call = exports.call = function call (func, context) {
+            var call = exports.call = function call(func, context) {
                 for (var _len3 = arguments.length, args = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
                     args[_key3 - 2] = arguments[_key3];
                 }
@@ -533,7 +541,7 @@
                 };
             };
 
-            var apply = exports.apply = function apply (func, context, args) {
+            var apply = exports.apply = function apply(func, context, args) {
                 return {
                     type: _keys2.default.call,
                     func: func,
@@ -542,7 +550,7 @@
                 };
             };
 
-            var cps = exports.cps = function cps (func) {
+            var cps = exports.cps = function cps(func) {
                 for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
                     args[_key4 - 1] = arguments[_key4];
                 }
@@ -554,22 +562,22 @@
                 };
             };
 
-            var subscribe = exports.subscribe = function subscribe (channel) {
+            var subscribe = exports.subscribe = function subscribe(channel) {
                 return {
                     type: _keys2.default.subscribe,
                     channel: channel
                 };
             };
 
-            var createChannel = exports.createChannel = function createChannel (callback) {
+            var createChannel = exports.createChannel = function createChannel(callback) {
                 var listeners = [];
-                var subscribe = function subscribe (l) {
+                var subscribe = function subscribe(l) {
                     listeners.push(l);
                     return function () {
                         return listeners.splice(listeners.indexOf(l), 1);
                     };
                 };
-                var next = function next (val) {
+                var next = function next(val) {
                     return listeners.forEach(function (l) {
                         return l(val);
                     });
@@ -601,49 +609,49 @@
 
             var _keys2 = _interopRequireDefault(_keys);
 
-            function _interopRequireDefault (obj) {
-                return obj && obj.__esModule ? obj : { default: obj };
+            function _interopRequireDefault(obj) {
+                return obj && obj.__esModule ? obj : {default: obj};
             }
 
             var is = {
-                obj: function obj (value) {
+                obj: function obj(value) {
                     return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && !!value;
                 },
-                all: function all (value) {
+                all: function all(value) {
                     return is.obj(value) && value.type === _keys2.default.all;
                 },
-                error: function error (value) {
+                error: function error(value) {
                     return is.obj(value) && value.type === _keys2.default.error;
                 },
                 array: Array.isArray,
-                func: function func (value) {
+                func: function func(value) {
                     return typeof value === 'function';
                 },
-                promise: function promise (value) {
+                promise: function promise(value) {
                     return value && is.func(value.then);
                 },
-                iterator: function iterator (value) {
+                iterator: function iterator(value) {
                     return value && is.func(value.next) && is.func(value.throw);
                 },
-                fork: function fork (value) {
+                fork: function fork(value) {
                     return is.obj(value) && value.type === _keys2.default.fork;
                 },
-                join: function join (value) {
+                join: function join(value) {
                     return is.obj(value) && value.type === _keys2.default.join;
                 },
-                race: function race (value) {
+                race: function race(value) {
                     return is.obj(value) && value.type === _keys2.default.race;
                 },
-                call: function call (value) {
+                call: function call(value) {
                     return is.obj(value) && value.type === _keys2.default.call;
                 },
-                cps: function cps (value) {
+                cps: function cps(value) {
                     return is.obj(value) && value.type === _keys2.default.cps;
                 },
-                subscribe: function subscribe (value) {
+                subscribe: function subscribe(value) {
                     return is.obj(value) && value.type === _keys2.default.subscribe;
                 },
-                channel: function channel (value) {
+                channel: function channel(value) {
                     return is.obj(value) && is.func(value.subscribe);
                 }
             };
@@ -684,7 +692,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -726,7 +734,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -766,7 +774,7 @@
          *
          * @return {object is Generator} Whether object is a generator.
          */
-        function isGenerator (object) {
+        function isGenerator(object) {
             /* eslint-enable jsdoc/valid-types */
             // Check that iterator (next) and iterable (Symbol.iterator) interfaces are satisfied.
             // These checks seem to be compatible with several generator helpers as well as the native implementation.
@@ -776,7 +784,7 @@
 // EXTERNAL MODULE: ./node_modules/rungen/dist/index.js
         var dist = __webpack_require__(2290);
         ;// CONCATENATED MODULE: ./node_modules/is-promise/index.mjs
-        function isPromise (obj) {
+        function isPromise(obj) {
             return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
         }
 
@@ -788,11 +796,11 @@
          * Released under the MIT License.
          */
 
-        function isObject (o) {
+        function isObject(o) {
             return Object.prototype.toString.call(o) === '[object Object]';
         }
 
-        function isPlainObject (o) {
+        function isPlainObject(o) {
             var ctor, prot;
 
             if (isObject(o) === false) return false;
@@ -829,7 +837,7 @@
          * @return {object is import('redux').AnyAction}  Whether object is an action.
          */
 
-        function isAction (object) {
+        function isAction(object) {
             return isPlainObject(object) && typeof object.type === 'string';
         }
 
@@ -843,7 +851,7 @@
          * @return {object is import('redux').AnyAction} Whether object is an action and is of specific type.
          */
 
-        function isActionOfType (object, expectedType) {
+        function isActionOfType(object, expectedType) {
             /* eslint-enable jsdoc/valid-types */
             return isAction(object) && object.type === expectedType;
         }
@@ -864,7 +872,7 @@
          * @param dispatch Unhandled action dispatch.
          */
 
-        function createRuntime (controls = {}, dispatch) {
+        function createRuntime(controls = {}, dispatch) {
             const rungenControls = Object.entries(controls).map(([actionType, control]) => (value, next, iterate, yieldNext, yieldError) => {
                 if (!isActionOfType(value, actionType)) {
                     return false;
@@ -921,7 +929,7 @@
          * @return {import('redux').Middleware} Co-routine runtime
          */
 
-        function createMiddleware (controls = {}) {
+        function createMiddleware(controls = {}) {
             return store => {
                 const runtime = createRuntime(controls, store.dispatch);
                 return next => action => {

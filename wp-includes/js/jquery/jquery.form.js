@@ -138,7 +138,7 @@
         var method, action, url, isMsie, iframeSrc, $form = this;
 
         if (typeof options === 'function') {
-            options = { success: options };
+            options = {success: options};
 
         } else if (typeof options === 'string' || (options === false && arguments.length > 0)) {
             options = {
@@ -354,7 +354,7 @@
         return this;
 
         // utility fn for deep serialization
-        function deepSerialize (extraData) {
+        function deepSerialize(extraData) {
             var serialized = $.param(extraData, options.traditional).split('&');
             var len = serialized.length;
             var result = [];
@@ -372,7 +372,7 @@
         }
 
         // XMLHttpRequest Level 2 file uploads (big hat tip to francois2metz)
-        function fileUploadXhr (a) {
+        function fileUploadXhr(a) {
             var formdata = new FormData();
 
             for (var i = 0; i < a.length; i++) {
@@ -442,7 +442,7 @@
         }
 
         // private function for handling file uploads (hat tip to YAHOO!)
-        function fileUploadIframe (a) {
+        function fileUploadIframe(a) {
             var form = $form[0], el, i, s, g, id, $io, io, xhr, sub, n, timedOut, timeoutHandle;
             var deferred = $.Deferred();
 
@@ -480,7 +480,7 @@
 
             } else {
                 $io = $('<iframe name="' + id + '" src="' + s.iframeSrc + '" />', ownerDocument);
-                $io.css({ position: 'absolute', top: '-1000px', left: '-1000px' });
+                $io.css({position: 'absolute', top: '-1000px', left: '-1000px'});
             }
             io = $io[0];
 
@@ -506,7 +506,8 @@
                         if (io.contentWindow.document.execCommand) {
                             io.contentWindow.document.execCommand('Stop');
                         }
-                    } catch (ignore) {}
+                    } catch (ignore) {
+                    }
 
                     $io.attr('src', s.iframeSrc); // abort op in progress
                     xhr.error = e;
@@ -565,7 +566,7 @@
             var CLIENT_TIMEOUT_ABORT = 1;
             var SERVER_ABORT = 2;
 
-            function getDoc (frame) {
+            function getDoc(frame) {
                 /* it looks like contentWindow or contentDocument do not
                  * carry the protocol property in ie8, when running under ssl
                  * frame.document is the only valid response document, since
@@ -610,7 +611,7 @@
             }
 
             // take a breath so that pending repaints get some cpu time before the upload starts
-            function doSubmit () {
+            function doSubmit() {
                 // make sure form attrs are set
                 var t = $form.attr2('target'),
                     a = $form.attr2('action'),
@@ -643,7 +644,7 @@
                 }
 
                 // look for server aborts
-                function checkState () {
+                function checkState() {
                     try {
                         var state = getDoc(io).readyState;
 
@@ -727,7 +728,7 @@
 
             var data, doc, domCheckCount = 50, callbackProcessed;
 
-            function cb (e) {
+            function cb(e) {
                 if (xhr.aborted || callbackProcessed) {
                     return;
                 }
@@ -798,7 +799,7 @@
                         s.dataType = 'xml';
                     }
                     xhr.getResponseHeader = function (header) {
-                        var headers = { 'content-type': s.dataType };
+                        var headers = {'content-type': s.dataType};
 
                         return headers[header.toLowerCase()];
                     };
@@ -992,7 +993,7 @@
 
         // in jQuery 1.3+ we can fix mistakes with the ready state
         if (!options.delegation && this.length === 0) {
-            var o = { s: this.selector, c: this.context };
+            var o = {s: this.selector, c: this.context};
 
             if (!$.isReady && o.s) {
                 log('DOM not ready, queuing ajaxForm');
@@ -1029,7 +1030,7 @@
     };
 
     // private event handlers
-    function doAjaxSubmit (e) {
+    function doAjaxSubmit(e) {
         /* jshint validthis:true */
         var options = e.data;
 
@@ -1039,7 +1040,7 @@
         }
     }
 
-    function captureSubmittingElement (e) {
+    function captureSubmittingElement(e) {
         /* jshint validthis:true */
         var target = e.target;
         var $el = $(target);
@@ -1141,8 +1142,8 @@
             if (semantic && form.clk && el.type === 'image') {
                 // handle image inputs on the fly when semantic == true
                 if (form.clk === el) {
-                    a.push({ name: n, value: $(el).val(), type: el.type });
-                    a.push({ name: n + '.x', value: form.clk_x }, { name: n + '.y', value: form.clk_y });
+                    a.push({name: n, value: $(el).val(), type: el.type});
+                    a.push({name: n + '.x', value: form.clk_x}, {name: n + '.y', value: form.clk_y});
                 }
                 continue;
             }
@@ -1153,7 +1154,7 @@
                     elements.push(el);
                 }
                 for (j = 0, jmax = v.length; j < jmax; j++) {
-                    a.push({ name: n, value: v[j] });
+                    a.push({name: n, value: v[j]});
                 }
 
             } else if (feature.fileapi && el.type === 'file') {
@@ -1165,18 +1166,18 @@
 
                 if (files.length) {
                     for (j = 0; j < files.length; j++) {
-                        a.push({ name: n, value: files[j], type: el.type });
+                        a.push({name: n, value: files[j], type: el.type});
                     }
                 } else {
                     // #180
-                    a.push({ name: n, value: '', type: el.type });
+                    a.push({name: n, value: '', type: el.type});
                 }
 
             } else if (v !== null && typeof v !== 'undefined') {
                 if (elements) {
                     elements.push(el);
                 }
-                a.push({ name: n, value: v, type: el.type, required: el.required });
+                a.push({name: n, value: v, type: el.type, required: el.required});
             }
         }
 
@@ -1187,8 +1188,8 @@
             n = input.name;
 
             if (n && !input.disabled && input.type === 'image') {
-                a.push({ name: n, value: $input.val() });
-                a.push({ name: n + '.x', value: form.clk_x }, { name: n + '.y', value: form.clk_y });
+                a.push({name: n, value: $input.val()});
+                a.push({name: n + '.x', value: form.clk_x}, {name: n + '.y', value: form.clk_y});
             }
         }
 
@@ -1222,11 +1223,11 @@
 
             if (v && v.constructor === Array) {
                 for (var i = 0, max = v.length; i < max; i++) {
-                    a.push({ name: n, value: v[i] });
+                    a.push({name: n, value: v[i]});
                 }
 
             } else if (v !== null && typeof v !== 'undefined') {
-                a.push({ name: this.name, value: v });
+                a.push({name: this.name, value: v});
             }
         });
 
@@ -1524,7 +1525,7 @@
     $.fn.ajaxSubmit.debug = false;
 
     // helper fn for console logging
-    function log () {
+    function log() {
         if (!$.fn.ajaxSubmit.debug) {
             return;
         }

@@ -2,19 +2,19 @@
     /**
      * Privacy administration panel.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
-    
+
     /** WordPress Administration Bootstrap */
-    require_once __DIR__ . '/admin.php';
-    
+    require_once __DIR__.'/admin.php';
+
     // Used in the HTML title tag.
     $title = __('Privacy');
-    
+
     [$display_version] = explode('-', get_bloginfo('version'));
-    
-    require_once ABSPATH . 'wp-admin/admin-header.php';
+
+    require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
 <div class="wrap about__container">
 
@@ -48,25 +48,17 @@
 
             <p>
                 <?php
-                    printf(
-                    /* translators: %s: https://wordpress.org/about/stats/ */
-                        __('This data is used to provide general enhancements to WordPress, which includes helping to protect your site by finding and automatically installing new updates. It is also used to calculate statistics, such as those shown on the <a href="%s">WordPress.org stats page</a>.'),
-                        __('https://wordpress.org/about/stats/')
-                    );
+                    printf(/* translators: %s: https://wordpress.org/about/stats/ */ __('This data is used to provide general enhancements to WordPress, which includes helping to protect your site by finding and automatically installing new updates. It is also used to calculate statistics, such as those shown on the <a href="%s">WordPress.org stats page</a>.'), __('https://wordpress.org/about/stats/'));
                 ?>
             </p>
 
             <p>
                 <?php
-                    printf(
-                    /* translators: %s: https://wordpress.org/about/privacy/ */
-                        __('We take privacy and transparency very seriously. To learn more about what data we collect, and how we use it, please visit <a href="%s">our Privacy Policy</a>.'),
-                        __('https://wordpress.org/about/privacy/')
-                    );
+                    printf(/* translators: %s: https://wordpress.org/about/privacy/ */ __('We take privacy and transparency very seriously. To learn more about what data we collect, and how we use it, please visit <a href="%s">our Privacy Policy</a>.'), __('https://wordpress.org/about/privacy/'));
                 ?>
             </p>
         </div>
     </div>
 
 </div>
-<?php require_once ABSPATH . 'wp-admin/admin-footer.php'; ?>
+<?php require_once ABSPATH.'wp-admin/admin-footer.php'; ?>

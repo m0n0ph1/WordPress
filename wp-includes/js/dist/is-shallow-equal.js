@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -76,7 +76,7 @@
      *
      * @return {boolean} Whether the two objects are shallow equal.
      */
-    function isShallowEqualObjects (a, b) {
+    function isShallowEqualObjects(a, b) {
         if (a === b) {
             return true;
         }
@@ -118,7 +118,7 @@
      *
      * @return {boolean} Whether the two arrays are shallow equal.
      */
-    function isShallowEqualArrays (a, b) {
+    function isShallowEqualArrays(a, b) {
         if (a === b) {
             return true;
         }
@@ -155,7 +155,7 @@
      * @return {boolean} Whether the two values are shallow equal.
      */
 
-    function isShallowEqual (a, b) {
+    function isShallowEqual(a, b) {
         if (a && b) {
             if (a.constructor === Object && b.constructor === Object) {
                 return isShallowEqualObjects(a, b);

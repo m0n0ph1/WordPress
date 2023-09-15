@@ -2,11 +2,11 @@
     /**
      * Template for displaying Tag Archive pages
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Ten
-     * @since Twenty Ten 1.0
+     * @since      Twenty Ten 1.0
      */
-    
+
     get_header(); ?>
 
 <div id="container">
@@ -15,10 +15,10 @@
         <h1 class="page-title">
             <?php
                 /* translators: %s: Tag title. */
-                printf(__('Tag Archives: %s', 'twentyten'), '<span>' . single_tag_title('', false) . '</span>');
+                printf(__('Tag Archives: %s', 'twentyten'), '<span>'.single_tag_title('', false).'</span>');
             ?>
         </h1>
-        
+
         <?php
             /*
              * Run the loop for the tag archive to output the posts

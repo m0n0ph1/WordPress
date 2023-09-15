@@ -2,16 +2,17 @@
     /**
      * Helper functions for displaying a list of items in an ajaxified HTML table.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage List_Table
-     * @since 3.1.0
+     * @since      3.1.0
      */
-    
+
     /**
      * Fetches an instance of a WP_List_Table class.
      *
-     * @param string $class_name The type of the list table, which is the class name.
-     * @param array $args Optional. Arguments to pass to the class. Accepts 'screen'.
+     * @param string  $class_name The type of the list table, which is the class name.
+     * @param array   $args       Optional. Arguments to pass to the class. Accepts 'screen'.
+     *
      * @return WP_List_Table|false List table object on success, false if the class does not exist.
      * @global string $hook_suffix
      *
@@ -34,58 +35,68 @@
             'WP_Theme_Install_List_Table' => ['themes', 'theme-install'],
             'WP_Plugins_List_Table' => 'plugins',
             'WP_Application_Passwords_List_Table' => 'application-passwords',
-            
+
             // Network Admin.
             'WP_MS_Sites_List_Table' => 'ms-sites',
             'WP_MS_Users_List_Table' => 'ms-users',
             'WP_MS_Themes_List_Table' => 'ms-themes',
-            
+
             // Privacy requests tables.
             'WP_Privacy_Data_Export_Requests_List_Table' => 'privacy-data-export-requests',
             'WP_Privacy_Data_Removal_Requests_List_Table' => 'privacy-data-removal-requests',
         ];
-        
-        if (isset($core_classes[$class_name])) {
-            foreach ((array) $core_classes[$class_name] as $required) {
-                require_once ABSPATH . 'wp-admin/includes/class-wp-' . $required . '-list-table.php';
+
+        if(isset($core_classes[$class_name]))
+        {
+            foreach((array) $core_classes[$class_name] as $required)
+            {
+                require_once ABSPATH.'wp-admin/includes/class-wp-'.$required.'-list-table.php';
             }
-            
-            if (isset($args['screen'])) {
+
+            if(isset($args['screen']))
+            {
                 $args['screen'] = convert_to_screen($args['screen']);
-            } elseif (isset($GLOBALS['hook_suffix'])) {
+            }
+            elseif(isset($GLOBALS['hook_suffix']))
+            {
                 $args['screen'] = get_current_screen();
-            } else {
+            }
+            else
+            {
                 $args['screen'] = null;
             }
-            
+
             /**
              * Filters the list table class to instantiate.
              *
              * @param string $class_name The list table class to use.
-             * @param array $args An array containing _get_list_table() arguments.
+             * @param array  $args       An array containing _get_list_table() arguments.
+             *
              * @since 6.1.0
              *
              */
             $custom_class_name = apply_filters('wp_list_table_class_name', $class_name, $args);
-            
-            if (is_string($custom_class_name) && class_exists($custom_class_name)) {
+
+            if(is_string($custom_class_name) && class_exists($custom_class_name))
+            {
                 $class_name = $custom_class_name;
             }
-            
+
             return new $class_name($args);
         }
-        
+
         return false;
     }
-    
+
     /**
      * Register column headers for a particular screen.
      *
-     * @param string $screen The handle for the screen to register column headers for. This is
+     * @param string   $screen  The handle for the screen to register column headers for. This is
      *                          usually the hook name returned by the `add_*_page()` functions.
      * @param string[] $columns An array of columns with column IDs as the keys and translated
      *                          column names as the values.
-     * @see get_column_headers(), print_column_headers(), get_hidden_columns()
+     *
+     * @see   get_column_headers(), print_column_headers(), get_hidden_columns()
      *
      * @since 2.7.0
      *
@@ -94,18 +105,19 @@
     {
         new _WP_List_Table_Compat($screen, $columns);
     }
-    
+
     /**
      * Prints column headers for a particular screen.
      *
-     * @param string|WP_Screen $screen The screen hook name or screen object.
-     * @param bool $with_id Whether to set the ID attribute or not.
+     * @param string|WP_Screen $screen  The screen hook name or screen object.
+     * @param bool             $with_id Whether to set the ID attribute or not.
+     *
      * @since 2.7.0
      *
      */
     function print_column_headers($screen, $with_id = true)
     {
         $wp_list_table = new _WP_List_Table_Compat($screen);
-        
+
         $wp_list_table->print_column_headers($with_id);
     }

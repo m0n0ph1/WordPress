@@ -112,7 +112,7 @@
          */
         fb.widgetCoords = function (event) {
             var offset = $(fb.wheel).offset();
-            return { x: (event.pageX - offset.left) - fb.width / 2, y: (event.pageY - offset.top) - fb.width / 2 };
+            return {x: (event.pageX - offset.left) - fb.width / 2, y: (event.pageY - offset.top) - fb.width / 2};
         };
 
         /**

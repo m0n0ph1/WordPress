@@ -342,10 +342,10 @@
                 this.headers.eq(0).attr('tabIndex', 0);
             } else {
                 this.active.attr({
-                        'aria-selected': 'true',
-                        'aria-expanded': 'true',
-                        tabIndex: 0
-                    })
+                    'aria-selected': 'true',
+                    'aria-expanded': 'true',
+                    tabIndex: 0
+                })
                     .next()
                     .attr({
                         'aria-hidden': 'false'
@@ -429,7 +429,7 @@
 
             this._off(this.headers.add(this.headers.next()));
             this._on(this.headers, events);
-            this._on(this.headers.next(), { keydown: '_panelKeyDown' });
+            this._on(this.headers.next(), {keydown: '_panelKeyDown'});
             this._hoverable(this.headers);
             this._focusable(this.headers);
         },
@@ -526,8 +526,8 @@
                 });
             } else if (toShow.length) {
                 this.headers.filter(function () {
-                        return parseInt($(this).attr('tabIndex'), 10) === 0;
-                    })
+                    return parseInt($(this).attr('tabIndex'), 10) === 0;
+                })
                     .attr('tabIndex', -1);
             }
 

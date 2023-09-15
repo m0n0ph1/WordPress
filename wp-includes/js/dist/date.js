@@ -32,7 +32,8 @@
                         __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
                             (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
                     __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));                 // AMD
-                } else {}
+                } else {
+                }
             }(this, function (moment) {
                 'use strict';
 
@@ -47,7 +48,7 @@
                 var BASE60 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWX',
                     EPSILON = 0.000001; // Used to fix floating point rounding errors
 
-                function packBase60Fraction (fraction, precision) {
+                function packBase60Fraction(fraction, precision) {
                     var buffer = '.',
                         output = '',
                         current;
@@ -70,7 +71,7 @@
                     return output;
                 }
 
-                function packBase60 (number, precision) {
+                function packBase60(number, precision) {
                     var output = '',
                         absolute = Math.abs(number),
                         whole = Math.floor(absolute),
@@ -100,7 +101,7 @@
                  Pack
                  ************************************/
 
-                function packUntils (untils) {
+                function packUntils(untils) {
                     var out = [],
                         last = 0,
                         i;
@@ -113,7 +114,7 @@
                     return out.join(' ');
                 }
 
-                function packAbbrsAndOffsets (source) {
+                function packAbbrsAndOffsets(source) {
                     var index = 0,
                         abbrs = [],
                         offsets = [],
@@ -135,7 +136,7 @@
                     return abbrs.join(' ') + '|' + offsets.join(' ') + '|' + indices.join('');
                 }
 
-                function packPopulation (number) {
+                function packPopulation(number) {
                     if (!number) {
                         return '';
                     }
@@ -147,18 +148,26 @@
                     return precision + 'e' + exponent;
                 }
 
-                function packCountries (countries) {
+                function packCountries(countries) {
                     if (!countries) {
                         return '';
                     }
                     return countries.join(' ');
                 }
 
-                function validatePackData (source) {
-                    if (!source.name) { throw new Error('Missing name'); }
-                    if (!source.abbrs) { throw new Error('Missing abbrs'); }
-                    if (!source.untils) { throw new Error('Missing untils'); }
-                    if (!source.offsets) { throw new Error('Missing offsets'); }
+                function validatePackData(source) {
+                    if (!source.name) {
+                        throw new Error('Missing name');
+                    }
+                    if (!source.abbrs) {
+                        throw new Error('Missing abbrs');
+                    }
+                    if (!source.untils) {
+                        throw new Error('Missing untils');
+                    }
+                    if (!source.offsets) {
+                        throw new Error('Missing offsets');
+                    }
                     if (
                         source.offsets.length !== source.untils.length ||
                         source.offsets.length !== source.abbrs.length
@@ -167,7 +176,7 @@
                     }
                 }
 
-                function pack (source) {
+                function pack(source) {
                     validatePackData(source);
                     return [
                         source.name, // 0 - timezone name
@@ -177,7 +186,7 @@
                     ].join('|');
                 }
 
-                function packCountry (source) {
+                function packCountry(source) {
                     return [
                         source.name,
                         source.zones.join(' ')
@@ -188,10 +197,12 @@
                  Create Links
                  ************************************/
 
-                function arraysAreEqual (a, b) {
+                function arraysAreEqual(a, b) {
                     var i;
 
-                    if (a.length !== b.length) { return false; }
+                    if (a.length !== b.length) {
+                        return false;
+                    }
 
                     for (i = 0; i < a.length; i++) {
                         if (a[i] !== b[i]) {
@@ -201,11 +212,11 @@
                     return true;
                 }
 
-                function zonesAreEqual (a, b) {
+                function zonesAreEqual(a, b) {
                     return arraysAreEqual(a.offsets, b.offsets) && arraysAreEqual(a.abbrs, b.abbrs) && arraysAreEqual(a.untils, b.untils);
                 }
 
-                function findAndCreateLinks (input, output, links, groupLeaders) {
+                function findAndCreateLinks(input, output, links, groupLeaders) {
                     var i, j, a, b, group, foundGroup, groups = [];
 
                     for (i = 0; i < input.length; i++) {
@@ -241,7 +252,7 @@
                     }
                 }
 
-                function createLinks (source, groupLeaders) {
+                function createLinks(source, groupLeaders) {
                     var zones = [],
                         links = [];
 
@@ -262,7 +273,7 @@
                  Filter Years
                  ************************************/
 
-                function findStartAndEndIndex (untils, start, end) {
+                function findStartAndEndIndex(untils, start, end) {
                     var startI = 0,
                         endI = untils.length + 1,
                         untilYear,
@@ -294,7 +305,7 @@
                     return [startI, endI];
                 }
 
-                function filterYears (source, start, end) {
+                function filterYears(source, start, end) {
                     var slice = Array.prototype.slice,
                         indices = findStartAndEndIndex(source.untils, start, end),
                         untils = slice.apply(source.untils, indices);
@@ -315,7 +326,7 @@
                  Filter, Link, and Pack
                  ************************************/
 
-                function filterLinkPack (input, start, end, groupLeaders) {
+                function filterLinkPack(input, start, end, groupLeaders) {
                     var i,
                         inputZones = input.zones,
                         outputZones = [],
@@ -379,7 +390,8 @@
                         __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
                             (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
                     __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));                 // AMD
-                } else {}
+                } else {
+                }
             }(this, function (moment) {
                 'use strict';
 
@@ -419,7 +431,7 @@
                  Unpacking
                  ************************************/
 
-                function charCodeToInt (charCode) {
+                function charCodeToInt(charCode) {
                     if (charCode > 96) {
                         return charCode - 87;
                     } else if (charCode > 64) {
@@ -428,7 +440,7 @@
                     return charCode - 48;
                 }
 
-                function unpackBase60 (string) {
+                function unpackBase60(string) {
                     var i = 0,
                         parts = string.split('.'),
                         whole = parts[0],
@@ -460,13 +472,13 @@
                     return out * sign;
                 }
 
-                function arrayToInt (array) {
+                function arrayToInt(array) {
                     for (var i = 0; i < array.length; i++) {
                         array[i] = unpackBase60(array[i]);
                     }
                 }
 
-                function intToUntil (array, length) {
+                function intToUntil(array, length) {
                     for (var i = 0; i < length; i++) {
                         array[i] = Math.round((array[i - 1] || 0) + (array[i] * 60000)); // minutes to milliseconds
                     }
@@ -474,7 +486,7 @@
                     array[length - 1] = Infinity;
                 }
 
-                function mapIndices (source, indices) {
+                function mapIndices(source, indices) {
                     var out = [], i;
 
                     for (i = 0; i < indices.length; i++) {
@@ -484,7 +496,7 @@
                     return out;
                 }
 
-                function unpack (string) {
+                function unpack(string) {
                     var data = string.split('|'),
                         offsets = data[2].split(' '),
                         indices = data[3].split(''),
@@ -509,7 +521,7 @@
                  Zone object
                  ************************************/
 
-                function Zone (packedString) {
+                function Zone(packedString) {
                     if (packedString) {
                         this._set(unpack(packedString));
                     }
@@ -587,7 +599,7 @@
                  Country object
                  ************************************/
 
-                function Country (country_name, zone_names) {
+                function Country(country_name, zone_names) {
                     this.name = country_name;
                     this.zones = zone_names;
                 }
@@ -596,7 +608,7 @@
                  Current Timezone
                  ************************************/
 
-                function OffsetAt (at) {
+                function OffsetAt(at) {
                     var timeString = at.toTimeString();
                     var abbr = timeString.match(/\([a-z ]+\)/i);
                     if (abbr && abbr[0]) {
@@ -620,7 +632,7 @@
                     this.offset = at.getTimezoneOffset();
                 }
 
-                function ZoneScore (zone) {
+                function ZoneScore(zone) {
                     this.zone = zone;
                     this.offsetScore = 0;
                     this.abbrScore = 0;
@@ -633,7 +645,7 @@
                     }
                 };
 
-                function findChange (low, high) {
+                function findChange(low, high) {
                     var mid, diff;
 
                     while ((diff = ((high.at - low.at) / 12e4 | 0) * 6e4)) {
@@ -648,7 +660,7 @@
                     return low;
                 }
 
-                function userOffsets () {
+                function userOffsets() {
                     var startYear = new Date().getFullYear() - 2,
                         last = new OffsetAt(new Date(startYear, 0, 1)),
                         offsets = [last],
@@ -672,7 +684,7 @@
                     return offsets;
                 }
 
-                function sortZoneScores (a, b) {
+                function sortZoneScores(a, b) {
                     if (a.offsetScore !== b.offsetScore) {
                         return a.offsetScore - b.offsetScore;
                     }
@@ -685,7 +697,7 @@
                     return b.zone.name.localeCompare(a.zone.name);
                 }
 
-                function addToGuesses (name, offsets) {
+                function addToGuesses(name, offsets) {
                     var i, offset;
                     arrayToInt(offsets);
                     for (i = 0; i < offsets.length; i++) {
@@ -695,7 +707,7 @@
                     }
                 }
 
-                function guessesForUserOffsets (offsets) {
+                function guessesForUserOffsets(offsets) {
                     var offsetsLength = offsets.length,
                         filteredGuesses = {},
                         out = [],
@@ -719,7 +731,7 @@
                     return out;
                 }
 
-                function rebuildGuess () {
+                function rebuildGuess() {
 
                     // use Intl API when available and returning valid time zone
                     try {
@@ -754,7 +766,7 @@
                     return zoneScores.length > 0 ? zoneScores[0].zone.name : undefined;
                 }
 
-                function guess (ignoreCache) {
+                function guess(ignoreCache) {
                     if (!cachedGuess || ignoreCache) {
                         cachedGuess = rebuildGuess();
                     }
@@ -765,11 +777,11 @@
                  Global Methods
                  ************************************/
 
-                function normalizeName (name) {
+                function normalizeName(name) {
                     return (name || '').toLowerCase().replace(/\//g, '_');
                 }
 
-                function addZone (packed) {
+                function addZone(packed) {
                     var i, name, split, normalized;
 
                     if (typeof packed === 'string') {
@@ -786,7 +798,7 @@
                     }
                 }
 
-                function getZone (name, caller) {
+                function getZone(name, caller) {
 
                     name = normalizeName(name);
 
@@ -814,7 +826,7 @@
                     return null;
                 }
 
-                function getNames () {
+                function getNames() {
                     var i, out = [];
 
                     for (i in names) {
@@ -826,11 +838,11 @@
                     return out.sort();
                 }
 
-                function getCountryNames () {
+                function getCountryNames() {
                     return Object.keys(countries);
                 }
 
-                function addLink (aliases) {
+                function addLink(aliases) {
                     var i, alias, normal0, normal1;
 
                     if (typeof aliases === 'string') {
@@ -851,7 +863,7 @@
                     }
                 }
 
-                function addCountries (data) {
+                function addCountries(data) {
                     var i, country_code, country_zones, split;
                     if (!data || !data.length) return;
                     for (i = 0; i < data.length; i++) {
@@ -865,12 +877,12 @@
                     }
                 }
 
-                function getCountry (name) {
+                function getCountry(name) {
                     name = name.toUpperCase();
                     return countries[name] || null;
                 }
 
-                function zonesForCountry (country, with_offset) {
+                function zonesForCountry(country, with_offset) {
                     country = getCountry(country);
 
                     if (!country) return null;
@@ -890,14 +902,14 @@
                     return zones;
                 }
 
-                function loadData (data) {
+                function loadData(data) {
                     addZone(data.zones);
                     addLink(data.links);
                     addCountries(data.countries);
                     tz.dataVersion = data.version;
                 }
 
-                function zoneExists (name) {
+                function zoneExists(name) {
                     if (!zoneExists.didShowError) {
                         zoneExists.didShowError = true;
                         logError('moment.tz.zoneExists(\'' + name + '\') has been deprecated in favor of !moment.tz.zone(\'' + name + '\')');
@@ -905,12 +917,12 @@
                     return !!getZone(name);
                 }
 
-                function needsOffset (m) {
+                function needsOffset(m) {
                     var isUnixTimestamp = (m._f === 'X' || m._f === 'x');
                     return !!(m._a && (m._tzm === undefined) && !isUnixTimestamp);
                 }
 
-                function logError (message) {
+                function logError(message) {
                     if (typeof console !== 'undefined' && typeof console.error === 'function') {
                         console.error(message);
                     }
@@ -920,7 +932,7 @@
                  moment.tz namespace
                  ************************************/
 
-                function tz (input) {
+                function tz(input) {
                     var args = Array.prototype.slice.call(arguments, 0, -1),
                         name = arguments[arguments.length - 1],
                         zone = getZone(name),
@@ -1006,24 +1018,28 @@
                         }
                         return this;
                     }
-                    if (this._z) { return this._z.name; }
+                    if (this._z) {
+                        return this._z.name;
+                    }
                 };
 
-                function abbrWrap (old) {
+                function abbrWrap(old) {
                     return function () {
-                        if (this._z) { return this._z.abbr(this); }
+                        if (this._z) {
+                            return this._z.abbr(this);
+                        }
                         return old.call(this);
                     };
                 }
 
-                function resetZoneWrap (old) {
+                function resetZoneWrap(old) {
                     return function () {
                         this._z = null;
                         return old.apply(this, arguments);
                     };
                 }
 
-                function resetZoneWrap2 (old) {
+                function resetZoneWrap2(old) {
                     return function () {
                         if (arguments.length > 0) this._z = null;
                         return old.apply(this, arguments);
@@ -1090,7 +1106,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -1132,7 +1148,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -1151,7 +1167,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -1178,11 +1194,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -1338,7 +1354,7 @@
          * @param {DateSettings} dateSettings Settings, including locale data.
          */
 
-        function setSettings (dateSettings) {
+        function setSettings(dateSettings) {
             settings = dateSettings;
             setupWPTimezone(); // Does moment already have a locale with the right name?
 
@@ -1366,7 +1382,7 @@
                 weekdays: dateSettings.l10n.weekdays,
                 weekdaysShort: dateSettings.l10n.weekdaysShort,
 
-                meridiem (hour, minute, isLowercase) {
+                meridiem(hour, minute, isLowercase) {
                     if (hour < 12) {
                         return isLowercase ? dateSettings.l10n.meridiem.am : dateSettings.l10n.meridiem.AM;
                     }
@@ -1396,7 +1412,7 @@
          * @return {DateSettings} Settings, including locale data.
          */
 
-        function getSettings () {
+        function getSettings() {
             return settings;
         }
 
@@ -1407,7 +1423,7 @@
          * @return {DateSettings} Settings, including locale data.
          */
 
-        function __experimentalGetSettings () {
+        function __experimentalGetSettings() {
             external_wp_deprecated_default()('wp.date.__experimentalGetSettings', {
                 since: '6.1',
                 alternative: 'wp.date.getSettings'
@@ -1415,7 +1431,7 @@
             return getSettings();
         }
 
-        function setupWPTimezone () {
+        function setupWPTimezone() {
             // Create WP timezone based off dateSettings.
             external_moment_default().tz.add(external_moment_default().tz.pack({
                 name: WP_ZONE,
@@ -1473,7 +1489,7 @@
              *
              * @return {string} Formatted date.
              */
-            S (momentDate) {
+            S(momentDate) {
                 // Do - D.
                 const num = momentDate.format('D');
                 const withOrdinal = momentDate.format('Do');
@@ -1489,7 +1505,7 @@
              *
              * @return {string} Formatted date.
              */
-            z (momentDate) {
+            z(momentDate) {
                 // DDD - 1.
                 return (parseInt(momentDate.format('DDD'), 10) - 1).toString();
             },
@@ -1509,7 +1525,7 @@
              *
              * @return {number} Formatted date.
              */
-            t (momentDate) {
+            t(momentDate) {
                 return momentDate.daysInMonth();
             },
 
@@ -1522,7 +1538,7 @@
              *
              * @return {string} Formatted date.
              */
-            L (momentDate) {
+            L(momentDate) {
                 return momentDate.isLeapYear() ? '1' : '0';
             },
 
@@ -1540,7 +1556,7 @@
              *
              * @return {number} Formatted date.
              */
-            B (momentDate) {
+            B(momentDate) {
                 const timezoned = external_moment_default()(momentDate).utcOffset(60);
                 const seconds = parseInt(timezoned.format('s'), 10),
                     minutes = parseInt(timezoned.format('m'), 10),
@@ -1566,7 +1582,7 @@
              *
              * @return {string} Formatted date.
              */
-            I (momentDate) {
+            I(momentDate) {
                 return momentDate.isDST() ? '1' : '0';
             },
 
@@ -1581,7 +1597,7 @@
              *
              * @return {number} Formatted date.
              */
-            Z (momentDate) {
+            Z(momentDate) {
                 // Timezone offset in seconds.
                 const offset = momentDate.format('Z');
                 const sign = offset[0] === '-' ? -1 : 1;
@@ -1601,7 +1617,7 @@
              *
              * @return {string} Formatted date.
              */
-            r (momentDate) {
+            r(momentDate) {
                 return momentDate.locale('en').format('ddd, DD MMM YYYY HH:mm:ss ZZ');
             },
 
@@ -1619,7 +1635,7 @@
          * @return {string} Formatted date.
          */
 
-        function format (dateFormat, dateValue = new Date()) {
+        function format(dateFormat, dateValue = new Date()) {
             let i, char;
             const newFormat = [];
             const momentDate = external_moment_default()(dateValue);
@@ -1672,7 +1688,7 @@
          * @return {string} Formatted date in English.
          */
 
-        function date (dateFormat, dateValue = new Date(), timezone) {
+        function date(dateFormat, dateValue = new Date(), timezone) {
             const dateMoment = buildMoment(dateValue, timezone);
             return format(dateFormat, dateMoment);
         }
@@ -1688,7 +1704,7 @@
          * @return {string} Formatted date in English.
          */
 
-        function gmdate (dateFormat, dateValue = new Date()) {
+        function gmdate(dateFormat, dateValue = new Date()) {
             const dateMoment = external_moment_default()(dateValue).utc();
             return format(dateFormat, dateMoment);
         }
@@ -1715,7 +1731,7 @@
          * @return {string} Formatted date.
          */
 
-        function dateI18n (dateFormat, dateValue = new Date(), timezone) {
+        function dateI18n(dateFormat, dateValue = new Date(), timezone) {
             if (true === timezone) {
                 return gmdateI18n(dateFormat, dateValue);
             }
@@ -1741,7 +1757,7 @@
          * @return {string} Formatted date.
          */
 
-        function gmdateI18n (dateFormat, dateValue = new Date()) {
+        function gmdateI18n(dateFormat, dateValue = new Date()) {
             const dateMoment = external_moment_default()(dateValue).utc();
             dateMoment.locale(settings.l10n.locale);
             return format(dateFormat, dateMoment);
@@ -1755,7 +1771,7 @@
          * @return {boolean} Is in the future.
          */
 
-        function isInTheFuture (dateValue) {
+        function isInTheFuture(dateValue) {
             const now = external_moment_default().tz(WP_ZONE);
             const momentObject = external_moment_default().tz(dateValue, WP_ZONE);
             return momentObject.isAfter(now);
@@ -1769,7 +1785,7 @@
          * @return {Date} Date
          */
 
-        function getDate (dateString) {
+        function getDate(dateString) {
             if (!dateString) {
                 return external_moment_default().tz(WP_ZONE).toDate();
             }
@@ -1786,7 +1802,7 @@
          * @return {string} Human-readable time difference.
          */
 
-        function humanTimeDiff (from, to) {
+        function humanTimeDiff(from, to) {
             const fromMoment = external_moment_default().tz(from, WP_ZONE);
             const toMoment = to ? external_moment_default().tz(to, WP_ZONE) : external_moment_default().tz(WP_ZONE);
             return fromMoment.from(toMoment);
@@ -1807,7 +1823,7 @@
          * @return {Moment} a moment instance.
          */
 
-        function buildMoment (dateValue, timezone = '') {
+        function buildMoment(dateValue, timezone = '') {
             const dateMoment = external_moment_default()(dateValue);
 
             if (timezone && !isUTCOffset(timezone)) {
@@ -1837,7 +1853,7 @@
          */
 
 
-        function isUTCOffset (offset) {
+        function isUTCOffset(offset) {
             if ('number' === typeof offset) {
                 return true;
             }

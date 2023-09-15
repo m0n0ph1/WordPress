@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -118,7 +118,7 @@
      * @return {Object} A record with the annotations applied.
      */
 
-    function applyAnnotations (record, annotations = []) {
+    function applyAnnotations(record, annotations = []) {
         annotations.forEach(annotation => {
             let {
                 start,
@@ -153,7 +153,7 @@
      * @return {Object} The cleaned record.
      */
 
-    function removeAnnotations (record) {
+    function removeAnnotations(record) {
         return removeFormat(record, 'core/annotation', 0, record.text.length);
     }
 
@@ -164,7 +164,7 @@
      * @return {Object} ID keyed positions of annotations.
      */
 
-    function retrieveAnnotationPositions (formats) {
+    function retrieveAnnotationPositions(formats) {
         const positions = {};
         formats.forEach((characterFormats, i) => {
             characterFormats = characterFormats || [];
@@ -200,7 +200,7 @@
      */
 
 
-    function updateAnnotationsWithPositions (annotations, positions, {
+    function updateAnnotationsWithPositions(annotations, positions, {
         removeAnnotation,
         updateAnnotationRange
     }) {
@@ -235,11 +235,11 @@
             id: 'id'
         },
 
-        edit () {
+        edit() {
             return null;
         },
 
-        __experimentalGetPropsForEditableTreePreparation (select, {
+        __experimentalGetPropsForEditableTreePreparation(select, {
             richTextIdentifier,
             blockClientId
         }) {
@@ -248,9 +248,9 @@
             };
         },
 
-        __experimentalCreatePrepareEditableTree ({
-                                                     annotations
-                                                 }) {
+        __experimentalCreatePrepareEditableTree({
+                                                    annotations
+                                                }) {
             return (formats, text) => {
                 if (annotations.length === 0) {
                     return formats;
@@ -265,14 +265,14 @@
             };
         },
 
-        __experimentalGetPropsForEditableTreeChangeHandler (dispatch) {
+        __experimentalGetPropsForEditableTreeChangeHandler(dispatch) {
             return {
                 removeAnnotation: dispatch(STORE_NAME).__experimentalRemoveAnnotation,
                 updateAnnotationRange: dispatch(STORE_NAME).__experimentalUpdateAnnotationRange
             };
         },
 
-        __experimentalCreateOnChangeEditableValue (props) {
+        __experimentalCreateOnChangeEditableValue(props) {
             return formats => {
                 const positions = retrieveAnnotationPositions(formats);
                 const {
@@ -352,7 +352,7 @@
      *                              in the array.
      * @return {Array} Filtered array.
      */
-    function filterWithReference (collection, predicate) {
+    function filterWithReference(collection, predicate) {
         const filteredCollection = collection.filter(predicate);
         return collection.length === filteredCollection.length ? collection : filteredCollection;
     }
@@ -380,7 +380,7 @@
      */
 
 
-    function isValidAnnotationRange (annotation) {
+    function isValidAnnotationRange(annotation) {
         return typeof annotation.start === 'number' && typeof annotation.end === 'number' && annotation.start <= annotation.end;
     }
 
@@ -394,7 +394,7 @@
      */
 
 
-    function annotations (state = {}, action) {
+    function annotations(state = {}, action) {
         var _state$blockClientId;
 
         switch (action.type) {
@@ -511,7 +511,7 @@
      *
      * @return {[T]} Value returned as entry in array.
      */
-    function arrayOf (value) {
+    function arrayOf(value) {
         return [value];
     }
 
@@ -523,7 +523,7 @@
      *
      * @return {boolean} Whether value is object-like.
      */
-    function isObjectLike (value) {
+    function isObjectLike(value) {
         return !!value && 'object' === typeof value;
     }
 
@@ -532,7 +532,7 @@
      *
      * @return {Cache} Cache object.
      */
-    function createCache () {
+    function createCache() {
         /** @type {Cache} */
         var cache = {
             clear: function () {
@@ -553,7 +553,7 @@
      *
      * @return {boolean} Whether arrays are shallowly equal.
      */
-    function isShallowEqual (a, b, fromIndex) {
+    function isShallowEqual(a, b, fromIndex) {
         var i;
 
         if (a.length !== b.length) {
@@ -585,7 +585,7 @@
      */
 
     /* harmony default export */
-    function rememo (selector, getDependants) {
+    function rememo(selector, getDependants) {
         /** @type {WeakMap<*,*>} */
         var rootCache;
 
@@ -610,7 +610,7 @@
          *
          * @return {Cache} Cache object.
          */
-        function getCache (dependants) {
+        function getCache(dependants) {
             var caches = rootCache,
                 isUniqueByDependants = true,
                 i,
@@ -653,7 +653,7 @@
         /**
          * Resets root memoization cache.
          */
-        function clear () {
+        function clear() {
             rootCache = new WeakMap();
         }
 
@@ -669,7 +669,7 @@
          */
 
         /* eslint-enable jsdoc/check-param-names */
-        function callSelector (/* source, ...extraArgs */) {
+        function callSelector(/* source, ...extraArgs */) {
             var len = arguments.length,
                 cache,
                 node,
@@ -797,7 +797,7 @@
         return [(_state$blockClientId2 = state?.[blockClientId]) !== null && _state$blockClientId2 !== void 0 ? _state$blockClientId2 : EMPTY_ARRAY];
     });
 
-    function __experimentalGetAllAnnotationsForBlock (state, blockClientId) {
+    function __experimentalGetAllAnnotationsForBlock(state, blockClientId) {
         var _state$blockClientId3;
 
         return (_state$blockClientId3 = state?.[blockClientId]) !== null && _state$blockClientId3 !== void 0 ? _state$blockClientId3 : EMPTY_ARRAY;
@@ -844,7 +844,7 @@
      * @return {Array} All annotations currently applied.
      */
 
-    function __experimentalGetAnnotations (state) {
+    function __experimentalGetAnnotations(state) {
         return Object.values(state).flat();
     }
 
@@ -855,7 +855,7 @@
     var getRandomValues;
     var rnds8 = new Uint8Array(16);
 
-    function rng () {
+    function rng() {
         // lazy load so that environments that need to polyfill have a chance to do so
         if (!getRandomValues) {
             // getRandomValues needs to be invoked in a context where "this" is a Crypto implementation. Also,
@@ -874,7 +874,7 @@
     const regex = (/^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i);
     ;// CONCATENATED MODULE: ./node_modules/@wordpress/annotations/node_modules/uuid/dist/esm-browser/validate.js
 
-    function validate (uuid) {
+    function validate(uuid) {
         return typeof uuid === 'string' && regex.test(uuid);
     }
 
@@ -893,7 +893,7 @@
         byteToHex.push((i + 0x100).toString(16).substr(1));
     }
 
-    function stringify (arr) {
+    function stringify(arr) {
         var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
         // Note: Be careful editing this code!  It's been tuned for performance
         // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
@@ -914,7 +914,7 @@
     const esm_browser_stringify = (stringify);
     ;// CONCATENATED MODULE: ./node_modules/@wordpress/annotations/node_modules/uuid/dist/esm-browser/v4.js
 
-    function v4 (options, buf, offset) {
+    function v4(options, buf, offset) {
         options = options || {};
         var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
 
@@ -969,14 +969,14 @@
      * @return {Object} Action object.
      */
 
-    function __experimentalAddAnnotation ({
-                                              blockClientId,
-                                              richTextIdentifier = null,
-                                              range = null,
-                                              selector = 'range',
-                                              source = 'default',
-                                              id = esm_browser_v4()
-                                          }) {
+    function __experimentalAddAnnotation({
+                                             blockClientId,
+                                             richTextIdentifier = null,
+                                             range = null,
+                                             selector = 'range',
+                                             source = 'default',
+                                             id = esm_browser_v4()
+                                         }) {
         const action = {
             type: 'ANNOTATION_ADD',
             id,
@@ -1001,7 +1001,7 @@
      * @return {Object} Action object.
      */
 
-    function __experimentalRemoveAnnotation (annotationId) {
+    function __experimentalRemoveAnnotation(annotationId) {
         return {
             type: 'ANNOTATION_REMOVE',
             annotationId
@@ -1018,7 +1018,7 @@
      * @return {Object} Action object.
      */
 
-    function __experimentalUpdateAnnotationRange (annotationId, start, end) {
+    function __experimentalUpdateAnnotationRange(annotationId, start, end) {
         return {
             type: 'ANNOTATION_UPDATE_RANGE',
             annotationId,
@@ -1035,7 +1035,7 @@
      * @return {Object} Action object.
      */
 
-    function __experimentalRemoveAnnotationsBySource (source) {
+    function __experimentalRemoveAnnotationsBySource(source) {
         return {
             type: 'ANNOTATION_REMOVE_SOURCE',
             source

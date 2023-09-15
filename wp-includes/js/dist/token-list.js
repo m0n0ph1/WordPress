@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -55,7 +55,7 @@
          *
          * @param {string} initialValue Initial value to assign.
          */
-        constructor (initialValue = '') {
+        constructor(initialValue = '') {
             this.value = initialValue; // Disable reason: These are type hints on the class.
 
             /* eslint-disable no-unused-expressions */
@@ -78,7 +78,7 @@
          */
 
 
-        get value () {
+        get value() {
             return this._currentValue;
         }
 
@@ -91,7 +91,7 @@
          */
 
 
-        set value (value) {
+        set value(value) {
             value = String(value);
             this._valueAsArray = [...new Set(value.split(/\s+/g).filter(Boolean))];
             this._currentValue = this._valueAsArray.join(' ');
@@ -106,7 +106,7 @@
          */
 
 
-        get length () {
+        get length() {
             return this._valueAsArray.length;
         }
 
@@ -115,7 +115,7 @@
          */
 
 
-        entries (...args) {
+        entries(...args) {
             return this._valueAsArray.entries(...args);
         }
 
@@ -124,7 +124,7 @@
          */
 
 
-        forEach (...args) {
+        forEach(...args) {
             return this._valueAsArray.forEach(...args);
         }
 
@@ -133,7 +133,7 @@
          */
 
 
-        keys (...args) {
+        keys(...args) {
             return this._valueAsArray.keys(...args);
         }
 
@@ -142,7 +142,7 @@
          */
 
 
-        values (...args) {
+        values(...args) {
             return this._valueAsArray.values(...args);
         }
 
@@ -156,7 +156,7 @@
          */
 
 
-        toString () {
+        toString() {
             return this.value;
         }
 
@@ -169,8 +169,8 @@
          */
 
 
-        * [Symbol.iterator] () {
-            return yield * this._valueAsArray;
+        * [Symbol.iterator]() {
+            return yield* this._valueAsArray;
         }
 
         /**
@@ -184,7 +184,7 @@
          */
 
 
-        item (index) {
+        item(index) {
             return this._valueAsArray[index];
         }
 
@@ -199,7 +199,7 @@
          */
 
 
-        contains (item) {
+        contains(item) {
             return this._valueAsArray.indexOf(item) !== -1;
         }
 
@@ -212,7 +212,7 @@
          */
 
 
-        add (...items) {
+        add(...items) {
             this.value += ' ' + items.join(' ');
         }
 
@@ -225,7 +225,7 @@
          */
 
 
-        remove (...items) {
+        remove(...items) {
             this.value = this._valueAsArray.filter(val => !items.includes(val)).join(' ');
         }
 
@@ -244,7 +244,7 @@
          */
 
 
-        toggle (token, force) {
+        toggle(token, force) {
             if (undefined === force) {
                 force = !this.contains(token);
             }
@@ -271,7 +271,7 @@
          */
 
 
-        replace (token, newToken) {
+        replace(token, newToken) {
             if (!this.contains(token)) {
                 return false;
             }
@@ -293,7 +293,7 @@
          */
 
 
-        supports () {
+        supports() {
             return true;
         }
 

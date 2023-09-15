@@ -41,7 +41,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
     try {
         new File([], ''); // eslint-disable-line
     } catch (a) {
-        global.File = function File (b, d, c) {
+        global.File = function File(b, d, c) {
             const blob = new Blob(b, c || {});
             const t = c && void 0 !== c.lastModified ? new Date(c.lastModified) : new Date();
 
@@ -53,7 +53,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
                     value: +t
                 },
                 toString: {
-                    value () {
+                    value() {
                         return '[object File]';
                     }
                 }
@@ -69,7 +69,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
         };
     }
 
-    function ensureArgs (args, expected) {
+    function ensureArgs(args, expected) {
         if (args.length < expected) {
             throw new TypeError(`${expected} argument required, but only ${args.length} present.`);
         }
@@ -80,7 +80,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
      * @param {string | undefined} filename
      * @returns {[string, File|string]}
      */
-    function normalizeArgs (name, value, filename) {
+    function normalizeArgs(name, value, filename) {
         if (value instanceof Blob) {
             filename = filename !== undefined
                 ? String(filename + '')
@@ -98,7 +98,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
 
     // normalize line feeds for textarea
     // https://html.spec.whatwg.org/multipage/form-elements.html#textarea-line-break-normalisation-transformation
-    function normalizeLinefeeds (value) {
+    function normalizeLinefeeds(value) {
         return value.replace(/\r?\n|\r/g, '\r\n');
     }
 
@@ -107,7 +107,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
      * @param {ArrayLike<T>} arr
      * @param {{ (elm: T): void; }} cb
      */
-    function each (arr, cb) {
+    function each(arr, cb) {
         for (let i = 0; i < arr.length; i++) {
             cb(arr[i]);
         }
@@ -124,7 +124,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          *
          * @param {HTMLFormElement=} form
          */
-        constructor (form) {
+        constructor(form) {
             /** @type {[string, string|File][]} */
             this._data = [];
 
@@ -141,7 +141,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
                 if (elm.type === 'file') {
                     const files = elm.files && elm.files.length
                         ? elm.files
-                        : [new File([], '', { type: 'application/octet-stream' })]; // #78
+                        : [new File([], '', {type: 'application/octet-stream'})]; // #78
 
                     each(files, file => {
                         self.append(elm.name, file);
@@ -167,7 +167,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          * @param   {string=}          filename  filename to use with blob
          * @return  {undefined}
          */
-        append (name, value, filename) {
+        append(name, value, filename) {
             ensureArgs(arguments, 2);
             this._data.push(normalizeArgs(name, value, filename));
         }
@@ -178,7 +178,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          * @param   {string}  name  Field name
          * @return  {undefined}
          */
-        delete (name) {
+        delete(name) {
             ensureArgs(arguments, 1);
             const result = [];
             name = String(name);
@@ -195,7 +195,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          *
          * @return {Iterator}
          */
-        * entries () {
+        * entries() {
             for (var i = 0; i < this._data.length; i++) {
                 yield this._data[i];
             }
@@ -207,7 +207,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          * @param   {Function}  callback  Executed for each item with parameters (value, name, thisArg)
          * @param   {Object=}   thisArg   `this` context for callback function
          */
-        forEach (callback, thisArg) {
+        forEach(callback, thisArg) {
             ensureArgs(arguments, 1);
             for (const [name, value] of this) {
                 callback.call(thisArg, value, name, this);
@@ -221,7 +221,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          * @param   {string}  name      Field name
          * @return  {string|File|null}  value Fields value
          */
-        get (name) {
+        get(name) {
             ensureArgs(arguments, 1);
             const entries = this._data;
             name = String(name);
@@ -239,7 +239,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          * @param   {string}  name  Fields name
          * @return  {Array}         [{String|File}]
          */
-        getAll (name) {
+        getAll(name) {
             ensureArgs(arguments, 1);
             const result = [];
             name = String(name);
@@ -256,7 +256,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          * @param   {string}   name  Field name
          * @return  {boolean}
          */
-        has (name) {
+        has(name) {
             ensureArgs(arguments, 1);
             name = String(name);
             for (let i = 0; i < this._data.length; i++) {
@@ -272,7 +272,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          *
          * @return {Iterator}
          */
-        * keys () {
+        * keys() {
             for (const [name] of this) {
                 yield name;
             }
@@ -285,7 +285,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          * @param   {string}    value     Field value
          * @param   {string=}   filename  Filename (optional)
          */
-        set (name, value, filename) {
+        set(name, value, filename) {
             ensureArgs(arguments, 2);
             name = String(name);
             /** @type {[string, string|File][]} */
@@ -312,7 +312,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          *
          * @return {Iterator}
          */
-        * values () {
+        * values() {
             for (const [, value] of this) {
                 yield value;
             }
@@ -324,7 +324,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          *
          * @return {FormData}
          */
-        ['_asNative'] () {
+        ['_asNative']() {
             const fd = new _FormData();
 
             for (const [name, value] of this) {
@@ -339,7 +339,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          *
          * @return {Blob} [description]
          */
-        ['_blob'] () {
+        ['_blob']() {
             const boundary = '----formdata-polyfill-' + Math.random(),
                 chunks = [],
                 p = `--${boundary}\r\nContent-Disposition: form-data; name="`;
@@ -358,7 +358,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          *
          * @return {Iterator}
          */
-        [Symbol.iterator] () {
+        [Symbol.iterator]() {
             return this.entries();
         }
 
@@ -367,7 +367,7 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
          *
          * @return  {string} [object FormData]
          */
-        toString () {
+        toString() {
             return '[object FormData]';
         }
     }
@@ -382,7 +382,8 @@ if (typeof Blob !== 'undefined' && (typeof FormData === 'undefined' || !FormData
             function (s) {
                 var matches = (this.document || this.ownerDocument).querySelectorAll(s);
                 var i = matches.length;
-                while (--i >= 0 && matches.item(i) !== this) {}
+                while (--i >= 0 && matches.item(i) !== this) {
+                }
                 return i > -1;
             };
     }

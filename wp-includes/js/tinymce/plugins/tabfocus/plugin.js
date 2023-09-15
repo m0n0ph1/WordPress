@@ -22,7 +22,7 @@
         var getTabFocus = function (editor) {
             return editor.getParam('tab_focus', getTabFocusElements(editor));
         };
-        var Settings = { getTabFocus: getTabFocus };
+        var Settings = {getTabFocus: getTabFocus};
 
         var DOM = global$1.DOM;
         var tabCancel = function (e) {
@@ -31,20 +31,20 @@
             }
         };
         var setup = function (editor) {
-            function tabHandler (e) {
+            function tabHandler(e) {
                 var x, el, v, i;
                 if (e.keyCode !== global$6.TAB || e.ctrlKey || e.altKey || e.metaKey || e.isDefaultPrevented()) {
                     return;
                 }
 
-                function find (direction) {
+                function find(direction) {
                     el = DOM.select(':input:enabled,*[tabindex]:not(iframe)');
 
-                    function canSelectRecursive (e) {
+                    function canSelectRecursive(e) {
                         return e.nodeName === 'BODY' || e.type !== 'hidden' && e.style.display !== 'none' && e.style.visibility !== 'hidden' && canSelectRecursive(e.parentNode);
                     }
 
-                    function canSelect (el) {
+                    function canSelect(el) {
                         return /INPUT|TEXTAREA|BUTTON/.test(el.tagName) && global$2.get(e.id) && el.tabIndex !== -1 && canSelectRecursive(el);
                     }
 
@@ -116,13 +116,13 @@
                 }
             });
         };
-        var Keyboard = { setup: setup };
+        var Keyboard = {setup: setup};
 
         global.add('tabfocus', function (editor) {
             Keyboard.setup(editor);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

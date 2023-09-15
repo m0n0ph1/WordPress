@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -74,7 +74,7 @@
      *
      * @return {void}
      */
-    function domReady (callback) {
+    function domReady(callback) {
         if (typeof document === 'undefined') {
             return;
         }

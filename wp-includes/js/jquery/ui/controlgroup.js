@@ -114,7 +114,7 @@
                 if (that['_' + widget + 'Options']) {
                     options = that['_' + widget + 'Options']('middle');
                 } else {
-                    options = { classes: {} };
+                    options = {classes: {}};
                 }
 
                 // Find instances of this widget inside controlgroup and init them

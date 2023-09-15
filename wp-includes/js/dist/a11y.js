@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -104,7 +104,7 @@
      * @return {HTMLParagraphElement} The explanatory text HTML element.
      */
 
-    function addIntroText () {
+    function addIntroText() {
         const introText = document.createElement('p');
         introText.id = 'a11y-speak-intro-text';
         introText.className = 'a11y-speak-intro-text';
@@ -130,7 +130,7 @@
      *
      * @return {HTMLDivElement} The ARIA live region HTML element.
      */
-    function addContainer (ariaLive = 'polite') {
+    function addContainer(ariaLive = 'polite') {
         const container = document.createElement('div');
         container.id = `a11y-speak-${ariaLive}`;
         container.className = 'a11y-speak-region';
@@ -153,7 +153,7 @@
     /**
      * Clears the a11y-speak-region elements and hides the explanatory text.
      */
-    function clear () {
+    function clear() {
         const regions = document.getElementsByClassName('a11y-speak-region');
         const introText = document.getElementById('a11y-speak-intro-text');
 
@@ -177,7 +177,7 @@
      * @return {string} The filtered message.
      */
 
-    function filterMessage (message) {
+    function filterMessage(message) {
         /*
          * Strip HTML tags (if any) from the message string. Ideally, messages should
          * be simple strings, carefully crafted for specific use with A11ySpeak.
@@ -212,7 +212,7 @@
      * Create the live regions.
      */
 
-    function setup () {
+    function setup() {
         const introText = document.getElementById('a11y-speak-intro-text');
         const containerAssertive = document.getElementById('a11y-speak-assertive');
         const containerPolite = document.getElementById('a11y-speak-polite');
@@ -255,7 +255,7 @@
      * ```
      */
 
-    function speak (message, ariaLive) {
+    function speak(message, ariaLive) {
         /*
          * Clear previous messages to allow repeated strings being read out and hide
          * the explanatory text from assistive technologies.

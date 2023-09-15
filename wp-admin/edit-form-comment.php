@@ -2,22 +2,23 @@
     /**
      * Edit comment form for inclusion in another file.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
 
 // Don't load directly.
-    if (!defined('ABSPATH')) {
+    if(! defined('ABSPATH'))
+    {
         die('-1');
     }
-    
+
     /**
      * @global WP_Comment $comment Global comment object.
      */
     global $comment;
 ?>
     <form name="post" action="comment.php" method="post" id="post">
-        <?php wp_nonce_field('update-comment_' . $comment->comment_ID); ?>
+        <?php wp_nonce_field('update-comment_'.$comment->comment_ID); ?>
         <div class="wrap">
             <h1><?php _e('Edit Comment'); ?></h1>
 
@@ -29,7 +30,7 @@
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content" class="edit-form-section edit-comment-section">
                         <?php
-                            if ('approved' === wp_get_comment_status($comment) && $comment->comment_post_ID > 0) :
+                            if('approved' === wp_get_comment_status($comment) && $comment->comment_post_ID > 0) :
                                 $comment_link = get_comment_link($comment);
                                 ?>
                                 <div class="inside">
@@ -100,15 +101,11 @@
                             </label>
                             <?php
                                 $quicktags_settings = ['buttons' => 'strong,em,link,block,del,ins,img,ul,ol,li,code,close'];
-                                wp_editor(
-                                    $comment->comment_content,
-                                    'content',
-                                    [
-                                        'media_buttons' => false,
-                                        'tinymce' => false,
-                                        'quicktags' => $quicktags_settings,
-                                    ]
-                                );
+                                wp_editor($comment->comment_content, 'content', [
+                                    'media_buttons' => false,
+                                    'tinymce' => false,
+                                    'quicktags' => $quicktags_settings,
+                                ]);
                                 wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
                             ?>
                         </div>
@@ -126,7 +123,8 @@
                                             <div class="misc-pub-section misc-pub-comment-status" id="comment-status">
                                                 <?php _e('Status:'); ?> <span id="comment-status-display">
 <?php
-    switch ($comment->comment_approved) {
+    switch($comment->comment_approved)
+    {
         case '1':
             _e('Approved');
             break;
@@ -147,41 +145,32 @@
                                                             _e('Comment status');
                                                         ?>
                                                     </legend>
-                                                    <label><input type="radio"<?php checked($comment->comment_approved,
-                                                            '1'); ?>
-                                                                  name="comment_status"
-                                                                  value="1"/><?php _ex('Approved', 'comment status'); ?>
+                                                    <label><input
+                                                                type="radio"<?php checked($comment->comment_approved, '1'); ?>
+                                                                name="comment_status"
+                                                                value="1"/><?php _ex('Approved', 'comment status'); ?>
                                                     </label><br/>
-                                                    <label><input type="radio"<?php checked($comment->comment_approved,
-                                                            '0'); ?>
-                                                                  name="comment_status"
-                                                                  value="0"/><?php _ex('Pending', 'comment status'); ?>
+                                                    <label><input
+                                                                type="radio"<?php checked($comment->comment_approved, '0'); ?>
+                                                                name="comment_status"
+                                                                value="0"/><?php _ex('Pending', 'comment status'); ?>
                                                     </label><br/>
-                                                    <label><input type="radio"<?php checked($comment->comment_approved,
-                                                            'spam'); ?>
-                                                                  name="comment_status"
-                                                                  value="spam"/><?php _ex('Spam', 'comment status'); ?>
+                                                    <label><input
+                                                                type="radio"<?php checked($comment->comment_approved, 'spam'); ?>
+                                                                name="comment_status"
+                                                                value="spam"/><?php _ex('Spam', 'comment status'); ?>
                                                     </label>
                                                 </fieldset>
                                             </div><!-- .misc-pub-section -->
 
                                             <div class="misc-pub-section curtime misc-pub-curtime">
                                                 <?php
-                                                    $submitted = sprintf(
-                                                    /* translators: 1: Comment date, 2: Comment time. */
-                                                        __('%1$s at %2$s'),
-                                                        /* translators: Publish box date format, see https://www.php.net/manual/datetime.format.php */
-                                                        date_i18n(_x('M j, Y', 'publish box date format'),
-                                                            strtotime($comment->comment_date)),
-                                                        /* translators: Publish box time format, see https://www.php.net/manual/datetime.format.php */
-                                                        date_i18n(_x('H:i', 'publish box time format'),
-                                                            strtotime($comment->comment_date))
-                                                    );
+                                                    $submitted = sprintf(/* translators: 1: Comment date, 2: Comment time. */ __('%1$s at %2$s'), /* translators: Publish box date format, see https://www.php.net/manual/datetime.format.php */ date_i18n(_x('M j, Y', 'publish box date format'), strtotime($comment->comment_date)), /* translators: Publish box time format, see https://www.php.net/manual/datetime.format.php */ date_i18n(_x('H:i', 'publish box time format'), strtotime($comment->comment_date)));
                                                 ?>
                                                 <span id="timestamp">
 <?php
     /* translators: %s: Comment date. */
-    printf(__('Submitted on: %s'), '<b>' . $submitted . '</b>');
+    printf(__('Submitted on: %s'), '<b>'.$submitted.'</b>');
 ?>
 </span>
                                                 <a href="#edit_timestamp" class="edit-timestamp hide-if-no-js"><span
@@ -204,59 +193,55 @@
                                                          * @global string $action
                                                          */
                                                         global $action;
-                                                        
+
                                                         touch_time(('editcomment' === $action), 0);
                                                     ?>
                                                 </fieldset>
                                             </div>
-                                            
+
                                             <?php
                                                 $post_id = $comment->comment_post_ID;
-                                                if (current_user_can('edit_post', $post_id)) {
-                                                    $post_link = "<a href='" . esc_url(get_edit_post_link($post_id)) . "'>";
-                                                    $post_link .= esc_html(get_the_title($post_id)) . '</a>';
-                                                } else {
+                                                if(current_user_can('edit_post', $post_id))
+                                                {
+                                                    $post_link = "<a href='".esc_url(get_edit_post_link($post_id))."'>";
+                                                    $post_link .= esc_html(get_the_title($post_id)).'</a>';
+                                                }
+                                                else
+                                                {
                                                     $post_link = esc_html(get_the_title($post_id));
                                                 }
                                             ?>
 
                                             <div class="misc-pub-section misc-pub-response-to">
                                                 <?php
-                                                    printf(
-                                                    /* translators: %s: Post link. */
-                                                        __('In response to: %s'),
-                                                        '<b>' . $post_link . '</b>'
-                                                    );
+                                                    printf(/* translators: %s: Post link. */ __('In response to: %s'), '<b>'.$post_link.'</b>');
                                                 ?>
                                             </div>
-                                            
+
                                             <?php
-                                                if ($comment->comment_parent) :
+                                                if($comment->comment_parent) :
                                                     $parent = get_comment($comment->comment_parent);
-                                                    if ($parent) :
+                                                    if($parent) :
                                                         $parent_link = esc_url(get_comment_link($parent));
                                                         $name = get_comment_author($parent);
                                                         ?>
                                                         <div class="misc-pub-section misc-pub-reply-to">
                                                             <?php
-                                                                printf(
-                                                                /* translators: %s: Comment link. */
-                                                                    __('In reply to: %s'),
-                                                                    '<b><a href="' . $parent_link . '">' . $name . '</a></b>'
-                                                                );
+                                                                printf(/* translators: %s: Comment link. */ __('In reply to: %s'), '<b><a href="'.$parent_link.'">'.$name.'</a></b>');
                                                             ?>
                                                         </div>
                                                     <?php
                                                     endif;
                                                 endif;
                                             ?>
-                                            
+
                                             <?php
                                                 /**
                                                  * Filters miscellaneous actions for the edit comment form sidebar.
                                                  *
-                                                 * @param string $html Output HTML to display miscellaneous action.
+                                                 * @param string     $html    Output HTML to display miscellaneous action.
                                                  * @param WP_Comment $comment Current comment object.
+                                                 *
                                                  * @since 4.3.0
                                                  *
                                                  */
@@ -269,8 +254,7 @@
 
                                     <div id="major-publishing-actions">
                                         <div id="delete-action">
-                                            <?php echo "<a class='submitdelete deletion' href='" . wp_nonce_url('comment.php?action=' . (!EMPTY_TRASH_DAYS ? 'deletecomment' : 'trashcomment') . "&amp;c=$comment->comment_ID&amp;_wp_original_http_referer=" . urlencode(wp_get_referer()),
-                                                    'delete-comment_' . $comment->comment_ID) . "'>" . (!EMPTY_TRASH_DAYS ? __('Delete Permanently') : __('Move to Trash')) . "</a>\n"; ?>
+                                            <?php echo "<a class='submitdelete deletion' href='".wp_nonce_url('comment.php?action='.(! EMPTY_TRASH_DAYS ? 'deletecomment' : 'trashcomment')."&amp;c=$comment->comment_ID&amp;_wp_original_http_referer=".urlencode(wp_get_referer()), 'delete-comment_'.$comment->comment_ID)."'>".(! EMPTY_TRASH_DAYS ? __('Delete Permanently') : __('Move to Trash'))."</a>\n"; ?>
                                         </div>
                                         <div id="publishing-action">
                                             <?php submit_button(__('Update'), 'primary large', 'save', false); ?>
@@ -286,18 +270,19 @@
                         <?php
                             /** This action is documented in wp-admin/includes/meta-boxes.php */
                             do_action('add_meta_boxes', 'comment', $comment);
-                            
+
                             /**
                              * Fires when comment-specific meta boxes are added.
                              *
                              * @param WP_Comment $comment Comment object.
+                             *
                              * @since 3.0.0
                              *
                              */
                             do_action('add_meta_boxes_comment', $comment);
-                            
+
                             do_meta_boxes(null, 'normal', $comment);
-                            
+
                             $referer = wp_get_referer();
                         ?>
                     </div>
@@ -316,9 +301,12 @@
         </div>
     </form>
 
-<?php if (!wp_is_mobile()) : ?>
+<?php if(! wp_is_mobile()) : ?>
     <script type="text/javascript">
-        try {document.post.name.focus();} catch (e) {}
+        try {
+            document.post.name.focus();
+        } catch (e) {
+        }
     </script>
 <?php
 endif;

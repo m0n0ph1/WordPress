@@ -1,13 +1,13 @@
 <?php
-/**
- * Network Privacy administration panel.
- *
- * @package WordPress
- * @subpackage Multisite
- * @since 4.9.0
- */
+    /**
+     * Network Privacy administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Multisite
+     * @since      4.9.0
+     */
 
-/** Load WordPress Administration Bootstrap */
-require_once __DIR__ . '/admin.php';
+    /** Load WordPress Administration Bootstrap */
+    require_once __DIR__.'/admin.php';
 
-require ABSPATH . 'wp-admin/privacy.php';
+    require ABSPATH.'wp-admin/privacy.php';

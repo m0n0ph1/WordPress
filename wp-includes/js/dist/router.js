@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -68,7 +68,7 @@
     ;// CONCATENATED MODULE: external ["wp","element"]
     const external_wp_element_namespaceObject = window['wp']['element'];
     ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
-    function extends_extends () {
+    function extends_extends() {
         extends_extends = Object.assign ? Object.assign.bind() : function (target) {
             for (var i = 1; i < arguments.length; i++) {
                 var source = arguments[i];
@@ -119,7 +119,7 @@
         return obj;
     };
 
-    function warning (cond, message) {
+    function warning(cond, message) {
         if (!cond) {
             // eslint-disable-next-line no-console
             if (typeof console !== 'undefined') console.warn(message);
@@ -131,7 +131,8 @@
                 // find the source for a warning that appears in the console by
                 // enabling "pause on exceptions" in your JavaScript debugger.
                 throw new Error(message); // eslint-disable-next-line no-empty
-            } catch (e) {}
+            } catch (e) {
+            }
         }
     }
 
@@ -147,7 +148,7 @@
      * @see https://github.com/remix-run/history/tree/main/docs/api-reference.md#createbrowserhistory
      */
 
-    function createBrowserHistory (options) {
+    function createBrowserHistory(options) {
         if (options === void 0) {
             options = {};
         }
@@ -157,7 +158,7 @@
             window = _options$window === void 0 ? document.defaultView : _options$window;
         var globalHistory = window.history;
 
-        function getIndexAndLocation () {
+        function getIndexAndLocation() {
             var _window$location = window.location,
                 pathname = _window$location.pathname,
                 search = _window$location.search,
@@ -174,7 +175,7 @@
 
         var blockedPopTx = null;
 
-        function handlePop () {
+        function handlePop() {
             if (blockedPopTx) {
                 blockers.call(blockedPopTx);
                 blockedPopTx = null;
@@ -194,7 +195,7 @@
                             blockedPopTx = {
                                 action: nextAction,
                                 location: nextLocation,
-                                retry: function retry () {
+                                retry: function retry() {
                                     go(delta * -1);
                                 }
                             };
@@ -228,11 +229,11 @@
             }), '');
         }
 
-        function createHref (to) {
+        function createHref(to) {
             return typeof to === 'string' ? to : createPath(to);
         } // state defaults to `null` because `window.history.state` does
 
-        function getNextLocation (to, state) {
+        function getNextLocation(to, state) {
             if (state === void 0) {
                 state = null;
             }
@@ -247,7 +248,7 @@
             }));
         }
 
-        function getHistoryStateAndUrl (nextLocation, index) {
+        function getHistoryStateAndUrl(nextLocation, index) {
             return [{
                 usr: nextLocation.state,
                 key: nextLocation.key,
@@ -255,7 +256,7 @@
             }, createHref(nextLocation)];
         }
 
-        function allowTx (action, location, retry) {
+        function allowTx(action, location, retry) {
             return !blockers.length || (blockers.call({
                 action: action,
                 location: location,
@@ -263,7 +264,7 @@
             }), false);
         }
 
-        function applyTx (nextAction) {
+        function applyTx(nextAction) {
             action = nextAction;
 
             var _getIndexAndLocation3 = getIndexAndLocation();
@@ -276,11 +277,11 @@
             });
         }
 
-        function push (to, state) {
+        function push(to, state) {
             var nextAction = Action.Push;
             var nextLocation = getNextLocation(to, state);
 
-            function retry () {
+            function retry() {
                 push(to, state);
             }
 
@@ -302,11 +303,11 @@
             }
         }
 
-        function replace (to, state) {
+        function replace(to, state) {
             var nextAction = Action.Replace;
             var nextLocation = getNextLocation(to, state);
 
-            function retry () {
+            function retry() {
                 replace(to, state);
             }
 
@@ -320,16 +321,16 @@
             }
         }
 
-        function go (delta) {
+        function go(delta) {
             globalHistory.go(delta);
         }
 
         var history = {
-            get action () {
+            get action() {
                 return action;
             },
 
-            get location () {
+            get location() {
                 return location;
             },
 
@@ -337,16 +338,16 @@
             push: push,
             replace: replace,
             go: go,
-            back: function back () {
+            back: function back() {
                 go(-1);
             },
-            forward: function forward () {
+            forward: function forward() {
                 go(1);
             },
-            listen: function listen (listener) {
+            listen: function listen(listener) {
                 return listeners.push(listener);
             },
-            block: function block (blocker) {
+            block: function block(blocker) {
                 var unblock = blockers.push(blocker);
 
                 if (blockers.length === 1) {
@@ -376,7 +377,7 @@
      * @see https://github.com/remix-run/history/tree/main/docs/api-reference.md#createhashhistory
      */
 
-    function createHashHistory (options) {
+    function createHashHistory(options) {
         if (options === void 0) {
             options = {};
         }
@@ -386,7 +387,7 @@
             window = _options2$window === void 0 ? document.defaultView : _options2$window;
         var globalHistory = window.history;
 
-        function getIndexAndLocation () {
+        function getIndexAndLocation() {
             var _parsePath = parsePath(window.location.hash.substr(1)),
                 _parsePath$pathname = _parsePath.pathname,
                 pathname = _parsePath$pathname === void 0 ? '/' : _parsePath$pathname,
@@ -407,7 +408,7 @@
 
         var blockedPopTx = null;
 
-        function handlePop () {
+        function handlePop() {
             if (blockedPopTx) {
                 blockers.call(blockedPopTx);
                 blockedPopTx = null;
@@ -427,7 +428,7 @@
                             blockedPopTx = {
                                 action: nextAction,
                                 location: nextLocation,
-                                retry: function retry () {
+                                retry: function retry() {
                                     go(delta * -1);
                                 }
                             };
@@ -471,7 +472,7 @@
             }), '');
         }
 
-        function getBaseHref () {
+        function getBaseHref() {
             var base = document.querySelector('base');
             var href = '';
 
@@ -484,11 +485,11 @@
             return href;
         }
 
-        function createHref (to) {
+        function createHref(to) {
             return getBaseHref() + '#' + (typeof to === 'string' ? to : createPath(to));
         }
 
-        function getNextLocation (to, state) {
+        function getNextLocation(to, state) {
             if (state === void 0) {
                 state = null;
             }
@@ -503,7 +504,7 @@
             }));
         }
 
-        function getHistoryStateAndUrl (nextLocation, index) {
+        function getHistoryStateAndUrl(nextLocation, index) {
             return [{
                 usr: nextLocation.state,
                 key: nextLocation.key,
@@ -511,7 +512,7 @@
             }, createHref(nextLocation)];
         }
 
-        function allowTx (action, location, retry) {
+        function allowTx(action, location, retry) {
             return !blockers.length || (blockers.call({
                 action: action,
                 location: location,
@@ -519,7 +520,7 @@
             }), false);
         }
 
-        function applyTx (nextAction) {
+        function applyTx(nextAction) {
             action = nextAction;
 
             var _getIndexAndLocation7 = getIndexAndLocation();
@@ -532,11 +533,11 @@
             });
         }
 
-        function push (to, state) {
+        function push(to, state) {
             var nextAction = Action.Push;
             var nextLocation = getNextLocation(to, state);
 
-            function retry () {
+            function retry() {
                 push(to, state);
             }
 
@@ -560,11 +561,11 @@
             }
         }
 
-        function replace (to, state) {
+        function replace(to, state) {
             var nextAction = Action.Replace;
             var nextLocation = getNextLocation(to, state);
 
-            function retry () {
+            function retry() {
                 replace(to, state);
             }
 
@@ -580,16 +581,16 @@
             }
         }
 
-        function go (delta) {
+        function go(delta) {
             globalHistory.go(delta);
         }
 
         var history = {
-            get action () {
+            get action() {
                 return action;
             },
 
-            get location () {
+            get location() {
                 return location;
             },
 
@@ -597,16 +598,16 @@
             push: push,
             replace: replace,
             go: go,
-            back: function back () {
+            back: function back() {
                 go(-1);
             },
-            forward: function forward () {
+            forward: function forward() {
                 go(1);
             },
-            listen: function listen (listener) {
+            listen: function listen(listener) {
                 return listeners.push(listener);
             },
-            block: function block (blocker) {
+            block: function block(blocker) {
                 var unblock = blockers.push(blocker);
 
                 if (blockers.length === 1) {
@@ -634,7 +635,7 @@
      * @see https://github.com/remix-run/history/tree/main/docs/api-reference.md#creatememoryhistory
      */
 
-    function createMemoryHistory (options) {
+    function createMemoryHistory(options) {
         if (options === void 0) {
             options = {};
         }
@@ -660,11 +661,11 @@
         var listeners = createEvents();
         var blockers = createEvents();
 
-        function createHref (to) {
+        function createHref(to) {
             return typeof to === 'string' ? to : createPath(to);
         }
 
-        function getNextLocation (to, state) {
+        function getNextLocation(to, state) {
             if (state === void 0) {
                 state = null;
             }
@@ -679,7 +680,7 @@
             }));
         }
 
-        function allowTx (action, location, retry) {
+        function allowTx(action, location, retry) {
             return !blockers.length || (blockers.call({
                 action: action,
                 location: location,
@@ -687,7 +688,7 @@
             }), false);
         }
 
-        function applyTx (nextAction, nextLocation) {
+        function applyTx(nextAction, nextLocation) {
             action = nextAction;
             location = nextLocation;
             listeners.call({
@@ -696,11 +697,11 @@
             });
         }
 
-        function push (to, state) {
+        function push(to, state) {
             var nextAction = Action.Push;
             var nextLocation = getNextLocation(to, state);
 
-            function retry () {
+            function retry() {
                 push(to, state);
             }
 
@@ -713,11 +714,11 @@
             }
         }
 
-        function replace (to, state) {
+        function replace(to, state) {
             var nextAction = Action.Replace;
             var nextLocation = getNextLocation(to, state);
 
-            function retry () {
+            function retry() {
                 replace(to, state);
             }
 
@@ -729,12 +730,12 @@
             }
         }
 
-        function go (delta) {
+        function go(delta) {
             var nextIndex = clamp(index + delta, 0, entries.length - 1);
             var nextAction = Action.Pop;
             var nextLocation = entries[nextIndex];
 
-            function retry () {
+            function retry() {
                 go(delta);
             }
 
@@ -745,15 +746,15 @@
         }
 
         var history = {
-            get index () {
+            get index() {
                 return index;
             },
 
-            get action () {
+            get action() {
                 return action;
             },
 
-            get location () {
+            get location() {
                 return location;
             },
 
@@ -761,16 +762,16 @@
             push: push,
             replace: replace,
             go: go,
-            back: function back () {
+            back: function back() {
                 go(-1);
             },
-            forward: function forward () {
+            forward: function forward() {
                 go(1);
             },
-            listen: function listen (listener) {
+            listen: function listen(listener) {
                 return listeners.push(listener);
             },
-            block: function block (blocker) {
+            block: function block(blocker) {
                 return blockers.push(blocker);
             }
         };
@@ -779,25 +780,25 @@
 // UTILS
 ////////////////////////////////////////////////////////////////////////////////
 
-    function clamp (n, lowerBound, upperBound) {
+    function clamp(n, lowerBound, upperBound) {
         return Math.min(Math.max(n, lowerBound), upperBound);
     }
 
-    function promptBeforeUnload (event) {
+    function promptBeforeUnload(event) {
         // Cancel the event.
         event.preventDefault(); // Chrome (and legacy IE) requires returnValue to be set.
 
         event.returnValue = '';
     }
 
-    function createEvents () {
+    function createEvents() {
         var handlers = [];
         return {
-            get length () {
+            get length() {
                 return handlers.length;
             },
 
-            push: function push (fn) {
+            push: function push(fn) {
                 handlers.push(fn);
                 return function () {
                     handlers = handlers.filter(function (handler) {
@@ -805,7 +806,7 @@
                     });
                 };
             },
-            call: function call (arg) {
+            call: function call(arg) {
                 handlers.forEach(function (fn) {
                     return fn && fn(arg);
                 });
@@ -813,7 +814,7 @@
         };
     }
 
-    function createKey () {
+    function createKey() {
         return Math.random().toString(36).substr(2, 8);
     }
 
@@ -824,7 +825,7 @@
      */
 
 
-    function createPath (_ref) {
+    function createPath(_ref) {
         var _ref$pathname = _ref.pathname,
             pathname = _ref$pathname === void 0 ? '/' : _ref$pathname,
             _ref$search = _ref.search,
@@ -842,7 +843,7 @@
      * @see https://github.com/remix-run/history/tree/main/docs/api-reference.md#parsepath
      */
 
-    function parsePath (path) {
+    function parsePath(path) {
         var parsedPath = {};
 
         if (path) {
@@ -884,14 +885,14 @@
     const originalHistoryPush = history_history.push;
     const originalHistoryReplace = history_history.replace;
 
-    function push (params, state) {
+    function push(params, state) {
         const currentArgs = (0, external_wp_url_namespaceObject.getQueryArgs)(window.location.href);
         const currentUrlWithoutArgs = (0, external_wp_url_namespaceObject.removeQueryArgs)(window.location.href, ...Object.keys(currentArgs));
         const newUrl = (0, external_wp_url_namespaceObject.addQueryArgs)(currentUrlWithoutArgs, params);
         return originalHistoryPush.call(history_history, newUrl, state);
     }
 
-    function replace (params, state) {
+    function replace(params, state) {
         const currentArgs = (0, external_wp_url_namespaceObject.getQueryArgs)(window.location.href);
         const currentUrlWithoutArgs = (0, external_wp_url_namespaceObject.removeQueryArgs)(window.location.href, ...Object.keys(currentArgs));
         const newUrl = (0, external_wp_url_namespaceObject.addQueryArgs)(currentUrlWithoutArgs, params);
@@ -917,15 +918,15 @@
     const RoutesContext = (0, external_wp_element_namespaceObject.createContext)();
     const HistoryContext = (0, external_wp_element_namespaceObject.createContext)();
 
-    function useLocation () {
+    function useLocation() {
         return (0, external_wp_element_namespaceObject.useContext)(RoutesContext);
     }
 
-    function useHistory () {
+    function useHistory() {
         return (0, external_wp_element_namespaceObject.useContext)(HistoryContext);
     }
 
-    function getLocationWithParams (location) {
+    function getLocationWithParams(location) {
         const searchParams = new URLSearchParams(location.search);
         return {
             ...location,
@@ -933,9 +934,9 @@
         };
     }
 
-    function RouterProvider ({
-                                 children
-                             }) {
+    function RouterProvider({
+                                children
+                            }) {
         const [location, setLocation] = (0, external_wp_element_namespaceObject.useState)(() => getLocationWithParams(build_module_history.location));
         (0, external_wp_element_namespaceObject.useEffect)(() => {
             return build_module_history.listen(({

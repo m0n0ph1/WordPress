@@ -2,47 +2,40 @@
     /**
      * Media settings administration panel.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
-    
+
     /** WordPress Administration Bootstrap */
-    require_once __DIR__ . '/admin.php';
-    
-    if (!current_user_can('manage_options')) {
+    require_once __DIR__.'/admin.php';
+
+    if(! current_user_can('manage_options'))
+    {
         wp_die(__('Sorry, you are not allowed to manage options for this site.'));
     }
-    
+
     // Used in the HTML title tag.
     $title = __('Media Settings');
     $parent_file = 'options-general.php';
-    
-    $media_options_help = '<p>' . __('You can set maximum sizes for images inserted into your written content; you can also insert an image as Full Size.') . '</p>';
-    
-    if (!is_multisite()
-        && (get_option('upload_url_path')
-            || get_option('upload_path') && 'wp-content/uploads' !== get_option('upload_path'))
-    ) {
-        $media_options_help .= '<p>' . __('Uploading Files allows you to choose the folder and path for storing your uploaded files.') . '</p>';
+
+    $media_options_help = '<p>'.__('You can set maximum sizes for images inserted into your written content; you can also insert an image as Full Size.').'</p>';
+
+    if(! is_multisite() && (get_option('upload_url_path') || get_option('upload_path') && 'wp-content/uploads' !== get_option('upload_path')))
+    {
+        $media_options_help .= '<p>'.__('Uploading Files allows you to choose the folder and path for storing your uploaded files.').'</p>';
     }
-    
-    $media_options_help .= '<p>' . __('You must click the Save Changes button at the bottom of the screen for new settings to take effect.') . '</p>';
-    
-    get_current_screen()->add_help_tab(
-        [
-            'id' => 'overview',
-            'title' => __('Overview'),
-            'content' => $media_options_help,
-        ]
-    );
-    
-    get_current_screen()->set_help_sidebar(
-        '<p><strong>' . __('For more information:') . '</strong></p>' .
-        '<p>' . __('<a href="https://wordpress.org/documentation/article/settings-media-screen/">Documentation on Media Settings</a>') . '</p>' .
-        '<p>' . __('<a href="https://wordpress.org/support/forums/">Support forums</a>') . '</p>'
-    );
-    
-    require_once ABSPATH . 'wp-admin/admin-header.php';
+
+    $media_options_help .= '<p>'.__('You must click the Save Changes button at the bottom of the screen for new settings to take effect.').'</p>';
+
+    get_current_screen()->add_help_tab([
+                                           'id' => 'overview',
+                                           'title' => __('Overview'),
+                                           'content' => $media_options_help,
+                                       ]);
+
+    get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/settings-media-screen/">Documentation on Media Settings</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
+
+    require_once ABSPATH.'wp-admin/admin-header.php';
 
 ?>
 
@@ -84,8 +77,8 @@
                                value="<?php form_option('thumbnail_size_h'); ?>"
                                class="small-text"/>
                     </fieldset>
-                    <input name="thumbnail_crop" type="checkbox" id="thumbnail_crop" value="1" <?php checked('1',
-                        get_option('thumbnail_crop')); ?>/>
+                    <input name="thumbnail_crop" type="checkbox" id="thumbnail_crop"
+                           value="1" <?php checked('1', get_option('thumbnail_crop')); ?>/>
                     <label for="thumbnail_crop"><?php _e('Crop thumbnail to exact dimensions (normally thumbnails are proportional)'); ?></label>
                 </td>
             </tr>
@@ -151,23 +144,23 @@
                     </fieldset>
                 </td>
             </tr>
-            
+
             <?php do_settings_fields('media', 'default'); ?>
         </table>
-        
+
         <?php
             /**
              * @global array $wp_settings
              */
-            if (isset($GLOBALS['wp_settings']['media']['embeds'])) :
+            if(isset($GLOBALS['wp_settings']['media']['embeds'])) :
                 ?>
                 <h2 class="title"><?php _e('Embeds'); ?></h2>
                 <table class="form-table" role="presentation">
                     <?php do_settings_fields('media', 'embeds'); ?>
                 </table>
             <?php endif; ?>
-        
-        <?php if (!is_multisite()) : ?>
+
+        <?php if(! is_multisite()) : ?>
             <h2 class="title"><?php _e('Uploading Files'); ?></h2>
             <table class="form-table" role="presentation">
                 <?php
@@ -176,8 +169,7 @@
                      * or upload_path is not the default ('wp-content/uploads' or empty),
                      * they can be edited, otherwise they're locked.
                      */
-                    if (get_option('upload_url_path')
-                || get_option('upload_path') && 'wp-content/uploads' !== get_option('upload_path')) :
+                    if(get_option('upload_url_path') || get_option('upload_path') && 'wp-content/uploads' !== get_option('upload_path')) :
                 ?>
                 <tr>
                     <th scope="row"><label for="upload_path"><?php _e('Store uploads in this folder'); ?></label></th>
@@ -220,17 +212,17 @@
                         </label>
                     </td>
                 </tr>
-                
+
                 <?php do_settings_fields('media', 'uploads'); ?>
             </table>
         <?php endif; ?>
-        
+
         <?php do_settings_sections('media'); ?>
-        
+
         <?php submit_button(); ?>
 
     </form>
 
 </div>
 
-<?php require_once ABSPATH . 'wp-admin/admin-footer.php'; ?>
+<?php require_once ABSPATH.'wp-admin/admin-footer.php'; ?>

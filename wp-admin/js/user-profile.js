@@ -17,7 +17,7 @@
         currentPass,
         $passwordWrapper;
 
-    function generatePassword () {
+    function generatePassword() {
         if (typeof zxcvbn !== 'function') {
             setTimeout(generatePassword, 50);
             return;
@@ -57,7 +57,7 @@
         }
     }
 
-    function bindPass1 () {
+    function bindPass1() {
         currentPass = $pass1.val();
 
         if (1 === parseInt($pass1.data('reveal'), 10)) {
@@ -77,7 +77,7 @@
         });
     }
 
-    function resetToggle (show) {
+    function resetToggle(show) {
         $toggleButton
             .attr({
                 'aria-label': show ? __('Show password') : __('Hide password')
@@ -90,7 +90,7 @@
             .addClass(show ? 'dashicons-visibility' : 'dashicons-hidden');
     }
 
-    function bindToggleButton () {
+    function bindToggleButton() {
         if (!!$toggleButton) {
             // Do not rebind.
             return;
@@ -111,7 +111,7 @@
      * Handle the password reset button. Sets up an ajax callback to trigger sending
      * a password reset email.
      */
-    function bindPasswordResetLink () {
+    function bindPasswordResetLink() {
         $('#generate-reset-link').on('click', function () {
             var $this = $(this),
                 data = {
@@ -147,7 +147,7 @@
      * @param {bool}          success Whether the message is a success message.
      * @param {string}        message The message to insert.
      */
-    function addInlineNotice ($this, success, message) {
+    function addInlineNotice($this, success, message) {
         var resultDiv = $('<div />');
 
         // Set up the notice div.
@@ -169,7 +169,7 @@
         $this.before(resultDiv);
     }
 
-    function bindPasswordForm () {
+    function bindPasswordForm() {
         var $generateButton,
             $cancelButton;
 
@@ -283,7 +283,7 @@
         });
     }
 
-    function check_pass_strength () {
+    function check_pass_strength() {
         var pass1 = $('#pass1').val(), strength;
 
         $('#pass-strength-result').removeClass('short bad good strong empty');
@@ -315,7 +315,7 @@
         }
     }
 
-    function showOrHideWeakPasswordCheckbox () {
+    function showOrHideWeakPasswordCheckbox() {
         var passStrengthResult = $('#pass-strength-result');
 
         if (passStrengthResult.length) {
@@ -431,7 +431,8 @@
                 if (typeof wp !== 'undefined' && wp.svgPainter) {
                     try {
                         colors = JSON.parse($this.children('.icon_colors').val());
-                    } catch (error) {}
+                    } catch (error) {
+                    }
 
                     if (colors) {
                         wp.svgPainter.setColors(colors);

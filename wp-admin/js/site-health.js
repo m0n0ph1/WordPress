@@ -73,7 +73,7 @@ jQuery(function ($) {
      *
      * @return {boolean}
      */
-    function validateIssueData (issue) {
+    function validateIssueData(issue) {
         // Expected minimum format of a valid SiteHealth test response.
         var minimumExpected = {
                 test: 'string',
@@ -122,7 +122,7 @@ jQuery(function ($) {
      *
      * @param {Object} issue The issue data.
      */
-    function appendIssue (issue) {
+    function appendIssue(issue) {
         var template = wp.template('health-check-issue'),
             issueWrapper = $('#health-check-issues-' + issue.status),
             heading,
@@ -187,7 +187,7 @@ jQuery(function ($) {
      *
      * @since 5.2.0
      */
-    function recalculateProgression () {
+    function recalculateProgression() {
         var r, c, pct;
         var $progress = $('.site-health-progress');
         var $wrapper = $progress.closest('.site-health-progress-wrapper');
@@ -219,7 +219,7 @@ jQuery(function ($) {
 
         pct = ((100 - val) / 100) * c + 'px';
 
-        $circle.css({ strokeDashoffset: pct });
+        $circle.css({strokeDashoffset: pct});
 
         if (80 <= val && 0 === parseInt(SiteHealth.site_status.issues.critical, 0)) {
             $wrapper.addClass('green').removeClass('orange');
@@ -255,7 +255,7 @@ jQuery(function ($) {
      *
      * @since 5.2.0
      */
-    function maybeRunNextAsyncTest () {
+    function maybeRunNextAsyncTest() {
         var doCalculation = true;
 
         if (1 <= SiteHealth.site_status.async.length) {
@@ -275,9 +275,9 @@ jQuery(function ($) {
 
                 if ('undefined' !== typeof (this.has_rest) && this.has_rest) {
                     wp.apiRequest({
-                            url: wp.url.addQueryArgs(this.test, { _locale: 'user' }),
-                            headers: this.headers
-                        })
+                        url: wp.url.addQueryArgs(this.test, {_locale: 'user'}),
+                        headers: this.headers
+                    })
                         .done(function (response) {
                             /** This filter is documented in wp-admin/includes/class-wp-site-health.php */
                             appendIssue(wp.hooks.applyFilters('site_status_test_result', response));
@@ -332,7 +332,7 @@ jQuery(function ($) {
      *
      * @since 5.6.0
      */
-    function addFailedSiteHealthCheckNotice (url, description) {
+    function addFailedSiteHealthCheckNotice(url, description) {
         var issue;
 
         issue = {
@@ -374,7 +374,7 @@ jQuery(function ($) {
         }
     }
 
-    function getDirectorySizes () {
+    function getDirectorySizes() {
         var timestamp = (new Date().getTime());
 
         // After 3 seconds announce that we're still waiting for directory sizes.
@@ -416,7 +416,7 @@ jQuery(function ($) {
         });
     }
 
-    function updateDirSizes (data) {
+    function updateDirSizes(data) {
         var copyButton = $('button.button.copy-button');
         var clipboardText = copyButton.attr('data-clipboard-text');
 

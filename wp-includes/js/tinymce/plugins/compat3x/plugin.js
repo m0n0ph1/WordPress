@@ -22,17 +22,17 @@
 (function (tinymce) {
     var reported;
 
-    function noop () {
+    function noop() {
     }
 
-    function log (apiCall) {
+    function log(apiCall) {
         if (!reported && window && window.console) {
             reported = true;
             console.log('Deprecated TinyMCE API call: ' + apiCall);
         }
     }
 
-    function Dispatcher (target, newEventName, argsMap, defaultScope) {
+    function Dispatcher(target, newEventName, argsMap, defaultScope) {
         target = target || this;
         var cbs = [];
 
@@ -45,7 +45,7 @@
             log('<target>.on' + newEventName + '.add(..)');
 
             // Convert callback({arg1:x, arg2:x}) -> callback(arg1, arg2)
-            function patchedEventCallback (e) {
+            function patchedEventCallback(e) {
                 var callbackArgs = [];
 
                 if (typeof argsMap == 'string') {
@@ -117,9 +117,9 @@
         get: noop, getHash: noop, remove: noop, set: noop, setHash: noop
     };
 
-    function patchEditor (editor) {
+    function patchEditor(editor) {
 
-        function translate (str) {
+        function translate(str) {
             var prefix = editor.settings.language || 'en';
             var prefixedStr = [prefix, str].join('.');
             var translatedStr = tinymce.i18n.translate(prefixedStr);
@@ -127,20 +127,20 @@
             return prefixedStr !== translatedStr ? translatedStr : tinymce.i18n.translate(str);
         }
 
-        function patchEditorEvents (oldEventNames, argsMap) {
+        function patchEditorEvents(oldEventNames, argsMap) {
             tinymce.each(oldEventNames.split(' '), function (oldName) {
                 editor['on' + oldName] = new Dispatcher(editor, oldName, argsMap);
             });
         }
 
-        function convertUndoEventArgs (type, event, target) {
+        function convertUndoEventArgs(type, event, target) {
             return [
                 event.level,
                 target
             ];
         }
 
-        function filterSelectionEvents (needsSelection) {
+        function filterSelectionEvents(needsSelection) {
             return function (type, e) {
                 if ((!e.selection && !needsSelection) || e.selection == needsSelection) {
                     return [e];
@@ -152,7 +152,7 @@
             return;
         }
 
-        function cmNoop () {
+        function cmNoop() {
             var obj = {}, methods = 'add addMenu addSeparator collapse createMenu destroy displayColor expand focus ' +
                 'getLength hasMenus hideMenu isActive isCollapsed isDisabled isRendered isSelected mark ' +
                 'postRender remove removeAll renderHTML renderMenu renderNode renderTo select selectByIndex ' +
@@ -160,7 +160,7 @@
 
             log('editor.controlManager.*');
 
-            function _noop () {
+            function _noop() {
                 return cmNoop();
             }
 
@@ -233,7 +233,7 @@
         editor.addButton = function (name, settings) {
             var originalOnPostRender;
 
-            function patchedPostRender () {
+            function patchedPostRender() {
                 editor.controlManager.buttons[name] = this;
 
                 if (originalOnPostRender) {

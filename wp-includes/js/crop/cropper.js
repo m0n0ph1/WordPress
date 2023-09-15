@@ -45,7 +45,7 @@ Cropper.Img = Class.create();
 Cropper.Img.prototype = {
     initialize: function (_7, _8) {
         this.options = Object.extend({
-            ratioDim: { x: 0, y: 0 },
+            ratioDim: {x: 0, y: 0},
             minWidth: 0,
             minHeight: 0,
             displayOnInit: false,
@@ -57,7 +57,7 @@ Cropper.Img.prototype = {
             this.options.ratioDim.y = this.options.minHeight;
         }
         this.img = $(_7);
-        this.clickCoords = { x: 0, y: 0 };
+        this.clickCoords = {x: 0, y: 0};
         this.dragging = false;
         this.resizing = false;
         this.isWebKit = /Konqueror|Safari|KHTML/.test(navigator.userAgent);
@@ -101,27 +101,27 @@ Cropper.Img.prototype = {
         if (this.isOpera8) {
             _11 = ' opera8';
         }
-        this.imgWrap = Builder.node('div', { 'class': _f + 'wrap' + _11 });
+        this.imgWrap = Builder.node('div', {'class': _f + 'wrap' + _11});
         if (this.isIE) {
-            this.north = Builder.node('div', { 'class': _f + 'overlay ' + _f + 'north' }, [Builder.node('span')]);
-            this.east = Builder.node('div', { 'class': _f + 'overlay ' + _f + 'east' }, [Builder.node('span')]);
-            this.south = Builder.node('div', { 'class': _f + 'overlay ' + _f + 'south' }, [Builder.node('span')]);
-            this.west = Builder.node('div', { 'class': _f + 'overlay ' + _f + 'west' }, [Builder.node('span')]);
+            this.north = Builder.node('div', {'class': _f + 'overlay ' + _f + 'north'}, [Builder.node('span')]);
+            this.east = Builder.node('div', {'class': _f + 'overlay ' + _f + 'east'}, [Builder.node('span')]);
+            this.south = Builder.node('div', {'class': _f + 'overlay ' + _f + 'south'}, [Builder.node('span')]);
+            this.west = Builder.node('div', {'class': _f + 'overlay ' + _f + 'west'}, [Builder.node('span')]);
             var _12 = [this.north, this.east, this.south, this.west];
         } else {
-            this.overlay = Builder.node('div', { 'class': _f + 'overlay' });
+            this.overlay = Builder.node('div', {'class': _f + 'overlay'});
             var _12 = [this.overlay];
         }
-        this.dragArea = Builder.node('div', { 'class': _f + 'dragArea' }, _12);
-        this.handleN = Builder.node('div', { 'class': _f + 'handle ' + _f + 'handleN' });
-        this.handleNE = Builder.node('div', { 'class': _f + 'handle ' + _f + 'handleNE' });
-        this.handleE = Builder.node('div', { 'class': _f + 'handle ' + _f + 'handleE' });
-        this.handleSE = Builder.node('div', { 'class': _f + 'handle ' + _f + 'handleSE' });
-        this.handleS = Builder.node('div', { 'class': _f + 'handle ' + _f + 'handleS' });
-        this.handleSW = Builder.node('div', { 'class': _f + 'handle ' + _f + 'handleSW' });
-        this.handleW = Builder.node('div', { 'class': _f + 'handle ' + _f + 'handleW' });
-        this.handleNW = Builder.node('div', { 'class': _f + 'handle ' + _f + 'handleNW' });
-        this.selArea = Builder.node('div', { 'class': _f + 'selArea' }, [Builder.node('div', { 'class': _f + 'marqueeHoriz ' + _f + 'marqueeNorth' }, [Builder.node('span')]), Builder.node('div', { 'class': _f + 'marqueeVert ' + _f + 'marqueeEast' }, [Builder.node('span')]), Builder.node('div', { 'class': _f + 'marqueeHoriz ' + _f + 'marqueeSouth' }, [Builder.node('span')]), Builder.node('div', { 'class': _f + 'marqueeVert ' + _f + 'marqueeWest' }, [Builder.node('span')]), this.handleN, this.handleNE, this.handleE, this.handleSE, this.handleS, this.handleSW, this.handleW, this.handleNW, Builder.node('div', { 'class': _f + 'clickArea' })]);
+        this.dragArea = Builder.node('div', {'class': _f + 'dragArea'}, _12);
+        this.handleN = Builder.node('div', {'class': _f + 'handle ' + _f + 'handleN'});
+        this.handleNE = Builder.node('div', {'class': _f + 'handle ' + _f + 'handleNE'});
+        this.handleE = Builder.node('div', {'class': _f + 'handle ' + _f + 'handleE'});
+        this.handleSE = Builder.node('div', {'class': _f + 'handle ' + _f + 'handleSE'});
+        this.handleS = Builder.node('div', {'class': _f + 'handle ' + _f + 'handleS'});
+        this.handleSW = Builder.node('div', {'class': _f + 'handle ' + _f + 'handleSW'});
+        this.handleW = Builder.node('div', {'class': _f + 'handle ' + _f + 'handleW'});
+        this.handleNW = Builder.node('div', {'class': _f + 'handle ' + _f + 'handleNW'});
+        this.selArea = Builder.node('div', {'class': _f + 'selArea'}, [Builder.node('div', {'class': _f + 'marqueeHoriz ' + _f + 'marqueeNorth'}, [Builder.node('span')]), Builder.node('div', {'class': _f + 'marqueeVert ' + _f + 'marqueeEast'}, [Builder.node('span')]), Builder.node('div', {'class': _f + 'marqueeHoriz ' + _f + 'marqueeSouth'}, [Builder.node('span')]), Builder.node('div', {'class': _f + 'marqueeVert ' + _f + 'marqueeWest'}, [Builder.node('span')]), this.handleN, this.handleNE, this.handleE, this.handleSE, this.handleS, this.handleSW, this.handleW, this.handleNW, Builder.node('div', {'class': _f + 'clickArea'})]);
         Element.setStyle($(this.selArea), {
             backgroundColor: 'transparent',
             backgroundRepeat: 'no-repeat',
@@ -130,7 +130,7 @@ Cropper.Img.prototype = {
         this.imgWrap.appendChild(this.img);
         this.imgWrap.appendChild(this.dragArea);
         this.dragArea.appendChild(this.selArea);
-        this.dragArea.appendChild(Builder.node('div', { 'class': _f + 'clickArea' }));
+        this.dragArea.appendChild(Builder.node('div', {'class': _f + 'clickArea'}));
         _10.appendChild(this.imgWrap);
         Event.observe(this.dragArea, 'mousedown', this.startDrag.bindAsEventListener(this));
         Event.observe(document, 'mousemove', this.onDrag.bindAsEventListener(this));
@@ -142,26 +142,26 @@ Cropper.Img.prototype = {
         if (this.options.captureKeys) {
             Event.observe(document, 'keydown', this.handleKeys.bindAsEventListener(this));
         }
-        new CropDraggable(this.selArea, { drawMethod: this.moveArea.bindAsEventListener(this) });
+        new CropDraggable(this.selArea, {drawMethod: this.moveArea.bindAsEventListener(this)});
         this.setParams();
     }, setParams: function () {
         this.imgW = this.img.width;
         this.imgH = this.img.height;
         if (!this.isIE) {
-            Element.setStyle($(this.overlay), { width: this.imgW + 'px', height: this.imgH + 'px' });
+            Element.setStyle($(this.overlay), {width: this.imgW + 'px', height: this.imgH + 'px'});
             Element.hide($(this.overlay));
-            Element.setStyle($(this.selArea), { backgroundImage: 'url(' + this.img.src + ')' });
+            Element.setStyle($(this.selArea), {backgroundImage: 'url(' + this.img.src + ')'});
         } else {
-            Element.setStyle($(this.north), { height: 0 });
-            Element.setStyle($(this.east), { width: 0, height: 0 });
-            Element.setStyle($(this.south), { height: 0 });
-            Element.setStyle($(this.west), { width: 0, height: 0 });
+            Element.setStyle($(this.north), {height: 0});
+            Element.setStyle($(this.east), {width: 0, height: 0});
+            Element.setStyle($(this.south), {height: 0});
+            Element.setStyle($(this.west), {width: 0, height: 0});
         }
-        Element.setStyle($(this.imgWrap), { 'width': this.imgW + 'px', 'height': this.imgH + 'px' });
+        Element.setStyle($(this.imgWrap), {'width': this.imgW + 'px', 'height': this.imgH + 'px'});
         Element.hide($(this.selArea));
         var _15 = Position.positionedOffset(this.imgWrap);
-        this.wrapOffsets = { 'top': _15[1], 'left': _15[0] };
-        var _16 = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        this.wrapOffsets = {'top': _15[1], 'left': _15[0]};
+        var _16 = {x1: 0, y1: 0, x2: 0, y2: 0};
         this.setAreaCoords(_16);
         if (this.options.ratioDim.x > 0 && this.options.ratioDim.y > 0 && this.options.displayOnInit) {
             _16.x1 = Math.ceil((this.imgW - this.options.ratioDim.x) / 2);
@@ -195,7 +195,7 @@ Cropper.Img.prototype = {
         }
         this.endCrop();
     }, handleKeys: function (e) {
-        var dir = { x: 0, y: 0 };
+        var dir = {x: 0, y: 0};
         if (!this.dragging) {
             switch (e.keyCode) {
                 case (37):
@@ -225,10 +225,10 @@ Cropper.Img.prototype = {
     }, calcH: function () {
         return (this.areaCoords.y2 - this.areaCoords.y1);
     }, moveArea: function (_1b) {
-        this.setAreaCoords({ x1: _1b[0], y1: _1b[1], x2: _1b[0] + this.calcW(), y2: _1b[1] + this.calcH() }, true);
+        this.setAreaCoords({x1: _1b[0], y1: _1b[1], x2: _1b[0] + this.calcW(), y2: _1b[1] + this.calcH()}, true);
         this.drawArea();
     }, cloneCoords: function (_1c) {
-        return { x1: _1c.x1, y1: _1c.y1, x2: _1c.x2, y2: _1c.y2 };
+        return {x1: _1c.x1, y1: _1c.y1, x2: _1c.x2, y2: _1c.y2};
     }, setAreaCoords: function (_1d, _1e, _1f, _20, _21) {
         var _22 = typeof _1e != 'undefined' ? _1e : false;
         var _23 = typeof _1f != 'undefined' ? _1f : false;
@@ -266,14 +266,14 @@ Cropper.Img.prototype = {
             }
             if (typeof (_20) != 'undefined') {
                 if (this.ratioX > 0) {
-                    this.applyRatio(_1d, { x: this.ratioX, y: this.ratioY }, _20, _21);
+                    this.applyRatio(_1d, {x: this.ratioX, y: this.ratioY}, _20, _21);
                 } else {
                     if (_23) {
-                        this.applyRatio(_1d, { x: 1, y: 1 }, _20, _21);
+                        this.applyRatio(_1d, {x: 1, y: 1}, _20, _21);
                     }
                 }
-                var _26 = { a1: _1d.x1, a2: _1d.x2 };
-                var _27 = { a1: _1d.y1, a2: _1d.y2 };
+                var _26 = {a1: _1d.x1, a2: _1d.x2};
+                var _27 = {a1: _1d.y1, a2: _1d.y2};
                 var _28 = this.options.minWidth;
                 var _29 = this.options.minHeight;
                 if ((_28 == 0 || _29 == 0) && _23) {
@@ -285,9 +285,9 @@ Cropper.Img.prototype = {
                         }
                     }
                 }
-                this.applyMinDimension(_26, _28, _20.x, { min: 0, max: this.imgW });
-                this.applyMinDimension(_27, _29, _20.y, { min: 0, max: this.imgH });
-                _1d = { x1: _26.a1, y1: _27.a1, x2: _26.a2, y2: _27.a2 };
+                this.applyMinDimension(_26, _28, _20.x, {min: 0, max: this.imgW});
+                this.applyMinDimension(_27, _29, _20.y, {min: 0, max: this.imgH});
+                _1d = {x1: _26.a1, y1: _27.a1, x2: _26.a2, y2: _27.a2};
             }
         }
         this.areaCoords = _1d;
@@ -311,19 +311,19 @@ Cropper.Img.prototype = {
     }, applyRatio: function (_2e, _2f, _30, _31) {
         var _32;
         if (_31 == 'N' || _31 == 'S') {
-            _32 = this.applyRatioToAxis({ a1: _2e.y1, b1: _2e.x1, a2: _2e.y2, b2: _2e.x2 }, {
+            _32 = this.applyRatioToAxis({a1: _2e.y1, b1: _2e.x1, a2: _2e.y2, b2: _2e.x2}, {
                 a: _2f.y,
                 b: _2f.x
-            }, { a: _30.y, b: _30.x }, { min: 0, max: this.imgW });
+            }, {a: _30.y, b: _30.x}, {min: 0, max: this.imgW});
             _2e.x1 = _32.b1;
             _2e.y1 = _32.a1;
             _2e.x2 = _32.b2;
             _2e.y2 = _32.a2;
         } else {
-            _32 = this.applyRatioToAxis({ a1: _2e.x1, b1: _2e.y1, a2: _2e.x2, b2: _2e.y2 }, {
+            _32 = this.applyRatioToAxis({a1: _2e.x1, b1: _2e.y1, a2: _2e.x2, b2: _2e.y2}, {
                 a: _2f.x,
                 b: _2f.y
-            }, { a: _30.x, b: _30.y }, { min: 0, max: this.imgH });
+            }, {a: _30.x, b: _30.y}, {min: 0, max: this.imgH});
             _2e.x1 = _32.a1;
             _2e.y1 = _32.b1;
             _2e.x2 = _32.a2;
@@ -440,13 +440,13 @@ Cropper.Img.prototype = {
         this.onDrag(e);
         Event.stop(e);
     }, getCurPos: function (e) {
-        return curPos = { x: Event.pointerX(e) - this.wrapOffsets.left, y: Event.pointerY(e) - this.wrapOffsets.top };
+        return curPos = {x: Event.pointerX(e) - this.wrapOffsets.left, y: Event.pointerY(e) - this.wrapOffsets.top};
     }, onDrag: function (e) {
         var _4f = null;
         if (this.dragging || this.resizing) {
             var _50 = this.getCurPos(e);
             var _51 = this.cloneCoords(this.areaCoords);
-            var _52 = { x: 1, y: 1 };
+            var _52 = {x: 1, y: 1};
         }
         if (this.dragging) {
             if (_50.x < this.clickCoords.x) {
@@ -512,7 +512,7 @@ Cropper.Img.prototype = {
     }, endCrop: function () {
         this.dragging = false;
         this.resizing = false;
-        this.options.onEndCrop(this.areaCoords, { width: this.calcW(), height: this.calcH() });
+        this.options.onEndCrop(this.areaCoords, {width: this.calcW(), height: this.calcH()});
     }, subInitialize: function () {
     }, subDrawArea: function () {
     }
@@ -537,8 +537,8 @@ Object.extend(Object.extend(Cropper.ImgWithPreview.prototype, Cropper.Img.protot
         if (this.hasPreviewImg) {
             var _58 = this.calcW();
             var _59 = this.calcH();
-            var _5a = { x: this.imgW / _58, y: this.imgH / _59 };
-            var _5b = { x: _58 / this.options.minWidth, y: _59 / this.options.minHeight };
+            var _5a = {x: this.imgW / _58, y: this.imgH / _59};
+            var _5b = {x: _58 / this.options.minWidth, y: _59 / this.options.minHeight};
             var _5c = {
                 w: Math.ceil(this.options.minWidth * _5a.x) + 'px',
                 h: Math.ceil(this.options.minHeight * _5a.y) + 'px',

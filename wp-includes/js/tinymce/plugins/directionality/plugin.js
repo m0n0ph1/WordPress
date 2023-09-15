@@ -20,7 +20,7 @@
                 editor.nodeChanged();
             }
         };
-        var Direction = { setDir: setDir };
+        var Direction = {setDir: setDir};
 
         var register = function (editor) {
             editor.addCommand('mceDirectionLTR', function () {
@@ -30,7 +30,7 @@
                 Direction.setDir(editor, 'rtl');
             });
         };
-        var Commands = { register: register };
+        var Commands = {register: register};
 
         var generateSelector = function (dir) {
             var selector = [];
@@ -51,14 +51,14 @@
                 stateSelector: generateSelector('rtl')
             });
         };
-        var Buttons = { register: register$1 };
+        var Buttons = {register: register$1};
 
         global.add('directionality', function (editor) {
             Commands.register(editor);
             Buttons.register(editor);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

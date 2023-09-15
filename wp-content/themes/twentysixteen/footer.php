@@ -4,40 +4,36 @@
      *
      * Contains the closing of the #content div and all content after
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Sixteen
-     * @since Twenty Sixteen 1.0
+     * @since      Twenty Sixteen 1.0
      */
 ?>
 
 </div><!-- .site-content -->
 
 <footer id="colophon" class="site-footer">
-    <?php if (has_nav_menu('primary')) : ?>
+    <?php if(has_nav_menu('primary')) : ?>
         <nav class="main-navigation" aria-label="<?php esc_attr_e('Footer Primary Menu', 'twentysixteen'); ?>">
             <?php
-                wp_nav_menu(
-                    [
-                        'theme_location' => 'primary',
-                        'menu_class' => 'primary-menu',
-                    ]
-                );
+                wp_nav_menu([
+                                'theme_location' => 'primary',
+                                'menu_class' => 'primary-menu',
+                            ]);
             ?>
         </nav><!-- .main-navigation -->
     <?php endif; ?>
-    
-    <?php if (has_nav_menu('social')) : ?>
+
+    <?php if(has_nav_menu('social')) : ?>
         <nav class="social-navigation" aria-label="<?php esc_attr_e('Footer Social Links Menu', 'twentysixteen'); ?>">
             <?php
-                wp_nav_menu(
-                    [
-                        'theme_location' => 'social',
-                        'menu_class' => 'social-links-menu',
-                        'depth' => 1,
-                        'link_before' => '<span class="screen-reader-text">',
-                        'link_after' => '</span>',
-                    ]
-                );
+                wp_nav_menu([
+                                'theme_location' => 'social',
+                                'menu_class' => 'social-links-menu',
+                                'depth' => 1,
+                                'link_before' => '<span class="screen-reader-text">',
+                                'link_after' => '</span>',
+                            ]);
             ?>
         </nav><!-- .social-navigation -->
     <?php endif; ?>
@@ -54,7 +50,8 @@
         <span class="site-title"><a href="<?php echo esc_url(home_url('/')); ?>"
                                     rel="home"><?php bloginfo('name'); ?></a></span>
         <?php
-            if (function_exists('the_privacy_policy_link')) {
+            if(function_exists('the_privacy_policy_link'))
+            {
                 the_privacy_policy_link('', '<span role="separator" aria-hidden="true"></span>');
             }
         ?>

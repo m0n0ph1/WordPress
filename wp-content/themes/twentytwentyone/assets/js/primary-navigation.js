@@ -12,7 +12,7 @@
  * @param {Element} el - The element.
  * @param {boolean} withListeners - Whether we want to add/remove listeners or not.
  */
-function twentytwentyoneToggleAriaExpanded (el, withListeners) {
+function twentytwentyoneToggleAriaExpanded(el, withListeners) {
     if ('true' !== el.getAttribute('aria-expanded')) {
         el.setAttribute('aria-expanded', 'true');
         twentytwentyoneSubmenuPosition(el.parentElement);
@@ -27,7 +27,7 @@ function twentytwentyoneToggleAriaExpanded (el, withListeners) {
     }
 }
 
-function twentytwentyoneCollapseMenuOnClickOutside (event) {
+function twentytwentyoneCollapseMenuOnClickOutside(event) {
     if (!document.getElementById('site-navigation').contains(event.target)) {
         document.getElementById('site-navigation').querySelectorAll('.sub-menu-toggle').forEach(function (button) {
             button.setAttribute('aria-expanded', 'false');
@@ -42,7 +42,7 @@ function twentytwentyoneCollapseMenuOnClickOutside (event) {
  *
  * @param {Element} li - The li element.
  */
-function twentytwentyoneSubmenuPosition (li) {
+function twentytwentyoneSubmenuPosition(li) {
     var subMenu = li.querySelector('ul.sub-menu'),
         rect,
         right,
@@ -72,7 +72,7 @@ function twentytwentyoneSubmenuPosition (li) {
  *
  * @param {Element} el - The element.
  */
-function twentytwentyoneExpandSubMenu (el) { // jshint ignore:line
+function twentytwentyoneExpandSubMenu(el) { // jshint ignore:line
     // Close other expanded items.
     el.closest('nav').querySelectorAll('.sub-menu-toggle').forEach(function (button) {
         if (button !== el) {

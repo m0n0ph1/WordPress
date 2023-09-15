@@ -29,16 +29,16 @@
                     sign: /^[+-]/
                 };
 
-                function sprintf (key) {
+                function sprintf(key) {
                     // `arguments` is not an array, but should be fine for this call
                     return sprintf_format(sprintf_parse(key), arguments);
                 }
 
-                function vsprintf (fmt, argv) {
+                function vsprintf(fmt, argv) {
                     return sprintf.apply(null, [fmt].concat(argv || []));
                 }
 
-                function sprintf_format (parse_tree, argv) {
+                function sprintf_format(parse_tree, argv) {
                     var cursor = 1, tree_length = parse_tree.length, arg, output = '', i, k, ph, pad, pad_character,
                         pad_length, is_positive, sign;
                     for (i = 0; i < tree_length; i++) {
@@ -145,7 +145,7 @@
 
                 var sprintf_cache = Object.create(null);
 
-                function sprintf_parse (fmt) {
+                function sprintf_parse(fmt) {
                     if (sprintf_cache[fmt]) {
                         return sprintf_cache[fmt];
                     }
@@ -240,7 +240,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -282,7 +282,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -301,7 +301,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -328,11 +328,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -403,7 +403,7 @@
          *
          * @return {((...args: Parameters<F>) => ReturnType<F>) & MemizeMemoizedFunction} Memoized function.
          */
-        function memize (fn, options) {
+        function memize(fn, options) {
             var size = 0;
 
             /** @type {?MemizeCacheNode|undefined} */
@@ -414,7 +414,7 @@
 
             options = options || {};
 
-            function memoized (/* ...args */) {
+            function memoized(/* ...args */) {
                 var node = head,
                     len = arguments.length,
                     args,
@@ -553,7 +553,7 @@
          * @return {string} The formatted string.
          */
 
-        function sprintf_sprintf (format, ...args) {
+        function sprintf_sprintf(format, ...args) {
             try {
                 return sprintf_default().sprintf(format, ...args);
             } catch (error) {
@@ -638,7 +638,7 @@
          *
          * @return {string[]} Postfix terms.
          */
-        function postfix (expression) {
+        function postfix(expression) {
             var terms = [],
                 stack = [],
                 match, operator, term, element;
@@ -770,7 +770,7 @@
          *
          * @return {*} Result of evaluation.
          */
-        function evaluate (postfix, variables) {
+        function evaluate(postfix, variables) {
             var stack = [],
                 i, j, args, getOperatorResult, term, value;
 
@@ -824,7 +824,7 @@
          *
          * @return {(variables?:{[variable:string]:*})=>*} Compiled evaluator.
          */
-        function compile (expression) {
+        function compile(expression) {
             var terms = postfix(expression);
 
             return function (variables) {
@@ -843,11 +843,11 @@
          *
          * @return {Function} Evaluator function.
          */
-        function pluralForms (expression) {
+        function pluralForms(expression) {
             var evaluate = compile(expression);
 
             return function (n) {
-                return +evaluate({ n: n });
+                return +evaluate({n: n});
             };
         }
 
@@ -920,7 +920,7 @@
          *
          * @return {string} Plural forms expression.
          */
-        function getPluralExpression (pf) {
+        function getPluralExpression(pf) {
             var parts, i, part;
 
             parts = pf.split(';');
@@ -941,7 +941,7 @@
          * @param {TanninLocaleData} data      Jed-formatted locale data.
          * @param {TanninOptions}    [options] Tannin options.
          */
-        function Tannin (data, options) {
+        function Tannin(data, options) {
             var key;
 
             /**
@@ -1084,7 +1084,7 @@
         const DEFAULT_LOCALE_DATA = {
             '': {
                 /** @param {number} n */
-                plural_forms (n) {
+                plural_forms(n) {
                     return n === 1 ? 0 : 1;
                 }
 

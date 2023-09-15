@@ -262,7 +262,7 @@ window.wp = window.wp || {};
     /**
      * Only allow to check for nonce refresh every 30 seconds.
      */
-    function schedule () {
+    function schedule() {
         check = false;
         window.clearTimeout(timeout);
         timeout = window.setTimeout(function () {
@@ -1005,7 +1005,7 @@ jQuery(function ($) {
      *
      * @return {void}
      */
-    function editPermalink () {
+    function editPermalink() {
         var i, slug_value, slug_label,
             $el, revert_e,
             c = 0,
@@ -1163,7 +1163,7 @@ jQuery(function ($) {
          *
          * @param {Object} event Event containing details about the drag.
          */
-        function dragging (event) {
+        function dragging(event) {
             if ($postdivrich.hasClass('wp-editor-expand')) {
                 return;
             }
@@ -1180,7 +1180,7 @@ jQuery(function ($) {
         /**
          * When the dragging stopped make sure we return focus and do a sanity check on the height.
          */
-        function endDrag () {
+        function endDrag() {
             var height, toolbarHeight;
 
             if ($postdivrich.hasClass('wp-editor-expand')) {
@@ -1338,13 +1338,13 @@ jQuery(function ($) {
         /**
          * Get the word count from TinyMCE and display it
          */
-        function update () {
+        function update() {
             var text, count;
 
             if (!contentEditor || contentEditor.isHidden()) {
                 text = $content.val();
             } else {
-                text = contentEditor.getContent({ format: 'raw' });
+                text = contentEditor.getContent({format: 'raw'});
             }
 
             count = counter.count(text);

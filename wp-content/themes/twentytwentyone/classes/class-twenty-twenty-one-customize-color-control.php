@@ -2,17 +2,17 @@
     /**
      * Customize API: WP_Customize_Color_Control class
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Twenty_One
-     * @since Twenty Twenty-One 1.0
+     * @since      Twenty Twenty-One 1.0
      */
-    
+
     /**
      * Customize Color Control class.
      *
      * @since Twenty Twenty-One 1.0
      *
-     * @see WP_Customize_Control
+     * @see   WP_Customize_Control
      */
     class Twenty_Twenty_One_Customize_Color_Control extends WP_Customize_Color_Control
     {
@@ -24,7 +24,7 @@
          * @var string
          */
         public $type = 'twenty-twenty-one-color';
-        
+
         /**
          * Colorpicker palette
          *
@@ -33,7 +33,7 @@
          * @var array
          */
         public $palette;
-        
+
         /**
          * Enqueue control related scripts/styles.
          *
@@ -44,22 +44,21 @@
         public function enqueue()
         {
             parent::enqueue();
-            
+
             // Enqueue the script.
-            wp_enqueue_script(
-                'twentytwentyone-control-color',
-                get_theme_file_uri('assets/js/palette-colorpicker.js'),
-                ['customize-controls', 'jquery', 'customize-base', 'wp-color-picker'],
-                wp_get_theme()->get('Version'),
-                false
-            );
+            wp_enqueue_script('twentytwentyone-control-color', get_theme_file_uri('assets/js/palette-colorpicker.js'), [
+                'customize-controls',
+                'jquery',
+                'customize-base',
+                'wp-color-picker',
+            ],                wp_get_theme()->get('Version'), false);
         }
-        
+
         /**
          * Refresh the parameters passed to the JavaScript via JSON.
          *
          * @return void
-         * @uses WP_Customize_Control::to_json()
+         * @uses  WP_Customize_Control::to_json()
          *
          * @since Twenty Twenty-One 1.0
          *

@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -51,7 +51,7 @@
      * @param {string} nonce
      * @return {import('../types').APIFetchMiddleware & { nonce: string }} A middleware to enhance a request with a nonce.
      */
-    function createNonceMiddleware (nonce) {
+    function createNonceMiddleware(nonce) {
         /**
          * @type {import('../types').APIFetchMiddleware & { nonce: string }}
          */
@@ -168,7 +168,7 @@
      * @return {import('../types').APIFetchMiddleware} Preloading middleware.
      */
 
-    function createPreloadingMiddleware (preloadedData) {
+    function createPreloadingMiddleware(preloadedData) {
         const cache = Object.fromEntries(Object.entries(preloadedData).map(([path, data]) => [(0, external_wp_url_namespaceObject.normalizePath)(path), data]));
         return (options, next) => {
             const {
@@ -221,7 +221,7 @@
      */
 
 
-    function prepareResponse (responseData, parse) {
+    function prepareResponse(responseData, parse) {
         return Promise.resolve(parse ? responseData.body : new window.Response(JSON.stringify(responseData.body), {
             status: 200,
             statusText: 'OK',
@@ -518,7 +518,7 @@
      * @return {Promise<any>} Parsed response.
      */
 
-    function parseAndThrowError (response, shouldParseResponse = true) {
+    function parseAndThrowError(response, shouldParseResponse = true) {
         if (!shouldParseResponse) {
             throw response;
         }
@@ -546,7 +546,7 @@
      * @return {boolean} True if the request is for media upload.
      */
 
-    function isMediaUploadRequest (options) {
+    function isMediaUploadRequest(options) {
         const isCreateMethod = !!options.method && options.method === 'POST';
         const isMediaEndpoint = !!options.path && options.path.indexOf('/wp/v2/media') !== -1 || !!options.url && options.url.indexOf('/wp/v2/media') !== -1;
         return isMediaEndpoint && isCreateMethod;
@@ -700,7 +700,7 @@
      * @param {import('./types').APIFetchMiddleware} middleware
      */
 
-    function registerMiddleware (middleware) {
+    function registerMiddleware(middleware) {
         middlewares.unshift(middleware);
     }
 
@@ -782,7 +782,7 @@
      * @param {FetchHandler} newFetchHandler The new fetch handler
      */
 
-    function setFetchHandler (newFetchHandler) {
+    function setFetchHandler(newFetchHandler) {
         fetchHandler = newFetchHandler;
     }
 
@@ -793,7 +793,7 @@
      */
 
 
-    function apiFetch (options) {
+    function apiFetch(options) {
         // creates a nested function chain that calls all middlewares and finally the `fetchHandler`,
         // converting `middlewares = [ m1, m2, m3 ]` into:
         // ```

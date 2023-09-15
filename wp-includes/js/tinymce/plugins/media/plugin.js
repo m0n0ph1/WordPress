@@ -205,7 +205,7 @@
                 }
             }
         };
-        var VideoScript = { getVideoScriptMatch: getVideoScriptMatch };
+        var VideoScript = {getVideoScriptMatch: getVideoScriptMatch};
 
         var DOM = global$3.DOM;
         var trimPx = function (value) {
@@ -274,7 +274,7 @@
             data.poster = data.poster || '';
             return data;
         };
-        var HtmlToData = { htmlToData: htmlToData };
+        var HtmlToData = {htmlToData: htmlToData};
 
         var global$5 = tinymce.util.Tools.resolve('tinymce.util.Promise');
 
@@ -291,7 +291,7 @@
             var mime = mimes[fileEnd];
             return mime ? mime : '';
         };
-        var Mime = { guess: guess };
+        var Mime = {guess: guess};
 
         var global$6 = tinymce.util.Tools.resolve('tinymce.html.Schema');
 
@@ -332,7 +332,7 @@
             var styleMap = style ? DOM$1.parseStyle(style) : {};
             styleMap['max-width'] = addPx(data.width);
             styleMap['max-height'] = addPx(data.height);
-            setAttributes(attrs, { style: DOM$1.serializeStyle(styleMap) });
+            setAttributes(attrs, {style: DOM$1.serializeStyle(styleMap)});
         };
         var updateHtml = function (html, data, updateAll) {
             var writer = global$7();
@@ -379,11 +379,11 @@
                                         src: ''
                                     });
                                     if (data.source2) {
-                                        setAttributes(attrs, { src: '' });
+                                        setAttributes(attrs, {src: ''});
                                     }
                                     break;
                                 case 'iframe':
-                                    setAttributes(attrs, { src: data.source1 });
+                                    setAttributes(attrs, {src: data.source1});
                                     break;
                                 case 'source':
                                     sourceCount++;
@@ -441,7 +441,7 @@
             }, global$6({})).parse(html);
             return writer.getContent();
         };
-        var UpdateHtml = { updateHtml: updateHtml };
+        var UpdateHtml = {updateHtml: updateHtml};
 
         var urlPatterns = [
             {
@@ -527,7 +527,7 @@
                 return pattern.regex.test(url);
             });
             if (pattern.length > 0) {
-                return global$2.extend({}, pattern[0], { url: getUrl(pattern[0], url) });
+                return global$2.extend({}, pattern[0], {url: getUrl(pattern[0], url)});
             } else {
                 return null;
             }
@@ -618,7 +618,7 @@
                 }
             }
         };
-        var DataToHtml = { dataToHtml: dataToHtml };
+        var DataToHtml = {dataToHtml: dataToHtml};
 
         var cache = {};
         var embedPromise = function (data, dataToHtml, handler) {
@@ -635,7 +635,7 @@
                 if (cache[data.source1]) {
                     wrappedResolve(cache[data.source1]);
                 } else {
-                    handler({ url: data.source1 }, wrappedResolve, rej);
+                    handler({url: data.source1}, wrappedResolve, rej);
                 }
             });
         };
@@ -796,7 +796,7 @@
                     'height': Size.getMaxHeight(element)
                 };
             }
-            return element.getAttribute('data-mce-object') ? HtmlToData.htmlToData(Settings.getScripts(editor), editor.serializer.serialize(element, { selection: true })) : {};
+            return element.getAttribute('data-mce-object') ? HtmlToData.htmlToData(Settings.getScripts(editor), editor.serializer.serialize(element, {selection: true})) : {};
         };
         var getSource = function (editor) {
             var elm = editor.selection.getNode();
@@ -808,7 +808,7 @@
             return function (response) {
                 var html = response.html;
                 var embed = win.find('#embed')[0];
-                var data = global$2.extend(HtmlToData.htmlToData(Settings.getScripts(editor), html), { source1: response.url });
+                var data = global$2.extend(HtmlToData.htmlToData(Settings.getScripts(editor), html), {source1: response.url});
                 win.fromJSON(data);
                 if (embed) {
                     embed.value(html);
@@ -961,15 +961,15 @@
             });
             SizeManager.syncSize(win);
         };
-        var Dialog = { showDialog: showDialog };
+        var Dialog = {showDialog: showDialog};
 
         var get$1 = function (editor) {
             var showDialog = function () {
                 Dialog.showDialog(editor);
             };
-            return { showDialog: showDialog };
+            return {showDialog: showDialog};
         };
-        var Api = { get: get$1 };
+        var Api = {get: get$1};
 
         var register = function (editor) {
             var showDialog = function () {
@@ -977,7 +977,7 @@
             };
             editor.addCommand('mceMedia', showDialog);
         };
-        var Commands = { register: register };
+        var Commands = {register: register};
 
         var global$8 = tinymce.util.Tools.resolve('tinymce.html.Node');
 
@@ -1027,7 +1027,7 @@
             }, global$6({})).parse(html);
             return writer.getContent();
         };
-        var Sanitize = { sanitize: sanitize };
+        var Sanitize = {sanitize: sanitize};
 
         var createPlaceholderNode = function (editor, node) {
             var placeHolder;
@@ -1193,7 +1193,7 @@
                                 });
                             }
                         }
-                        realElm.attr({ style: node.attr('style') });
+                        realElm.attr({style: node.attr('style')});
                         attribs = node.attributes;
                         ai = attribs.length;
                         while (ai--) {
@@ -1225,7 +1225,7 @@
                 });
             });
         };
-        var FilterContent = { setup: setup };
+        var FilterContent = {setup: setup};
 
         var setup$1 = function (editor) {
             editor.on('ResolveName', function (e) {
@@ -1235,7 +1235,7 @@
                 }
             });
         };
-        var ResolveName = { setup: setup$1 };
+        var ResolveName = {setup: setup$1};
 
         var setup$2 = function (editor) {
             editor.on('click keyup', function () {
@@ -1267,7 +1267,7 @@
                 }
             });
         };
-        var Selection = { setup: setup$2 };
+        var Selection = {setup: setup$2};
 
         var register$1 = function (editor) {
             editor.addButton('media', {
@@ -1287,7 +1287,7 @@
                 prependToContext: true
             });
         };
-        var Buttons = { register: register$1 };
+        var Buttons = {register: register$1};
 
         global.add('media', function (editor) {
             Commands.register(editor);
@@ -1298,7 +1298,7 @@
             return Api.get(editor);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

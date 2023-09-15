@@ -2,9 +2,9 @@
     /**
      * Displays the search icon and modal
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Twenty
-     * @since Twenty Twenty 1.0
+     * @since      Twenty Twenty 1.0
      */
 
 ?>
@@ -17,13 +17,11 @@
     <div class="search-modal-inner modal-inner">
 
         <div class="section-inner">
-            
+
             <?php
-                get_search_form(
-                    [
-                        'aria_label' => __('Search for:', 'twentytwenty'),
-                    ]
-                );
+                get_search_form([
+                                    'aria_label' => __('Search for:', 'twentytwenty'),
+                                ]);
             ?>
 
             <button class="toggle search-untoggle close-search-toggle fill-children-current-color"

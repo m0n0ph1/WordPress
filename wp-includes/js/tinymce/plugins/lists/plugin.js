@@ -135,7 +135,7 @@
                 container = rng[start ? 'startContainer' : 'endContainer'];
                 offset = rng[start ? 'startOffset' : 'endOffset'];
                 if (container.nodeType === 1) {
-                    offsetNode = DOM.create('span', { 'data-mce-type': 'bookmark' });
+                    offsetNode = DOM.create('span', {'data-mce-type': 'bookmark'});
                     if (container.hasChildNodes()) {
                         offset = Math.min(offset, container.childNodes.length - 1);
                         if (start) {
@@ -159,7 +159,7 @@
             return bookmark;
         };
         var resolveBookmark = function (bookmark) {
-            function restoreEndPoint (start) {
+            function restoreEndPoint(start) {
                 var container, offset, node;
                 var nodeIndex = function (container) {
                     var node = container.parentNode.firstChild, idx = 0;
@@ -475,7 +475,7 @@
             }
             return actual;
         };
-        var Global$1 = { getOrDie: getOrDie };
+        var Global$1 = {getOrDie: getOrDie};
 
         var htmlElement = function (scope) {
             return Global$1.getOrDie('HTMLElement', scope);
@@ -484,7 +484,7 @@
             var scope = resolve('ownerDocument.defaultView', x);
             return htmlElement(scope).prototype.isPrototypeOf(x);
         };
-        var HTMLElement = { isPrototypeOf: isPrototypeOf };
+        var HTMLElement = {isPrototypeOf: isPrototypeOf};
 
         var global$7 = tinymce.util.Tools.resolve('tinymce.dom.DomQuery');
 
@@ -589,7 +589,7 @@
             if (node === null || node === undefined) {
                 throw new Error('Node cannot be null or undefined');
             }
-            return { dom: constant(node) };
+            return {dom: constant(node)};
         };
         var fromPoint = function (docElm, x, y) {
             var doc = docElm.dom();
@@ -984,13 +984,13 @@
                 deviceType: deviceType
             };
         };
-        var PlatformDetection = { detect: detect$2 };
+        var PlatformDetection = {detect: detect$2};
 
         var detect$3 = cached(function () {
             var userAgent = domGlobals.navigator.userAgent;
             return PlatformDetection.detect(userAgent);
         });
-        var PlatformDetection$1 = { detect: detect$3 };
+        var PlatformDetection$1 = {detect: detect$3};
 
         var ATTRIBUTE = domGlobals.Node.ATTRIBUTE_NODE;
         var CDATA_SECTION = domGlobals.Node.CDATA_SECTION_NODE;
@@ -1438,7 +1438,7 @@
                 fragment.appendChild(dom.create('br'));
             } else {
                 if (!hasContentNode && (!global$8.ie || global$8.ie > 10)) {
-                    textBlock.appendChild(dom.create('br', { 'data-mce-bogus': '1' }));
+                    textBlock.appendChild(dom.create('br', {'data-mce-bogus': '1'}));
                 }
             }
             return fragment;
@@ -1516,7 +1516,7 @@
                 DOM$1.remove(ul);
             }
         };
-        var SplitList = { splitList: splitList };
+        var SplitList = {splitList: splitList};
 
         var outdentDlItem = function (editor, item) {
             if (is$1(item, 'dd')) {
@@ -2027,7 +2027,7 @@
                 }
             };
         };
-        var Api = { get: get };
+        var Api = {get: get};
 
         var queryListCommandState = function (editor, listName) {
             return function () {
@@ -2060,12 +2060,12 @@
             editor.addQueryStateHandler('InsertOrderedList', queryListCommandState(editor, 'OL'));
             editor.addQueryStateHandler('InsertDefinitionList', queryListCommandState(editor, 'DL'));
         };
-        var Commands = { register: register };
+        var Commands = {register: register};
 
         var shouldIndentOnTab = function (editor) {
             return editor.getParam('lists_indent_on_tab', true);
         };
-        var Settings = { shouldIndentOnTab: shouldIndentOnTab };
+        var Settings = {shouldIndentOnTab: shouldIndentOnTab};
 
         var setupTabKey = function (editor) {
             editor.on('keydown', function (e) {
@@ -2085,7 +2085,7 @@
             }
             Delete.setup(editor);
         };
-        var Keyboard = { setup: setup$1 };
+        var Keyboard = {setup: setup$1};
 
         var findIndex = function (list, predicate) {
             for (var index = 0; index < list.length; index++) {
@@ -2132,7 +2132,7 @@
                 cmd: 'Indent'
             });
         };
-        var Buttons = { register: register$1 };
+        var Buttons = {register: register$1};
 
         global.add('lists', function (editor) {
             Keyboard.setup(editor);
@@ -2141,7 +2141,7 @@
             return Api.get(editor);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

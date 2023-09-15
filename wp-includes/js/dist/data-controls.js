@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -121,7 +121,7 @@
      *
      * @return {Object} The control descriptor.
      */
-    function apiFetch (request) {
+    function apiFetch(request) {
         return {
             type: 'API_FETCH',
             request
@@ -137,7 +137,7 @@
      * @param args                  Arguments passed without change to the `@wordpress/data` control.
      */
 
-    function build_module_select (storeNameOrDescriptor, selectorName, ...args) {
+    function build_module_select(storeNameOrDescriptor, selectorName, ...args) {
         external_wp_deprecated_default()('`select` control in `@wordpress/data-controls`', {
             since: '5.7',
             alternative: 'built-in `resolveSelect` control in `@wordpress/data`'
@@ -154,7 +154,7 @@
      * @param args                  Arguments passed without change to the `@wordpress/data` control.
      */
 
-    function syncSelect (storeNameOrDescriptor, selectorName, ...args) {
+    function syncSelect(storeNameOrDescriptor, selectorName, ...args) {
         external_wp_deprecated_default()('`syncSelect` control in `@wordpress/data-controls`', {
             since: '5.7',
             alternative: 'built-in `select` control in `@wordpress/data`'
@@ -171,7 +171,7 @@
      * @param args                  Arguments passed without change to the `@wordpress/data` control.
      */
 
-    function dispatch (storeNameOrDescriptor, actionName, ...args) {
+    function dispatch(storeNameOrDescriptor, actionName, ...args) {
         external_wp_deprecated_default()('`dispatch` control in `@wordpress/data-controls`', {
             since: '5.7',
             alternative: 'built-in `dispatch` control in `@wordpress/data`'
@@ -238,9 +238,9 @@
                             promise
                         }) => promise,
 
-        API_FETCH ({
-                       request
-                   }) {
+        API_FETCH({
+                      request
+                  }) {
             return external_wp_apiFetch_default()(request);
         }
 

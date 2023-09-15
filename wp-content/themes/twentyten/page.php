@@ -7,16 +7,16 @@
      * and that other 'pages' on your WordPress site will use a
      * different template.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Ten
-     * @since Twenty Ten 1.0
+     * @since      Twenty Ten 1.0
      */
-    
+
     get_header(); ?>
 
 <div id="container">
     <div id="content" role="main">
-        
+
         <?php
             /*
              * Run the loop to output the page.

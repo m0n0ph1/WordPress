@@ -10,7 +10,7 @@
 
 /*jshint globals: tinyMCEPopup */
 
-function MCTabs () {
+function MCTabs() {
     this.settings = [];
     this.onChange = tinyMCEPopup.editor.windowManager.createInstance('tinymce.util.Dispatcher');
 }

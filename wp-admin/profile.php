@@ -2,10 +2,10 @@
     /**
      * User Profile Administration Screen.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
-    
+
     /**
      * This is a profile page.
      *
@@ -13,6 +13,6 @@
      * @var bool
      */
     define('IS_PROFILE_PAGE', true);
-    
+
     /** Load User Editing Page */
-    require_once __DIR__ . '/user-edit.php';
+    require_once __DIR__.'/user-edit.php';

@@ -5,15 +5,15 @@
         var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
 
         var fireInsertCustomChar = function (editor, chr) {
-            return editor.fire('insertCustomChar', { chr: chr });
+            return editor.fire('insertCustomChar', {chr: chr});
         };
-        var Events = { fireInsertCustomChar: fireInsertCustomChar };
+        var Events = {fireInsertCustomChar: fireInsertCustomChar};
 
         var insertChar = function (editor, chr) {
             var evtChr = Events.fireInsertCustomChar(editor, chr).chr;
             editor.execCommand('mceInsertContent', false, evtChr);
         };
-        var Actions = { insertChar: insertChar };
+        var Actions = {insertChar: insertChar};
 
         var global$1 = tinymce.util.Tools.resolve('tinymce.util.Tools');
 
@@ -1109,7 +1109,7 @@
         var getCharMap$1 = function (editor) {
             return extendCharMap(editor, getDefaultCharMap());
         };
-        var CharMap = { getCharMap: getCharMap$1 };
+        var CharMap = {getCharMap: getCharMap$1};
 
         var get = function (editor) {
             var getCharMap = function () {
@@ -1123,7 +1123,7 @@
                 insertChar: insertChar
             };
         };
-        var Api = { get: get };
+        var Api = {get: get};
 
         var getHtml = function (charmap) {
             var gridHtml, x, y;
@@ -1148,7 +1148,7 @@
             gridHtml += '</tbody></table>';
             return gridHtml;
         };
-        var GridHtml = { getHtml: getHtml };
+        var GridHtml = {getHtml: getHtml};
 
         var getParentTd = function (elm) {
             while (elm) {
@@ -1237,14 +1237,14 @@
                 }]
             });
         };
-        var Dialog = { open: open };
+        var Dialog = {open: open};
 
         var register = function (editor) {
             editor.addCommand('mceShowCharmap', function () {
                 Dialog.open(editor);
             });
         };
-        var Commands = { register: register };
+        var Commands = {register: register};
 
         var register$1 = function (editor) {
             editor.addButton('charmap', {
@@ -1259,7 +1259,7 @@
                 context: 'insert'
             });
         };
-        var Buttons = { register: register$1 };
+        var Buttons = {register: register$1};
 
         global.add('charmap', function (editor) {
             Commands.register(editor);
@@ -1267,7 +1267,7 @@
             return Api.get(editor);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

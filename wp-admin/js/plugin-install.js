@@ -78,7 +78,7 @@ jQuery(function ($) {
             $focusedBefore.trigger('focus');
         });
 
-    function iframeLoaded () {
+    function iframeLoaded() {
         var $iframe = tbWindow.find('#TB_iframeContent');
 
         // Get the iframe body.
@@ -115,7 +115,7 @@ jQuery(function ($) {
      * Called again each time a Tab gets clicked.
      * @todo Consider to implement a WordPress general utility for this and don't use jQuery UI.
      */
-    function handleTabbables () {
+    function handleTabbables() {
         var $firstAndLast;
         // Get all the tabbable elements.
         $tabbables = $(':tabbable', $iframeBody);
@@ -134,7 +134,7 @@ jQuery(function ($) {
     }
 
     // Constrain tabbing within the plugin modal dialog.
-    function constrainTabbing (event) {
+    function constrainTabbing(event) {
         if (9 !== event.which) {
             return;
         }

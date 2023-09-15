@@ -12,7 +12,7 @@
 
             var envHasBigInt64Array = typeof BigInt64Array !== 'undefined';
 
-            module.exports = function equal (a, b) {
+            module.exports = function equal(a, b) {
                 if (a === b) return true;
 
                 if (a && b && typeof a == 'object' && typeof b == 'object') {
@@ -87,7 +87,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -129,7 +129,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -148,7 +148,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -215,7 +215,7 @@
 
         const EMPTY_OBJECT = {};
 
-        function rendererPath (block, attributes = null, urlQueryArgs = {}) {
+        function rendererPath(block, attributes = null, urlQueryArgs = {}) {
             return (0, external_wp_url_namespaceObject.addQueryArgs)(`/wp/v2/block-renderer/${block}`, {
                 context: 'edit',
                 ...(null !== attributes ? {
@@ -225,7 +225,7 @@
             });
         }
 
-        function removeBlockSupportAttributes (attributes) {
+        function removeBlockSupportAttributes(attributes) {
             const {
                 backgroundColor,
                 borderColor,
@@ -250,18 +250,18 @@
             };
         }
 
-        function DefaultEmptyResponsePlaceholder ({
-                                                      className
-                                                  }) {
+        function DefaultEmptyResponsePlaceholder({
+                                                     className
+                                                 }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Placeholder, {
                 className: className
             }, (0, external_wp_i18n_namespaceObject.__)('Block rendered as empty.'));
         }
 
-        function DefaultErrorResponsePlaceholder ({
-                                                      response,
-                                                      className
-                                                  }) {
+        function DefaultErrorResponsePlaceholder({
+                                                     response,
+                                                     className
+                                                 }) {
             const errorMessage = (0, external_wp_i18n_namespaceObject.sprintf)( // translators: %s: error message describing the problem
                 (0, external_wp_i18n_namespaceObject.__)('Error loading block: %s'), response.errorMsg);
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Placeholder, {
@@ -269,10 +269,10 @@
             }, errorMessage);
         }
 
-        function DefaultLoadingResponsePlaceholder ({
-                                                        children,
-                                                        showLoader
-                                                    }) {
+        function DefaultLoadingResponsePlaceholder({
+                                                       children,
+                                                       showLoader
+                                                   }) {
             return (0, external_wp_element_namespaceObject.createElement)('div', {
                 style: {
                     position: 'relative'
@@ -292,7 +292,7 @@
             }, children));
         }
 
-        function ServerSideRender (props) {
+        function ServerSideRender(props) {
             const {
                 attributes,
                 block,
@@ -311,7 +311,7 @@
             const prevProps = (0, external_wp_compose_namespaceObject.usePrevious)(props);
             const [isLoading, setIsLoading] = (0, external_wp_element_namespaceObject.useState)(false);
 
-            function fetchData () {
+            function fetchData() {
                 var _sanitizedAttributes, _sanitizedAttributes2;
 
                 if (!isMountedRef.current) {

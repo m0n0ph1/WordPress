@@ -106,7 +106,7 @@
          *
          * @return {void}
          */
-        function textEditorResize () {
+        function textEditorResize() {
             var length = textEditor.value.length;
 
             if (mceEditor && !mceEditor.isHidden()) {
@@ -139,7 +139,7 @@
          *
          * @return {void}
          */
-        function getHeights () {
+        function getHeights() {
             var windowWidth = $window.width();
 
             heights = {
@@ -209,7 +209,7 @@
              * @return {number|boolean} Returns the offset of the editor
              * or false if there is no offset height.
              */
-            function mceGetCursorOffset () {
+            function mceGetCursorOffset() {
                 var node = editor.selection.getNode(),
                     range, view, offset;
 
@@ -225,7 +225,8 @@
                     // Try to get the offset from a range.
                     try {
                         offset = range.getClientRects()[0];
-                    } catch (er) {}
+                    } catch (er) {
+                    }
 
                     // Get the offset from the bounding client rectangle of the node.
                     if (!offset) {
@@ -245,7 +246,7 @@
              *
              * @return {void}
              */
-            function mceKeyup (event) {
+            function mceKeyup(event) {
                 var key = event.keyCode;
 
                 // Bail on special keys. Key code 47 is a '/'.
@@ -275,7 +276,7 @@
              *
              * @return {void}
              */
-            function mceScroll (key) {
+            function mceScroll(key) {
                 var offset = mceGetCursorOffset(),
                     buffer = 50,
                     cursorTop, cursorBottom, editorTop, editorBottom;
@@ -336,7 +337,7 @@
              *
              * @return {void}
              */
-            function mceFullscreenToggled (event) {
+            function mceFullscreenToggled(event) {
                 // event.state is true if the editor is fullscreen.
                 if (!event.state) {
                     adjust();
@@ -353,7 +354,7 @@
              *
              * @return {void}
              */
-            function mceShow () {
+            function mceShow() {
                 $window.on('scroll.mce-float-panels', hideFloatPanels);
 
                 setTimeout(function () {
@@ -372,7 +373,7 @@
              *
              * @return {void}
              */
-            function mceHide () {
+            function mceHide() {
                 $window.off('scroll.mce-float-panels');
 
                 setTimeout(function () {
@@ -396,7 +397,7 @@
              *
              * @return {void}
              */
-            function toggleAdvanced () {
+            function toggleAdvanced() {
                 advanced = !advanced;
             }
 
@@ -465,7 +466,7 @@
          *
          * @return {void}
          */
-        function adjust (event) {
+        function adjust(event) {
 
             // Makes sure we're not in fullscreen mode.
             if (fullscreen && fullscreen.settings.visible) {
@@ -777,7 +778,7 @@
          *
          * @return {void}
          */
-        function fullscreenHide () {
+        function fullscreenHide() {
             textEditorResize();
             adjust();
         }
@@ -791,7 +792,7 @@
          *
          * @return {void}
          */
-        function initialResize (callback) {
+        function initialResize(callback) {
             for (var i = 1; i < 6; i++) {
                 setTimeout(callback, 500 * i);
             }
@@ -804,7 +805,7 @@
          *
          * @return {void}
          */
-        function afterScroll () {
+        function afterScroll() {
             clearTimeout(scrollTimer);
             scrollTimer = setTimeout(adjust, 100);
         }
@@ -816,7 +817,7 @@
          *
          * @return {void}
          */
-        function on () {
+        function on() {
             /*
              * Scroll to the top when triggering this from JS.
              * Ensure the toolbars are pinned properly.
@@ -886,7 +887,7 @@
          *
          * @return {void}
          */
-        function off () {
+        function off() {
             var height = parseInt(window.getUserSetting('ed_size', 300), 10);
 
             if (height < 50) {
@@ -1030,7 +1031,7 @@
          *
          * @return {void}
          */
-        function recalcEditorRect () {
+        function recalcEditorRect() {
             editorRect = $editor.offset();
             editorRect.right = editorRect.left + $editor.outerWidth();
             editorRect.bottom = editorRect.top + $editor.outerHeight();
@@ -1043,7 +1044,7 @@
          *
          * @return {void}
          */
-        function activate () {
+        function activate() {
             if (!_isActive) {
                 _isActive = true;
 
@@ -1059,7 +1060,7 @@
          *
          * @return {void}
          */
-        function deactivate () {
+        function deactivate() {
             if (_isActive) {
                 off();
 
@@ -1077,7 +1078,7 @@
          *
          * @return {boolean} Returns true is _isActive is true.
          */
-        function isActive () {
+        function isActive() {
             return _isActive;
         }
 
@@ -1088,7 +1089,7 @@
          *
          * @return {void}
          */
-        function on () {
+        function on() {
             if (!_isOn && _isActive) {
                 _isOn = true;
 
@@ -1111,7 +1112,7 @@
          *
          * @return {void}
          */
-        function off () {
+        function off() {
             if (_isOn) {
                 _isOn = false;
 
@@ -1134,7 +1135,7 @@
          *
          * @return {void}
          */
-        function toggle () {
+        function toggle() {
             if (_isOn) {
                 off();
             } else {
@@ -1149,7 +1150,7 @@
          *
          * @return {boolean} Returns true if _isOn is true.
          */
-        function isOn () {
+        function isOn() {
             return _isOn;
         }
 
@@ -1166,7 +1167,7 @@
          *
          * @return {void}
          */
-        function fadeOut (event) {
+        function fadeOut(event) {
             var isMac,
                 key = event && event.keyCode;
 
@@ -1305,7 +1306,7 @@
          *
          * @return {void}
          */
-        function fadeIn (event) {
+        function fadeIn(event) {
             if (faded) {
                 faded = false;
 
@@ -1351,11 +1352,11 @@
          *
          * @return {void}
          */
-        function maybeFadeIn () {
+        function maybeFadeIn() {
             setTimeout(function () {
                 var position = document.activeElement.compareDocumentPosition($editor.get(0));
 
-                function hasFocus ($el) {
+                function hasFocus($el) {
                     return $.contains($el.get(0), document.activeElement);
                 }
 
@@ -1373,7 +1374,7 @@
          *
          * @return {void}
          */
-        function fadeOutAdminBar () {
+        function fadeOutAdminBar() {
             if (!fadedAdminBar && faded) {
                 fadedAdminBar = true;
 
@@ -1394,7 +1395,7 @@
          *
          * @return {void}
          */
-        function fadeInAdminBar () {
+        function fadeInAdminBar() {
             if (fadedAdminBar) {
                 fadedAdminBar = false;
 
@@ -1409,7 +1410,7 @@
          *
          * @return {void}
          */
-        function fadeOutSlug () {
+        function fadeOutSlug() {
             if (!fadedSlug && faded && !$slug.find(':focus').length) {
                 fadedSlug = true;
 
@@ -1426,7 +1427,7 @@
          *
          * @return {void}
          */
-        function fadeInSlug () {
+        function fadeInSlug() {
             if (fadedSlug) {
                 fadedSlug = false;
 
@@ -1447,7 +1448,7 @@
          *
          * @return {void}
          */
-        function toggleViaKeyboard (event) {
+        function toggleViaKeyboard(event) {
             if (event.altKey && event.shiftKey && 87 === event.keyCode) {
                 toggle();
             }
@@ -1519,11 +1520,11 @@
         $document.on('tinymce-editor-init.focus', function (event, editor) {
             var mceBind, mceUnbind;
 
-            function focus () {
+            function focus() {
                 editorHasFocus = true;
             }
 
-            function blur () {
+            function blur() {
                 editorHasFocus = false;
             }
 

@@ -6,11 +6,11 @@
      * since this theme is not meant to be backward compatible beyond that and
      * relies on many newer functions and markup changes introduced in 4.7.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Seventeen
-     * @since Twenty Seventeen 1.0
+     * @since      Twenty Seventeen 1.0
      */
-    
+
     /**
      * Prevent switching to Twenty Seventeen on old versions of WordPress.
      *
@@ -24,9 +24,9 @@
         unset($_GET['activated']);
         add_action('admin_notices', 'twentyseventeen_upgrade_notice');
     }
-    
+
     add_action('after_switch_theme', 'twentyseventeen_switch_theme');
-    
+
     /**
      * Adds a message for unsuccessful theme switch.
      *
@@ -39,17 +39,9 @@
      */
     function twentyseventeen_upgrade_notice()
     {
-        printf(
-            '<div class="error"><p>%s</p></div>',
-            sprintf(
-            /* translators: %s: The current WordPress version. */
-                __('Twenty Seventeen requires at least WordPress version 4.7. You are running version %s. Please upgrade and try again.',
-                    'twentyseventeen'),
-                $GLOBALS['wp_version']
-            )
-        );
+        printf('<div class="error"><p>%s</p></div>', sprintf(/* translators: %s: The current WordPress version. */ __('Twenty Seventeen requires at least WordPress version 4.7. You are running version %s. Please upgrade and try again.', 'twentyseventeen'), $GLOBALS['wp_version']));
     }
-    
+
     /**
      * Prevents the Customizer from being loaded on WordPress versions prior to 4.7.
      *
@@ -59,22 +51,13 @@
      */
     function twentyseventeen_customize()
     {
-        wp_die(
-            sprintf(
-            /* translators: %s: The current WordPress version. */
-                __('Twenty Seventeen requires at least WordPress version 4.7. You are running version %s. Please upgrade and try again.',
-                    'twentyseventeen'),
-                $GLOBALS['wp_version']
-            ),
-            '',
-            [
-                'back_link' => true,
-            ]
-        );
+        wp_die(sprintf(/* translators: %s: The current WordPress version. */ __('Twenty Seventeen requires at least WordPress version 4.7. You are running version %s. Please upgrade and try again.', 'twentyseventeen'), $GLOBALS['wp_version']), '', [
+            'back_link' => true,
+        ]);
     }
-    
+
     add_action('load-customize.php', 'twentyseventeen_customize');
-    
+
     /**
      * Prevents the Theme Preview from being loaded on WordPress versions prior to 4.7.
      *
@@ -84,16 +67,10 @@
      */
     function twentyseventeen_preview()
     {
-        if (isset($_GET['preview'])) {
-            wp_die(
-                sprintf(
-                /* translators: %s: The current WordPress version. */
-                    __('Twenty Seventeen requires at least WordPress version 4.7. You are running version %s. Please upgrade and try again.',
-                        'twentyseventeen'),
-                    $GLOBALS['wp_version']
-                )
-            );
+        if(isset($_GET['preview']))
+        {
+            wp_die(sprintf(/* translators: %s: The current WordPress version. */ __('Twenty Seventeen requires at least WordPress version 4.7. You are running version %s. Please upgrade and try again.', 'twentyseventeen'), $GLOBALS['wp_version']));
         }
     }
-    
+
     add_action('template_redirect', 'twentyseventeen_preview');

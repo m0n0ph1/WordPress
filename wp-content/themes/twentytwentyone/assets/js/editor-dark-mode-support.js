@@ -15,7 +15,7 @@ if (document.body.classList.contains('twentytwentyone-supports-dark-theme')) {
  * @param {number} attempt Track the number of tries
  * @return {void}
  */
-function twentytwentyoneDarkModeEditorInit (attempt) {
+function twentytwentyoneDarkModeEditorInit(attempt) {
     var container = document.querySelector('.block-editor__typewriter'),
         maxAttempts = 8;
 

@@ -42,7 +42,7 @@
          *
          * @return {void}
          */
-        renderPreview: function renderPreview () {
+        renderPreview: function renderPreview() {
             var control = this, previewContainer, previewTemplate, fieldsContainer, fieldsTemplate, linkInput;
             if (!control.model.get('attachment_id') && !control.model.get('url')) {
                 return;
@@ -66,7 +66,7 @@
          *
          * @return {void}
          */
-        editMedia: function editMedia () {
+        editMedia: function editMedia() {
             var control = this, mediaFrame, updateCallback, defaultSync, metadata;
 
             metadata = control.mapModelToMediaFrameProps(control.model.toJSON());
@@ -96,7 +96,7 @@
 
                 control.model.set(_.extend(
                     control.mapMediaToModelProps(mediaProps),
-                    { error: false }
+                    {error: false}
                 ));
             };
 
@@ -105,10 +105,10 @@
 
             // Disable syncing of attachment changes back to server. See <https://core.trac.wordpress.org/ticket/40403>.
             defaultSync = wp.media.model.Attachment.prototype.sync;
-            wp.media.model.Attachment.prototype.sync = function rejectedSync () {
+            wp.media.model.Attachment.prototype.sync = function rejectedSync() {
                 return $.Deferred().rejectWith(this).promise();
             };
-            mediaFrame.on('close', function onClose () {
+            mediaFrame.on('close', function onClose() {
                 mediaFrame.detach();
                 wp.media.model.Attachment.prototype.sync = defaultSync;
             });
@@ -121,7 +121,7 @@
          *
          * @return {Object} Reset/override props.
          */
-        getEmbedResetProps: function getEmbedResetProps () {
+        getEmbedResetProps: function getEmbedResetProps() {
             return _.extend(
                 component.MediaWidgetControl.prototype.getEmbedResetProps.call(this),
                 {
@@ -140,7 +140,7 @@
          * @param {wp.media.view.MediaFrame.Select} mediaFrame - Select frame.
          * @return {Object} Props.
          */
-        getModelPropsFromMediaFrame: function getModelPropsFromMediaFrame (mediaFrame) {
+        getModelPropsFromMediaFrame: function getModelPropsFromMediaFrame(mediaFrame) {
             var control = this;
             return _.omit(
                 component.MediaWidgetControl.prototype.getModelPropsFromMediaFrame.call(control, mediaFrame),
@@ -153,7 +153,7 @@
          *
          * @return {Object} Preview template props.
          */
-        mapModelToPreviewTemplateProps: function mapModelToPreviewTemplateProps () {
+        mapModelToPreviewTemplateProps: function mapModelToPreviewTemplateProps() {
             var control = this, previewTemplateProps, url;
             url = control.model.get('url');
             previewTemplateProps = component.MediaWidgetControl.prototype.mapModelToPreviewTemplateProps.call(control);

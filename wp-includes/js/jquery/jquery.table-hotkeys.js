@@ -108,7 +108,7 @@
         class_prefix: 'vim-',
         selected_suffix: 'current',
         destructive_suffix: 'destructive',
-        hotkeys_opts: { disableInInput: true, type: 'keypress' },
+        hotkeys_opts: {disableInInput: true, type: 'keypress'},
         checkbox_expr: ':checkbox',
         next_key: 'j',
         prev_key: 'k',

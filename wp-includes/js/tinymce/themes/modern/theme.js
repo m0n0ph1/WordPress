@@ -143,7 +143,7 @@
                 editor.focus();
             });
         };
-        var A11y = { addKeys: addKeys };
+        var A11y = {addKeys: addKeys};
 
         var global$6 = tinymce.util.Tools.resolve('tinymce.geom.Rect');
 
@@ -641,7 +641,7 @@
                 }
             });
         };
-        var ContextToolbars = { addContextualToolbars: addContextualToolbars };
+        var ContextToolbars = {addContextualToolbars: addContextualToolbars};
 
         var typeOf = function (x) {
             if (x === null) {
@@ -772,13 +772,13 @@
                 title: 'Tools',
                 items: 'spellchecker spellcheckerlanguage | a11ycheck code'
             },
-            table: { title: 'Table' },
-            help: { title: 'Help' }
+            table: {title: 'Table'},
+            help: {title: 'Help'}
         };
         var delimiterMenuNamePair = function () {
             return {
                 name: '|',
-                item: { text: '|' }
+                item: {text: '|'}
             };
         };
         var createMenuNameItemPair = function (name, item) {
@@ -816,7 +816,7 @@
                 menu = defaultMenus[context];
             }
             if (menu) {
-                menuButton = { text: menu.title };
+                menuButton = {text: menu.title};
                 namedMenuItems = [];
                 global$2.each((menu.items || '').split(/[ ,]/), function (name) {
                     var namedMenuItem = createMenuNameItemPair(name, editorMenuItems[name]);
@@ -880,7 +880,7 @@
             }
             return menuButtons;
         };
-        var Menubar = { createMenuButtons: createMenuButtons };
+        var Menubar = {createMenuButtons: createMenuButtons};
 
         var DOM$1 = global$3.DOM;
         var getSize = function (elm) {
@@ -1030,7 +1030,7 @@
                 }
             };
         };
-        var SkinLoaded = { fireSkinLoaded: fireSkinLoaded$1 };
+        var SkinLoaded = {fireSkinLoaded: fireSkinLoaded$1};
 
         var DOM$2 = global$3.DOM;
         var switchMode = function (panel) {
@@ -1159,7 +1159,7 @@
                 editorContainer: panel.getEl()
             };
         };
-        var Iframe = { render: render };
+        var Iframe = {render: render};
 
         var global$9 = tinymce.util.Tools.resolve('tinymce.dom.DomQuery');
 
@@ -1254,7 +1254,7 @@
             return ctrl.state.get('fixed');
         };
 
-        function calculateRelativePosition (ctrl, targetElm, rel) {
+        function calculateRelativePosition(ctrl, targetElm, rel) {
             var ctrlElm, pos, x, y, selfW, selfH, targetW, targetH, viewport, size;
             viewport = getWindowViewPort();
             pos = funcs.getPos(targetElm, UiContainer.getUiContainer(ctrl));
@@ -1361,7 +1361,7 @@
             moveTo: function (x, y) {
                 var self = this;
 
-                function constrain (value, max, size) {
+                function constrain(value, max, size) {
                     if (value < 0) {
                         return 0;
                     }
@@ -1442,7 +1442,7 @@
                 };
             },
             measureBox: function (elm, prefix) {
-                function getStyle (name) {
+                function getStyle(name) {
                     var defaultView = elm.ownerDocument.defaultView;
                     if (defaultView) {
                         var computedStyle = defaultView.getComputedStyle(elm, null);
@@ -1458,7 +1458,7 @@
                     return elm.currentStyle[name];
                 }
 
-                function getSide (name) {
+                function getSide(name) {
                     var val = parseFloat(getStyle(name));
                     return isNaN(val) ? 0 : val;
                 }
@@ -1472,10 +1472,10 @@
             }
         };
 
-        function noop$1 () {
+        function noop$1() {
         }
 
-        function ClassList (onchange) {
+        function ClassList(onchange) {
             this.cls = [];
             this.cls._map = {};
             this.onchange = onchange || noop$1;
@@ -1540,7 +1540,7 @@
             return value;
         };
 
-        function unique (array) {
+        function unique(array) {
             var uniqueItems = [];
             var i = array.length, item;
             while (i--) {
@@ -1565,7 +1565,7 @@
             init: function (selector) {
                 var match = this.match;
 
-                function compileNameFilter (name) {
+                function compileNameFilter(name) {
                     if (name) {
                         name = name.toLowerCase();
                         return function (item) {
@@ -1574,7 +1574,7 @@
                     }
                 }
 
-                function compileIdFilter (id) {
+                function compileIdFilter(id) {
                     if (id) {
                         return function (item) {
                             return item._name === id;
@@ -1582,7 +1582,7 @@
                     }
                 }
 
-                function compileClassesFilter (classes) {
+                function compileClassesFilter(classes) {
                     if (classes) {
                         classes = classes.split('.');
                         return function (item) {
@@ -1597,7 +1597,7 @@
                     }
                 }
 
-                function compileAttrFilter (name, cmp, check) {
+                function compileAttrFilter(name, cmp, check) {
                     if (name) {
                         return function (item) {
                             var value = item[name] ? item[name]() : '';
@@ -1606,7 +1606,7 @@
                     }
                 }
 
-                function compilePsuedoFilter (name) {
+                function compilePsuedoFilter(name) {
                     var notSelectors;
                     if (name) {
                         name = /(?:not\((.+)\))|(.+)/i.exec(name);
@@ -1623,10 +1623,10 @@
                     }
                 }
 
-                function compile (selector, filters, direct) {
+                function compile(selector, filters, direct) {
                     var parts;
 
-                    function add (filter) {
+                    function add(filter) {
                         if (filter) {
                             filters.push(filter);
                         }
@@ -1643,7 +1643,7 @@
                     return filters;
                 }
 
-                function parseChunks (selector, selectors) {
+                function parseChunks(selector, selectors) {
                     var parts = [];
                     var extra, matches, i;
                     do {
@@ -1720,7 +1720,7 @@
                 var matches = [], i, l;
                 var selectors = this._selectors;
 
-                function collect (items, selector, index) {
+                function collect(items, selector, index) {
                     var i, l, fi, fl, item;
                     var filters = selector[index];
                     for (i = 0, l = items.length; i < l; i++) {
@@ -1944,11 +1944,11 @@
 
         var global$c = tinymce.util.Tools.resolve('tinymce.util.Observable');
 
-        function isNode (node) {
+        function isNode(node) {
             return node.nodeType > 0;
         }
 
-        function isEqual (a, b) {
+        function isEqual(a, b) {
             var k, checked;
             if (a === b) {
                 return true;
@@ -2079,7 +2079,7 @@
         var classPrefix = 'mce-';
         var Control, idCounter = 0;
         var proto$1 = {
-            Statics: { classPrefix: classPrefix },
+            Statics: {classPrefix: classPrefix},
             isRtl: function () {
                 return Control.rtl;
             },
@@ -2088,7 +2088,7 @@
                 var self = this;
                 var classes, defaultClasses;
 
-                function applyClasses (classes) {
+                function applyClasses(classes) {
                     var i;
                     classes = classes.split(' ');
                     for (i = 0; i < classes.length; i++) {
@@ -2098,7 +2098,7 @@
 
                 self.settings = settings = global$2.extend({}, self.Defaults, settings);
                 self._id = settings.id || 'mceu_' + idCounter++;
-                self._aria = { role: settings.role };
+                self._aria = {role: settings.role};
                 self._elmCache = {};
                 self.$ = global$9;
                 self.state = new ObservableObject({
@@ -2345,7 +2345,7 @@
             on: function (name, callback) {
                 var self = this;
 
-                function resolveCallbackName (name) {
+                function resolveCallbackName(name) {
                     var callback, scope;
                     if (typeof name !== 'string') {
                         return name;
@@ -2604,7 +2604,7 @@
             bindStates: function () {
             },
             scrollIntoView: function (align) {
-                function getOffset (elm, rootElm) {
+                function getOffset(elm, rootElm) {
                     var x, y, parent = elm;
                     x = y = 0;
                     while (parent && parent !== rootElm && parent.nodeType) {
@@ -2681,7 +2681,7 @@
         });
         Control = global$a.extend(proto$1);
 
-        function getEventDispatcher (obj) {
+        function getEventDispatcher(obj) {
             if (!obj._eventDispatcher) {
                 obj._eventDispatcher = new global$b({
                     scope: obj,
@@ -2701,28 +2701,28 @@
             return obj._eventDispatcher;
         }
 
-        function bindPendingEvents (eventCtrl) {
+        function bindPendingEvents(eventCtrl) {
             var i, l, parents, eventRootCtrl, nativeEvents, name;
 
-            function delegate (e) {
+            function delegate(e) {
                 var control = eventCtrl.getParentCtrl(e.target);
                 if (control) {
                     control.fire(e.type, e);
                 }
             }
 
-            function mouseLeaveHandler () {
+            function mouseLeaveHandler() {
                 var ctrl = eventRootCtrl._lastHoverCtrl;
                 if (ctrl) {
-                    ctrl.fire('mouseleave', { target: ctrl.getEl() });
+                    ctrl.fire('mouseleave', {target: ctrl.getEl()});
                     ctrl.parents().each(function (ctrl) {
-                        ctrl.fire('mouseleave', { target: ctrl.getEl() });
+                        ctrl.fire('mouseleave', {target: ctrl.getEl()});
                     });
                     eventRootCtrl._lastHoverCtrl = null;
                 }
             }
 
-            function mouseEnterHandler (e) {
+            function mouseEnterHandler(e) {
                 var ctrl = eventCtrl.getParentCtrl(e.target), lastCtrl = eventRootCtrl._lastHoverCtrl, idx = 0, i,
                     parents, lastParents;
                 if (ctrl !== lastCtrl) {
@@ -2739,17 +2739,17 @@
                         }
                         for (i = lastParents.length - 1; i >= idx; i--) {
                             lastCtrl = lastParents[i];
-                            lastCtrl.fire('mouseleave', { target: lastCtrl.getEl() });
+                            lastCtrl.fire('mouseleave', {target: lastCtrl.getEl()});
                         }
                     }
                     for (i = idx; i < parents.length; i++) {
                         ctrl = parents[i];
-                        ctrl.fire('mouseenter', { target: ctrl.getEl() });
+                        ctrl.fire('mouseenter', {target: ctrl.getEl()});
                     }
                 }
             }
 
-            function fixWheelEvent (e) {
+            function fixWheelEvent(e) {
                 e.preventDefault();
                 if (e.type === 'mousewheel') {
                     e.deltaY = -1 / 40 * e.wheelDelta;
@@ -2813,11 +2813,11 @@
             return elm.getAttribute('data-mce-tabstop') ? true : false;
         };
 
-        function KeyboardNavigation (settings) {
+        function KeyboardNavigation(settings) {
             var root = settings.root;
             var focusedElement, focusedControl;
 
-            function isElement (node) {
+            function isElement(node) {
                 return node && node.nodeType === 1;
             }
 
@@ -2828,7 +2828,7 @@
             }
             focusedControl = root.getParentCtrl(focusedElement);
 
-            function getRole (elm) {
+            function getRole(elm) {
                 elm = elm || focusedElement;
                 if (isElement(elm)) {
                     return elm.getAttribute('role');
@@ -2836,7 +2836,7 @@
                 return null;
             }
 
-            function getParentRole (elm) {
+            function getParentRole(elm) {
                 var role, parent = elm || focusedElement;
                 while (parent = parent.parentNode) {
                     if (role = getRole(parent)) {
@@ -2845,19 +2845,19 @@
                 }
             }
 
-            function getAriaProp (name) {
+            function getAriaProp(name) {
                 var elm = focusedElement;
                 if (isElement(elm)) {
                     return elm.getAttribute('aria-' + name);
                 }
             }
 
-            function isTextInputElement (elm) {
+            function isTextInputElement(elm) {
                 var tagName = elm.tagName.toUpperCase();
                 return tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT';
             }
 
-            function canFocus (elm) {
+            function canFocus(elm) {
                 if (isTextInputElement(elm) && !elm.hidden) {
                     return true;
                 }
@@ -2870,10 +2870,10 @@
                 return false;
             }
 
-            function getFocusElements (elm) {
+            function getFocusElements(elm) {
                 var elements = [];
 
-                function collect (elm) {
+                function collect(elm) {
                     if (elm.nodeType !== 1 || elm.style.display === 'none' || elm.disabled) {
                         return;
                     }
@@ -2889,7 +2889,7 @@
                 return elements;
             }
 
-            function getNavigationRoot (targetControl) {
+            function getNavigationRoot(targetControl) {
                 var navigationRoot, controls;
                 targetControl = targetControl || focusedControl;
                 controls = targetControl.parents().toArray();
@@ -2903,7 +2903,7 @@
                 return navigationRoot;
             }
 
-            function focusFirst (targetControl) {
+            function focusFirst(targetControl) {
                 var navigationRoot = getNavigationRoot(targetControl);
                 var focusElements = getFocusElements(navigationRoot.getEl());
                 if (navigationRoot.settings.ariaRemember && 'lastAriaIndex' in navigationRoot) {
@@ -2913,7 +2913,7 @@
                 }
             }
 
-            function moveFocusToIndex (idx, elements) {
+            function moveFocusToIndex(idx, elements) {
                 if (idx < 0) {
                     idx = elements.length - 1;
                 } else if (idx >= elements.length) {
@@ -2925,7 +2925,7 @@
                 return idx;
             }
 
-            function moveFocus (dir, elements) {
+            function moveFocus(dir, elements) {
                 var idx = -1;
                 var navigationRoot = getNavigationRoot();
                 elements = elements || getFocusElements(navigationRoot.getEl());
@@ -2938,7 +2938,7 @@
                 navigationRoot.lastAriaIndex = moveFocusToIndex(idx, elements);
             }
 
-            function left () {
+            function left() {
                 var parentRole = getParentRole();
                 if (parentRole === 'tablist') {
                     moveFocus(-1, getFocusElements(focusedElement.parentNode));
@@ -2949,7 +2949,7 @@
                 }
             }
 
-            function right () {
+            function right() {
                 var role = getRole(), parentRole = getParentRole();
                 if (parentRole === 'tablist') {
                     moveFocus(1, getFocusElements(focusedElement.parentNode));
@@ -2960,22 +2960,22 @@
                 }
             }
 
-            function up () {
+            function up() {
                 moveFocus(-1);
             }
 
-            function down () {
+            function down() {
                 var role = getRole(), parentRole = getParentRole();
                 if (role === 'menuitem' && parentRole === 'menubar') {
                     enter();
                 } else if (role === 'button' && getAriaProp('haspopup')) {
-                    enter({ key: 'down' });
+                    enter({key: 'down'});
                 } else {
                     moveFocus(1);
                 }
             }
 
-            function tab (e) {
+            function tab(e) {
                 var parentRole = getParentRole();
                 if (parentRole === 'tablist') {
                     var elm = getFocusElements(focusedControl.getEl('body'))[0];
@@ -2987,11 +2987,11 @@
                 }
             }
 
-            function cancel () {
+            function cancel() {
                 focusedControl.fire('cancel');
             }
 
-            function enter (aria) {
+            function enter(aria) {
                 aria = aria || {};
                 focusedControl.fire('click', {
                     target: focusedElement,
@@ -3000,7 +3000,7 @@
             }
 
             root.on('keydown', function (e) {
-                function handleNonTabOrEscEvent (e, handler) {
+                function handleNonTabOrEscEvent(e, handler) {
                     if (isTextInputElement(focusedElement) || hasTabstopData(focusedElement)) {
                         return;
                     }
@@ -3046,7 +3046,7 @@
                 focusedElement = e.target;
                 focusedControl = e.control;
             });
-            return { focusFirst: focusFirst };
+            return {focusFirst: focusFirst};
         }
 
         var selectorCache = {};
@@ -3154,7 +3154,7 @@
                     if (item) {
                         if (!(item instanceof Control$1)) {
                             if (typeof item === 'string') {
-                                item = { type: item };
+                                item = {type: item};
                             }
                             settings = global$2.extend({}, self.settings.defaults, item);
                             item.type = settings.type = settings.type || item.type || self.settings.defaultType || (settings.defaults ? settings.defaults.type : null);
@@ -3251,7 +3251,7 @@
                     });
                 }
                 if (!self.parent()) {
-                    self.keyboardNav = KeyboardNavigation({ root: self });
+                    self.keyboardNav = KeyboardNavigation({root: self});
                 }
                 return self;
             },
@@ -3296,7 +3296,7 @@
             }
         });
 
-        function getDocumentSize (doc) {
+        function getDocumentSize(doc) {
             var documentElement, body, scrollWidth, clientWidth;
             var offsetWidth, scrollHeight, clientHeight, offsetHeight;
             var max = Math.max;
@@ -3314,7 +3314,7 @@
             };
         }
 
-        function updateWithTouchData (e) {
+        function updateWithTouchData(e) {
             var keys, i;
             if (e.changedTouches) {
                 keys = 'screenX screenY pageX pageY clientX clientY'.split(' ');
@@ -3324,7 +3324,7 @@
             }
         }
 
-        function DragHelper (id, settings) {
+        function DragHelper(id, settings) {
             var $eventOverlay;
             var doc = settings.document || domGlobals.document;
             var downButton;
@@ -3390,10 +3390,10 @@
             renderScroll: function () {
                 var self = this, margin = 2;
 
-                function repaintScroll () {
+                function repaintScroll() {
                     var hasScrollH, hasScrollV, bodyElm;
 
-                    function repaintAxis (axisName, posName, sizeName, contentSizeName, hasScroll, ax) {
+                    function repaintAxis(axisName, posName, sizeName, contentSizeName, hasScroll, ax) {
                         var containerElm, scrollBarElm, scrollThumbElm;
                         var containerSize, scrollSize, ratio, rect;
                         var posNameLower, sizeNameLower;
@@ -3431,8 +3431,8 @@
                     repaintAxis('v', 'Top', 'Height', 'contentH', hasScrollV, 'Width');
                 }
 
-                function addScroll () {
-                    function addScrollAxis (axisName, posName, sizeName, deltaPosName, ax) {
+                function addScroll() {
+                    function addScrollAxis(axisName, posName, sizeName, deltaPosName, ax) {
                         var scrollStart;
                         var axisId = self._id + '-scroll' + axisName, prefix = self.classPrefix;
                         global$9(self.getEl()).append('<div id="' + axisId + '" class="' + prefix + 'scrollbar ' + prefix + 'scrollbar-' + axisName + '">' + '<div id="' + axisId + 't" class="' + prefix + 'scrollbar-thumb"></div>' + '</div>');
@@ -3534,7 +3534,7 @@
         var zOrder = [];
         var hasModal;
 
-        function isChildOf (ctrl, parent) {
+        function isChildOf(ctrl, parent) {
             while (ctrl) {
                 if (ctrl === parent) {
                     return true;
@@ -3543,7 +3543,7 @@
             }
         }
 
-        function skipOrHidePanels (e) {
+        function skipOrHidePanels(e) {
             var i = visiblePanels.length;
             while (i--) {
                 var panel = visiblePanels[i], clickCtrl = panel.getParentCtrl(e.target);
@@ -3553,7 +3553,7 @@
                             continue;
                         }
                     }
-                    e = panel.fire('autohide', { target: e.target });
+                    e = panel.fire('autohide', {target: e.target});
                     if (!e.isDefaultPrevented()) {
                         panel.hide();
                     }
@@ -3561,7 +3561,7 @@
             }
         }
 
-        function bindDocumentClickHandler () {
+        function bindDocumentClickHandler() {
             if (!documentClickHandler) {
                 documentClickHandler = function (e) {
                     if (e.button === 2) {
@@ -3573,7 +3573,7 @@
             }
         }
 
-        function bindDocumentScrollHandler () {
+        function bindDocumentScrollHandler() {
             if (!documentScrollHandler) {
                 documentScrollHandler = function () {
                     var i;
@@ -3586,7 +3586,7 @@
             }
         }
 
-        function bindWindowResizeHandler () {
+        function bindWindowResizeHandler() {
             if (!windowResizeHandler) {
                 var docElm_1 = domGlobals.document.documentElement;
                 var clientWidth_1 = docElm_1.clientWidth, clientHeight_1 = docElm_1.clientHeight;
@@ -3601,10 +3601,10 @@
             }
         }
 
-        function repositionPanel (panel) {
+        function repositionPanel(panel) {
             var scrollY = funcs.getViewPort().y;
 
-            function toggleFixedChildPanels (fixed, deltaY) {
+            function toggleFixedChildPanels(fixed, deltaY) {
                 var parent;
                 for (var i = 0; i < visiblePanels.length; i++) {
                     if (visiblePanels[i] !== panel) {
@@ -3622,19 +3622,19 @@
                 if (!panel.state.get('fixed')) {
                     panel._autoFixY = panel.layoutRect().y;
                     if (panel._autoFixY < scrollY) {
-                        panel.fixed(true).layoutRect({ y: 0 }).repaint();
+                        panel.fixed(true).layoutRect({y: 0}).repaint();
                         toggleFixedChildPanels(true, scrollY - panel._autoFixY);
                     }
                 } else {
                     if (panel._autoFixY > scrollY) {
-                        panel.fixed(false).layoutRect({ y: panel._autoFixY }).repaint();
+                        panel.fixed(false).layoutRect({y: panel._autoFixY}).repaint();
                         toggleFixedChildPanels(false, panel._autoFixY - scrollY);
                     }
                 }
             }
         }
 
-        function addRemove (add, ctrl) {
+        function addRemove(add, ctrl) {
             var i, zIndex = FloatPanel.zIndex || 65535, topModal;
             if (add) {
                 zOrder.push(ctrl);
@@ -3792,7 +3792,7 @@
             }
         };
 
-        function removeVisiblePanel (panel) {
+        function removeVisiblePanel(panel) {
             var i;
             i = visiblePanels.length;
             while (i--) {
@@ -3916,15 +3916,15 @@
             }
             return {};
         };
-        var Inline = { render: render$1 };
+        var Inline = {render: render$1};
 
-        function Throbber (elm, inline) {
+        function Throbber(elm, inline) {
             var self = this;
             var state;
             var classPrefix = Control$1.classPrefix;
             var timer;
             self.show = function (time, callback) {
-                function render () {
+                function render() {
                     if (state) {
                         global$9(elm).append('<div class="' + classPrefix + 'throbber' + (inline ? ' ' + classPrefix + 'throbber-inline' : '') + '"></div>');
                         if (callback) {
@@ -3964,7 +3964,7 @@
                 }
             });
         };
-        var ProgressState = { setup: setup };
+        var ProgressState = {setup: setup};
 
         var renderUI = function (editor, theme, args) {
             var skinUrl = getSkinUrl(editor);
@@ -3975,11 +3975,11 @@
             ProgressState.setup(editor, theme);
             return isInline(editor) ? Inline.render(editor, theme, args) : Iframe.render(editor, theme, args);
         };
-        var Render = { renderUI: renderUI };
+        var Render = {renderUI: renderUI};
 
         var Tooltip = Control$1.extend({
             Mixins: [Movable],
-            Defaults: { classes: 'widget tooltip tooltip-n' },
+            Defaults: {classes: 'widget tooltip tooltip-n'},
             renderHtml: function () {
                 var self = this, prefix = self.classPrefix;
                 return '<div id="' + self._id + '" class="' + self.classes + '" role="presentation">' + '<div class="' + prefix + 'tooltip-arrow"></div>' + '<div class="' + prefix + 'tooltip-inner">' + self.encode(self.state.get('text')) + '</div>' + '</div>';
@@ -4034,7 +4034,7 @@
             },
             tooltip: function () {
                 if (!this._tooltip) {
-                    this._tooltip = new Tooltip({ type: 'tooltip' });
+                    this._tooltip = new Tooltip({type: 'tooltip'});
                     UiContainer.inheritUiContainer(this, this._tooltip);
                     this._tooltip.renderTo();
                 }
@@ -4054,12 +4054,12 @@
             bindStates: function () {
                 var self = this;
 
-                function disable (state) {
+                function disable(state) {
                     self.aria('disabled', state);
                     self.classes.toggle('disabled', state);
                 }
 
-                function active (state) {
+                function active(state) {
                     self.aria('pressed', state);
                     self.classes.toggle('active', state);
                 }
@@ -4088,7 +4088,7 @@
         });
 
         var Progress = Widget.extend({
-            Defaults: { value: 0 },
+            Defaults: {value: 0},
             init: function (settings) {
                 var self = this;
                 self._super(settings);
@@ -4112,7 +4112,7 @@
             bindStates: function () {
                 var self = this;
 
-                function setValue (value) {
+                function setValue(value) {
                     value = self.settings.filter(value);
                     self.getEl().lastChild.innerHTML = value + '%';
                     self.getEl().firstChild.firstChild.style.width = value + '%';
@@ -4131,7 +4131,7 @@
         };
         var Notification = Control$1.extend({
             Mixins: [Movable],
-            Defaults: { classes: 'widget notification' },
+            Defaults: {classes: 'widget notification'},
             init: function (settings) {
                 var self = this;
                 self._super(settings);
@@ -4219,7 +4219,7 @@
             }
         });
 
-        function NotificationManagerImpl (editor) {
+        function NotificationManagerImpl(editor) {
             var getEditorContainer = function (editor) {
                 return editor.inline ? editor.getElement() : editor.getContentAreaContainer();
             };
@@ -4249,7 +4249,7 @@
                 positionNotifications(notifications);
             };
             var open = function (args, closeCallback) {
-                var extendedArgs = global$2.extend(args, { maxWidth: getContainerWidth() });
+                var extendedArgs = global$2.extend(args, {maxWidth: getContainerWidth()});
                 var notif = new Notification(extendedArgs);
                 notif.args = extendedArgs;
                 if (extendedArgs.timeout > 0) {
@@ -4281,7 +4281,7 @@
         var windows = [];
         var oldMetaValue = '';
 
-        function toggleFullScreenState (state) {
+        function toggleFullScreenState(state) {
             var noScaleMetaValue = 'width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0';
             var viewport = global$9('meta[name=viewport]')[0], contentValue;
             if (global$8.overrideViewPort === false) {
@@ -4299,7 +4299,7 @@
             viewport.setAttribute('content', state ? noScaleMetaValue : oldMetaValue);
         }
 
-        function toggleBodyFullScreenClasses (classPrefix, state) {
+        function toggleBodyFullScreenClasses(classPrefix, state) {
             if (checkFullscreenWindows() && state === false) {
                 global$9([
                     domGlobals.document.documentElement,
@@ -4308,7 +4308,7 @@
             }
         }
 
-        function checkFullscreenWindows () {
+        function checkFullscreenWindows() {
             for (var i = 0; i < windows.length; i++) {
                 if (windows[i]._fullscreen) {
                     return true;
@@ -4317,7 +4317,7 @@
             return false;
         }
 
-        function handleWindowResize () {
+        function handleWindowResize() {
             if (!global$8.desktop) {
                 var lastSize_1 = {
                     w: domGlobals.window.innerWidth,
@@ -4335,7 +4335,7 @@
                 }, 100);
             }
 
-            function reposition () {
+            function reposition() {
                 var i;
                 var rect = funcs.getWindowSize();
                 var layoutRect;
@@ -4357,7 +4357,7 @@
                 role: 'dialog',
                 callbacks: {
                     submit: function () {
-                        this.fire('submit', { data: this.toJSON() });
+                        this.fire('submit', {data: this.toJSON()});
                     },
                     close: function () {
                         this.close();
@@ -4381,7 +4381,7 @@
                         padding: 10,
                         align: 'center',
                         pack: self.isRtl() ? 'start' : 'end',
-                        defaults: { type: 'button' },
+                        defaults: {type: 'button'},
                         items: settings.buttons
                     });
                     self.statusbar.classes.add('foot');
@@ -4427,7 +4427,7 @@
                     }
                 }
                 if (statusbar) {
-                    statusbar.layoutRect({ w: self.layoutRect().innerW }).recalc();
+                    statusbar.layoutRect({w: self.layoutRect().innerW}).recalc();
                     width = statusbar.layoutRect().minW + layoutRect.deltaW;
                     if (width > layoutRect.w) {
                         x = layoutRect.x - Math.max(0, width - layoutRect.w);
@@ -4577,7 +4577,7 @@
                 toggleFullScreenState(true);
             },
             submit: function () {
-                return this.fire('submit', { data: this.toJSON() });
+                return this.fire('submit', {data: this.toJSON()});
             },
             remove: function () {
                 var self = this;
@@ -4637,7 +4637,7 @@
                     var callback = settings.callback || function () {
                     };
 
-                    function createButton (text, status, primary) {
+                    function createButton(text, status, primary) {
                         return {
                             type: 'button',
                             text: text,
@@ -4700,14 +4700,14 @@
                 },
                 alert: function (settings, callback) {
                     if (typeof settings === 'string') {
-                        settings = { text: settings };
+                        settings = {text: settings};
                     }
                     settings.callback = callback;
                     return MessageBox.msgBox(settings);
                 },
                 confirm: function (settings, callback) {
                     if (typeof settings === 'string') {
-                        settings = { text: settings };
+                        settings = {text: settings};
                     }
                     settings.callback = callback;
                     settings.buttons = MessageBox.OK_CANCEL;
@@ -4716,7 +4716,7 @@
             }
         });
 
-        function WindowManagerImpl (editor) {
+        function WindowManagerImpl(editor) {
             var open = function (args, params, closeCallback) {
                 var win;
                 args.title = args.title || ' ';
@@ -4833,7 +4833,7 @@
                 getWindowManagerImpl: getWindowManagerImpl
             };
         };
-        var ThemeApi = { get: get };
+        var ThemeApi = {get: get};
 
         var Layout = global$a.extend({
             Defaults: {
@@ -4982,7 +4982,7 @@
             bindStates: function () {
                 var self = this, $ = self.$, textCls = self.classPrefix + 'txt';
 
-                function setButtonText (text) {
+                function setButtonText(text) {
                     var $span = $('span.' + textCls, self.getEl());
                     if (text) {
                         if (!$span[0]) {
@@ -5130,7 +5130,7 @@
             bindStates: function () {
                 var self = this;
 
-                function checked (state) {
+                function checked(state) {
                     self.classes.toggle('checked', state);
                     self.aria('checked', state);
                 }
@@ -5212,7 +5212,7 @@
                                 return false;
                             }
                         });
-                        self.fire('submit', { data: rootControl.toJSON() });
+                        self.fire('submit', {data: rootControl.toJSON()});
                     }
                 });
                 self.on('keyup', function (e) {
@@ -5291,7 +5291,7 @@
                     self.aria('expanded', true);
                 }
                 self.menu.show();
-                self.menu.layoutRect({ w: self.layoutRect().w });
+                self.menu.layoutRect({w: self.layoutRect().w});
                 self.menu.moveRel(self.getEl(), self.isRtl() ? [
                     'br-tr',
                     'tr-br'
@@ -5662,7 +5662,7 @@
         var global$e = tinymce.util.Tools.resolve('tinymce.util.Color');
 
         var ColorPicker = Widget.extend({
-            Defaults: { classes: 'widget colorpicker' },
+            Defaults: {classes: 'widget colorpicker'},
             init: function (settings) {
                 this._super(settings);
             },
@@ -5675,7 +5675,7 @@
                 svRootElm = self.getEl('sv');
                 svPointElm = self.getEl('svp');
 
-                function getPos (elm, event) {
+                function getPos(elm, event) {
                     var pos = funcs.getPos(elm);
                     var x, y;
                     x = event.pageX - pos.x;
@@ -5688,9 +5688,9 @@
                     };
                 }
 
-                function updateColor (hsv, hueUpdate) {
+                function updateColor(hsv, hueUpdate) {
                     var hue = (360 - hsv.h) / 360;
-                    funcs.css(huePointElm, { top: hue * 100 + '%' });
+                    funcs.css(huePointElm, {top: hue * 100 + '%'});
                     if (!hueUpdate) {
                         funcs.css(svPointElm, {
                             left: hsv.s + '%',
@@ -5709,7 +5709,7 @@
                     });
                 }
 
-                function updateSaturationAndValue (e) {
+                function updateSaturationAndValue(e) {
                     var pos;
                     pos = getPos(svRootElm, e);
                     hsv.s = pos.x * 100;
@@ -5718,7 +5718,7 @@
                     self.fire('change');
                 }
 
-                function updateHue (e) {
+                function updateHue(e) {
                     var pos;
                     pos = getPos(hueRootElm, e);
                     hsv = color.toHsv();
@@ -5769,7 +5769,7 @@
                 var hueHtml;
                 var stops = '#ff0000,#ff0080,#ff00ff,#8000ff,#0000ff,#0080ff,#00ffff,#00ff80,#00ff00,#80ff00,#ffff00,#ff8000,#ff0000';
 
-                function getOldIeFallbackHtml () {
+                function getOldIeFallbackHtml() {
                     var i, l, html = '', gradientPrefix, stopsList;
                     gradientPrefix = 'filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=';
                     stopsList = stops.split(',');
@@ -5930,7 +5930,7 @@
             postRender: function () {
                 var self = this, editor = self.settings.editor;
 
-                function isHidden (elm) {
+                function isHidden(elm) {
                     if (elm.nodeType === 1) {
                         if (elm.nodeName === 'BR' || !!elm.getAttribute('data-mce-bogus')) {
                             return true;
@@ -5980,7 +5980,7 @@
             Defaults: {
                 layout: 'flex',
                 align: 'center',
-                defaults: { flex: 1 }
+                defaults: {flex: 1}
             },
             renderHtml: function () {
                 var self = this, layout = self._layout, prefix = self.classPrefix;
@@ -6012,7 +6012,7 @@
                     self.settings.formItemDefaults = {
                         layout: 'flex',
                         autoResize: 'overflow',
-                        defaults: { flex: 1 }
+                        defaults: {flex: 1}
                     };
                 }
                 items.each(function (ctrl) {
@@ -6040,7 +6040,7 @@
                 });
             },
             submit: function () {
-                return this.fire('submit', { data: this.toJSON() });
+                return this.fire('submit', {data: this.toJSON()});
             },
             postRender: function () {
                 var self = this;
@@ -6051,7 +6051,7 @@
                 var self = this;
                 self._super();
 
-                function recalcLabels () {
+                function recalcLabels() {
                     var maxLabelWidth = 0;
                     var labels = [];
                     var i, labelGap, items;
@@ -6133,7 +6133,7 @@
             if (node === null || node === undefined) {
                 throw new Error('Node cannot be null or undefined');
             }
-            return { dom: constant(node) };
+            return {dom: constant(node)};
         };
         var fromPoint = function (docElm, x, y) {
             var doc = docElm.dom();
@@ -6200,7 +6200,7 @@
             }
             return actual;
         };
-        var Global$1 = { getOrDie: getOrDie };
+        var Global$1 = {getOrDie: getOrDie};
 
         var Immutable = function () {
             var fields = [];
@@ -6544,13 +6544,13 @@
                 deviceType: deviceType
             };
         };
-        var PlatformDetection = { detect: detect$2 };
+        var PlatformDetection = {detect: detect$2};
 
         var detect$3 = cached(function () {
             var userAgent = domGlobals.navigator.userAgent;
             return PlatformDetection.detect(userAgent);
         });
-        var PlatformDetection$1 = { detect: detect$3 };
+        var PlatformDetection$1 = {detect: detect$3};
 
         var ELEMENT$1 = ELEMENT;
         var DOCUMENT$1 = DOCUMENT;
@@ -6675,7 +6675,7 @@
             var elms = getTargetElements(elm);
             return filter(getHeaderTargets(elms).concat(getAnchorTargets(elms)), hasTitle);
         };
-        var LinkTargets = { find: find$2 };
+        var LinkTargets = {find: find$2};
 
         var getActiveEditor = function () {
             return window.tinymce ? window.tinymce.activeEditor : global$1.activeEditor;
@@ -6689,7 +6689,7 @@
             return {
                 title: target.title,
                 value: {
-                    title: { raw: target.title },
+                    title: {raw: target.title},
                     url: target.url,
                     attach: target.attach
                 }
@@ -6719,7 +6719,7 @@
             return value === false ? null : value;
         };
         var createMenuItems = function (term, targets, fileType, editorSettings) {
-            var separator = { title: '-' };
+            var separator = {title: '-'};
             var fromHistoryMenuItems = function (history) {
                 var historyItems = history.hasOwnProperty(fileType) ? history[fileType] : [];
                 var uniqueHistory = filter(historyItems, function (url) {
@@ -6883,7 +6883,7 @@
             }
         };
         var FilePicker = ComboBox.extend({
-            Statics: { clearHistory: clearHistory },
+            Statics: {clearHistory: clearHistory},
             init: function (settings) {
                 var self = this, editor = getActiveEditor(), editorSettings = editor.settings;
                 var actionCallback, fileBrowserCallback, fileBrowserCallbackTypes;
@@ -6898,9 +6898,9 @@
                     if (fileBrowserCallback && (!fileBrowserCallbackTypes || fileBrowserCallbackTypes[fileType])) {
                         actionCallback = function () {
                             var meta = self.fire('beforecall').meta;
-                            meta = global$2.extend({ filetype: fileType }, meta);
+                            meta = global$2.extend({filetype: fileType}, meta);
                             fileBrowserCallback.call(editor, function (value, meta) {
-                                self.value(value).fire('change', { meta: meta });
+                                self.value(value).fire('change', {meta: meta});
                             }, self.value(), meta);
                         };
                     } else {
@@ -7240,7 +7240,7 @@
                 });
             });
         };
-        var Align = { register: register };
+        var Align = {register: register};
 
         var getFirstFont = function (fontFamily) {
             return fontFamily ? fontFamily.split(',')[0] : '';
@@ -7287,7 +7287,7 @@
             var fonts = createFormats(editor.settings.font_formats || defaultFontsFormats);
             return global$2.map(fonts, function (font) {
                 return {
-                    text: { raw: font[0] },
+                    text: {raw: font[0]},
                     value: font[1],
                     textStyle: font[1].indexOf('dings') === -1 ? 'font-family:' + font[1] : ''
                 };
@@ -7314,7 +7314,7 @@
         var register$1 = function (editor) {
             registerButtons(editor);
         };
-        var FontSelect = { register: register$1 };
+        var FontSelect = {register: register$1};
 
         var round = function (number, precision) {
             var factor = Math.pow(10, precision);
@@ -7393,7 +7393,7 @@
         var register$2 = function (editor) {
             registerButtons$1(editor);
         };
-        var FontSizeSelect = { register: register$2 };
+        var FontSizeSelect = {register: register$2};
 
         var hideMenuObjects = function (editor, menu) {
             var count = menu.length;
@@ -7597,7 +7597,7 @@
                 type: 'menu',
                 items: createStylesMenu(),
                 onPostRender: function (e) {
-                    editor.fire('renderFormatsMenu', { control: e.control });
+                    editor.fire('renderFormatsMenu', {control: e.control});
                 },
                 itemDefaults: {
                     preview: true,
@@ -7655,7 +7655,7 @@
             registerMenuItems(editor, formatMenu);
             registerButtons$2(editor, formatMenu);
         };
-        var Formats = { register: register$3 };
+        var Formats = {register: register$3};
 
         var defaultBlocks = 'Paragraph=p;' + 'Heading 1=h1;' + 'Heading 2=h2;' + 'Heading 3=h3;' + 'Heading 4=h4;' + 'Heading 5=h5;' + 'Heading 6=h6;' + 'Preformatted=pre';
         var createFormats$1 = function (formats) {
@@ -7675,7 +7675,7 @@
                     global$2.each(e.parents, function (node) {
                         global$2.each(items, function (item) {
                             if (formatName) {
-                                if (formatter.matchNode(node, formatName, { value: item.value })) {
+                                if (formatter.matchNode(node, formatName, {value: item.value})) {
                                     value = item.value;
                                 }
                             } else {
@@ -7741,7 +7741,7 @@
             });
             editor.addButton('formatselect', lazyFormatSelectBoxItems(editor, blocks));
         };
-        var FormatSelect = { register: register$4 };
+        var FormatSelect = {register: register$4};
 
         var createCustomMenuItems = function (editor, names) {
             var items, nameList;
@@ -7756,7 +7756,7 @@
                 return name === '|' || name in editor.menuItems;
             });
             return global$2.map(items, function (name) {
-                return name === '|' ? { text: '-' } : editor.menuItems[name];
+                return name === '|' ? {text: '-'} : editor.menuItems[name];
             });
         };
         var isSeparator$1 = function (menuItem) {
@@ -7771,13 +7771,13 @@
             });
         };
         var createContextMenuItems = function (editor, context) {
-            var outputMenuItems = [{ text: '-' }];
+            var outputMenuItems = [{text: '-'}];
             var menuItems = global$2.grep(editor.menuItems, function (menuItem) {
                 return menuItem.context === context;
             });
             global$2.each(menuItems, function (menuItem) {
                 if (menuItem.separator === 'before') {
-                    outputMenuItems.push({ text: '|' });
+                    outputMenuItems.push({text: '|'});
                 }
                 if (menuItem.prependToContext) {
                     outputMenuItems.unshift(menuItem);
@@ -7785,7 +7785,7 @@
                     outputMenuItems.push(menuItem);
                 }
                 if (menuItem.separator === 'after') {
-                    outputMenuItems.push({ text: '|' });
+                    outputMenuItems.push({text: '|'});
                 }
             });
             return outputMenuItems;
@@ -7812,7 +7812,7 @@
         var register$5 = function (editor) {
             registerButtons$3(editor);
         };
-        var InsertButton = { register: register$5 };
+        var InsertButton = {register: register$5};
 
         var registerFormatButtons = function (editor) {
             global$2.each({
@@ -7987,7 +7987,7 @@
             registerButtons$4(editor);
             registerMenuItems$1(editor);
         };
-        var SimpleControls = { register: register$6 };
+        var SimpleControls = {register: register$6};
 
         var toggleUndoRedoState = function (editor, type) {
             return function () {
@@ -8034,7 +8034,7 @@
             registerMenuItems$2(editor);
             registerButtons$5(editor);
         };
-        var UndoRedo = { register: register$7 };
+        var UndoRedo = {register: register$7};
 
         var toggleVisualAidState = function (editor) {
             return function () {
@@ -8056,7 +8056,7 @@
         var register$8 = function (editor) {
             registerMenuItems$3(editor);
         };
-        var VisualAid = { register: register$8 };
+        var VisualAid = {register: register$8};
 
         var setupEnvironment = function () {
             Widget.tooltips = !global$8.iOS;
@@ -8096,7 +8096,7 @@
             VisualAid.register(editor);
             InsertButton.register(editor);
         };
-        var FormatControls = { setup: setup$1 };
+        var FormatControls = {setup: setup$1};
 
         var GridLayout = AbsoluteLayout.extend({
             recalc: function (container) {
@@ -8400,11 +8400,11 @@
                 role: 'menubar',
                 containerCls: 'menubar',
                 ariaRoot: true,
-                defaults: { type: 'menubutton' }
+                defaults: {type: 'menubutton'}
             }
         });
 
-        function isChildOf$1 (node, parent) {
+        function isChildOf$1(node, parent) {
             while (node) {
                 if (parent === node) {
                     return true;
@@ -8475,7 +8475,7 @@
                     }).fire('show');
                 }
                 self.menu.show();
-                self.menu.layoutRect({ w: self.layoutRect().w });
+                self.menu.layoutRect({w: self.layoutRect().w});
                 self.menu.repaint();
                 self.menu.moveRel(self.getEl(), self.isRtl() ? [
                     'br-tr',
@@ -8624,7 +8624,7 @@
                 var self = this;
                 var time, factory;
 
-                function hideThrobber () {
+                function hideThrobber() {
                     if (self.throbber) {
                         self.throbber.hide();
                         self.throbber = null;
@@ -8708,7 +8708,7 @@
                 var self = this;
                 var values, selected, selectedText, lastItemCtrl;
 
-                function setSelected (menuValues) {
+                function setSelected(menuValues) {
                     for (var i = 0; i < menuValues.length; i++) {
                         selected = menuValues[i].selected || settings.value === menuValues[i].value;
                         if (selected) {
@@ -8760,7 +8760,7 @@
                     return this;
                 }
 
-                function valueExists (values) {
+                function valueExists(values) {
                     return exists(values, function (a) {
                         return a.menu ? valueExists(a.menu) : a.value === value;
                     });
@@ -8780,7 +8780,7 @@
             bindStates: function () {
                 var self = this;
 
-                function activateMenuItemsByValue (menu, value) {
+                function activateMenuItemsByValue(menu, value) {
                     if (menu instanceof Menu) {
                         menu.items().each(function (ctrl) {
                             if (!ctrl.hasMenus()) {
@@ -8790,7 +8790,7 @@
                     }
                 }
 
-                function getSelectedItem (menuValues, value) {
+                function getSelectedItem(menuValues, value) {
                     var selectedItem;
                     if (!menuValues) {
                         return;
@@ -8967,7 +8967,7 @@
                 var icon = self.settings.icon, image = '', shortcut = settings.shortcut;
                 var url = self.encode(settings.url), iconHtml = '';
 
-                function convertShortcut (shortcut) {
+                function convertShortcut(shortcut) {
                     var i, value, replace = {};
                     if (global$8.mac) {
                         replace = {
@@ -8977,7 +8977,7 @@
                             meta: '&#x2318;'
                         };
                     } else {
-                        replace = { meta: 'Ctrl' };
+                        replace = {meta: 'Ctrl'};
                     }
                     shortcut = shortcut.split('+');
                     for (i = 0; i < shortcut.length; i++) {
@@ -8989,18 +8989,18 @@
                     return shortcut.join('+');
                 }
 
-                function escapeRegExp (str) {
+                function escapeRegExp(str) {
                     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 }
 
-                function markMatches (text) {
+                function markMatches(text) {
                     var match = settings.match || '';
                     return match ? text.replace(new RegExp(escapeRegExp(match), 'gi'), function (match) {
                         return '!mce~match[' + match + ']mce~match!';
                     }) : text;
                 }
 
-                function boldMatches (text) {
+                function boldMatches(text) {
                     return text.replace(new RegExp(escapeRegExp('!mce~match['), 'g'), '<b>').replace(new RegExp(escapeRegExp(']mce~match!'), 'g'), '</b>');
                 }
 
@@ -9116,7 +9116,7 @@
             }
         });
 
-        function createOptions (options) {
+        function createOptions(options) {
             var strOptions = '';
             if (options) {
                 for (var i = 0; i < options.length; i++) {
@@ -9151,7 +9151,7 @@
                                 return false;
                             }
                         });
-                        self.fire('submit', { data: rootControl.toJSON() });
+                        self.fire('submit', {data: rootControl.toJSON()});
                     }
                 });
             },
@@ -9180,7 +9180,7 @@
             }
         });
 
-        function constrain (value, minVal, maxVal) {
+        function constrain(value, minVal, maxVal) {
             if (value < minVal) {
                 value = minVal;
             }
@@ -9190,11 +9190,11 @@
             return value;
         }
 
-        function setAriaProp (el, name, value) {
+        function setAriaProp(el, name, value) {
             el.setAttribute('aria-' + name, value);
         }
 
-        function updateSliderHandle (ctrl, value) {
+        function updateSliderHandle(ctrl, value) {
             var maxHandlePos, shortSizeName, sizeName, stylePosName, styleValue, handleEl;
             if (ctrl.settings.orientation === 'v') {
                 stylePosName = 'top';
@@ -9244,24 +9244,24 @@
                 var self = this;
                 var minValue, maxValue, screenCordName, stylePosName, sizeName, shortSizeName;
 
-                function toFraction (min, max, val) {
+                function toFraction(min, max, val) {
                     return (val + min) / (max - min);
                 }
 
-                function fromFraction (min, max, val) {
+                function fromFraction(min, max, val) {
                     return val * (max - min) - min;
                 }
 
-                function handleKeyboard (minValue, maxValue) {
-                    function alter (delta) {
+                function handleKeyboard(minValue, maxValue) {
+                    function alter(delta) {
                         var value;
                         value = self.value();
                         value = fromFraction(minValue, maxValue, toFraction(minValue, maxValue, value) + delta * 0.05);
                         value = constrain(value, minValue, maxValue);
                         self.value(value);
-                        self.fire('dragstart', { value: value });
-                        self.fire('drag', { value: value });
-                        self.fire('dragend', { value: value });
+                        self.fire('dragstart', {value: value});
+                        self.fire('drag', {value: value});
+                        self.fire('dragend', {value: value});
                     }
 
                     self.on('keydown', function (e) {
@@ -9278,7 +9278,7 @@
                     });
                 }
 
-                function handleDrag (minValue, maxValue, handleEl) {
+                function handleDrag(minValue, maxValue, handleEl) {
                     var startPos, startHandlePos, maxHandlePos, handlePos, value;
                     self._dragHelper = new DragHelper(self._id, {
                         handle: self._id + '-handle',
@@ -9286,7 +9286,7 @@
                             startPos = e[screenCordName];
                             startHandlePos = parseInt(self.getEl('handle').style[stylePosName], 10);
                             maxHandlePos = (self.layoutRect()[shortSizeName] || 100) - funcs.getSize(handleEl)[sizeName];
-                            self.fire('dragstart', { value: value });
+                            self.fire('dragstart', {value: value});
                         },
                         drag: function (e) {
                             var delta = e[screenCordName] - startPos;
@@ -9295,11 +9295,11 @@
                             value = minValue + handlePos / maxHandlePos * (maxValue - minValue);
                             self.value(value);
                             self.tooltip().text('' + self.settings.previewFilter(value)).show().moveRel(handleEl, 'bc tc');
-                            self.fire('drag', { value: value });
+                            self.fire('drag', {value: value});
                         },
                         stop: function () {
                             self.tooltip().hide();
-                            self.fire('dragend', { value: value });
+                            self.fire('dragend', {value: value});
                         }
                     });
                 }
@@ -9360,7 +9360,7 @@
                     width: rect.w - funcs.getSize(menuButtonElm).width,
                     height: rect.h - 2
                 });
-                global$9(menuButtonElm).css({ height: rect.h - 2 });
+                global$9(menuButtonElm).css({height: rect.h - 2});
                 return self;
             },
             activeMenu: function (state) {
@@ -9430,7 +9430,7 @@
         var TabPanel = Panel.extend({
             Defaults: {
                 layout: 'absolute',
-                defaults: { type: 'panel' }
+                defaults: {type: 'panel'}
             },
             activateTab: function (idx) {
                 var activeTabElm;
@@ -9533,7 +9533,7 @@
                                     return false;
                                 }
                             });
-                            self.fire('submit', { data: rootControl.toJSON() });
+                            self.fire('submit', {data: rootControl.toJSON()});
                         }
                     });
                     self.on('keyup', function (e) {
@@ -9738,7 +9738,7 @@
             return ThemeApi.get(editor);
         });
 
-        function Theme () {
+        function Theme() {
         }
 
         return Theme;

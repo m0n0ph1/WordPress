@@ -59,11 +59,11 @@
                 // If we don't already have a selection, select the entire image.
                 if (0 === selection.x1 && 0 === selection.y1 && 0 === selection.x2 && 0 === selection.y2) {
                     this.iasapi.setSelection(0, 0, img.innerWidth(), img.innerHeight(), true);
-                    this.iasapi.setOptions({ show: true });
+                    this.iasapi.setOptions({show: true});
                     this.iasapi.update();
                 } else {
                     this.iasapi.setSelection(startX, startY, width, height, true);
-                    this.iasapi.setOptions({ show: true });
+                    this.iasapi.setOptions({show: true});
                     this.iasapi.update();
                 }
             }
@@ -242,7 +242,7 @@
                 .attr('aria-expanded', 'false' === $el.attr('aria-expanded') ? 'true' : 'false');
             // Open menu and set z-index to appear above image crop area if it is enabled.
             $target
-                .toggleClass('imgedit-popup-menu-open').slideToggle('fast').css({ 'z-index': 200000 });
+                .toggleClass('imgedit-popup-menu-open').slideToggle('fast').css({'z-index': 200000});
             // Move focus to first item in menu when opening menu.
             if ('true' === $el.attr('aria-expanded')) {
                 $target.find('button').first().trigger('focus');
@@ -502,11 +502,11 @@
                 for (n in history) {
                     i = history[n];
                     if (i.hasOwnProperty('c')) {
-                        op[n] = { 'c': { 'x': i.c.x, 'y': i.c.y, 'w': i.c.w, 'h': i.c.h } };
+                        op[n] = {'c': {'x': i.c.x, 'y': i.c.y, 'w': i.c.w, 'h': i.c.h}};
                     } else if (i.hasOwnProperty('r')) {
-                        op[n] = { 'r': i.r.r };
+                        op[n] = {'r': i.r.r};
                     } else if (i.hasOwnProperty('f')) {
-                        op[n] = { 'f': i.f.f };
+                        op[n] = {'f': i.f.f};
                     }
                 }
                 return JSON.stringify(op);
@@ -541,7 +541,7 @@
             };
 
             img = $('<img id="image-preview-' + postid + '" alt="" />')
-                .on('load', { history: data.history }, function (event) {
+                .on('load', {history: data.history}, function (event) {
                     var max1, max2,
                         parent = $('#imgedit-crop-' + postid),
                         t = imageEdit,
@@ -1021,7 +1021,7 @@
                 return false;
             }
 
-            sel = { 'x': c.x1, 'y': c.y1, 'w': c.width, 'h': c.height };
+            sel = {'x': c.x1, 'y': c.y1, 'w': c.width, 'h': c.height};
             this.setDisabled($('.imgedit-crop', '#imgedit-panel-' + postid), 1);
             $('#imgedit-selection-' + postid).val(JSON.stringify(sel));
         },
@@ -1146,7 +1146,7 @@
                 return false;
             }
             this.closePopup(t);
-            this.addStep({ 'r': { 'r': angle, 'fw': this.hold.h, 'fh': this.hold.w } }, postid, nonce);
+            this.addStep({'r': {'r': angle, 'fw': this.hold.h, 'fh': this.hold.w}}, postid, nonce);
         },
 
         /**
@@ -1168,7 +1168,7 @@
                 return false;
             }
             this.closePopup(t);
-            this.addStep({ 'f': { 'f': axis, 'fw': this.hold.w, 'fh': this.hold.h } }, postid, nonce);
+            this.addStep({'f': {'f': axis, 'fw': this.hold.w, 'fh': this.hold.h}}, postid, nonce);
         },
 
         /**
@@ -1197,7 +1197,7 @@
             if (sel.w > 0 && sel.h > 0 && w > 0 && h > 0) {
                 sel.fw = w;
                 sel.fh = h;
-                this.addStep({ 'c': sel }, postid, nonce);
+                this.addStep({'c': sel}, postid, nonce);
             }
 
             // Clear the selection fields after cropping.

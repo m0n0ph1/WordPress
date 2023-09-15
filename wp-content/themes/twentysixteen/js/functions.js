@@ -8,7 +8,7 @@
 (function ($) {
     var body, masthead, menuToggle, siteNavigation, socialNavigation, siteHeaderMenu, resizeTimer;
 
-    function initMainNavigation (container) {
+    function initMainNavigation(container) {
 
         // Add dropdown toggle that displays child menu items.
         var dropdownToggle = $('<button />', {
@@ -78,7 +78,7 @@
         }
 
         // Toggle `focus` class to allow submenu access on tablets.
-        function toggleFocusClassTouchScreen () {
+        function toggleFocusClassTouchScreen() {
             if (window.innerWidth >= 910) {
                 $(document.body).on('touchstart.twentysixteen', function (e) {
                     if (!$(e.target).closest('.main-navigation li').length) {
@@ -110,7 +110,7 @@
     })();
 
     // Add the default ARIA attributes for the menu toggle and the navigations.
-    function onResizeARIA () {
+    function onResizeARIA() {
         if (window.innerWidth < 910) {
             if (menuToggle.hasClass('toggled-on')) {
                 menuToggle.attr('aria-expanded', 'true');
@@ -136,7 +136,7 @@
     }
 
     // Add 'below-entry-meta' class to elements.
-    function belowEntryMetaClass (param) {
+    function belowEntryMetaClass(param) {
         if (body.hasClass('page') || body.hasClass('search') || body.hasClass('single-attachment') || body.hasClass('error404')) {
             return;
         }

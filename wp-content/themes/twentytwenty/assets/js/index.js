@@ -64,7 +64,8 @@ if (!Element.prototype.matches) {
         function (s) {
             var matches = (this.document || this.ownerDocument).querySelectorAll(s),
                 i = matches.length;
-            while (--i >= 0 && matches.item(i) !== this) {}
+            while (--i >= 0 && matches.item(i) !== this) {
+            }
             return i > -1;
         };
 }
@@ -174,7 +175,7 @@ twentytwenty.coverModals = {
             htmlStyle = _doc.documentElement.style,
             adminBar = _doc.querySelector('#wpadminbar');
 
-        function getAdminBarHeight (negativeValue) {
+        function getAdminBarHeight(negativeValue) {
             var height,
                 currentScroll = _win.pageYOffset;
 
@@ -187,7 +188,7 @@ twentytwenty.coverModals = {
             return currentScroll === 0 ? 0 : -currentScroll;
         }
 
-        function htmlStyles () {
+        function htmlStyles() {
             var overflow = _win.innerHeight > _doc.documentElement.getBoundingClientRect().height;
 
             return {
@@ -446,7 +447,7 @@ twentytwenty.primaryMenu = {
         }
 
         //Sets or removes the .focus class on an element.
-        function toggleFocus () {
+        function toggleFocus() {
             var self = this;
 
             // Move up through the ancestors of the current link until we hit .primary-menu.
@@ -651,7 +652,7 @@ twentytwenty.toggles = {
  *
  * @param {Function} fn Callback function to run.
  */
-function twentytwentyDomReady (fn) {
+function twentytwentyDomReady(fn) {
     if (typeof fn !== 'function') {
         return;
     }
@@ -678,7 +679,7 @@ twentytwentyDomReady(function () {
 
 /* Toggle an attribute ----------------------- */
 
-function twentytwentyToggleAttribute (element, attribute, trueVal, falseVal) {
+function twentytwentyToggleAttribute(element, attribute, trueVal, falseVal) {
     var toggles;
 
     if (!element.hasAttribute(attribute)) {
@@ -719,7 +720,7 @@ function twentytwentyToggleAttribute (element, attribute, trueVal, falseVal) {
  * @param {HTMLElement} target
  * @param {number} duration
  */
-function twentytwentyMenuToggle (target, duration) {
+function twentytwentyMenuToggle(target, duration) {
     var initialParentHeight, finalParentHeight, menu, menuItems, transitionListener,
         initialPositions = [],
         finalPositions = [];
@@ -734,7 +735,7 @@ function twentytwentyMenuToggle (target, duration) {
     menuItems = menu.querySelectorAll('.menu-item');
 
     menuItems.forEach(function (menuItem, index) {
-        initialPositions[index] = { x: menuItem.offsetLeft, y: menuItem.offsetTop };
+        initialPositions[index] = {x: menuItem.offsetLeft, y: menuItem.offsetTop};
     });
     initialParentHeight = target.parentElement.offsetHeight;
 
@@ -744,7 +745,7 @@ function twentytwentyMenuToggle (target, duration) {
     target.classList.toggle('active');
 
     menuItems.forEach(function (menuItem, index) {
-        finalPositions[index] = { x: menuItem.offsetLeft, y: menuItem.offsetTop };
+        finalPositions[index] = {x: menuItem.offsetLeft, y: menuItem.offsetTop};
     });
     finalParentHeight = target.parentElement.offsetHeight;
 
@@ -823,11 +824,11 @@ function twentytwentyMenuToggle (target, duration) {
  * @param {string} query
  * @return {NodeList} parents matching query
  */
-function twentytwentyFindParents (target, query) {
+function twentytwentyFindParents(target, query) {
     var parents = [];
 
     // Recursively go up the DOM adding matches to the parents array.
-    function traverse (item) {
+    function traverse(item) {
         var parent = item.parentNode;
         if (parent instanceof HTMLElement) {
             if (parent.matches(query)) {

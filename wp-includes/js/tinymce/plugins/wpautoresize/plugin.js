@@ -29,18 +29,18 @@ tinymce.PluginManager.add('wpautoresize', function (editor) {
         return;
     }
 
-    function isFullscreen () {
+    function isFullscreen() {
         return editor.plugins.fullscreen && editor.plugins.fullscreen.isFullscreen();
     }
 
-    function getInt (n) {
+    function getInt(n) {
         return parseInt(n, 10) || 0;
     }
 
     /**
      * This method gets executed each time the editor needs to resize.
      */
-    function resize (e) {
+    function resize(e) {
         var deltaSize, doc, body, docElm, DOM = tinymce.DOM, resizeHeight, myHeight,
             marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom;
 
@@ -128,7 +128,7 @@ tinymce.PluginManager.add('wpautoresize', function (editor) {
      * Calls the resize x times in 100ms intervals. We can't wait for load events since
      * the CSS files might load async.
      */
-    function wait (times, interval, callback) {
+    function wait(times, interval, callback) {
         setTimeout(function () {
             resize();
 
@@ -146,7 +146,7 @@ tinymce.PluginManager.add('wpautoresize', function (editor) {
     // Define maximum height.
     settings.autoresize_max_height = parseInt(editor.getParam('autoresize_max_height', 0), 10);
 
-    function on () {
+    function on() {
         if (!editor.dom.hasClass(editor.getBody(), 'wp-autoresize')) {
             isActive = true;
             editor.dom.addClass(editor.getBody(), 'wp-autoresize');
@@ -156,7 +156,7 @@ tinymce.PluginManager.add('wpautoresize', function (editor) {
         }
     }
 
-    function off () {
+    function off() {
         var doc;
 
         // Don't turn off if the setting is 'on'.

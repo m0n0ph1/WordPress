@@ -27,7 +27,7 @@
     jQuery.migrateVersion = '3.4.1';
 
 // Returns 0 if v1 == v2, -1 if v1 < v2, 1 if v1 > v2
-    function compareVersions (v1, v2) {
+    function compareVersions(v1, v2) {
         var i,
             rVersionParts = /^(\d+)\.(\d+)\.(\d+)/,
             v1p = rVersionParts.exec(v1) || [],
@@ -44,7 +44,7 @@
         return 0;
     }
 
-    function jQueryVersionSince (version) {
+    function jQueryVersionSince(version) {
         return compareVersions(jQuery.fn.jquery, version) >= 0;
     }
 
@@ -126,7 +126,7 @@
         jQuery.migrateWarnings.length = 0;
     };
 
-    function migrateWarn (code, msg) {
+    function migrateWarn(code, msg) {
         var console = window.console;
         if (jQuery.migrateIsPatchEnabled(code) &&
             (!jQuery.migrateDeduplicateWarnings || !warnedAbout[msg])) {
@@ -141,7 +141,7 @@
         }
     }
 
-    function migrateWarnProp (obj, prop, value, code, msg) {
+    function migrateWarnProp(obj, prop, value, code, msg) {
         Object.defineProperty(obj, prop, {
             configurable: true,
             enumerable: true,
@@ -156,7 +156,7 @@
         });
     }
 
-    function migrateWarnFuncInternal (obj, prop, newFunc, code, msg) {
+    function migrateWarnFuncInternal(obj, prop, newFunc, code, msg) {
         var finalFunc,
             origFunc = obj[prop];
 
@@ -182,14 +182,14 @@
         };
     }
 
-    function migratePatchAndWarnFunc (obj, prop, newFunc, code, msg) {
+    function migratePatchAndWarnFunc(obj, prop, newFunc, code, msg) {
         if (!msg) {
             throw new Error('No warning message provided');
         }
         return migrateWarnFuncInternal(obj, prop, newFunc, code, msg);
     }
 
-    function migratePatchFunc (obj, prop, newFunc, code) {
+    function migratePatchFunc(obj, prop, newFunc, code) {
         return migrateWarnFuncInternal(obj, prop, newFunc, code);
     }
 
@@ -478,7 +478,7 @@
         });
     }, 'toggleClass-bool');
 
-    function camelCase (string) {
+    function camelCase(string) {
         return string.replace(/-([a-z])/g, function (_, letter) {
             return letter.toUpperCase();
         });
@@ -618,7 +618,7 @@
         internalCssNumber = jQuery.cssNumber;
     }
 
-    function isAutoPx (prop) {
+    function isAutoPx(prop) {
 
         // The first test is used to ensure that:
         // 1. The prop starts with a lowercase letter (as we uppercase it for the second regex).
@@ -967,7 +967,7 @@
             var deferred = oldDeferred(),
                 promise = deferred.promise();
 
-            function newDeferredPipe ( /* fnDone, fnFail, fnProgress */) {
+            function newDeferredPipe( /* fnDone, fnFail, fnProgress */) {
                 var fns = arguments;
 
                 return jQuery.Deferred(function (newDefer) {

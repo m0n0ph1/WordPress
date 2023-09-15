@@ -20,25 +20,25 @@
             return;
         }
 
-        function setImgAttr (image) {
+        function setImgAttr(image) {
             image.className = 'emoji';
             image.setAttribute('data-mce-resize', 'false');
             image.setAttribute('data-mce-placeholder', '1');
             image.setAttribute('data-wp-emoji', '1');
         }
 
-        function replaceEmoji (node) {
+        function replaceEmoji(node) {
             var imgAttr = {
                 'data-mce-resize': 'false',
                 'data-mce-placeholder': '1',
                 'data-wp-emoji': '1'
             };
 
-            wp.emoji.parse(node, { imgAttr: imgAttr });
+            wp.emoji.parse(node, {imgAttr: imgAttr});
         }
 
         // Test if the node text contains emoji char(s) and replace.
-        function parseNode (node) {
+        function parseNode(node) {
             var selection, bookmark;
 
             if (node && window.twemoji && window.twemoji.test(node.textContent || node.innerText)) {

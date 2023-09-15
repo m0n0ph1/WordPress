@@ -38,7 +38,7 @@ wp.textWidgets = (function ($) {
          *
          * @return {void}
          */
-        initialize: function initialize (options) {
+        initialize: function initialize(options) {
             var control = this;
 
             if (!options.el) {
@@ -86,7 +86,7 @@ wp.textWidgets = (function ($) {
 
             // Sync input fields to hidden sync fields which actually get sent to the server.
             _.each(control.fields, function (fieldInput, fieldName) {
-                fieldInput.on('input change', function updateSyncField () {
+                fieldInput.on('input change', function updateSyncField() {
                     var syncInput = control.syncContainer.find('.sync-input.' + fieldName);
                     if (syncInput.val() !== fieldInput.val()) {
                         syncInput.val(fieldInput.val());
@@ -107,7 +107,7 @@ wp.textWidgets = (function ($) {
          * @param {Array} pointers Pointer IDs to dismiss.
          * @return {void}
          */
-        dismissPointers: function dismissPointers (pointers) {
+        dismissPointers: function dismissPointers(pointers) {
             _.each(pointers, function (pointer) {
                 wp.ajax.post('dismiss-wp-pointer', {
                     pointer: pointer
@@ -122,7 +122,7 @@ wp.textWidgets = (function ($) {
          * @since 4.8.1
          * @return {void}
          */
-        openAvailableWidgetsPanel: function openAvailableWidgetsPanel () {
+        openAvailableWidgetsPanel: function openAvailableWidgetsPanel() {
             var sidebarControl;
             wp.customize.section.each(function (section) {
                 if (section.extended(wp.customize.Widgets.SidebarSection) && section.expanded()) {
@@ -147,7 +147,7 @@ wp.textWidgets = (function ($) {
          *
          * @return {void}
          */
-        updateFields: function updateFields () {
+        updateFields: function updateFields() {
             var control = this, syncInput;
 
             if (!control.fields.title.is(document.activeElement)) {
@@ -170,7 +170,7 @@ wp.textWidgets = (function ($) {
          *
          * @return {void}
          */
-        initializeEditor: function initializeEditor () {
+        initializeEditor: function initializeEditor() {
             var control = this, changeDebounceDelay = 1000, id, textarea, triggerChangeIfDirty, restoreTextMode = false,
                 needsTextareaChangeTrigger = false, previousValue;
             textarea = control.fields.text;
@@ -219,7 +219,7 @@ wp.textWidgets = (function ($) {
             };
 
             // Just-in-time force-update the hidden input fields.
-            control.syncContainer.closest('.widget').find('[name=savewidget]:first').on('click', function onClickSaveButton () {
+            control.syncContainer.closest('.widget').find('[name=savewidget]:first').on('click', function onClickSaveButton() {
                 triggerChangeIfDirty();
             });
 
@@ -228,7 +228,7 @@ wp.textWidgets = (function ($) {
              *
              * @return {void}
              */
-            function buildEditor () {
+            function buildEditor() {
                 var editor, onInit, showPointerElement;
 
                 // Abort building if the textarea is gone, likely due to the widget having been deleted entirely.
@@ -338,18 +338,18 @@ wp.textWidgets = (function ($) {
 
                 control.editorFocused = false;
 
-                editor.on('focus', function onEditorFocus () {
+                editor.on('focus', function onEditorFocus() {
                     control.editorFocused = true;
                 });
-                editor.on('paste', function onEditorPaste () {
+                editor.on('paste', function onEditorPaste() {
                     editor.setDirty(true); // Because pasting doesn't currently set the dirty state.
                     triggerChangeIfDirty();
                 });
-                editor.on('NodeChange', function onNodeChange () {
+                editor.on('NodeChange', function onNodeChange() {
                     needsTextareaChangeTrigger = true;
                 });
                 editor.on('NodeChange', _.debounce(triggerChangeIfDirty, changeDebounceDelay));
-                editor.on('blur hide', function onEditorBlur () {
+                editor.on('blur hide', function onEditorBlur() {
                     control.editorFocused = false;
                     triggerChangeIfDirty();
                 });
@@ -380,7 +380,7 @@ wp.textWidgets = (function ($) {
      *
      * @return {void}
      */
-    component.handleWidgetAdded = function handleWidgetAdded (event, widgetContainer) {
+    component.handleWidgetAdded = function handleWidgetAdded(event, widgetContainer) {
         var widgetForm, idBase, widgetControl, widgetId, animatedCheckDelay = 50, renderWhenAnimationDone,
             fieldContainer, syncContainer;
         widgetForm = widgetContainer.find('> .widget-inside > .form, > .widget-inside > form'); // Note: '.form' appears in the customizer, whereas 'form' on the widgets admin screen.
@@ -446,7 +446,7 @@ wp.textWidgets = (function ($) {
      *
      * @return {void}
      */
-    component.setupAccessibleMode = function setupAccessibleMode () {
+    component.setupAccessibleMode = function setupAccessibleMode() {
         var widgetForm, idBase, widgetControl, fieldContainer, syncContainer;
         widgetForm = $('.editwidget > form');
         if (0 === widgetForm.length) {
@@ -488,7 +488,7 @@ wp.textWidgets = (function ($) {
      * @param {jQuery}       widgetContainer - Widget container element.
      * @return {void}
      */
-    component.handleWidgetUpdated = function handleWidgetUpdated (event, widgetContainer) {
+    component.handleWidgetUpdated = function handleWidgetUpdated(event, widgetContainer) {
         var widgetForm, widgetId, widgetControl, idBase;
         widgetForm = widgetContainer.find('> .widget-inside > .form, > .widget-inside > form');
 
@@ -517,7 +517,7 @@ wp.textWidgets = (function ($) {
      *
      * @return {void}
      */
-    component.init = function init () {
+    component.init = function init() {
         var $document = $(document);
         $document.on('widget-added', component.handleWidgetAdded);
         $document.on('widget-synced widget-updated', component.handleWidgetUpdated);
@@ -532,13 +532,13 @@ wp.textWidgets = (function ($) {
          * the same for the widgets admin screen, to invoke the widget-added
          * handler when a pre-existing media widget is expanded.
          */
-        $(function initializeExistingWidgetContainers () {
+        $(function initializeExistingWidgetContainers() {
             var widgetContainers;
             if ('widgets' !== window.pagenow) {
                 return;
             }
             widgetContainers = $('.widgets-holder-wrap:not(#available-widgets)').find('div.widget');
-            widgetContainers.one('click.toggle-widget-expanded', function toggleWidgetExpanded () {
+            widgetContainers.one('click.toggle-widget-expanded', function toggleWidgetExpanded() {
                 var widgetContainer = $(this);
                 component.handleWidgetAdded(new jQuery.Event('widget-added'), widgetContainer);
             });

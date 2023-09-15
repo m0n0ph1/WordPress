@@ -2,9 +2,9 @@
     /**
      * The template for displaying Author bios
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Thirteen
-     * @since Twenty Thirteen 1.0
+     * @since      Twenty Thirteen 1.0
      */
 ?>
 
@@ -15,6 +15,7 @@
              * Filters the author bio avatar size.
              *
              * @param int $size The avatar height and width size in pixels.
+             *
              * @since Twenty Thirteen 1.0
              *
              */
@@ -36,8 +37,7 @@
                rel="author">
                 <?php
                     /* translators: %s: Author display name. */
-                    printf(__('View all posts by %s <span class="meta-nav">&rarr;</span>', 'twentythirteen'),
-                        get_the_author());
+                    printf(__('View all posts by %s <span class="meta-nav">&rarr;</span>', 'twentythirteen'), get_the_author());
                 ?>
             </a>
         </p>

@@ -2,19 +2,19 @@
     /**
      * The template for displaying archive pages
      *
-     * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
+     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Seventeen
-     * @since Twenty Seventeen 1.0
-     * @version 1.0
+     * @since      Twenty Seventeen 1.0
+     * @version    1.0
      */
-    
+
     get_header(); ?>
 
     <div class="wrap">
-        
-        <?php if (have_posts()) : ?>
+
+        <?php if(have_posts()) : ?>
             <header class="page-header">
                 <?php
                     the_archive_title('<h1 class="page-title">', '</h1>');
@@ -25,15 +25,15 @@
 
         <div id="primary" class="content-area">
             <main id="main" class="site-main">
-                
+
                 <?php
-                    if (have_posts()) :
+                    if(have_posts()) :
                         ?>
                         <?php
                         // Start the Loop.
-                        while (have_posts()) :
+                        while(have_posts()) :
                             the_post();
-                            
+
                             /*
                              * Include the Post-Format-specific template for the content.
                              * If you want to override this in a child theme, then include a file
@@ -41,27 +41,22 @@
                              * will be used instead.
                              */
                             get_template_part('template-parts/post/content', get_post_format());
-                        
+
                         endwhile;
-                        
-                        the_posts_pagination(
-                            [
-                                /* translators: Hidden accessibility text. */
-                                'prev_text' => twentyseventeen_get_svg(['icon' => 'arrow-left']) . '<span class="screen-reader-text">' . __('Previous page',
-                                        'twentyseventeen') . '</span>',
-                                /* translators: Hidden accessibility text. */
-                                'next_text' => '<span class="screen-reader-text">' . __('Next page',
-                                        'twentyseventeen') . '</span>' . twentyseventeen_get_svg(['icon' => 'arrow-right']),
-                                /* translators: Hidden accessibility text. */
-                                'before_page_number' => '<span class="meta-nav screen-reader-text">' . __('Page',
-                                        'twentyseventeen') . ' </span>',
-                            ]
-                        );
-                    
+
+                        the_posts_pagination([
+                                                 /* translators: Hidden accessibility text. */
+                                                 'prev_text' => twentyseventeen_get_svg(['icon' => 'arrow-left']).'<span class="screen-reader-text">'.__('Previous page', 'twentyseventeen').'</span>',
+                                                 /* translators: Hidden accessibility text. */
+                                                 'next_text' => '<span class="screen-reader-text">'.__('Next page', 'twentyseventeen').'</span>'.twentyseventeen_get_svg(['icon' => 'arrow-right']),
+                                                 /* translators: Hidden accessibility text. */
+                                                 'before_page_number' => '<span class="meta-nav screen-reader-text">'.__('Page', 'twentyseventeen').' </span>',
+                                             ]);
+
                     else :
-                        
+
                         get_template_part('template-parts/post/content', 'none');
-                    
+
                     endif;
                 ?>
 

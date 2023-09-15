@@ -29,14 +29,14 @@
                 }
             };
         };
-        var Api = { get: get };
+        var Api = {get: get};
 
         var global$1 = tinymce.util.Tools.resolve('tinymce.dom.DOMUtils');
 
         var fireFullscreenStateChanged = function (editor, state) {
-            editor.fire('FullscreenStateChanged', { state: state });
+            editor.fire('FullscreenStateChanged', {state: state});
         };
-        var Events = { fireFullscreenStateChanged: fireFullscreenStateChanged };
+        var Events = {fireFullscreenStateChanged: fireFullscreenStateChanged};
 
         var DOM = global$1.DOM;
         var getWindowSize = function () {
@@ -123,14 +123,14 @@
                 Events.fireFullscreenStateChanged(editor, false);
             }
         };
-        var Actions = { toggleFullscreen: toggleFullscreen };
+        var Actions = {toggleFullscreen: toggleFullscreen};
 
         var register = function (editor, fullscreenState) {
             editor.addCommand('mceFullScreen', function () {
                 Actions.toggleFullscreen(editor, fullscreenState);
             });
         };
-        var Commands = { register: register };
+        var Commands = {register: register};
 
         var postRender = function (editor) {
             return function (e) {
@@ -156,7 +156,7 @@
                 onPostRender: postRender(editor)
             });
         };
-        var Buttons = { register: register$1 };
+        var Buttons = {register: register$1};
 
         global.add('fullscreen', function (editor) {
             var fullscreenState = Cell(null);
@@ -169,7 +169,7 @@
             return Api.get(fullscreenState);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

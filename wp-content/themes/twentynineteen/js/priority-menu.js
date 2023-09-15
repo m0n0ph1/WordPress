@@ -7,7 +7,7 @@
      * @param {number} wait
      * @param {boolean} immediate
      */
-    function debounce (func, wait, immediate) {
+    function debounce(func, wait, immediate) {
         'use strict';
 
         var timeout;
@@ -42,7 +42,7 @@
      * @param {Element} container
      * @param {Element} element
      */
-    function prependElement (container, element) {
+    function prependElement(container, element) {
         if (container.firstChild.nextSibling) {
             return container.insertBefore(element, container.firstChild.nextSibling);
         } else {
@@ -55,7 +55,7 @@
      *
      * @param {Element} element
      */
-    function showButton (element) {
+    function showButton(element) {
         // classList.remove is not supported in IE11.
         element.className = element.className.replace('is-empty', '');
     }
@@ -65,7 +65,7 @@
      *
      * @param {Element} element
      */
-    function hideButton (element) {
+    function hideButton(element) {
         // classList.add is not supported in IE11.
         if (!element.classList.contains('is-empty')) {
             element.className += ' is-empty';
@@ -77,7 +77,7 @@
      *
      * @returns {number} Available space
      */
-    function getAvailableSpace (button, container) {
+    function getAvailableSpace(button, container) {
         return container.offsetWidth - button.offsetWidth - 22;
     }
 
@@ -86,7 +86,7 @@
      *
      * @returns {boolean} Is overflowing
      */
-    function isOverflowingNavivation (list, button, container) {
+    function isOverflowingNavivation(list, button, container) {
         return list.offsetWidth > getAvailableSpace(button, container);
     }
 
@@ -106,7 +106,7 @@
     /**
      * Refreshes the list item from the menu depending on the menu size.
      */
-    function updateNavigationMenu (container) {
+    function updateNavigationMenu(container) {
 
         /**
          * Let’s bail if our menu is empty.

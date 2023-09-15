@@ -4,9 +4,9 @@
      *
      * Contains the closing of the "site-content" div and all content after.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Fifteen
-     * @since Twenty Fifteen 1.0
+     * @since      Twenty Fifteen 1.0
      */
 ?>
 
@@ -23,7 +23,8 @@
             do_action('twentyfifteen_credits');
         ?>
         <?php
-            if (function_exists('the_privacy_policy_link')) {
+            if(function_exists('the_privacy_policy_link'))
+            {
                 the_privacy_policy_link('', '<span role="separator" aria-hidden="true"></span>');
             }
         ?>

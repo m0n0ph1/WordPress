@@ -2,9 +2,9 @@
     /**
      * The template for displaying posts in the Image post format
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Twelve
-     * @since Twenty Twelve 1.0
+     * @since      Twenty Twelve 1.0
      */
 ?>
 
@@ -21,10 +21,9 @@
                       datetime="<?php echo esc_attr(get_the_date('c')); ?>"><?php echo get_the_date(); ?></time>
             </h2>
         </a>
-        <?php if (comments_open()) : ?>
+        <?php if(comments_open()) : ?>
             <div class="comments-link">
-                <?php comments_popup_link('<span class="leave-reply">' . __('Leave a reply',
-                        'twentytwelve') . '</span>', __('1 Reply', 'twentytwelve'), __('% Replies', 'twentytwelve')); ?>
+                <?php comments_popup_link('<span class="leave-reply">'.__('Leave a reply', 'twentytwelve').'</span>', __('1 Reply', 'twentytwelve'), __('% Replies', 'twentytwelve')); ?>
             </div><!-- .comments-link -->
         <?php endif; // comments_open() ?>
         <?php edit_post_link(__('Edit', 'twentytwelve'), '<span class="edit-link">', '</span>'); ?>

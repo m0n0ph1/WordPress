@@ -102,7 +102,7 @@
      *
      * @since Twenty Fourteen 1.4
      */
-    function onResizeARIA () {
+    function onResizeARIA() {
         if (781 > _window.width()) {
             button.attr('aria-expanded', 'false');
             menu.attr('aria-expanded', 'false');

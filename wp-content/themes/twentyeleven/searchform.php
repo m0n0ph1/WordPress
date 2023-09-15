@@ -2,9 +2,9 @@
     /**
      * Template for displaying search forms in Twenty Eleven
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Eleven
-     * @since Twenty Eleven 1.0
+     * @since      Twenty Eleven 1.0
      */
 ?>
 <form method="get" id="searchform" action="<?php echo esc_url(home_url('/')); ?>">

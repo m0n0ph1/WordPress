@@ -2,15 +2,16 @@
     /**
      * WordPress Administration Template Footer
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
-    
+
     // Don't load directly.
-    if (!defined('ABSPATH')) {
+    if(! defined('ABSPATH'))
+    {
         die('-1');
     }
-    
+
     /**
      * @global string $hook_suffix
      */
@@ -32,20 +33,17 @@
     ?>
     <p id="footer-left" class="alignleft">
         <?php
-            $text = sprintf(
-            /* translators: %s: https://wordpress.org/ */
-                __('Thank you for creating with <a href="%s">WordPress</a>.'),
-                __('https://wordpress.org/')
-            );
-            
+            $text = sprintf(/* translators: %s: https://wordpress.org/ */ __('Thank you for creating with <a href="%s">WordPress</a>.'), __('https://wordpress.org/'));
+
             /**
              * Filters the "Thank you" text displayed in the admin footer.
              *
              * @param string $text The content that will be printed.
+             *
              * @since 2.8.0
              *
              */
-            echo apply_filters('admin_footer_text', '<span id="footer-thankyou">' . $text . '</span>');
+            echo apply_filters('admin_footer_text', '<span id="footer-thankyou">'.$text.'</span>');
         ?>
     </p>
     <p id="footer-upgrade" class="alignright">
@@ -57,7 +55,8 @@
              * using core_update_footer() at priority 10.
              *
              * @param string $content The content that will be printed.
-             * @see core_update_footer()
+             *
+             * @see   core_update_footer()
              *
              * @since 2.3.0
              *
@@ -72,11 +71,12 @@
      * Prints scripts or data before the default footer scripts.
      *
      * @param string $data The data to print.
+     *
      * @since 1.2.0
      *
      */
     do_action('admin_footer', '');
-    
+
     /**
      * Prints scripts and data queued for the footer.
      *
@@ -86,14 +86,14 @@
      * @since 4.6.0
      */
     do_action("admin_print_footer_scripts-{$hook_suffix}"); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-    
+
     /**
      * Prints any scripts and data queued for the footer.
      *
      * @since 2.8.0
      */
     do_action('admin_print_footer_scripts');
-    
+
     /**
      * Prints scripts or data after the default footer scripts.
      *
@@ -103,11 +103,10 @@
      * @since 2.8.0
      */
     do_action("admin_footer-{$hook_suffix}"); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-    
+
     // get_site_option() won't exist when auto upgrading from <= 2.7.
-    if (function_exists('get_site_option')
-        && false === get_site_option('can_compress_scripts')
-    ) {
+    if(function_exists('get_site_option') && false === get_site_option('can_compress_scripts'))
+    {
         compression_test();
     }
 

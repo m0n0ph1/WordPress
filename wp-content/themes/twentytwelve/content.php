@@ -4,41 +4,40 @@
      *
      * Used for both single and index/archive/search.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Twelve
-     * @since Twenty Twelve 1.0
+     * @since      Twenty Twelve 1.0
      */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-    <?php if (is_sticky() && is_home() && !is_paged()) : ?>
+    <?php if(is_sticky() && is_home() && ! is_paged()) : ?>
         <div class="featured-post">
             <?php _e('Featured post', 'twentytwelve'); ?>
         </div>
     <?php endif; ?>
     <header class="entry-header">
         <?php
-            if (!post_password_required() && !is_attachment()) :
+            if(! post_password_required() && ! is_attachment()) :
                 the_post_thumbnail();
             endif;
         ?>
-        
-        <?php if (is_single()) : ?>
+
+        <?php if(is_single()) : ?>
             <h1 class="entry-title"><?php the_title(); ?></h1>
         <?php else : ?>
             <h1 class="entry-title">
                 <a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a>
             </h1>
         <?php endif; // is_single() ?>
-        <?php if (comments_open()) : ?>
+        <?php if(comments_open()) : ?>
             <div class="comments-link">
-                <?php comments_popup_link('<span class="leave-reply">' . __('Leave a reply',
-                        'twentytwelve') . '</span>', __('1 Reply', 'twentytwelve'), __('% Replies', 'twentytwelve')); ?>
+                <?php comments_popup_link('<span class="leave-reply">'.__('Leave a reply', 'twentytwelve').'</span>', __('1 Reply', 'twentytwelve'), __('% Replies', 'twentytwelve')); ?>
             </div><!-- .comments-link -->
         <?php endif; // comments_open() ?>
     </header><!-- .entry-header -->
-    
-    <?php if (is_search()) : // Only display excerpts for search. ?>
+
+    <?php if(is_search()) : // Only display excerpts for search. ?>
         <div class="entry-summary">
             <?php the_excerpt(); ?>
         </div><!-- .entry-summary -->
@@ -46,12 +45,10 @@
         <div class="entry-content">
             <?php the_content(__('Continue reading <span class="meta-nav">&rarr;</span>', 'twentytwelve')); ?>
             <?php
-                wp_link_pages(
-                    [
-                        'before' => '<div class="page-links">' . __('Pages:', 'twentytwelve'),
-                        'after' => '</div>',
-                    ]
-                );
+                wp_link_pages([
+                                  'before' => '<div class="page-links">'.__('Pages:', 'twentytwelve'),
+                                  'after' => '</div>',
+                              ]);
             ?>
         </div><!-- .entry-content -->
     <?php endif; ?>
@@ -61,7 +58,7 @@
         <?php edit_post_link(__('Edit', 'twentytwelve'), '<span class="edit-link">', '</span>'); ?>
         <?php
             // If a user has filled out their description and this is a multi-author blog, show a bio on their entries.
-            if (is_singular() && get_the_author_meta('description') && is_multi_author()) :
+            if(is_singular() && get_the_author_meta('description') && is_multi_author()) :
                 ?>
                 <div class="author-info">
                     <div class="author-avatar">
@@ -84,9 +81,7 @@
                                rel="author">
                                 <?php
                                     /* translators: %s: Author display name. */
-                                    printf(__('View all posts by %s <span class="meta-nav">&rarr;</span>',
-                                        'twentytwelve'),
-                                        get_the_author());
+                                    printf(__('View all posts by %s <span class="meta-nav">&rarr;</span>', 'twentytwelve'), get_the_author());
                                 ?>
                             </a>
                         </div><!-- .author-link	-->

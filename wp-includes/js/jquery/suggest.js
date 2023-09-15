@@ -40,7 +40,7 @@
 
         $input.keydown(processKey);
 
-        function resetPosition () {
+        function resetPosition() {
             // requires jquery.dimension plugin
             var offset = $input.offset();
             $results.css({
@@ -49,7 +49,7 @@
             });
         }
 
-        function processKey (e) {
+        function processKey(e) {
 
             // handling up/down/escape requires results to be visible
             // handling enter/tab requires that AND a result to be selected
@@ -96,7 +96,7 @@
 
         }
 
-        function suggest () {
+        function suggest() {
 
             var q = $.trim($input.val()), multipleSepPos, items;
 
@@ -116,7 +116,7 @@
 
                 } else {
 
-                    $.get(options.source, { q: q }, function (txt) {
+                    $.get(options.source, {q: q}, function (txt) {
 
                         $results.hide();
 
@@ -137,7 +137,7 @@
 
         }
 
-        function checkCache (q) {
+        function checkCache(q) {
             var i;
             for (i = 0; i < cache.length; i++)
                 if (cache[i]['q'] == q) {
@@ -149,7 +149,7 @@
 
         }
 
-        function addToCache (q, items, size) {
+        function addToCache(q, items, size) {
             var cached;
             while (cache.length && (cacheSize + size > options.maxCacheSize)) {
                 cached = cache.pop();
@@ -166,7 +166,7 @@
 
         }
 
-        function displayItems (items) {
+        function displayItems(items) {
             var html = '', i;
             if (!items)
                 return;
@@ -197,7 +197,7 @@
 
         }
 
-        function parseTxt (txt, q) {
+        function parseTxt(txt, q) {
 
             var items = [], tokens = txt.split(options.delimiter), i, token;
 
@@ -218,7 +218,7 @@
             return items;
         }
 
-        function getCurrentResult () {
+        function getCurrentResult() {
             var $currentResult;
             if (!$results.is(':visible'))
                 return false;
@@ -232,7 +232,7 @@
 
         }
 
-        function selectCurrentResult () {
+        function selectCurrentResult() {
 
             $currentResult = getCurrentResult();
 
@@ -258,7 +258,7 @@
 
         }
 
-        function nextResult () {
+        function nextResult() {
 
             $currentResult = getCurrentResult();
 
@@ -272,7 +272,7 @@
 
         }
 
-        function prevResult () {
+        function prevResult() {
             var $currentResult = getCurrentResult();
 
             if ($currentResult)

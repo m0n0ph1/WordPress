@@ -28,7 +28,7 @@
      * @param {string} version     The version of WordPress that deprecated the property.
      * @param {string} replacement The property that should have been used.
      */
-    function deprecatedProperty (propName, version, replacement) {
+    function deprecatedProperty(propName, version, replacement) {
         var message;
 
         if ('undefined' !== typeof replacement) {
@@ -63,7 +63,7 @@
      *
      * @return {object} The object with all its properties deprecated.
      */
-    function deprecateL10nObject (name, l10nObject, version) {
+    function deprecateL10nObject(name, l10nObject, version) {
         var deprecatedObject = {};
 
         Object.keys(l10nObject).forEach(function (key) {
@@ -741,7 +741,7 @@
      *
      * @param {Object} button Button jQuery object.
      */
-    function changeStructureTagButtonState (button) {
+    function changeStructureTagButtonState(button) {
         if (-1 !== $permalinkStructure.val().indexOf(button.text().trim())) {
             button.attr('data-label', button.attr('aria-label'));
             button.attr('aria-label', button.attr('data-used'));
@@ -903,7 +903,7 @@
                 }
             }
 
-            $document.trigger('wp-collapse-menu', { state: menuState });
+            $document.trigger('wp-collapse-menu', {state: menuState});
         });
 
         /**
@@ -913,7 +913,7 @@
          *
          * @return {void}
          */
-        function currentMenuItemHasPopup () {
+        function currentMenuItemHasPopup() {
             var $current = $('a.wp-has-current-submenu');
 
             if ('folded' === menuState) {
@@ -936,7 +936,7 @@
          *
          * @return {void}
          */
-        function adjustSubmenu ($menuItem) {
+        function adjustSubmenu($menuItem) {
             var bottomOffset, pageHeight, adjustment, theFold, menutop, wintop, maxtop,
                 $submenu = $menuItem.find('.wp-submenu');
 
@@ -1115,7 +1115,7 @@
          *
          * @return {void}
          */
-        function makeNoticesDismissible () {
+        function makeNoticesDismissible() {
             $('.notice.is-dismissible').each(function () {
                 var $el = $(this),
                     $button = $('<button type="button" class="notice-dismiss"><span class="screen-reader-text"></span></button>');
@@ -1153,9 +1153,13 @@
          */
         $body.on('click', 'tbody > tr > .check-column :checkbox', function (event) {
             // Shift click to select a range of checkboxes.
-            if ('undefined' == event.shiftKey) { return true; }
+            if ('undefined' == event.shiftKey) {
+                return true;
+            }
             if (event.shiftKey) {
-                if (!lastClicked) { return true; }
+                if (!lastClicked) {
+                    return true;
+                }
                 checks = $(lastClicked).closest('form').find(':checkbox').filter(':visible:enabled');
                 first = checks.index(lastClicked);
                 last = checks.index(this);
@@ -1254,7 +1258,7 @@
          * @param {jQuery} bottomSubmit   The bottom submit element.
          * @return {void}
          */
-        function marryControls (topSelector, topSubmit, bottomSelector, bottomSubmit) {
+        function marryControls(topSelector, topSubmit, bottomSelector, bottomSubmit) {
             /**
              * Updates the primary selector when the secondary selector is changed.
              *
@@ -1262,7 +1266,7 @@
              *
              * @return {void}
              */
-            function updateTopSelector () {
+            function updateTopSelector() {
                 topSelector.val($(this).val());
             }
 
@@ -1275,7 +1279,7 @@
              *
              * @return {void}
              */
-            function updateBottomSelector () {
+            function updateBottomSelector() {
                 bottomSelector.val($(this).val());
             }
 
@@ -1288,7 +1292,7 @@
              *
              * @return {void}
              */
-            function triggerSubmitClick (e) {
+            function triggerSubmitClick(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -1455,7 +1459,7 @@
              *
              * @return {void}
              */
-            function toggleUploadButton () {
+            function toggleUploadButton() {
                 // When no inputs have a value, disable the upload buttons.
                 button.prop('disabled', '' === input.map(function () {
                     return $(this).val();
@@ -1477,7 +1481,7 @@
          *
          * @return {void}
          */
-        function pinMenu (event) {
+        function pinMenu(event) {
             var windowPos = $window.scrollTop(),
                 resizing = !event || event.type !== 'scroll';
 
@@ -1620,7 +1624,7 @@
          *
          * @return {void}
          */
-        function resetHeights () {
+        function resetHeights() {
             height = {
                 window: $window.height(),
                 wpwrap: $wpwrap.height(),
@@ -1636,7 +1640,7 @@
          *
          * @return {void}
          */
-        function unpinMenu () {
+        function unpinMenu() {
             if (isIOS || !menuIsPinned) {
                 return;
             }
@@ -1656,7 +1660,7 @@
          *
          * @return {void}
          */
-        function setPinMenu () {
+        function setPinMenu() {
             resetHeights();
 
             if ($adminmenu.data('wp-responsive')) {
@@ -1905,7 +1909,8 @@
                     try {
                         $sortables.sortable('disable');
                         $sortables.find('.ui-sortable-handle').addClass('is-non-sortable');
-                    } catch (e) {}
+                    } catch (e) {
+                    }
                 }
             },
 
@@ -1921,7 +1926,8 @@
                     try {
                         $sortables.sortable('enable');
                         $sortables.find('.ui-sortable-handle').removeClass('is-non-sortable');
-                    } catch (e) {}
+                    } catch (e) {
+                    }
                 }
             }
         };
@@ -1933,7 +1939,7 @@
          *
          * @return {void}
          */
-        function aria_button_if_js () {
+        function aria_button_if_js() {
             $('.aria-button-if-js').attr('role', 'button');
         }
 
@@ -1949,7 +1955,7 @@
          * @return {number|boolean} The current viewport width or false if the
          *                          browser doesn't support innerWidth (IE < 9).
          */
-        function getViewportWidth () {
+        function getViewportWidth() {
             var viewportWidth = false;
 
             if (window.innerWidth) {
@@ -1970,7 +1976,7 @@
          *
          * @return {void}
          */
-        function setMenuState () {
+        function setMenuState() {
             var viewportWidth = getViewportWidth() || 961;
 
             if (viewportWidth <= 782) {
@@ -1981,7 +1987,7 @@
                 menuState = 'open';
             }
 
-            $document.trigger('wp-menu-state-set', { state: menuState });
+            $document.trigger('wp-menu-state-set', {state: menuState});
         }
 
         // Set the menu state when the window gets resized.
@@ -2094,7 +2100,7 @@
          *
          * @return {void}
          */
-        function triggerEvent () {
+        function triggerEvent() {
             $document.trigger('wp-window-resized');
         }
 
@@ -2105,7 +2111,7 @@
          *
          * @return {void}
          */
-        function fireOnce () {
+        function fireOnce() {
             window.clearTimeout(timeout);
             timeout = window.setTimeout(triggerEvent, 200);
         }

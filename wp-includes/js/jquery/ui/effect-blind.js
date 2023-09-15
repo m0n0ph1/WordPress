@@ -43,7 +43,7 @@
             element = $(this),
             direction = options.direction || 'up',
             start = element.cssClip(),
-            animate = { clip: $.extend({}, start) },
+            animate = {clip: $.extend({}, start)},
             placeholder = $.effects.createPlaceholder(element);
 
         animate.clip[map[direction][0]] = animate.clip[map[direction][1]];

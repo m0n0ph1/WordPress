@@ -19,7 +19,7 @@
                 var hasOwn = {}.hasOwnProperty;
                 var nativeCodeString = '[native code]';
 
-                function classNames () {
+                function classNames() {
                     var classes = [];
 
                     for (var i = 0; i < arguments.length; i++) {
@@ -63,7 +63,8 @@
                         return classNames;
                     }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
                     __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-                } else {}
+                } else {
+                }
             }());
 
             /***/
@@ -78,7 +79,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -120,7 +121,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -139,7 +140,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -166,11 +167,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -271,10 +272,10 @@
 
 
 
-        function WidgetTypeSelector ({
-                                         selectedId,
-                                         onSelect
-                                     }) {
+        function WidgetTypeSelector({
+                                        selectedId,
+                                        onSelect
+                                    }) {
             const widgetTypes = (0, external_wp_data_namespaceObject.useSelect)(select => {
                 var _select$getSettings$w;
 
@@ -321,10 +322,10 @@
 
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/widgets/build-module/blocks/legacy-widget/edit/inspector-card.js
 
-        function InspectorCard ({
-                                    name,
-                                    description
-                                }) {
+        function InspectorCard({
+                                   name,
+                                   description
+                               }) {
             return (0, external_wp_element_namespaceObject.createElement)('div', {
                 className: 'wp-block-legacy-widget-inspector-card'
             }, (0, external_wp_element_namespaceObject.createElement)('h3', {
@@ -367,14 +368,14 @@
              * @param {Function} params.onChangeHasPreview
              * @param {Function} params.onError
              */
-            constructor ({
-                             id,
-                             idBase,
-                             instance,
-                             onChangeInstance,
-                             onChangeHasPreview,
-                             onError
-                         }) {
+            constructor({
+                            id,
+                            idBase,
+                            instance,
+                            onChangeInstance,
+                            onChangeHasPreview,
+                            onError
+                        }) {
                 this.id = id;
                 this.idBase = idBase;
                 this._instance = instance;
@@ -400,7 +401,7 @@
              */
 
 
-            get instance () {
+            get instance() {
                 return this._instance;
             }
 
@@ -411,7 +412,7 @@
              */
 
 
-            set instance (instance) {
+            set instance(instance) {
                 if (this._instance !== instance) {
                     this._instance = instance;
                     this.onChangeInstance(instance);
@@ -425,7 +426,7 @@
              */
 
 
-            get hasPreview () {
+            get hasPreview() {
                 return this._hasPreview;
             }
 
@@ -436,7 +437,7 @@
              */
 
 
-            set hasPreview (hasPreview) {
+            set hasPreview(hasPreview) {
                 if (this._hasPreview !== hasPreview) {
                     this._hasPreview = hasPreview;
                     this.onChangeHasPreview(hasPreview);
@@ -450,7 +451,7 @@
              */
 
 
-            destroy () {
+            destroy() {
                 this.unbindEvents();
                 this.element.remove(); // TODO: How do we make third party widget scripts remove their event
                 // listeners?
@@ -463,7 +464,7 @@
              */
 
 
-            initDOM () {
+            initDOM() {
                 var _this$id, _this$idBase;
 
                 this.element = el('div', {
@@ -516,7 +517,7 @@
              */
 
 
-            bindEvents () {
+            bindEvents() {
                 // Prefer jQuery 'change' event instead of the native 'change' event
                 // because many widgets use jQuery's event bus to trigger an update.
                 if (window.jQuery) {
@@ -540,7 +541,7 @@
              */
 
 
-            unbindEvents () {
+            unbindEvents() {
                 if (window.jQuery) {
                     const {
                         jQuery: $
@@ -563,7 +564,7 @@
              */
 
 
-            async loadContent () {
+            async loadContent() {
                 try {
                     if (this.id) {
                         const {
@@ -619,7 +620,7 @@
              */
 
 
-            handleFormChange () {
+            handleFormChange() {
                 if (this.idBase) {
                     this.saveForm();
                 }
@@ -633,7 +634,7 @@
              */
 
 
-            handleFormSubmit (event) {
+            handleFormSubmit(event) {
                 event.preventDefault();
                 this.saveForm();
             }
@@ -646,7 +647,7 @@
              */
 
 
-            async saveForm () {
+            async saveForm() {
                 const formData = serializeForm(this.form);
 
                 try {
@@ -684,7 +685,7 @@
 
         let lastNumber = 0;
 
-        function el (tagName, attributes = {}, content = null) {
+        function el(tagName, attributes = {}, content = null) {
             const element = document.createElement(tagName);
 
             for (const [attribute, value] of Object.entries(attributes)) {
@@ -704,7 +705,7 @@
             return element;
         }
 
-        async function saveWidget (id, formData = null) {
+        async function saveWidget(id, formData = null) {
             let widget;
 
             if (formData) {
@@ -727,12 +728,12 @@
             };
         }
 
-        async function encodeWidget ({
-                                         idBase,
-                                         instance,
-                                         number,
-                                         formData = null
-                                     }) {
+        async function encodeWidget({
+                                        idBase,
+                                        instance,
+                                        number,
+                                        formData = null
+                                    }) {
             const response = await external_wp_apiFetch_default()({
                 path: `/wp/v2/widget-types/${idBase}/encode`,
                 method: 'POST',
@@ -749,13 +750,13 @@
             };
         }
 
-        function isEmptyHTML (html) {
+        function isEmptyHTML(html) {
             const element = document.createElement('div');
             element.innerHTML = html;
             return isEmptyNode(element);
         }
 
-        function isEmptyNode (node) {
+        function isEmptyNode(node) {
             switch (node.nodeType) {
                 case node.TEXT_NODE:
                     // Text nodes are empty if it's entirely whitespace.
@@ -779,7 +780,7 @@
             }
         }
 
-        function serializeForm (form) {
+        function serializeForm(form) {
             return new window.URLSearchParams(Array.from(new window.FormData(form))).toString();
         }
 
@@ -798,16 +799,16 @@
          */
 
 
-        function Form ({
-                           title,
-                           isVisible,
-                           id,
-                           idBase,
-                           instance,
-                           isWide,
-                           onChangeInstance,
-                           onChangeHasPreview
-                       }) {
+        function Form({
+                          title,
+                          isVisible,
+                          id,
+                          idBase,
+                          instance,
+                          isWide,
+                          onChangeInstance,
+                          onChangeHasPreview
+                      }) {
             const ref = (0, external_wp_element_namespaceObject.useRef)();
             const isMediumLargeViewport = (0, external_wp_compose_namespaceObject.useViewportMatch)('small'); // We only want to remount the control when the instance changes
             // *externally*. For example, if the user performs an undo. To do this, we
@@ -830,7 +831,7 @@
                     idBase,
                     instance,
 
-                    onChangeInstance (nextInstance) {
+                    onChangeInstance(nextInstance) {
                         outgoingInstances.current.add(instance);
                         incomingInstances.current.add(nextInstance);
                         onChangeInstance(nextInstance);
@@ -838,7 +839,7 @@
 
                     onChangeHasPreview,
 
-                    onError (error) {
+                    onError(error) {
                         window.console.error(error);
                         createNotice('error', (0, external_wp_i18n_namespaceObject.sprintf)(
                             /* translators: %s: the name of the affected block. */
@@ -902,17 +903,17 @@
 
 
 
-        function Preview ({
-                              idBase,
-                              instance,
-                              isVisible
-                          }) {
+        function Preview({
+                             idBase,
+                             instance,
+                             isVisible
+                         }) {
             const [isLoaded, setIsLoaded] = (0, external_wp_element_namespaceObject.useState)(false);
             const [srcDoc, setSrcDoc] = (0, external_wp_element_namespaceObject.useState)('');
             (0, external_wp_element_namespaceObject.useEffect)(() => {
                 const abortController = typeof window.AbortController === 'undefined' ? undefined : new window.AbortController();
 
-                async function fetchPreviewHTML () {
+                async function fetchPreviewHTML() {
                     const restRoute = `/wp/v2/widget-types/${idBase}/render`;
                     return await external_wp_apiFetch_default()({
                         path: restRoute,
@@ -946,7 +947,7 @@
                 // One possible solution is to add custom script to call `postMessage` in the preview frame.
                 // Or, better yet, we migrate away from iframe.
 
-                function setHeight () {
+                function setHeight() {
                     var _iframe$contentDocume, _iframe$contentDocume2;
 
                     // Pick the maximum of these two values to account for margin collapsing.
@@ -1005,9 +1006,9 @@
          * WordPress dependencies
          */
 
-        function NoPreview ({
-                                name
-                            }) {
+        function NoPreview({
+                               name
+                           }) {
             return (0, external_wp_element_namespaceObject.createElement)('div', {
                 className: 'wp-block-legacy-widget__edit-no-preview'
             }, name && (0, external_wp_element_namespaceObject.createElement)('h3', null, name), (0, external_wp_element_namespaceObject.createElement)('p', null, (0, external_wp_i18n_namespaceObject.__)('No preview available.')));
@@ -1023,10 +1024,10 @@
 
 
 
-        function ConvertToBlocksButton ({
-                                            clientId,
-                                            rawInstance
-                                        }) {
+        function ConvertToBlocksButton({
+                                           clientId,
+                                           rawInstance
+                                       }) {
             const {
                 replaceBlocks
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_blockEditor_namespaceObject.store);
@@ -1067,7 +1068,7 @@
 
 
 
-        function Edit (props) {
+        function Edit(props) {
             const {
                 id,
                 idBase
@@ -1089,13 +1090,13 @@
             }));
         }
 
-        function Empty ({
-                            attributes: {
-                                id,
-                                idBase
-                            },
-                            setAttributes
-                        }) {
+        function Empty({
+                           attributes: {
+                               id,
+                               idBase
+                           },
+                           setAttributes
+                       }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Placeholder, {
                 icon: (0, external_wp_element_namespaceObject.createElement)(external_wp_blockEditor_namespaceObject.BlockIcon, {
                     icon: library_brush
@@ -1130,17 +1131,17 @@
             }))));
         }
 
-        function NotEmpty ({
-                               attributes: {
-                                   id,
-                                   idBase,
-                                   instance
-                               },
-                               setAttributes,
-                               clientId,
-                               isSelected,
-                               isWide = false
-                           }) {
+        function NotEmpty({
+                              attributes: {
+                                  id,
+                                  idBase,
+                                  instance
+                              },
+                              setAttributes,
+                              clientId,
+                              isSelected,
+                              isWide = false
+                          }) {
             const [hasPreview, setHasPreview] = (0, external_wp_element_namespaceObject.useState)(null);
             const widgetTypeId = id !== null && id !== void 0 ? id : idBase;
             const {
@@ -1482,7 +1483,7 @@
 
 
 
-        function edit_Edit (props) {
+        function edit_Edit(props) {
             const {
                 clientId
             } = props;
@@ -1500,9 +1501,9 @@
             }));
         }
 
-        function PlaceholderContent ({
-                                         clientId
-                                     }) {
+        function PlaceholderContent({
+                                        clientId
+                                    }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Placeholder, {
                 className: 'wp-block-widget-group__placeholder',
                 icon: (0, external_wp_element_namespaceObject.createElement)(external_wp_blockEditor_namespaceObject.BlockIcon, {
@@ -1516,10 +1517,10 @@
             }));
         }
 
-        function PreviewContent ({
-                                     attributes,
-                                     setAttributes
-                                 }) {
+        function PreviewContent({
+                                    attributes,
+                                    setAttributes
+                                }) {
             var _attributes$title;
 
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)(external_wp_blockEditor_namespaceObject.RichText, {
@@ -1540,9 +1541,9 @@
          * WordPress dependencies
          */
 
-        function save ({
-                           attributes
-                       }) {
+        function save({
+                          attributes
+                      }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)(external_wp_blockEditor_namespaceObject.RichText.Content, {
                 tagName: 'h2',
                 className: 'widget-title',
@@ -1571,9 +1572,9 @@
                 reusable: false
             },
 
-            save ({
-                      attributes
-                  }) {
+            save({
+                     attributes
+                 }) {
                 return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)(external_wp_blockEditor_namespaceObject.RichText.Content, {
                     tagName: 'h2',
                     className: 'widget-title',
@@ -1632,12 +1633,12 @@
                     isMultiBlock: true,
                     blocks: ['*'],
 
-                    isMatch (attributes, blocks) {
+                    isMatch(attributes, blocks) {
                         // Avoid transforming existing `widget-group` blocks.
                         return !blocks.some(block => block.name === 'core/widget-group');
                     },
 
-                    __experimentalConvert (blocks) {
+                    __experimentalConvert(blocks) {
                         // Put the selected blocks inside the new Widget Group's innerBlocks.
                         let innerBlocks = [...blocks.map(block => {
                             return (0, external_wp_blocks_namespaceObject.createBlock)(block.name, block.attributes, block.innerBlocks);
@@ -1683,11 +1684,11 @@
 
 
 
-        function MoveToWidgetArea ({
-                                       currentWidgetAreaId,
-                                       widgetAreas,
-                                       onSelect
-                                   }) {
+        function MoveToWidgetArea({
+                                      currentWidgetAreaId,
+                                      widgetAreas,
+                                      onSelect
+                                  }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.ToolbarGroup, null, (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.ToolbarItem, null, toggleProps => (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.DropdownMenu, {
                 icon: move_to,
                 label: (0, external_wp_i18n_namespaceObject.__)('Move to widget area'),
@@ -1726,7 +1727,7 @@
          * @param    {Block}      block              The block.
          * @return {string} The internal widget id.
          */
-        function getWidgetIdFromBlock (block) {
+        function getWidgetIdFromBlock(block) {
             return block.attributes.__internalWidgetId;
         }
 
@@ -1738,7 +1739,7 @@
          * @return {Block} The updated block.
          */
 
-        function addWidgetIdToBlock (block, widgetId) {
+        function addWidgetIdToBlock(block, widgetId) {
             return {
                 ...block,
                 attributes: {
@@ -1755,7 +1756,7 @@
 
 
 
-        function registerLegacyWidgetVariations (settings) {
+        function registerLegacyWidgetVariations(settings) {
             const unsubscribe = (0, external_wp_data_namespaceObject.subscribe)(() => {
                 var _settings$widgetTypes;
 
@@ -1800,7 +1801,7 @@
          * @see https://developer.wordpress.org/block-editor/how-to-guides/widgets/legacy-widget-block/
          */
 
-        function registerLegacyWidgetBlock (supports = {}) {
+        function registerLegacyWidgetBlock(supports = {}) {
             const {
                 metadata,
                 settings,
@@ -1824,7 +1825,7 @@
          * @param {Object} supports Block support settings.
          */
 
-        function registerWidgetGroupBlock (supports = {}) {
+        function registerWidgetGroupBlock(supports = {}) {
             const {
                 metadata,
                 settings,

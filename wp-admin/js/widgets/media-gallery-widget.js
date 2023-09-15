@@ -23,7 +23,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        createStates: function createStates () {
+        createStates: function createStates() {
             this.states.add([
                 new wp.media.controller.Library({
                     id: 'gallery',
@@ -90,7 +90,7 @@
          * @param {jQuery}         options.syncContainer - Container element where fields are synced for the server.
          * @return {void}
          */
-        initialize: function initialize (options) {
+        initialize: function initialize(options) {
             var control = this;
 
             component.MediaWidgetControl.prototype.initialize.call(control, options);
@@ -124,7 +124,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        updateSelectedAttachments: function updateSelectedAttachments () {
+        updateSelectedAttachments: function updateSelectedAttachments() {
             var control = this, newIds, oldIds, removedIds, addedIds, addedQuery;
 
             newIds = control.model.get('ids');
@@ -157,7 +157,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        renderPreview: function renderPreview () {
+        renderPreview: function renderPreview() {
             var control = this, previewContainer, previewTemplate, data;
 
             previewContainer = control.$el.find('.media-widget-preview');
@@ -178,7 +178,7 @@
          * @since 4.9.0
          * @return {boolean} Selected.
          */
-        isSelected: function isSelected () {
+        isSelected: function isSelected() {
             var control = this;
 
             if (control.model.get('error')) {
@@ -194,7 +194,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        editMedia: function editMedia () {
+        editMedia: function editMedia() {
             var control = this, selection, mediaFrame, mediaFrameProps;
 
             selection = new wp.media.model.Selection(control.selectedAttachments.models, {
@@ -221,7 +221,7 @@
             wp.media.frame = mediaFrame; // See wp.media().
 
             // Handle selection of a media item.
-            mediaFrame.on('update', function onUpdate (newSelection) {
+            mediaFrame.on('update', function onUpdate(newSelection) {
                 var state = mediaFrame.state(), resultSelection;
 
                 resultSelection = newSelection || state.get('selection');
@@ -257,7 +257,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        selectMedia: function selectMedia () {
+        selectMedia: function selectMedia() {
             var control = this, selection, mediaFrame, mediaFrameProps;
             selection = new wp.media.model.Selection(control.selectedAttachments.models, {
                 multiple: true
@@ -280,7 +280,7 @@
             wp.media.frame = mediaFrame; // See wp.media().
 
             // Handle selection of a media item.
-            mediaFrame.on('update', function onUpdate (newSelection) {
+            mediaFrame.on('update', function onUpdate(newSelection) {
                 var state = mediaFrame.state(), resultSelection;
 
                 resultSelection = newSelection || state.get('selection');
@@ -323,7 +323,7 @@
          * @param {wp.media.models.Attachment} attachment - Attachment.
          * @return {void}
          */
-        handleAttachmentDestroy: function handleAttachmentDestroy (attachment) {
+        handleAttachmentDestroy: function handleAttachmentDestroy(attachment) {
             var control = this;
             control.model.set({
                 ids: _.difference(

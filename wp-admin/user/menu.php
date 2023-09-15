@@ -2,11 +2,11 @@
     /**
      * Build User Administration Menu.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
-     * @since 3.1.0
+     * @since      3.1.0
      */
-    
+
     $menu[2] = [
         __('Dashboard'),
         'exist',
@@ -14,11 +14,11 @@
         '',
         'menu-top menu-top-first menu-icon-dashboard',
         'menu-dashboard',
-        'dashicons-dashboard'
+        'dashicons-dashboard',
     ];
-    
+
     $menu[4] = ['', 'exist', 'separator1', '', 'wp-menu-separator'];
-    
+
     $menu[70] = [
         __('Profile'),
         'exist',
@@ -26,13 +26,13 @@
         '',
         'menu-top menu-icon-users',
         'menu-users',
-        'dashicons-admin-users'
+        'dashicons-admin-users',
     ];
-    
+
     $menu[99] = ['', 'exist', 'separator-last', '', 'wp-menu-separator'];
-    
+
     $_wp_real_parent_file['users.php'] = 'profile.php';
     $compat = [];
     $submenu = [];
-    
-    require_once ABSPATH . 'wp-admin/includes/menu.php';
+
+    require_once ABSPATH.'wp-admin/includes/menu.php';

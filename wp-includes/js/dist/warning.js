@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -59,7 +59,7 @@
      */
 
 
-    function isDev () {
+    function isDev() {
         return typeof process !== 'undefined' && process.env && 'production' !== 'production';
     }
 
@@ -82,7 +82,7 @@
      */
 
 
-    function warning (message) {
+    function warning(message) {
         if (!isDev()) {
             return;
         } // Skip if already logged.

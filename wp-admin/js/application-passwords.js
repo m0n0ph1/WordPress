@@ -171,7 +171,7 @@
      * @param {string} textStatus The string categorizing the ajax request's status.
      * @param {string} errorThrown The HTTP status error text.
      */
-    function handleErrorResponse (xhr, textStatus, errorThrown) {
+    function handleErrorResponse(xhr, textStatus, errorThrown) {
         var errorMessage = errorThrown;
 
         if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -190,7 +190,7 @@
      * @param {string} type    The notice type. Either 'success' or 'error'.
      * @returns {jQuery} The notice element.
      */
-    function addNotice (message, type) {
+    function addNotice(message, type) {
         var $notice = $('<div></div>')
             .attr('role', 'alert')
             .attr('tabindex', '-1')
@@ -213,7 +213,7 @@
      *
      * @since 5.6.0
      */
-    function clearNotices () {
+    function clearNotices() {
         $('.notice', $appPassSection).remove();
     }
 }(jQuery));

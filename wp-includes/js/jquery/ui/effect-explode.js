@@ -51,7 +51,7 @@
             pieces = [];
 
         // Children animate complete:
-        function childComplete () {
+        function childComplete() {
             pieces.push(this);
             if (pieces.length === rows * cells) {
                 animComplete();
@@ -101,7 +101,7 @@
             }
         }
 
-        function animComplete () {
+        function animComplete() {
             element.css({
                 visibility: 'visible'
             });

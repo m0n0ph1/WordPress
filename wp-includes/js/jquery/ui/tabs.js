@@ -70,10 +70,12 @@
                 // Decoding may throw an error if the URL isn't UTF-8 (#9518)
                 try {
                     anchorUrl = decodeURIComponent(anchorUrl);
-                } catch (error) {}
+                } catch (error) {
+                }
                 try {
                     locationUrl = decodeURIComponent(locationUrl);
-                } catch (error) {}
+                } catch (error) {
+                }
 
                 return anchor.hash.length > 1 && anchorUrl === locationUrl;
             };
@@ -258,7 +260,7 @@
         _findNextTab: function (index, goingForward) {
             var lastTabIndex = this.tabs.length - 1;
 
-            function constrain () {
+            function constrain() {
                 if (index > lastTabIndex) {
                     index = 0;
                 }
@@ -426,8 +428,8 @@
             this._addClass(this.tabs, 'ui-tabs-tab', 'ui-state-default');
 
             this.anchors = this.tabs.map(function () {
-                    return $('a', this)[0];
-                })
+                return $('a', this)[0];
+            })
                 .attr({
                     tabIndex: -1
                 });
@@ -543,8 +545,8 @@
                 }
             });
             this._on(this.anchors, events);
-            this._on(this.tabs, { keydown: '_tabKeydown' });
-            this._on(this.panels, { keydown: '_panelKeydown' });
+            this._on(this.tabs, {keydown: '_tabKeydown'});
+            this._on(this.panels, {keydown: '_panelKeydown'});
 
             this._focusable(this.tabs);
             this._hoverable(this.tabs);
@@ -573,9 +575,9 @@
                 });
 
                 this.panels.each(function () {
-                        $(this).height(Math.max(0, maxHeight -
-                            $(this).innerHeight() + $(this).height()));
-                    })
+                    $(this).height(Math.max(0, maxHeight -
+                        $(this).innerHeight() + $(this).height()));
+                })
                     .css('overflow', 'auto');
             } else if (heightStyle === 'auto') {
                 maxHeight = 0;
@@ -644,12 +646,12 @@
 
             this.running = true;
 
-            function complete () {
+            function complete() {
                 that.running = false;
                 that._trigger('activate', event, eventData);
             }
 
-            function show () {
+            function show() {
                 that._addClass(eventData.newTab.closest('li'), 'ui-tabs-active', 'ui-state-active');
 
                 if (toShow.length && that.options.show) {
@@ -687,8 +689,8 @@
                 eventData.oldTab.attr('tabIndex', -1);
             } else if (toShow.length) {
                 this.tabs.filter(function () {
-                        return $(this).attr('tabIndex') === 0;
-                    })
+                    return $(this).attr('tabIndex') === 0;
+                })
                     .attr('tabIndex', -1);
             }
 
@@ -892,7 +894,7 @@
                 url: anchor.attr('href').replace(/#.*$/, ''),
                 beforeSend: function (jqXHR, settings) {
                     return that._trigger('beforeLoad', event,
-                        $.extend({ jqXHR: jqXHR, ajaxSettings: settings }, eventData));
+                        $.extend({jqXHR: jqXHR, ajaxSettings: settings}, eventData));
                 }
             };
         },

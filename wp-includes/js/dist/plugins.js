@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -131,7 +131,7 @@
      *
      * @return {((...args: Parameters<F>) => ReturnType<F>) & MemizeMemoizedFunction} Memoized function.
      */
-    function memize (fn, options) {
+    function memize(fn, options) {
         var size = 0;
 
         /** @type {?MemizeCacheNode|undefined} */
@@ -142,7 +142,7 @@
 
         options = options || {};
 
-        function memoized (/* ...args */) {
+        function memoized(/* ...args */) {
             var node = head,
                 len = arguments.length,
                 args,
@@ -303,14 +303,14 @@
         /**
          * @param {Object} props
          */
-        constructor (props) {
+        constructor(props) {
             super(props);
             this.state = {
                 hasError: false
             };
         }
 
-        static getDerivedStateFromError () {
+        static getDerivedStateFromError() {
             return {
                 hasError: true
             };
@@ -321,7 +321,7 @@
          */
 
 
-        componentDidCatch (error) {
+        componentDidCatch(error) {
             const {
                 name,
                 onError
@@ -332,7 +332,7 @@
             }
         }
 
-        render () {
+        render() {
             if (!this.state.hasError) {
                 return this.props.children;
             }
@@ -449,7 +449,7 @@
      * @return The final plugin settings object.
      */
 
-    function registerPlugin (name, settings) {
+    function registerPlugin(name, settings) {
         if (typeof settings !== 'object') {
             console.error('No settings object provided!');
             return null;
@@ -526,7 +526,7 @@
      *         successfully unregistered; otherwise `undefined`.
      */
 
-    function unregisterPlugin (name) {
+    function unregisterPlugin(name) {
         if (!api_plugins[name]) {
             console.error('Plugin "' + name + '" is not registered.');
             return;
@@ -546,7 +546,7 @@
      * @return Plugin setting.
      */
 
-    function getPlugin (name) {
+    function getPlugin(name) {
         return api_plugins[name];
     }
 
@@ -559,7 +559,7 @@
      * @return The list of plugins without a scope or for a given scope.
      */
 
-    function getPlugins (scope) {
+    function getPlugins(scope) {
         return Object.values(api_plugins).filter(plugin => plugin.scope === scope);
     }
 
@@ -623,14 +623,14 @@
      * @return {WPComponent} The component to be rendered.
      */
 
-    function PluginArea ({
-                             scope,
-                             onError
-                         }) {
+    function PluginArea({
+                            scope,
+                            onError
+                        }) {
         const store = (0, external_wp_element_namespaceObject.useMemo)(() => {
             let lastValue = [];
             return {
-                subscribe (listener) {
+                subscribe(listener) {
                     (0, external_wp_hooks_namespaceObject.addAction)('plugins.pluginRegistered', 'core/plugins/plugin-area/plugins-registered', listener);
                     (0, external_wp_hooks_namespaceObject.addAction)('plugins.pluginUnregistered', 'core/plugins/plugin-area/plugins-unregistered', listener);
                     return () => {
@@ -639,7 +639,7 @@
                     };
                 },
 
-                getValue () {
+                getValue() {
                     const nextValue = getPlugins(scope);
 
                     if (!external_wp_isShallowEqual_default()(lastValue, nextValue)) {

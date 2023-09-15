@@ -122,7 +122,7 @@ var AutoValidator = {
         for (i = 0; i < nl.length; i++) {
             if (this.hasClass(nl[i], s.invalid_cls)) {
                 field = document.getElementById(nl[i].getAttribute('for'));
-                values = { field: nl[i].textContent };
+                values = {field: nl[i].textContent};
                 if (this.hasClass(field, s.min_cls, true)) {
                     message = ed.getLang('invalid_data_min');
                     values.min = this.getNum(field, s.min_cls);

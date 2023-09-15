@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -252,7 +252,7 @@
      * @return {Object} Action object.
      */
 
-    function createNotice (status = DEFAULT_STATUS, content, options = {}) {
+    function createNotice(status = DEFAULT_STATUS, content, options = {}) {
         const {
             speak = true,
             isDismissible = true,
@@ -324,7 +324,7 @@
      * @return {Object} Action object.
      */
 
-    function createSuccessNotice (content, options) {
+    function createSuccessNotice(content, options) {
         return createNotice('success', content, options);
     }
 
@@ -363,7 +363,7 @@
      * @return {Object} Action object.
      */
 
-    function createInfoNotice (content, options) {
+    function createInfoNotice(content, options) {
         return createNotice('info', content, options);
     }
 
@@ -405,7 +405,7 @@
      * @return {Object} Action object.
      */
 
-    function createErrorNotice (content, options) {
+    function createErrorNotice(content, options) {
         return createNotice('error', content, options);
     }
 
@@ -448,7 +448,7 @@
      * @return {Object} Action object.
      */
 
-    function createWarningNotice (content, options) {
+    function createWarningNotice(content, options) {
         return createNotice('warning', content, options);
     }
 
@@ -494,7 +494,7 @@
      * @return {Object} Action object.
      */
 
-    function removeNotice (id, context = DEFAULT_CONTEXT) {
+    function removeNotice(id, context = DEFAULT_CONTEXT) {
         return {
             type: 'REMOVE_NOTICE',
             id,
@@ -549,7 +549,7 @@
      * @return {Object}       Action object.
      */
 
-    function removeAllNotices (noticeType = 'default', context = DEFAULT_CONTEXT) {
+    function removeAllNotices(noticeType = 'default', context = DEFAULT_CONTEXT) {
         return {
             type: 'REMOVE_ALL_NOTICES',
             noticeType,
@@ -596,7 +596,7 @@
      * @return {Object} Action object.
      */
 
-    function removeNotices (ids, context = DEFAULT_CONTEXT) {
+    function removeNotices(ids, context = DEFAULT_CONTEXT) {
         return {
             type: 'REMOVE_NOTICES',
             ids,
@@ -677,7 +677,7 @@
      * @return {WPNotice[]} Array of notices.
      */
 
-    function getNotices (state, context = DEFAULT_CONTEXT) {
+    function getNotices(state, context = DEFAULT_CONTEXT) {
         return state[context] || DEFAULT_NOTICES;
     }
 

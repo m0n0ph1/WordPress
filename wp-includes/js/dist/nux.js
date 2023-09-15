@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -124,7 +124,7 @@
      * @return {Array} Updated state.
      */
 
-    function guides (state = [], action) {
+    function guides(state = [], action) {
         switch (action.type) {
             case 'TRIGGER_GUIDE':
                 return [...state, action.tipIds];
@@ -142,7 +142,7 @@
      * @return {boolean} Updated state.
      */
 
-    function areTipsEnabled (state = true, action) {
+    function areTipsEnabled(state = true, action) {
         switch (action.type) {
             case 'DISABLE_TIPS':
                 return false;
@@ -164,7 +164,7 @@
      * @return {Object} Updated state.
      */
 
-    function dismissedTips (state = {}, action) {
+    function dismissedTips(state = {}, action) {
         switch (action.type) {
             case 'DISMISS_TIP':
                 return {
@@ -198,7 +198,7 @@
      *
      * @return {Object} Action object.
      */
-    function triggerGuide (tipIds) {
+    function triggerGuide(tipIds) {
         return {
             type: 'TRIGGER_GUIDE',
             tipIds
@@ -214,7 +214,7 @@
      * @return {Object} Action object.
      */
 
-    function dismissTip (id) {
+    function dismissTip(id) {
         return {
             type: 'DISMISS_TIP',
             id
@@ -228,7 +228,7 @@
      * @return {Object} Action object.
      */
 
-    function disableTips () {
+    function disableTips() {
         return {
             type: 'DISABLE_TIPS'
         };
@@ -240,7 +240,7 @@
      * @return {Object} Action object.
      */
 
-    function enableTips () {
+    function enableTips() {
         return {
             type: 'ENABLE_TIPS'
         };
@@ -297,7 +297,7 @@
      *
      * @return {[T]} Value returned as entry in array.
      */
-    function arrayOf (value) {
+    function arrayOf(value) {
         return [value];
     }
 
@@ -309,7 +309,7 @@
      *
      * @return {boolean} Whether value is object-like.
      */
-    function isObjectLike (value) {
+    function isObjectLike(value) {
         return !!value && 'object' === typeof value;
     }
 
@@ -318,7 +318,7 @@
      *
      * @return {Cache} Cache object.
      */
-    function createCache () {
+    function createCache() {
         /** @type {Cache} */
         var cache = {
             clear: function () {
@@ -339,7 +339,7 @@
      *
      * @return {boolean} Whether arrays are shallowly equal.
      */
-    function isShallowEqual (a, b, fromIndex) {
+    function isShallowEqual(a, b, fromIndex) {
         var i;
 
         if (a.length !== b.length) {
@@ -371,7 +371,7 @@
      */
 
     /* harmony default export */
-    function rememo (selector, getDependants) {
+    function rememo(selector, getDependants) {
         /** @type {WeakMap<*,*>} */
         var rootCache;
 
@@ -396,7 +396,7 @@
          *
          * @return {Cache} Cache object.
          */
-        function getCache (dependants) {
+        function getCache(dependants) {
             var caches = rootCache,
                 isUniqueByDependants = true,
                 i,
@@ -439,7 +439,7 @@
         /**
          * Resets root memoization cache.
          */
-        function clear () {
+        function clear() {
             rootCache = new WeakMap();
         }
 
@@ -455,7 +455,7 @@
          */
 
         /* eslint-enable jsdoc/check-param-names */
-        function callSelector (/* source, ...extraArgs */) {
+        function callSelector(/* source, ...extraArgs */) {
             var len = arguments.length,
                 cache,
                 node,
@@ -597,7 +597,7 @@
      * @return {boolean} Whether or not the given tip is showing.
      */
 
-    function isTipVisible (state, tipId) {
+    function isTipVisible(state, tipId) {
         if (!state.preferences.areTipsEnabled) {
             return false;
         }
@@ -623,7 +623,7 @@
      * @return {boolean} Whether tips are globally enabled.
      */
 
-    function selectors_areTipsEnabled (state) {
+    function selectors_areTipsEnabled(state) {
         return state.preferences.areTipsEnabled;
     }
 
@@ -700,20 +700,20 @@
 
 
 
-    function onClick (event) {
+    function onClick(event) {
         // Tips are often nested within buttons. We stop propagation so that clicking
         // on a tip doesn't result in the button being clicked.
         event.stopPropagation();
     }
 
-    function DotTip ({
-                         position = 'middle right',
-                         children,
-                         isVisible,
-                         hasNextTip,
-                         onDismiss,
-                         onDisable
-                     }) {
+    function DotTip({
+                        position = 'middle right',
+                        children,
+                        isVisible,
+                        hasNextTip,
+                        onDismiss,
+                        onDisable
+                    }) {
         const anchorParent = (0, external_wp_element_namespaceObject.useRef)(null);
         const onFocusOutsideCallback = (0, external_wp_element_namespaceObject.useCallback)(event => {
             if (!anchorParent.current) {
@@ -771,11 +771,11 @@
             disableTips
         } = dispatch(store);
         return {
-            onDismiss () {
+            onDismiss() {
                 dismissTip(tipId);
             },
 
-            onDisable () {
+            onDisable() {
                 disableTips();
             }
 

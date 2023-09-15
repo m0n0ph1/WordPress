@@ -66,7 +66,7 @@
             var IS_GAP_REGEXP = /[\\\/\-_+.# \t"@\[\(\{&]/,
                 COUNT_GAPS_REGEXP = /[\\\/\-_+.# \t"@\[\(\{&]/g;
 
-            function commandScoreInner (string, abbreviation, lowerString, lowerAbbreviation, stringIndex, abbreviationIndex) {
+            function commandScoreInner(string, abbreviation, lowerString, lowerAbbreviation, stringIndex, abbreviationIndex) {
 
                 if (abbreviationIndex === abbreviation.length) {
                     if (stringIndex === string.length) {
@@ -132,7 +132,7 @@
                 return highScore;
             }
 
-            function commandScore (string, abbreviation) {
+            function commandScore(string, abbreviation) {
                 /* NOTE:
      * in the original, we used to do the lower-casing on each recursive call, but this meant that toLowerCase()
      * was the dominating cost in the algorithm, passing both is a little ugly, but considerably faster.
@@ -154,7 +154,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -196,7 +196,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -215,7 +215,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -242,11 +242,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -309,7 +309,7 @@
         ;// CONCATENATED MODULE: external ["wp","element"]
         const external_wp_element_namespaceObject = window['wp']['element'];
         ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
-        function _extends () {
+        function _extends() {
             _extends = Object.assign ? Object.assign.bind() : function (target) {
                 for (var i = 1; i < arguments.length; i++) {
                     var source = arguments[i];
@@ -326,8 +326,8 @@
         ;// CONCATENATED MODULE: external "React"
         const external_React_namespaceObject = window['React'];
         ;// CONCATENATED MODULE: ./node_modules/@radix-ui/primitive/dist/index.module.js
-        function $e42e1063c40fb3ef$export$b9ecd428b558ff10 (originalEventHandler, ourEventHandler, { checkForDefaultPrevented: checkForDefaultPrevented = true } = {}) {
-            return function handleEvent (event) {
+        function $e42e1063c40fb3ef$export$b9ecd428b558ff10(originalEventHandler, ourEventHandler, {checkForDefaultPrevented: checkForDefaultPrevented = true} = {}) {
+            return function handleEvent(event) {
                 originalEventHandler === null || originalEventHandler === void 0 || originalEventHandler(event);
                 if (checkForDefaultPrevented === false || !event.defaultPrevented) return ourEventHandler === null || ourEventHandler === void 0 ? void 0 : ourEventHandler(event);
             };
@@ -338,7 +338,7 @@
         /**
          * Set a given ref to a given value
          * This utility takes care of different types of refs: callback refs and RefObject(s)
-         */ function $6ed0406888f73fc4$var$setRef (ref, value) {
+         */ function $6ed0406888f73fc4$var$setRef(ref, value) {
             if (typeof ref === 'function') ref(value);
             else if (ref !== null && ref !== undefined) ref.current = value;
         }
@@ -346,7 +346,7 @@
         /**
          * A utility to compose multiple refs together
          * Accepts callback refs and RefObject(s)
-         */ function $6ed0406888f73fc4$export$43e446d32b3d21af (...refs) {
+         */ function $6ed0406888f73fc4$export$43e446d32b3d21af(...refs) {
             return (node) => refs.forEach((ref) => $6ed0406888f73fc4$var$setRef(ref, node)
             )
                 ;
@@ -355,18 +355,18 @@
         /**
          * A custom hook that composes multiple refs
          * Accepts callback refs and RefObject(s)
-         */ function $6ed0406888f73fc4$export$c7b2cbe3552a0d05 (...refs) {
+         */ function $6ed0406888f73fc4$export$c7b2cbe3552a0d05(...refs) {
             // eslint-disable-next-line react-hooks/exhaustive-deps
             return (0, external_React_namespaceObject.useCallback)($6ed0406888f73fc4$export$43e446d32b3d21af(...refs), refs);
         }
 
         ;// CONCATENATED MODULE: ./node_modules/@radix-ui/react-context/dist/index.module.js
 
-        function $c512c27ab02ef895$export$fd42f52fd3ae1109 (rootComponentName, defaultContext) {
+        function $c512c27ab02ef895$export$fd42f52fd3ae1109(rootComponentName, defaultContext) {
             const Context = /*#__PURE__*/ (0, external_React_namespaceObject.createContext)(defaultContext);
 
-            function Provider (props) {
-                const { children: children, ...context } = props; // Only re-memoize when prop values change
+            function Provider(props) {
+                const {children: children, ...context} = props; // Only re-memoize when prop values change
                 // eslint-disable-next-line react-hooks/exhaustive-deps
                 const value = (0, external_React_namespaceObject.useMemo)(() => context
                     , Object.values(context));
@@ -375,7 +375,7 @@
                 }, children);
             }
 
-            function useContext (consumerName) {
+            function useContext(consumerName) {
                 const context = (0, external_React_namespaceObject.useContext)(Context);
                 if (context) return context;
                 if (defaultContext !== undefined) return defaultContext; // if a defaultContext wasn't specified, it's a required context.
@@ -392,13 +392,13 @@
         /* -------------------------------------------------------------------------------------------------
  * createContextScope
  * -----------------------------------------------------------------------------------------------*/
-        function $c512c27ab02ef895$export$50c7b4e9d9f19c1 (scopeName, createContextScopeDeps = []) {
+        function $c512c27ab02ef895$export$50c7b4e9d9f19c1(scopeName, createContextScopeDeps = []) {
             let defaultContexts = [];
 
             /* -----------------------------------------------------------------------------------------------
    * createContext
    * ---------------------------------------------------------------------------------------------*/
-            function $c512c27ab02ef895$export$fd42f52fd3ae1109 (rootComponentName, defaultContext) {
+            function $c512c27ab02ef895$export$fd42f52fd3ae1109(rootComponentName, defaultContext) {
                 const BaseContext = /*#__PURE__*/ (0, external_React_namespaceObject.createContext)(defaultContext);
                 const index = defaultContexts.length;
                 defaultContexts = [
@@ -406,8 +406,8 @@
                     defaultContext
                 ];
 
-                function Provider (props) {
-                    const { scope: scope, children: children, ...context } = props;
+                function Provider(props) {
+                    const {scope: scope, children: children, ...context} = props;
                     const Context = (scope === null || scope === void 0 ? void 0 : scope[scopeName][index]) || BaseContext; // Only re-memoize when prop values change
                     // eslint-disable-next-line react-hooks/exhaustive-deps
                     const value = (0, external_React_namespaceObject.useMemo)(() => context
@@ -417,7 +417,7 @@
                     }, children);
                 }
 
-                function useContext (consumerName, scope) {
+                function useContext(consumerName, scope) {
                     const Context = (scope === null || scope === void 0 ? void 0 : scope[scopeName][index]) || BaseContext;
                     const context = (0, external_React_namespaceObject.useContext)(Context);
                     if (context) return context;
@@ -439,7 +439,7 @@
                 const scopeContexts = defaultContexts.map((defaultContext) => {
                     return /*#__PURE__*/ (0, external_React_namespaceObject.createContext)(defaultContext);
                 });
-                return function useScope (scope) {
+                return function useScope(scope) {
                     const contexts = (scope === null || scope === void 0 ? void 0 : scope[scopeName]) || scopeContexts;
                     return (0, external_React_namespaceObject.useMemo)(() => ({
                             [`__scope${scopeName}`]: {
@@ -463,7 +463,7 @@
         /* -------------------------------------------------------------------------------------------------
  * composeContextScopes
  * -----------------------------------------------------------------------------------------------*/
-        function $c512c27ab02ef895$var$composeContextScopes (...scopes) {
+        function $c512c27ab02ef895$var$composeContextScopes(...scopes) {
             const baseScope = scopes[0];
             if (scopes.length === 1) return baseScope;
             const createScope1 = () => {
@@ -472,7 +472,7 @@
                         scopeName: createScope.scopeName
                     })
                 );
-                return function useComposedScopes (overrideScopes) {
+                return function useComposedScopes(overrideScopes) {
                     const nextScopes1 = scopeHooks.reduce((nextScopes, {
                         useScope: useScope,
                         scopeName: scopeName
@@ -516,7 +516,7 @@
         );
         let $1746a345f3d73bb7$var$count = 0;
 
-        function $1746a345f3d73bb7$export$f680877a34711e37 (deterministicId) {
+        function $1746a345f3d73bb7$export$f680877a34711e37(deterministicId) {
             const [id, setId] = external_React_namespaceObject.useState($1746a345f3d73bb7$var$useReactId()); // React versions older than 18 will have client-side ids only.
             $9f79659886946c16$export$e5c5a5f917a5871c(() => {
                 if (!deterministicId) setId((reactId) => reactId !== null && reactId !== void 0 ? reactId : String($1746a345f3d73bb7$var$count++)
@@ -532,7 +532,7 @@
         /**
          * A custom hook that converts a callback to a ref to avoid triggering re-renders when passed as a
          * prop or avoid re-executing effects when passed as a dependency
-         */ function $b1b2314f5f9a1d84$export$25bec8c6f54ee79a (callback) {
+         */ function $b1b2314f5f9a1d84$export$25bec8c6f54ee79a(callback) {
             const callbackRef = (0, external_React_namespaceObject.useRef)(callback);
             (0, external_React_namespaceObject.useEffect)(() => {
                 callbackRef.current = callback;
@@ -546,12 +546,12 @@
 
         ;// CONCATENATED MODULE: ./node_modules/@radix-ui/react-use-controllable-state/dist/index.module.js
 
-        function $71cd76cc60e0454e$export$6f32135080cb4c3 ({
-                                                               prop: prop,
-                                                               defaultProp: defaultProp,
-                                                               onChange: onChange = () => {
-                                                               }
-                                                           }) {
+        function $71cd76cc60e0454e$export$6f32135080cb4c3({
+                                                              prop: prop,
+                                                              defaultProp: defaultProp,
+                                                              onChange: onChange = () => {
+                                                              }
+                                                          }) {
             const [uncontrolledProp, setUncontrolledProp] = $71cd76cc60e0454e$var$useUncontrolledState({
                 defaultProp: defaultProp,
                 onChange: onChange
@@ -577,7 +577,7 @@
             ];
         }
 
-        function $71cd76cc60e0454e$var$useUncontrolledState ({ defaultProp: defaultProp, onChange: onChange }) {
+        function $71cd76cc60e0454e$var$useUncontrolledState({defaultProp: defaultProp, onChange: onChange}) {
             const uncontrolledState = (0, external_React_namespaceObject.useState)(defaultProp);
             const [value] = uncontrolledState;
             const prevValueRef = (0, external_React_namespaceObject.useRef)(value);
@@ -604,7 +604,7 @@
  * Slot
  * -----------------------------------------------------------------------------------------------*/
         const $5e63c961fc1ce211$export$8c6ed5c666ac1360 = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
-            const { children: children, ...slotProps } = props;
+            const {children: children, ...slotProps} = props;
             const childrenArray = external_React_namespaceObject.Children.toArray(children);
             const slottable = childrenArray.find($5e63c961fc1ce211$var$isSlottable);
             if (slottable) {
@@ -631,7 +631,7 @@
  * SlotClone
  * -----------------------------------------------------------------------------------------------*/
         const $5e63c961fc1ce211$var$SlotClone = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
-            const { children: children, ...slotProps } = props;
+            const {children: children, ...slotProps} = props;
             if (/*#__PURE__*/ (0, external_React_namespaceObject.isValidElement)(children)) return /*#__PURE__*/ (0, external_React_namespaceObject.cloneElement)(children, {
                 ...$5e63c961fc1ce211$var$mergeProps(slotProps, children.props),
                 ref: $6ed0406888f73fc4$export$43e446d32b3d21af(forwardedRef, children.ref)
@@ -642,16 +642,16 @@
         /* -------------------------------------------------------------------------------------------------
  * Slottable
  * -----------------------------------------------------------------------------------------------*/
-        const $5e63c961fc1ce211$export$d9f1ccf0bdb05d45 = ({ children: children }) => {
+        const $5e63c961fc1ce211$export$d9f1ccf0bdb05d45 = ({children: children}) => {
             return /*#__PURE__*/ (0, external_React_namespaceObject.createElement)(external_React_namespaceObject.Fragment, null, children);
         };
 
         /* ---------------------------------------------------------------------------------------------- */
-        function $5e63c961fc1ce211$var$isSlottable (child) {
+        function $5e63c961fc1ce211$var$isSlottable(child) {
             return /*#__PURE__*/ (0, external_React_namespaceObject.isValidElement)(child) && child.type === $5e63c961fc1ce211$export$d9f1ccf0bdb05d45;
         }
 
-        function $5e63c961fc1ce211$var$mergeProps (slotProps, childProps) {
+        function $5e63c961fc1ce211$var$mergeProps(slotProps, childProps) {
             // all child props should override
             const overrideProps = {
                 ...childProps
@@ -705,7 +705,7 @@
  * -----------------------------------------------------------------------------------------------*/
         const $8927f6f2acc4f386$export$250ffa63cdc0d034 = $8927f6f2acc4f386$var$NODES.reduce((primitive, node) => {
             const Node = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
-                const { asChild: asChild, ...primitiveProps } = props;
+                const {asChild: asChild, ...primitiveProps} = props;
                 const Comp = asChild ? $5e63c961fc1ce211$export$8c6ed5c666ac1360 : node;
                 (0, external_React_namespaceObject.useEffect)(() => {
                     window[Symbol.for('radix-ui')] = true;
@@ -759,7 +759,7 @@
          * Note: though React classifies `focus`, `focusin` and `focusout` events as `discrete`, it's  not recommended to use
          * this utility with them. This is because it's possible for those handlers to be called implicitly during render
          * e.g. when focus is within a component as it is unmounted, or when managing focus on mount.
-         */ function $8927f6f2acc4f386$export$6d1a0317bde7de7f (target, event) {
+         */ function $8927f6f2acc4f386$export$6d1a0317bde7de7f(target, event) {
             if (target) (0, external_ReactDOM_namespaceObject.flushSync)(() => target.dispatchEvent(event)
             );
         }
@@ -771,7 +771,7 @@
 
         /**
          * Listens for when the escape key is down
-         */ function $addc16e1bbe58fd0$export$3a72a57244d6e765 (onEscapeKeyDownProp) {
+         */ function $addc16e1bbe58fd0$export$3a72a57244d6e765(onEscapeKeyDownProp) {
             const onEscapeKeyDown = $b1b2314f5f9a1d84$export$25bec8c6f54ee79a(onEscapeKeyDownProp);
             (0, external_React_namespaceObject.useEffect)(() => {
                 const handleKeyDown = (event) => {
@@ -944,7 +944,7 @@
          * Listens for `pointerdown` outside a react subtree. We use `pointerdown` rather than `pointerup`
          * to mimic layer dismissing behaviour present in OS.
          * Returns props to pass to the node we want to check for outside events.
-         */ function $5cb92bef7577960e$var$usePointerDownOutside (onPointerDownOutside) {
+         */ function $5cb92bef7577960e$var$usePointerDownOutside(onPointerDownOutside) {
             const handlePointerDownOutside = $b1b2314f5f9a1d84$export$25bec8c6f54ee79a(onPointerDownOutside);
             const isPointerInsideReactTreeRef = (0, external_React_namespaceObject.useRef)(false);
             const handleClickRef = (0, external_React_namespaceObject.useRef)(() => {
@@ -956,7 +956,7 @@
                             originalEvent: event
                         };
 
-                        function handleAndDispatchPointerDownOutsideEvent () {
+                        function handleAndDispatchPointerDownOutsideEvent() {
                             $5cb92bef7577960e$var$handleAndDispatchCustomEvent($5cb92bef7577960e$var$POINTER_DOWN_OUTSIDE, handlePointerDownOutside, eventDetail, {
                                 discrete: true
                             });
@@ -1016,7 +1016,7 @@
         /**
          * Listens for when focus happens outside a react subtree.
          * Returns props to pass to the root (node) of the subtree we want to check.
-         */ function $5cb92bef7577960e$var$useFocusOutside (onFocusOutside) {
+         */ function $5cb92bef7577960e$var$useFocusOutside(onFocusOutside) {
             const handleFocusOutside = $b1b2314f5f9a1d84$export$25bec8c6f54ee79a(onFocusOutside);
             const isFocusInsideReactTreeRef = (0, external_React_namespaceObject.useRef)(false);
             (0, external_React_namespaceObject.useEffect)(() => {
@@ -1043,12 +1043,12 @@
             };
         }
 
-        function $5cb92bef7577960e$var$dispatchUpdate () {
+        function $5cb92bef7577960e$var$dispatchUpdate() {
             const event = new CustomEvent($5cb92bef7577960e$var$CONTEXT_UPDATE);
             document.dispatchEvent(event);
         }
 
-        function $5cb92bef7577960e$var$handleAndDispatchCustomEvent (name, handler, detail, { discrete: discrete }) {
+        function $5cb92bef7577960e$var$handleAndDispatchCustomEvent(name, handler, detail, {discrete: discrete}) {
             const target = detail.originalEvent.target;
             const event = new CustomEvent(name, {
                 bubbles: false,
@@ -1093,16 +1093,16 @@
             );
             const focusScope = (0, external_React_namespaceObject.useRef)({
                 paused: false,
-                pause () {
+                pause() {
                     this.paused = true;
                 },
-                resume () {
+                resume() {
                     this.paused = false;
                 }
             }).current; // Takes care of trapping focus if focus is moved outside programmatically for example
             (0, external_React_namespaceObject.useEffect)(() => {
                 if (trapped) {
-                    function handleFocusIn (event) {
+                    function handleFocusIn(event) {
                         if (focusScope.paused || !container1) return;
                         const target = event.target;
                         if (container1.contains(target)) lastFocusedElementRef.current = target;
@@ -1111,7 +1111,7 @@
                         });
                     }
 
-                    function handleFocusOut (event) {
+                    function handleFocusOut(event) {
                         if (focusScope.paused || !container1) return;
                         if (!container1.contains(event.relatedTarget)) $d3863c46a17e8a28$var$focus(lastFocusedElementRef.current, {
                             select: true
@@ -1217,7 +1217,7 @@
         /**
          * Attempts focusing the first element in a list of candidates.
          * Stops when focus has actually moved.
-         */ function $d3863c46a17e8a28$var$focusFirst (candidates, { select: select = false } = {}) {
+         */ function $d3863c46a17e8a28$var$focusFirst(candidates, {select: select = false} = {}) {
             const previouslyFocusedElement = document.activeElement;
             for (const candidate of candidates) {
                 $d3863c46a17e8a28$var$focus(candidate, {
@@ -1229,7 +1229,7 @@
 
         /**
          * Returns the first and last tabbable elements inside a container.
-         */ function $d3863c46a17e8a28$var$getTabbableEdges (container) {
+         */ function $d3863c46a17e8a28$var$getTabbableEdges(container) {
             const candidates = $d3863c46a17e8a28$var$getTabbableCandidates(container);
             const first = $d3863c46a17e8a28$var$findVisible(candidates, container);
             const last = $d3863c46a17e8a28$var$findVisible(candidates.reverse(), container);
@@ -1248,7 +1248,7 @@
          *
          * See: https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker
          * Credit: https://github.com/discord/focus-layers/blob/master/src/util/wrapFocus.tsx#L1
-         */ function $d3863c46a17e8a28$var$getTabbableCandidates (container) {
+         */ function $d3863c46a17e8a28$var$getTabbableCandidates(container) {
             const nodes = [];
             const walker = document.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, {
                 acceptNode: (node) => {
@@ -1267,7 +1267,7 @@
         /**
          * Returns the first visible element in a list.
          * NOTE: Only checks visibility up to the `container`.
-         */ function $d3863c46a17e8a28$var$findVisible (elements, container) {
+         */ function $d3863c46a17e8a28$var$findVisible(elements, container) {
             for (const element of elements) {
                 // we stop checking if it's hidden at the `container` level (excluding)
                 if (!$d3863c46a17e8a28$var$isHidden(element, {
@@ -1276,7 +1276,7 @@
             }
         }
 
-        function $d3863c46a17e8a28$var$isHidden (node, { upTo: upTo }) {
+        function $d3863c46a17e8a28$var$isHidden(node, {upTo: upTo}) {
             if (getComputedStyle(node).visibility === 'hidden') return true;
             while (node) {
                 // we stop at `upTo` (excluding it)
@@ -1287,11 +1287,11 @@
             return false;
         }
 
-        function $d3863c46a17e8a28$var$isSelectableInput (element) {
+        function $d3863c46a17e8a28$var$isSelectableInput(element) {
             return element instanceof HTMLInputElement && 'select' in element;
         }
 
-        function $d3863c46a17e8a28$var$focus (element, { select: select = false } = {}) {
+        function $d3863c46a17e8a28$var$focus(element, {select: select = false} = {}) {
             // only focus if that element is focusable
             if (element && element.focus) {
                 const previouslyFocusedElement = document.activeElement; // NOTE: we prevent scrolling on focus, to minimize jarring transitions for users
@@ -1307,10 +1307,10 @@
  * -----------------------------------------------------------------------------------------------*/
         const $d3863c46a17e8a28$var$focusScopesStack = $d3863c46a17e8a28$var$createFocusScopesStack();
 
-        function $d3863c46a17e8a28$var$createFocusScopesStack () {
+        function $d3863c46a17e8a28$var$createFocusScopesStack() {
             /** A stack of focus scopes, with the active one at the top */ let stack = [];
             return {
-                add (focusScope) {
+                add(focusScope) {
                     // pause the currently active focus scope (at the top of the stack)
                     const activeFocusScope = stack[0];
                     if (focusScope !== activeFocusScope) activeFocusScope === null || activeFocusScope === void 0 || activeFocusScope.pause();
@@ -1318,7 +1318,7 @@
                     stack = $d3863c46a17e8a28$var$arrayRemove(stack, focusScope);
                     stack.unshift(focusScope);
                 },
-                remove (focusScope) {
+                remove(focusScope) {
                     var _stack$;
                     stack = $d3863c46a17e8a28$var$arrayRemove(stack, focusScope);
                     (_stack$ = stack[0]) === null || _stack$ === void 0 || _stack$.resume();
@@ -1326,7 +1326,7 @@
             };
         }
 
-        function $d3863c46a17e8a28$var$arrayRemove (array, item) {
+        function $d3863c46a17e8a28$var$arrayRemove(array, item) {
             const updatedArray = [
                 ...array
             ];
@@ -1335,7 +1335,7 @@
             return updatedArray;
         }
 
-        function $d3863c46a17e8a28$var$removeLinks (items) {
+        function $d3863c46a17e8a28$var$removeLinks(items) {
             return items.filter((item) => item.tagName !== 'A'
             );
         }
@@ -1367,7 +1367,7 @@
 
         ;// CONCATENATED MODULE: ./node_modules/@radix-ui/react-presence/dist/index.module.js
 
-        function $fe963b355347cc68$export$3e6543de14f8614f (initialState, machine) {
+        function $fe963b355347cc68$export$3e6543de14f8614f(initialState, machine) {
             return (0, external_React_namespaceObject.useReducer)((state, event) => {
                 const nextState = machine[state][event];
                 return nextState !== null && nextState !== void 0 ? nextState : state;
@@ -1375,7 +1375,7 @@
         }
 
         const $921a889cee6df7e8$export$99c2b779aa4e8b8b = (props) => {
-            const { present: present, children: children } = props;
+            const {present: present, children: children} = props;
             const presence = $921a889cee6df7e8$var$usePresence(present);
             const child = typeof children === 'function' ? children({
                 present: presence.isPresent
@@ -1391,7 +1391,7 @@
         /* -------------------------------------------------------------------------------------------------
  * usePresence
  * -----------------------------------------------------------------------------------------------*/
-        function $921a889cee6df7e8$var$usePresence (present) {
+        function $921a889cee6df7e8$var$usePresence(present) {
             const [node1, setNode] = (0, external_React_namespaceObject.useState)();
             const stylesRef = (0, external_React_namespaceObject.useRef)({});
             const prevPresentRef = (0, external_React_namespaceObject.useRef)(present);
@@ -1490,7 +1490,7 @@
         }
 
         /* -----------------------------------------------------------------------------------------------*/
-        function $921a889cee6df7e8$var$getAnimationName (styles) {
+        function $921a889cee6df7e8$var$getAnimationName(styles) {
             return (styles === null || styles === void 0 ? void 0 : styles.animationName) || 'none';
         }
 
@@ -1498,7 +1498,7 @@
 
         /** Number of components which have requested interest to have focus guards */ let $3db38b7d1fb3fe6a$var$count = 0;
 
-        function $3db38b7d1fb3fe6a$export$ac5b58043b79449b (props) {
+        function $3db38b7d1fb3fe6a$export$ac5b58043b79449b(props) {
             $3db38b7d1fb3fe6a$export$b7ece24a22aeda8c();
             return props.children;
         }
@@ -1506,7 +1506,7 @@
         /**
          * Injects a pair of focus guards at the edges of the whole DOM tree
          * to ensure `focusin` & `focusout` events can be caught consistently.
-         */ function $3db38b7d1fb3fe6a$export$b7ece24a22aeda8c () {
+         */ function $3db38b7d1fb3fe6a$export$b7ece24a22aeda8c() {
             (0, external_React_namespaceObject.useEffect)(() => {
                 var _edgeGuards$, _edgeGuards$2;
                 const edgeGuards = document.querySelectorAll('[data-radix-focus-guard]');
@@ -1521,7 +1521,7 @@
             }, []);
         }
 
-        function $3db38b7d1fb3fe6a$var$createFocusGuard () {
+        function $3db38b7d1fb3fe6a$var$createFocusGuard() {
             const element = document.createElement('span');
             element.setAttribute('data-radix-focus-guard', '');
             element.tabIndex = 0;
@@ -1550,7 +1550,7 @@
 
         var extendStatics = function (d, b) {
             extendStatics = Object.setPrototypeOf ||
-                ({ __proto__: [] } instanceof Array && function (d, b) {
+                ({__proto__: []} instanceof Array && function (d, b) {
                     d.__proto__ = b;
                 }) ||
                 function (d, b) {
@@ -1559,12 +1559,12 @@
             return extendStatics(d, b);
         };
 
-        function __extends (d, b) {
+        function __extends(d, b) {
             if (typeof b !== 'function' && b !== null)
                 throw new TypeError('Class extends value ' + String(b) + ' is not a constructor or null');
             extendStatics(d, b);
 
-            function __ () {
+            function __() {
                 this.constructor = d;
             }
 
@@ -1572,7 +1572,7 @@
         }
 
         var __assign = function () {
-            __assign = Object.assign || function __assign (t) {
+            __assign = Object.assign || function __assign(t) {
                 for (var s, i = 1, n = arguments.length; i < n; i++) {
                     s = arguments[i];
                     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
@@ -1582,7 +1582,7 @@
             return __assign.apply(this, arguments);
         };
 
-        function __rest (s, e) {
+        function __rest(s, e) {
             var t = {};
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
                 t[p] = s[p];
@@ -1594,7 +1594,7 @@
             return t;
         }
 
-        function __decorate (decorators, target, key, desc) {
+        function __decorate(decorators, target, key, desc) {
             var c = arguments.length,
                 r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
             if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function') r = Reflect.decorate(decorators, target, key, desc);
@@ -1602,14 +1602,14 @@
             return c > 3 && r && Object.defineProperty(target, key, r), r;
         }
 
-        function __param (paramIndex, decorator) {
+        function __param(paramIndex, decorator) {
             return function (target, key) {
                 decorator(target, key, paramIndex);
             };
         }
 
-        function __esDecorate (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-            function accept (f) {
+        function __esDecorate(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+            function accept(f) {
                 if (f !== void 0 && typeof f !== 'function') throw new TypeError('Function expected');
                 return f;
             }
@@ -1645,7 +1645,7 @@
             done = true;
         };
 
-        function __runInitializers (thisArg, initializers, value) {
+        function __runInitializers(thisArg, initializers, value) {
             var useValue = arguments.length > 2;
             for (var i = 0; i < initializers.length; i++) {
                 value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
@@ -1653,11 +1653,11 @@
             return useValue ? value : void 0;
         };
 
-        function __propKey (x) {
+        function __propKey(x) {
             return typeof x === 'symbol' ? x : ''.concat(x);
         };
 
-        function __setFunctionName (f, name, prefix) {
+        function __setFunctionName(f, name, prefix) {
             if (typeof name === 'symbol') name = name.description ? '['.concat(name.description, ']') : '';
             return Object.defineProperty(f, 'name', {
                 configurable: true,
@@ -1665,27 +1665,35 @@
             });
         };
 
-        function __metadata (metadataKey, metadataValue) {
+        function __metadata(metadataKey, metadataValue) {
             if (typeof Reflect === 'object' && typeof Reflect.metadata === 'function') return Reflect.metadata(metadataKey, metadataValue);
         }
 
-        function __awaiter (thisArg, _arguments, P, generator) {
-            function adopt (value) {
+        function __awaiter(thisArg, _arguments, P, generator) {
+            function adopt(value) {
                 return value instanceof P ? value : new P(function (resolve) {
                     resolve(value);
                 });
             }
 
             return new (P || (P = Promise))(function (resolve, reject) {
-                function fulfilled (value) {
-                    try { step(generator.next(value)); } catch (e) { reject(e); }
+                function fulfilled(value) {
+                    try {
+                        step(generator.next(value));
+                    } catch (e) {
+                        reject(e);
+                    }
                 }
 
-                function rejected (value) {
-                    try { step(generator['throw'](value)); } catch (e) { reject(e); }
+                function rejected(value) {
+                    try {
+                        step(generator['throw'](value));
+                    } catch (e) {
+                        reject(e);
+                    }
                 }
 
-                function step (result) {
+                function step(result) {
                     result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
                 }
 
@@ -1693,7 +1701,7 @@
             });
         }
 
-        function __generator (thisArg, body) {
+        function __generator(thisArg, body) {
             var _ = {
                 label: 0, sent: function () {
                     if (t[0] & 1) throw t[1];
@@ -1708,13 +1716,13 @@
                 return this;
             }), g;
 
-            function verb (n) {
+            function verb(n) {
                 return function (v) {
                     return step([n, v]);
                 };
             }
 
-            function step (op) {
+            function step(op) {
                 if (f) throw new TypeError('Generator is already executing.');
                 while (g && (g = 0, op[0] && (_ = 0)), _) try {
                     if (f = 1, y && (t = op[0] & 2 ? y['return'] : op[0] ? y['throw'] || ((t = y['return']) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
@@ -1726,7 +1734,7 @@
                             break;
                         case 4:
                             _.label++;
-                            return { value: op[1], done: false };
+                            return {value: op[1], done: false};
                         case 5:
                             _.label++;
                             y = op[1];
@@ -1763,9 +1771,11 @@
                 } catch (e) {
                     op = [6, e];
                     y = 0;
-                } finally { f = t = 0; }
+                } finally {
+                    f = t = 0;
+                }
                 if (op[0] & 5) throw op[1];
-                return { value: op[0] ? op[1] : void 0, done: true };
+                return {value: op[0] ? op[1] : void 0, done: true};
             }
         }
 
@@ -1785,45 +1795,49 @@
             o[k2] = m[k];
         });
 
-        function __exportStar (m, o) {
+        function __exportStar(m, o) {
             for (var p in m) if (p !== 'default' && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
         }
 
-        function __values (o) {
+        function __values(o) {
             var s = typeof Symbol === 'function' && Symbol.iterator, m = s && o[s], i = 0;
             if (m) return m.call(o);
             if (o && typeof o.length === 'number') return {
                 next: function () {
                     if (o && i >= o.length) o = void 0;
-                    return { value: o && o[i++], done: !o };
+                    return {value: o && o[i++], done: !o};
                 }
             };
             throw new TypeError(s ? 'Object is not iterable.' : 'Symbol.iterator is not defined.');
         }
 
-        function __read (o, n) {
+        function __read(o, n) {
             var m = typeof Symbol === 'function' && o[Symbol.iterator];
             if (!m) return o;
             var i = m.call(o), r, ar = [], e;
             try {
                 while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-            } catch (error) { e = { error: error }; } finally {
+            } catch (error) {
+                e = {error: error};
+            } finally {
                 try {
                     if (r && !r.done && (m = i['return'])) m.call(i);
-                } finally { if (e) throw e.error; }
+                } finally {
+                    if (e) throw e.error;
+                }
             }
             return ar;
         }
 
         /** @deprecated */
-        function __spread () {
+        function __spread() {
             for (var ar = [], i = 0; i < arguments.length; i++)
                 ar = ar.concat(__read(arguments[i]));
             return ar;
         }
 
         /** @deprecated */
-        function __spreadArrays () {
+        function __spreadArrays() {
             for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
             for (var r = Array(s), k = 0, i = 0; i < il; i++)
                 for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -1831,7 +1845,7 @@
             return r;
         }
 
-        function __spreadArray (to, from, pack) {
+        function __spreadArray(to, from, pack) {
             if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
                 if (ar || !(i in from)) {
                     if (!ar) ar = Array.prototype.slice.call(from, 0, i);
@@ -1841,18 +1855,18 @@
             return to.concat(ar || Array.prototype.slice.call(from));
         }
 
-        function __await (v) {
+        function __await(v) {
             return this instanceof __await ? (this.v = v, this) : new __await(v);
         }
 
-        function __asyncGenerator (thisArg, _arguments, generator) {
+        function __asyncGenerator(thisArg, _arguments, generator) {
             if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
             var g = generator.apply(thisArg, _arguments || []), i, q = [];
             return i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
                 return this;
             }, i;
 
-            function verb (n) {
+            function verb(n) {
                 if (g[n]) i[n] = function (v) {
                     return new Promise(function (a, b) {
                         q.push([n, v, a, b]) > 1 || resume(n, v);
@@ -1860,28 +1874,32 @@
                 };
             }
 
-            function resume (n, v) {
-                try { step(g[n](v)); } catch (e) { settle(q[0][3], e); }
+            function resume(n, v) {
+                try {
+                    step(g[n](v));
+                } catch (e) {
+                    settle(q[0][3], e);
+                }
             }
 
-            function step (r) {
+            function step(r) {
                 r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
             }
 
-            function fulfill (value) {
+            function fulfill(value) {
                 resume('next', value);
             }
 
-            function reject (value) {
+            function reject(value) {
                 resume('throw', value);
             }
 
-            function settle (f, v) {
+            function settle(f, v) {
                 if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]);
             }
         }
 
-        function __asyncDelegator (o) {
+        function __asyncDelegator(o) {
             var i, p;
             return i = {}, verb('next'), verb('throw', function (e) {
                 throw e;
@@ -1889,21 +1907,21 @@
                 return this;
             }, i;
 
-            function verb (n, f) {
+            function verb(n, f) {
                 i[n] = o[n] ? function (v) {
-                    return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
+                    return (p = !p) ? {value: __await(o[n](v)), done: false} : f ? f(v) : v;
                 } : f;
             }
         }
 
-        function __asyncValues (o) {
+        function __asyncValues(o) {
             if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
             var m = o[Symbol.asyncIterator], i;
             return m ? m.call(o) : (o = typeof __values === 'function' ? __values(o) : o[Symbol.iterator](), i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
                 return this;
             }, i);
 
-            function verb (n) {
+            function verb(n) {
                 i[n] = o[n] && function (v) {
                     return new Promise(function (resolve, reject) {
                         v = o[n](v), settle(resolve, reject, v.done, v.value);
@@ -1911,25 +1929,29 @@
                 };
             }
 
-            function settle (resolve, reject, d, v) {
+            function settle(resolve, reject, d, v) {
                 Promise.resolve(v).then(function (v) {
-                    resolve({ value: v, done: d });
+                    resolve({value: v, done: d});
                 }, reject);
             }
         }
 
-        function __makeTemplateObject (cooked, raw) {
-            if (Object.defineProperty) { Object.defineProperty(cooked, 'raw', { value: raw }); } else { cooked.raw = raw; }
+        function __makeTemplateObject(cooked, raw) {
+            if (Object.defineProperty) {
+                Object.defineProperty(cooked, 'raw', {value: raw});
+            } else {
+                cooked.raw = raw;
+            }
             return cooked;
         };
 
         var __setModuleDefault = Object.create ? (function (o, v) {
-            Object.defineProperty(o, 'default', { enumerable: true, value: v });
+            Object.defineProperty(o, 'default', {enumerable: true, value: v});
         }) : function (o, v) {
             o['default'] = v;
         };
 
-        function __importStar (mod) {
+        function __importStar(mod) {
             if (mod && mod.__esModule) return mod;
             var result = {};
             if (mod != null) for (var k in mod) if (k !== 'default' && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
@@ -1937,29 +1959,29 @@
             return result;
         }
 
-        function __importDefault (mod) {
-            return (mod && mod.__esModule) ? mod : { default: mod };
+        function __importDefault(mod) {
+            return (mod && mod.__esModule) ? mod : {default: mod};
         }
 
-        function __classPrivateFieldGet (receiver, state, kind, f) {
+        function __classPrivateFieldGet(receiver, state, kind, f) {
             if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a getter');
             if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot read private member from an object whose class did not declare it');
             return kind === 'm' ? f : kind === 'a' ? f.call(receiver) : f ? f.value : state.get(receiver);
         }
 
-        function __classPrivateFieldSet (receiver, state, value, kind, f) {
+        function __classPrivateFieldSet(receiver, state, value, kind, f) {
             if (kind === 'm') throw new TypeError('Private method is not writable');
             if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a setter');
             if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot write private member to an object whose class did not declare it');
             return (kind === 'a' ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
         }
 
-        function __classPrivateFieldIn (state, receiver) {
+        function __classPrivateFieldIn(state, receiver) {
             if (receiver === null || (typeof receiver !== 'object' && typeof receiver !== 'function')) throw new TypeError('Cannot use \'in\' operator on non-object');
             return typeof state === 'function' ? receiver === state : state.has(receiver);
         }
 
-        function __addDisposableResource (env, value, async) {
+        function __addDisposableResource(env, value, async) {
             if (value !== null && value !== void 0) {
                 if (typeof value !== 'object') throw new TypeError('Object expected.');
                 var dispose;
@@ -1972,9 +1994,9 @@
                     dispose = value[Symbol.dispose];
                 }
                 if (typeof dispose !== 'function') throw new TypeError('Object not disposable.');
-                env.stack.push({ value: value, dispose: dispose, async: async });
+                env.stack.push({value: value, dispose: dispose, async: async});
             } else if (async) {
-                env.stack.push({ async: true });
+                env.stack.push({async: true});
             }
             return value;
         }
@@ -1984,13 +2006,13 @@
             return e.name = 'SuppressedError', e.error = error, e.suppressed = suppressed, e;
         };
 
-        function __disposeResources (env) {
-            function fail (e) {
+        function __disposeResources(env) {
+            function fail(e) {
                 env.error = env.hasError ? new _SuppressedError(e, env.error, 'An error was suppressed during disposal.') : e;
                 env.hasError = true;
             }
 
-            function next () {
+            function next() {
                 while (env.stack.length) {
                     var rec = env.stack.pop();
                     try {
@@ -2064,7 +2086,7 @@
          * assignRef(refObject, "refValue");
          * assignRef(refFn, "refValue");
          */
-        function assignRef (ref, value) {
+        function assignRef(ref, value) {
             if (typeof ref === 'function') {
                 ref(value);
             } else if (ref) {
@@ -2089,7 +2111,7 @@
          * @see https://github.com/theKashey/use-callback-ref#usecallbackref---to-replace-reactuseref
          * @returns {MutableRefObject}
          */
-        function useCallbackRef (initialValue, callback) {
+        function useCallbackRef(initialValue, callback) {
             var ref = (0, external_React_namespaceObject.useState)(function () {
                 return ({
                     // value
@@ -2098,10 +2120,10 @@
                     callback: callback,
                     // "memoized" public interface
                     facade: {
-                        get current () {
+                        get current() {
                             return ref.value;
                         },
-                        set current (value) {
+                        set current(value) {
                             var last = ref.value;
                             if (last !== value) {
                                 ref.value = value;
@@ -2132,7 +2154,7 @@
          *   return <div ref={domRef}>...</div>
          * }
          */
-        function useMergeRefs (refs, defaultValue) {
+        function useMergeRefs(refs, defaultValue) {
             return useCallbackRef(defaultValue || null, function (newValue) {
                 return refs.forEach(function (ref) {
                     return assignRef(ref, newValue);
@@ -2142,12 +2164,14 @@
 
         ;// CONCATENATED MODULE: ./node_modules/use-sidecar/dist/es2015/medium.js
 
-        function ItoI (a) {
+        function ItoI(a) {
             return a;
         }
 
-        function innerCreateMedium (defaults, middleware) {
-            if (middleware === void 0) { middleware = ItoI; }
+        function innerCreateMedium(defaults, middleware) {
+            if (middleware === void 0) {
+                middleware = ItoI;
+            }
             var buffer = [];
             var assigned = false;
             var medium = {
@@ -2218,16 +2242,20 @@
             return medium;
         }
 
-        function createMedium (defaults, middleware) {
-            if (middleware === void 0) { middleware = ItoI; }
+        function createMedium(defaults, middleware) {
+            if (middleware === void 0) {
+                middleware = ItoI;
+            }
             return innerCreateMedium(defaults, middleware);
         }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-        function createSidecarMedium (options) {
-            if (options === void 0) { options = {}; }
+        function createSidecarMedium(options) {
+            if (options === void 0) {
+                options = {};
+            }
             var medium = innerCreateMedium(null);
-            medium.options = __assign({ async: true, ssr: false }, options);
+            medium.options = __assign({async: true, ssr: false}, options);
             return medium;
         }
 
@@ -2269,7 +2297,7 @@
                     allowPinchZoom: !!allowPinchZoom,
                     lockRef: ref
                 })),
-                forwardProps ? (external_React_namespaceObject.cloneElement(external_React_namespaceObject.Children.only(children), __assign(__assign({}, containerProps), { ref: containerRef }))) : (external_React_namespaceObject.createElement(Container, __assign({}, containerProps, {
+                forwardProps ? (external_React_namespaceObject.cloneElement(external_React_namespaceObject.Children.only(children), __assign(__assign({}, containerProps), {ref: containerRef}))) : (external_React_namespaceObject.createElement(Container, __assign({}, containerProps, {
                     className: className,
                     ref: containerRef
                 }), children))));
@@ -2299,7 +2327,7 @@
         };
         SideCar.isSideCarExport = true;
 
-        function exportSidecar (medium, exported) {
+        function exportSidecar(medium, exported) {
             medium.useMedium(exported);
             return SideCar;
         }
@@ -2321,7 +2349,7 @@
 
         ;// CONCATENATED MODULE: ./node_modules/react-style-singleton/dist/es2015/singleton.js
 
-        function makeStyleTag () {
+        function makeStyleTag() {
             if (!document)
                 return null;
             var tag = document.createElement('style');
@@ -2333,7 +2361,7 @@
             return tag;
         }
 
-        function injectStyles (tag, css) {
+        function injectStyles(tag, css) {
             // @ts-ignore
             if (tag.styleSheet) {
                 // @ts-ignore
@@ -2343,7 +2371,7 @@
             }
         }
 
-        function insertStyleTag (tag) {
+        function insertStyleTag(tag) {
             var head = document.head || document.getElementsByTagName('head')[0];
             head.appendChild(tag);
         }
@@ -2432,7 +2460,9 @@
             return [parse(left), parse(top), parse(right)];
         };
         var getGapWidth = function (gapMode) {
-            if (gapMode === void 0) { gapMode = 'margin'; }
+            if (gapMode === void 0) {
+                gapMode = 'margin';
+            }
             if (typeof window === 'undefined') {
                 return zeroGap;
             }
@@ -2455,7 +2485,9 @@
 // thus we are using style-singleton - only the first "yet correct" style will be applied.
         var getStyles = function (_a, allowRelative, gapMode, important) {
             var left = _a.left, top = _a.top, right = _a.right, gap = _a.gap;
-            if (gapMode === void 0) { gapMode = 'margin'; }
+            if (gapMode === void 0) {
+                gapMode = 'margin';
+            }
             return '\n  .'.concat(noScrollbarsClassName, ' {\n   overflow: hidden ').concat(important, ';\n   padding-right: ').concat(gap, 'px ').concat(important, ';\n  }\n  body {\n    overflow: hidden ').concat(important, ';\n    overscroll-behavior: contain;\n    ').concat([
                 allowRelative && 'position: relative '.concat(important, ';'),
                 gapMode === 'margin' &&
@@ -2479,7 +2511,7 @@
             var gap = external_React_namespaceObject.useMemo(function () {
                 return getGapWidth(gapMode);
             }, [gapMode]);
-            return external_React_namespaceObject.createElement(Style, { styles: getStyles(gap, !noRelative, gapMode, !noImportant ? '!important' : '') });
+            return external_React_namespaceObject.createElement(Style, {styles: getStyles(gap, !noRelative, gapMode, !noImportant ? '!important' : '')});
         };
 
         ;// CONCATENATED MODULE: ./node_modules/react-remove-scroll-bar/dist/es2015/index.js
@@ -2502,7 +2534,7 @@
                 passiveSupported = false;
             }
         }
-        var nonPassive = passiveSupported ? { passive: false } : false;
+        var nonPassive = passiveSupported ? {passive: false} : false;
 
         ;// CONCATENATED MODULE: ./node_modules/@radix-ui/react-dialog/node_modules/react-remove-scroll/dist/es2015/handleScroll.js
         var elementCouldBeVScrolled = function (node) {
@@ -2619,7 +2651,7 @@
         var idCounter = 0;
         var lockStack = [];
 
-        function RemoveScrollSideCar (props) {
+        function RemoveScrollSideCar(props) {
             var shouldPreventQueue = external_React_namespaceObject.useRef([]);
             var touchStartRef = external_React_namespaceObject.useRef([0, 0]);
             var activeAxis = external_React_namespaceObject.useRef();
@@ -2715,7 +2747,7 @@
                 }
             }, []);
             var shouldCancel = external_React_namespaceObject.useCallback(function (name, delta, target, should) {
-                var event = { name: name, delta: delta, target: target, should: should };
+                var event = {name: name, delta: delta, target: target, should: should};
                 shouldPreventQueue.current.push(event);
                 setTimeout(function () {
                     shouldPreventQueue.current = shouldPreventQueue.current.filter(function (e) {
@@ -2754,8 +2786,8 @@
             }, []);
             var removeScrollBar = props.removeScrollBar, inert = props.inert;
             return (external_React_namespaceObject.createElement(external_React_namespaceObject.Fragment, null,
-                inert ? external_React_namespaceObject.createElement(Style, { styles: generateStyle(id) }) : null,
-                removeScrollBar ? external_React_namespaceObject.createElement(RemoveScrollBar, { gapMode: 'margin' }) : null));
+                inert ? external_React_namespaceObject.createElement(Style, {styles: generateStyle(id)}) : null,
+                removeScrollBar ? external_React_namespaceObject.createElement(RemoveScrollBar, {gapMode: 'margin'}) : null));
         }
 
         ;// CONCATENATED MODULE: ./node_modules/@radix-ui/react-dialog/node_modules/react-remove-scroll/dist/es2015/sidecar.js
@@ -2896,7 +2928,9 @@
          * @return {Undo} undo command
          */
         var hideOthers = function (originalTarget, parentNode, markerName) {
-            if (markerName === void 0) { markerName = 'data-aria-hidden'; }
+            if (markerName === void 0) {
+                markerName = 'data-aria-hidden';
+            }
             var targets = Array.from(Array.isArray(originalTarget) ? originalTarget : [originalTarget]);
             var activeParentNode = parentNode || getDefaultParent(originalTarget);
             if (!activeParentNode) {
@@ -2916,7 +2950,9 @@
          * @return {Undo} undo command
          */
         var inertOthers = function (originalTarget, parentNode, markerName) {
-            if (markerName === void 0) { markerName = 'data-inert-ed'; }
+            if (markerName === void 0) {
+                markerName = 'data-inert-ed';
+            }
             var activeParentNode = parentNode || getDefaultParent(originalTarget);
             if (!activeParentNode) {
                 return function () {
@@ -2939,7 +2975,9 @@
          * @return {Undo} undo command
          */
         var suppressOthers = function (originalTarget, parentNode, markerName) {
-            if (markerName === void 0) { markerName = 'data-suppressed'; }
+            if (markerName === void 0) {
+                markerName = 'data-suppressed';
+            }
             return (supportsInert() ? inertOthers : hideOthers)(originalTarget, parentNode, markerName);
         };
 
@@ -2993,7 +3031,7 @@
  * -----------------------------------------------------------------------------------------------*/
         const $5d3850c4d0b4e6c7$var$TRIGGER_NAME = 'DialogTrigger';
         const $5d3850c4d0b4e6c7$export$2e1e1122cf0cba88 = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
-            const { __scopeDialog: __scopeDialog, ...triggerProps } = props;
+            const {__scopeDialog: __scopeDialog, ...triggerProps} = props;
             const context = $5d3850c4d0b4e6c7$var$useDialogContext($5d3850c4d0b4e6c7$var$TRIGGER_NAME, __scopeDialog);
             const composedTriggerRef = $6ed0406888f73fc4$export$c7b2cbe3552a0d05(forwardedRef, context.triggerRef);
             return /*#__PURE__*/ (0, external_React_namespaceObject.createElement)($8927f6f2acc4f386$export$250ffa63cdc0d034.button, _extends({
@@ -3047,7 +3085,7 @@
         const $5d3850c4d0b4e6c7$var$OVERLAY_NAME = 'DialogOverlay';
         const $5d3850c4d0b4e6c7$export$bd1d06c79be19e17 = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
             const portalContext = $5d3850c4d0b4e6c7$var$usePortalContext($5d3850c4d0b4e6c7$var$OVERLAY_NAME, props.__scopeDialog);
-            const { forceMount: forceMount = portalContext.forceMount, ...overlayProps } = props;
+            const {forceMount: forceMount = portalContext.forceMount, ...overlayProps} = props;
             const context = $5d3850c4d0b4e6c7$var$useDialogContext($5d3850c4d0b4e6c7$var$OVERLAY_NAME, props.__scopeDialog);
             return context.modal ? /*#__PURE__*/ (0, external_React_namespaceObject.createElement)($921a889cee6df7e8$export$99c2b779aa4e8b8b, {
                 present: forceMount || context.open
@@ -3060,7 +3098,7 @@
             displayName: $5d3850c4d0b4e6c7$var$OVERLAY_NAME
         });
         const $5d3850c4d0b4e6c7$var$DialogOverlayImpl = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
-            const { __scopeDialog: __scopeDialog, ...overlayProps } = props;
+            const {__scopeDialog: __scopeDialog, ...overlayProps} = props;
             const context = $5d3850c4d0b4e6c7$var$useDialogContext($5d3850c4d0b4e6c7$var$OVERLAY_NAME, __scopeDialog);
             return (/*#__PURE__*/ // Make sure `Content` is scrollable even when it doesn't live inside `RemoveScroll`
                 // ie. when `Overlay` and `Content` are siblings
@@ -3087,7 +3125,7 @@
         const $5d3850c4d0b4e6c7$var$CONTENT_NAME = 'DialogContent';
         const $5d3850c4d0b4e6c7$export$b6d9565de1e068cf = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
             const portalContext = $5d3850c4d0b4e6c7$var$usePortalContext($5d3850c4d0b4e6c7$var$CONTENT_NAME, props.__scopeDialog);
-            const { forceMount: forceMount = portalContext.forceMount, ...contentProps } = props;
+            const {forceMount: forceMount = portalContext.forceMount, ...contentProps} = props;
             const context = $5d3850c4d0b4e6c7$var$useDialogContext($5d3850c4d0b4e6c7$var$CONTENT_NAME, props.__scopeDialog);
             return /*#__PURE__*/ (0, external_React_namespaceObject.createElement)($921a889cee6df7e8$export$99c2b779aa4e8b8b, {
                 present: forceMount || context.open
@@ -3201,7 +3239,7 @@
  * -----------------------------------------------------------------------------------------------*/
         const $5d3850c4d0b4e6c7$var$TITLE_NAME = 'DialogTitle';
         const $5d3850c4d0b4e6c7$export$16f7638e4a34b909 = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
-            const { __scopeDialog: __scopeDialog, ...titleProps } = props;
+            const {__scopeDialog: __scopeDialog, ...titleProps} = props;
             const context = $5d3850c4d0b4e6c7$var$useDialogContext($5d3850c4d0b4e6c7$var$TITLE_NAME, __scopeDialog);
             return /*#__PURE__*/ (0, external_React_namespaceObject.createElement)($8927f6f2acc4f386$export$250ffa63cdc0d034.h2, _extends({
                 id: context.titleId
@@ -3218,7 +3256,7 @@
  * -----------------------------------------------------------------------------------------------*/
         const $5d3850c4d0b4e6c7$var$DESCRIPTION_NAME = 'DialogDescription';
         const $5d3850c4d0b4e6c7$export$94e94c2ec2c954d5 = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
-            const { __scopeDialog: __scopeDialog, ...descriptionProps } = props;
+            const {__scopeDialog: __scopeDialog, ...descriptionProps} = props;
             const context = $5d3850c4d0b4e6c7$var$useDialogContext($5d3850c4d0b4e6c7$var$DESCRIPTION_NAME, __scopeDialog);
             return /*#__PURE__*/ (0, external_React_namespaceObject.createElement)($8927f6f2acc4f386$export$250ffa63cdc0d034.p, _extends({
                 id: context.descriptionId
@@ -3235,7 +3273,7 @@
  * -----------------------------------------------------------------------------------------------*/
         const $5d3850c4d0b4e6c7$var$CLOSE_NAME = 'DialogClose';
         const $5d3850c4d0b4e6c7$export$fba2fb7cd781b7ac = /*#__PURE__*/ (0, external_React_namespaceObject.forwardRef)((props, forwardedRef) => {
-            const { __scopeDialog: __scopeDialog, ...closeProps } = props;
+            const {__scopeDialog: __scopeDialog, ...closeProps} = props;
             const context = $5d3850c4d0b4e6c7$var$useDialogContext($5d3850c4d0b4e6c7$var$CLOSE_NAME, __scopeDialog);
             return /*#__PURE__*/ (0, external_React_namespaceObject.createElement)($8927f6f2acc4f386$export$250ffa63cdc0d034.button, _extends({
                 type: 'button'
@@ -3251,7 +3289,7 @@
         });
 
         /* -----------------------------------------------------------------------------------------------*/
-        function $5d3850c4d0b4e6c7$var$getState (open) {
+        function $5d3850c4d0b4e6c7$var$getState(open) {
             return open ? 'open' : 'closed';
         }
 
@@ -3261,7 +3299,7 @@
             titleName: $5d3850c4d0b4e6c7$var$TITLE_NAME,
             docsSlug: 'dialog'
         });
-        const $5d3850c4d0b4e6c7$var$TitleWarning = ({ titleId: titleId }) => {
+        const $5d3850c4d0b4e6c7$var$TitleWarning = ({titleId: titleId}) => {
             const titleWarningContext = $5d3850c4d0b4e6c7$var$useWarningContext($5d3850c4d0b4e6c7$var$TITLE_WARNING_NAME);
             const MESSAGE = `\`${titleWarningContext.contentName}\` requires a \`${titleWarningContext.titleName}\` for the component to be accessible for screen reader users.
 
@@ -3280,7 +3318,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             return null;
         };
         const $5d3850c4d0b4e6c7$var$DESCRIPTION_WARNING_NAME = 'DialogDescriptionWarning';
-        const $5d3850c4d0b4e6c7$var$DescriptionWarning = ({ contentRef: contentRef, descriptionId: descriptionId }) => {
+        const $5d3850c4d0b4e6c7$var$DescriptionWarning = ({contentRef: contentRef, descriptionId: descriptionId}) => {
             const descriptionWarningContext = $5d3850c4d0b4e6c7$var$useWarningContext($5d3850c4d0b4e6c7$var$DESCRIPTION_WARNING_NAME);
             const MESSAGE = `Warning: Missing \`Description\` or \`aria-describedby={undefined}\` for {${descriptionWarningContext.contentName}}.`;
             $67UHm$useEffect(() => {
@@ -3319,7 +3357,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             ne = external_React_namespaceObject.createContext(void 0),
             oe = external_React_namespaceObject.forwardRef((n, a) => {
                 let r = external_React_namespaceObject.useRef(null),
-                    o = x(() => ({ search: '', value: '', filtered: { count: 0, items: new Map, groups: new Set } })),
+                    o = x(() => ({search: '', value: '', filtered: {count: 0, items: new Map, groups: new Set}})),
                     u = x(() => new Set), l = x(() => new Map), p = x(() => new Map), f = x(() => new Set), d = ae(n), {
                         label: v,
                         children: E,
@@ -3375,13 +3413,13 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     labelId: g
                 }), []);
 
-                function B (e) {
+                function B(e) {
                     var i;
                     let c = ((i = d.current) == null ? void 0 : i.filter) ?? fe;
                     return e ? c(e, o.current.search) : 0;
                 }
 
-                function G () {
+                function G() {
                     if (!r.current || !o.current.search || d.current.shouldFilter === !1) return;
                     let e = o.current.filtered.items, c = [];
                     o.current.filtered.groups.forEach(s => {
@@ -3404,12 +3442,12 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     });
                 }
 
-                function V () {
+                function V() {
                     let e = I().find(i => !i.ariaDisabled), c = e == null ? void 0 : e.getAttribute(S);
                     h.setState('value', c || void 0);
                 }
 
-                function j () {
+                function j() {
                     if (!o.current.search || d.current.shouldFilter === !1) {
                         o.current.filtered.count = u.current.size;
                         return;
@@ -3427,32 +3465,32 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     o.current.filtered.count = e;
                 }
 
-                function W () {
+                function W() {
                     var c, i, s;
                     let e = _();
-                    e && (((c = e.parentElement) == null ? void 0 : c.firstChild) === e && ((s = (i = e.closest(M)) == null ? void 0 : i.querySelector(de)) == null || s.scrollIntoView({ block: 'nearest' })), e.scrollIntoView({ block: 'nearest' }));
+                    e && (((c = e.parentElement) == null ? void 0 : c.firstChild) === e && ((s = (i = e.closest(M)) == null ? void 0 : i.querySelector(de)) == null || s.scrollIntoView({block: 'nearest'})), e.scrollIntoView({block: 'nearest'}));
                 }
 
-                function _ () {
+                function _() {
                     return r.current.querySelector(`${ee}[aria-selected="true"]`);
                 }
 
-                function I () {
+                function I() {
                     return Array.from(r.current.querySelectorAll(Z));
                 }
 
-                function q (e) {
+                function q(e) {
                     let i = I()[e];
                     i && h.setState('value', i.getAttribute(S));
                 }
 
-                function $ (e) {
+                function $(e) {
                     var b;
                     let c = _(), i = I(), s = i.findIndex(P => P === c), m = i[s + e];
                     (b = d.current) != null && b.loop && (m = s + e < 0 ? i[i.length - 1] : s + e === i.length ? i[0] : i[s + e]), m && h.setState('value', m.getAttribute(S));
                 }
 
-                function J (e) {
+                function J(e) {
                     let c = _(), i = c == null ? void 0 : c.closest(M), s;
                     for (; i && !s;) i = e > 0 ? Se(i, M) : Ce(i, M), s = i == null ? void 0 : i.querySelector(Z);
                     s ? h.setState('value', s.getAttribute(S)) : $(e);
@@ -3510,7 +3548,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     htmlFor: K.inputId,
                     id: K.labelId,
                     style: xe
-                }, v), external_React_namespaceObject.createElement(re.Provider, { value: h }, external_React_namespaceObject.createElement(te.Provider, { value: K }, E)));
+                }, v), external_React_namespaceObject.createElement(re.Provider, {value: h}, external_React_namespaceObject.createElement(te.Provider, {value: K}, E)));
             }), me = external_React_namespaceObject.forwardRef((n, a) => {
                 let r = external_React_namespaceObject.useId(), o = external_React_namespaceObject.useRef(null),
                     u = external_React_namespaceObject.useContext(ne), l = k(), p = ae(n);
@@ -3522,17 +3560,17 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     if (!(!g || n.disabled)) return g.addEventListener(z, R), () => g.removeEventListener(z, R);
                 }, [E, n.onSelect, n.disabled]);
 
-                function R () {
+                function R() {
                     var g, A;
                     (A = (g = p.current).onSelect) == null || A.call(g, f.current);
                 }
 
-                function w () {
+                function w() {
                     d.setState('value', f.current, !0);
                 }
 
                 if (!E) return null;
-                let { disabled: O, value: ie, onSelect: D, ...F } = n;
+                let {disabled: O, value: ie, onSelect: D, ...F} = n;
                 return external_React_namespaceObject.createElement('div', {
                     ref: H([o, a]), ...F,
                     'cmdk-item': '',
@@ -3544,12 +3582,12 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     onClick: O ? void 0 : R
                 }, n.children);
             }), pe = external_React_namespaceObject.forwardRef((n, a) => {
-                let { heading: r, children: o, ...u } = n, l = external_React_namespaceObject.useId(),
+                let {heading: r, children: o, ...u} = n, l = external_React_namespaceObject.useId(),
                     p = external_React_namespaceObject.useRef(null), f = external_React_namespaceObject.useRef(null),
                     d = external_React_namespaceObject.useId(), v = k(),
                     E = T(w => v.filter() === !1 ? !0 : w.search ? w.filtered.groups.has(l) : !0);
                 L(() => v.group(l), []), se(l, p, [n.value, n.heading, f]);
-                let R = external_React_namespaceObject.createElement(ne.Provider, { value: l }, o);
+                let R = external_React_namespaceObject.createElement(ne.Provider, {value: l}, o);
                 return external_React_namespaceObject.createElement('div', {
                     ref: H([p, a]), ...u,
                     'cmdk-group': '',
@@ -3566,14 +3604,14 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     'aria-labelledby': r ? d : void 0
                 }, R));
             }), ge = external_React_namespaceObject.forwardRef((n, a) => {
-                let { alwaysRender: r, ...o } = n, u = external_React_namespaceObject.useRef(null), l = T(p => !p.search);
+                let {alwaysRender: r, ...o} = n, u = external_React_namespaceObject.useRef(null), l = T(p => !p.search);
                 return !r && !l ? null : external_React_namespaceObject.createElement('div', {
                     ref: H([u, a]), ...o,
                     'cmdk-separator': '',
                     role: 'separator'
                 });
             }), ve = external_React_namespaceObject.forwardRef((n, a) => {
-                let { onValueChange: r, ...o } = n, u = n.value != null, l = U(), p = T(d => d.search), f = k();
+                let {onValueChange: r, ...o} = n, u = n.value != null, l = U(), p = T(d => d.search), f = k();
                 return external_React_namespaceObject.useEffect(() => {
                     n.value != null && l.setState('search', n.value);
                 }, [n.value]), external_React_namespaceObject.createElement('input', {
@@ -3595,7 +3633,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     }
                 });
             }), Re = external_React_namespaceObject.forwardRef((n, a) => {
-                let { children: r, ...o } = n, u = external_React_namespaceObject.useRef(null),
+                let {children: r, ...o} = n, u = external_React_namespaceObject.useRef(null),
                     l = external_React_namespaceObject.useRef(null), p = k();
                 return external_React_namespaceObject.useEffect(() => {
                     if (l.current && u.current) {
@@ -3616,16 +3654,16 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     'aria-label': 'Suggestions',
                     id: p.listId,
                     'aria-labelledby': p.inputId
-                }, external_React_namespaceObject.createElement('div', { ref: l, 'cmdk-list-sizer': '' }, r));
+                }, external_React_namespaceObject.createElement('div', {ref: l, 'cmdk-list-sizer': ''}, r));
             }), be = external_React_namespaceObject.forwardRef((n, a) => {
-                let { open: r, onOpenChange: o, container: u, ...l } = n;
+                let {open: r, onOpenChange: o, container: u, ...l} = n;
                 return external_React_namespaceObject.createElement($5d3850c4d0b4e6c7$export$be92b6f5f03c0fe9, {
                     open: r,
                     onOpenChange: o
-                }, external_React_namespaceObject.createElement($5d3850c4d0b4e6c7$export$602eac185826482c, { container: u }, external_React_namespaceObject.createElement($5d3850c4d0b4e6c7$export$c6fdb837b070b4ff, { 'cmdk-overlay': '' }), external_React_namespaceObject.createElement($5d3850c4d0b4e6c7$export$7c6e2c02157bb7d2, {
+                }, external_React_namespaceObject.createElement($5d3850c4d0b4e6c7$export$602eac185826482c, {container: u}, external_React_namespaceObject.createElement($5d3850c4d0b4e6c7$export$c6fdb837b070b4ff, {'cmdk-overlay': ''}), external_React_namespaceObject.createElement($5d3850c4d0b4e6c7$export$7c6e2c02157bb7d2, {
                     'aria-label': n.label,
                     'cmdk-dialog': ''
-                }, external_React_namespaceObject.createElement(oe, { ref: a, ...l }))));
+                }, external_React_namespaceObject.createElement(oe, {ref: a, ...l}))));
             }), he = external_React_namespaceObject.forwardRef((n, a) => {
                 let r = external_React_namespaceObject.useRef(!0), o = T(u => u.filtered.count === 0);
                 return external_React_namespaceObject.useEffect(() => {
@@ -3636,7 +3674,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     role: 'presentation'
                 });
             }), Ee = external_React_namespaceObject.forwardRef((n, a) => {
-                let { progress: r, children: o, ...u } = n;
+                let {progress: r, children: o, ...u} = n;
                 return external_React_namespaceObject.createElement('div', {
                     ref: a, ...u,
                     'cmdk-loading': '',
@@ -3645,7 +3683,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                     'aria-valuemin': 0,
                     'aria-valuemax': 100,
                     'aria-label': 'Loading...'
-                }, external_React_namespaceObject.createElement('div', { 'aria-hidden': !0 }, o));
+                }, external_React_namespaceObject.createElement('div', {'aria-hidden': !0}, o));
             }), Le = Object.assign(oe, {
                 List: Re,
                 Item: me,
@@ -3657,7 +3695,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
                 Loading: Ee
             });
 
-        function Se (n, a) {
+        function Se(n, a) {
             let r = n.nextElementSibling;
             for (; r;) {
                 if (r.matches(a)) return r;
@@ -3665,7 +3703,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             }
         }
 
-        function Ce (n, a) {
+        function Ce(n, a) {
             let r = n.previousElementSibling;
             for (; r;) {
                 if (r.matches(a)) return r;
@@ -3673,7 +3711,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             }
         }
 
-        function ae (n) {
+        function ae(n) {
             let a = external_React_namespaceObject.useRef(n);
             return L(() => {
                 a.current = n;
@@ -3682,12 +3720,12 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
 
         var L = typeof window > 'u' ? external_React_namespaceObject.useEffect : external_React_namespaceObject.useLayoutEffect;
 
-        function x (n) {
+        function x(n) {
             let a = external_React_namespaceObject.useRef();
             return a.current === void 0 && (a.current = n()), a;
         }
 
-        function H (n) {
+        function H(n) {
             return a => {
                 n.forEach(r => {
                     typeof r == 'function' ? r(a) : r != null && (r.current = a);
@@ -3695,12 +3733,12 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             };
         }
 
-        function T (n) {
+        function T(n) {
             let a = U(), r = () => n(a.snapshot());
             return external_React_namespaceObject.useSyncExternalStore(a.subscribe, r, r);
         }
 
-        function se (n, a, r) {
+        function se(n, a, r) {
             let o = external_React_namespaceObject.useRef(), u = k();
             return L(() => {
                 var p;
@@ -3759,11 +3797,11 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @return {JSX.Element}  Icon component
          */
 
-        function Icon ({
-                           icon,
-                           size = 24,
-                           ...props
-                       }) {
+        function Icon({
+                          icon,
+                          size = 24,
+                          ...props
+                      }) {
             return (0, external_wp_element_namespaceObject.cloneElement)(icon, {
                 width: size,
                 height: size,
@@ -3788,7 +3826,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @return {Object} Updated state.
          */
 
-        function commands (state = {}, action) {
+        function commands(state = {}, action) {
             switch (action.type) {
                 case 'REGISTER_COMMAND':
                     return {
@@ -3825,7 +3863,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          */
 
 
-        function commandLoaders (state = {}, action) {
+        function commandLoaders(state = {}, action) {
             switch (action.type) {
                 case 'REGISTER_COMMAND_LOADER':
                     return {
@@ -3859,7 +3897,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          */
 
 
-        function isOpen (state = false, action) {
+        function isOpen(state = false, action) {
             switch (action.type) {
                 case 'OPEN':
                     return true;
@@ -3881,7 +3919,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          */
 
 
-        function context (state = 'root', action) {
+        function context(state = 'root', action) {
             switch (action.type) {
                 case 'SET_CONTEXT':
                     return action.context;
@@ -3936,7 +3974,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          *
          * @return {Object} action.
          */
-        function registerCommand (config) {
+        function registerCommand(config) {
             return {
                 type: 'REGISTER_COMMAND',
                 ...config
@@ -3951,7 +3989,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @return {Object} action.
          */
 
-        function unregisterCommand (name) {
+        function unregisterCommand(name) {
             return {
                 type: 'UNREGISTER_COMMAND',
                 name
@@ -3966,7 +4004,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @return {Object} action.
          */
 
-        function registerCommandLoader (config) {
+        function registerCommandLoader(config) {
             return {
                 type: 'REGISTER_COMMAND_LOADER',
                 ...config
@@ -3981,7 +4019,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @return {Object} action.
          */
 
-        function unregisterCommandLoader (name) {
+        function unregisterCommandLoader(name) {
             return {
                 type: 'UNREGISTER_COMMAND_LOADER',
                 name
@@ -3994,7 +4032,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @return {Object} action.
          */
 
-        function actions_open () {
+        function actions_open() {
             return {
                 type: 'OPEN'
             };
@@ -4006,7 +4044,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @return {Object} action.
          */
 
-        function actions_close () {
+        function actions_close() {
             return {
                 type: 'CLOSE'
             };
@@ -4063,7 +4101,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          *
          * @return {[T]} Value returned as entry in array.
          */
-        function arrayOf (value) {
+        function arrayOf(value) {
             return [value];
         }
 
@@ -4075,7 +4113,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          *
          * @return {boolean} Whether value is object-like.
          */
-        function isObjectLike (value) {
+        function isObjectLike(value) {
             return !!value && 'object' === typeof value;
         }
 
@@ -4084,7 +4122,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          *
          * @return {Cache} Cache object.
          */
-        function createCache () {
+        function createCache() {
             /** @type {Cache} */
             var cache = {
                 clear: function () {
@@ -4105,7 +4143,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          *
          * @return {boolean} Whether arrays are shallowly equal.
          */
-        function isShallowEqual (a, b, fromIndex) {
+        function isShallowEqual(a, b, fromIndex) {
             var i;
 
             if (a.length !== b.length) {
@@ -4137,7 +4175,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          */
 
         /* harmony default export */
-        function rememo (selector, getDependants) {
+        function rememo(selector, getDependants) {
             /** @type {WeakMap<*,*>} */
             var rootCache;
 
@@ -4162,7 +4200,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
              *
              * @return {Cache} Cache object.
              */
-            function getCache (dependants) {
+            function getCache(dependants) {
                 var caches = rootCache,
                     isUniqueByDependants = true,
                     i,
@@ -4205,7 +4243,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             /**
              * Resets root memoization cache.
              */
-            function clear () {
+            function clear() {
                 rootCache = new WeakMap();
             }
 
@@ -4221,7 +4259,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
              */
 
             /* eslint-enable jsdoc/check-param-names */
-            function callSelector (/* source, ...extraArgs */) {
+            function callSelector(/* source, ...extraArgs */) {
                 var len = arguments.length,
                     cache,
                     node,
@@ -4326,11 +4364,11 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             return contextual ? isContextual : !isContextual;
         }), state => [state.commandLoaders, state.context]);
 
-        function selectors_isOpen (state) {
+        function selectors_isOpen(state) {
             return state.isOpen;
         }
 
-        function getContext (state) {
+        function getContext(state) {
             return state.context;
         }
 
@@ -4342,7 +4380,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          *
          * @return {Object} action.
          */
-        function setContext (context) {
+        function setContext(context) {
             return {
                 type: 'SET_CONTEXT',
                 context
@@ -4408,13 +4446,13 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
 
 
 
-        function CommandMenuLoader ({
-                                        name,
-                                        search,
-                                        hook,
-                                        setLoader,
-                                        close
-                                    }) {
+        function CommandMenuLoader({
+                                       name,
+                                       search,
+                                       hook,
+                                       setLoader,
+                                       close
+                                   }) {
             var _hook;
 
             const {
@@ -4452,12 +4490,12 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             })));
         }
 
-        function CommandMenuLoaderWrapper ({
-                                               hook,
-                                               search,
-                                               setLoader,
-                                               close
-                                           }) {
+        function CommandMenuLoaderWrapper({
+                                              hook,
+                                              search,
+                                              setLoader,
+                                              close
+                                          }) {
             // The "hook" prop is actually a custom React hook
             // so to avoid breaking the rules of hooks
             // the CommandMenuLoaderWrapper component need to be
@@ -4480,12 +4518,12 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             });
         }
 
-        function CommandMenuGroup ({
-                                       isContextual,
-                                       search,
-                                       setLoader,
-                                       close
-                                   }) {
+        function CommandMenuGroup({
+                                      isContextual,
+                                      search,
+                                      setLoader,
+                                      close
+                                  }) {
             const {
                 commands,
                 loaders
@@ -4531,7 +4569,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
             })));
         }
 
-        function CommandMenu () {
+        function CommandMenu() {
             const {
                 registerShortcut
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_keyboardShortcuts_namespaceObject.store);
@@ -4645,7 +4683,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @param {string} context Context to set.
          */
 
-        function useCommandContext (context) {
+        function useCommandContext(context) {
             const {
                 getContext
             } = (0, external_wp_data_namespaceObject.useSelect)(store);
@@ -4690,7 +4728,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @param {import('../store/actions').WPCommandConfig} command command config.
          */
 
-        function useCommand (command) {
+        function useCommand(command) {
             const {
                 registerCommand,
                 unregisterCommand
@@ -4729,7 +4767,7 @@ For more information, see https://radix-ui.com/primitives/docs/components/${titl
          * @param {import('../store/actions').WPCommandLoaderConfig} loader command loader config.
          */
 
-        function useCommandLoader (loader) {
+        function useCommandLoader(loader) {
             const {
                 registerCommandLoader,
                 unregisterCommandLoader

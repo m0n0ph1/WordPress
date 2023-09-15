@@ -10,7 +10,7 @@
 
 var themeBaseURL = tinyMCEPopup.editor.baseURI.toAbsolute('themes/' + tinyMCEPopup.getParam('theme'));
 
-function getColorPickerHTML (id, target_form_element) {
+function getColorPickerHTML(id, target_form_element) {
     var h = '', dom = tinyMCEPopup.dom;
 
     if (label = dom.select('label[for=' + target_form_element + ']')[0]) {
@@ -23,11 +23,11 @@ function getColorPickerHTML (id, target_form_element) {
     return h;
 }
 
-function updateColor (img_id, form_element_id) {
+function updateColor(img_id, form_element_id) {
     document.getElementById(img_id).style.backgroundColor = document.forms[0].elements[form_element_id].value;
 }
 
-function setBrowserDisabled (id, state) {
+function setBrowserDisabled(id, state) {
     var img = document.getElementById(id);
     var lnk = document.getElementById(id + '_link');
 
@@ -46,7 +46,7 @@ function setBrowserDisabled (id, state) {
     }
 }
 
-function getBrowserHTML (id, target_form_element, type, prefix) {
+function getBrowserHTML(id, target_form_element, type, prefix) {
     var option = prefix + '_' + type + '_browser_callback', cb, html;
 
     cb = tinyMCEPopup.getParam(option, tinyMCEPopup.getParam('file_browser_callback'));
@@ -62,7 +62,7 @@ function getBrowserHTML (id, target_form_element, type, prefix) {
     return html;
 }
 
-function openBrowser (img_id, target_form_element, type, option) {
+function openBrowser(img_id, target_form_element, type, option) {
     var img = document.getElementById(img_id);
 
     if (img.className != 'mceButtonDisabled') {
@@ -70,7 +70,7 @@ function openBrowser (img_id, target_form_element, type, option) {
     }
 }
 
-function selectByValue (form_obj, field_name, value, add_custom, ignore_case) {
+function selectByValue(form_obj, field_name, value, add_custom, ignore_case) {
     if (!form_obj || !form_obj.elements[field_name]) {
         return;
     }
@@ -103,7 +103,7 @@ function selectByValue (form_obj, field_name, value, add_custom, ignore_case) {
     return found;
 }
 
-function getSelectValue (form_obj, field_name) {
+function getSelectValue(form_obj, field_name) {
     var elm = form_obj.elements[field_name];
 
     if (elm == null || elm.options == null || elm.selectedIndex === -1) {
@@ -113,13 +113,13 @@ function getSelectValue (form_obj, field_name) {
     return elm.options[elm.selectedIndex].value;
 }
 
-function addSelectValue (form_obj, field_name, name, value) {
+function addSelectValue(form_obj, field_name, name, value) {
     var s = form_obj.elements[field_name];
     var o = new Option(name, value);
     s.options[s.options.length] = o;
 }
 
-function addClassesToList (list_id, specific_option) {
+function addClassesToList(list_id, specific_option) {
     // Setup class droplist
     var styleSelectElm = document.getElementById(list_id);
     var styles = tinyMCEPopup.getParam('theme_advanced_styles', false);
@@ -145,13 +145,13 @@ function addClassesToList (list_id, specific_option) {
     }
 }
 
-function isVisible (element_id) {
+function isVisible(element_id) {
     var elm = document.getElementById(element_id);
 
     return elm && elm.style.display != 'none';
 }
 
-function convertRGBToHex (col) {
+function convertRGBToHex(col) {
     var re = new RegExp('rgb\\s*\\(\\s*([0-9]+).*,\\s*([0-9]+).*,\\s*([0-9]+).*\\)', 'gi');
 
     var rgb = col.replace(re, '$1,$2,$3').split(',');
@@ -170,7 +170,7 @@ function convertRGBToHex (col) {
     return col;
 }
 
-function convertHexToRGB (col) {
+function convertHexToRGB(col) {
     if (col.indexOf('#') != -1) {
         col = col.replace(new RegExp('[^0-9A-F]', 'gi'), '');
 
@@ -184,11 +184,11 @@ function convertHexToRGB (col) {
     return col;
 }
 
-function trimSize (size) {
+function trimSize(size) {
     return size.replace(/([0-9\.]+)(px|%|in|cm|mm|em|ex|pt|pc)/i, '$1$2');
 }
 
-function getCSSSize (size) {
+function getCSSSize(size) {
     size = trimSize(size);
 
     if (size == '') {
@@ -207,7 +207,7 @@ function getCSSSize (size) {
     return size;
 }
 
-function getStyle (elm, attrib, style) {
+function getStyle(elm, attrib, style) {
     var val = tinyMCEPopup.dom.getAttrib(elm, attrib);
 
     if (val != '') {

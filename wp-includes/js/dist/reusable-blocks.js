@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -178,7 +178,7 @@
      * @return {Object} Action descriptor.
      */
 
-    function __experimentalSetEditingReusableBlock (clientId, isEditing) {
+    function __experimentalSetEditingReusableBlock(clientId, isEditing) {
         return {
             type: 'SET_EDITING_REUSABLE_BLOCK',
             clientId,
@@ -191,7 +191,7 @@
      * WordPress dependencies
      */
 
-    function isEditingReusableBlock (state = {}, action) {
+    function isEditingReusableBlock(state = {}, action) {
         if (action?.type === 'SET_EDITING_REUSABLE_BLOCK') {
             return {
                 ...state,
@@ -215,7 +215,7 @@
      * @param {number} clientId the clientID of the block.
      * @return {boolean} Whether the reusable block is in the editing state.
      */
-    function __experimentalIsEditingReusableBlock (state, clientId) {
+    function __experimentalIsEditingReusableBlock(state, clientId) {
         return state.isEditingReusableBlock[clientId];
     }
 
@@ -302,10 +302,10 @@
      * @return {import('@wordpress/element').WPComponent} The menu control or null.
      */
 
-    function ReusableBlockConvertButton ({
-                                             clientIds,
-                                             rootClientId
-                                         }) {
+    function ReusableBlockConvertButton({
+                                            clientIds,
+                                            rootClientId
+                                        }) {
         const {
             useReusableBlocksRenameHint,
             ReusableBlocksRenameHint
@@ -430,9 +430,9 @@
 
 
 
-    function ReusableBlocksManageButton ({
-                                             clientId
-                                         }) {
+    function ReusableBlocksManageButton({
+                                            clientId
+                                        }) {
         const {
             canRemove,
             isVisible,
@@ -496,9 +496,9 @@
 
 
 
-    function ReusableBlocksMenuItems ({
-                                          rootClientId
-                                      }) {
+    function ReusableBlocksMenuItems({
+                                         rootClientId
+                                     }) {
         const clientIds = (0, external_wp_data_namespaceObject.useSelect)(select => select(external_wp_blockEditor_namespaceObject.store).getSelectedBlockClientIds(), []);
         return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)(ReusableBlockConvertButton, {
             clientIds: clientIds,

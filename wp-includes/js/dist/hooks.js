@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -93,7 +93,7 @@
      *
      * @return {boolean} Whether the namespace is valid.
      */
-    function validateNamespace (namespace) {
+    function validateNamespace(namespace) {
         if ('string' !== typeof namespace || '' === namespace) {
             // eslint-disable-next-line no-console
             console.error('The namespace must be a non-empty string.');
@@ -122,7 +122,7 @@
      *
      * @return {boolean} Whether the hook name is valid.
      */
-    function validateHookName (hookName) {
+    function validateHookName(hookName) {
         if ('string' !== typeof hookName || '' === hookName) {
             // eslint-disable-next-line no-console
             console.error('The hook name must be a non-empty string.');
@@ -172,8 +172,8 @@
      * @return {AddHook} Function that adds a new hook.
      */
 
-    function createAddHook (hooks, storeKey) {
-        return function addHook (hookName, namespace, callback, priority = 10) {
+    function createAddHook(hooks, storeKey) {
+        return function addHook(hookName, namespace, callback, priority = 10) {
             const hooksStore = hooks[storeKey];
 
             if (!build_module_validateHookName(hookName)) {
@@ -278,8 +278,8 @@
      * @return {RemoveHook} Function that removes hooks.
      */
 
-    function createRemoveHook (hooks, storeKey, removeAll = false) {
-        return function removeHook (hookName, namespace) {
+    function createRemoveHook(hooks, storeKey, removeAll = false) {
+        return function removeHook(hookName, namespace) {
             const hooksStore = hooks[storeKey];
 
             if (!build_module_validateHookName(hookName)) {
@@ -358,8 +358,8 @@
      * @return {HasHook} Function that returns whether any handlers are
      *                   attached to a particular hook and optional namespace.
      */
-    function createHasHook (hooks, storeKey) {
-        return function hasHook (hookName, namespace) {
+    function createHasHook(hooks, storeKey) {
+        return function hasHook(hookName, namespace) {
             const hooksStore = hooks[storeKey]; // Use the namespace if provided.
 
             if ('undefined' !== typeof namespace) {
@@ -386,8 +386,8 @@
      *
      * @return {(hookName:string, ...args: unknown[]) => unknown} Function that runs hook callbacks.
      */
-    function createRunHook (hooks, storeKey, returnFirstArg = false) {
-        return function runHooks (hookName, ...args) {
+    function createRunHook(hooks, storeKey, returnFirstArg = false) {
+        return function runHooks(hookName, ...args) {
             const hooksStore = hooks[storeKey];
 
             if (!hooksStore[hookName]) {
@@ -400,7 +400,8 @@
             hooksStore[hookName].runs++;
             const handlers = hooksStore[hookName].handlers; // The following code is stripped from production builds.
 
-            if (false) {}
+            if (false) {
+            }
 
             if (!handlers || !handlers.length) {
                 return returnFirstArg ? args[0] : undefined;
@@ -446,8 +447,8 @@
      *
      * @return {() => string | null} Function that returns the current hook name or null.
      */
-    function createCurrentHook (hooks, storeKey) {
-        return function currentHook () {
+    function createCurrentHook(hooks, storeKey) {
+        return function currentHook() {
             var _hooksStore$__current;
 
             const hooksStore = hooks[storeKey];
@@ -479,8 +480,8 @@
      * @return {DoingHook} Function that returns whether a hook is currently
      *                     being executed.
      */
-    function createDoingHook (hooks, storeKey) {
-        return function doingHook (hookName) {
+    function createDoingHook(hooks, storeKey) {
+        return function doingHook(hookName) {
             const hooksStore = hooks[storeKey]; // If the hookName was not passed, check for any current hook.
 
             if ('undefined' === typeof hookName) {
@@ -519,8 +520,8 @@
      * @return {DidHook} Function that returns a hook's call count.
      */
 
-    function createDidHook (hooks, storeKey) {
-        return function didHook (hookName) {
+    function createDidHook(hooks, storeKey) {
+        return function didHook(hookName) {
             const hooksStore = hooks[storeKey];
 
             if (!build_module_validateHookName(hookName)) {
@@ -548,7 +549,7 @@
      */
 
     class _Hooks {
-        constructor () {
+        constructor() {
             /** @type {import('.').Store} actions */
             this.actions = Object.create(null);
             this.actions.__current = [];
@@ -584,7 +585,7 @@
      * @return {Hooks} A Hooks instance.
      */
 
-    function createHooks () {
+    function createHooks() {
         return new _Hooks();
     }
 

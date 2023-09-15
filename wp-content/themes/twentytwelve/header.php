@@ -4,9 +4,9 @@
  *
  * Displays all of the <head> section and everything up till <div id="main">
  *
- * @package WordPress
+ * @package    WordPress
  * @subpackage Twenty_Twelve
- * @since Twenty Twelve 1.0
+ * @since      Twenty Twelve 1.0
  */
 ?><!DOCTYPE html>
 <!--[if IE 7]>
@@ -45,16 +45,14 @@
             <button class="menu-toggle"><?php _e('Menu', 'twentytwelve'); ?></button>
             <a class="assistive-text" href="#content"><?php _e('Skip to content', 'twentytwelve'); ?></a>
             <?php
-                wp_nav_menu(
-                    [
-                        'theme_location' => 'primary',
-                        'menu_class' => 'nav-menu',
-                    ]
-                );
+                wp_nav_menu([
+                                'theme_location' => 'primary',
+                                'menu_class' => 'nav-menu',
+                            ]);
             ?>
         </nav><!-- #site-navigation -->
-        
-        <?php if (get_header_image()) : ?>
+
+        <?php if(get_header_image()) : ?>
             <a href="<?php echo esc_url(home_url('/')); ?>"><?php twentytwelve_header_image(); ?></a>
         <?php endif; ?>
     </header><!-- #masthead -->

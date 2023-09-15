@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -86,7 +86,7 @@
      *
      * @return {((...args: Parameters<F>) => ReturnType<F>) & MemizeMemoizedFunction} Memoized function.
      */
-    function memize (fn, options) {
+    function memize(fn, options) {
         var size = 0;
 
         /** @type {?MemizeCacheNode|undefined} */
@@ -97,7 +97,7 @@
 
         options = options || {};
 
-        function memoized (/* ...args */) {
+        function memoized(/* ...args */) {
             var node = head,
                 len = arguments.length,
                 args,
@@ -250,7 +250,7 @@
      * @return {WPShortcodeMatch | undefined} Matched information.
      */
 
-    function next (tag, text, index = 0) {
+    function next(tag, text, index = 0) {
         const re = regexp(tag);
         re.lastIndex = index;
         const match = re.exec(text);
@@ -293,7 +293,7 @@
      * @return {string} Text with shortcodes replaced.
      */
 
-    function replace (tag, text, callback) {
+    function replace(tag, text, callback) {
         return text.replace(regexp(tag), function (match, left, $3, attrs, slash, content, closing, right) {
             // If both extra brackets exist, the shortcode has been properly
             // escaped.
@@ -322,7 +322,7 @@
      * @return {string} String representation of the shortcode.
      */
 
-    function string (options) {
+    function string(options) {
         return new shortcode(options).string();
     }
 
@@ -347,7 +347,7 @@
      * @return {RegExp} Shortcode RegExp.
      */
 
-    function regexp (tag) {
+    function regexp(tag) {
         return new RegExp('\\[(\\[?)(' + tag + ')(?![\\w-])([^\\]\\/]*(?:\\/(?!\\])[^\\]\\/]*)*?)(?:(\\/)\\]|\\](?:([^\\[]*(?:\\[(?!\\/\\2\\])[^\\[]*)*)(\\[\\/\\2\\]))?)(\\]?)', 'g');
     }
 
@@ -425,7 +425,7 @@
      * @return {WPShortcode} Shortcode instance.
      */
 
-    function fromMatch (match) {
+    function fromMatch(match) {
         let type;
 
         if (match[4]) {
@@ -509,7 +509,7 @@
          *
          * @return {string} Attribute value.
          */
-        get (attr) {
+        get(attr) {
             return this.attrs[typeof attr === 'number' ? 'numeric' : 'named'][attr];
         },
 
@@ -524,7 +524,7 @@
          *
          * @return {WPShortcode} Shortcode instance.
          */
-        set (attr, value) {
+        set(attr, value) {
             this.attrs[typeof attr === 'number' ? 'numeric' : 'named'][attr] = value;
             return this;
         },
@@ -534,7 +534,7 @@
          *
          * @return {string} String representation of the shortcode.
          */
-        string () {
+        string() {
             let text = '[' + this.tag;
             this.attrs.numeric.forEach(value => {
                 if (/\s/.test(value)) {

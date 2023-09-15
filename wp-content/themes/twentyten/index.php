@@ -8,16 +8,16 @@
      * E.g., it puts together the home page when no home.php file exists.
      * Learn more: https://developer.wordpress.org/themes/basics/template-hierarchy/
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Ten
-     * @since Twenty Ten 1.0
+     * @since      Twenty Ten 1.0
      */
-    
+
     get_header(); ?>
 
 <div id="container">
     <div id="content" role="main">
-        
+
         <?php
             /*
              * Run the loop to output the posts.

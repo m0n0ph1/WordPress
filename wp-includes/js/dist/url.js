@@ -417,7 +417,7 @@
             var allAccents = new RegExp(chars, 'g');
             var firstAccent = new RegExp(chars, '');
 
-            function matcher (match) {
+            function matcher(match) {
                 return characterMap[match];
             }
 
@@ -445,7 +445,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -487,7 +487,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -506,7 +506,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -533,11 +533,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -598,7 +598,7 @@
          *
          * @return {boolean} Whether or not it looks like a URL.
          */
-        function isURL (url) {
+        function isURL(url) {
             // A URL can be considered value if the `URL` constructor is able to parse
             // it. The constructor throws an error for an invalid URL.
             try {
@@ -625,7 +625,7 @@
          * @return {boolean} Whether or not it looks like an email.
          */
 
-        function isEmail (email) {
+        function isEmail(email) {
             return EMAIL_REGEXP.test(email);
         }
 
@@ -643,7 +643,7 @@
          *
          * @return {string|void} The protocol part of the URL.
          */
-        function getProtocol (url) {
+        function getProtocol(url) {
             const matches = /^([^\s:]+:)/.exec(url);
 
             if (matches) {
@@ -665,7 +665,7 @@
          *
          * @return {boolean} True if the argument is a valid protocol (e.g. http:, tel:).
          */
-        function isValidProtocol (protocol) {
+        function isValidProtocol(protocol) {
             if (!protocol) {
                 return false;
             }
@@ -687,7 +687,7 @@
          *
          * @return {string|void} The authority part of the URL.
          */
-        function getAuthority (url) {
+        function getAuthority(url) {
             const matches = /^[^\/\s:]+:(?:\/\/)?\/?([^\/\s#?]+)[\/#?]{0,1}\S*$/.exec(url);
 
             if (matches) {
@@ -709,7 +709,7 @@
          *
          * @return {boolean} True if the argument contains a valid authority.
          */
-        function isValidAuthority (authority) {
+        function isValidAuthority(authority) {
             if (!authority) {
                 return false;
             }
@@ -731,7 +731,7 @@
          *
          * @return {string|void} The path part of the URL.
          */
-        function getPath (url) {
+        function getPath(url) {
             const matches = /^[^\/\s:]+:(?:\/\/)?[^\/\s#?]+[\/]([^\s#?]+)[#?]{0,1}\S*$/.exec(url);
 
             if (matches) {
@@ -753,7 +753,7 @@
          *
          * @return {boolean} True if the argument contains a valid path
          */
-        function isValidPath (path) {
+        function isValidPath(path) {
             if (!path) {
                 return false;
             }
@@ -774,12 +774,13 @@
          *
          * @return {string|void} The query string part of the URL.
          */
-        function getQueryString (url) {
+        function getQueryString(url) {
             let query;
 
             try {
                 query = new URL(url, 'http://example.com').search.substring(1);
-            } catch (error) {}
+            } catch (error) {
+            }
 
             if (query) {
                 return query;
@@ -811,7 +812,7 @@
          *
          * @return {string} Query string.
          */
-        function buildQueryString (data) {
+        function buildQueryString(data) {
             let string = '';
             const stack = Object.entries(data);
             let pair;
@@ -859,7 +860,7 @@
          *
          * @return {boolean} True if the argument contains a valid query string.
          */
-        function isValidQueryString (queryString) {
+        function isValidQueryString(queryString) {
             if (!queryString) {
                 return false;
             }
@@ -886,7 +887,7 @@
          * @return {string} The path part and query string part of the URL.
          */
 
-        function getPathAndQueryString (url) {
+        function getPathAndQueryString(url) {
             const path = getPath(url);
             const queryString = getQueryString(url);
             let value = '/';
@@ -909,7 +910,7 @@
          *
          * @return {string|void} The fragment part of the URL.
          */
-        function getFragment (url) {
+        function getFragment(url) {
             const matches = /^\S+?(#[^\s\?]*)/.exec(url);
 
             if (matches) {
@@ -931,7 +932,7 @@
          *
          * @return {boolean} True if the argument contains a valid fragment.
          */
-        function isValidFragment (fragment) {
+        function isValidFragment(fragment) {
             if (!fragment) {
                 return false;
             }
@@ -948,7 +949,7 @@
          *
          * @return {string} Decoded URI component if possible.
          */
-        function safeDecodeURIComponent (uriComponent) {
+        function safeDecodeURIComponent(uriComponent) {
             try {
                 return decodeURIComponent(uriComponent);
             } catch (uriComponentError) {
@@ -976,7 +977,7 @@
          * @param {*}                value  Value to set.
          */
 
-        function setPath (object, path, value) {
+        function setPath(object, path, value) {
             const length = path.length;
             const lastIndex = length - 1;
 
@@ -1026,7 +1027,7 @@
          */
 
 
-        function getQueryArgs (url) {
+        function getQueryArgs(url) {
             return (getQueryString(url) || '' // Normalize space encoding, accounting for PHP URL encoding
                 // corresponding to `application/x-www-form-urlencoded`.
                 //
@@ -1067,7 +1068,7 @@
          * @return {string} URL with arguments applied.
          */
 
-        function addQueryArgs (url = '', args) {
+        function addQueryArgs(url = '', args) {
             // If no arguments are to be appended, return original URL.
             if (!args || !Object.keys(args).length) {
                 return url;
@@ -1114,7 +1115,7 @@
          * @return {QueryArgParsed|void} Query arg value.
          */
 
-        function getQueryArg (url, arg) {
+        function getQueryArg(url, arg) {
             return getQueryArgs(url)[arg];
         }
 
@@ -1137,7 +1138,7 @@
          * @return {boolean} Whether or not the URL contains the query arg.
          */
 
-        function hasQueryArg (url, arg) {
+        function hasQueryArg(url, arg) {
             return getQueryArg(url, arg) !== undefined;
         }
 
@@ -1160,7 +1161,7 @@
          * @return {string} Updated URL.
          */
 
-        function removeQueryArgs (url, ...args) {
+        function removeQueryArgs(url, ...args) {
             const queryStringIndex = url.indexOf('?');
 
             if (queryStringIndex === -1) {
@@ -1194,7 +1195,7 @@
          * @return {string} The updated URL.
          */
 
-        function prependHTTP (url) {
+        function prependHTTP(url) {
             if (!url) {
                 return url;
             }
@@ -1222,7 +1223,7 @@
          *
          * @return {string} Decoded URI if possible.
          */
-        function safeDecodeURI (uri) {
+        function safeDecodeURI(uri) {
             try {
                 return decodeURI(uri);
             } catch (uriError) {
@@ -1245,7 +1246,7 @@
          *
          * @return {string} Displayed URL.
          */
-        function filterURLForDisplay (url, maxLength = null) {
+        function filterURLForDisplay(url, maxLength = null) {
             // Remove protocol and www prefixes.
             let filteredURL = url.replace(/^(?:https?:)\/\/(?:www\.)?/, ''); // Ends with / and only has that single slash, strip it.
 
@@ -1298,7 +1299,7 @@
          * @return {string} Processed string.
          */
 
-        function cleanForSlug (string) {
+        function cleanForSlug(string) {
             if (!string) {
                 return '';
             }
@@ -1325,12 +1326,13 @@
          *
          * @return {string|void} The filename part of the URL.
          */
-        function getFilename (url) {
+        function getFilename(url) {
             let filename;
 
             try {
                 filename = new URL(url, 'http://example.com').pathname.split('/').pop();
-            } catch (error) {}
+            } catch (error) {
+            }
 
             if (filename) {
                 return filename;
@@ -1347,7 +1349,7 @@
          *
          * @return {string} Normalized path.
          */
-        function normalizePath (path) {
+        function normalizePath(path) {
             const splitted = path.split('?');
             const query = splitted[1];
             const base = splitted[0];
@@ -1386,7 +1388,7 @@
          * @return {string} The updated URL.
          */
 
-        function prependHTTPS (url) {
+        function prependHTTPS(url) {
             if (!url) {
                 return url;
             } // If url starts with http://, return it as is.

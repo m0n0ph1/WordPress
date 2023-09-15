@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -106,10 +106,10 @@
      * @return {Function} A function that debounce whatever function is passed
      *                    to it.
      */
-    function debounceAsync (func, delayMS) {
+    function debounceAsync(func, delayMS) {
         let timeoutId;
         let activePromise;
-        return async function debounced (...args) {
+        return async function debounced(...args) {
             // This is a leading edge debounce. If there's no promise or timeout
             // in progress, call the debounced function immediately.
             if (!activePromise && !timeoutId) {
@@ -187,15 +187,15 @@
      * @return {Object} A persistence layer for WordPress user meta.
      */
 
-    function create ({
-                         preloadedData,
-                         localStorageRestoreKey = 'WP_PREFERENCES_RESTORE_DATA',
-                         requestDebounceMS = 2500
-                     } = {}) {
+    function create({
+                        preloadedData,
+                        localStorageRestoreKey = 'WP_PREFERENCES_RESTORE_DATA',
+                        requestDebounceMS = 2500
+                    } = {}) {
         let cache = preloadedData;
         const debouncedApiFetch = debounceAsync((external_wp_apiFetch_default()), requestDebounceMS);
 
-        async function get () {
+        async function get() {
             if (cache) {
                 return cache;
             }
@@ -222,7 +222,7 @@
             return cache;
         }
 
-        function set (newData) {
+        function set(newData) {
             const dataWithTimestamp = {
                 ...newData,
                 _modified: new Date().toISOString()
@@ -319,7 +319,7 @@
      *                                 package.
      * @return {Object} The migrated state
      */
-    function moveFeaturePreferences (state, sourceStoreName) {
+    function moveFeaturePreferences(state, sourceStoreName) {
         const preferencesStoreName = 'core/preferences';
         const interfaceStoreName = 'core/interface'; // Features most recently (and briefly) lived in the interface package.
         // If data exists there, prioritize using that for the migration. If not
@@ -431,7 +431,7 @@
      * @return {Object} The state with third party preferences moved to the
      *                  preferences data structure.
      */
-    function moveThirdPartyFeaturePreferencesToPreferences (state) {
+    function moveThirdPartyFeaturePreferencesToPreferences(state) {
         const interfaceStoreName = 'core/interface';
         const preferencesStoreName = 'core/preferences';
         const interfaceScopes = state?.[interfaceStoreName]?.preferences?.features;
@@ -522,7 +522,7 @@
      */
 
 
-    function moveIndividualPreferenceToPreferences (state, {
+    function moveIndividualPreferenceToPreferences(state, {
         from: sourceStoreName,
         to: scope
     }, key, convert = identity) {
@@ -617,7 +617,7 @@
      *
      * @param {Object} state The local storage state.
      */
-    function moveInterfaceEnableItems (state) {
+    function moveInterfaceEnableItems(state) {
         var _state$preferencesSto, _sourceEnableItems$si, _sourceEnableItems$mu;
 
         const interfaceStoreName = 'core/interface';
@@ -711,7 +711,7 @@
      *
      * @return {Object} The converted data.
      */
-    function convertEditPostPanels (preferences) {
+    function convertEditPostPanels(preferences) {
         var _preferences$panels;
 
         const panels = (_preferences$panels = preferences?.panels) !== null && _preferences$panels !== void 0 ? _preferences$panels : {};
@@ -746,7 +746,7 @@
      * @return {Object | null} The local storage data.
      */
 
-    function getLegacyData (userId) {
+    function getLegacyData(userId) {
         const key = `WP_DATA_USER_${userId}`;
         const unparsedData = window.localStorage.getItem(key);
         return JSON.parse(unparsedData);
@@ -762,7 +762,7 @@
      */
 
 
-    function convertLegacyData (data) {
+    function convertLegacyData(data) {
         if (!data) {
             return;
         } // Move boolean feature preferences from each editor into the
@@ -819,13 +819,13 @@
      *                              storage data could be found.
      */
 
-    function convertLegacyLocalStorageData (userId) {
+    function convertLegacyLocalStorageData(userId) {
         const data = getLegacyData(userId);
         return convertLegacyData(data);
     }
 
     ;// CONCATENATED MODULE: ./node_modules/@wordpress/preferences-persistence/build-module/migrations/preferences-package-data/convert-complementary-areas.js
-    function convertComplementaryAreas (state) {
+    function convertComplementaryAreas(state) {
         return Object.keys(state).reduce((stateAccumulator, scope) => {
             const scopeData = state[scope]; // If a complementary area is truthy, convert it to the `isComplementaryAreaVisible` boolean.
 
@@ -848,7 +848,7 @@
      * Internal dependencies
      */
 
-    function convertPreferencesPackageData (data) {
+    function convertPreferencesPackageData(data) {
         return convertComplementaryAreas(data);
     }
 
@@ -872,7 +872,7 @@
      * @return {Object} The persistence layer initialized with the preloaded data.
      */
 
-    function __unstableCreatePersistenceLayer (serverData, userId) {
+    function __unstableCreatePersistenceLayer(serverData, userId) {
         const localStorageRestoreKey = `WP_PREFERENCES_USER_${userId}`;
         const localData = JSON.parse(window.localStorage.getItem(localStorageRestoreKey)); // Date parse returns NaN for invalid input. Coerce anything invalid
         // into a conveniently comparable zero.

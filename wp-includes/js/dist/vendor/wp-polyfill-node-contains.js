@@ -1,7 +1,7 @@
 // Node.prototype.contains
 (function () {
 
-    function contains (node) {
+    function contains(node) {
         if (!(0 in arguments)) {
             throw new TypeError('1 argument is required');
         }
@@ -21,7 +21,8 @@
         try {
             delete HTMLElement.prototype.contains;
             // eslint-disable-next-line no-empty
-        } catch (e) {}
+        } catch (e) {
+        }
     }
 
     if ('Node' in self) {

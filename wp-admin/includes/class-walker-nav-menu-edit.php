@@ -2,75 +2,74 @@
     /**
      * Navigation Menu API: Walker_Nav_Menu_Edit class
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
-     * @since 4.4.0
+     * @since      4.4.0
      */
-    
+
     /**
      * Create HTML list of nav menu input items.
      *
      * @since 3.0.0
      *
-     * @see Walker_Nav_Menu
+     * @see   Walker_Nav_Menu
      */
     class Walker_Nav_Menu_Edit extends Walker_Nav_Menu
     {
         /**
          * Starts the list before the elements are added.
          *
-         * @param string $output Passed by reference.
-         * @param int $depth Depth of menu item. Used for padding.
-         * @param stdClass $args Not used.
+         * @param string   $output Passed by reference.
+         * @param int      $depth  Depth of menu item. Used for padding.
+         * @param stdClass $args   Not used.
+         *
          * @since 3.0.0
          *
-         * @see Walker_Nav_Menu::start_lvl()
+         * @see   Walker_Nav_Menu::start_lvl()
          *
          */
-        public function start_lvl(&$output, $depth = 0, $args = null)
-        {
-        }
-        
+        public function start_lvl(&$output, $depth = 0, $args = null) {}
+
         /**
          * Ends the list of after the elements are added.
          *
-         * @param string $output Passed by reference.
-         * @param int $depth Depth of menu item. Used for padding.
-         * @param stdClass $args Not used.
+         * @param string   $output Passed by reference.
+         * @param int      $depth  Depth of menu item. Used for padding.
+         * @param stdClass $args   Not used.
+         *
          * @since 3.0.0
          *
-         * @see Walker_Nav_Menu::end_lvl()
+         * @see   Walker_Nav_Menu::end_lvl()
          *
          */
-        public function end_lvl(&$output, $depth = 0, $args = null)
-        {
-        }
-        
+        public function end_lvl(&$output, $depth = 0, $args = null) {}
+
         /**
          * Start the element output.
          *
-         * @param string $output Used to append additional content (passed by reference).
-         * @param WP_Post $data_object Menu item data object.
-         * @param int $depth Depth of menu item. Used for padding.
-         * @param stdClass $args Not used.
-         * @param int $current_object_id Optional. ID of the current menu item. Default 0.
+         * @param string   $output            Used to append additional content (passed by reference).
+         * @param WP_Post  $data_object       Menu item data object.
+         * @param int      $depth             Depth of menu item. Used for padding.
+         * @param stdClass $args              Not used.
+         * @param int      $current_object_id Optional. ID of the current menu item. Default 0.
+         *
          * @since 3.0.0
          * @since 5.9.0 Renamed `$item` to `$data_object` and `$id` to `$current_object_id`
          *              to match parent class for PHP 8 named parameter support.
          *
-         * @global int $_wp_nav_menu_max_depth
+         * @global int     $_wp_nav_menu_max_depth
          *
-         * @see Walker_Nav_Menu::start_el()
+         * @see   Walker_Nav_Menu::start_el()
          */
         public function start_el(&$output, $data_object, $depth = 0, $args = null, $current_object_id = 0)
         {
             global $_wp_nav_menu_max_depth;
-            
+
             // Restores the more descriptive, specific name for use within this method.
             $menu_item = $data_object;
-            
+
             $_wp_nav_menu_max_depth = $depth > $_wp_nav_menu_max_depth ? $depth : $_wp_nav_menu_max_depth;
-            
+
             ob_start();
             $item_id = esc_attr($menu_item->ID);
             $removed_args = [
@@ -81,51 +80,63 @@
                 'page-tab',
                 '_wpnonce',
             ];
-            
+
             $original_title = false;
-            
-            if ('taxonomy' === $menu_item->type) {
+
+            if('taxonomy' === $menu_item->type)
+            {
                 $original_object = get_term((int) $menu_item->object_id, $menu_item->object);
-                if ($original_object && !is_wp_error($original_object)) {
+                if($original_object && ! is_wp_error($original_object))
+                {
                     $original_title = $original_object->name;
                 }
-            } elseif ('post_type' === $menu_item->type) {
+            }
+            elseif('post_type' === $menu_item->type)
+            {
                 $original_object = get_post($menu_item->object_id);
-                if ($original_object) {
+                if($original_object)
+                {
                     $original_title = get_the_title($original_object->ID);
                 }
-            } elseif ('post_type_archive' === $menu_item->type) {
+            }
+            elseif('post_type_archive' === $menu_item->type)
+            {
                 $original_object = get_post_type_object($menu_item->object);
-                if ($original_object) {
+                if($original_object)
+                {
                     $original_title = $original_object->labels->archives;
                 }
             }
-            
+
             $classes = [
-                'menu-item menu-item-depth-' . $depth,
-                'menu-item-' . esc_attr($menu_item->object),
-                'menu-item-edit-' . ((isset($_GET['edit-menu-item']) && $item_id === $_GET['edit-menu-item']) ? 'active' : 'inactive'),
+                'menu-item menu-item-depth-'.$depth,
+                'menu-item-'.esc_attr($menu_item->object),
+                'menu-item-edit-'.((isset($_GET['edit-menu-item']) && $item_id === $_GET['edit-menu-item']) ? 'active' : 'inactive'),
             ];
-            
+
             $title = $menu_item->title;
-            
-            if (!empty($menu_item->_invalid)) {
+
+            if(! empty($menu_item->_invalid))
+            {
                 $classes[] = 'menu-item-invalid';
                 /* translators: %s: Title of an invalid menu item. */
                 $title = sprintf(__('%s (Invalid)'), $menu_item->title);
-            } elseif (isset($menu_item->post_status) && 'draft' === $menu_item->post_status) {
+            }
+            elseif(isset($menu_item->post_status) && 'draft' === $menu_item->post_status)
+            {
                 $classes[] = 'pending';
                 /* translators: %s: Title of a menu item in draft status. */
                 $title = sprintf(__('%s (Pending)'), $menu_item->title);
             }
-            
-            $title = (!isset($menu_item->label) || '' === $menu_item->label) ? $title : $menu_item->label;
-            
+
+            $title = (! isset($menu_item->label) || '' === $menu_item->label) ? $title : $menu_item->label;
+
             $submenu_text = '';
-            if (0 === $depth) {
+            if(0 === $depth)
+            {
                 $submenu_text = 'style="display: none;"';
             }
-            
+
             ?>
         <li id="menu-item-<?php echo $item_id; ?>" class="<?php echo implode(' ', $classes); ?>">
             <div class="menu-item-bar">
@@ -144,66 +155,46 @@
 						<span class="item-order hide-if-js">
 							<?php
                                 printf(
-                                    '<a href="%s" class="item-move-up" aria-label="%s">&#8593;</a>',
-                                    wp_nonce_url(
-                                        add_query_arg(
-                                            [
-                                                'action' => 'move-up-menu-item',
-                                                'menu-item' => $item_id,
-                                            ],
-                                            remove_query_arg($removed_args, admin_url('nav-menus.php'))
-                                        ),
-                                        'move-menu_item'
-                                    ),
-                                    esc_attr__('Move up')
+                                    '<a href="%s" class="item-move-up" aria-label="%s">&#8593;</a>', wp_nonce_url(
+                                    add_query_arg([
+                                                      'action' => 'move-up-menu-item',
+                                                      'menu-item' => $item_id,
+                                                  ], remove_query_arg($removed_args, admin_url('nav-menus.php'))), 'move-menu_item'
+                                ),  esc_attr__('Move up')
                                 );
                             ?>
 							|
 							<?php
                                 printf(
-                                    '<a href="%s" class="item-move-down" aria-label="%s">&#8595;</a>',
-                                    wp_nonce_url(
-                                        add_query_arg(
-                                            [
-                                                'action' => 'move-down-menu-item',
-                                                'menu-item' => $item_id,
-                                            ],
-                                            remove_query_arg($removed_args, admin_url('nav-menus.php'))
-                                        ),
-                                        'move-menu_item'
-                                    ),
-                                    esc_attr__('Move down')
+                                    '<a href="%s" class="item-move-down" aria-label="%s">&#8595;</a>', wp_nonce_url(
+                                    add_query_arg([
+                                                      'action' => 'move-down-menu-item',
+                                                      'menu-item' => $item_id,
+                                                  ], remove_query_arg($removed_args, admin_url('nav-menus.php'))), 'move-menu_item'
+                                ),  esc_attr__('Move down')
                                 );
                             ?>
 						</span>
 						<?php
-                            if (isset($_GET['edit-menu-item']) && $item_id === $_GET['edit-menu-item']) {
+                            if(isset($_GET['edit-menu-item']) && $item_id === $_GET['edit-menu-item'])
+                            {
                                 $edit_url = admin_url('nav-menus.php');
-                            } else {
-                                $edit_url = add_query_arg(
-                                    [
-                                        'edit-menu-item' => $item_id,
-                                    ],
-                                    remove_query_arg($removed_args,
-                                        admin_url('nav-menus.php#menu-item-settings-' . $item_id))
-                                );
                             }
-                            
-                            printf(
-                                '<a class="item-edit" id="edit-%s" href="%s" aria-label="%s"><span class="screen-reader-text">%s</span></a>',
-                                $item_id,
-                                esc_url($edit_url),
-                                esc_attr__('Edit menu item'),
-                                /* translators: Hidden accessibility text. */
-                                __('Edit')
-                            );
+                            else
+                            {
+                                $edit_url = add_query_arg([
+                                                              'edit-menu-item' => $item_id,
+                                                          ], remove_query_arg($removed_args, admin_url('nav-menus.php#menu-item-settings-'.$item_id)));
+                            }
+
+                            printf('<a class="item-edit" id="edit-%s" href="%s" aria-label="%s"><span class="screen-reader-text">%s</span></a>', $item_id, esc_url($edit_url), esc_attr__('Edit menu item'), /* translators: Hidden accessibility text. */ __('Edit'));
                         ?>
 					</span>
                 </div>
             </div>
 
             <div class="menu-item-settings wp-clearfix" id="menu-item-settings-<?php echo $item_id; ?>">
-                <?php if ('custom' === $menu_item->type) : ?>
+                <?php if('custom' === $menu_item->type) : ?>
                     <p class="field-url description description-wide">
                         <label for="edit-menu-item-url-<?php echo $item_id; ?>">
                             <?php _e('URL'); ?><br/>
@@ -240,8 +231,7 @@
                         <input type="checkbox"
                                id="edit-menu-item-target-<?php echo $item_id; ?>"
                                value="_blank"
-                               name="menu-item-target[<?php echo $item_id; ?>]"<?php checked($menu_item->target,
-                            '_blank'); ?> />
+                               name="menu-item-target[<?php echo $item_id; ?>]"<?php checked($menu_item->target, '_blank'); ?> />
                         <?php _e('Open link in a new tab'); ?>
                     </label>
                 </p>
@@ -277,21 +267,21 @@
                         <span class="description"><?php _e('The description will be displayed in the menu if the active theme supports it.'); ?></span>
                     </label>
                 </p>
-                
+
                 <?php
                     /**
                      * Fires just before the move buttons of a nav menu item in the menu editor.
                      *
-                     * @param string $item_id Menu item ID as a numeric string.
-                     * @param WP_Post $menu_item Menu item data object.
-                     * @param int $depth Depth of menu item. Used for padding.
-                     * @param stdClass|null $args An object of menu item arguments.
-                     * @param int $current_object_id Nav menu ID.
+                     * @param string        $item_id           Menu item ID as a numeric string.
+                     * @param WP_Post       $menu_item         Menu item data object.
+                     * @param int           $depth             Depth of menu item. Used for padding.
+                     * @param stdClass|null $args              An object of menu item arguments.
+                     * @param int           $current_object_id Nav menu ID.
+                     *
                      * @since 5.4.0
                      *
                      */
-                    do_action('wp_nav_menu_item_custom_fields', $item_id, $menu_item, $depth, $args,
-                        $current_object_id);
+                    do_action('wp_nav_menu_item_custom_fields', $item_id, $menu_item, $depth, $args, $current_object_id);
                 ?>
 
                 <fieldset class="field-move hide-if-no-js description description-wide">
@@ -310,49 +300,34 @@
                 </fieldset>
 
                 <div class="menu-item-actions description-wide submitbox">
-                    <?php if ('custom' !== $menu_item->type && false !== $original_title) : ?>
+                    <?php if('custom' !== $menu_item->type && false !== $original_title) : ?>
                         <p class="link-to-original">
                             <?php
                                 /* translators: %s: Link to menu item's original object. */
-                                printf(__('Original: %s'),
-                                    '<a href="' . esc_url($menu_item->url) . '">' . esc_html($original_title) . '</a>');
+                                printf(__('Original: %s'), '<a href="'.esc_url($menu_item->url).'">'.esc_html($original_title).'</a>');
                             ?>
                         </p>
                     <?php endif; ?>
-                    
+
                     <?php
                         printf(
-                            '<a class="item-delete submitdelete deletion" id="delete-%s" href="%s">%s</a>',
-                            $item_id,
-                            wp_nonce_url(
-                                add_query_arg(
-                                    [
-                                        'action' => 'delete-menu-item',
-                                        'menu-item' => $item_id,
-                                    ],
-                                    admin_url('nav-menus.php')
-                                ),
-                                'delete-menu_item_' . $item_id
-                            ),
-                            __('Remove')
+                            '<a class="item-delete submitdelete deletion" id="delete-%s" href="%s">%s</a>', $item_id, wp_nonce_url(
+                            add_query_arg([
+                                              'action' => 'delete-menu-item',
+                                              'menu-item' => $item_id,
+                                          ], admin_url('nav-menus.php')), 'delete-menu_item_'.$item_id
+                        ),  __('Remove')
                         );
                     ?>
                     <span class="meta-sep hide-if-no-js"> | </span>
                     <?php
                         printf(
-                            '<a class="item-cancel submitcancel hide-if-no-js" id="cancel-%s" href="%s#menu-item-settings-%s">%s</a>',
-                            $item_id,
-                            esc_url(
-                                add_query_arg(
-                                    [
-                                        'edit-menu-item' => $item_id,
-                                        'cancel' => time(),
-                                    ],
-                                    admin_url('nav-menus.php')
-                                )
-                            ),
-                            $item_id,
-                            __('Cancel')
+                            '<a class="item-cancel submitcancel hide-if-no-js" id="cancel-%s" href="%s#menu-item-settings-%s">%s</a>', $item_id, esc_url(
+                            add_query_arg([
+                                              'edit-menu-item' => $item_id,
+                                              'cancel' => time(),
+                                          ], admin_url('nav-menus.php'))
+                        ),  $item_id, __('Cancel')
                         );
                     ?>
                 </div>

@@ -17,7 +17,7 @@
      *
      * @return {jQuery.Promise} Resolved promise.
      */
-    function returnDeferred (partial) {
+    function returnDeferred(partial) {
         var deferred = new $.Deferred();
 
         deferred.resolveWith(partial, _.map(partial.placements(), function () {
@@ -159,7 +159,7 @@
      *
      * @return {void}
      */
-    function twentyTwentyGenerateColorA11yPreviewStyles (context) {
+    function twentyTwentyGenerateColorA11yPreviewStyles(context) {
         // Get the accessible colors option.
         var a11yColors = window.parent.wp.customize('accent_accessible_colors').get(),
             stylesheedID = 'twentytwenty-customizer-styles-' + context,

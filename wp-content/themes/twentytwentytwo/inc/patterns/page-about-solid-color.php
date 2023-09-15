@@ -11,8 +11,7 @@
 					<div class="wp-block-group"><!-- wp:spacer {"height":64} -->
 					<div style="height:64px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer --><!-- wp:heading {"style":{"typography":{"lineHeight":"1","textTransform":"uppercase","fontSize":"clamp(2.75rem, 6vw, 3.25rem)"}}} -->
-					<h2 id="edvard-smith" style="font-size:clamp(2.75rem, 6vw, 3.25rem);line-height:1;text-transform:uppercase">' . wp_kses_post(__('Edvard<br>Smith',
-                'twentytwentytwo')) . '</h2>
+					<h2 id="edvard-smith" style="font-size:clamp(2.75rem, 6vw, 3.25rem);line-height:1;text-transform:uppercase">'.wp_kses_post(__('Edvard<br>Smith', 'twentytwentytwo')).'</h2>
 					<!-- /wp:heading -->
 
 					<!-- wp:spacer {"height":8} -->
@@ -20,8 +19,7 @@
 					<!-- /wp:spacer -->
 
 					<!-- wp:paragraph {"fontSize":"small"} -->
-					<p class="has-small-font-size">' . esc_html__('Oh hello. My name’s Edvard, and you’ve found your way to my website. I’m an avid bird watcher, and I also broadcast my own radio show every Tuesday evening at 11PM EDT. Listen in sometime!',
-                'twentytwentytwo') . '</p>
+					<p class="has-small-font-size">'.esc_html__('Oh hello. My name’s Edvard, and you’ve found your way to my website. I’m an avid bird watcher, and I also broadcast my own radio show every Tuesday evening at 11PM EDT. Listen in sometime!', 'twentytwentytwo').'</p>
 					<!-- /wp:paragraph -->
 
 					<!-- wp:spacer {"height":8} -->

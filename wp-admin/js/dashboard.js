@@ -84,7 +84,7 @@ jQuery(function ($) {
          *
          * @return {void}
          */
-        function show (i, id) {
+        function show(i, id) {
             var p, e = $('#' + id + ' div.inside:visible').find('.widget-loading');
             // If the element is found in the dom, queue to load latest representation.
             if (e.length) {
@@ -119,7 +119,7 @@ jQuery(function ($) {
     ajaxPopulateWidgets();
 
     // Register ajax widgets as postbox toggles.
-    postboxes.add_postbox_toggles(pagenow, { pbshow: ajaxPopulateWidgets });
+    postboxes.add_postbox_toggles(pagenow, {pbshow: ajaxPopulateWidgets});
 
     /**
      * Control the Quick Press (Quick Draft) widget.
@@ -162,7 +162,7 @@ jQuery(function ($) {
              *
              * @return {void}
              */
-            function highlightLatestPost () {
+            function highlightLatestPost() {
                 var latestPost = $('.drafts ul li').first();
                 latestPost.css('background', '#fffbe5');
                 setTimeout(function () {
@@ -194,7 +194,7 @@ jQuery(function ($) {
      *
      * @return {void}
      */
-    function autoResizeTextarea () {
+    function autoResizeTextarea() {
         // When IE8 or older is used to render this document, exit.
         if (document.documentMode && document.documentMode < 9) {
             return;
@@ -726,7 +726,7 @@ jQuery(function ($) {
              * This doesn't need to take `startTimestamp` into account, because a name like
              * `America/Chicago` automatically tracks daylight savings.
              */
-            var shortTimeStringParts = eventDateTime.toLocaleTimeString(undefined, { timeZoneName: 'short' }).split(' ');
+            var shortTimeStringParts = eventDateTime.toLocaleTimeString(undefined, {timeZoneName: 'short'}).split(' ');
 
             if (3 === shortTimeStringParts.length) {
                 timeZoneAbbreviation = shortTimeStringParts[2];

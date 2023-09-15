@@ -2,9 +2,9 @@
     /**
      * Multisite Administration hooks
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
-     * @since 4.3.0
+     * @since      4.3.0
      */
 
 // Media hooks.
@@ -13,7 +13,7 @@
 // User hooks.
     add_action('user_admin_notices', 'new_user_email_admin_notice');
     add_action('network_admin_notices', 'new_user_email_admin_notice');
-    
+
     add_action('admin_page_access_denied', '_access_denied_splash', 99);
 
 // Site hooks.

@@ -94,7 +94,7 @@
                 }
             }
         };
-        var OpenUrl = { open: open };
+        var OpenUrl = {open: open};
 
         var global$4 = tinymce.util.Tools.resolve('tinymce.util.Tools');
 
@@ -128,7 +128,7 @@
             }
         };
         var getAnchorText = function (selection, anchorElm) {
-            var text = anchorElm ? anchorElm.innerText || anchorElm.textContent : selection.getContent({ format: 'text' });
+            var text = anchorElm ? anchorElm.innerText || anchorElm.textContent : selection.getContent({format: 'text'});
             return trimCaretContainers(text);
         };
         var isLink = function (elm) {
@@ -258,7 +258,7 @@
             var appendItems = function (values, output) {
                 output = output || [];
                 global$4.each(values, function (item) {
-                    var menuItem = { text: item.text || item.title };
+                    var menuItem = {text: item.text || item.title};
                     if (item.menu) {
                         menuItem.menu = appendItems(item.menu);
                     } else {
@@ -521,7 +521,7 @@
         var open$1 = function (editor) {
             createLinkList(editor, showDialog);
         };
-        var Dialog = { open: open$1 };
+        var Dialog = {open: open$1};
 
         var getLink = function (editor, elm) {
             return editor.dom.getParent(elm, 'a[href]');
@@ -632,12 +632,12 @@
         var register = function (editor) {
             editor.addCommand('mceLink', Actions.openDialog(editor));
         };
-        var Commands = { register: register };
+        var Commands = {register: register};
 
         var setup = function (editor) {
             editor.addShortcut('Meta+K', '', Actions.openDialog(editor));
         };
-        var Keyboard = { setup: setup };
+        var Keyboard = {setup: setup};
 
         var setupButtons = function (editor) {
             editor.addButton('link', {
@@ -706,7 +706,7 @@
             Keyboard.setup(editor);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

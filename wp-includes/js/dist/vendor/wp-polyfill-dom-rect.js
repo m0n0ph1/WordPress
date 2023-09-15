@@ -1,14 +1,14 @@
 // DOMRect
 (function (global) {
-    function number (v) {
+    function number(v) {
         return v === undefined ? 0 : Number(v);
     }
 
-    function different (u, v) {
+    function different(u, v) {
         return u !== v && !(isNaN(u) && isNaN(v));
     }
 
-    function DOMRect (xArg, yArg, wArg, hArg) {
+    function DOMRect(xArg, yArg, wArg, hArg) {
         var x, y, width, height, left, right, top, bottom;
 
         x = number(xArg);

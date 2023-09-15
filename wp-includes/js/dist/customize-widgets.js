@@ -19,7 +19,7 @@
                 var hasOwn = {}.hasOwnProperty;
                 var nativeCodeString = '[native code]';
 
-                function classNames () {
+                function classNames() {
                     var classes = [];
 
                     for (var i = 0; i < arguments.length; i++) {
@@ -63,7 +63,8 @@
                         return classNames;
                     }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
                     __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-                } else {}
+                } else {
+                }
             }());
 
             /***/
@@ -78,7 +79,7 @@
 
             var envHasBigInt64Array = typeof BigInt64Array !== 'undefined';
 
-            module.exports = function equal (a, b) {
+            module.exports = function equal(a, b) {
                 if (a === b) return true;
 
                 if (a && b && typeof a == 'object' && typeof b == 'object') {
@@ -153,7 +154,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -195,7 +196,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -214,7 +215,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -241,11 +242,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -342,10 +343,10 @@
 
 
 
-        function CopyButton ({
-                                 text,
-                                 children
-                             }) {
+        function CopyButton({
+                                text,
+                                children
+                            }) {
             const ref = (0, external_wp_compose_namespaceObject.useCopyToClipboard)(text);
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Button, {
                 variant: 'secondary',
@@ -354,21 +355,21 @@
         }
 
         class ErrorBoundary extends external_wp_element_namespaceObject.Component {
-            constructor () {
+            constructor() {
                 super(...arguments);
                 this.state = {
                     error: null
                 };
             }
 
-            componentDidCatch (error) {
+            componentDidCatch(error) {
                 this.setState({
                     error
                 });
                 (0, external_wp_hooks_namespaceObject.doAction)('editor.ErrorBoundary.errorLogged', error);
             }
 
-            render () {
+            render() {
                 const {
                     error
                 } = this.state;
@@ -403,11 +404,11 @@
 
 
 
-        function BlockInspectorButton ({
-                                           inspector,
-                                           closeMenu,
-                                           ...props
-                                       }) {
+        function BlockInspectorButton({
+                                          inspector,
+                                          closeMenu,
+                                          ...props
+                                      }) {
             const selectedBlockClientId = (0, external_wp_data_namespaceObject.useSelect)(select => select(external_wp_blockEditor_namespaceObject.store).getSelectedBlockClientId(), []);
             const selectedBlock = (0, external_wp_element_namespaceObject.useMemo)(() => document.getElementById(`block-${selectedBlockClientId}`), [selectedBlockClientId]);
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.MenuItem, {
@@ -505,7 +506,7 @@
          * @param {Object}         action
          */
 
-        function blockInserterPanel (state = false, action) {
+        function blockInserterPanel(state = false, action) {
             switch (action.type) {
                 case 'SET_IS_INSERTER_OPENED':
                     return action.value;
@@ -527,7 +528,7 @@
          *
          * @return {boolean} Whether the inserter is opened.
          */
-        function isInserterOpened (state) {
+        function isInserterOpened(state) {
             return !!state.blockInserterPanel;
         }
 
@@ -539,7 +540,7 @@
          * @return {Object} The root client ID and index to insert at.
          */
 
-        function __experimentalGetInsertionPoint (state) {
+        function __experimentalGetInsertionPoint(state) {
             const {
                 rootClientId,
                 insertionIndex
@@ -563,7 +564,7 @@
          *
          * @return {Object} Action object.
          */
-        function setIsInserterOpened (value) {
+        function setIsInserterOpened(value) {
             return {
                 type: 'SET_IS_INSERTER_OPENED',
                 value
@@ -621,9 +622,9 @@
 
 
 
-        function Inserter ({
-                               setIsOpened
-                           }) {
+        function Inserter({
+                              setIsOpened
+                          }) {
             const inserterTitleId = (0, external_wp_compose_namespaceObject.useInstanceId)(Inserter, 'customize-widget-layout__inserter-panel-title');
             const insertionPoint = (0, external_wp_data_namespaceObject.useSelect)(select => select(store).__experimentalGetInsertionPoint(), []);
             return (0, external_wp_element_namespaceObject.createElement)('div', {
@@ -695,16 +696,16 @@
 
 
 
-        function MoreMenuDropdown ({
-                                       as: DropdownComponent = external_wp_components_namespaceObject.DropdownMenu,
-                                       className,
+        function MoreMenuDropdown({
+                                      as: DropdownComponent = external_wp_components_namespaceObject.DropdownMenu,
+                                      className,
 
-                                       /* translators: button label text should, if possible, be under 16 characters. */
-                                       label = (0, external_wp_i18n_namespaceObject.__)('Options'),
-                                       popoverProps,
-                                       toggleProps,
-                                       children
-                                   }) {
+                                      /* translators: button label text should, if possible, be under 16 characters. */
+                                      label = (0, external_wp_i18n_namespaceObject.__)('Options'),
+                                      popoverProps,
+                                      toggleProps,
+                                      children
+                                  }) {
             return (0, external_wp_element_namespaceObject.createElement)(DropdownComponent, {
                 className: classnames_default()('interface-more-menu-dropdown', className),
                 icon: more_vertical,
@@ -845,7 +846,7 @@
          * @param {string} featureName The feature name.
          */
 
-        function toggleFeature (scope, featureName) {
+        function toggleFeature(scope, featureName) {
             return function ({
                                  registry
                              }) {
@@ -868,7 +869,7 @@
          * @return {Object} Action object.
          */
 
-        function setFeatureValue (scope, featureName, value) {
+        function setFeatureValue(scope, featureName, value) {
             return function ({
                                  registry
                              }) {
@@ -889,7 +890,7 @@
          * @return {Object} Action object.
          */
 
-        function setFeatureDefaults (scope, defaults) {
+        function setFeatureDefaults(scope, defaults) {
             return function ({
                                  registry
                              }) {
@@ -909,7 +910,7 @@
          * @return {Object} Action object.
          */
 
-        function openModal (name) {
+        function openModal(name) {
             return {
                 type: 'OPEN_MODAL',
                 name
@@ -922,7 +923,7 @@
          * @return {Object} Action object.
          */
 
-        function closeModal () {
+        function closeModal() {
             return {
                 type: 'CLOSE_MODAL'
             };
@@ -1006,7 +1007,7 @@
          * @return {boolean} Whether the modal is active.
          */
 
-        function isModalActive (state, modalName) {
+        function isModalActive(state, modalName) {
             return state.activeModal === modalName;
         }
 
@@ -1015,7 +1016,7 @@
          * WordPress dependencies
          */
 
-        function complementaryAreas (state = {}, action) {
+        function complementaryAreas(state = {}, action) {
             switch (action.type) {
                 case 'SET_DEFAULT_COMPLEMENTARY_AREA': {
                     const {
@@ -1057,7 +1058,7 @@
          * @return {Object} Updated state
          */
 
-        function activeModal (state = null, action) {
+        function activeModal(state = null, action) {
             switch (action.type) {
                 case 'OPEN_MODAL':
                     return action.name;
@@ -1185,10 +1186,10 @@
 
 
 
-        function KeyCombination ({
-                                     keyCombination,
-                                     forceAriaLabel
-                                 }) {
+        function KeyCombination({
+                                    keyCombination,
+                                    forceAriaLabel
+                                }) {
             const shortcut = keyCombination.modifier ? external_wp_keycodes_namespaceObject.displayShortcutList[keyCombination.modifier](keyCombination.character) : keyCombination.character;
             const ariaLabel = keyCombination.modifier ? external_wp_keycodes_namespaceObject.shortcutAriaLabel[keyCombination.modifier](keyCombination.character) : keyCombination.character;
             return (0, external_wp_element_namespaceObject.createElement)('kbd', {
@@ -1208,12 +1209,12 @@
             }));
         }
 
-        function Shortcut ({
-                               description,
-                               keyCombination,
-                               aliases = [],
-                               ariaLabel
-                           }) {
+        function Shortcut({
+                              description,
+                              keyCombination,
+                              aliases = [],
+                              ariaLabel
+                          }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)('div', {
                 className: 'customize-widgets-keyboard-shortcut-help-modal__shortcut-description'
             }, description), (0, external_wp_element_namespaceObject.createElement)('div', {
@@ -1243,9 +1244,9 @@
 
 
 
-        function DynamicShortcut ({
-                                      name
-                                  }) {
+        function DynamicShortcut({
+                                     name
+                                 }) {
             const {
                 keyCombination,
                 description,
@@ -1344,10 +1345,10 @@
             });
         };
 
-        function KeyboardShortcutHelpModal ({
-                                                isModalActive,
-                                                toggleModal
-                                            }) {
+        function KeyboardShortcutHelpModal({
+                                               isModalActive,
+                                               toggleModal
+                                           }) {
             const {
                 registerShortcut
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_keyboardShortcuts_namespaceObject.store);
@@ -1408,7 +1409,7 @@
          */
 
 
-        function MoreMenu () {
+        function MoreMenu() {
             const [isKeyboardShortcutsModalActive, setIsKeyboardShortcutsModalVisible] = (0, external_wp_element_namespaceObject.useState)(false);
 
             const toggleKeyboardShortcutsModal = () => setIsKeyboardShortcutsModalVisible(!isKeyboardShortcutsModalActive);
@@ -1478,13 +1479,13 @@
 
 
 
-        function Header ({
-                             sidebar,
-                             inserter,
-                             isInserterOpened,
-                             setIsInserterOpened,
-                             isFixedToolbarActive
-                         }) {
+        function Header({
+                            sidebar,
+                            inserter,
+                            isInserterOpened,
+                            setIsInserterOpened,
+                            isFixedToolbarActive
+                        }) {
             const [[hasUndo, hasRedo], setUndoRedo] = (0, external_wp_element_namespaceObject.useState)([sidebar.hasUndo(), sidebar.hasRedo()]);
             const shortcut = (0, external_wp_keycodes_namespaceObject.isAppleOS)() ? external_wp_keycodes_namespaceObject.displayShortcut.primaryShift('z') : external_wp_keycodes_namespaceObject.displayShortcut.primary('y');
             (0, external_wp_element_namespaceObject.useEffect)(() => {
@@ -1550,7 +1551,7 @@
          */
 
 
-        function useInserter (inserter) {
+        function useInserter(inserter) {
             const isInserterOpened = (0, external_wp_data_namespaceObject.useSelect)(select => select(store).isInserterOpened(), []);
             const {
                 setIsInserterOpened
@@ -1593,7 +1594,7 @@
          * @return {string} The widget id.
          */
 
-        function settingIdToWidgetId (settingId) {
+        function settingIdToWidgetId(settingId) {
             const matches = settingId.match(/^widget_(.+)(?:\[(\d+)\])$/);
 
             if (matches) {
@@ -1613,7 +1614,7 @@
          * @return {Object} The transformed widget.
          */
 
-        function blockToWidget (block, existingWidget = null) {
+        function blockToWidget(block, existingWidget = null) {
             let widget;
             const isValidLegacyWidgetBlock = block.name === 'core/legacy-widget' && (block.attributes.id || block.attributes.instance);
 
@@ -1679,12 +1680,12 @@
          * @return {WPBlock} The transformed block.
          */
 
-        function widgetToBlock ({
-                                    id,
-                                    idBase,
-                                    number,
-                                    instance
-                                }) {
+        function widgetToBlock({
+                                   id,
+                                   idBase,
+                                   number,
+                                   instance
+                               }) {
             let block;
             const {
                 encoded_serialized_instance: encoded,
@@ -1736,11 +1737,11 @@
 
 
 
-        function widgetsToBlocks (widgets) {
+        function widgetsToBlocks(widgets) {
             return widgets.map(widget => widgetToBlock(widget));
         }
 
-        function useSidebarBlockEditor (sidebar) {
+        function useSidebarBlockEditor(sidebar) {
             const [blocks, setBlocks] = (0, external_wp_element_namespaceObject.useState)(() => widgetsToBlocks(sidebar.getWidgets()));
             (0, external_wp_element_namespaceObject.useEffect)(() => {
                 return sidebar.subscribe((prevWidgets, nextWidgets) => {
@@ -1828,11 +1829,11 @@
 
         const FocusControlContext = (0, external_wp_element_namespaceObject.createContext)();
 
-        function FocusControl ({
-                                   api,
-                                   sidebarControls,
-                                   children
-                               }) {
+        function FocusControl({
+                                  api,
+                                  sidebarControls,
+                                  children
+                              }) {
             const [focusedWidgetIdRef, setFocusedWidgetIdRef] = (0, external_wp_element_namespaceObject.useState)({
                 current: null
             });
@@ -1844,7 +1845,7 @@
                         sidebarControl.sectionInstance.expand({
                             // Schedule it after the complete callback so that
                             // it won't be overridden by the "Back" button focus.
-                            completeCallback () {
+                            completeCallback() {
                                 // Create a "ref-like" object every time to ensure
                                 // the same widget id can also triggers the focus control.
                                 setFocusedWidgetIdRef({
@@ -1858,14 +1859,14 @@
                 }
             }, [sidebarControls]);
             (0, external_wp_element_namespaceObject.useEffect)(() => {
-                function handleFocus (settingId) {
+                function handleFocus(settingId) {
                     const widgetId = settingIdToWidgetId(settingId);
                     focusWidget(widgetId);
                 }
 
                 let previewBound = false;
 
-                function handleReady () {
+                function handleReady() {
                     api.previewer.preview.bind('focus-control-for-setting', handleFocus);
                     previewBound = true;
                 }
@@ -1897,7 +1898,7 @@
          */
 
 
-        function useBlocksFocusControl (blocks) {
+        function useBlocksFocusControl(blocks) {
             const {
                 selectBlock
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_blockEditor_namespaceObject.store);
@@ -1951,11 +1952,11 @@
             ExperimentalBlockEditorProvider
         } = unlock(external_wp_blockEditor_namespaceObject.privateApis);
 
-        function SidebarEditorProvider ({
-                                            sidebar,
-                                            settings,
-                                            children
-                                        }) {
+        function SidebarEditorProvider({
+                                           sidebar,
+                                           settings,
+                                           children
+                                       }) {
             const [blocks, onInput, onChange] = useSidebarBlockEditor(sidebar);
             useBlocksFocusControl(blocks);
             return (0, external_wp_element_namespaceObject.createElement)(ExperimentalBlockEditorProvider, {
@@ -1976,9 +1977,9 @@
 
 
 
-        function WelcomeGuide ({
-                                   sidebar
-                               }) {
+        function WelcomeGuide({
+                                  sidebar
+                              }) {
             const {
                 toggle
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_preferences_namespaceObject.store);
@@ -2029,11 +2030,11 @@
 
 
 
-        function KeyboardShortcuts ({
-                                        undo,
-                                        redo,
-                                        save
-                                    }) {
+        function KeyboardShortcuts({
+                                       undo,
+                                       redo,
+                                       save
+                                   }) {
             const {
                 replaceBlocks
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_blockEditor_namespaceObject.store);
@@ -2092,7 +2093,7 @@
             return null;
         }
 
-        function KeyboardShortcutsRegister () {
+        function KeyboardShortcutsRegister() {
             const {
                 registerShortcut,
                 unregisterShortcut
@@ -2174,7 +2175,7 @@
 
 
 
-        function BlockAppender (props) {
+        function BlockAppender(props) {
             const ref = (0, external_wp_element_namespaceObject.useRef)();
             const isBlocksListEmpty = (0, external_wp_data_namespaceObject.useSelect)(select => select(external_wp_blockEditor_namespaceObject.store).getBlockCount() === 0); // Move the focus to the block appender to prevent focus from
             // being lost when emptying the widget area.
@@ -2213,12 +2214,12 @@
 
 
 
-        function SidebarBlockEditor ({
-                                         blockEditorSettings,
-                                         sidebar,
-                                         inserter,
-                                         inspector
-                                     }) {
+        function SidebarBlockEditor({
+                                        blockEditorSettings,
+                                        sidebar,
+                                        inserter,
+                                        inspector
+                                    }) {
             const [isInserterOpened, setIsInserterOpened] = useInserter(inserter);
             const {
                 hasUploadPermissions,
@@ -2311,11 +2312,11 @@
 
         const SidebarControlsContext = (0, external_wp_element_namespaceObject.createContext)();
 
-        function SidebarControls ({
-                                      sidebarControls,
-                                      activeSidebarControl,
-                                      children
-                                  }) {
+        function SidebarControls({
+                                     sidebarControls,
+                                     activeSidebarControl,
+                                     children
+                                 }) {
             const context = (0, external_wp_element_namespaceObject.useMemo)(() => ({
                 sidebarControls,
                 activeSidebarControl
@@ -2325,14 +2326,14 @@
             }, children);
         }
 
-        function useSidebarControls () {
+        function useSidebarControls() {
             const {
                 sidebarControls
             } = (0, external_wp_element_namespaceObject.useContext)(SidebarControlsContext);
             return sidebarControls;
         }
 
-        function useActiveSidebarControl () {
+        function useActiveSidebarControl() {
             const {
                 activeSidebarControl
             } = (0, external_wp_element_namespaceObject.useContext)(SidebarControlsContext);
@@ -2361,7 +2362,7 @@
          * @param {Object} popoverRef     The ref object of the popover node container.
          */
 
-        function useClearSelectedBlock (sidebarControl, popoverRef) {
+        function useClearSelectedBlock(sidebarControl, popoverRef) {
             const {
                 hasSelectedBlock,
                 hasMultiSelection
@@ -2376,7 +2377,7 @@
                     const ownerDocument = container.ownerDocument;
                     const ownerWindow = ownerDocument.defaultView;
 
-                    function handleClearSelectedBlock (element) {
+                    function handleClearSelectedBlock(element) {
                         if ( // 1. Make sure there are blocks being selected.
                             (hasSelectedBlock() || hasMultiSelection()) && // 2. The element should exist in the DOM (not deleted).
                             element && ownerDocument.contains(element) && // 3. It should also not exist in the container, the popover, nor the dialog.
@@ -2386,11 +2387,11 @@
                         }
                     } // Handle mouse down in the same document.
 
-                    function handleMouseDown (event) {
+                    function handleMouseDown(event) {
                         handleClearSelectedBlock(event.target);
                     } // Handle focusing outside the current document, like to iframes.
 
-                    function handleBlur () {
+                    function handleBlur() {
                         handleClearSelectedBlock(ownerDocument.activeElement);
                     }
 
@@ -2419,11 +2420,11 @@
 
 
 
-        function CustomizeWidgets ({
-                                       api,
-                                       sidebarControls,
-                                       blockEditorSettings
-                                   }) {
+        function CustomizeWidgets({
+                                      api,
+                                      sidebarControls,
+                                      blockEditorSettings
+                                  }) {
             const [activeSidebarControl, setActiveSidebarControl] = (0, external_wp_element_namespaceObject.useState)(null);
             const parentContainer = document.getElementById('customize-theme-controls');
             const popoverRef = (0, external_wp_element_namespaceObject.useRef)();
@@ -2461,38 +2462,38 @@
         }
 
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/customize-widgets/build-module/controls/inspector-section.js
-        function getInspectorSection () {
+        function getInspectorSection() {
             const {
                 wp: {
                     customize
                 }
             } = window;
             return class InspectorSection extends customize.Section {
-                constructor (id, options) {
+                constructor(id, options) {
                     super(id, options);
                     this.parentSection = options.parentSection;
                     this.returnFocusWhenClose = null;
                     this._isOpen = false;
                 }
 
-                get isOpen () {
+                get isOpen() {
                     return this._isOpen;
                 }
 
-                set isOpen (value) {
+                set isOpen(value) {
                     this._isOpen = value;
                     this.triggerActiveCallbacks();
                 }
 
-                ready () {
+                ready() {
                     this.contentContainer[0].classList.add('customize-widgets-layout__inspector');
                 }
 
-                isContextuallyActive () {
+                isContextuallyActive() {
                     return this.isOpen;
                 }
 
-                onChangeExpanded (expanded, args) {
+                onChangeExpanded(expanded, args) {
                     super.onChangeExpanded(expanded, args);
 
                     if (this.parentSection && !args.unchanged) {
@@ -2514,9 +2515,9 @@
                     }
                 }
 
-                open ({
-                          returnFocusWhenClose
-                      } = {}) {
+                open({
+                         returnFocusWhenClose
+                     } = {}) {
                     this.isOpen = true;
                     this.returnFocusWhenClose = returnFocusWhenClose;
                     this.expand({
@@ -2524,13 +2525,13 @@
                     });
                 }
 
-                close () {
+                close() {
                     this.collapse({
                         allowMultiple: true
                     });
                 }
 
-                collapse (options) {
+                collapse(options) {
                     // Overridden collapse() function. Mostly call the parent collapse(), but also
                     // move our .isOpen to false.
                     // Initially, I tried tracking this with onChangeExpanded(), but it doesn't work
@@ -2544,7 +2545,7 @@
                     super.collapse(options);
                 }
 
-                triggerActiveCallbacks () {
+                triggerActiveCallbacks() {
                     // Manually fire the callbacks associated with moving this.active
                     // from false to true.  "active" is always true for this section,
                     // and "isContextuallyActive" reflects if the block settings
@@ -2576,7 +2577,7 @@
 
         const getInspectorSectionId = sidebarId => `widgets-inspector-${sidebarId}`;
 
-        function getSidebarSection () {
+        function getSidebarSection() {
             const {
                 wp: {
                     customize
@@ -2588,7 +2589,7 @@
                 isReducedMotion = event.matches;
             });
             return class SidebarSection extends customize.Section {
-                ready () {
+                ready() {
                     const InspectorSection = getInspectorSection();
                     this.inspector = new InspectorSection(getInspectorSectionId(this.id), {
                         title: (0, external_wp_i18n_namespaceObject.__)('Block Settings'),
@@ -2599,16 +2600,16 @@
                     this.contentContainer[0].classList.add('customize-widgets__sidebar-section');
                 }
 
-                hasSubSectionOpened () {
+                hasSubSectionOpened() {
                     return this.inspector.expanded();
                 }
 
-                onChangeExpanded (expanded, _args) {
+                onChangeExpanded(expanded, _args) {
                     const controls = this.controls();
                     const args = {
                         ..._args,
 
-                        completeCallback () {
+                        completeCallback() {
                             controls.forEach(control => {
                                 control.onChangeSectionExpanded?.(expanded, args);
                             });
@@ -2655,7 +2656,7 @@
             wp
         } = window;
 
-        function parseWidgetId (widgetId) {
+        function parseWidgetId(widgetId) {
             const matches = widgetId.match(/^(.+)-(\d+)$/);
 
             if (matches) {
@@ -2670,7 +2671,7 @@
             };
         }
 
-        function widgetIdToSettingId (widgetId) {
+        function widgetIdToSettingId(widgetId) {
             const {
                 idBase,
                 number
@@ -2694,11 +2695,11 @@
          */
 
 
-        function debounce (leading, callback, timeout) {
+        function debounce(leading, callback, timeout) {
             let isLeading = false;
             let timerID;
 
-            function debounced (...args) {
+            function debounced(...args) {
                 const result = (isLeading ? callback : leading).apply(this, args);
                 isLeading = true;
                 clearTimeout(timerID);
@@ -2717,7 +2718,7 @@
         }
 
         class SidebarAdapter {
-            constructor (setting, api) {
+            constructor(setting, api) {
                 this.setting = setting;
                 this.api = api;
                 this.locked = false;
@@ -2735,38 +2736,38 @@
                 this.save = this.save.bind(this);
             }
 
-            subscribe (callback) {
+            subscribe(callback) {
                 this.subscribers.add(callback);
                 return () => {
                     this.subscribers.delete(callback);
                 };
             }
 
-            getWidgets () {
+            getWidgets() {
                 return this.history[this.historyIndex];
             }
 
-            _emit (...args) {
+            _emit(...args) {
                 for (const callback of this.subscribers) {
                     callback(...args);
                 }
             }
 
-            _getWidgetIds () {
+            _getWidgetIds() {
                 return this.setting.get();
             }
 
-            _pushHistory () {
+            _pushHistory() {
                 this.history = [...this.history.slice(0, this.historyIndex + 1), this._getWidgetIds().map(widgetId => this.getWidget(widgetId))];
                 this.historyIndex += 1;
                 this.historySubscribers.forEach(listener => listener());
             }
 
-            _replaceHistory () {
+            _replaceHistory() {
                 this.history[this.historyIndex] = this._getWidgetIds().map(widgetId => this.getWidget(widgetId));
             }
 
-            _handleSettingChange () {
+            _handleSettingChange() {
                 if (this.locked) {
                     return;
                 }
@@ -2778,7 +2779,7 @@
                 this._emit(prevWidgets, this.getWidgets());
             }
 
-            _handleAllSettingsChange (setting) {
+            _handleAllSettingsChange(setting) {
                 if (this.locked) {
                     return;
                 }
@@ -2800,7 +2801,7 @@
                 this._emit(prevWidgets, this.getWidgets());
             }
 
-            _createWidget (widget) {
+            _createWidget(widget) {
                 const widgetModel = wp.customize.Widgets.availableWidgets.findWhere({
                     id_base: widget.idBase
                 });
@@ -2822,7 +2823,7 @@
                 return widgetId;
             }
 
-            _removeWidget (widget) {
+            _removeWidget(widget) {
                 const settingId = widgetIdToSettingId(widget.id);
                 const setting = this.api(settingId);
 
@@ -2834,7 +2835,7 @@
                 this.api.remove(settingId);
             }
 
-            _updateWidget (widget) {
+            _updateWidget(widget) {
                 const prevWidget = this.getWidget(widget.id); // Bail out update if nothing changed.
 
                 if (prevWidget === widget) {
@@ -2852,7 +2853,7 @@
                 return this._createWidget(widget);
             }
 
-            getWidget (widgetId) {
+            getWidget(widgetId) {
                 if (!widgetId) {
                     return null;
                 }
@@ -2884,7 +2885,7 @@
                 return widget;
             }
 
-            _updateWidgets (nextWidgets) {
+            _updateWidgets(nextWidgets) {
                 this.locked = true;
                 const addedWidgetIds = [];
                 const nextWidgetIds = nextWidgets.map(nextWidget => {
@@ -2905,7 +2906,7 @@
                 return addedWidgetIds;
             }
 
-            setWidgets (nextWidgets) {
+            setWidgets(nextWidgets) {
                 const addedWidgetIds = this._updateWidgets(nextWidgets);
 
                 this._debounceSetHistory();
@@ -2918,15 +2919,15 @@
              */
 
 
-            hasUndo () {
+            hasUndo() {
                 return this.historyIndex > 0;
             }
 
-            hasRedo () {
+            hasRedo() {
                 return this.historyIndex < this.history.length - 1;
             }
 
-            _seek (historyIndex) {
+            _seek(historyIndex) {
                 const currentWidgets = this.getWidgets();
                 this.historyIndex = historyIndex;
                 const widgets = this.history[this.historyIndex];
@@ -2940,7 +2941,7 @@
                 this._debounceSetHistory.cancel();
             }
 
-            undo () {
+            undo() {
                 if (!this.hasUndo()) {
                     return;
                 }
@@ -2948,7 +2949,7 @@
                 this._seek(this.historyIndex - 1);
             }
 
-            redo () {
+            redo() {
                 if (!this.hasRedo()) {
                     return;
                 }
@@ -2956,14 +2957,14 @@
                 this._seek(this.historyIndex + 1);
             }
 
-            subscribeHistory (listener) {
+            subscribeHistory(listener) {
                 this.historySubscribers.add(listener);
                 return () => {
                     this.historySubscribers.delete(listener);
                 };
             }
 
-            save () {
+            save() {
                 this.api.previewer.save();
             }
 
@@ -2981,7 +2982,7 @@
          */
 
 
-        function getInserterOuterSection () {
+        function getInserterOuterSection() {
             const {
                 wp: {
                     customize
@@ -2992,7 +2993,7 @@
             // The result is that at most one outer section can be opened at the same time.
 
             customize.OuterSection = class extends OuterSection {
-                onChangeExpanded (expanded, args) {
+                onChangeExpanded(expanded, args) {
                     if (expanded) {
                         customize.section.each(section => {
                             if (section.params.type === 'outer' && section.id !== this.id) {
@@ -3010,7 +3011,7 @@
 
             customize.sectionConstructor.outer = customize.OuterSection;
             return class InserterOuterSection extends customize.OuterSection {
-                constructor (...args) {
+                constructor(...args) {
                     super(...args); // This is necessary since we're creating a new class which is not identical to the original OuterSection.
                     // @See https://github.com/WordPress/wordpress-develop/blob/42b05c397c50d9dc244083eff52991413909d4bd/src/js/_enqueues/wp/customize/controls.js#L1427-L1436
 
@@ -3040,13 +3041,13 @@
                     });
                 }
 
-                open () {
+                open() {
                     if (!this.expanded()) {
                         const contentContainer = this.contentContainer[0];
                         this.activeElementBeforeExpanded = contentContainer.ownerDocument.activeElement;
                         this.isFromInternalAction = true;
                         this.expand({
-                            completeCallback () {
+                            completeCallback() {
                                 // We have to do this in a "completeCallback" or else the elements will not yet be visible/tabbable.
                                 // The first one should be the close button,
                                 // we want to skip it and choose the second one instead, which is the search box.
@@ -3061,13 +3062,13 @@
                     }
                 }
 
-                close () {
+                close() {
                     if (this.expanded()) {
                         const contentContainer = this.contentContainer[0];
                         const activeElement = contentContainer.ownerDocument.activeElement;
                         this.isFromInternalAction = true;
                         this.collapse({
-                            completeCallback () {
+                            completeCallback() {
                                 // Return back the focus when closing the inserter.
                                 // Only do this if the active element which triggers the action is inside the inserter,
                                 // (the close button for instance). In that case the focus will be lost.
@@ -3103,19 +3104,19 @@
 
         const getInserterId = controlId => `widgets-inserter-${controlId}`;
 
-        function getSidebarControl () {
+        function getSidebarControl() {
             const {
                 wp: {
                     customize
                 }
             } = window;
             return class SidebarControl extends customize.Control {
-                constructor (...args) {
+                constructor(...args) {
                     super(...args);
                     this.subscribers = new Set();
                 }
 
-                ready () {
+                ready() {
                     const InserterOuterSection = getInserterOuterSection();
                     this.inserter = new InserterOuterSection(getInserterId(this.id), {});
                     customize.section.add(this.inserter);
@@ -3124,14 +3125,14 @@
                     this.sidebarAdapter = new SidebarAdapter(this.setting, customize);
                 }
 
-                subscribe (callback) {
+                subscribe(callback) {
                     this.subscribers.add(callback);
                     return () => {
                         this.subscribers.delete(callback);
                     };
                 }
 
-                onChangeSectionExpanded (expanded, args) {
+                onChangeSectionExpanded(expanded, args) {
                     if (!args.unchanged) {
                         // Close the inserter when the section collapses.
                         if (!expanded) {
@@ -3176,7 +3177,7 @@
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_blockEditor_namespaceObject.store);
             const [, focusWidget] = useFocusControl();
 
-            function moveToSidebar (sidebarControlId) {
+            function moveToSidebar(sidebarControlId) {
                 const newSidebarControl = sidebarControls.find(sidebarControl => sidebarControl.id === sidebarControlId);
 
                 if (widgetId) {
@@ -3284,7 +3285,7 @@
          * @param {Object} blockEditorSettings Block editor settings.
          */
 
-        function initialize (editorName, blockEditorSettings) {
+        function initialize(editorName, blockEditorSettings) {
             (0, external_wp_data_namespaceObject.dispatch)(external_wp_preferences_namespaceObject.store).setDefaults('core/customize-widgets', {
                 fixedToolbar: false,
                 welcomeGuide: true
@@ -3299,7 +3300,8 @@
             (0, external_wp_blockLibrary_namespaceObject.registerCoreBlocks)(coreBlocks);
             (0, external_wp_widgets_namespaceObject.registerLegacyWidgetBlock)();
 
-            if (false) {}
+            if (false) {
+            }
 
             (0, external_wp_widgets_namespaceObject.registerLegacyWidgetVariations)(blockEditorSettings);
             (0, external_wp_widgets_namespaceObject.registerWidgetGroupBlock)(); // As we are unregistering `core/freeform` to avoid the Classic block, we must

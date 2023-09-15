@@ -25,7 +25,7 @@
                 $('.panel-placeholder').slideDown(200, function () {
                     $.scrollTo($('#panel1'), {
                         duration: 600,
-                        offset: { 'top': -70 } // Account for sticky menu.
+                        offset: {'top': -70} // Account for sticky menu.
                     });
                 });
 
@@ -117,13 +117,13 @@
     });
 
     // Whether a header image is available.
-    function hasHeaderImage () {
+    function hasHeaderImage() {
         var image = wp.customize('header_image')();
         return '' !== image && 'remove-header' !== image;
     }
 
     // Whether a header video is available.
-    function hasHeaderVideo () {
+    function hasHeaderVideo() {
         var externalVideo = wp.customize('external_header_video')(),
             video = wp.customize('header_video')();
 

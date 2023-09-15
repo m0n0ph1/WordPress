@@ -8,16 +8,16 @@
 
             'use strict';
 
-            var isMergeableObject = function isMergeableObject (value) {
+            var isMergeableObject = function isMergeableObject(value) {
                 return isNonNullObject(value)
                     && !isSpecial(value);
             };
 
-            function isNonNullObject (value) {
+            function isNonNullObject(value) {
                 return !!value && typeof value === 'object';
             }
 
-            function isSpecial (value) {
+            function isSpecial(value) {
                 var stringValue = Object.prototype.toString.call(value);
 
                 return stringValue === '[object RegExp]'
@@ -29,27 +29,27 @@
             var canUseSymbol = typeof Symbol === 'function' && Symbol.for;
             var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for('react.element') : 0xeac7;
 
-            function isReactElement (value) {
+            function isReactElement(value) {
                 return value.$$typeof === REACT_ELEMENT_TYPE;
             }
 
-            function emptyTarget (val) {
+            function emptyTarget(val) {
                 return Array.isArray(val) ? [] : {};
             }
 
-            function cloneUnlessOtherwiseSpecified (value, options) {
+            function cloneUnlessOtherwiseSpecified(value, options) {
                 return (options.clone !== false && options.isMergeableObject(value))
                     ? deepmerge(emptyTarget(value), value, options)
                     : value;
             }
 
-            function defaultArrayMerge (target, source, options) {
+            function defaultArrayMerge(target, source, options) {
                 return target.concat(source).map(function (element) {
                     return cloneUnlessOtherwiseSpecified(element, options);
                 });
             }
 
-            function getMergeFunction (key, options) {
+            function getMergeFunction(key, options) {
                 if (!options.customMerge) {
                     return deepmerge;
                 }
@@ -57,7 +57,7 @@
                 return typeof customMerge === 'function' ? customMerge : deepmerge;
             }
 
-            function getEnumerableOwnPropertySymbols (target) {
+            function getEnumerableOwnPropertySymbols(target) {
                 return Object.getOwnPropertySymbols
                     ? Object.getOwnPropertySymbols(target).filter(function (symbol) {
                         return Object.propertyIsEnumerable.call(target, symbol);
@@ -65,11 +65,11 @@
                     : [];
             }
 
-            function getKeys (target) {
+            function getKeys(target) {
                 return Object.keys(target).concat(getEnumerableOwnPropertySymbols(target));
             }
 
-            function propertyIsOnObject (object, property) {
+            function propertyIsOnObject(object, property) {
                 try {
                     return property in object;
                 } catch (_) {
@@ -78,13 +78,13 @@
             }
 
 // Protects from prototype poisoning and unexpected merging up the prototype chain.
-            function propertyIsUnsafe (target, key) {
+            function propertyIsUnsafe(target, key) {
                 return propertyIsOnObject(target, key) // Properties are safe to merge if they don't exist in the target yet,
                     && !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
                         && Object.propertyIsEnumerable.call(target, key)); // and also unsafe if they're nonenumerable.
             }
 
-            function mergeObject (target, source, options) {
+            function mergeObject(target, source, options) {
                 var destination = {};
                 if (options.isMergeableObject(target)) {
                     getKeys(target).forEach(function (key) {
@@ -105,7 +105,7 @@
                 return destination;
             }
 
-            function deepmerge (target, source, options) {
+            function deepmerge(target, source, options) {
                 options = options || {};
                 options.arrayMerge = options.arrayMerge || defaultArrayMerge;
                 options.isMergeableObject = options.isMergeableObject || isMergeableObject;
@@ -126,7 +126,7 @@
                 }
             }
 
-            deepmerge.all = function deepmergeAll (array, options) {
+            deepmerge.all = function deepmergeAll(array, options) {
                 if (!Array.isArray(array)) {
                     throw new Error('first argument should be an array');
                 }
@@ -148,7 +148,7 @@
 
             'use strict';
 
-            function _typeof (obj) {
+            function _typeof(obj) {
                 if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
                     _typeof = function (obj) {
                         return typeof obj;
@@ -162,13 +162,13 @@
                 return _typeof(obj);
             }
 
-            function _classCallCheck (instance, Constructor) {
+            function _classCallCheck(instance, Constructor) {
                 if (!(instance instanceof Constructor)) {
                     throw new TypeError('Cannot call a class as a function');
                 }
             }
 
-            function _defineProperties (target, props) {
+            function _defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
                     var descriptor = props[i];
                     descriptor.enumerable = descriptor.enumerable || false;
@@ -178,7 +178,7 @@
                 }
             }
 
-            function _createClass (Constructor, protoProps, staticProps) {
+            function _createClass(Constructor, protoProps, staticProps) {
                 if (protoProps) _defineProperties(Constructor.prototype, protoProps);
                 if (staticProps) _defineProperties(Constructor, staticProps);
                 return Constructor;
@@ -195,7 +195,7 @@
              *
              * @return {?Array} Value pair, if exists.
              */
-            function getValuePair (instance, key) {
+            function getValuePair(instance, key) {
                 var _map = instance._map,
                     _arrayTreeMap = instance._arrayTreeMap,
                     _objectTreeMap = instance._objectTreeMap; // Map keeps a reference to the last object-like key used to set the
@@ -256,7 +256,7 @@
                      *
                      * @param {Iterable.<*>} iterable Initial pair of key, value for map.
                      */
-                    function EquivalentKeyMap (iterable) {
+                    function EquivalentKeyMap(iterable) {
                         _classCallCheck(this, EquivalentKeyMap);
 
                         this.clear();
@@ -294,7 +294,7 @@
                          *
                          * @return {EquivalentKeyMap} Map instance.
                          */
-                        value: function set (key, value) {
+                        value: function set(key, value) {
                             // Shortcut non-object-like to set on internal Map.
                             if (key === null || _typeof(key) !== 'object') {
                                 this._map.set(key, value);
@@ -350,7 +350,7 @@
 
                     }, {
                         key: 'get',
-                        value: function get (key) {
+                        value: function get(key) {
                             // Shortcut non-object-like to get from internal Map.
                             if (key === null || _typeof(key) !== 'object') {
                                 return this._map.get(key);
@@ -373,7 +373,7 @@
 
                     }, {
                         key: 'has',
-                        value: function has (key) {
+                        value: function has(key) {
                             if (key === null || _typeof(key) !== 'object') {
                                 return this._map.has(key);
                             } // Test on the _presence_ of the pair, not its value, as even undefined
@@ -392,7 +392,7 @@
 
                     }, {
                         key: 'delete',
-                        value: function _delete (key) {
+                        value: function _delete(key) {
                             if (!this.has(key)) {
                                 return false;
                             } // This naive implementation will leave orphaned child trees. A better
@@ -412,7 +412,7 @@
 
                     }, {
                         key: 'forEach',
-                        value: function forEach (callback) {
+                        value: function forEach(callback) {
                             var _this = this;
 
                             var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
@@ -432,14 +432,14 @@
 
                     }, {
                         key: 'clear',
-                        value: function clear () {
+                        value: function clear() {
                             this._map = new Map();
                             this._arrayTreeMap = new Map();
                             this._objectTreeMap = new Map();
                         }
                     }, {
                         key: 'size',
-                        get: function get () {
+                        get: function get() {
                             return this._map.size;
                         }
                     }]);
@@ -455,7 +455,7 @@
         /***/ 9125:
         /***/ ((module) => {
 
-            function combineReducers (reducers) {
+            function combineReducers(reducers) {
                 var keys = Object.keys(reducers),
                     getNextState;
 
@@ -482,7 +482,7 @@
                     return new Function('r,s,a', fn);
                 })();
 
-                return function combinedReducer (state, action) {
+                return function combinedReducer(state, action) {
                     var nextState, i, key;
 
                     // Assumed changed if initial state.
@@ -520,7 +520,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -562,7 +562,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -581,7 +581,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -608,11 +608,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -700,7 +700,7 @@
         const external_wp_deprecated_namespaceObject = window['wp']['deprecated'];
         var external_wp_deprecated_default = /*#__PURE__*/__webpack_require__.n(external_wp_deprecated_namespaceObject);
         ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
-        function _typeof (obj) {
+        function _typeof(obj) {
             '@babel/helpers - typeof';
 
             return _typeof = 'function' == typeof Symbol && 'symbol' == typeof Symbol.iterator ? function (obj) {
@@ -711,7 +711,7 @@
         }
         ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPrimitive.js
 
-        function _toPrimitive (input, hint) {
+        function _toPrimitive(input, hint) {
             if (_typeof(input) !== 'object' || input === null) return input;
             var prim = input[Symbol.toPrimitive];
             if (prim !== undefined) {
@@ -723,13 +723,13 @@
         }
         ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPropertyKey.js
 
-        function _toPropertyKey (arg) {
+        function _toPropertyKey(arg) {
             var key = _toPrimitive(arg, 'string');
             return _typeof(key) === 'symbol' ? key : String(key);
         }
         ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 
-        function _defineProperty (obj, key, value) {
+        function _defineProperty(obj, key, value) {
             key = _toPropertyKey(key);
             if (key in obj) {
                 Object.defineProperty(obj, key, {
@@ -745,7 +745,7 @@
         }
         ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/objectSpread2.js
 
-        function ownKeys (object, enumerableOnly) {
+        function ownKeys(object, enumerableOnly) {
             var keys = Object.keys(object);
             if (Object.getOwnPropertySymbols) {
                 var symbols = Object.getOwnPropertySymbols(object);
@@ -756,7 +756,7 @@
             return keys;
         }
 
-        function _objectSpread2 (target) {
+        function _objectSpread2(target) {
             for (var i = 1; i < arguments.length; i++) {
                 var source = null != arguments[i] ? arguments[i] : {};
                 i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
@@ -776,7 +776,7 @@
          * during build.
          * @param {number} code
          */
-        function formatProdErrorMessage (code) {
+        function formatProdErrorMessage(code) {
             return 'Minified Redux error #' + code + '; visit https://redux.js.org/Errors?code=' + code + ' for the full message or ' + 'use the non-minified dev environment for full errors. ';
         }
 
@@ -791,14 +791,14 @@
          * If the current state is undefined, you must return the initial state.
          * Do not reference these action types directly in your code.
          */
-        var randomString = function randomString () {
+        var randomString = function randomString() {
             return Math.random().toString(36).substring(7).split('').join('.');
         };
 
         var ActionTypes = {
             INIT: '@@redux/INIT' + randomString(),
             REPLACE: '@@redux/REPLACE' + randomString(),
-            PROBE_UNKNOWN_ACTION: function PROBE_UNKNOWN_ACTION () {
+            PROBE_UNKNOWN_ACTION: function PROBE_UNKNOWN_ACTION() {
                 return '@@redux/PROBE_UNKNOWN_ACTION' + randomString();
             }
         };
@@ -807,7 +807,7 @@
          * @param {any} obj The object to inspect.
          * @returns {boolean} True if the argument appears to be a plain object.
          */
-        function isPlainObject (obj) {
+        function isPlainObject(obj) {
             if (typeof obj !== 'object' || obj === null) return false;
             var proto = obj;
 
@@ -819,7 +819,7 @@
         }
 
 // Inlined / shortened version of `kindOf` from https://github.com/jonschlinkert/kind-of
-        function miniKindOf (val) {
+        function miniKindOf(val) {
             if (val === void 0) return 'undefined';
             if (val === null) return 'null';
             var type = typeof val;
@@ -852,23 +852,24 @@
             return type.slice(8, -1).toLowerCase().replace(/\s/g, '');
         }
 
-        function ctorName (val) {
+        function ctorName(val) {
             return typeof val.constructor === 'function' ? val.constructor.name : null;
         }
 
-        function isError (val) {
+        function isError(val) {
             return val instanceof Error || typeof val.message === 'string' && val.constructor && typeof val.constructor.stackTraceLimit === 'number';
         }
 
-        function isDate (val) {
+        function isDate(val) {
             if (val instanceof Date) return true;
             return typeof val.toDateString === 'function' && typeof val.getDate === 'function' && typeof val.setDate === 'function';
         }
 
-        function kindOf (val) {
+        function kindOf(val) {
             var typeOfVal = typeof val;
 
-            if (false) {}
+            if (false) {
+            }
 
             return typeOfVal;
         }
@@ -899,7 +900,7 @@
          *
          */
 
-        function createStore (reducer, preloadedState, enhancer) {
+        function createStore(reducer, preloadedState, enhancer) {
             var _ref2;
 
             if (typeof preloadedState === 'function' && typeof enhancer === 'function' || typeof enhancer === 'function' && typeof arguments[3] === 'function') {
@@ -937,7 +938,7 @@
              * subscribe/unsubscribe in the middle of a dispatch.
              */
 
-            function ensureCanMutateNextListeners () {
+            function ensureCanMutateNextListeners() {
                 if (nextListeners === currentListeners) {
                     nextListeners = currentListeners.slice();
                 }
@@ -950,7 +951,7 @@
              */
 
 
-            function getState () {
+            function getState() {
                 if (isDispatching) {
                     throw new Error(true ? formatProdErrorMessage(3) : 0);
                 }
@@ -983,7 +984,7 @@
              */
 
 
-            function subscribe (listener) {
+            function subscribe(listener) {
                 if (typeof listener !== 'function') {
                     throw new Error(true ? formatProdErrorMessage(4) : 0);
                 }
@@ -995,7 +996,7 @@
                 var isSubscribed = true;
                 ensureCanMutateNextListeners();
                 nextListeners.push(listener);
-                return function unsubscribe () {
+                return function unsubscribe() {
                     if (!isSubscribed) {
                         return;
                     }
@@ -1039,7 +1040,7 @@
              */
 
 
-            function dispatch (action) {
+            function dispatch(action) {
                 if (!isPlainObject(action)) {
                     throw new Error(true ? formatProdErrorMessage(7) : 0);
                 }
@@ -1081,7 +1082,7 @@
              */
 
 
-            function replaceReducer (nextReducer) {
+            function replaceReducer(nextReducer) {
                 if (typeof nextReducer !== 'function') {
                     throw new Error(true ? formatProdErrorMessage(10) : 0);
                 }
@@ -1104,7 +1105,7 @@
              */
 
 
-            function observable () {
+            function observable() {
                 var _ref;
 
                 var outerSubscribe = subscribe;
@@ -1117,12 +1118,12 @@
                      * be used to unsubscribe the observable from the store, and prevent further
                      * emission of values from the observable.
                      */
-                    subscribe: function subscribe (observer) {
+                    subscribe: function subscribe(observer) {
                         if (typeof observer !== 'object' || observer === null) {
                             throw new Error(true ? formatProdErrorMessage(11) : 0);
                         }
 
-                        function observeState () {
+                        function observeState() {
                             if (observer.next) {
                                 observer.next(getState());
                             }
@@ -1191,7 +1192,7 @@
          * @param {String} message The warning message.
          * @returns {void}
          */
-        function warning (message) {
+        function warning(message) {
             /* eslint-disable no-console */
             if (typeof console !== 'undefined' && typeof console.error === 'function') {
                 console.error(message);
@@ -1203,11 +1204,12 @@
                 // "break on all exceptions" in your console,
                 // it would pause the execution at this line.
                 throw new Error(message);
-            } catch (e) {} // eslint-disable-line no-empty
+            } catch (e) {
+            } // eslint-disable-line no-empty
 
         }
 
-        function getUnexpectedStateShapeWarningMessage (inputState, reducers, action, unexpectedKeyCache) {
+        function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, unexpectedKeyCache) {
             var reducerKeys = Object.keys(reducers);
             var argumentName = action && action.type === ActionTypes.INIT ? 'preloadedState argument passed to createStore' : 'previous state received by the reducer';
 
@@ -1232,7 +1234,7 @@
             }
         }
 
-        function assertReducerShape (reducers) {
+        function assertReducerShape(reducers) {
             Object.keys(reducers).forEach(function (key) {
                 var reducer = reducers[key];
                 var initialState = reducer(undefined, {
@@ -1269,14 +1271,15 @@
          */
 
 
-        function combineReducers (reducers) {
+        function combineReducers(reducers) {
             var reducerKeys = Object.keys(reducers);
             var finalReducers = {};
 
             for (var i = 0; i < reducerKeys.length; i++) {
                 var key = reducerKeys[i];
 
-                if (false) {}
+                if (false) {
+                }
 
                 if (typeof reducers[key] === 'function') {
                     finalReducers[key] = reducers[key];
@@ -1288,7 +1291,8 @@
 
             var unexpectedKeyCache;
 
-            if (false) {}
+            if (false) {
+            }
 
             var shapeAssertionError;
 
@@ -1298,7 +1302,7 @@
                 shapeAssertionError = e;
             }
 
-            return function combination (state, action) {
+            return function combination(state, action) {
                 if (state === void 0) {
                     state = {};
                 }
@@ -1307,7 +1311,9 @@
                     throw shapeAssertionError;
                 }
 
-                if (false) { var warningMessage; }
+                if (false) {
+                    var warningMessage;
+                }
 
                 var hasChanged = false;
                 var nextState = {};
@@ -1332,7 +1338,7 @@
             };
         }
 
-        function bindActionCreator (actionCreator, dispatch) {
+        function bindActionCreator(actionCreator, dispatch) {
             return function () {
                 return dispatch(actionCreator.apply(this, arguments));
             };
@@ -1361,7 +1367,7 @@
          */
 
 
-        function bindActionCreators (actionCreators, dispatch) {
+        function bindActionCreators(actionCreators, dispatch) {
             if (typeof actionCreators === 'function') {
                 return bindActionCreator(actionCreators, dispatch);
             }
@@ -1393,7 +1399,7 @@
          * from right to left. For example, compose(f, g, h) is identical to doing
          * (...args) => f(g(h(...args))).
          */
-        function compose () {
+        function compose() {
             for (var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++) {
                 funcs[_key] = arguments[_key];
             }
@@ -1432,7 +1438,7 @@
          * @returns {Function} A store enhancer applying the middleware.
          */
 
-        function applyMiddleware () {
+        function applyMiddleware() {
             for (var _len = arguments.length, middlewares = new Array(_len), _key = 0; _key < _len; _key++) {
                 middlewares[_key] = arguments[_key];
             }
@@ -1441,13 +1447,13 @@
                 return function () {
                     var store = createStore.apply(void 0, arguments);
 
-                    var _dispatch = function dispatch () {
+                    var _dispatch = function dispatch() {
                         throw new Error(true ? formatProdErrorMessage(15) : 0);
                     };
 
                     var middlewareAPI = {
                         getState: store.getState,
-                        dispatch: function dispatch () {
+                        dispatch: function dispatch() {
                             return _dispatch.apply(void 0, arguments);
                         }
                     };
@@ -1511,7 +1517,7 @@
          *
          * @return {Function} Registry selector that can be registered with a store.
          */
-        function createRegistrySelector (registrySelector) {
+        function createRegistrySelector(registrySelector) {
             // Create a selector function that is bound to the registry referenced by `selector.registry`
             // and that has the same API as a regular selector. Binding it in such a way makes it
             // possible to call the selector directly from another selector.
@@ -1549,7 +1555,7 @@
          * @return {Function} Registry control that can be registered with a store.
          */
 
-        function createRegistryControl (registryControl) {
+        function createRegistryControl(registryControl) {
             registryControl.isRegistryControl = true;
             return registryControl;
         }
@@ -1565,7 +1571,7 @@
         const RESOLVE_SELECT = '@@data/RESOLVE_SELECT';
         const DISPATCH = '@@data/DISPATCH';
 
-        function isObject (object) {
+        function isObject(object) {
             return object !== null && typeof object === 'object';
         }
 
@@ -1594,7 +1600,7 @@
          */
 
 
-        function controls_select (storeNameOrDescriptor, selectorName, ...args) {
+        function controls_select(storeNameOrDescriptor, selectorName, ...args) {
             return {
                 type: SELECT,
                 storeKey: isObject(storeNameOrDescriptor) ? storeNameOrDescriptor.name : storeNameOrDescriptor,
@@ -1629,7 +1635,7 @@
          */
 
 
-        function resolveSelect (storeNameOrDescriptor, selectorName, ...args) {
+        function resolveSelect(storeNameOrDescriptor, selectorName, ...args) {
             return {
                 type: RESOLVE_SELECT,
                 storeKey: isObject(storeNameOrDescriptor) ? storeNameOrDescriptor.name : storeNameOrDescriptor,
@@ -1660,7 +1666,7 @@
          */
 
 
-        function dispatch (storeNameOrDescriptor, actionName, ...args) {
+        function dispatch(storeNameOrDescriptor, actionName, ...args) {
             return {
                 type: DISPATCH,
                 storeKey: isObject(storeNameOrDescriptor) ? storeNameOrDescriptor.name : storeNameOrDescriptor,
@@ -1708,7 +1714,7 @@
         } = (0, external_wp_privateApis_namespaceObject.__dangerousOptInToUnstableAPIsOnlyForCoreModules)('I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.', '@wordpress/data');
 
         ;// CONCATENATED MODULE: ./node_modules/is-promise/index.mjs
-        function isPromise (obj) {
+        function isPromise(obj) {
             return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
         }
 
@@ -1742,7 +1748,7 @@
         const coreDataStore = {
             name: 'core/data',
 
-            instantiate (registry) {
+            instantiate(registry) {
                 const getCoreDataSelector = selectorName => (key, ...args) => {
                     return registry.select(key)[selectorName](...args);
                 };
@@ -1752,15 +1758,15 @@
                 };
 
                 return {
-                    getSelectors () {
+                    getSelectors() {
                         return Object.fromEntries(['getIsResolving', 'hasStartedResolution', 'hasFinishedResolution', 'isResolving', 'getCachedResolvers'].map(selectorName => [selectorName, getCoreDataSelector(selectorName)]));
                     },
 
-                    getActions () {
+                    getActions() {
                         return Object.fromEntries(['startResolution', 'finishResolution', 'invalidateResolution', 'invalidateResolutionForStore', 'invalidateResolutionForStoreSelector'].map(actionName => [actionName, getCoreDataAction(actionName)]));
                     },
 
-                    subscribe () {
+                    subscribe() {
                         // There's no reasons to trigger any listener when we subscribe to this store
                         // because there's no state stored in this store that need to retrigger selectors
                         // if a change happens, the corresponding store where the tracking stated live
@@ -1821,7 +1827,7 @@
         const resolvers_cache_middleware = (createResolversCacheMiddleware);
 
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/data/build-module/redux-store/thunk-middleware.js
-        function createThunkMiddleware (args) {
+        function createThunkMiddleware(args) {
             return () => next => action => {
                 if (typeof action === 'function') {
                     return action(args);
@@ -1873,7 +1879,7 @@
          * @return Normalized state key array
          */
 
-        function selectorArgsToStateKey (args) {
+        function selectorArgsToStateKey(args) {
             if (args === undefined || args === null) {
                 return [];
             }
@@ -2049,7 +2055,7 @@
          * @return {StateValue|undefined} isResolving value.
          */
 
-        function getResolutionState (state, selectorName, args) {
+        function getResolutionState(state, selectorName, args) {
             const map = state[selectorName];
 
             if (!map) {
@@ -2072,7 +2078,7 @@
          * @return {boolean | undefined} isResolving value.
          */
 
-        function getIsResolving (state, selectorName, args) {
+        function getIsResolving(state, selectorName, args) {
             const resolutionState = getResolutionState(state, selectorName, args);
             return resolutionState && resolutionState.status === 'resolving';
         }
@@ -2088,7 +2094,7 @@
          * @return {boolean} Whether resolution has been triggered.
          */
 
-        function hasStartedResolution (state, selectorName, args) {
+        function hasStartedResolution(state, selectorName, args) {
             return getResolutionState(state, selectorName, args) !== undefined;
         }
 
@@ -2103,7 +2109,7 @@
          * @return {boolean} Whether resolution has completed.
          */
 
-        function hasFinishedResolution (state, selectorName, args) {
+        function hasFinishedResolution(state, selectorName, args) {
             const status = getResolutionState(state, selectorName, args)?.status;
             return status === 'finished' || status === 'error';
         }
@@ -2119,7 +2125,7 @@
          * @return {boolean} Has resolution failed
          */
 
-        function hasResolutionFailed (state, selectorName, args) {
+        function hasResolutionFailed(state, selectorName, args) {
             return getResolutionState(state, selectorName, args)?.status === 'error';
         }
 
@@ -2135,7 +2141,7 @@
          * @return {Error|unknown} Last resolution error
          */
 
-        function getResolutionError (state, selectorName, args) {
+        function getResolutionError(state, selectorName, args) {
             const resolutionState = getResolutionState(state, selectorName, args);
             return resolutionState?.status === 'error' ? resolutionState.error : null;
         }
@@ -2151,7 +2157,7 @@
          * @return {boolean} Whether resolution is in progress.
          */
 
-        function isResolving (state, selectorName, args) {
+        function isResolving(state, selectorName, args) {
             return getResolutionState(state, selectorName, args)?.status === 'resolving';
         }
 
@@ -2163,7 +2169,7 @@
          * @return {State} Resolvers mapped by args and selectorName.
          */
 
-        function getCachedResolvers (state) {
+        function getCachedResolvers(state) {
             return state;
         }
 
@@ -2175,7 +2181,7 @@
          * @return {boolean} True if one or more selectors are resolving, false otherwise.
          */
 
-        function hasResolvingSelectors (state) {
+        function hasResolvingSelectors(state) {
             return Object.values(state).some(selectorState =>
                 /**
                  * This uses the internal `_map` property of `EquivalentKeyMap` for
@@ -2197,7 +2203,7 @@
          *
          * @return {{ type: 'START_RESOLUTION', selectorName: string, args: unknown[] }} Action object.
          */
-        function startResolution (selectorName, args) {
+        function startResolution(selectorName, args) {
             return {
                 type: 'START_RESOLUTION',
                 selectorName,
@@ -2215,7 +2221,7 @@
          * @return {{ type: 'FINISH_RESOLUTION', selectorName: string, args: unknown[] }} Action object.
          */
 
-        function finishResolution (selectorName, args) {
+        function finishResolution(selectorName, args) {
             return {
                 type: 'FINISH_RESOLUTION',
                 selectorName,
@@ -2234,7 +2240,7 @@
          * @return {{ type: 'FAIL_RESOLUTION', selectorName: string, args: unknown[], error: Error|unknown }} Action object.
          */
 
-        function failResolution (selectorName, args, error) {
+        function failResolution(selectorName, args, error) {
             return {
                 type: 'FAIL_RESOLUTION',
                 selectorName,
@@ -2254,7 +2260,7 @@
          * @return {{ type: 'START_RESOLUTIONS', selectorName: string, args: unknown[][] }} Action object.
          */
 
-        function startResolutions (selectorName, args) {
+        function startResolutions(selectorName, args) {
             return {
                 type: 'START_RESOLUTIONS',
                 selectorName,
@@ -2273,7 +2279,7 @@
          * @return {{ type: 'FINISH_RESOLUTIONS', selectorName: string, args: unknown[][] }} Action object.
          */
 
-        function finishResolutions (selectorName, args) {
+        function finishResolutions(selectorName, args) {
             return {
                 type: 'FINISH_RESOLUTIONS',
                 selectorName,
@@ -2293,7 +2299,7 @@
          * @return {{ type: 'FAIL_RESOLUTIONS', selectorName: string, args: unknown[], errors: Array<Error|unknown> }} Action object.
          */
 
-        function failResolutions (selectorName, args, errors) {
+        function failResolutions(selectorName, args, errors) {
             return {
                 type: 'FAIL_RESOLUTIONS',
                 selectorName,
@@ -2311,7 +2317,7 @@
          * @return {{ type: 'INVALIDATE_RESOLUTION', selectorName: string, args: any[] }} Action object.
          */
 
-        function invalidateResolution (selectorName, args) {
+        function invalidateResolution(selectorName, args) {
             return {
                 type: 'INVALIDATE_RESOLUTION',
                 selectorName,
@@ -2326,7 +2332,7 @@
          * @return {{ type: 'INVALIDATE_RESOLUTION_FOR_STORE' }} Action object.
          */
 
-        function invalidateResolutionForStore () {
+        function invalidateResolutionForStore() {
             return {
                 type: 'INVALIDATE_RESOLUTION_FOR_STORE'
             };
@@ -2342,7 +2348,7 @@
          * @return  {{ type: 'INVALIDATE_RESOLUTION_FOR_STORE_SELECTOR', selectorName: string }} Action object.
          */
 
-        function invalidateResolutionForStoreSelector (selectorName) {
+        function invalidateResolutionForStoreSelector(selectorName) {
             return {
                 type: 'INVALIDATE_RESOLUTION_FOR_STORE_SELECTOR',
                 selectorName
@@ -2414,20 +2420,20 @@
          */
 
 
-        function createResolversCache () {
+        function createResolversCache() {
             const cache = {};
             return {
-                isRunning (selectorName, args) {
+                isRunning(selectorName, args) {
                     return cache[selectorName] && cache[selectorName].get(trimUndefinedValues(args));
                 },
 
-                clear (selectorName, args) {
+                clear(selectorName, args) {
                     if (cache[selectorName]) {
                         cache[selectorName].delete(trimUndefinedValues(args));
                     }
                 },
 
-                markAsRunning (selectorName, args) {
+                markAsRunning(selectorName, args) {
                     if (!cache[selectorName]) {
                         cache[selectorName] = new (equivalent_key_map_default())();
                     }
@@ -2438,10 +2444,10 @@
             };
         }
 
-        function createBindingCache (bind) {
+        function createBindingCache(bind) {
             const cache = new WeakMap();
             return {
-                get (item, itemName) {
+                get(item, itemName) {
                     let boundItem = cache.get(item);
 
                     if (!boundItem) {
@@ -2483,7 +2489,7 @@
          */
 
 
-        function createReduxStore (key, options) {
+        function createReduxStore(key, options) {
             const privateActions = {};
             const privateSelectors = {};
             const privateRegistrationFunctions = {
@@ -2503,15 +2509,15 @@
                     const thunkArgs = {
                         registry,
 
-                        get dispatch () {
+                        get dispatch() {
                             return thunkActions;
                         },
 
-                        get select () {
+                        get select() {
                             return thunkSelectors;
                         },
 
-                        get resolveSelect () {
+                        get resolveSelect() {
                             return getResolveSelectors();
                         }
 
@@ -2522,7 +2528,7 @@
                     lock(store, privateRegistrationFunctions);
                     const resolversCache = createResolversCache();
 
-                    function bindAction (action) {
+                    function bindAction(action) {
                         return (...args) => Promise.resolve(store.dispatch(action(...args)));
                     }
 
@@ -2544,7 +2550,7 @@
                     lock(actions, allActions);
                     const resolvers = options.resolvers ? mapResolvers(options.resolvers) : {};
 
-                    function bindSelector (selector, selectorName) {
+                    function bindSelector(selector, selectorName) {
                         if (selector.isRegistrySelector) {
                             selector.registry = registry;
                         }
@@ -2565,7 +2571,7 @@
                         return mapSelectorWithResolver(boundSelector, selectorName, resolver, store, resolversCache);
                     }
 
-                    function bindMetadataSelector (selector) {
+                    function bindMetadataSelector(selector) {
                         const boundSelector = (...args) => {
                             const state = store.__unstableOriginalGetState();
 
@@ -2665,7 +2671,7 @@
          * @return {Object} Newly created redux store.
          */
 
-        function instantiateReduxStore (key, options, registry, thunkArgs) {
+        function instantiateReduxStore(key, options, registry, thunkArgs) {
             const controls = {
                 ...options.controls,
                 ...builtinControls
@@ -2707,7 +2713,7 @@
          */
 
 
-        function mapResolveSelectors (selectors, store) {
+        function mapResolveSelectors(selectors, store) {
             const {
                 getIsResolving,
                 hasStartedResolution,
@@ -2770,7 +2776,7 @@
          */
 
 
-        function mapSuspendSelectors (selectors, store) {
+        function mapSuspendSelectors(selectors, store) {
             return mapValues(selectors, (selector, selectorName) => {
                 // Selector without a resolver doesn't have any extra suspense behavior.
                 if (!selector.hasResolver) {
@@ -2808,7 +2814,7 @@
          */
 
 
-        function mapResolvers (resolvers) {
+        function mapResolvers(resolvers) {
             return mapValues(resolvers, resolver => {
                 if (resolver.fulfill) {
                     return resolver;
@@ -2836,8 +2842,8 @@
          */
 
 
-        function mapSelectorWithResolver (selector, selectorName, resolver, store, resolversCache) {
-            function fulfillSelector (args) {
+        function mapSelectorWithResolver(selector, selectorName, resolver, store, resolversCache) {
+            function fulfillSelector(args) {
                 const state = store.getState();
 
                 if (resolversCache.isRunning(selectorName, args) || typeof resolver.isFulfilled === 'function' && resolver.isFulfilled(state, ...args)) {
@@ -2886,7 +2892,7 @@
          *
          * @return {import('../types').DataEmitter} Emitter.
          */
-        function createEmitter () {
+        function createEmitter() {
             let isPaused = false;
             let isPending = false;
             const listeners = new Set();
@@ -2897,20 +2903,20 @@
                 Array.from(listeners).forEach(listener => listener());
 
             return {
-                get isPaused () {
+                get isPaused() {
                     return isPaused;
                 },
 
-                subscribe (listener) {
+                subscribe(listener) {
                     listeners.add(listener);
                     return () => listeners.delete(listener);
                 },
 
-                pause () {
+                pause() {
                     isPaused = true;
                 },
 
-                resume () {
+                resume() {
                     isPaused = false;
 
                     if (isPending) {
@@ -2919,7 +2925,7 @@
                     }
                 },
 
-                emit () {
+                emit() {
                     if (isPaused) {
                         isPending = true;
                         return;
@@ -2968,7 +2974,7 @@
          * @property {Function} registerStore registers store.
          */
 
-        function getStoreName (storeNameOrDescriptor) {
+        function getStoreName(storeNameOrDescriptor) {
             return typeof storeNameOrDescriptor === 'string' ? storeNameOrDescriptor : storeNameOrDescriptor.name;
         }
 
@@ -2983,7 +2989,7 @@
          */
 
 
-        function createRegistry (storeConfigs = {}, parent = null) {
+        function createRegistry(storeConfigs = {}, parent = null) {
             const stores = {};
             const emitter = createEmitter();
             let listeningStores = null;
@@ -2992,7 +2998,7 @@
              * Global listener called for each store's update.
              */
 
-            function globalListener () {
+            function globalListener() {
                 emitter.emit();
             }
 
@@ -3040,7 +3046,7 @@
              */
 
 
-            function select (storeNameOrDescriptor) {
+            function select(storeNameOrDescriptor) {
                 const storeName = getStoreName(storeNameOrDescriptor);
                 listeningStores?.add(storeName);
                 const store = stores[storeName];
@@ -3052,7 +3058,7 @@
                 return parent?.select(storeName);
             }
 
-            function __unstableMarkListeningStores (callback, ref) {
+            function __unstableMarkListeningStores(callback, ref) {
                 listeningStores = new Set();
 
                 try {
@@ -3076,7 +3082,7 @@
              */
 
 
-            function resolveSelect (storeNameOrDescriptor) {
+            function resolveSelect(storeNameOrDescriptor) {
                 const storeName = getStoreName(storeNameOrDescriptor);
                 listeningStores?.add(storeName);
                 const store = stores[storeName];
@@ -3101,7 +3107,7 @@
              */
 
 
-            function suspendSelect (storeNameOrDescriptor) {
+            function suspendSelect(storeNameOrDescriptor) {
                 const storeName = getStoreName(storeNameOrDescriptor);
                 listeningStores?.add(storeName);
                 const store = stores[storeName];
@@ -3123,7 +3129,7 @@
              */
 
 
-            function dispatch (storeNameOrDescriptor) {
+            function dispatch(storeNameOrDescriptor) {
                 const storeName = getStoreName(storeNameOrDescriptor);
                 const store = stores[storeName];
 
@@ -3136,7 +3142,7 @@
             // Deprecated
             // TODO: Remove this after `use()` is removed.
 
-            function withPlugins (attributes) {
+            function withPlugins(attributes) {
                 return Object.fromEntries(Object.entries(attributes).map(([key, attribute]) => {
                     if (typeof attribute !== 'function') {
                         return [key, attribute];
@@ -3156,7 +3162,7 @@
              */
 
 
-            function registerStoreInstance (name, createStore) {
+            function registerStoreInstance(name, createStore) {
                 if (stores[name]) {
                     // eslint-disable-next-line no-console
                     console.error('Store "' + name + '" is already registered.');
@@ -3221,11 +3227,11 @@
              */
 
 
-            function register (store) {
+            function register(store) {
                 registerStoreInstance(store.name, () => store.instantiate(registry));
             }
 
-            function registerGenericStore (name, store) {
+            function registerGenericStore(name, store) {
                 external_wp_deprecated_default()('wp.data.registerGenericStore', {
                     since: '5.9',
                     alternative: 'wp.data.register( storeDescriptor )'
@@ -3243,7 +3249,7 @@
              */
 
 
-            function registerStore (storeName, options) {
+            function registerStore(storeName, options) {
                 if (!options.reducer) {
                     throw new TypeError('Must specify store reducer');
                 }
@@ -3252,7 +3258,7 @@
                 return store.store;
             }
 
-            function batch (callback) {
+            function batch(callback) {
                 // If we're already batching, just call the callback.
                 if (emitter.isPaused) {
                     callback();
@@ -3285,7 +3291,7 @@
             // TODO:
             // This function will be deprecated as soon as it is no longer internally referenced.
 
-            function use (plugin, options) {
+            function use(plugin, options) {
                 if (!plugin) {
                     return;
                 }
@@ -3345,11 +3351,11 @@
  * Released under the MIT License.
  */
 
-        function is_plain_object_isObject (o) {
+        function is_plain_object_isObject(o) {
             return Object.prototype.toString.call(o) === '[object Object]';
         }
 
-        function is_plain_object_isPlainObject (o) {
+        function is_plain_object_isPlainObject(o) {
             var ctor, prot;
 
             if (is_plain_object_isObject(o) === false) return false;
@@ -3377,7 +3383,7 @@
         ;// CONCATENATED MODULE: ./node_modules/@wordpress/data/build-module/plugins/persistence/storage/object.js
         let objectStorage;
         const storage = {
-            getItem (key) {
+            getItem(key) {
                 if (!objectStorage || !objectStorage[key]) {
                     return null;
                 }
@@ -3385,7 +3391,7 @@
                 return objectStorage[key];
             },
 
-            setItem (key, value) {
+            setItem(key, value) {
                 if (!objectStorage) {
                     storage.clear();
                 }
@@ -3393,7 +3399,7 @@
                 objectStorage[key] = String(value);
             },
 
-            clear () {
+            clear() {
                 objectStorage = Object.create(null);
             }
 
@@ -3486,7 +3492,7 @@
          * @return {Object} Persistence interface.
          */
 
-        function createPersistenceInterface (options) {
+        function createPersistenceInterface(options) {
             const {
                 storage = DEFAULT_STORAGE,
                 storageKey = DEFAULT_STORAGE_KEY
@@ -3499,7 +3505,7 @@
              * @return {Object} Persisted data.
              */
 
-            function getData () {
+            function getData() {
                 if (data === undefined) {
                     // If unset, getItem is expected to return null. Fall back to
                     // empty object.
@@ -3529,7 +3535,7 @@
              */
 
 
-            function setData (key, value) {
+            function setData(key, value) {
                 data = {
                     ...data,
                     [key]: value
@@ -3552,7 +3558,7 @@
          * @return {WPDataPlugin} Data plugin.
          */
 
-        function persistencePlugin (registry, pluginOptions) {
+        function persistencePlugin(registry, pluginOptions) {
             const persistence = createPersistenceInterface(pluginOptions);
 
             /**
@@ -3566,7 +3572,7 @@
              * @return {Function} Enhanced dispatch function.
              */
 
-            function createPersistOnChange (getState, storeName, keys) {
+            function createPersistOnChange(getState, storeName, keys) {
                 let getPersistedState;
 
                 if (Array.isArray(keys)) {
@@ -3599,7 +3605,7 @@
             }
 
             return {
-                registerStore (storeName, options) {
+                registerStore(storeName, options) {
                     if (!options.persist) {
                         return registry.registerStore(storeName, options);
                     } // Load from persistence to use as initial state.
@@ -3763,7 +3769,7 @@
          * @return {Function}  A custom react hook exposing the registry context value.
          */
 
-        function useRegistry () {
+        function useRegistry() {
             return (0, external_wp_element_namespaceObject.useContext)(Context);
         }
 
@@ -3827,7 +3833,7 @@
          */
 
 
-        function useAsyncMode () {
+        function useAsyncMode() {
             return (0, external_wp_element_namespaceObject.useContext)(context_Context);
         }
 
@@ -3862,7 +3868,7 @@
          * @template {MapSelect|StoreDescriptor<any>} T
          */
 
-        function Store (registry, suspense) {
+        function Store(registry, suspense) {
             const select = suspense ? registry.suspendSelect : registry.select;
             const queueContext = {};
             let lastMapSelect;
@@ -3880,7 +3886,7 @@
 
                 const activeSubscriptions = new Set();
 
-                function subscribe (listener) {
+                function subscribe(listener) {
                     // Invalidate the value right after subscription was created. React will
                     // call `getValue` after subscribing, to detect store updates that happened
                     // in the interval between the `getValue` call during render and creating
@@ -3904,7 +3910,7 @@
 
                     const unsubs = [];
 
-                    function subscribeStore (storeName) {
+                    function subscribeStore(storeName) {
                         unsubs.push(registry.subscribe(onChange, storeName));
                     }
 
@@ -3925,7 +3931,7 @@
                     };
                 } // Check if `newStores` contains some stores we're not subscribed to yet, and add them.
 
-                function updateStores (newStores) {
+                function updateStores(newStores) {
                     for (const newStore of newStores) {
                         if (activeStores.includes(newStore)) {
                             continue;
@@ -3946,7 +3952,7 @@
             };
 
             return (mapSelect, isAsync) => {
-                function updateValue () {
+                function updateValue() {
                     // If the last value is valid, and the `mapSelect` callback hasn't changed,
                     // then we can safely return the cached value. The value can change only on
                     // store update, and in that case value will be invalidated by the listener.
@@ -3975,7 +3981,7 @@
                     lastMapResultValid = true;
                 }
 
-                function getValue () {
+                function getValue() {
                     // Update the value in case it's been invalidated or `mapSelect` has changed.
                     updateValue();
                     return lastMapResult;
@@ -3998,11 +4004,11 @@
             };
         }
 
-        function useStaticSelect (storeName) {
+        function useStaticSelect(storeName) {
             return useRegistry().select(storeName);
         }
 
-        function useMappingSelect (suspense, mapSelect, deps) {
+        function useMappingSelect(suspense, mapSelect, deps) {
             const registry = useRegistry();
             const isAsync = useAsyncMode();
             const store = (0, external_wp_element_namespaceObject.useMemo)(() => Store(registry, suspense), [registry]);
@@ -4082,7 +4088,7 @@
          */
 
 
-        function useSelect (mapSelect, deps) {
+        function useSelect(mapSelect, deps) {
             // On initial call, on mount, determine the mode of this `useSelect` call
             // and then never allow it to change on subsequent updates.
             const staticSelectMode = typeof mapSelect !== 'function';
@@ -4117,7 +4123,7 @@
          * @return {Object} Data object returned by the `mapSelect` function.
          */
 
-        function useSuspenseSelect (mapSelect, deps) {
+        function useSuspenseSelect(mapSelect, deps) {
             return useMappingSelect(true, mapSelect, deps);
         }
 
@@ -4463,7 +4469,7 @@
          * @return Object containing the action creators.
          */
 
-        function dispatch_dispatch (storeNameOrDescriptor) {
+        function dispatch_dispatch(storeNameOrDescriptor) {
             return default_registry.dispatch(storeNameOrDescriptor);
         }
 
@@ -4492,7 +4498,7 @@
          * @return Object containing the store's selectors.
          */
 
-        function select_select (storeNameOrDescriptor) {
+        function select_select(storeNameOrDescriptor) {
             return default_registry.select(storeNameOrDescriptor);
         }
 

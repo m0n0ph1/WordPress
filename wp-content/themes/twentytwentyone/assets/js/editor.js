@@ -4,7 +4,7 @@ wp.domReady(function () {
     wp.blocks.unregisterBlockStyle('core/separator', 'wide');
 
     // Add to ".block-editor__typewriter" the "is-dark-theme" class if needed.
-    function twentytwentyoneCopyDarkThemeClass () {
+    function twentytwentyoneCopyDarkThemeClass() {
         var editor,
             attemptDelay = 25,
             attempt = 0,

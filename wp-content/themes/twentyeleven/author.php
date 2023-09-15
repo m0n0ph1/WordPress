@@ -2,18 +2,18 @@
     /**
      * Template for displaying Author Archive pages
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Eleven
-     * @since Twenty Eleven 1.0
+     * @since      Twenty Eleven 1.0
      */
-    
+
     get_header(); ?>
 
 <section id="primary">
     <div id="content" role="main">
-        
-        <?php if (have_posts()) : ?>
-            
+
+        <?php if(have_posts()) : ?>
+
             <?php
             /*
              * Queue the first post, that way we know what author
@@ -29,12 +29,11 @@
                 <h1 class="page-title author">
                     <?php
                         /* translators: %s: Author display name. */
-                        printf(__('Author Archives: %s', 'twentyeleven'),
-                            '<span class="vcard"><a class="url fn n" href="' . esc_url(get_author_posts_url(get_the_author_meta('ID'))) . '" rel="me">' . get_the_author() . '</a></span>');
+                        printf(__('Author Archives: %s', 'twentyeleven'), '<span class="vcard"><a class="url fn n" href="'.esc_url(get_author_posts_url(get_the_author_meta('ID'))).'" rel="me">'.get_the_author().'</a></span>');
                     ?>
                 </h1>
             </header>
-            
+
             <?php
             /*
              * Since we called the_post() above, we need
@@ -43,12 +42,12 @@
              */
             rewind_posts();
             ?>
-            
+
             <?php twentyeleven_content_nav('nav-above'); ?>
-            
+
             <?php
             // If a user has filled out their description, show a bio on their entries.
-            if (get_the_author_meta('description')) :
+            if(get_the_author_meta('description')) :
                 ?>
                 <div id="author-info">
                     <div id="author-avatar">
@@ -57,6 +56,7 @@
                              * Filters the Twenty Eleven author bio avatar size.
                              *
                              * @param int The height and width avatar dimension in pixels. Default 60.
+                             *
                              * @since Twenty Eleven 1.0
                              *
                              */
@@ -75,13 +75,13 @@
                     </div><!-- #author-description	-->
                 </div><!-- #author-info -->
             <?php endif; ?>
-            
+
             <?php
             // Start the Loop.
-            while (have_posts()) :
+            while(have_posts()) :
                 the_post();
                 ?>
-                
+
                 <?php
                 /*
                  * Include the Post-Format-specific template for the content.
@@ -91,11 +91,11 @@
                  */
                 get_template_part('content', get_post_format());
                 ?>
-            
+
             <?php endwhile; ?>
-            
+
             <?php twentyeleven_content_nav('nav-below'); ?>
-        
+
         <?php else : ?>
 
             <article id="post-0" class="post no-results not-found">
@@ -104,12 +104,11 @@
                 </header><!-- .entry-header -->
 
                 <div class="entry-content">
-                    <p><?php _e('Apologies, but no results were found for the requested archive. Perhaps searching will help find a related post.',
-                            'twentyeleven'); ?></p>
+                    <p><?php _e('Apologies, but no results were found for the requested archive. Perhaps searching will help find a related post.', 'twentyeleven'); ?></p>
                     <?php get_search_form(); ?>
                 </div><!-- .entry-content -->
             </article><!-- #post-0 -->
-        
+
         <?php endif; ?>
 
     </div><!-- #content -->

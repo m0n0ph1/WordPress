@@ -47,7 +47,7 @@
             options = {};
         }
         var opt = {},
-            defaults = { type: 'keydown', propagate: false, disableInInput: false, target: jQuery('html')[0] },
+            defaults = {type: 'keydown', propagate: false, disableInInput: false, target: jQuery('html')[0]},
             that = this;
         opt = jQuery.extend(opt, defaults, options || {});
         combi = combi.toLowerCase();
@@ -115,13 +115,13 @@
         };
         // first hook for this element
         if (!this.all[opt.target]) {
-            this.all[opt.target] = { events: {} };
+            this.all[opt.target] = {events: {}};
         }
         if (!this.all[opt.target].events[opt.type]) {
-            this.all[opt.target].events[opt.type] = { callbackMap: {} };
+            this.all[opt.target].events[opt.type] = {callbackMap: {}};
             jQuery.event.add(opt.target, opt.type, inspector);
         }
-        this.all[opt.target].events[opt.type].callbackMap[combi] = { cb: callback, propagate: opt.propagate };
+        this.all[opt.target].events[opt.type].callbackMap[combi] = {cb: callback, propagate: opt.propagate};
         return jQuery;
     };
     this.remove = function (exp, opt) {

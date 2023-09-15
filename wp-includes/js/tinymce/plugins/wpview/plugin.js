@@ -3,7 +3,7 @@
  */
 (function (tinymce) {
     tinymce.PluginManager.add('wpview', function (editor) {
-        function noop () {
+        function noop() {
         }
 
         // Set this here as wp-tinymce.js may be loaded too early.
@@ -16,13 +16,13 @@
         }
 
         // Check if a node is a view or not.
-        function isView (node) {
+        function isView(node) {
             return editor.dom.hasClass(node, 'wpview');
         }
 
         // Replace view tags with their text.
-        function resetViews (content) {
-            function callback (match, $1) {
+        function resetViews(content) {
+            function callback(match, $1) {
                 return '<p>' + window.decodeURIComponent($1) + '</p>';
             }
 
@@ -58,7 +58,8 @@
                     if (!iframe.src || iframe.src === 'javascript:""') {
                         try {
                             iframe.contentWindow.document.body.className = className;
-                        } catch (er) {}
+                        } catch (er) {
+                        }
                     }
                 });
             });

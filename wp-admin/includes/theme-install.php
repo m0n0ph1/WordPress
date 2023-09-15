@@ -2,10 +2,10 @@
     /**
      * WordPress Theme Installation Administration API
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
-    
+
     $themes_allowedtags = [
         'a' => [
             'href' => [],
@@ -35,7 +35,7 @@
             'alt' => [],
         ],
     ];
-    
+
     $theme_field_defaults = [
         'description' => true,
         'sections' => false,
@@ -49,43 +49,47 @@
         'tags' => true,
         'num_ratings' => true,
     ];
-    
+
     /**
      * Retrieves the list of WordPress theme features (aka theme tags).
      *
      * @return array
      * @deprecated 3.1.0 Use get_theme_feature_list() instead.
      *
-     * @since 2.8.0
+     * @since      2.8.0
      *
      */
     function install_themes_feature_list()
     {
         _deprecated_function(__FUNCTION__, '3.1.0', 'get_theme_feature_list()');
-        
+
         $cache = get_transient('wporg_theme_feature_list');
-        if (!$cache) {
+        if(! $cache)
+        {
             set_transient('wporg_theme_feature_list', [], 3 * HOUR_IN_SECONDS);
         }
-        
-        if ($cache) {
+
+        if($cache)
+        {
             return $cache;
         }
-        
+
         $feature_list = themes_api('feature_list', []);
-        if (is_wp_error($feature_list)) {
+        if(is_wp_error($feature_list))
+        {
             return [];
         }
-        
+
         set_transient('wporg_theme_feature_list', $feature_list, 3 * HOUR_IN_SECONDS);
-        
+
         return $feature_list;
     }
-    
+
     /**
      * Displays search form for searching themes.
      *
      * @param bool $type_selector
+     *
      * @since 2.8.0
      *
      */
@@ -93,13 +97,14 @@
     {
         $type = isset($_REQUEST['type']) ? wp_unslash($_REQUEST['type']) : 'term';
         $term = isset($_REQUEST['s']) ? wp_unslash($_REQUEST['s']) : '';
-        if (!$type_selector) {
-            echo '<p class="install-help">' . __('Search for themes by keyword.') . '</p>';
+        if(! $type_selector)
+        {
+            echo '<p class="install-help">'.__('Search for themes by keyword.').'</p>';
         }
         ?>
         <form id="search-themes" method="get">
             <input type="hidden" name="tab" value="search"/>
-            <?php if ($type_selector) : ?>
+            <?php if($type_selector) : ?>
                 <label class="screen-reader-text" for="typeselector">
                     <?php
                         /* translators: Hidden accessibility text. */
@@ -109,23 +114,20 @@
                 <select name="type" id="typeselector">
                     <option value="term" <?php selected('term', $type); ?>><?php _e('Keyword'); ?></option>
                     <option value="author" <?php selected('author', $type); ?>><?php _e('Author'); ?></option>
-                    <option value="tag" <?php selected('tag', $type); ?>><?php _ex('Tag',
-                            'Theme Installer'); ?></option>
+                    <option value="tag" <?php selected('tag', $type); ?>><?php _ex('Tag', 'Theme Installer'); ?></option>
                 </select>
                 <label class="screen-reader-text" for="s">
                     <?php
-                        switch ($type) {
+                        switch($type)
+                        {
                             case 'term':
-                                /* translators: Hidden accessibility text. */
-                                _e('Search by keyword');
+                                /* translators: Hidden accessibility text. */ _e('Search by keyword');
                                 break;
                             case 'author':
-                                /* translators: Hidden accessibility text. */
-                                _e('Search by author');
+                                /* translators: Hidden accessibility text. */ _e('Search by author');
                                 break;
                             case 'tag':
-                                /* translators: Hidden accessibility text. */
-                                _e('Search by tag');
+                                /* translators: Hidden accessibility text. */ _e('Search by tag');
                                 break;
                         }
                     ?>
@@ -148,7 +150,7 @@
         </form>
         <?php
     }
-    
+
     /**
      * Displays tags filter for themes.
      *
@@ -166,13 +168,15 @@
             <?php
                 $feature_list = get_theme_feature_list();
                 echo '<div class="feature-filter">';
-                
-                foreach ((array) $feature_list as $feature_name => $features) {
+
+                foreach((array) $feature_list as $feature_name => $features)
+                {
                     $feature_name = esc_html($feature_name);
-                    echo '<div class="feature-name">' . $feature_name . '</div>';
-                    
+                    echo '<div class="feature-name">'.$feature_name.'</div>';
+
                     echo '<ol class="feature-group">';
-                    foreach ($features as $feature => $feature_name) {
+                    foreach($features as $feature => $feature_name)
+                    {
                         $feature_name = esc_html($feature_name);
                         $feature = esc_attr($feature);
                         ?>
@@ -184,7 +188,7 @@
                                    value="<?php echo $feature; ?>"/>
                             <label for="feature-id-<?php echo $feature; ?>"><?php echo $feature_name; ?></label>
                         </li>
-                    
+
                     <?php } ?>
                     </ol>
                     <br class="clear"/>
@@ -198,7 +202,7 @@
         </form>
         <?php
     }
-    
+
     /**
      * Displays a form to upload themes from zip files.
      *
@@ -224,11 +228,12 @@
         </form>
         <?php
     }
-    
+
     /**
      * Prints a theme on the Install Themes pages.
      *
-     * @param object $theme
+     * @param object                       $theme
+     *
      * @global WP_Theme_Install_List_Table $wp_list_table
      *
      * @deprecated 3.4.0
@@ -238,13 +243,14 @@
     {
         _deprecated_function(__FUNCTION__, '3.4.0');
         global $wp_list_table;
-        if (!isset($wp_list_table)) {
+        if(! isset($wp_list_table))
+        {
             $wp_list_table = _get_list_table('WP_Theme_Install_List_Table');
         }
         $wp_list_table->prepare_items();
         $wp_list_table->single_row($theme);
     }
-    
+
     /**
      * Displays theme content based on theme list.
      *
@@ -255,14 +261,15 @@
     function display_themes()
     {
         global $wp_list_table;
-        
-        if (!isset($wp_list_table)) {
+
+        if(! isset($wp_list_table))
+        {
             $wp_list_table = _get_list_table('WP_Theme_Install_List_Table');
         }
         $wp_list_table->prepare_items();
         $wp_list_table->display();
     }
-    
+
     /**
      * Displays theme information in dialog box form.
      *
@@ -273,15 +280,17 @@
     function install_theme_information()
     {
         global $wp_list_table;
-        
+
         $theme = themes_api('theme_information', ['slug' => wp_unslash($_REQUEST['theme'])]);
-        
-        if (is_wp_error($theme)) {
+
+        if(is_wp_error($theme))
+        {
             wp_die($theme);
         }
-        
+
         iframe_header(__('Theme Installation'));
-        if (!isset($wp_list_table)) {
+        if(! isset($wp_list_table))
+        {
             $wp_list_table = _get_list_table('WP_Theme_Install_List_Table');
         }
         $wp_list_table->theme_installer_single($theme);

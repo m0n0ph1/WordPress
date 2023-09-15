@@ -273,7 +273,7 @@
                     axis = $('<div>');
                     this._addClass(axis, 'ui-resizable-handle ' + hname);
 
-                    axis.css({ zIndex: o.zIndex });
+                    axis.css({zIndex: o.zIndex});
 
                     this.handles[handle] = '.ui-resizable-' + handle;
                     if (!this.element.children(this.handles[handle]).length) {
@@ -296,7 +296,7 @@
                         this.handles[i] = this.element.children(this.handles[i]).first().show();
                     } else if (this.handles[i].jquery || this.handles[i].nodeType) {
                         this.handles[i] = $(this.handles[i]);
-                        this._on(this.handles[i], { 'mousedown': that._mouseDown });
+                        this._on(this.handles[i], {'mousedown': that._mouseDown});
                     }
 
                     if (this.elementIsWrapper &&
@@ -381,7 +381,7 @@
             }
 
             this.offset = this.helper.offset();
-            this.position = { left: curleft, top: curtop };
+            this.position = {left: curleft, top: curtop};
 
             this.size = this._helper ? {
                 width: this.helper.width(),
@@ -404,8 +404,8 @@
                 height: el.outerHeight() - el.height()
             };
 
-            this.originalPosition = { left: curleft, top: curtop };
-            this.originalMousePosition = { left: event.pageX, top: event.pageY };
+            this.originalPosition = {left: curleft, top: curtop};
+            this.originalMousePosition = {left: event.pageX, top: event.pageY};
 
             this.aspectRatio = (typeof o.aspectRatio === 'number') ?
                 o.aspectRatio :
@@ -485,7 +485,7 @@
                     (that.position.top - that.originalPosition.top)) || null;
 
                 if (!o.animate) {
-                    this.element.css($.extend(s, { top: top, left: left }));
+                    this.element.css($.extend(s, {top: top, left: left}));
                 }
 
                 that.helper.height(that.size.height);
@@ -725,7 +725,7 @@
 
             if (this._helper) {
 
-                this.helper = this.helper || $('<div></div>').css({ overflow: 'hidden' });
+                this.helper = this.helper || $('<div></div>').css({overflow: 'hidden'});
 
                 this._addClass(this.helper, this._helper);
                 this.helper.css({
@@ -749,18 +749,18 @@
 
         _change: {
             e: function (event, dx) {
-                return { width: this.originalSize.width + dx };
+                return {width: this.originalSize.width + dx};
             },
             w: function (event, dx) {
                 var cs = this.originalSize, sp = this.originalPosition;
-                return { left: sp.left + dx, width: cs.width - dx };
+                return {left: sp.left + dx, width: cs.width - dx};
             },
             n: function (event, dx, dy) {
                 var cs = this.originalSize, sp = this.originalPosition;
-                return { top: sp.top + dy, height: cs.height - dy };
+                return {top: sp.top + dy, height: cs.height - dy};
             },
             s: function (event, dx, dy) {
-                return { height: this.originalSize.height + dy };
+                return {height: this.originalSize.height + dy};
             },
             se: function (event, dx, dy) {
                 return $.extend(this._change.s.apply(this, arguments),
@@ -826,7 +826,7 @@
                     (that.position.top - that.originalPosition.top)) || null;
 
             that.element.animate(
-                $.extend(style, top && left ? { top: top, left: left } : {}), {
+                $.extend(style, top && left ? {top: top, left: left} : {}), {
                     duration: o.animateDuration,
                     easing: o.animateEasing,
                     step: function () {
@@ -839,7 +839,7 @@
                         };
 
                         if (pr && pr.length) {
-                            $(pr[0]).css({ width: data.width, height: data.height });
+                            $(pr[0]).css({width: data.width, height: data.height});
                         }
 
                         // Propagating resize, and updating values for each animation step

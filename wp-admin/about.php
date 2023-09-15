@@ -2,20 +2,20 @@
     /**
      * About This Version administration panel.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
-    
+
     /** WordPress Administration Bootstrap */
-    require_once __DIR__ . '/admin.php';
+    require_once __DIR__.'/admin.php';
 
 // Used in the HTML title tag.
     /* translators: Page title of the About WordPress page in the admin. */
     $title = _x('About', 'page title');
-    
+
     [$display_version] = explode('-', get_bloginfo('version'));
-    
-    require_once ABSPATH . 'wp-admin/admin-header.php';
+
+    require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
     <div class="wrap about__container">
 
@@ -23,11 +23,7 @@
             <div class="about__header-title">
                 <h1>
                     <?php
-                        printf(
-                        /* translators: %s: Version number. */
-                            __('WordPress %s'),
-                            $display_version
-                        );
+                        printf(/* translators: %s: Version number. */ __('WordPress %s'), $display_version);
                     ?>
                 </h1>
             </div>
@@ -48,11 +44,7 @@
             <div class="column">
                 <h2>
                     <?php
-                        printf(
-                        /* translators: %s: Version number. */
-                            __('Welcome to WordPress %s'),
-                            $display_version
-                        );
+                        printf(/* translators: %s: Version number. */ __('Welcome to WordPress %s'), $display_version);
                     ?>
                 </h2>
                 <p class="is-subheading">
@@ -313,21 +305,12 @@
             <div class="column is-vertically-aligned-center" style="grid-column-end:span 2">
                 <h3>
                     <?php
-                        printf(
-                        /* translators: %s: Version number. */
-                            __('Learn more about WordPress %s'),
-                            $display_version
-                        );
+                        printf(/* translators: %s: Version number. */ __('Learn more about WordPress %s'), $display_version);
                     ?>
                 </h3>
                 <p>
                     <?php
-                        printf(
-                        /* translators: 1: Learn WordPress link, 2: Workshops link. */
-                            __('<a href="%1$s">Learn WordPress</a> is a free resource for new and experienced WordPress users. Learn is stocked with how-to videos on using various features in WordPress, <a href="%2$s">interactive events</a> for exploring topics in-depth, and lesson plans for diving deep into specific areas of WordPress.'),
-                            'https://learn.wordpress.org/',
-                            'https://learn.wordpress.org/online-workshops/'
-                        );
+                        printf(/* translators: 1: Learn WordPress link, 2: Workshops link. */ __('<a href="%1$s">Learn WordPress</a> is a free resource for new and experienced WordPress users. Learn is stocked with how-to videos on using various features in WordPress, <a href="%2$s">interactive events</a> for exploring topics in-depth, and lesson plans for diving deep into specific areas of WordPress.'), 'https://learn.wordpress.org/', 'https://learn.wordpress.org/online-workshops/');
                     ?>
                 </p>
             </div>
@@ -350,11 +333,7 @@
                 </div>
                 <p style="margin-top:calc(var(--gap) / 2);">
                     <?php
-                        printf(
-                        /* translators: %s: WordPress Field Guide link. */
-                            __('Check out the latest version of the <a href="%s">WordPress Field Guide</a>. It is overflowing with detailed developer notes to help you build with WordPress.'),
-                            __('https://make.wordpress.org/core/2023/07/18/wordpress-6-3-field-guide/')
-                        );
+                        printf(/* translators: %s: WordPress Field Guide link. */ __('Check out the latest version of the <a href="%s">WordPress Field Guide</a>. It is overflowing with detailed developer notes to help you build with WordPress.'), __('https://make.wordpress.org/core/2023/07/18/wordpress-6-3-field-guide/'));
                     ?>
                 </p>
             </div>
@@ -377,16 +356,7 @@
                 </div>
                 <p style="margin-top:calc(var(--gap) / 2);">
                     <?php
-                        printf(
-                        /* translators: 1: WordPress Release Notes link, 2: WordPress version number. */
-                            __('<a href="%1$s">Read the WordPress %2$s Release Notes</a> for more information on the included enhancements and issues fixed, installation information, developer notes and resources, release contributors, and the list of file changes in this release.'),
-                            sprintf(
-                            /* translators: %s: WordPress version number. */
-                                esc_url(__('https://wordpress.org/documentation/wordpress-version/version-%s/')),
-                                '6-3'
-                            ),
-                            '6.3'
-                        );
+                        printf(/* translators: 1: WordPress Release Notes link, 2: WordPress version number. */ __('<a href="%1$s">Read the WordPress %2$s Release Notes</a> for more information on the included enhancements and issues fixed, installation information, developer notes and resources, release contributors, and the list of file changes in this release.'), sprintf(/* translators: %s: WordPress version number. */ esc_url(__('https://wordpress.org/documentation/wordpress-version/version-%s/')), '6-3'), '6.3');
                     ?>
                 </p>
             </div>
@@ -396,73 +366,57 @@
 
         <div class="return-to-dashboard">
             <?php
-                if (isset($_GET['updated']) && current_user_can('update_core')) {
-                    printf(
-                        '<a href="%1$s">%2$s</a> | ',
-                        esc_url(self_admin_url('update-core.php')),
-                        is_multisite() ? __('Go to Updates') : __('Go to Dashboard &rarr; Updates')
-                    );
+                if(isset($_GET['updated']) && current_user_can('update_core'))
+                {
+                    printf('<a href="%1$s">%2$s</a> | ', esc_url(self_admin_url('update-core.php')), is_multisite() ? __('Go to Updates') : __('Go to Dashboard &rarr; Updates'));
                 }
-                
-                printf(
-                    '<a href="%1$s">%2$s</a>',
-                    esc_url(self_admin_url()),
-                    is_blog_admin() ? __('Go to Dashboard &rarr; Home') : __('Go to Dashboard')
-                );
+
+                printf('<a href="%1$s">%2$s</a>', esc_url(self_admin_url()), is_blog_admin() ? __('Go to Dashboard &rarr; Home') : __('Go to Dashboard'));
             ?>
         </div>
     </div>
 
-<?php require_once ABSPATH . 'wp-admin/admin-footer.php'; ?>
+<?php require_once ABSPATH.'wp-admin/admin-footer.php'; ?>
 
 <?php
 
 // These are strings we may use to describe maintenance/security releases, where we aim for no new strings.
     return;
-    
+
     __('Maintenance Release');
     __('Maintenance Releases');
-    
+
     __('Security Release');
     __('Security Releases');
-    
+
     __('Maintenance and Security Release');
     __('Maintenance and Security Releases');
-    
+
     /* translators: %s: WordPress version number. */
     __('<strong>Version %s</strong> addressed one security issue.');
     /* translators: %s: WordPress version number. */
     __('<strong>Version %s</strong> addressed some security issues.');
-    
+
     /* translators: 1: WordPress version number, 2: Plural number of bugs. */
-    _n_noop(
-        '<strong>Version %1$s</strong> addressed %2$s bug.',
-        '<strong>Version %1$s</strong> addressed %2$s bugs.'
-    );
-    
+    _n_noop('<strong>Version %1$s</strong> addressed %2$s bug.', '<strong>Version %1$s</strong> addressed %2$s bugs.');
+
     /* translators: 1: WordPress version number, 2: Plural number of bugs. Singular security issue. */
-    _n_noop(
-        '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug.',
-        '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs.'
-    );
-    
+    _n_noop('<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug.', '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs.');
+
     /* translators: 1: WordPress version number, 2: Plural number of bugs. More than one security issue. */
-    _n_noop(
-        '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
-        '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.'
-    );
-    
+    _n_noop('<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.', '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.');
+
     /* translators: %s: Documentation URL. */
     __('For more information, see <a href="%s">the release notes</a>.');
-    
+
     /* translators: 1: WordPress version number, 2: Link to update WordPress */
     __('Important! Your version of WordPress (%1$s) is no longer supported, you will not receive any security updates for your website. To keep your site secure, please <a href="%2$s">update to the latest version of WordPress</a>.');
-    
+
     /* translators: 1: WordPress version number, 2: Link to update WordPress */
     __('Important! Your version of WordPress (%1$s) will stop receiving security updates in the near future. To keep your site secure, please <a href="%2$s">update to the latest version of WordPress</a>.');
-    
+
     /* translators: %s: The major version of WordPress for this branch. */
     __('This is the final release of WordPress %s');
-    
+
     /* translators: The localized WordPress download URL. */
     __('https://wordpress.org/download/');

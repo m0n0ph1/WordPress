@@ -52,11 +52,11 @@
 
         // Anims - 1 opacity "toggles"
         for (; i < anims; i++) {
-            element.animate({ opacity: animateTo }, duration, options.easing);
+            element.animate({opacity: animateTo}, duration, options.easing);
             animateTo = 1 - animateTo;
         }
 
-        element.animate({ opacity: animateTo }, duration, options.easing);
+        element.animate({opacity: animateTo}, duration, options.easing);
 
         element.queue(done);
 

@@ -195,7 +195,7 @@
                 y2 = y1;
                 y1 = tmp;
             }
-            this.helper.css({ left: x1, top: y1, width: x2 - x1, height: y2 - y1 });
+            this.helper.css({left: x1, top: y1, width: x2 - x1, height: y2 - y1});
 
             this.selectees.each(function () {
                 var selectee = $.data(this, 'selectable-item'),

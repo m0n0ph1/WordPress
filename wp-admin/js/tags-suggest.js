@@ -11,11 +11,11 @@
     var tempID = 0;
     var separator = wp.i18n._x(',', 'tag delimiter') || ',';
 
-    function split (val) {
+    function split(val) {
         return val.split(new RegExp(separator + '\\s*'));
     }
 
-    function getLast (term) {
+    function getLast(term) {
         return split(term).pop();
     }
 
@@ -168,11 +168,11 @@
         };
 
         $element.attr({
-                'role': 'combobox',
-                'aria-autocomplete': 'list',
-                'aria-expanded': 'false',
-                'aria-owns': $element.autocomplete('widget').attr('id')
-            })
+            'role': 'combobox',
+            'aria-autocomplete': 'list',
+            'aria-expanded': 'false',
+            'aria-owns': $element.autocomplete('widget').attr('id')
+        })
             .on('focus', function () {
                 var inputValue = split($element.val()).pop();
 

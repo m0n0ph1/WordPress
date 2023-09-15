@@ -4,9 +4,9 @@
  *
  * Displays all of the <head> section and everything up till <div id="main">.
  *
- * @package WordPress
+ * @package    WordPress
  * @subpackage Twenty_Eleven
- * @since Twenty Eleven 1.0
+ * @since      Twenty Eleven 1.0
  */
 ?><!DOCTYPE html>
 <!--[if IE 6]>
@@ -28,24 +28,26 @@
         <?php
             // Print the <title> tag based on what is being viewed.
             global $page, $paged;
-            
+
             wp_title('|', true, 'right');
-            
+
             // Add the site name.
             bloginfo('name');
-            
+
             // Add the site description for the home/front page.
             $site_description = get_bloginfo('description', 'display');
-            if ($site_description && (is_home() || is_front_page())) {
+            if($site_description && (is_home() || is_front_page()))
+            {
                 echo " | $site_description";
             }
-            
+
             // Add a page number if necessary:
-            if (($paged >= 2 || $page >= 2) && !is_404()) {
+            if(($paged >= 2 || $page >= 2) && ! is_404())
+            {
                 /* translators: %s: Page number. */
-                echo esc_html(' | ' . sprintf(__('Page %s', 'twentyeleven'), max($paged, $page)));
+                echo esc_html(' | '.sprintf(__('Page %s', 'twentyeleven'), max($paged, $page)));
             }
-        
+
         ?>
     </title>
     <link rel="profile" href="https://gmpg.org/xfn/11"/>
@@ -62,10 +64,11 @@
          * We add some JavaScript to pages with the comment form
          * to support sites with threaded comments (when in use).
          */
-        if (is_singular() && get_option('thread_comments')) {
+        if(is_singular() && get_option('thread_comments'))
+        {
             wp_enqueue_script('comment-reply');
         }
-        
+
         /*
          * Always have wp_head() just before the closing </head>
          * tag of your theme, or you will break many plugins, which
@@ -85,19 +88,22 @@
                                          rel="home"><?php bloginfo('name'); ?></a></span></h1>
             <h2 id="site-description"><?php bloginfo('description'); ?></h2>
         </hgroup>
-        
+
         <?php
             // Check to see if the header image has been removed.
             $header_image = get_header_image();
-            if ($header_image) :
+            if($header_image) :
                 // Compatibility with versions of WordPress prior to 3.4.
-                if (function_exists('get_custom_header')) {
+                if(function_exists('get_custom_header'))
+                {
                     /*
                      * We need to figure out what the minimum width should be for our featured image.
                      * This result would be the suggested width if the theme were to implement flexible widths.
                      */
                     $header_image_width = get_theme_support('custom-header', 'width');
-                } else {
+                }
+                else
+                {
                     $header_image_width = HEADER_IMAGE_WIDTH;
                 }
                 ?>
@@ -108,25 +114,32 @@
                          * Check if this is a post or page, if it has a thumbnail, and if it's a big one
                          */
                         $image = false;
-                        if (is_singular() && has_post_thumbnail($post->ID)) {
-                            $image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID),
-                                [$header_image_width, $header_image_width]);
+                        if(is_singular() && has_post_thumbnail($post->ID))
+                        {
+                            $image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), [
+                                $header_image_width,
+                                $header_image_width,
+                            ]);
                         }
-                        if ($image && $image[1] >= $header_image_width) {
+                        if($image && $image[1] >= $header_image_width)
+                        {
                             // Houston, we have a new header image!
                             echo get_the_post_thumbnail($post->ID, 'post-thumbnail');
-                        } else {
+                        }
+                        else
+                        {
                             twentyeleven_header_image();
                         } // End check for featured image or standard header.
                     ?>
                 </a>
             <?php endif; // End check for removed header image. ?>
-        
+
         <?php
             // Has the text been hidden?
-            if ('blank' === get_header_textcolor()) :
+            if('blank' === get_header_textcolor()) :
                 $header_image_class = '';
-                if ($header_image) {
+                if($header_image)
+                {
                     $header_image_class = ' with-image';
                 }
                 ?>

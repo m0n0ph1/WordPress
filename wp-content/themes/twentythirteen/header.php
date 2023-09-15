@@ -4,9 +4,9 @@
  *
  * Displays all of the <head> section and everything up till <div id="main">
  *
- * @package WordPress
+ * @package    WordPress
  * @subpackage Twenty_Thirteen
- * @since Twenty Thirteen 1.0
+ * @since      Twenty Thirteen 1.0
  */
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -38,13 +38,11 @@
                     ?>
                 </a>
                 <?php
-                    wp_nav_menu(
-                        [
-                            'theme_location' => 'primary',
-                            'menu_class' => 'nav-menu',
-                            'menu_id' => 'primary-menu',
-                        ]
-                    );
+                    wp_nav_menu([
+                                    'theme_location' => 'primary',
+                                    'menu_class' => 'nav-menu',
+                                    'menu_id' => 'primary-menu',
+                                ]);
                 ?>
                 <?php get_search_form(); ?>
             </nav><!-- #site-navigation -->

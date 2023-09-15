@@ -108,7 +108,7 @@
             });
             setColor(win, value);
         };
-        var Dialog = { open: open };
+        var Dialog = {open: open};
 
         global.add('colorpicker', function (editor) {
             if (!editor.settings.color_picker_callback) {
@@ -118,7 +118,7 @@
             }
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

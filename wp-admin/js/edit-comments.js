@@ -450,7 +450,7 @@
                     e.preventDefault();
                     e.stopPropagation(); // Ticket #35904.
                     list.wpList.del(this);
-                    $('#undo-' + id).css({ backgroundColor: '#ceb' }).fadeOut(350, function () {
+                    $('#undo-' + id).css({backgroundColor: '#ceb'}).fadeOut(350, function () {
                         $(this).remove();
                         $('#comment-' + id).css('backgroundColor', '').fadeIn(300, function () {
                             $(this).show();
@@ -758,7 +758,7 @@
          *
          * @global
          */
-        window.theExtraList = $('#the-extra-comment-list').wpList({ alt: '', delColor: 'none', addColor: 'none' });
+        window.theExtraList = $('#the-extra-comment-list').wpList({alt: '', delColor: 'none', addColor: 'none'});
 
         /**
          * Globally available jQuery object referring to the comments list.
@@ -766,12 +766,12 @@
          * @global
          */
         window.theList = $('#the-comment-list').wpList({
-                alt: '',
-                delBefore: delBefore,
-                dimAfter: dimAfter,
-                delAfter: delAfter,
-                addColor: 'none'
-            })
+            alt: '',
+            delBefore: delBefore,
+            dimAfter: dimAfter,
+            delAfter: delAfter,
+            addColor: 'none'
+        })
             .on('wpListDelEnd', function (e, s) {
                 var wpListsData = $(s.target).attr('data-wp-lists'), id = s.element.replace(/[^0-9]+/g, '');
 
@@ -1130,13 +1130,13 @@
             var t = this, r, c, id, bg, pid;
 
             if (typeof (xml) == 'string') {
-                t.error({ 'responseText': xml });
+                t.error({'responseText': xml});
                 return false;
             }
 
             r = wpAjax.parseAjaxResponse(xml);
             if (r.errors) {
-                t.error({ 'responseText': wpAjax.broken });
+                t.error({'responseText': wpAjax.broken});
                 return false;
             }
 
@@ -1153,7 +1153,7 @@
                 updatePending(-1, r.supplemental.parent_post_id);
 
                 if (this.comments_listing == 'moderated') {
-                    pid.animate({ 'backgroundColor': '#CCEEBB' }, 400, function () {
+                    pid.animate({'backgroundColor': '#CCEEBB'}, 400, function () {
                         pid.fadeOut();
                     });
                     return;
@@ -1176,11 +1176,11 @@
             t.addEvents(id);
             bg = id.hasClass('unapproved') ? '#FFFFE0' : id.closest('.widefat, .postbox').css('backgroundColor');
 
-            id.animate({ 'backgroundColor': '#CCEEBB' }, 300)
-                .animate({ 'backgroundColor': bg }, 300, function () {
+            id.animate({'backgroundColor': '#CCEEBB'}, 300)
+                .animate({'backgroundColor': bg}, 300, function () {
                     if (pid && pid.length) {
-                        pid.animate({ 'backgroundColor': '#CCEEBB' }, 300)
-                            .animate({ 'backgroundColor': bg }, 300)
+                        pid.animate({'backgroundColor': '#CCEEBB'}, 300)
+                            .animate({'backgroundColor': bg}, 300)
                             .removeClass('unapproved').addClass('approved')
                             .find('div.comment_status').html('1');
                     }

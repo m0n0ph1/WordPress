@@ -293,7 +293,7 @@
             a11yContent.removeAttr('id').find('[id]').removeAttr('id');
             a11yContent.appendTo(this.liveRegion);
 
-            function position (event) {
+            function position(event) {
                 positionOption.of = event;
                 if (tooltip.is(':hidden')) {
                     return;
@@ -331,7 +331,7 @@
                 }, 13);
             }
 
-            this._trigger('open', event, { tooltip: tooltip });
+            this._trigger('open', event, {tooltip: tooltip});
         },
 
         _registerCloseHandlers: function (event, target) {
@@ -424,7 +424,7 @@
             }
 
             tooltipData.closing = true;
-            this._trigger('close', event, { tooltip: tooltip });
+            this._trigger('close', event, {tooltip: tooltip});
             if (!tooltipData.hiding) {
                 tooltipData.closing = false;
             }

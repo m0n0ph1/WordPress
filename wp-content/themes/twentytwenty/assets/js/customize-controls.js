@@ -59,7 +59,7 @@
      *
      * @return {void}
      */
-    function twentyTwentySetAccessibleColorsValue (context, backgroundColor, accentHue) {
+    function twentyTwentySetAccessibleColorsValue(context, backgroundColor, accentHue) {
         var value, colors;
 
         // Get the current value for our accessible colors, and make sure it's an object.
@@ -108,7 +108,7 @@
      *
      * @return {void}
      */
-    function twentyTwentySetRetineLogoVisibility (visible) {
+    function twentyTwentySetRetineLogoVisibility(visible) {
         wp.customize.control('retina_logo').container.toggle(visible);
     }
 }(jQuery));

@@ -56,7 +56,7 @@
      *
      * @return {String} Escaped characters
      */
-    function escapeRegExp (string) {
+    function escapeRegExp(string) {
         return string.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
     }
 
@@ -65,22 +65,22 @@
         var settings = editor.settings.wptextpattern || {};
 
         var spacePatterns = settings.space || [
-            { regExp: /^[*-]\s/, cmd: 'InsertUnorderedList' },
-            { regExp: /^1[.)]\s/, cmd: 'InsertOrderedList' }
+            {regExp: /^[*-]\s/, cmd: 'InsertUnorderedList'},
+            {regExp: /^1[.)]\s/, cmd: 'InsertOrderedList'}
         ];
 
         var enterPatterns = settings.enter || [
-            { start: '##', format: 'h2' },
-            { start: '###', format: 'h3' },
-            { start: '####', format: 'h4' },
-            { start: '#####', format: 'h5' },
-            { start: '######', format: 'h6' },
-            { start: '>', format: 'blockquote' },
-            { regExp: /^(-){3,}$/, element: 'hr' }
+            {start: '##', format: 'h2'},
+            {start: '###', format: 'h3'},
+            {start: '####', format: 'h4'},
+            {start: '#####', format: 'h5'},
+            {start: '######', format: 'h6'},
+            {start: '>', format: 'blockquote'},
+            {regExp: /^(-){3,}$/, element: 'hr'}
         ];
 
         var inlinePatterns = settings.inline || [
-            { delimiter: '`', format: 'code' }
+            {delimiter: '`', format: 'code'}
         ];
 
         var canUndo;
@@ -110,7 +110,7 @@
             }
         }, true);
 
-        function inline () {
+        function inline() {
             var rng = editor.selection.getRng();
             var node = rng.startContainer;
             var offset = rng.startOffset;
@@ -210,7 +210,7 @@
             }
         }
 
-        function firstTextNode (node) {
+        function firstTextNode(node) {
             var parent = editor.dom.getParent(node, 'p'),
                 child;
 
@@ -241,7 +241,7 @@
             return child;
         }
 
-        function space () {
+        function space() {
             var rng = editor.selection.getRng(),
                 node = rng.startContainer,
                 parent,
@@ -283,7 +283,7 @@
             });
         }
 
-        function enter () {
+        function enter() {
             var rng = editor.selection.getRng(),
                 start = rng.startContainer,
                 node = firstTextNode(start),
@@ -341,7 +341,7 @@
             });
         }
 
-        function ltrim (text) {
+        function ltrim(text) {
             return text ? text.replace(/^\s+/, '') : '';
         }
     });

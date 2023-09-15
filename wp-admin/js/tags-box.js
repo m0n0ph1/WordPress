@@ -292,7 +292,7 @@
              *
              * @return {void}
              */
-            $.post(ajaxurl, { 'action': 'get-tagcloud', 'tax': tax }, function (r, stat) {
+            $.post(ajaxurl, {'action': 'get-tagcloud', 'tax': tax}, function (r, stat) {
                 if (0 === r || 'success' != stat) {
                     return;
                 }

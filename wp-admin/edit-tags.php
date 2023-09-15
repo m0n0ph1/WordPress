@@ -2,330 +2,342 @@
     /**
      * Edit Tags Administration Screen.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
-    
+
     /** WordPress Administration Bootstrap */
-    require_once __DIR__ . '/admin.php';
-    
-    if (!$taxnow) {
+    require_once __DIR__.'/admin.php';
+
+    if(! $taxnow)
+    {
         wp_die(__('Invalid taxonomy.'));
     }
-    
+
     $tax = get_taxonomy($taxnow);
-    
-    if (!$tax) {
+
+    if(! $tax)
+    {
         wp_die(__('Invalid taxonomy.'));
     }
-    
-    if (!in_array($tax->name, get_taxonomies(['show_ui' => true]), true)) {
+
+    if(! in_array($tax->name, get_taxonomies(['show_ui' => true]), true))
+    {
         wp_die(__('Sorry, you are not allowed to edit terms in this taxonomy.'));
     }
-    
-    if (!current_user_can($tax->cap->manage_terms)) {
-        wp_die(
-            '<h1>' . __('You need a higher level of permission.') . '</h1>' .
-            '<p>' . __('Sorry, you are not allowed to manage terms in this taxonomy.') . '</p>',
-            403
-        );
+
+    if(! current_user_can($tax->cap->manage_terms))
+    {
+        wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to manage terms in this taxonomy.').'</p>', 403);
     }
-    
+
     /**
      * $post_type is set when the WP_Terms_List_Table instance is created
      *
      * @global string $post_type
      */
     global $post_type;
-    
+
     $wp_list_table = _get_list_table('WP_Terms_List_Table');
     $pagenum = $wp_list_table->get_pagenum();
-    
+
     $title = $tax->labels->name;
-    
-    if ('post' !== $post_type) {
+
+    if('post' !== $post_type)
+    {
         $parent_file = ('attachment' === $post_type) ? 'upload.php' : "edit.php?post_type=$post_type";
         $submenu_file = "edit-tags.php?taxonomy=$taxonomy&amp;post_type=$post_type";
-    } elseif ('link_category' === $tax->name) {
+    }
+    elseif('link_category' === $tax->name)
+    {
         $parent_file = 'link-manager.php';
         $submenu_file = 'edit-tags.php?taxonomy=link_category';
-    } else {
+    }
+    else
+    {
         $parent_file = 'edit.php';
         $submenu_file = "edit-tags.php?taxonomy=$taxonomy";
     }
-    
-    add_screen_option(
-        'per_page',
-        [
-            'default' => 20,
-            'option' => 'edit_' . $tax->name . '_per_page',
-        ]
-    );
-    
-    get_current_screen()->set_screen_reader_content(
-        [
-            'heading_pagination' => $tax->labels->items_list_navigation,
-            'heading_list' => $tax->labels->items_list,
-        ]
-    );
-    
+
+    add_screen_option('per_page', [
+        'default' => 20,
+        'option' => 'edit_'.$tax->name.'_per_page',
+    ]);
+
+    get_current_screen()->set_screen_reader_content([
+                                                        'heading_pagination' => $tax->labels->items_list_navigation,
+                                                        'heading_list' => $tax->labels->items_list,
+                                                    ]);
+
     $location = false;
     $referer = wp_get_referer();
-    if (!$referer) { // For POST requests.
+    if(! $referer)
+    { // For POST requests.
         $referer = wp_unslash($_SERVER['REQUEST_URI']);
     }
     $referer = remove_query_arg(['_wp_http_referer', '_wpnonce', 'error', 'message', 'paged'], $referer);
-    switch ($wp_list_table->current_action()) {
+    switch($wp_list_table->current_action())
+    {
         case 'add-tag':
             check_admin_referer('add-tag', '_wpnonce_add-tag');
-            
-            if (!current_user_can($tax->cap->edit_terms)) {
-                wp_die(
-                    '<h1>' . __('You need a higher level of permission.') . '</h1>' .
-                    '<p>' . __('Sorry, you are not allowed to create terms in this taxonomy.') . '</p>',
-                    403
-                );
+
+            if(! current_user_can($tax->cap->edit_terms))
+            {
+                wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to create terms in this taxonomy.').'</p>', 403);
             }
-            
+
             $ret = wp_insert_term($_POST['tag-name'], $taxonomy, $_POST);
-            if ($ret && !is_wp_error($ret)) {
+            if($ret && ! is_wp_error($ret))
+            {
                 $location = add_query_arg('message', 1, $referer);
-            } else {
-                $location = add_query_arg(
-                    [
-                        'error' => true,
-                        'message' => 4,
-                    ],
-                    $referer
-                );
             }
-            
+            else
+            {
+                $location = add_query_arg([
+                                              'error' => true,
+                                              'message' => 4,
+                                          ], $referer);
+            }
+
             break;
-        
+
         case 'delete':
-            if (!isset($_REQUEST['tag_ID'])) {
+            if(! isset($_REQUEST['tag_ID']))
+            {
                 break;
             }
-            
+
             $tag_ID = (int) $_REQUEST['tag_ID'];
-            check_admin_referer('delete-tag_' . $tag_ID);
-            
-            if (!current_user_can('delete_term', $tag_ID)) {
-                wp_die(
-                    '<h1>' . __('You need a higher level of permission.') . '</h1>' .
-                    '<p>' . __('Sorry, you are not allowed to delete this item.') . '</p>',
-                    403
-                );
+            check_admin_referer('delete-tag_'.$tag_ID);
+
+            if(! current_user_can('delete_term', $tag_ID))
+            {
+                wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to delete this item.').'</p>', 403);
             }
-            
+
             wp_delete_term($tag_ID, $taxonomy);
-            
+
             $location = add_query_arg('message', 2, $referer);
-            
+
             // When deleting a term, prevent the action from redirecting back to a term that no longer exists.
             $location = remove_query_arg(['tag_ID', 'action'], $location);
-            
+
             break;
-        
+
         case 'bulk-delete':
             check_admin_referer('bulk-tags');
-            
-            if (!current_user_can($tax->cap->delete_terms)) {
-                wp_die(
-                    '<h1>' . __('You need a higher level of permission.') . '</h1>' .
-                    '<p>' . __('Sorry, you are not allowed to delete these items.') . '</p>',
-                    403
-                );
+
+            if(! current_user_can($tax->cap->delete_terms))
+            {
+                wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to delete these items.').'</p>', 403);
             }
-            
+
             $tags = (array) $_REQUEST['delete_tags'];
-            foreach ($tags as $tag_ID) {
+            foreach($tags as $tag_ID)
+            {
                 wp_delete_term($tag_ID, $taxonomy);
             }
-            
+
             $location = add_query_arg('message', 6, $referer);
-            
+
             break;
-        
+
         case 'edit':
-            if (!isset($_REQUEST['tag_ID'])) {
+            if(! isset($_REQUEST['tag_ID']))
+            {
                 break;
             }
-            
+
             $term_id = (int) $_REQUEST['tag_ID'];
             $term = get_term($term_id);
-            
-            if (!$term instanceof WP_Term) {
+
+            if(! $term instanceof WP_Term)
+            {
                 wp_die(__('You attempted to edit an item that does not exist. Perhaps it was deleted?'));
             }
-            
+
             wp_redirect(sanitize_url(get_edit_term_link($term_id, $taxonomy, $post_type)));
             exit;
-        
+
         case 'editedtag':
             $tag_ID = (int) $_POST['tag_ID'];
-            check_admin_referer('update-tag_' . $tag_ID);
-            
-            if (!current_user_can('edit_term', $tag_ID)) {
-                wp_die(
-                    '<h1>' . __('You need a higher level of permission.') . '</h1>' .
-                    '<p>' . __('Sorry, you are not allowed to edit this item.') . '</p>',
-                    403
-                );
+            check_admin_referer('update-tag_'.$tag_ID);
+
+            if(! current_user_can('edit_term', $tag_ID))
+            {
+                wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to edit this item.').'</p>', 403);
             }
-            
+
             $tag = get_term($tag_ID, $taxonomy);
-            if (!$tag) {
+            if(! $tag)
+            {
                 wp_die(__('You attempted to edit an item that does not exist. Perhaps it was deleted?'));
             }
-            
+
             $ret = wp_update_term($tag_ID, $taxonomy, $_POST);
-            
-            if ($ret && !is_wp_error($ret)) {
+
+            if($ret && ! is_wp_error($ret))
+            {
                 $location = add_query_arg('message', 3, $referer);
-            } else {
-                $location = add_query_arg(
-                    [
-                        'error' => true,
-                        'message' => 5,
-                    ],
-                    $referer
-                );
+            }
+            else
+            {
+                $location = add_query_arg([
+                                              'error' => true,
+                                              'message' => 5,
+                                          ], $referer);
             }
             break;
         default:
-            if (!$wp_list_table->current_action() || !isset($_REQUEST['delete_tags'])) {
+            if(! $wp_list_table->current_action() || ! isset($_REQUEST['delete_tags']))
+            {
                 break;
             }
             check_admin_referer('bulk-tags');
-            
+
             $screen = get_current_screen()->id;
             $tags = (array) $_REQUEST['delete_tags'];
-            
+
             /** This action is documented in wp-admin/edit.php */
-            $location = apply_filters("handle_bulk_actions-{$screen}", $location, $wp_list_table->current_action(),
-                $tags); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
+            $location = apply_filters("handle_bulk_actions-{$screen}", $location, $wp_list_table->current_action(), $tags); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
             break;
     }
-    
-    if (!$location && !empty($_REQUEST['_wp_http_referer'])) {
+
+    if(! $location && ! empty($_REQUEST['_wp_http_referer']))
+    {
         $location = remove_query_arg(['_wp_http_referer', '_wpnonce'], wp_unslash($_SERVER['REQUEST_URI']));
     }
-    
-    if ($location) {
-        if ($pagenum > 1) {
+
+    if($location)
+    {
+        if($pagenum > 1)
+        {
             $location = add_query_arg('paged', $pagenum, $location); // $pagenum takes care of $total_pages.
         }
-        
+
         /**
          * Filters the taxonomy redirect destination URL.
          *
-         * @param string $location The destination URL.
-         * @param WP_Taxonomy $tax The taxonomy object.
+         * @param string      $location The destination URL.
+         * @param WP_Taxonomy $tax      The taxonomy object.
+         *
          * @since 4.6.0
          *
          */
         wp_redirect(apply_filters('redirect_term_location', $location, $tax));
         exit;
     }
-    
+
     $wp_list_table->prepare_items();
     $total_pages = $wp_list_table->get_pagination_arg('total_pages');
-    
-    if ($pagenum > $total_pages && $total_pages > 0) {
+
+    if($pagenum > $total_pages && $total_pages > 0)
+    {
         wp_redirect(add_query_arg('paged', $total_pages));
         exit;
     }
-    
+
     wp_enqueue_script('admin-tags');
-    if (current_user_can($tax->cap->edit_terms)) {
+    if(current_user_can($tax->cap->edit_terms))
+    {
         wp_enqueue_script('inline-edit-tax');
     }
-    
-    if ('category' === $taxonomy || 'link_category' === $taxonomy || 'post_tag' === $taxonomy) {
+
+    if('category' === $taxonomy || 'link_category' === $taxonomy || 'post_tag' === $taxonomy)
+    {
         $help = '';
-        if ('category' === $taxonomy) {
-            $help = '<p>' . sprintf(
-                /* translators: %s: URL to Writing Settings screen. */
-                    __('You can use categories to define sections of your site and group related posts. The default category is &#8220;Uncategorized&#8221; until you change it in your <a href="%s">writing settings</a>.'),
-                    'options-writing.php'
-                ) . '</p>';
-        } elseif ('link_category' === $taxonomy) {
-            $help = '<p>' . __('You can create groups of links by using Link Categories. Link Category names must be unique and Link Categories are separate from the categories you use for posts.') . '</p>';
-        } else {
-            $help = '<p>' . __('You can assign keywords to your posts using <strong>tags</strong>. Unlike categories, tags have no hierarchy, meaning there is no relationship from one tag to another.') . '</p>';
+        if('category' === $taxonomy)
+        {
+            $help = '<p>'.sprintf(/* translators: %s: URL to Writing Settings screen. */ __('You can use categories to define sections of your site and group related posts. The default category is &#8220;Uncategorized&#8221; until you change it in your <a href="%s">writing settings</a>.'), 'options-writing.php').'</p>';
         }
-        
-        if ('link_category' === $taxonomy) {
-            $help .= '<p>' . __('You can delete Link Categories in the Bulk Action pull-down, but that action does not delete the links within the category. Instead, it moves them to the default Link Category.') . '</p>';
-        } else {
-            $help .= '<p>' . __('What&#8217;s the difference between categories and tags? Normally, tags are ad-hoc keywords that identify important information in your post (names, subjects, etc) that may or may not recur in other posts, while categories are pre-determined sections. If you think of your site like a book, the categories are like the Table of Contents and the tags are like the terms in the index.') . '</p>';
+        elseif('link_category' === $taxonomy)
+        {
+            $help = '<p>'.__('You can create groups of links by using Link Categories. Link Category names must be unique and Link Categories are separate from the categories you use for posts.').'</p>';
         }
-        
-        get_current_screen()->add_help_tab(
-            [
-                'id' => 'overview',
-                'title' => __('Overview'),
-                'content' => $help,
-            ]
-        );
-        
-        if ('category' === $taxonomy || 'post_tag' === $taxonomy) {
-            if ('category' === $taxonomy) {
-                $help = '<p>' . __('When adding a new category on this screen, you&#8217;ll fill in the following fields:') . '</p>';
-            } else {
-                $help = '<p>' . __('When adding a new tag on this screen, you&#8217;ll fill in the following fields:') . '</p>';
+        else
+        {
+            $help = '<p>'.__('You can assign keywords to your posts using <strong>tags</strong>. Unlike categories, tags have no hierarchy, meaning there is no relationship from one tag to another.').'</p>';
+        }
+
+        if('link_category' === $taxonomy)
+        {
+            $help .= '<p>'.__('You can delete Link Categories in the Bulk Action pull-down, but that action does not delete the links within the category. Instead, it moves them to the default Link Category.').'</p>';
+        }
+        else
+        {
+            $help .= '<p>'.__('What&#8217;s the difference between categories and tags? Normally, tags are ad-hoc keywords that identify important information in your post (names, subjects, etc) that may or may not recur in other posts, while categories are pre-determined sections. If you think of your site like a book, the categories are like the Table of Contents and the tags are like the terms in the index.').'</p>';
+        }
+
+        get_current_screen()->add_help_tab([
+                                               'id' => 'overview',
+                                               'title' => __('Overview'),
+                                               'content' => $help,
+                                           ]);
+
+        if('category' === $taxonomy || 'post_tag' === $taxonomy)
+        {
+            if('category' === $taxonomy)
+            {
+                $help = '<p>'.__('When adding a new category on this screen, you&#8217;ll fill in the following fields:').'</p>';
             }
-            
-            $help .= '<ul>' .
-                '<li>' . __('<strong>Name</strong> &mdash; The name is how it appears on your site.') . '</li>';
-            
-            $help .= '<li>' . __('<strong>Slug</strong> &mdash; The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.') . '</li>';
-            
-            if ('category' === $taxonomy) {
-                $help .= '<li>' . __('<strong>Parent</strong> &mdash; Categories, unlike tags, can have a hierarchy. You might have a Jazz category, and under that have child categories for Bebop and Big Band. Totally optional. To create a subcategory, just choose another category from the Parent dropdown.') . '</li>';
+            else
+            {
+                $help = '<p>'.__('When adding a new tag on this screen, you&#8217;ll fill in the following fields:').'</p>';
             }
-            
-            $help .= '<li>' . __('<strong>Description</strong> &mdash; The description is not prominent by default; however, some themes may display it.') . '</li>' .
-                '</ul>' .
-                '<p>' . __('You can change the display of this screen using the Screen Options tab to set how many items are displayed per screen and to display/hide columns in the table.') . '</p>';
-            
-            get_current_screen()->add_help_tab(
-                [
-                    'id' => 'adding-terms',
-                    'title' => 'category' === $taxonomy ? __('Adding Categories') : __('Adding Tags'),
-                    'content' => $help,
-                ]
-            );
+
+            $help .= '<ul>'.'<li>'.__('<strong>Name</strong> &mdash; The name is how it appears on your site.').'</li>';
+
+            $help .= '<li>'.__('<strong>Slug</strong> &mdash; The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.').'</li>';
+
+            if('category' === $taxonomy)
+            {
+                $help .= '<li>'.__('<strong>Parent</strong> &mdash; Categories, unlike tags, can have a hierarchy. You might have a Jazz category, and under that have child categories for Bebop and Big Band. Totally optional. To create a subcategory, just choose another category from the Parent dropdown.').'</li>';
+            }
+
+            $help .= '<li>'.__('<strong>Description</strong> &mdash; The description is not prominent by default; however, some themes may display it.').'</li>'.'</ul>'.'<p>'.__('You can change the display of this screen using the Screen Options tab to set how many items are displayed per screen and to display/hide columns in the table.').'</p>';
+
+            get_current_screen()->add_help_tab([
+                                                   'id' => 'adding-terms',
+                                                   'title' => 'category' === $taxonomy ? __('Adding Categories') : __('Adding Tags'),
+                                                   'content' => $help,
+                                               ]);
         }
-        
-        $help = '<p><strong>' . __('For more information:') . '</strong></p>';
-        
-        if ('category' === $taxonomy) {
-            $help .= '<p>' . __('<a href="https://wordpress.org/documentation/article/posts-categories-screen/">Documentation on Categories</a>') . '</p>';
-        } elseif ('link_category' === $taxonomy) {
-            $help .= '<p>' . __('<a href="https://codex.wordpress.org/Links_Link_Categories_Screen">Documentation on Link Categories</a>') . '</p>';
-        } else {
-            $help .= '<p>' . __('<a href="https://wordpress.org/documentation/article/posts-tags-screen/">Documentation on Tags</a>') . '</p>';
+
+        $help = '<p><strong>'.__('For more information:').'</strong></p>';
+
+        if('category' === $taxonomy)
+        {
+            $help .= '<p>'.__('<a href="https://wordpress.org/documentation/article/posts-categories-screen/">Documentation on Categories</a>').'</p>';
         }
-        
-        $help .= '<p>' . __('<a href="https://wordpress.org/support/forums/">Support forums</a>') . '</p>';
-        
+        elseif('link_category' === $taxonomy)
+        {
+            $help .= '<p>'.__('<a href="https://codex.wordpress.org/Links_Link_Categories_Screen">Documentation on Link Categories</a>').'</p>';
+        }
+        else
+        {
+            $help .= '<p>'.__('<a href="https://wordpress.org/documentation/article/posts-tags-screen/">Documentation on Tags</a>').'</p>';
+        }
+
+        $help .= '<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>';
+
         get_current_screen()->set_help_sidebar($help);
-        
+
         unset($help);
     }
-    
-    require_once ABSPATH . 'wp-admin/admin-header.php';
+
+    require_once ABSPATH.'wp-admin/admin-header.php';
 
 // Also used by the Edit Tag form.
-    require_once ABSPATH . 'wp-admin/includes/edit-tag-messages.php';
-    
+    require_once ABSPATH.'wp-admin/includes/edit-tag-messages.php';
+
     $class = (isset($_REQUEST['error'])) ? 'error' : 'updated';
-    
-    if (is_plugin_active('wpcat2tag-importer/wpcat2tag-importer.php')) {
+
+    if(is_plugin_active('wpcat2tag-importer/wpcat2tag-importer.php'))
+    {
         $import_link = admin_url('admin.php?import=wpcat2tag');
-    } else {
+    }
+    else
+    {
         $import_link = admin_url('import.php');
     }
 
@@ -333,22 +345,19 @@
 
     <div class="wrap nosubsub">
         <h1 class="wp-heading-inline"><?php echo esc_html($title); ?></h1>
-        
+
         <?php
-            if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
+            if(isset($_REQUEST['s']) && strlen($_REQUEST['s']))
+            {
                 echo '<span class="subtitle">';
-                printf(
-                /* translators: %s: Search query. */
-                    __('Search results for: %s'),
-                    '<strong>' . esc_html(wp_unslash($_REQUEST['s'])) . '</strong>'
-                );
+                printf(/* translators: %s: Search query. */ __('Search results for: %s'), '<strong>'.esc_html(wp_unslash($_REQUEST['s'])).'</strong>');
                 echo '</span>';
             }
         ?>
 
         <hr class="wp-header-end">
-        
-        <?php if ($message) : ?>
+
+        <?php if($message) : ?>
             <div id="message" class="<?php echo $class; ?> notice is-dismissible"><p><?php echo $message; ?></p></div>
             <?php
             $_SERVER['REQUEST_URI'] = remove_query_arg(['message', 'error'], $_SERVER['REQUEST_URI']);
@@ -359,56 +368,63 @@
         <form class="search-form wp-clearfix" method="get">
             <input type="hidden" name="taxonomy" value="<?php echo esc_attr($taxonomy); ?>"/>
             <input type="hidden" name="post_type" value="<?php echo esc_attr($post_type); ?>"/>
-            
+
             <?php $wp_list_table->search_box($tax->labels->search_items, 'tag'); ?>
 
         </form>
-        
+
         <?php
             $can_edit_terms = current_user_can($tax->cap->edit_terms);
-            
-            if ($can_edit_terms) {
+
+            if($can_edit_terms)
+            {
         ?>
         <div id="col-container" class="wp-clearfix">
 
             <div id="col-left">
                 <div class="col-wrap">
-                    
+
                     <?php
-                        if ('category' === $taxonomy) {
+                        if('category' === $taxonomy)
+                        {
                             /**
                              * Fires before the Add Category form.
                              *
                              * @param object $arg Optional arguments cast to an object.
+                             *
                              * @deprecated 3.0.0 Use {@see '{$taxonomy}_pre_add_form'} instead.
                              *
-                             * @since 2.1.0
+                             * @since      2.1.0
                              */
-                            do_action_deprecated('add_category_form_pre', [(object) ['parent' => 0]], '3.0.0',
-                                '{$taxonomy}_pre_add_form');
-                        } elseif ('link_category' === $taxonomy) {
+                            do_action_deprecated('add_category_form_pre', [(object) ['parent' => 0]], '3.0.0', '{$taxonomy}_pre_add_form');
+                        }
+                        elseif('link_category' === $taxonomy)
+                        {
                             /**
                              * Fires before the link category form.
                              *
                              * @param object $arg Optional arguments cast to an object.
+                             *
                              * @deprecated 3.0.0 Use {@see '{$taxonomy}_pre_add_form'} instead.
                              *
-                             * @since 2.3.0
+                             * @since      2.3.0
                              */
-                            do_action_deprecated('add_link_category_form_pre', [(object) ['parent' => 0]], '3.0.0',
-                                '{$taxonomy}_pre_add_form');
-                        } else {
+                            do_action_deprecated('add_link_category_form_pre', [(object) ['parent' => 0]], '3.0.0', '{$taxonomy}_pre_add_form');
+                        }
+                        else
+                        {
                             /**
                              * Fires before the Add Tag form.
                              *
                              * @param string $taxonomy The taxonomy slug.
+                             *
                              * @deprecated 3.0.0 Use {@see '{$taxonomy}_pre_add_form'} instead.
                              *
-                             * @since 2.5.0
+                             * @since      2.5.0
                              */
                             do_action_deprecated('add_tag_form_pre', [$taxonomy], '3.0.0', '{$taxonomy}_pre_add_form');
                         }
-                        
+
                         /**
                          * Fires before the Add Term form for all taxonomies.
                          *
@@ -420,6 +436,7 @@
                          *  - `post_tag_pre_add_form`
                          *
                          * @param string $taxonomy The taxonomy slug.
+                         *
                          * @since 3.0.0
                          *
                          */
@@ -472,7 +489,7 @@
                                        aria-describedby="slug-description"/>
                                 <p id="slug-description"><?php echo $tax->labels->slug_field_description; ?></p>
                             </div>
-                            <?php if (is_taxonomy_hierarchical($taxonomy)) : ?>
+                            <?php if(is_taxonomy_hierarchical($taxonomy)) : ?>
                                 <div class="form-field term-parent-wrap">
                                     <label for="parent"><?php echo esc_html($tax->labels->parent_item); ?></label>
                                     <?php
@@ -485,36 +502,37 @@
                                             'hierarchical' => true,
                                             'show_option_none' => __('None'),
                                         ];
-                                        
+
                                         /**
                                          * Filters the taxonomy parent drop-down on the Edit Term page.
                                          *
-                                         * @param array $dropdown_args {
-                                         *     An array of taxonomy parent drop-down arguments.
+                                         * @param array   $dropdown_args        {
+                                         *                                      An array of taxonomy parent drop-down arguments.
                                          *
-                                         * @type int|bool $hide_empty Whether to hide terms not attached to any posts. Default 0.
-                                         * @type bool $hide_if_empty Whether to hide the drop-down if no terms exist. Default false.
-                                         * @type string $taxonomy The taxonomy slug.
-                                         * @type string $name Value of the name attribute to use for the drop-down select element.
+                                         * @type int|bool $hide_empty           Whether to hide terms not attached to any posts. Default 0.
+                                         * @type bool     $hide_if_empty        Whether to hide the drop-down if no terms exist. Default false.
+                                         * @type string   $taxonomy             The taxonomy slug.
+                                         * @type string   $name                 Value of the name attribute to use for the drop-down select element.
                                          *                                      Default 'parent'.
-                                         * @type string $orderby The field to order by. Default 'name'.
-                                         * @type bool $hierarchical Whether the taxonomy is hierarchical. Default true.
-                                         * @type string $show_option_none Label to display if there are no terms. Default 'None'.
-                                         * }
-                                         * @param string $taxonomy The taxonomy slug.
-                                         * @param string $context Filter context. Accepts 'new' or 'edit'.
+                                         * @type string   $orderby              The field to order by. Default 'name'.
+                                         * @type bool     $hierarchical         Whether the taxonomy is hierarchical. Default true.
+                                         * @type string   $show_option_none     Label to display if there are no terms. Default 'None'.
+                                         *                                      }
+                                         *
+                                         * @param string  $taxonomy             The taxonomy slug.
+                                         * @param string  $context              Filter context. Accepts 'new' or 'edit'.
+                                         *
                                          * @since 4.2.0 Added `$context` parameter.
                                          *
                                          * @since 3.7.0
                                          */
-                                        $dropdown_args = apply_filters('taxonomy_parent_dropdown_args', $dropdown_args,
-                                            $taxonomy, 'new');
-                                        
+                                        $dropdown_args = apply_filters('taxonomy_parent_dropdown_args', $dropdown_args, $taxonomy, 'new');
+
                                         $dropdown_args['aria_describedby'] = 'parent-description';
-                                        
+
                                         wp_dropdown_categories($dropdown_args);
                                     ?>
-                                    <?php if ('category' === $taxonomy) : ?>
+                                    <?php if('category' === $taxonomy) : ?>
                                         <p id="parent-description"><?php _e('Categories, unlike tags, can have a hierarchy. You might have a Jazz category, and under that have children categories for Bebop and Big Band. Totally optional.'); ?></p>
                                     <?php else : ?>
                                         <p id="parent-description"><?php echo $tax->labels->parent_field_description; ?></p>
@@ -530,19 +548,21 @@
                                           aria-describedby="description-description"></textarea>
                                 <p id="description-description"><?php echo $tax->labels->desc_field_description; ?></p>
                             </div>
-                            
+
                             <?php
-                                if (!is_taxonomy_hierarchical($taxonomy)) {
+                                if(! is_taxonomy_hierarchical($taxonomy))
+                                {
                                     /**
                                      * Fires after the Add Tag form fields for non-hierarchical taxonomies.
                                      *
                                      * @param string $taxonomy The taxonomy slug.
+                                     *
                                      * @since 3.0.0
                                      *
                                      */
                                     do_action('add_tag_form_fields', $taxonomy);
                                 }
-                                
+
                                 /**
                                  * Fires after the Add Term form fields.
                                  *
@@ -554,6 +574,7 @@
                                  *  - `post_tag_add_form_fields`
                                  *
                                  * @param string $taxonomy The taxonomy slug.
+                                 *
                                  * @since 3.0.0
                                  *
                                  */
@@ -564,40 +585,46 @@
                                 <span class="spinner"></span>
                             </p>
                             <?php
-                                if ('category' === $taxonomy) {
+                                if('category' === $taxonomy)
+                                {
                                     /**
                                      * Fires at the end of the Edit Category form.
                                      *
                                      * @param object $arg Optional arguments cast to an object.
+                                     *
                                      * @deprecated 3.0.0 Use {@see '{$taxonomy}_add_form'} instead.
                                      *
-                                     * @since 2.1.0
+                                     * @since      2.1.0
                                      */
-                                    do_action_deprecated('edit_category_form', [(object) ['parent' => 0]], '3.0.0',
-                                        '{$taxonomy}_add_form');
-                                } elseif ('link_category' === $taxonomy) {
+                                    do_action_deprecated('edit_category_form', [(object) ['parent' => 0]], '3.0.0', '{$taxonomy}_add_form');
+                                }
+                                elseif('link_category' === $taxonomy)
+                                {
                                     /**
                                      * Fires at the end of the Edit Link form.
                                      *
                                      * @param object $arg Optional arguments cast to an object.
+                                     *
                                      * @deprecated 3.0.0 Use {@see '{$taxonomy}_add_form'} instead.
                                      *
-                                     * @since 2.3.0
+                                     * @since      2.3.0
                                      */
-                                    do_action_deprecated('edit_link_category_form', [(object) ['parent' => 0]], '3.0.0',
-                                        '{$taxonomy}_add_form');
-                                } else {
+                                    do_action_deprecated('edit_link_category_form', [(object) ['parent' => 0]], '3.0.0', '{$taxonomy}_add_form');
+                                }
+                                else
+                                {
                                     /**
                                      * Fires at the end of the Add Tag form.
                                      *
                                      * @param string $taxonomy The taxonomy slug.
+                                     *
                                      * @deprecated 3.0.0 Use {@see '{$taxonomy}_add_form'} instead.
                                      *
-                                     * @since 2.7.0
+                                     * @since      2.7.0
                                      */
                                     do_action_deprecated('add_tag_form', [$taxonomy], '3.0.0', '{$taxonomy}_add_form');
                                 }
-                                
+
                                 /**
                                  * Fires at the end of the Add Term form for all taxonomies.
                                  *
@@ -609,6 +636,7 @@
                                  *  - `post_tag_add_form`
                                  *
                                  * @param string $taxonomy The taxonomy slug.
+                                 *
                                  * @since 3.0.0
                                  *
                                  */
@@ -622,57 +650,43 @@
             <div id="col-right">
                 <div class="col-wrap">
                     <?php } ?>
-                    
+
                     <?php $wp_list_table->views(); ?>
 
                     <form id="posts-filter" method="post">
                         <input type="hidden" name="taxonomy" value="<?php echo esc_attr($taxonomy); ?>"/>
                         <input type="hidden" name="post_type" value="<?php echo esc_attr($post_type); ?>"/>
-                        
+
                         <?php $wp_list_table->display(); ?>
 
                     </form>
-                    
-                    <?php if ('category' === $taxonomy) : ?>
+
+                    <?php if('category' === $taxonomy) : ?>
                         <div class="form-wrap edit-term-notes">
                             <p>
                                 <?php
-                                    printf(
-                                    /* translators: %s: Default category. */
-                                        __('Deleting a category does not delete the posts in that category. Instead, posts that were only assigned to the deleted category are set to the default category %s. The default category cannot be deleted.'),
-                                        /** This filter is documented in wp-includes/category-template.php */
-                                        '<strong>' . apply_filters('the_category',
-                                            get_cat_name(get_option('default_category')), '', '') . '</strong>'
-                                    );
+                                    printf(/* translators: %s: Default category. */ __('Deleting a category does not delete the posts in that category. Instead, posts that were only assigned to the deleted category are set to the default category %s. The default category cannot be deleted.'), /** This filter is documented in wp-includes/category-template.php */ '<strong>'.apply_filters('the_category', get_cat_name(get_option('default_category')), '', '').'</strong>');
                                 ?>
                             </p>
-                            <?php if (current_user_can('import')) : ?>
+                            <?php if(current_user_can('import')) : ?>
                                 <p>
                                     <?php
-                                        printf(
-                                        /* translators: %s: URL to Categories to Tags Converter tool. */
-                                            __('Categories can be selectively converted to tags using the <a href="%s">category to tag converter</a>.'),
-                                            esc_url($import_link)
-                                        );
+                                        printf(/* translators: %s: URL to Categories to Tags Converter tool. */ __('Categories can be selectively converted to tags using the <a href="%s">category to tag converter</a>.'), esc_url($import_link));
                                     ?>
                                 </p>
                             <?php endif; ?>
                         </div>
-                    <?php elseif ('post_tag' === $taxonomy && current_user_can('import')) : ?>
+                    <?php elseif('post_tag' === $taxonomy && current_user_can('import')) : ?>
                         <div class="form-wrap edit-term-notes">
                             <p>
                                 <?php
-                                    printf(
-                                    /* translators: %s: URL to Categories to Tags Converter tool. */
-                                        __('Tags can be selectively converted to categories using the <a href="%s">tag to category converter</a>.'),
-                                        esc_url($import_link)
-                                    );
+                                    printf(/* translators: %s: URL to Categories to Tags Converter tool. */ __('Tags can be selectively converted to categories using the <a href="%s">tag to category converter</a>.'), esc_url($import_link));
                                 ?>
                             </p>
                         </div>
                     <?php
                     endif;
-                        
+
                         /**
                          * Fires after the taxonomy list table.
                          *
@@ -684,13 +698,14 @@
                          *  - `after-post_tag-table`
                          *
                          * @param string $taxonomy The taxonomy name.
+                         *
                          * @since 3.0.0
                          *
                          */
-                        do_action("after-{$taxonomy}-table",
-                            $taxonomy);  // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-                        
-                        if ($can_edit_terms) {
+                        do_action("after-{$taxonomy}-table", $taxonomy);  // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
+
+                        if($can_edit_terms)
+                        {
                     ?>
                 </div>
             </div><!-- /col-right -->
@@ -700,13 +715,16 @@
 
     </div><!-- /wrap -->
 
-<?php if (!wp_is_mobile()) : ?>
+<?php if(! wp_is_mobile()) : ?>
     <script type="text/javascript">
-        try {document.forms.addtag['tag-name'].focus();} catch (e) {}
+        try {
+            document.forms.addtag['tag-name'].focus();
+        } catch (e) {
+        }
     </script>
 <?php
 endif;
-    
+
     $wp_list_table->inline_edit();
-    
-    require_once ABSPATH . 'wp-admin/admin-footer.php';
+
+    require_once ABSPATH.'wp-admin/admin-footer.php';

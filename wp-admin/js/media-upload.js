@@ -58,7 +58,10 @@ window.send_to_editor = function (html) {
 
     // If the old thickbox remove function exists, call it.
     if (window.tb_remove) {
-        try { window.tb_remove(); } catch (e) {}
+        try {
+            window.tb_remove();
+        } catch (e) {
+        }
     }
 };
 
@@ -88,9 +91,9 @@ window.send_to_editor = function (html) {
         if (tbWindow.length) {
             tbWindow.width(W - 50).height(H - 45 - adminbar_height);
             $('#TB_iframeContent').width(W - 50).height(H - 75 - adminbar_height);
-            tbWindow.css({ 'margin-left': '-' + parseInt(((W - 50) / 2), 10) + 'px' });
+            tbWindow.css({'margin-left': '-' + parseInt(((W - 50) / 2), 10) + 'px'});
             if (typeof document.body.style.maxWidth !== 'undefined')
-                tbWindow.css({ 'top': 20 + adminbar_height + 'px', 'margin-top': '0' });
+                tbWindow.css({'top': 20 + adminbar_height + 'px', 'margin-top': '0'});
         }
 
         /**

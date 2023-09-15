@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -100,7 +100,7 @@
      *
      * @return {Object} Updated state.
      */
-    function reducer (state = {}, action) {
+    function reducer(state = {}, action) {
         switch (action.type) {
             case 'REGISTER_SHORTCUT':
                 return {
@@ -158,13 +158,13 @@
      *
      * @return {Object} action.
      */
-    function registerShortcut ({
-                                   name,
-                                   category,
-                                   description,
-                                   keyCombination,
-                                   aliases
-                               }) {
+    function registerShortcut({
+                                  name,
+                                  category,
+                                  description,
+                                  keyCombination,
+                                  aliases
+                              }) {
         return {
             type: 'REGISTER_SHORTCUT',
             name,
@@ -183,7 +183,7 @@
      * @return {Object} action.
      */
 
-    function unregisterShortcut (name) {
+    function unregisterShortcut(name) {
         return {
             type: 'UNREGISTER_SHORTCUT',
             name
@@ -241,7 +241,7 @@
      *
      * @return {[T]} Value returned as entry in array.
      */
-    function arrayOf (value) {
+    function arrayOf(value) {
         return [value];
     }
 
@@ -253,7 +253,7 @@
      *
      * @return {boolean} Whether value is object-like.
      */
-    function isObjectLike (value) {
+    function isObjectLike(value) {
         return !!value && 'object' === typeof value;
     }
 
@@ -262,7 +262,7 @@
      *
      * @return {Cache} Cache object.
      */
-    function createCache () {
+    function createCache() {
         /** @type {Cache} */
         var cache = {
             clear: function () {
@@ -283,7 +283,7 @@
      *
      * @return {boolean} Whether arrays are shallowly equal.
      */
-    function isShallowEqual (a, b, fromIndex) {
+    function isShallowEqual(a, b, fromIndex) {
         var i;
 
         if (a.length !== b.length) {
@@ -315,7 +315,7 @@
      */
 
     /* harmony default export */
-    function rememo (selector, getDependants) {
+    function rememo(selector, getDependants) {
         /** @type {WeakMap<*,*>} */
         var rootCache;
 
@@ -340,7 +340,7 @@
          *
          * @return {Cache} Cache object.
          */
-        function getCache (dependants) {
+        function getCache(dependants) {
             var caches = rootCache,
                 isUniqueByDependants = true,
                 i,
@@ -383,7 +383,7 @@
         /**
          * Resets root memoization cache.
          */
-        function clear () {
+        function clear() {
             rootCache = new WeakMap();
         }
 
@@ -399,7 +399,7 @@
          */
 
         /* eslint-enable jsdoc/check-param-names */
-        function callSelector (/* source, ...extraArgs */) {
+        function callSelector(/* source, ...extraArgs */) {
             var len = arguments.length,
                 cache,
                 node,
@@ -537,7 +537,7 @@
      * @return {string?} Shortcut representation.
      */
 
-    function getKeyCombinationRepresentation (shortcut, representation) {
+    function getKeyCombinationRepresentation(shortcut, representation) {
         if (!shortcut) {
             return null;
         }
@@ -555,7 +555,7 @@
      */
 
 
-    function getShortcutKeyCombination (state, name) {
+    function getShortcutKeyCombination(state, name) {
         return state[name] ? state[name].keyCombination : null;
     }
 
@@ -570,7 +570,7 @@
      * @return {string?} Shortcut representation.
      */
 
-    function getShortcutRepresentation (state, name, representation = 'display') {
+    function getShortcutRepresentation(state, name, representation = 'display') {
         const shortcut = getShortcutKeyCombination(state, name);
         return getKeyCombinationRepresentation(shortcut, representation);
     }
@@ -584,7 +584,7 @@
      * @return {string?} Shortcut description.
      */
 
-    function getShortcutDescription (state, name) {
+    function getShortcutDescription(state, name) {
         return state[name] ? state[name].description : null;
     }
 
@@ -597,7 +597,7 @@
      * @return {WPShortcutKeyCombination[]} Key combinations.
      */
 
-    function getShortcutAliases (state, name) {
+    function getShortcutAliases(state, name) {
         return state[name] && state[name].aliases ? state[name].aliases : EMPTY_ARRAY;
     }
 
@@ -675,7 +675,7 @@
      *                    predefined shortcut combination.
      */
 
-    function useShortcutEventMatch () {
+    function useShortcutEventMatch() {
         const {
             getAllShortcutKeyCombinations
         } = (0, external_wp_data_namespaceObject.useSelect)(store);
@@ -690,7 +690,7 @@
          * @return {boolean} True if the event matches any shortcuts, false if not.
          */
 
-        function isMatch (name, event) {
+        function isMatch(name, event) {
             return getAllShortcutKeyCombinations(name).some(({
                                                                  modifier,
                                                                  character
@@ -727,7 +727,7 @@
      * @param {boolean}  options.isDisabled Whether to disable to shortut.
      */
 
-    function useShortcut (name, callback, {
+    function useShortcut(name, callback, {
         isDisabled
     } = {}) {
         const shortcuts = (0, external_wp_element_namespaceObject.useContext)(context);
@@ -739,7 +739,7 @@
                 return;
             }
 
-            function _callback (event) {
+            function _callback(event) {
                 if (isMatch(name, event)) {
                     callbackRef.current(event);
                 }
@@ -775,10 +775,10 @@
      * @return {import('@wordpress/element').WPElement} Component.
      */
 
-    function ShortcutProvider (props) {
+    function ShortcutProvider(props) {
         const keyboardShortcuts = (0, external_wp_element_namespaceObject.useRef)(new Set());
 
-        function onKeyDown (event) {
+        function onKeyDown(event) {
             if (props.onKeyDown) props.onKeyDown(event);
 
             for (const keyboardShortcut of keyboardShortcuts.current) {

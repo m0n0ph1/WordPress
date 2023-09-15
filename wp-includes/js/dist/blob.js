@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -80,7 +80,7 @@
      * @return {string} The blob URL.
      */
 
-    function createBlobURL (file) {
+    function createBlobURL(file) {
         const url = window.URL.createObjectURL(file);
         cache[url] = file;
         return url;
@@ -96,7 +96,7 @@
      * @return {File|undefined} The file for the blob URL.
      */
 
-    function getBlobByURL (url) {
+    function getBlobByURL(url) {
         return cache[url];
     }
 
@@ -110,7 +110,7 @@
      * @return {string|undefined} The blob type.
      */
 
-    function getBlobTypeByURL (url) {
+    function getBlobTypeByURL(url) {
         return getBlobByURL(url)?.type.split('/')[0]; // 0: media type , 1: file extension eg ( type: 'image/jpeg' ).
     }
 
@@ -120,7 +120,7 @@
      * @param {string} url The blob URL.
      */
 
-    function revokeBlobURL (url) {
+    function revokeBlobURL(url) {
         if (cache[url]) {
             window.URL.revokeObjectURL(url);
         }
@@ -136,7 +136,7 @@
      * @return {boolean} Is the url a blob url?
      */
 
-    function isBlobURL (url) {
+    function isBlobURL(url) {
         if (!url || !url.indexOf) {
             return false;
         }

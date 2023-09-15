@@ -65,7 +65,7 @@
         }
 
         if (show) {
-            downAnim = { opacity: 1 };
+            downAnim = {opacity: 1};
             downAnim[ref] = refValue;
 
             // If we are showing, force opacity 0 and set the initial position
@@ -98,7 +98,7 @@
 
         // Last Bounce when Hiding
         if (hide) {
-            upAnim = { opacity: 0 };
+            upAnim = {opacity: 0};
             upAnim[ref] = (motion ? '-=' : '+=') + distance;
 
             element.animate(upAnim, speed, easing);

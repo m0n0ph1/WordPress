@@ -7,16 +7,16 @@
      * The "Template Name:" bit above allows this to be selectable
      * from a dropdown menu on the edit page screen.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Ten
-     * @since Twenty Ten 1.0
+     * @since      Twenty Ten 1.0
      */
-    
+
     get_header(); ?>
 
 <div id="container" class="one-column">
     <div id="content" role="main">
-        
+
         <?php
             /*
              * Run the loop to output the page.

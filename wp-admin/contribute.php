@@ -2,19 +2,19 @@
     /**
      * Contribute administration panel.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
      */
-    
+
     /** WordPress Administration Bootstrap */
-    require_once __DIR__ . '/admin.php';
+    require_once __DIR__.'/admin.php';
 
 // Used in the HTML title tag.
     $title = __('Get Involved');
-    
+
     [$display_version] = explode('-', get_bloginfo('version'));
-    
-    require_once ABSPATH . 'wp-admin/admin-header.php';
+
+    require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
     <div class="wrap about__container">
 
@@ -109,4 +109,4 @@
 
     </div>
 <?php
-    require_once ABSPATH . 'wp-admin/admin-footer.php';
+    require_once ABSPATH.'wp-admin/admin-footer.php';

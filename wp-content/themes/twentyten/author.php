@@ -2,16 +2,16 @@
     /**
      * Template for displaying Author Archive pages
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Ten
-     * @since Twenty Ten 1.0
+     * @since      Twenty Ten 1.0
      */
-    
+
     get_header(); ?>
 
 <div id="container">
     <div id="content" role="main">
-        
+
         <?php
             /*
              * Queue the first post, that way we know who
@@ -21,7 +21,8 @@
              * We reset this later so we can run the loop
              * properly with a call to rewind_posts().
              */
-            if (have_posts()) {
+            if(have_posts())
+            {
                 the_post();
             }
         ?>
@@ -29,14 +30,13 @@
         <h1 class="page-title author">
             <?php
                 /* translators: %s: Author display name. */
-                printf(__('Author Archives: %s', 'twentyten'),
-                    '<span class="vcard"><a class="url fn n" href="' . esc_url(get_author_posts_url(get_the_author_meta('ID'))) . '" rel="me">' . get_the_author() . '</a></span>');
+                printf(__('Author Archives: %s', 'twentyten'), '<span class="vcard"><a class="url fn n" href="'.esc_url(get_author_posts_url(get_the_author_meta('ID'))).'" rel="me">'.get_the_author().'</a></span>');
             ?>
         </h1>
-        
+
         <?php
             // If a user has filled out their description, show a bio on their entries.
-            if (get_the_author_meta('description')) :
+            if(get_the_author_meta('description')) :
                 ?>
                 <div id="entry-author-info">
                     <div id="author-avatar">
@@ -45,6 +45,7 @@
                              * Filters the Twenty Ten author bio avatar size.
                              *
                              * @param int The height and width avatar dimensions in pixels. Default 60.
+                             *
                              * @since Twenty Ten 1.0
                              *
                              */
@@ -63,7 +64,7 @@
                     </div><!-- #author-description	-->
                 </div><!-- #entry-author-info -->
             <?php endif; ?>
-        
+
         <?php
             /*
              * Since we called the_post() above, we need
@@ -71,7 +72,7 @@
              * That way we can run the loop properly, in full.
              */
             rewind_posts();
-            
+
             /*
              * Run the loop for the author archive page to output the authors posts
              * If you want to overload this in a child theme then include a file

@@ -5,7 +5,7 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
         trim = tinymce.trim,
         iOS = tinymce.Env.iOS;
 
-    function isPlaceholder (node) {
+    function isPlaceholder(node) {
         return !!(editor.dom.getAttrib(node, 'data-mce-placeholder') || editor.dom.getAttrib(node, 'data-mce-object'));
     }
 
@@ -79,7 +79,7 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
         }
     });
 
-    function isNonEditable (node) {
+    function isNonEditable(node) {
         var parent = editor.$(node).parents('[contenteditable]');
         return parent && parent.attr('contenteditable') === 'false';
     }
@@ -115,7 +115,7 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
         });
     }
 
-    function parseShortcode (content) {
+    function parseShortcode(content) {
         return content.replace(/(?:<p>)?\[(?:wp_)?caption([^\]]+)\]([\s\S]+?)\[\/(?:wp_)?caption\](?:<\/p>)?/g, function (a, b, c) {
             var id, align, classes, caption, img, width;
 
@@ -177,7 +177,7 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
         });
     }
 
-    function getShortcode (content) {
+    function getShortcode(content) {
         return content.replace(/(?:<div [^>]+mceTemp[^>]+>)?\s*(<dl [^>]+wp-caption[^>]+>[\s\S]+?<\/dl>)\s*(?:<\/div>)?/g, function (all, dl) {
             var out = '';
 
@@ -234,7 +234,7 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
         });
     }
 
-    function extractImageData (imageNode) {
+    function extractImageData(imageNode) {
         var classes, extraClasses, metadata, captionBlock, caption, link, width, height,
             captionClassName = [],
             dom = editor.dom,
@@ -330,12 +330,12 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
         return metadata;
     }
 
-    function hasTextContent (node) {
+    function hasTextContent(node) {
         return node && !!(node.textContent || node.innerText).replace(/\ufeff/g, '');
     }
 
     // Verify HTML in captions.
-    function verifyHTML (caption) {
+    function verifyHTML(caption) {
         if (!caption || (caption.indexOf('<') === -1 && caption.indexOf('>') === -1)) {
             return caption;
         }
@@ -344,10 +344,10 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
             serializer = new tinymce.html.Serializer({}, editor.schema);
         }
 
-        return serializer.serialize(editor.parser.parse(caption, { forced_root_block: false }));
+        return serializer.serialize(editor.parser.parse(caption, {forced_root_block: false}));
     }
 
-    function updateImage ($imageNode, imageData) {
+    function updateImage($imageNode, imageData) {
         var classes, className, node, html, parent, wrap, linkNode, imageNode,
             captionNode, dd, dl, id, attrs, linkAttrs, width, height, align,
             $imageNode, srcset, src,
@@ -471,7 +471,7 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
                 html = '<dl ' + id + 'class="' + className + '" style="width: ' + width + 'px">' +
                     '<dt class="wp-caption-dt"></dt><dd class="wp-caption-dd">' + imageData.caption + '</dd></dl>';
 
-                wrap = dom.create('div', { 'class': 'mceTemp' }, html);
+                wrap = dom.create('div', {'class': 'mceTemp'}, html);
 
                 if (parent = dom.getParent(node, 'p')) {
                     parent.parentNode.insertBefore(wrap, parent);
@@ -517,7 +517,7 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
         editor.nodeChanged();
     }
 
-    function editImage (img) {
+    function editImage(img) {
         var frame, callback, metadata, imageNode;
 
         if (typeof wp === 'undefined' || !wp.media) {
@@ -543,7 +543,7 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
             metadata: metadata
         });
 
-        wp.media.events.trigger('editor:frame-create', { frame: frame });
+        wp.media.events.trigger('editor:frame-create', {frame: frame});
 
         callback = function (imageData) {
             editor.undoManager.transact(function () {
@@ -570,7 +570,7 @@ tinymce.PluginManager.add('wpeditimage', function (editor) {
         frame.open();
     }
 
-    function removeImage (node) {
+    function removeImage(node) {
         var wrap = editor.dom.getParent(node, 'div.mceTemp');
 
         if (!wrap && node.nodeName === 'IMG') {

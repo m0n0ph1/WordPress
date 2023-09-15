@@ -2,11 +2,11 @@
     /**
      * WordPress Options Administration API.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Administration
-     * @since 4.4.0
+     * @since      4.4.0
      */
-    
+
     /**
      * Output JavaScript to toggle display of additional settings if avatars are disabled.
      *
@@ -26,7 +26,7 @@
         </script>
         <?php
     }
-    
+
     /**
      * Display JavaScript on the page.
      *
@@ -109,7 +109,7 @@
         </script>
         <?php
     }
-    
+
     /**
      * Display JavaScript on the page.
      *
@@ -132,7 +132,7 @@
         </script>
         <?php
     }
-    
+
     /**
      * Render the site charset setting.
      *
@@ -140,6 +140,6 @@
      */
     function options_reading_blog_charset()
     {
-        echo '<input name="blog_charset" type="text" id="blog_charset" value="' . esc_attr(get_option('blog_charset')) . '" class="regular-text" />';
-        echo '<p class="description">' . __('The <a href="https://wordpress.org/documentation/article/wordpress-glossary/#character-set">character encoding</a> of your site (UTF-8 is recommended)') . '</p>';
+        echo '<input name="blog_charset" type="text" id="blog_charset" value="'.esc_attr(get_option('blog_charset')).'" class="regular-text" />';
+        echo '<p class="description">'.__('The <a href="https://wordpress.org/documentation/article/wordpress-glossary/#character-set">character encoding</a> of your site (UTF-8 is recommended)').'</p>';
     }

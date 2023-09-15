@@ -20,7 +20,7 @@ window.wp = window.wp || {};
     themes.isInstall = !!themes.data.settings.isInstall;
 
 // Setup app structure.
-    _.extend(themes, { model: {}, view: {}, routes: {}, router: {}, template: wp.template });
+    _.extend(themes, {model: {}, view: {}, routes: {}, router: {}, template: wp.template});
 
     themes.Model = Backbone.Model.extend({
         // Adds attributes to the default data coming through the .org themes api.
@@ -31,12 +31,12 @@ window.wp = window.wp || {};
             if (this.get('slug')) {
                 // If the theme is already installed, set an attribute.
                 if (_.indexOf(themes.data.installedThemes, this.get('slug')) !== -1) {
-                    this.set({ installed: true });
+                    this.set({installed: true});
                 }
 
                 // If the theme is active, set an attribute.
                 if (themes.data.activeTheme === this.get('slug')) {
-                    this.set({ active: true });
+                    this.set({active: true});
                 }
             }
 
@@ -50,7 +50,7 @@ window.wp = window.wp || {};
             // as the API sometimes returns it differently.
             if (this.has('sections')) {
                 description = this.get('sections').description;
-                this.set({ description: description });
+                this.set({description: description});
             }
         }
     });
@@ -188,7 +188,7 @@ window.wp = window.wp || {};
             var match, results, haystack, name, description, author;
 
             // Start with a full collection.
-            this.reset(themes.data.themes, { silent: true });
+            this.reset(themes.data.themes, {silent: true});
 
             // Trim the term.
             term = term.trim();
@@ -284,7 +284,7 @@ window.wp = window.wp || {};
                         self.reset(data.themes);
                         count = data.info.results;
                         // Store the results and the query request.
-                        queries.push({ themes: data.themes, request: request, total: count });
+                        queries.push({themes: data.themes, request: request, total: count});
                     }
 
                     // Trigger a collection refresh event
@@ -524,30 +524,30 @@ window.wp = window.wp || {};
             // for `theme:next` and `theme:previous` events.
             this.listenTo(preview, 'theme:next', function () {
 
-                    // Keep local track of current theme model.
-                    current = self.model;
+                // Keep local track of current theme model.
+                current = self.model;
 
-                    // If we have ventured away from current model update the current model position.
-                    if (!_.isUndefined(self.current)) {
-                        current = self.current;
-                    }
+                // If we have ventured away from current model update the current model position.
+                if (!_.isUndefined(self.current)) {
+                    current = self.current;
+                }
 
-                    // Get next theme model.
-                    self.current = self.model.collection.at(self.model.collection.indexOf(current) + 1);
+                // Get next theme model.
+                self.current = self.model.collection.at(self.model.collection.indexOf(current) + 1);
 
-                    // If we have no more themes, bail.
-                    if (_.isUndefined(self.current)) {
-                        self.options.parent.parent.trigger('theme:end');
-                        return self.current = current;
-                    }
+                // If we have no more themes, bail.
+                if (_.isUndefined(self.current)) {
+                    self.options.parent.parent.trigger('theme:end');
+                    return self.current = current;
+                }
 
-                    preview.model = self.current;
+                preview.model = self.current;
 
-                    // Render and append.
-                    preview.render();
-                    this.setNavButtonsState();
-                    $('.next-theme').trigger('focus');
-                })
+                // Render and append.
+                preview.render();
+                this.setNavButtonsState();
+                $('.next-theme').trigger('focus');
+            })
                 .listenTo(preview, 'theme:previous', function () {
 
                     // Keep track of current theme model.
@@ -620,10 +620,10 @@ window.wp = window.wp || {};
 
             $(document).on('wp-theme-install-success', function (event, response) {
                 if (_this.model.get('id') === response.slug) {
-                    _this.model.set({ 'installed': true });
+                    _this.model.set({'installed': true});
                 }
                 if (response.blockTheme) {
-                    _this.model.set({ 'block_theme': true });
+                    _this.model.set({'block_theme': true});
                 }
             });
 
@@ -805,7 +805,7 @@ window.wp = window.wp || {};
                 if (_this.model.get('id') === data.asset) {
                     autoupdate = _this.model.get('autoupdate');
                     autoupdate.enabled = 'enable' === data.state;
-                    _this.model.set({ autoupdate: autoupdate });
+                    _this.model.set({autoupdate: autoupdate});
                     $(document).off('wp-auto-update-setting-changed', callback);
                 }
             };
@@ -850,9 +850,9 @@ window.wp = window.wp || {};
 
             $(document).one('wp-theme-delete-success', function (event, response) {
                 _this.$el.find('.close').trigger('click');
-                $('[data-slug="' + response.slug + '"]').css({ backgroundColor: '#faafaa' }).fadeOut(350, function () {
+                $('[data-slug="' + response.slug + '"]').css({backgroundColor: '#faafaa'}).fadeOut(350, function () {
                     $(this).remove();
-                    _themes.data.themes = _.without(_themes.data.themes, _.findWhere(_themes.data.themes, { id: response.slug }));
+                    _themes.data.themes = _.without(_themes.data.themes, _.findWhere(_themes.data.themes, {id: response.slug}));
 
                     $('.wp-filter-search').val('');
                     _collection.doSearch('');
@@ -929,7 +929,7 @@ window.wp = window.wp || {};
                 self.tooglePreviewDeviceButtons(currentPreviewDevice);
             }
 
-            themes.router.navigate(themes.router.baseUrl(themes.router.themePath + this.model.get('id')), { replace: false });
+            themes.router.navigate(themes.router.baseUrl(themes.router.themePath + this.model.get('id')), {replace: false});
 
             this.$el.fadeIn(200, function () {
                 $body.addClass('theme-installer-active full-overlay-active');
@@ -971,9 +971,9 @@ window.wp = window.wp || {};
         collapse: function (event) {
             var $button = $(event.currentTarget);
             if ('true' === $button.attr('aria-expanded')) {
-                $button.attr({ 'aria-expanded': 'false', 'aria-label': l10n.expandSidebar });
+                $button.attr({'aria-expanded': 'false', 'aria-label': l10n.expandSidebar});
             } else {
-                $button.attr({ 'aria-expanded': 'true', 'aria-label': l10n.collapseSidebar });
+                $button.attr({'aria-expanded': 'true', 'aria-label': l10n.collapseSidebar});
             }
 
             this.$el.toggleClass('collapsed').toggleClass('expanded');
@@ -1032,7 +1032,7 @@ window.wp = window.wp || {};
             wp.updates.maybeRequestFilesystemCredentials(event);
 
             $(document).on('wp-theme-install-success', function () {
-                _this.model.set({ 'installed': true });
+                _this.model.set({'installed': true});
             });
 
             wp.updates.installTheme({
@@ -1219,12 +1219,12 @@ window.wp = window.wp || {};
             var self = this,
                 current;
 
-            current = self.collection.findWhere({ active: true });
+            current = self.collection.findWhere({active: true});
 
             // Move the active theme to the beginning of the collection.
             if (current) {
                 self.collection.remove(current);
-                self.collection.add(current, { at: 0 });
+                self.collection.add(current, {at: 0});
             }
         },
 
@@ -1275,10 +1275,10 @@ window.wp = window.wp || {};
             // Bind to theme:next and theme:previous triggered by the arrow keys.
             // Keep track of the current model so we can infer an index position.
             this.listenTo(this.overlay, 'theme:next', function () {
-                    // Renders the next theme on the overlay.
-                    self.next([self.model.cid]);
+                // Renders the next theme on the overlay.
+                self.next([self.model.cid]);
 
-                })
+            })
                 .listenTo(this.overlay, 'theme:previous', function () {
                     // Renders the previous theme on the overlay.
                     self.previous([self.model.cid]);
@@ -1433,7 +1433,7 @@ window.wp = window.wp || {};
      * @param {Object} state - State.
      * @return {void}
      */
-    function navigateRouter (url, state) {
+    function navigateRouter(url, state) {
         var router = this;
         if (Backbone.history._hasPushState) {
             Backbone.Router.prototype.navigate.call(router, url, state);
@@ -1609,7 +1609,7 @@ window.wp = window.wp || {};
             this.collection.query(request);
 
             // Set route.
-            themes.router.navigate(themes.router.baseUrl(themes.router.searchPath + encodeURIComponent(value)), { replace: true });
+            themes.router.navigate(themes.router.baseUrl(themes.router.searchPath + encodeURIComponent(value)), {replace: true});
         }
     });
 
@@ -1652,7 +1652,7 @@ window.wp = window.wp || {};
                 self.collection.currentQuery.page++;
 
                 // Use currentQuery.page to build the themes request.
-                _.extend(self.collection.currentQuery.request, { page: self.collection.currentQuery.page });
+                _.extend(self.collection.currentQuery.request, {page: self.collection.currentQuery.page});
                 self.collection.query(self.collection.currentQuery.request);
             });
 
@@ -1697,9 +1697,9 @@ window.wp = window.wp || {};
             if ('block-themes' === section) {
                 // Get the themes by sending Ajax POST request to api.wordpress.org/themes
                 // or searching the local cache.
-                this.collection.query({ tag: 'full-site-editing' });
+                this.collection.query({tag: 'full-site-editing'});
             } else {
-                this.collection.query({ browse: section });
+                this.collection.query({browse: section});
             }
         },
 
@@ -1772,7 +1772,7 @@ window.wp = window.wp || {};
             // Construct the filter request
             // using the default values.
             filter = _.union([filter, this.filtersChecked()]);
-            request = { tag: [filter] };
+            request = {tag: [filter]};
 
             // Get the themes by sending Ajax POST request to api.wordpress.org/themes
             // or searching the local cache.
@@ -1788,7 +1788,7 @@ window.wp = window.wp || {};
         applyFilters: function (event) {
             var name,
                 tags = this.filtersChecked(),
-                request = { tag: tags },
+                request = {tag: tags},
                 filteringBy = $('.filtered-by .tags');
 
             if (event) {
@@ -1821,7 +1821,7 @@ window.wp = window.wp || {};
         saveUsername: function (event) {
             var username = $('#wporg-username-input').val(),
                 nonce = $('#wporg-username-nonce').val(),
-                request = { browse: 'favorites', user: username },
+                request = {browse: 'favorites', user: username},
                 that = this;
 
             if (event) {
@@ -2016,7 +2016,7 @@ window.wp = window.wp || {};
 
                 // If the theme preview is active, set the current theme.
                 if (self.view.view.theme && self.view.view.theme.preview) {
-                    self.view.view.theme.model = self.view.collection.findWhere({ 'slug': slug });
+                    self.view.view.theme.model = self.view.collection.findWhere({'slug': slug});
                     self.view.view.theme.preview();
                 } else {
 
@@ -2041,7 +2041,7 @@ window.wp = window.wp || {};
             themes.router.on('route:sort', function (sort) {
                 if (!sort) {
                     sort = 'popular';
-                    themes.router.navigate(themes.router.baseUrl('?browse=popular'), { replace: true });
+                    themes.router.navigate(themes.router.baseUrl('?browse=popular'), {replace: true});
                 }
                 self.view.sort(sort);
 
@@ -2108,9 +2108,9 @@ jQuery(function ($) {
         if (tbWindow.length >= 1) {
             tbWindow.width(W - 50).height(H - 45 - adminbar_height);
             $('#TB_iframeContent').width(W - 50).height(H - 75 - adminbar_height);
-            tbWindow.css({ 'margin-left': '-' + parseInt(((W - 50) / 2), 10) + 'px' });
+            tbWindow.css({'margin-left': '-' + parseInt(((W - 50) / 2), 10) + 'px'});
             if (typeof document.body.style.maxWidth !== 'undefined') {
-                tbWindow.css({ 'top': 20 + adminbar_height + 'px', 'margin-top': '0' });
+                tbWindow.css({'top': 20 + adminbar_height + 'px', 'margin-top': '0'});
             }
         }
     };

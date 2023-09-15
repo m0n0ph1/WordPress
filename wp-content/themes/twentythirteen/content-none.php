@@ -2,9 +2,9 @@
     /**
      * The template for displaying a "No posts found" message
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Thirteen
-     * @since Twenty Thirteen 1.0
+     * @since      Twenty Thirteen 1.0
      */
 ?>
 
@@ -13,27 +13,24 @@
 </header>
 
 <div class="page-content">
-    <?php if (is_home() && current_user_can('publish_posts')) : ?>
+    <?php if(is_home() && current_user_can('publish_posts')) : ?>
 
         <p>
             <?php
                 /* translators: %s: Post editor URL. */
-                printf(__('Ready to publish your first post? <a href="%s">Get started here</a>.', 'twentythirteen'),
-                    admin_url('post-new.php'));
+                printf(__('Ready to publish your first post? <a href="%s">Get started here</a>.', 'twentythirteen'), admin_url('post-new.php'));
             ?>
         </p>
-    
-    <?php elseif (is_search()) : ?>
 
-        <p><?php _e('Sorry, but nothing matched your search terms. Please try again with different keywords.',
-                'twentythirteen'); ?></p>
+    <?php elseif(is_search()) : ?>
+
+        <p><?php _e('Sorry, but nothing matched your search terms. Please try again with different keywords.', 'twentythirteen'); ?></p>
         <?php get_search_form(); ?>
-    
+
     <?php else : ?>
 
-        <p><?php _e('It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help.',
-                'twentythirteen'); ?></p>
+        <p><?php _e('It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help.', 'twentythirteen'); ?></p>
         <?php get_search_form(); ?>
-    
+
     <?php endif; ?>
 </div><!-- .page-content -->

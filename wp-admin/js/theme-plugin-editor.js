@@ -31,7 +31,7 @@ wp.themePluginEditor = (function ($) {
      * @param {Object|boolean} settings.codeEditor - Code editor settings (or `false` if syntax highlighting is disabled).
      * @return {void}
      */
-    component.init = function init (form, settings) {
+    component.init = function init(form, settings) {
 
         component.form = form;
         if (settings) {
@@ -315,7 +315,7 @@ wp.themePluginEditor = (function ($) {
      * @since 4.9.0
      * @return {void}
      */
-    component.initCodeEditor = function initCodeEditor () {
+    component.initCodeEditor = function initCodeEditor() {
         var codeEditorSettings, editor;
 
         codeEditorSettings = $.extend({}, component.codeEditor);
@@ -367,7 +367,7 @@ wp.themePluginEditor = (function ($) {
          * @param {Array} errorAnnotations - Error annotations.
          * @return {void}
          */
-        codeEditorSettings.onUpdateErrorNotice = function onUpdateErrorNotice (errorAnnotations) {
+        codeEditorSettings.onUpdateErrorNotice = function onUpdateErrorNotice(errorAnnotations) {
             var noticeElement;
 
             component.submitButton.toggleClass('disabled', errorAnnotations.length > 0);
@@ -422,7 +422,7 @@ wp.themePluginEditor = (function ($) {
      * @since 4.9.0
      * @return {void}
      */
-    component.initFileBrowser = function initFileBrowser () {
+    component.initFileBrowser = function initFileBrowser() {
 
         var $templateside = $('#templateside');
 
@@ -577,11 +577,11 @@ wp.themePluginEditor = (function ($) {
                 _char = event.key,
                 clickEvent;
 
-            function isPrintableCharacter (str) {
+            function isPrintableCharacter(str) {
                 return str.length === 1 && str.match(/\S/);
             }
 
-            function printableCharacter (item) {
+            function printableCharacter(item) {
                 if (_char == '*') {
                     item.tree.expandAllSiblingItems(item);
                     flag = true;
@@ -777,7 +777,7 @@ wp.themePluginEditor = (function ($) {
 
         TreeLinks.prototype.init = function () {
 
-            function findTreeitems (node, tree, group) {
+            function findTreeitems(node, tree, group) {
 
                 var elem = node.firstElementChild;
                 var ti = group;

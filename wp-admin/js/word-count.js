@@ -44,7 +44,7 @@
      *
      * @return {void}
      */
-    function WordCounter (settings) {
+    function WordCounter(settings) {
         var key,
             shortcodes;
 

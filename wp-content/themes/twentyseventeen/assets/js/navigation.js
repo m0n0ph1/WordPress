@@ -8,12 +8,12 @@
 (function ($) {
     var masthead, menuToggle, siteNavContain, siteNavigation;
 
-    function initMainNavigation (container) {
+    function initMainNavigation(container) {
 
         // Add dropdown toggle that displays child menu items.
-        var dropdownToggle = $('<button />', { 'class': 'dropdown-toggle', 'aria-expanded': false })
+        var dropdownToggle = $('<button />', {'class': 'dropdown-toggle', 'aria-expanded': false})
             .append(twentyseventeenScreenReaderText.icon)
-            .append($('<span />', { 'class': 'screen-reader-text', text: twentyseventeenScreenReaderText.expand }));
+            .append($('<span />', {'class': 'screen-reader-text', text: twentyseventeenScreenReaderText.expand}));
 
         container.find('.menu-item-has-children > a, .page_item_has_children > a').after(dropdownToggle);
 
@@ -72,7 +72,7 @@
         }
 
         // Toggle `focus` class to allow submenu access on tablets.
-        function toggleFocusClassTouchScreen () {
+        function toggleFocusClassTouchScreen() {
             if ('none' === $('.menu-toggle').css('display')) {
 
                 $(document.body).on('touchstart.twentyseventeen', function (e) {

@@ -174,7 +174,7 @@
 
                         // Prevent inital focus from firing and check if its a newly focused item
                         if (that.focusIndex != null && item.index !== that.focusIndex) {
-                            that._trigger('focus', event, { item: item });
+                            that._trigger('focus', event, {item: item});
                             if (!that.isOpen) {
                                 that._select(item, event);
                             }
@@ -275,7 +275,7 @@
         },
 
         _position: function () {
-            this.menuWrap.position($.extend({ of: this.button }, this.options.position));
+            this.menuWrap.position($.extend({of: this.button}, this.options.position));
         },
 
         close: function (event) {
@@ -522,10 +522,10 @@
             this.element[0].selectedIndex = item.index;
             this.buttonItem.replaceWith(this.buttonItem = this._renderButtonItem(item));
             this._setAria(item);
-            this._trigger('select', event, { item: item });
+            this._trigger('select', event, {item: item});
 
             if (item.index !== oldIndex) {
-                this._trigger('change', event, { item: item });
+                this._trigger('change', event, {item: item});
             }
 
             this.close(event);
@@ -602,7 +602,7 @@
             // we always remove classes first and add them second, otherwise if both classes have the
             // same theme class, it will be removed after we add it.
             this._removeClass(this.button, 'ui-selectmenu-button-' +
-                    (this.isOpen ? 'closed' : 'open'))
+                (this.isOpen ? 'closed' : 'open'))
                 ._addClass(this.button, 'ui-selectmenu-button-' +
                     (this.isOpen ? 'open' : 'closed'))
                 ._toggleClass(this.menuWrap, 'ui-selectmenu-open', null, this.isOpen);

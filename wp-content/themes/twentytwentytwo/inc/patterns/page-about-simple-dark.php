@@ -15,13 +15,11 @@
 					<div class="wp-block-column is-vertically-aligned-bottom" style="padding-top:12rem;flex-basis:45%"><!-- wp:site-logo {"width":60} /-->
 
 					<!-- wp:heading {"style":{"typography":{"fontWeight":"300","lineHeight":"1.115","fontSize":"clamp(3rem, 6vw, 4.5rem)"}}} -->
-					<h2 style="font-size:clamp(3rem, 6vw, 4.5rem);font-weight:300;line-height:1.115"><em>' . wp_kses_post(__('Jesús<br>Rodriguez',
-                'twentytwentytwo')) . '</em></h2>
+					<h2 style="font-size:clamp(3rem, 6vw, 4.5rem);font-weight:300;line-height:1.115"><em>'.wp_kses_post(__('Jesús<br>Rodriguez', 'twentytwentytwo')).'</em></h2>
 					<!-- /wp:heading -->
 
 					<!-- wp:paragraph {"style":{"typography":{"lineHeight":"1.6"}}} -->
-					<p style="line-height:1.6">' . esc_html__('Oh hello. My name’s Jesús, and you’ve found your way to my website. I’m an avid bird watcher, and I also broadcast my own radio show on Tuesday evenings at 11PM EDT.',
-                'twentytwentytwo') . '</p>
+					<p style="line-height:1.6">'.esc_html__('Oh hello. My name’s Jesús, and you’ve found your way to my website. I’m an avid bird watcher, and I also broadcast my own radio show on Tuesday evenings at 11PM EDT.', 'twentytwentytwo').'</p>
 					<!-- /wp:paragraph -->
 
 					<!-- wp:spacer {"height":40} -->

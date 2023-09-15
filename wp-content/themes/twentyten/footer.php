@@ -5,16 +5,16 @@
      * Contains the closing of the id=main div and all content
      * after. Calls sidebar-footer.php for bottom widgets.
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Ten
-     * @since Twenty Ten 1.0
+     * @since      Twenty Ten 1.0
      */
 ?>
 </div><!-- #main -->
 
 <div id="footer" role="contentinfo">
     <div id="colophon">
-        
+
         <?php
             /*
              * A sidebar in the footer? Yep. You can customize
@@ -28,7 +28,8 @@
                 <?php bloginfo('name'); ?>
             </a>
             <?php
-                if (function_exists('the_privacy_policy_link')) {
+                if(function_exists('the_privacy_policy_link'))
+                {
                     the_privacy_policy_link('<span role="separator" aria-hidden="true"></span>', '');
                 }
             ?>
@@ -64,7 +65,7 @@
      * tag of your theme, or you will break many plugins, which
      * generally use this hook to reference JavaScript files.
      */
-    
+
     wp_footer();
 ?>
 </body>

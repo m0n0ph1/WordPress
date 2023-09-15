@@ -87,9 +87,9 @@
             }
             return actual;
         };
-        var Global$1 = { getOrDie: getOrDie };
+        var Global$1 = {getOrDie: getOrDie};
 
-        function FileReader () {
+        function FileReader() {
             var f = Global$1.getOrDie('FileReader');
             return new f();
         }
@@ -106,7 +106,7 @@
         var getImageSize = function (url, callback) {
             var img = domGlobals.document.createElement('img');
 
-            function done (width, height) {
+            function done(width, height) {
                 if (img.parentNode) {
                     img.parentNode.removeChild(img);
                 }
@@ -133,10 +133,10 @@
             img.src = url;
         };
         var buildListItems = function (inputList, itemCallback, startItems) {
-            function appendItems (values, output) {
+            function appendItems(values, output) {
                 output = output || [];
                 global$2.each(values, function (item) {
-                    var menuItem = { text: item.text || item.title };
+                    var menuItem = {text: item.text || item.title};
                     if (item.menu) {
                         menuItem.menu = appendItems(item.menu);
                     } else {
@@ -210,7 +210,7 @@
             }
         };
         var waitLoadImage = function (editor, data, imgElm) {
-            function selectImage () {
+            function selectImage() {
                 imgElm.onload = imgElm.onerror = null;
                 if (editor.selection) {
                     editor.selection.select(imgElm);
@@ -320,10 +320,10 @@
             image.setAttribute(name, value);
         };
         var wrapInFigure = function (image) {
-            var figureElm = DOM.create('figure', { class: 'image' });
+            var figureElm = DOM.create('figure', {class: 'image'});
             DOM.insertAfter(figureElm, image);
             figureElm.appendChild(image);
-            figureElm.appendChild(DOM.create('figcaption', { contentEditable: true }, 'Caption'));
+            figureElm.appendChild(DOM.create('figcaption', {contentEditable: true}, 'Caption'));
             figureElm.contentEditable = 'false';
         };
         var removeFigure = function (image) {
@@ -423,12 +423,12 @@
         };
         var create = function (normalizeCss, data) {
             var image = domGlobals.document.createElement('img');
-            write(normalizeCss, merge(data, { caption: false }), image);
+            write(normalizeCss, merge(data, {caption: false}), image);
             setAttrib(image, 'alt', data.alt);
             if (data.caption) {
-                var figure = DOM.create('figure', { class: 'image' });
+                var figure = DOM.create('figure', {class: 'image'});
                 figure.appendChild(image);
-                figure.appendChild(DOM.create('figcaption', { contentEditable: true }, 'Caption'));
+                figure.appendChild(DOM.create('figcaption', {contentEditable: true}, 'Caption'));
                 figure.contentEditable = 'false';
                 return figure;
             } else {
@@ -719,7 +719,7 @@
                 ]
             };
         };
-        var AdvTab = { makeTab: makeTab };
+        var AdvTab = {makeTab: makeTab};
 
         var doSyncSize = function (widthCtrl, heightCtrl) {
             widthCtrl.state.set('oldVal', widthCtrl.value());
@@ -923,7 +923,7 @@
 
         var global$5 = tinymce.util.Tools.resolve('tinymce.ui.Factory');
 
-        function XMLHttpRequest () {
+        function XMLHttpRequest() {
             var f = Global$1.getOrDie('XMLHttpRequest');
             return new f();
         }
@@ -937,7 +937,7 @@
             return path2;
         };
 
-        function Uploader (settings) {
+        function Uploader(settings) {
             var defaultHandler = function (blobInfo, success, failure, progress) {
                 var xhr, formData;
                 xhr = XMLHttpRequest();
@@ -985,7 +985,7 @@
                 credentials: false,
                 handler: defaultHandler
             }, settings);
-            return { upload: upload };
+            return {upload: upload};
         }
 
         var onFileInput = function (editor) {
@@ -1066,9 +1066,9 @@
                 ]
             };
         };
-        var UploadTab = { makeTab: makeTab$2 };
+        var UploadTab = {makeTab: makeTab$2};
 
-        function curry (fn) {
+        function curry(fn) {
             var initialArgs = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 initialArgs[_i - 1] = arguments[_i];
@@ -1093,8 +1093,8 @@
             editor.editorUpload.uploadImagesAuto();
         };
 
-        function Dialog (editor) {
-            function showDialog (imageList) {
+        function Dialog(editor) {
+            function showDialog(imageList) {
                 var data = readImageDataFromSelection(editor);
                 var win, imageListCtrl;
                 if (imageList) {
@@ -1147,17 +1147,17 @@
                 SizeManager.syncSize(win);
             }
 
-            function open () {
+            function open() {
                 Utils.createImageList(editor, showDialog);
             }
 
-            return { open: open };
+            return {open: open};
         }
 
         var register = function (editor) {
             editor.addCommand('mceImage', Dialog(editor).open);
         };
-        var Commands = { register: register };
+        var Commands = {register: register};
 
         var hasImageClass = function (node) {
             var className = node.attr('class');
@@ -1184,7 +1184,7 @@
                 editor.serializer.addNodeFilter('figure', toggleContentEditableState(false));
             });
         };
-        var FilterContent = { setup: setup };
+        var FilterContent = {setup: setup};
 
         var register$1 = function (editor) {
             editor.addButton('image', {
@@ -1201,7 +1201,7 @@
                 prependToContext: true
             });
         };
-        var Buttons = { register: register$1 };
+        var Buttons = {register: register$1};
 
         global.add('image', function (editor) {
             FilterContent.setup(editor);
@@ -1209,7 +1209,7 @@
             Commands.register(editor);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

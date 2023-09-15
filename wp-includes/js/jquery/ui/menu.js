@@ -62,7 +62,7 @@
             // Flag used to prevent firing of the click handler
             // as the event bubbles up through nested menus
             this.mouseHandled = false;
-            this.lastMousePosition = { x: null, y: null };
+            this.lastMousePosition = {x: null, y: null};
             this.element
                 .uniqueId()
                 .attr({
@@ -431,7 +431,7 @@
             }
             this.activeMenu = item.parent();
 
-            this._trigger('focus', event, { item: item });
+            this._trigger('focus', event, {item: item});
         },
 
         _scrollIntoView: function (item) {
@@ -464,7 +464,7 @@
             this._removeClass(this.active.children('.ui-menu-item-wrapper'),
                 null, 'ui-state-active');
 
-            this._trigger('blur', event, { item: this.active });
+            this._trigger('blur', event, {item: this.active});
             this.active = null;
         },
 
@@ -681,7 +681,7 @@
             // TODO: It should never be possible to not have an active item at this
             // point, but the tests don't trigger mouseenter before click.
             this.active = this.active || $(event.target).closest('.ui-menu-item');
-            var ui = { item: this.active };
+            var ui = {item: this.active};
             if (!this.active.has('.ui-menu').length) {
                 this.collapseAll(event, true);
             }

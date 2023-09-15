@@ -1,4 +1,4 @@
-function toggleDarkMode () { // jshint ignore:line
+function toggleDarkMode() { // jshint ignore:line
     var toggler = document.getElementById('dark-mode-toggler');
 
     if ('false' === toggler.getAttribute('aria-pressed')) {
@@ -14,7 +14,7 @@ function toggleDarkMode () { // jshint ignore:line
     }
 }
 
-function twentytwentyoneIsDarkMode () {
+function twentytwentyoneIsDarkMode() {
     var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     if ('yes' === window.localStorage.getItem('twentytwentyoneDarkMode')) {
@@ -26,7 +26,7 @@ function twentytwentyoneIsDarkMode () {
     return isDarkMode;
 }
 
-function darkModeInitialLoad () {
+function darkModeInitialLoad() {
     var toggler = document.getElementById('dark-mode-toggler'),
         isDarkMode = twentytwentyoneIsDarkMode();
 
@@ -43,7 +43,7 @@ function darkModeInitialLoad () {
     }
 }
 
-function darkModeRepositionTogglerOnScroll () {
+function darkModeRepositionTogglerOnScroll() {
 
     var toggler = document.getElementById('dark-mode-toggler'),
         prevScroll = window.scrollY || document.documentElement.scrollTop,

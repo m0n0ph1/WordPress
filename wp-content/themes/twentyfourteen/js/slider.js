@@ -232,7 +232,7 @@
                     el.addEventListener('MSGestureEnd', onMSGestureEnd, false);
                 }
 
-                function onTouchStart (e) {
+                function onTouchStart(e) {
                     if (slider.animating) {
                         e.preventDefault();
                     } else if ((window.navigator.msPointerEnabled) || e.touches.length === 1) {
@@ -256,7 +256,7 @@
                     }
                 }
 
-                function onTouchMove (e) {
+                function onTouchMove(e) {
                     // Local vars for X and Y points.
                     localX = e.touches[0].pageX;
                     localY = e.touches[0].pageY;
@@ -272,7 +272,7 @@
                     }
                 }
 
-                function onTouchEnd () {
+                function onTouchEnd() {
                     // Finish the touch by undoing the touch session.
                     el.removeEventListener('touchmove', onTouchMove, false);
 
@@ -290,7 +290,7 @@
                     offset = null;
                 }
 
-                function onMSPointerDown (e) {
+                function onMSPointerDown(e) {
                     e.stopPropagation();
                     if (slider.animating) {
                         e.preventDefault();
@@ -306,7 +306,7 @@
                     }
                 }
 
-                function onMSGestureChange (e) {
+                function onMSGestureChange(e) {
                     e.stopPropagation();
                     var slider = e.target._slider,
                         transX,
@@ -339,7 +339,7 @@
                     }
                 }
 
-                function onMSGestureEnd (e) {
+                function onMSGestureEnd(e) {
                     e.stopPropagation();
                     var slider = e.target._slider,
                         updateDx,
@@ -376,7 +376,7 @@
 
             smoothHeight: function (dur) {
                 var $obj = slider.viewport;
-                (dur) ? $obj.animate({ 'height': slider.slides.eq(slider.animatingTo).height() }, dur) : $obj.height(slider.slides.eq(slider.animatingTo).height());
+                (dur) ? $obj.animate({'height': slider.slides.eq(slider.animatingTo).height()}, dur) : $obj.height(slider.slides.eq(slider.animatingTo).height());
             },
 
             setToClearWatchedEvent: function () {
@@ -521,7 +521,7 @@
             slider.setProps(sliderOffset * slider.computedW, 'init');
             setTimeout(function () {
                 slider.doMath();
-                slider.newSlides.css({ 'width': slider.computedW, 'float': 'left', 'display': 'block' });
+                slider.newSlides.css({'width': slider.computedW, 'float': 'left', 'display': 'block'});
                 // SMOOTH HEIGHT
                 methods.smoothHeight();
             }, (type === 'init') ? 100 : 0);

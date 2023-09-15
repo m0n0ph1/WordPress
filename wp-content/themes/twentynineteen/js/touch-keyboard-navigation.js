@@ -13,7 +13,7 @@
      * @param {number} wait
      * @param {boolean} immediate
      */
-    function debounce (func, wait, immediate) {
+    function debounce(func, wait, immediate) {
         'use strict';
 
         var timeout;
@@ -48,7 +48,7 @@
      * @param {Object} el
      * @param {string} cls
      */
-    function addClass (el, cls) {
+    function addClass(el, cls) {
         if (!el.className.match('(?:^|\\s)' + cls + '(?!\\S)')) {
             el.className += ' ' + cls;
         }
@@ -60,7 +60,7 @@
      * @param {Object} el
      * @param {string} cls
      */
-    function deleteClass (el, cls) {
+    function deleteClass(el, cls) {
         el.className = el.className.replace(new RegExp('(?:^|\\s)' + cls + '(?!\\S)'), '');
     }
 
@@ -72,7 +72,7 @@
      *
      * @returns {boolean} Has class
      */
-    function hasClass (el, cls) {
+    function hasClass(el, cls) {
 
         if (el.className.match('(?:^|\\s)' + cls + '(?!\\S)')) {
             return true;
@@ -84,7 +84,7 @@
      *
      * @param {Object} ariaItem
      */
-    function toggleAriaExpandedState (ariaItem) {
+    function toggleAriaExpandedState(ariaItem) {
         'use strict';
 
         var ariaState = ariaItem.getAttribute('aria-expanded');
@@ -103,7 +103,7 @@
      *
      * @param {Object} currentSubMenu
      */
-    function openSubMenu (currentSubMenu) {
+    function openSubMenu(currentSubMenu) {
         'use strict';
 
         // Update classes.
@@ -120,7 +120,7 @@
      *
      * @param {Object} currentSubMenu
      */
-    function closeSubMenu (currentSubMenu) {
+    function closeSubMenu(currentSubMenu) {
         'use strict';
 
         var menuItem = getCurrentParent(currentSubMenu, '.menu-item'); // this.parentNode
@@ -158,7 +158,7 @@
      * @param {String} selector
      * @param {String} stopSelector
      */
-    function getCurrentParent (child, selector, stopSelector) {
+    function getCurrentParent(child, selector, stopSelector) {
 
         var currentParent = null;
 
@@ -183,7 +183,7 @@
     /**
      * Remove all off-canvas states.
      */
-    function removeAllFocusStates () {
+    function removeAllFocusStates() {
         'use strict';
 
         var siteBranding = document.getElementsByClassName('site-branding')[0];
@@ -211,7 +211,7 @@
     /**
      * Toggle `focus` class to allow sub-menu access on touch screens.
      */
-    function toggleSubmenuDisplay () {
+    function toggleSubmenuDisplay() {
 
         document.addEventListener('touchstart', function (event) {
 

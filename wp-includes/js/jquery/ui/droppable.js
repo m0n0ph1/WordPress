@@ -205,7 +205,7 @@
                         ) &&
                         $.ui.intersect(
                             draggable,
-                            $.extend(inst, { offset: inst.element.offset() }),
+                            $.extend(inst, {offset: inst.element.offset()}),
                             inst.options.tolerance, event
                         )
                     ) {
@@ -259,7 +259,7 @@
     });
 
     $.ui.intersect = (function () {
-        function isOverAxis (x, reference, size) {
+        function isOverAxis(x, reference, size) {
             return (x >= reference) && (x < (reference + size));
         }
 
@@ -312,7 +312,7 @@
     */
     $.ui.ddmanager = {
         current: null,
-        droppables: { 'default': [] },
+        droppables: {'default': []},
         prepareOffsets: function (t, event) {
 
             var i, j,

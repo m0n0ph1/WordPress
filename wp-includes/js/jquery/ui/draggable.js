@@ -339,7 +339,7 @@
         cancel: function () {
 
             if (this.helper.is('.ui-draggable-dragging')) {
-                this._mouseUp(new $.Event('mouseup', { target: this.element[0] }));
+                this._mouseUp(new $.Event('mouseup', {target: this.element[0]}));
             } else {
                 this._clear();
             }
@@ -407,7 +407,7 @@
                 obj = obj.split(' ');
             }
             if (Array.isArray(obj)) {
-                obj = { left: +obj[0], top: +obj[1] || 0 };
+                obj = {left: +obj[0], top: +obj[1] || 0};
             }
             if ('left' in obj) {
                 this.offset.click.left = obj.left + this.margins.left;
@@ -447,7 +447,7 @@
             }
 
             if (this._isRootNode(this.offsetParent[0])) {
-                po = { top: 0, left: 0 };
+                po = {top: 0, left: 0};
             }
 
             return {
@@ -459,7 +459,7 @@
 
         _getRelativeOffset: function () {
             if (this.cssPosition !== 'relative') {
-                return { top: 0, left: 0 };
+                return {top: 0, left: 0};
             }
 
             var p = this.element.position(),
@@ -1119,7 +1119,7 @@
                             inst.options.snap.release.call(
                                 inst.element,
                                 event,
-                                $.extend(inst._uiHash(), { snapItem: inst.snapElements[i].item })
+                                $.extend(inst._uiHash(), {snapItem: inst.snapElements[i].item})
                             );
                         }
                     }

@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -149,7 +149,7 @@
      * @return {Object} Updated state.
      */
 
-    function formatTypes (state = {}, action) {
+    function formatTypes(state = {}, action) {
         switch (action.type) {
             case 'ADD_FORMAT_TYPES':
                 return {
@@ -224,7 +224,7 @@
      *
      * @return {[T]} Value returned as entry in array.
      */
-    function arrayOf (value) {
+    function arrayOf(value) {
         return [value];
     }
 
@@ -236,7 +236,7 @@
      *
      * @return {boolean} Whether value is object-like.
      */
-    function isObjectLike (value) {
+    function isObjectLike(value) {
         return !!value && 'object' === typeof value;
     }
 
@@ -245,7 +245,7 @@
      *
      * @return {Cache} Cache object.
      */
-    function createCache () {
+    function createCache() {
         /** @type {Cache} */
         var cache = {
             clear: function () {
@@ -266,7 +266,7 @@
      *
      * @return {boolean} Whether arrays are shallowly equal.
      */
-    function isShallowEqual (a, b, fromIndex) {
+    function isShallowEqual(a, b, fromIndex) {
         var i;
 
         if (a.length !== b.length) {
@@ -298,7 +298,7 @@
      */
 
     /* harmony default export */
-    function rememo (selector, getDependants) {
+    function rememo(selector, getDependants) {
         /** @type {WeakMap<*,*>} */
         var rootCache;
 
@@ -323,7 +323,7 @@
          *
          * @return {Cache} Cache object.
          */
-        function getCache (dependants) {
+        function getCache(dependants) {
             var caches = rootCache,
                 isUniqueByDependants = true,
                 i,
@@ -366,7 +366,7 @@
         /**
          * Resets root memoization cache.
          */
-        function clear () {
+        function clear() {
             rootCache = new WeakMap();
         }
 
@@ -382,7 +382,7 @@
          */
 
         /* eslint-enable jsdoc/check-param-names */
-        function callSelector (/* source, ...extraArgs */) {
+        function callSelector(/* source, ...extraArgs */) {
             var len = arguments.length,
                 cache,
                 node,
@@ -497,7 +497,7 @@
      * @return {Object?} Format type.
      */
 
-    function getFormatType (state, name) {
+    function getFormatType(state, name) {
         return state.formatTypes[name];
     }
 
@@ -511,7 +511,7 @@
      * @return {?Object} Format type.
      */
 
-    function getFormatTypeForBareElement (state, bareElementTagName) {
+    function getFormatTypeForBareElement(state, bareElementTagName) {
         const formatTypes = getFormatTypes(state);
         return formatTypes.find(({
                                      className,
@@ -535,7 +535,7 @@
      * @return {?Object} Format type.
      */
 
-    function getFormatTypeForClassName (state, elementClassName) {
+    function getFormatTypeForClassName(state, elementClassName) {
         return getFormatTypes(state).find(({
                                                className
                                            }) => {
@@ -556,7 +556,7 @@
      *
      * @return {Object} Action object.
      */
-    function addFormatTypes (formatTypes) {
+    function addFormatTypes(formatTypes) {
         return {
             type: 'ADD_FORMAT_TYPES',
             formatTypes: Array.isArray(formatTypes) ? formatTypes : [formatTypes]
@@ -571,7 +571,7 @@
      * @return {Object} Action object.
      */
 
-    function removeFormatTypes (names) {
+    function removeFormatTypes(names) {
         return {
             type: 'REMOVE_FORMAT_TYPES',
             names: Array.isArray(names) ? names : [names]
@@ -617,7 +617,7 @@
      *
      * @return {boolean} True if formats are equal, false if not.
      */
-    function isFormatEqual (format1, format2) {
+    function isFormatEqual(format1, format2) {
         // Both not defined.
         if (format1 === format2) {
             return true;
@@ -678,7 +678,7 @@
      * @return {RichTextValue} New value with normalised formats.
      */
 
-    function normaliseFormats (value) {
+    function normaliseFormats(value) {
         const newFormats = value.formats.slice();
         newFormats.forEach((formatsAtIndex, index) => {
             const formatsAtPreviousIndex = newFormats[index - 1];
@@ -710,7 +710,7 @@
 
     /** @typedef {import('./types').RichTextFormat} RichTextFormat */
 
-    function replace (array, index, value) {
+    function replace(array, index, value) {
         array = array.slice();
         array[index] = value;
         return array;
@@ -730,7 +730,7 @@
      */
 
 
-    function applyFormat (value, format, startIndex = value.start, endIndex = value.end) {
+    function applyFormat(value, format, startIndex = value.start, endIndex = value.end) {
         const {
             formats,
             activeFormats
@@ -808,9 +808,9 @@
      *
      * @return {HTMLBodyElement} Body element with parsed HTML.
      */
-    function createElement ({
-                                implementation
-                            }, html) {
+    function createElement({
+                               implementation
+                           }, html) {
         // Because `createHTMLDocument` is an expensive operation, and with this
         // function being internal to `rich-text` (full control in avoiding a risk
         // of asynchronous operations on the shared reference), a single document
@@ -851,7 +851,7 @@
 
     /** @typedef {import('./types').RichTextValue} RichTextValue */
 
-    function createEmptyValue () {
+    function createEmptyValue() {
         return {
             formats: [],
             replacements: [],
@@ -859,10 +859,10 @@
         };
     }
 
-    function toFormat ({
-                           tagName,
-                           attributes
-                       }) {
+    function toFormat({
+                          tagName,
+                          attributes
+                      }) {
         let formatType;
 
         if (attributes && attributes.class) {
@@ -987,16 +987,16 @@
      */
 
 
-    function create ({
-                         element,
-                         text,
-                         html,
-                         range,
-                         multilineTag,
-                         multilineWrapperTags,
-                         __unstableIsEditableTree: isEditableTree,
-                         preserveWhiteSpace
-                     } = {}) {
+    function create({
+                        element,
+                        text,
+                        html,
+                        range,
+                        multilineTag,
+                        multilineWrapperTags,
+                        __unstableIsEditableTree: isEditableTree,
+                        preserveWhiteSpace
+                    } = {}) {
         if (typeof text === 'string' && text.length > 0) {
             return {
                 formats: Array(text.length),
@@ -1044,7 +1044,7 @@
      * @param {Object} value       Value that is being accumulated.
      */
 
-    function accumulateSelection (accumulator, node, range, value) {
+    function accumulateSelection(accumulator, node, range, value) {
         if (!range) {
             return;
         }
@@ -1096,7 +1096,7 @@
      */
 
 
-    function filterRange (node, range, filter) {
+    function filterRange(node, range, filter) {
         if (!range) {
             return;
         }
@@ -1134,7 +1134,7 @@
      */
 
 
-    function collapseWhiteSpace (string) {
+    function collapseWhiteSpace(string) {
         return string.replace(/[\n\r\t]+/g, ' ');
     }
 
@@ -1145,7 +1145,7 @@
      */
 
 
-    function removeReservedCharacters (string) {
+    function removeReservedCharacters(string) {
         // with the global flag, note that we should create a new regex each time OR reset lastIndex state.
         return string.replace(new RegExp(`[${ZWNBSP}${OBJECT_REPLACEMENT_CHARACTER}]`, 'gu'), '');
     }
@@ -1168,15 +1168,15 @@
      * @return {RichTextValue} A rich text value.
      */
 
-    function createFromElement ({
-                                    element,
-                                    range,
-                                    multilineTag,
-                                    multilineWrapperTags,
-                                    currentWrapperTags = [],
-                                    isEditableTree,
-                                    preserveWhiteSpace
-                                }) {
+    function createFromElement({
+                                   element,
+                                   range,
+                                   multilineTag,
+                                   multilineWrapperTags,
+                                   currentWrapperTags = [],
+                                   isEditableTree,
+                                   preserveWhiteSpace
+                               }) {
         const accumulator = createEmptyValue();
 
         if (!element) {
@@ -1311,7 +1311,7 @@
             } else {
                 // Indices should share a reference to the same formats array.
                 // Only create a new reference if `formats` changes.
-                function mergeFormats (formats) {
+                function mergeFormats(formats) {
                     if (mergeFormats.formats === formats) {
                         return mergeFormats.newFormats;
                     }
@@ -1355,15 +1355,15 @@
      */
 
 
-    function createFromMultilineElement ({
-                                             element,
-                                             range,
-                                             multilineTag,
-                                             multilineWrapperTags,
-                                             currentWrapperTags = [],
-                                             isEditableTree,
-                                             preserveWhiteSpace
-                                         }) {
+    function createFromMultilineElement({
+                                            element,
+                                            range,
+                                            multilineTag,
+                                            multilineWrapperTags,
+                                            currentWrapperTags = [],
+                                            isEditableTree,
+                                            preserveWhiteSpace
+                                        }) {
         const accumulator = createEmptyValue();
 
         if (!element || !element.hasChildNodes()) {
@@ -1415,9 +1415,9 @@
      */
 
 
-    function getAttributes ({
-                                element
-                            }) {
+    function getAttributes({
+                               element
+                           }) {
         if (!element.hasAttributes()) {
             return;
         }
@@ -1460,7 +1460,7 @@
      * @return {Object} `a`, mutated.
      */
 
-    function mergePair (a, b) {
+    function mergePair(a, b) {
         a.formats = a.formats.concat(b.formats);
         a.replacements = a.replacements.concat(b.replacements);
         a.text += b.text;
@@ -1476,7 +1476,7 @@
      * @return {RichTextValue} A new value combining all given records.
      */
 
-    function concat (...values) {
+    function concat(...values) {
         return normaliseFormats(values.reduce(mergePair, create()));
     }
 
@@ -1499,7 +1499,7 @@
      * @return {RichTextFormatList} Active format objects.
      */
 
-    function getActiveFormats (value, EMPTY_ACTIVE_FORMATS = []) {
+    function getActiveFormats(value, EMPTY_ACTIVE_FORMATS = []) {
         const {
             formats,
             start,
@@ -1588,7 +1588,7 @@
      *                                    type, or undefined.
      */
 
-    function getActiveFormat (value, formatType) {
+    function getActiveFormat(value, formatType) {
         return getActiveFormats(value).find(({
                                                  type
                                              }) => type === formatType);
@@ -1611,12 +1611,12 @@
      * @return {RichTextFormat|void} Active object, or undefined.
      */
 
-    function getActiveObject ({
-                                  start,
-                                  end,
-                                  replacements,
-                                  text
-                              }) {
+    function getActiveObject({
+                                 start,
+                                 end,
+                                 replacements,
+                                 text
+                             }) {
         if (start + 1 !== end || text[start] !== OBJECT_REPLACEMENT_CHARACTER) {
             return;
         }
@@ -1642,9 +1642,9 @@
      * @return {string} The text content.
      */
 
-    function getTextContent ({
-                                 text
-                             }) {
+    function getTextContent({
+                                text
+                            }) {
         return text.replace(pattern, c => c === OBJECT_REPLACEMENT_CHARACTER ? '' : '\n');
     }
 
@@ -1664,10 +1664,10 @@
      * @param props.end
      * @return True if the selection is collapsed, false if not, undefined if there is no selection.
      */
-    function isCollapsed ({
-                              start,
-                              end
-                          }) {
+    function isCollapsed({
+                             start,
+                             end
+                         }) {
         if (start === undefined || end === undefined) {
             return;
         }
@@ -1691,9 +1691,9 @@
      * @return {boolean} True if the value is empty, false if not.
      */
 
-    function isEmpty ({
-                          text
-                      }) {
+    function isEmpty({
+                         text
+                     }) {
         return text.length === 0;
     }
 
@@ -1706,11 +1706,11 @@
      * @return {boolean} True if the line is empty, false if not.
      */
 
-    function isEmptyLine ({
-                              text,
-                              start,
-                              end
-                          }) {
+    function isEmptyLine({
+                             text,
+                             start,
+                             end
+                         }) {
         if (start !== end) {
             return false;
         }
@@ -1748,7 +1748,7 @@
      * @return {RichTextValue} A new combined value.
      */
 
-    function join (values, separator = '') {
+    function join(values, separator = '') {
         if (typeof separator === 'string') {
             separator = create({
                 text: separator
@@ -1800,7 +1800,7 @@
      *                              registered; otherwise `undefined`.
      */
 
-    function registerFormatType (name, settings) {
+    function registerFormatType(name, settings) {
         settings = {
             name,
             ...settings
@@ -1891,7 +1891,7 @@
      * @return {RichTextValue} A new value with the format applied.
      */
 
-    function removeFormat (value, formatType, startIndex = value.start, endIndex = value.end) {
+    function removeFormat(value, formatType, startIndex = value.start, endIndex = value.end) {
         const {
             formats,
             activeFormats
@@ -1934,7 +1934,7 @@
         });
     }
 
-    function filterFormats (formats, index, formatType) {
+    function filterFormats(formats, index, formatType) {
         const newFormats = formats[index].filter(({
                                                       type
                                                   }) => type !== formatType);
@@ -1967,7 +1967,7 @@
      * @return {RichTextValue} A new value with the value inserted.
      */
 
-    function insert (value, valueToInsert, startIndex = value.start, endIndex = value.end) {
+    function insert(value, valueToInsert, startIndex = value.start, endIndex = value.end) {
         const {
             formats,
             replacements,
@@ -2008,7 +2008,7 @@
      * @return {RichTextValue} A new value with the content removed.
      */
 
-    function remove (value, startIndex, endIndex) {
+    function remove(value, startIndex, endIndex) {
         return insert(value, create(), startIndex, endIndex);
     }
 
@@ -2036,13 +2036,13 @@
      * @return {RichTextValue} A new value with replacements applied.
      */
 
-    function replace_replace ({
-                                  formats,
-                                  replacements,
-                                  text,
-                                  start,
-                                  end
-                              }, pattern, replacement) {
+    function replace_replace({
+                                 formats,
+                                 replacements,
+                                 text,
+                                 start,
+                                 end
+                             }, pattern, replacement) {
         text = text.replace(pattern, (match, ...rest) => {
             const offset = rest[rest.length - 2];
             let newText = replacement;
@@ -2103,7 +2103,7 @@
      * @return {RichTextValue} A new value with the value inserted.
      */
 
-    function insertLineSeparator (value, startIndex = value.start, endIndex = value.end) {
+    function insertLineSeparator(value, startIndex = value.start, endIndex = value.end) {
         const beforeText = value.text.slice(0, startIndex);
         const previousLineSeparatorIndex = beforeText.lastIndexOf(LINE_SEPARATOR);
         const previousLineSeparatorFormats = value.replacements[previousLineSeparatorIndex];
@@ -2143,7 +2143,7 @@
      * @return {RichTextValue} A new value with the object inserted.
      */
 
-    function insertObject (value, formatToInsert, startIndex, endIndex) {
+    function insertObject(value, formatToInsert, startIndex, endIndex) {
         const valueToInsert = {
             formats: [],
             replacements: [formatToInsert],
@@ -2166,7 +2166,7 @@
      *
      * @return {RichTextValue} A new extracted value.
      */
-    function slice (value, startIndex = value.start, endIndex = value.end) {
+    function slice(value, startIndex = value.start, endIndex = value.end) {
         const {
             formats,
             replacements,
@@ -2204,13 +2204,13 @@
      * @return {Array<RichTextValue>|undefined} An array of new values.
      */
 
-    function split ({
-                        formats,
-                        replacements,
-                        text,
-                        start,
-                        end
-                    }, string) {
+    function split({
+                       formats,
+                       replacements,
+                       text,
+                       start,
+                       end
+                   }, string) {
         if (typeof string !== 'string') {
             return splitAtSelection(...arguments);
         }
@@ -2243,13 +2243,13 @@
         });
     }
 
-    function splitAtSelection ({
-                                   formats,
-                                   replacements,
-                                   text,
-                                   start,
-                                   end
-                               }, startIndex = start, endIndex = end) {
+    function splitAtSelection({
+                                  formats,
+                                  replacements,
+                                  text,
+                                  start,
+                                  end
+                              }, startIndex = start, endIndex = end) {
         if (start === undefined || end === undefined) {
             return;
         }
@@ -2289,7 +2289,7 @@
      * @return {RichTextFormatType|undefined} Format type.
      */
 
-    function get_format_type_getFormatType (name) {
+    function get_format_type_getFormatType(name) {
         return (0, external_wp_data_namespaceObject.select)(store).getFormatType(name);
     }
 
@@ -2301,7 +2301,7 @@
 
 
 
-    function restoreOnAttributes (attributes, isEditableTree) {
+    function restoreOnAttributes(attributes, isEditableTree) {
         if (isEditableTree) {
             return attributes;
         }
@@ -2341,15 +2341,15 @@
      */
 
 
-    function fromFormat ({
-                             type,
-                             tagName,
-                             attributes,
-                             unregisteredAttributes,
-                             object,
-                             boundaryClass,
-                             isEditableTree
-                         }) {
+    function fromFormat({
+                            type,
+                            tagName,
+                            attributes,
+                            unregisteredAttributes,
+                            object,
+                            boundaryClass,
+                            isEditableTree
+                        }) {
         const formatType = get_format_type_getFormatType(type);
         let elementAttributes = {};
 
@@ -2416,7 +2416,7 @@
      */
 
 
-    function isEqualUntil (a, b, index) {
+    function isEqualUntil(a, b, index) {
         do {
             if (a[index] !== b[index]) {
                 return false;
@@ -2426,23 +2426,23 @@
         return true;
     }
 
-    function toTree ({
-                         value,
-                         multilineTag,
-                         preserveWhiteSpace,
-                         createEmpty,
-                         append,
-                         getLastChild,
-                         getParent,
-                         isText,
-                         getText,
-                         remove,
-                         appendText,
-                         onStartIndex,
-                         onEndIndex,
-                         isEditableTree,
-                         placeholder
-                     }) {
+    function toTree({
+                        value,
+                        multilineTag,
+                        preserveWhiteSpace,
+                        createEmpty,
+                        append,
+                        getLastChild,
+                        getParent,
+                        isText,
+                        getText,
+                        remove,
+                        appendText,
+                        onStartIndex,
+                        onEndIndex,
+                        isEditableTree,
+                        placeholder
+                    }) {
         const {
             formats,
             replacements,
@@ -2668,7 +2668,7 @@
      *
      * @return {boolean} Whether the two ranges are equal.
      */
-    function isRangeEqual (a, b) {
+    function isRangeEqual(a, b) {
         return a === b || a && b && a.startContainer === b.startContainer && a.startOffset === b.startOffset && a.endContainer === b.endContainer && a.endOffset === b.endOffset;
     }
 
@@ -2690,7 +2690,7 @@
      * @return {Array} The path from the root node to the node.
      */
 
-    function createPathToNode (node, rootNode, path) {
+    function createPathToNode(node, rootNode, path) {
         const parentNode = node.parentNode;
         let i = 0;
 
@@ -2717,7 +2717,7 @@
      */
 
 
-    function getNodeByPath (node, path) {
+    function getNodeByPath(node, path) {
         path = [...path];
 
         while (node && path.length > 1) {
@@ -2730,7 +2730,7 @@
         };
     }
 
-    function append (element, child) {
+    function append(element, child) {
         if (child.html !== undefined) {
             return element.innerHTML += child.html;
         }
@@ -2755,44 +2755,44 @@
         return element.appendChild(child);
     }
 
-    function appendText (node, text) {
+    function appendText(node, text) {
         node.appendData(text);
     }
 
-    function getLastChild ({
-                               lastChild
-                           }) {
+    function getLastChild({
+                              lastChild
+                          }) {
         return lastChild;
     }
 
-    function getParent ({
-                            parentNode
-                        }) {
+    function getParent({
+                           parentNode
+                       }) {
         return parentNode;
     }
 
-    function isText (node) {
+    function isText(node) {
         return node.nodeType === node.TEXT_NODE;
     }
 
-    function getText ({
-                          nodeValue
-                      }) {
+    function getText({
+                         nodeValue
+                     }) {
         return nodeValue;
     }
 
-    function to_dom_remove (node) {
+    function to_dom_remove(node) {
         return node.parentNode.removeChild(node);
     }
 
-    function toDom ({
-                        value,
-                        multilineTag,
-                        prepareEditableTree,
-                        isEditableTree = true,
-                        placeholder,
-                        doc = document
-                    }) {
+    function toDom({
+                       value,
+                       multilineTag,
+                       prepareEditableTree,
+                       isEditableTree = true,
+                       placeholder,
+                       doc = document
+                   }) {
         let startPath = [];
         let endPath = [];
 
@@ -2828,11 +2828,11 @@
             remove: to_dom_remove,
             appendText,
 
-            onStartIndex (body, pointer) {
+            onStartIndex(body, pointer) {
                 startPath = createPathToNode(pointer, body, [pointer.nodeValue.length]);
             },
 
-            onEndIndex (body, pointer) {
+            onEndIndex(body, pointer) {
                 endPath = createPathToNode(pointer, body, [pointer.nodeValue.length]);
             },
 
@@ -2862,14 +2862,14 @@
      * @param {string}        [$1.placeholder]         Placeholder text.
      */
 
-    function apply ({
-                        value,
-                        current,
-                        multilineTag,
-                        prepareEditableTree,
-                        __unstableDomOnly,
-                        placeholder
-                    }) {
+    function apply({
+                       value,
+                       current,
+                       multilineTag,
+                       prepareEditableTree,
+                       __unstableDomOnly,
+                       placeholder
+                   }) {
         // Construct a new element tree in memory.
         const {
             body,
@@ -2888,7 +2888,7 @@
         }
     }
 
-    function applyValue (future, current) {
+    function applyValue(future, current) {
         let i = 0;
         let futureChild;
 
@@ -2947,10 +2947,10 @@
         }
     }
 
-    function applySelection ({
-                                 startPath,
-                                 endPath
-                             }, current) {
+    function applySelection({
+                                startPath,
+                                endPath
+                            }, current) {
         const {
             node: startContainer,
             offset: startOffset
@@ -3025,11 +3025,11 @@
      * @return {string} HTML string.
      */
 
-    function toHTMLString ({
-                               value,
-                               multilineTag,
-                               preserveWhiteSpace
-                           }) {
+    function toHTMLString({
+                              value,
+                              multilineTag,
+                              preserveWhiteSpace
+                          }) {
         const tree = toTree({
             value,
             multilineTag,
@@ -3046,17 +3046,17 @@
         return createChildrenHTML(tree.children);
     }
 
-    function createEmpty () {
+    function createEmpty() {
         return {};
     }
 
-    function to_html_string_getLastChild ({
-                                              children
-                                          }) {
+    function to_html_string_getLastChild({
+                                             children
+                                         }) {
         return children && children[children.length - 1];
     }
 
-    function to_html_string_append (parent, object) {
+    function to_html_string_append(parent, object) {
         if (typeof object === 'string') {
             object = {
                 text: object
@@ -3069,29 +3069,29 @@
         return object;
     }
 
-    function to_html_string_appendText (object, text) {
+    function to_html_string_appendText(object, text) {
         object.text += text;
     }
 
-    function to_html_string_getParent ({
-                                           parent
-                                       }) {
+    function to_html_string_getParent({
+                                          parent
+                                      }) {
         return parent;
     }
 
-    function to_html_string_isText ({
-                                        text
-                                    }) {
+    function to_html_string_isText({
+                                       text
+                                   }) {
         return typeof text === 'string';
     }
 
-    function to_html_string_getText ({
-                                         text
-                                     }) {
+    function to_html_string_getText({
+                                        text
+                                    }) {
         return text;
     }
 
-    function to_html_string_remove (object) {
+    function to_html_string_remove(object) {
         const index = object.parent.children.indexOf(object);
 
         if (index !== -1) {
@@ -3101,12 +3101,12 @@
         return object;
     }
 
-    function createElementHTML ({
-                                    type,
-                                    attributes,
-                                    object,
-                                    children
-                                }) {
+    function createElementHTML({
+                                   type,
+                                   attributes,
+                                   object,
+                                   children
+                               }) {
         let attributeString = '';
 
         for (const key in attributes) {
@@ -3124,7 +3124,7 @@
         return `<${type}${attributeString}>${createChildrenHTML(children)}</${type}>`;
     }
 
-    function createChildrenHTML (children = []) {
+    function createChildrenHTML(children = []) {
         return children.map(child => {
             if (child.html !== undefined) {
                 return child.html;
@@ -3160,7 +3160,7 @@
      * @return {RichTextValue} A new value with the format applied or removed.
      */
 
-    function toggleFormat (value, format) {
+    function toggleFormat(value, format) {
         if (getActiveFormat(value, format.type)) {
             // For screen readers, will announce if formatting control is disabled.
             if (format.title) {
@@ -3200,7 +3200,7 @@
      *                                        otherwise `undefined`.
      */
 
-    function unregisterFormatType (name) {
+    function unregisterFormatType(name) {
         const oldFormat = (0, external_wp_data_namespaceObject.select)(store).getFormatType(name);
 
         if (!oldFormat) {
@@ -3250,11 +3250,11 @@
      * @return {Element|Range} The active element or selection range.
      */
 
-    function useAnchorRef ({
-                               ref,
-                               value,
-                               settings = {}
-                           }) {
+    function useAnchorRef({
+                              ref,
+                              value,
+                              settings = {}
+                          }) {
         external_wp_deprecated_default()('`useAnchorRef` hook', {
             since: '6.1',
             alternative: '`useAnchor` hook'
@@ -3317,7 +3317,7 @@
      * @return {HTMLElement|undefined} The format element, if found.
      */
 
-    function getFormatElement (range, editableContentElement, tagName, className) {
+    function getFormatElement(range, editableContentElement, tagName, className) {
         let element = range.startContainer; // If the caret is right before the element, select the next element.
 
         element = element.nextElementSibling || element;
@@ -3361,11 +3361,11 @@
      */
 
 
-    function createVirtualAnchorElement (range, editableContentElement) {
+    function createVirtualAnchorElement(range, editableContentElement) {
         return {
             ownerDocument: range.startContainer.ownerDocument,
 
-            getBoundingClientRect () {
+            getBoundingClientRect() {
                 return editableContentElement.contains(range.startContainer) ? range.getBoundingClientRect() : editableContentElement.getBoundingClientRect();
             }
 
@@ -3386,7 +3386,7 @@
      */
 
 
-    function getAnchor (editableContentElement, tagName, className) {
+    function getAnchor(editableContentElement, tagName, className) {
         if (!editableContentElement) return;
         const {
             ownerDocument
@@ -3418,10 +3418,10 @@
      */
 
 
-    function useAnchor ({
-                            editableContentElement,
-                            settings = {}
-                        }) {
+    function useAnchor({
+                           editableContentElement,
+                           settings = {}
+                       }) {
         const {
             tagName,
             className
@@ -3433,15 +3433,15 @@
                 ownerDocument
             } = editableContentElement;
 
-            function callback () {
+            function callback() {
                 setAnchor(getAnchor(editableContentElement, tagName, className));
             }
 
-            function attach () {
+            function attach() {
                 ownerDocument.addEventListener('selectionchange', callback);
             }
 
-            function detach () {
+            function detach() {
                 ownerDocument.removeEventListener('selectionchange', callback);
             }
 
@@ -3492,7 +3492,7 @@
 
     const minWidth = '1px';
 
-    function useDefaultStyle () {
+    function useDefaultStyle() {
         return (0, external_wp_element_namespaceObject.useCallback)(element => {
             if (!element) return;
             element.style.whiteSpace = whiteSpace;
@@ -3510,9 +3510,9 @@
  * change.
  */
 
-    function useBoundaryStyle ({
-                                   record
-                               }) {
+    function useBoundaryStyle({
+                                  record
+                              }) {
         const ref = (0, external_wp_element_namespaceObject.useRef)();
         const {
             activeFormats = [],
@@ -3574,11 +3574,11 @@
 
 
 
-    function useCopyHandler (props) {
+    function useCopyHandler(props) {
         const propsRef = (0, external_wp_element_namespaceObject.useRef)(props);
         propsRef.current = props;
         return (0, external_wp_compose_namespaceObject.useRefEffect)(element => {
-            function onCopy (event) {
+            function onCopy(event) {
                 const {
                     record,
                     multilineTag,
@@ -3633,12 +3633,12 @@
 
     const EMPTY_ACTIVE_FORMATS = [];
 
-    function useFormatBoundaries (props) {
+    function useFormatBoundaries(props) {
         const [, forceRender] = (0, external_wp_element_namespaceObject.useReducer)(() => ({}));
         const propsRef = (0, external_wp_element_namespaceObject.useRef)(props);
         propsRef.current = props;
         return (0, external_wp_compose_namespaceObject.useRefEffect)(element => {
-            function onKeyDown (event) {
+            function onKeyDown(event) {
                 const {
                     keyCode,
                     shiftKey,
@@ -3738,9 +3738,9 @@
      * WordPress dependencies
      */
 
-    function useSelectObject () {
+    function useSelectObject() {
         return (0, external_wp_compose_namespaceObject.useRefEffect)(element => {
-            function onClick (event) {
+            function onClick(event) {
                 const {
                     target
                 } = event; // If the child element has no text content, it must be an object.
@@ -3769,7 +3769,7 @@
                 event.preventDefault();
             }
 
-            function onFocusIn (event) {
+            function onFocusIn(event) {
                 // When there is incoming focus from a link, select the object.
                 if (event.relatedTarget && !element.contains(event.relatedTarget) && event.relatedTarget.tagName === 'A') {
                     onClick(event);
@@ -3805,12 +3805,12 @@
      * @return {RichTextValue} Mutated value.
      */
 
-    function updateFormats ({
-                                value,
-                                start,
-                                end,
-                                formats
-                            }) {
+    function updateFormats({
+                               value,
+                               start,
+                               end,
+                               formats
+                           }) {
         // Start and end may be switched in case of delete.
         const min = Math.min(start, end);
         const max = Math.max(start, end);
@@ -3871,7 +3871,7 @@
      * @param {Window} defaultView
      */
 
-    function fixPlaceholderSelection (defaultView) {
+    function fixPlaceholderSelection(defaultView) {
         const selection = defaultView.getSelection();
         const {
             anchorNode,
@@ -3891,7 +3891,7 @@
         selection.collapseToStart();
     }
 
-    function useInputAndSelection (props) {
+    function useInputAndSelection(props) {
         const propsRef = (0, external_wp_element_namespaceObject.useRef)(props);
         propsRef.current = props;
         return (0, external_wp_compose_namespaceObject.useRefEffect)(element => {
@@ -3903,7 +3903,7 @@
             } = ownerDocument;
             let isComposing = false;
 
-            function onInput (event) {
+            function onInput(event) {
                 // Do not trigger a change if characters are being composed.
                 // Browsers  will usually emit a final `input` event when the
                 // characters are composed.
@@ -3954,7 +3954,7 @@
              */
 
 
-            function handleSelectionChange () {
+            function handleSelectionChange() {
                 const {
                     record,
                     applyRecord,
@@ -4068,7 +4068,7 @@
                 onSelectionChange(start, end);
             }
 
-            function onCompositionStart () {
+            function onCompositionStart() {
                 isComposing = true; // Do not update the selection when characters are being composed as
                 // this rerenders the component and might destroy internal browser
                 // editing state.
@@ -4081,7 +4081,7 @@
                 element.querySelector(`[${PLACEHOLDER_ATTR_NAME}]`)?.remove();
             }
 
-            function onCompositionEnd () {
+            function onCompositionEnd() {
                 isComposing = false; // Ensure the value is up-to-date for browsers that don't emit a final
                 // input event after composition.
 
@@ -4092,7 +4092,7 @@
                 ownerDocument.addEventListener('selectionchange', handleSelectionChange);
             }
 
-            function onFocus () {
+            function onFocus() {
                 const {
                     record,
                     isSelected,
@@ -4156,7 +4156,7 @@
      *                                                  listeners.
      */
 
-    function useSelectionChangeCompat () {
+    function useSelectionChangeCompat() {
         return (0, external_wp_compose_namespaceObject.useRefEffect)(element => {
             const {
                 ownerDocument
@@ -4167,20 +4167,20 @@
             const selection = defaultView?.getSelection();
             let range;
 
-            function getRange () {
+            function getRange() {
                 return selection.rangeCount ? selection.getRangeAt(0) : null;
             }
 
-            function onDown (event) {
+            function onDown(event) {
                 const type = event.type === 'keydown' ? 'keyup' : 'pointerup';
 
-                function onCancel () {
+                function onCancel() {
                     ownerDocument.removeEventListener(type, onUp);
                     ownerDocument.removeEventListener('selectionchange', onCancel);
                     ownerDocument.removeEventListener('input', onCancel);
                 }
 
-                function onUp () {
+                function onUp() {
                     onCancel();
                     if (isRangeEqual(range, getRange())) return;
                     ownerDocument.dispatchEvent(new Event('selectionchange'));
@@ -4222,7 +4222,7 @@
      *                                   is found on the position.
      */
 
-    function removeLineSeparator (value, backward = true) {
+    function removeLineSeparator(value, backward = true) {
         const {
             replacements,
             text,
@@ -4273,11 +4273,11 @@
 
 
 
-    function useDelete (props) {
+    function useDelete(props) {
         const propsRef = (0, external_wp_element_namespaceObject.useRef)(props);
         propsRef.current = props;
         return (0, external_wp_compose_namespaceObject.useRefEffect)(element => {
-            function onKeyDown (event) {
+            function onKeyDown(event) {
                 const {
                     keyCode
                 } = event;
@@ -4352,27 +4352,27 @@
 
 
 
-    function useRichText ({
-                              value = '',
-                              selectionStart,
-                              selectionEnd,
-                              placeholder,
-                              preserveWhiteSpace,
-                              onSelectionChange,
-                              onChange,
-                              __unstableMultilineTag: multilineTag,
-                              __unstableDisableFormats: disableFormats,
-                              __unstableIsSelected: isSelected,
-                              __unstableDependencies = [],
-                              __unstableAfterParse,
-                              __unstableBeforeSerialize,
-                              __unstableAddInvisibleFormats
-                          }) {
+    function useRichText({
+                             value = '',
+                             selectionStart,
+                             selectionEnd,
+                             placeholder,
+                             preserveWhiteSpace,
+                             onSelectionChange,
+                             onChange,
+                             __unstableMultilineTag: multilineTag,
+                             __unstableDisableFormats: disableFormats,
+                             __unstableIsSelected: isSelected,
+                             __unstableDependencies = [],
+                             __unstableAfterParse,
+                             __unstableBeforeSerialize,
+                             __unstableAddInvisibleFormats
+                         }) {
         const registry = (0, external_wp_data_namespaceObject.useRegistry)();
         const [, forceRender] = (0, external_wp_element_namespaceObject.useReducer)(() => ({}));
         const ref = (0, external_wp_element_namespaceObject.useRef)();
 
-        function createRecord () {
+        function createRecord() {
             const {
                 ownerDocument: {
                     defaultView
@@ -4390,7 +4390,7 @@
             });
         }
 
-        function applyRecord (newRecord, {
+        function applyRecord(newRecord, {
             domOnly
         } = {}) {
             apply({
@@ -4408,7 +4408,7 @@
 
         const record = (0, external_wp_element_namespaceObject.useRef)();
 
-        function setRecordFromProps () {
+        function setRecordFromProps() {
             _value.current = value;
             record.current = create({
                 html: value,
@@ -4465,7 +4465,7 @@
          */
 
 
-        function handleChange (newRecord) {
+        function handleChange(newRecord) {
             record.current = newRecord;
             applyRecord(newRecord);
 
@@ -4501,7 +4501,7 @@
             forceRender();
         }
 
-        function handleChangesUponInit (newRecord) {
+        function handleChangesUponInit(newRecord) {
             record.current = newRecord;
             _value.current = toHTMLString({
                 value: __unstableBeforeSerialize ? {
@@ -4524,7 +4524,7 @@
             forceRender();
         }
 
-        function applyFromProps () {
+        function applyFromProps() {
             setRecordFromProps();
             applyRecord(record.current);
         }
@@ -4587,7 +4587,7 @@
         };
     }
 
-    function __experimentalRichText () {
+    function __experimentalRichText() {
     }
 
     ;// CONCATENATED MODULE: ./node_modules/@wordpress/rich-text/build-module/component/format-edit.js
@@ -4597,13 +4597,13 @@
      */
 
 
-    function FormatEdit ({
-                             formatTypes,
-                             onChange,
-                             onFocus,
-                             value,
-                             forwardedRef
-                         }) {
+    function FormatEdit({
+                            formatTypes,
+                            onChange,
+                            onFocus,
+                            value,
+                            forwardedRef
+                        }) {
         return formatTypes.map(settings => {
             const {
                 name,

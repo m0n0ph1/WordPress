@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -173,7 +173,7 @@
      * @param {any} privateData The private data to bind to the object.
      */
 
-    function lock (object, privateData) {
+    function lock(object, privateData) {
         if (!object) {
             throw new Error('Cannot lock an undefined object.');
         }
@@ -210,7 +210,7 @@
      */
 
 
-    function unlock (object) {
+    function unlock(object) {
         if (!object) {
             throw new Error('Cannot unlock an undefined object.');
         }
@@ -238,7 +238,7 @@
      */
 
 
-    function allowCoreModule (name) {
+    function allowCoreModule(name) {
         CORE_MODULES_USING_PRIVATE_APIS.push(name);
     }
 
@@ -247,7 +247,7 @@
      * a custom list of allowed modules.
      */
 
-    function resetAllowedCoreModules () {
+    function resetAllowedCoreModules() {
         while (CORE_MODULES_USING_PRIVATE_APIS.length) {
             CORE_MODULES_USING_PRIVATE_APIS.pop();
         }
@@ -258,7 +258,7 @@
      * the list of registered private apis.
      */
 
-    function resetRegisteredPrivateApis () {
+    function resetRegisteredPrivateApis() {
         while (registeredPrivateApis.length) {
             registeredPrivateApis.pop();
         }

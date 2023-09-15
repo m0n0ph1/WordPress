@@ -9,7 +9,7 @@
     var $body, $window, $sidebar, resizeTimer,
         secondary, button;
 
-    function initMainNavigation (container) {
+    function initMainNavigation(container) {
         // Add dropdown toggle that display child menu items.
         container.find('.menu-item-has-children > a').after('<button class="dropdown-toggle" aria-expanded="false">' + screenReaderText.expand + '</button>');
 
@@ -83,7 +83,7 @@
      *
      * @since Twenty Fifteen 1.1
      */
-    function onResizeARIA () {
+    function onResizeARIA() {
         if (955 > $window.width()) {
             button.attr('aria-expanded', 'false');
             secondary.attr('aria-expanded', 'false');
@@ -96,7 +96,7 @@
     }
 
     // Sidebar scrolling.
-    function resizeAndScroll () {
+    function resizeAndScroll() {
         var windowPos = $window.scrollTop(),
             windowHeight = $window.height(),
             sidebarHeight = $sidebar.height(),

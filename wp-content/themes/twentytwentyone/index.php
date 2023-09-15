@@ -7,36 +7,39 @@
      * It is used to display a page when nothing more specific matches a query.
      * E.g., it puts together the home page when no home.php file exists.
      *
-     * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
+     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Twenty_One
-     * @since Twenty Twenty-One 1.0
+     * @since      Twenty Twenty-One 1.0
      */
-    
+
     get_header(); ?>
 
-<?php if (is_home() && !is_front_page() && !empty(single_post_title('', false))) : ?>
+<?php if(is_home() && ! is_front_page() && ! empty(single_post_title('', false))) : ?>
     <header class="page-header alignwide">
         <h1 class="page-title"><?php single_post_title(); ?></h1>
     </header><!-- .page-header -->
 <?php endif; ?>
 
 <?php
-    if (have_posts()) {
+    if(have_posts())
+    {
         // Load posts loop.
-        while (have_posts()) {
+        while(have_posts())
+        {
             the_post();
-            
-            get_template_part('template-parts/content/content',
-                get_theme_mod('display_excerpt_or_full_post', 'excerpt'));
+
+            get_template_part('template-parts/content/content', get_theme_mod('display_excerpt_or_full_post', 'excerpt'));
         }
-        
+
         // Previous/next page navigation.
         twenty_twenty_one_the_posts_navigation();
-    } else {
+    }
+    else
+    {
         // If no content, include the "No posts found" template.
         get_template_part('template-parts/content/content-none');
     }
-    
+
     get_footer();

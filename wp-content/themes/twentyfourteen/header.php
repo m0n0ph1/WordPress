@@ -4,9 +4,9 @@
  *
  * Displays all of the <head> section and everything up till <div id="main">
  *
- * @package WordPress
+ * @package    WordPress
  * @subpackage Twenty_Fourteen
- * @since Twenty Fourteen 1.0
+ * @since      Twenty Fourteen 1.0
  */
 ?><!DOCTYPE html>
 <!--[if IE 7]>
@@ -33,7 +33,7 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <div id="page" class="hfeed site">
-    <?php if (get_header_image()) : ?>
+    <?php if(get_header_image()) : ?>
         <div id="site-header">
             <a href="<?php echo esc_url(home_url('/')); ?>" rel="home">
                 <?php twentyfourteen_header_image(); ?>
@@ -67,13 +67,11 @@
                     ?>
                 </a>
                 <?php
-                    wp_nav_menu(
-                        [
-                            'theme_location' => 'primary',
-                            'menu_class' => 'nav-menu',
-                            'menu_id' => 'primary-menu',
-                        ]
-                    );
+                    wp_nav_menu([
+                                    'theme_location' => 'primary',
+                                    'menu_class' => 'nav-menu',
+                                    'menu_id' => 'primary-menu',
+                                ]);
                 ?>
             </nav>
         </div>

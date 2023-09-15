@@ -35,11 +35,11 @@
 })(function ($) {
     'use strict';
 
-    $.extend($.ui, { datepicker: { version: '1.13.2' } });
+    $.extend($.ui, {datepicker: {version: '1.13.2'}});
 
     var datepicker_instActive;
 
-    function datepicker_getZindex (elem) {
+    function datepicker_getZindex(elem) {
         var position, value;
         while (elem.length && elem[0] !== document) {
 
@@ -69,7 +69,7 @@
    Settings for (groups of) date pickers are maintained in an instance object,
    allowing multiple different settings on the same page. */
 
-    function Datepicker () {
+    function Datepicker() {
         this._curInst = null; // The current instance in use
         this._keyEvent = false; // If the last event was a key event
         this._disabledInputs = []; // List of date picker inputs that have been disabled
@@ -454,7 +454,7 @@
                 target.disabled = false;
                 inst.trigger.filter('button').each(function () {
                     this.disabled = false;
-                }).end().filter('img').css({ opacity: '1.0', cursor: '' });
+                }).end().filter('img').css({opacity: '1.0', cursor: ''});
             } else if (nodeName === 'div' || nodeName === 'span') {
                 inline = $target.children('.' + this._inlineClass);
                 inline.children().removeClass('ui-state-disabled');
@@ -485,7 +485,7 @@
                 target.disabled = true;
                 inst.trigger.filter('button').each(function () {
                     this.disabled = true;
-                }).end().filter('img').css({ opacity: '0.5', cursor: 'default' });
+                }).end().filter('img').css({opacity: '0.5', cursor: 'default'});
             } else if (nodeName === 'div' || nodeName === 'span') {
                 inline = $target.children('.' + this._inlineClass);
                 inline.children().addClass('ui-state-disabled');
@@ -826,14 +826,14 @@
                 return !isFixed;
             });
 
-            offset = { left: $.datepicker._pos[0], top: $.datepicker._pos[1] };
+            offset = {left: $.datepicker._pos[0], top: $.datepicker._pos[1]};
             $.datepicker._pos = null;
 
             //to avoid flashes on Firefox
             inst.dpDiv.empty();
 
             // determine sizing offscreen
-            inst.dpDiv.css({ position: 'absolute', display: 'block', top: '-1000px' });
+            inst.dpDiv.css({position: 'absolute', display: 'block', top: '-1000px'});
             $.datepicker._updateDatepicker(inst);
 
             // fix width for dynamic number of date pickers
@@ -995,7 +995,7 @@
 
                 this._lastInput = null;
                 if (this._inDialog) {
-                    this._dialogInput.css({ position: 'absolute', left: '0', top: '-100px' });
+                    this._dialogInput.css({position: 'absolute', left: '0', top: '-100px'});
                     if ($.blockUI) {
                         $.unblockUI();
                         $('body').append(this.dpDiv);
@@ -2174,21 +2174,21 @@
  * Done via delegate so the binding only occurs once in the lifetime of the parent div.
  * Global datepicker_instActive, set by _updateDatepicker allows the handlers to find their way back to the active picker.
  */
-    function datepicker_bindHover (dpDiv) {
+    function datepicker_bindHover(dpDiv) {
         var selector = 'button, .ui-datepicker-prev, .ui-datepicker-next, .ui-datepicker-calendar td a';
         return dpDiv.on('mouseout', selector, function () {
-                $(this).removeClass('ui-state-hover');
-                if (this.className.indexOf('ui-datepicker-prev') !== -1) {
-                    $(this).removeClass('ui-datepicker-prev-hover');
-                }
-                if (this.className.indexOf('ui-datepicker-next') !== -1) {
-                    $(this).removeClass('ui-datepicker-next-hover');
-                }
-            })
+            $(this).removeClass('ui-state-hover');
+            if (this.className.indexOf('ui-datepicker-prev') !== -1) {
+                $(this).removeClass('ui-datepicker-prev-hover');
+            }
+            if (this.className.indexOf('ui-datepicker-next') !== -1) {
+                $(this).removeClass('ui-datepicker-next-hover');
+            }
+        })
             .on('mouseover', selector, datepicker_handleMouseover);
     }
 
-    function datepicker_handleMouseover () {
+    function datepicker_handleMouseover() {
         if (!$.datepicker._isDisabledDatepicker(datepicker_instActive.inline ? datepicker_instActive.dpDiv.parent()[0] : datepicker_instActive.input[0])) {
             $(this).parents('.ui-datepicker-calendar').find('a').removeClass('ui-state-hover');
             $(this).addClass('ui-state-hover');
@@ -2202,7 +2202,7 @@
     }
 
     /* jQuery extend now ignores nulls! */
-    function datepicker_extendRemove (target, props) {
+    function datepicker_extendRemove(target, props) {
         $.extend(target, props);
         for (var name in props) {
             if (props[name] == null) {

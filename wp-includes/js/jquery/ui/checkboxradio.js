@@ -277,7 +277,7 @@
             }
 
             if (isDisabled !== this.options.disabled) {
-                this._setOptions({ 'disabled': isDisabled });
+                this._setOptions({'disabled': isDisabled});
             }
         }
 

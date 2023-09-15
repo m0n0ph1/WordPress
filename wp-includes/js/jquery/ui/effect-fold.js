@@ -47,8 +47,8 @@
             placeholder = $.effects.createPlaceholder(element),
 
             start = element.cssClip(),
-            animation1 = { clip: $.extend({}, start) },
-            animation2 = { clip: $.extend({}, start) },
+            animation1 = {clip: $.extend({}, start)},
+            animation2 = {clip: $.extend({}, start)},
 
             distance = [start[ref[0]], start[ref[1]]],
 

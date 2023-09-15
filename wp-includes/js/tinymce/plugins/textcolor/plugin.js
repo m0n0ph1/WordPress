@@ -28,14 +28,14 @@
         var applyFormat = function (editor, format, value) {
             editor.undoManager.transact(function () {
                 editor.focus();
-                editor.formatter.apply(format, { value: value });
+                editor.formatter.apply(format, {value: value});
                 editor.nodeChanged();
             });
         };
         var removeFormat = function (editor, format) {
             editor.undoManager.transact(function () {
                 editor.focus();
-                editor.formatter.remove(format, { value: null }, null, true);
+                editor.formatter.remove(format, {value: null}, null, true);
                 editor.nodeChanged();
             });
         };
@@ -54,7 +54,7 @@
                 TextColor.removeFormat(editor, format);
             });
         };
-        var Commands = { register: register };
+        var Commands = {register: register};
 
         var global$1 = tinymce.util.Tools.resolve('tinymce.dom.DOMUtils');
 
@@ -224,9 +224,9 @@
             html += '</tbody></table>';
             return html;
         };
-        var ColorPickerHtml = { getHtml: getHtml };
+        var ColorPickerHtml = {getHtml: getHtml};
 
-        var setDivColor = function setDivColor (div, value) {
+        var setDivColor = function setDivColor(div, value) {
             div.style.background = value;
             div.setAttribute('data-mce-color', value);
         };
@@ -331,14 +331,14 @@
                 onclick: onButtonClick(editor)
             });
         };
-        var Buttons = { register: register$1 };
+        var Buttons = {register: register$1};
 
         global.add('textcolor', function (editor) {
             Commands.register(editor);
             Buttons.register(editor);
         });
 
-        function Plugin () {
+        function Plugin() {
         }
 
         return Plugin;

@@ -2,15 +2,15 @@
     /**
      * Sidebar template containing the primary and secondary widget areas
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Ten
-     * @since Twenty Ten 1.0
+     * @since      Twenty Ten 1.0
      */
 ?>
 
 <div id="primary" class="widget-area" role="complementary">
     <ul class="xoxo">
-        
+
         <?php
             /*
              * When we call the dynamic_sidebar() function, it'll spit out
@@ -18,7 +18,7 @@
              * then the sidebar simply doesn't exist, so we'll hard-code in
              * some default sidebar stuff just in case.
              */
-            if (!dynamic_sidebar('primary-widget-area')) :
+            if(! dynamic_sidebar('primary-widget-area')) :
                 ?>
 
                 <li id="search" class="widget-container widget_search">
@@ -40,14 +40,14 @@
                         <?php wp_meta(); ?>
                     </ul>
                 </li>
-            
+
             <?php endif; // End primary widget area. ?>
     </ul>
 </div><!-- #primary .widget-area -->
 
 <?php
     // A second sidebar for widgets, just because.
-    if (is_active_sidebar('secondary-widget-area')) :
+    if(is_active_sidebar('secondary-widget-area')) :
         ?>
 
         <div id="secondary" class="widget-area" role="complementary">
@@ -55,5 +55,5 @@
                 <?php dynamic_sidebar('secondary-widget-area'); ?>
             </ul>
         </div><!-- #secondary .widget-area -->
-    
+
     <?php endif; ?>

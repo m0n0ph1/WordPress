@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -255,7 +255,7 @@
      *
      * @return {boolean} Whether the blockType is found.
      */
-    function hasBlockType (blockType, blocks = []) {
+    function hasBlockType(blockType, blocks = []) {
         if (!blocks.length) {
             return false;
         }
@@ -293,7 +293,7 @@
      * @return {boolean} Whether a request is in progress for the blocks list.
      */
 
-    function isRequestingDownloadableBlocks (state, filterValue) {
+    function isRequestingDownloadableBlocks(state, filterValue) {
         var _state$downloadableBl;
 
         return (_state$downloadableBl = state.downloadableBlocks[filterValue]?.isRequesting) !== null && _state$downloadableBl !== void 0 ? _state$downloadableBl : false;
@@ -308,7 +308,7 @@
      * @return {Array} Downloadable blocks.
      */
 
-    function getDownloadableBlocks (state, filterValue) {
+    function getDownloadableBlocks(state, filterValue) {
         var _state$downloadableBl2;
 
         return (_state$downloadableBl2 = state.downloadableBlocks[filterValue]?.results) !== null && _state$downloadableBl2 !== void 0 ? _state$downloadableBl2 : [];
@@ -323,7 +323,7 @@
      * @return {Array} Block type items
      */
 
-    function getInstalledBlockTypes (state) {
+    function getInstalledBlockTypes(state) {
         return state.blockManagement.installedBlockTypes;
     }
 
@@ -365,7 +365,7 @@
      * @return {boolean} Whether this block is currently being installed.
      */
 
-    function isInstalling (state, blockId) {
+    function isInstalling(state, blockId) {
         return state.blockManagement.isInstalling[blockId] || false;
     }
 
@@ -377,7 +377,7 @@
      * @return {Object} Object with error notices.
      */
 
-    function getErrorNotices (state) {
+    function getErrorNotices(state) {
         return state.errorNotices;
     }
 
@@ -390,7 +390,7 @@
      * @return {string|boolean} The error text, or false if no error.
      */
 
-    function getErrorNoticeForBlock (state, blockId) {
+    function getErrorNoticeForBlock(state, blockId) {
         return state.errorNotices[blockId];
     }
 
@@ -452,7 +452,7 @@
      * Load the asset files for a block
      */
 
-    async function loadAssets () {
+    async function loadAssets() {
         /*
          * Fetch the current URL (post-new.php, or post.php?post=1&action=edit) and compare the
          * JavaScript and CSS assets loaded between the pages. This imports the required assets
@@ -485,7 +485,7 @@
      *
      * @return {string} The plugin URL, if exists.
      */
-    function getPluginUrl (block) {
+    function getPluginUrl(block) {
         if (!block) {
             return false;
         }
@@ -517,7 +517,7 @@
      * @return {Object} Action object.
      */
 
-    function fetchDownloadableBlocks (filterValue) {
+    function fetchDownloadableBlocks(filterValue) {
         return {
             type: 'FETCH_DOWNLOADABLE_BLOCKS',
             filterValue
@@ -534,7 +534,7 @@
      * @return {Object} Action object.
      */
 
-    function receiveDownloadableBlocks (downloadableBlocks, filterValue) {
+    function receiveDownloadableBlocks(downloadableBlocks, filterValue) {
         return {
             type: 'RECEIVE_DOWNLOADABLE_BLOCKS',
             downloadableBlocks,
@@ -688,7 +688,7 @@
      * @return {Object} Action object.
      */
 
-    function addInstalledBlockType (item) {
+    function addInstalledBlockType(item) {
         return {
             type: 'ADD_INSTALLED_BLOCK_TYPE',
             item
@@ -704,7 +704,7 @@
      * @return {Object} Action object.
      */
 
-    function removeInstalledBlockType (item) {
+    function removeInstalledBlockType(item) {
         return {
             type: 'REMOVE_INSTALLED_BLOCK_TYPE',
             item
@@ -720,7 +720,7 @@
      * @return {Object} Action object.
      */
 
-    function setIsInstalling (blockId, isInstalling) {
+    function setIsInstalling(blockId, isInstalling) {
         return {
             type: 'SET_INSTALLING_BLOCK',
             blockId,
@@ -738,7 +738,7 @@
      * @return {Object} Action object.
      */
 
-    function setErrorNotice (blockId, message, isFatal = false) {
+    function setErrorNotice(blockId, message, isFatal = false) {
         return {
             type: 'SET_ERROR_NOTICE',
             blockId,
@@ -755,7 +755,7 @@
      * @return {Object} Action object.
      */
 
-    function clearErrorNotice (blockId) {
+    function clearErrorNotice(blockId) {
         return {
             type: 'CLEAR_ERROR_NOTICE',
             blockId
@@ -781,7 +781,7 @@
 
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) {
+            ({__proto__: []} instanceof Array && function (d, b) {
                 d.__proto__ = b;
             }) ||
             function (d, b) {
@@ -790,12 +790,12 @@
         return extendStatics(d, b);
     };
 
-    function __extends (d, b) {
+    function __extends(d, b) {
         if (typeof b !== 'function' && b !== null)
             throw new TypeError('Class extends value ' + String(b) + ' is not a constructor or null');
         extendStatics(d, b);
 
-        function __ () {
+        function __() {
             this.constructor = d;
         }
 
@@ -803,7 +803,7 @@
     }
 
     var __assign = function () {
-        __assign = Object.assign || function __assign (t) {
+        __assign = Object.assign || function __assign(t) {
             for (var s, i = 1, n = arguments.length; i < n; i++) {
                 s = arguments[i];
                 for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
@@ -813,7 +813,7 @@
         return __assign.apply(this, arguments);
     };
 
-    function __rest (s, e) {
+    function __rest(s, e) {
         var t = {};
         for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
             t[p] = s[p];
@@ -825,7 +825,7 @@
         return t;
     }
 
-    function __decorate (decorators, target, key, desc) {
+    function __decorate(decorators, target, key, desc) {
         var c = arguments.length,
             r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function') r = Reflect.decorate(decorators, target, key, desc);
@@ -833,14 +833,14 @@
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     }
 
-    function __param (paramIndex, decorator) {
+    function __param(paramIndex, decorator) {
         return function (target, key) {
             decorator(target, key, paramIndex);
         };
     }
 
-    function __esDecorate (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-        function accept (f) {
+    function __esDecorate(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+        function accept(f) {
             if (f !== void 0 && typeof f !== 'function') throw new TypeError('Function expected');
             return f;
         }
@@ -876,7 +876,7 @@
         done = true;
     };
 
-    function __runInitializers (thisArg, initializers, value) {
+    function __runInitializers(thisArg, initializers, value) {
         var useValue = arguments.length > 2;
         for (var i = 0; i < initializers.length; i++) {
             value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
@@ -884,11 +884,11 @@
         return useValue ? value : void 0;
     };
 
-    function __propKey (x) {
+    function __propKey(x) {
         return typeof x === 'symbol' ? x : ''.concat(x);
     };
 
-    function __setFunctionName (f, name, prefix) {
+    function __setFunctionName(f, name, prefix) {
         if (typeof name === 'symbol') name = name.description ? '['.concat(name.description, ']') : '';
         return Object.defineProperty(f, 'name', {
             configurable: true,
@@ -896,27 +896,35 @@
         });
     };
 
-    function __metadata (metadataKey, metadataValue) {
+    function __metadata(metadataKey, metadataValue) {
         if (typeof Reflect === 'object' && typeof Reflect.metadata === 'function') return Reflect.metadata(metadataKey, metadataValue);
     }
 
-    function __awaiter (thisArg, _arguments, P, generator) {
-        function adopt (value) {
+    function __awaiter(thisArg, _arguments, P, generator) {
+        function adopt(value) {
             return value instanceof P ? value : new P(function (resolve) {
                 resolve(value);
             });
         }
 
         return new (P || (P = Promise))(function (resolve, reject) {
-            function fulfilled (value) {
-                try { step(generator.next(value)); } catch (e) { reject(e); }
+            function fulfilled(value) {
+                try {
+                    step(generator.next(value));
+                } catch (e) {
+                    reject(e);
+                }
             }
 
-            function rejected (value) {
-                try { step(generator['throw'](value)); } catch (e) { reject(e); }
+            function rejected(value) {
+                try {
+                    step(generator['throw'](value));
+                } catch (e) {
+                    reject(e);
+                }
             }
 
-            function step (result) {
+            function step(result) {
                 result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
             }
 
@@ -924,7 +932,7 @@
         });
     }
 
-    function __generator (thisArg, body) {
+    function __generator(thisArg, body) {
         var _ = {
             label: 0, sent: function () {
                 if (t[0] & 1) throw t[1];
@@ -939,13 +947,13 @@
             return this;
         }), g;
 
-        function verb (n) {
+        function verb(n) {
             return function (v) {
                 return step([n, v]);
             };
         }
 
-        function step (op) {
+        function step(op) {
             if (f) throw new TypeError('Generator is already executing.');
             while (g && (g = 0, op[0] && (_ = 0)), _) try {
                 if (f = 1, y && (t = op[0] & 2 ? y['return'] : op[0] ? y['throw'] || ((t = y['return']) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
@@ -957,7 +965,7 @@
                         break;
                     case 4:
                         _.label++;
-                        return { value: op[1], done: false };
+                        return {value: op[1], done: false};
                     case 5:
                         _.label++;
                         y = op[1];
@@ -994,9 +1002,11 @@
             } catch (e) {
                 op = [6, e];
                 y = 0;
-            } finally { f = t = 0; }
+            } finally {
+                f = t = 0;
+            }
             if (op[0] & 5) throw op[1];
-            return { value: op[0] ? op[1] : void 0, done: true };
+            return {value: op[0] ? op[1] : void 0, done: true};
         }
     }
 
@@ -1016,45 +1026,49 @@
         o[k2] = m[k];
     });
 
-    function __exportStar (m, o) {
+    function __exportStar(m, o) {
         for (var p in m) if (p !== 'default' && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
     }
 
-    function __values (o) {
+    function __values(o) {
         var s = typeof Symbol === 'function' && Symbol.iterator, m = s && o[s], i = 0;
         if (m) return m.call(o);
         if (o && typeof o.length === 'number') return {
             next: function () {
                 if (o && i >= o.length) o = void 0;
-                return { value: o && o[i++], done: !o };
+                return {value: o && o[i++], done: !o};
             }
         };
         throw new TypeError(s ? 'Object is not iterable.' : 'Symbol.iterator is not defined.');
     }
 
-    function __read (o, n) {
+    function __read(o, n) {
         var m = typeof Symbol === 'function' && o[Symbol.iterator];
         if (!m) return o;
         var i = m.call(o), r, ar = [], e;
         try {
             while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-        } catch (error) { e = { error: error }; } finally {
+        } catch (error) {
+            e = {error: error};
+        } finally {
             try {
                 if (r && !r.done && (m = i['return'])) m.call(i);
-            } finally { if (e) throw e.error; }
+            } finally {
+                if (e) throw e.error;
+            }
         }
         return ar;
     }
 
     /** @deprecated */
-    function __spread () {
+    function __spread() {
         for (var ar = [], i = 0; i < arguments.length; i++)
             ar = ar.concat(__read(arguments[i]));
         return ar;
     }
 
     /** @deprecated */
-    function __spreadArrays () {
+    function __spreadArrays() {
         for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
         for (var r = Array(s), k = 0, i = 0; i < il; i++)
             for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -1062,7 +1076,7 @@
         return r;
     }
 
-    function __spreadArray (to, from, pack) {
+    function __spreadArray(to, from, pack) {
         if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
             if (ar || !(i in from)) {
                 if (!ar) ar = Array.prototype.slice.call(from, 0, i);
@@ -1072,18 +1086,18 @@
         return to.concat(ar || Array.prototype.slice.call(from));
     }
 
-    function __await (v) {
+    function __await(v) {
         return this instanceof __await ? (this.v = v, this) : new __await(v);
     }
 
-    function __asyncGenerator (thisArg, _arguments, generator) {
+    function __asyncGenerator(thisArg, _arguments, generator) {
         if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
         var g = generator.apply(thisArg, _arguments || []), i, q = [];
         return i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
             return this;
         }, i;
 
-        function verb (n) {
+        function verb(n) {
             if (g[n]) i[n] = function (v) {
                 return new Promise(function (a, b) {
                     q.push([n, v, a, b]) > 1 || resume(n, v);
@@ -1091,28 +1105,32 @@
             };
         }
 
-        function resume (n, v) {
-            try { step(g[n](v)); } catch (e) { settle(q[0][3], e); }
+        function resume(n, v) {
+            try {
+                step(g[n](v));
+            } catch (e) {
+                settle(q[0][3], e);
+            }
         }
 
-        function step (r) {
+        function step(r) {
             r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
         }
 
-        function fulfill (value) {
+        function fulfill(value) {
             resume('next', value);
         }
 
-        function reject (value) {
+        function reject(value) {
             resume('throw', value);
         }
 
-        function settle (f, v) {
+        function settle(f, v) {
             if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]);
         }
     }
 
-    function __asyncDelegator (o) {
+    function __asyncDelegator(o) {
         var i, p;
         return i = {}, verb('next'), verb('throw', function (e) {
             throw e;
@@ -1120,21 +1138,21 @@
             return this;
         }, i;
 
-        function verb (n, f) {
+        function verb(n, f) {
             i[n] = o[n] ? function (v) {
-                return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
+                return (p = !p) ? {value: __await(o[n](v)), done: false} : f ? f(v) : v;
             } : f;
         }
     }
 
-    function __asyncValues (o) {
+    function __asyncValues(o) {
         if (!Symbol.asyncIterator) throw new TypeError('Symbol.asyncIterator is not defined.');
         var m = o[Symbol.asyncIterator], i;
         return m ? m.call(o) : (o = typeof __values === 'function' ? __values(o) : o[Symbol.iterator](), i = {}, verb('next'), verb('throw'), verb('return'), i[Symbol.asyncIterator] = function () {
             return this;
         }, i);
 
-        function verb (n) {
+        function verb(n) {
             i[n] = o[n] && function (v) {
                 return new Promise(function (resolve, reject) {
                     v = o[n](v), settle(resolve, reject, v.done, v.value);
@@ -1142,25 +1160,29 @@
             };
         }
 
-        function settle (resolve, reject, d, v) {
+        function settle(resolve, reject, d, v) {
             Promise.resolve(v).then(function (v) {
-                resolve({ value: v, done: d });
+                resolve({value: v, done: d});
             }, reject);
         }
     }
 
-    function __makeTemplateObject (cooked, raw) {
-        if (Object.defineProperty) { Object.defineProperty(cooked, 'raw', { value: raw }); } else { cooked.raw = raw; }
+    function __makeTemplateObject(cooked, raw) {
+        if (Object.defineProperty) {
+            Object.defineProperty(cooked, 'raw', {value: raw});
+        } else {
+            cooked.raw = raw;
+        }
         return cooked;
     };
 
     var __setModuleDefault = Object.create ? (function (o, v) {
-        Object.defineProperty(o, 'default', { enumerable: true, value: v });
+        Object.defineProperty(o, 'default', {enumerable: true, value: v});
     }) : function (o, v) {
         o['default'] = v;
     };
 
-    function __importStar (mod) {
+    function __importStar(mod) {
         if (mod && mod.__esModule) return mod;
         var result = {};
         if (mod != null) for (var k in mod) if (k !== 'default' && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
@@ -1168,29 +1190,29 @@
         return result;
     }
 
-    function __importDefault (mod) {
-        return (mod && mod.__esModule) ? mod : { default: mod };
+    function __importDefault(mod) {
+        return (mod && mod.__esModule) ? mod : {default: mod};
     }
 
-    function __classPrivateFieldGet (receiver, state, kind, f) {
+    function __classPrivateFieldGet(receiver, state, kind, f) {
         if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a getter');
         if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot read private member from an object whose class did not declare it');
         return kind === 'm' ? f : kind === 'a' ? f.call(receiver) : f ? f.value : state.get(receiver);
     }
 
-    function __classPrivateFieldSet (receiver, state, value, kind, f) {
+    function __classPrivateFieldSet(receiver, state, value, kind, f) {
         if (kind === 'm') throw new TypeError('Private method is not writable');
         if (kind === 'a' && !f) throw new TypeError('Private accessor was defined without a setter');
         if (typeof state === 'function' ? receiver !== state || !f : !state.has(receiver)) throw new TypeError('Cannot write private member to an object whose class did not declare it');
         return (kind === 'a' ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
     }
 
-    function __classPrivateFieldIn (state, receiver) {
+    function __classPrivateFieldIn(state, receiver) {
         if (receiver === null || (typeof receiver !== 'object' && typeof receiver !== 'function')) throw new TypeError('Cannot use \'in\' operator on non-object');
         return typeof state === 'function' ? receiver === state : state.has(receiver);
     }
 
-    function __addDisposableResource (env, value, async) {
+    function __addDisposableResource(env, value, async) {
         if (value !== null && value !== void 0) {
             if (typeof value !== 'object') throw new TypeError('Object expected.');
             var dispose;
@@ -1203,9 +1225,9 @@
                 dispose = value[Symbol.dispose];
             }
             if (typeof dispose !== 'function') throw new TypeError('Object not disposable.');
-            env.stack.push({ value: value, dispose: dispose, async: async });
+            env.stack.push({value: value, dispose: dispose, async: async});
         } else if (async) {
-            env.stack.push({ async: true });
+            env.stack.push({async: true});
         }
         return value;
     }
@@ -1215,13 +1237,13 @@
         return e.name = 'SuppressedError', e.error = error, e.suppressed = suppressed, e;
     };
 
-    function __disposeResources (env) {
-        function fail (e) {
+    function __disposeResources(env) {
+        function fail(e) {
             env.error = env.hasError ? new _SuppressedError(e, env.error, 'An error was suppressed during disposal.') : e;
             env.hasError = true;
         }
 
-        function next () {
+        function next() {
             while (env.stack.length) {
                 var rec = env.stack.pop();
                 try {
@@ -1308,7 +1330,7 @@
     /**
      * Localized lower case.
      */
-    function localeLowerCase (str, locale) {
+    function localeLowerCase(str, locale) {
         var lang = SUPPORTED_LOCALE[locale.toLowerCase()];
         if (lang)
             return lowerCase(str.replace(lang.regexp, function (m) {
@@ -1320,7 +1342,7 @@
     /**
      * Lower case as a function.
      */
-    function lowerCase (str) {
+    function lowerCase(str) {
         return str.toLowerCase();
     }
 
@@ -1334,8 +1356,10 @@
     /**
      * Normalize the string into something other libraries can manipulate easier.
      */
-    function noCase (input, options) {
-        if (options === void 0) { options = {}; }
+    function noCase(input, options) {
+        if (options === void 0) {
+            options = {};
+        }
         var _a = options.splitRegexp, splitRegexp = _a === void 0 ? DEFAULT_SPLIT_REGEXP : _a, _b = options.stripRegexp,
             stripRegexp = _b === void 0 ? DEFAULT_STRIP_REGEXP : _b, _c = options.transform,
             transform = _c === void 0 ? lowerCase : _c, _d = options.delimiter, delimiter = _d === void 0 ? ' ' : _d;
@@ -1354,7 +1378,7 @@
     /**
      * Replace `re` in the input string with the replacement value.
      */
-    function replace (input, re, value) {
+    function replace(input, re, value) {
         if (re instanceof RegExp)
             return input.replace(re, value);
         return re.reduce(function (input, re) {
@@ -1364,7 +1388,7 @@
 
     ;// CONCATENATED MODULE: ./node_modules/pascal-case/dist.es2015/index.js
 
-    function pascalCaseTransform (input, index) {
+    function pascalCaseTransform(input, index) {
         var firstChar = input.charAt(0);
         var lowerChars = input.substr(1).toLowerCase();
         if (index > 0 && firstChar >= '0' && firstChar <= '9') {
@@ -1373,32 +1397,36 @@
         return '' + firstChar.toUpperCase() + lowerChars;
     }
 
-    function dist_es2015_pascalCaseTransformMerge (input) {
+    function dist_es2015_pascalCaseTransformMerge(input) {
         return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
     }
 
-    function pascalCase (input, options) {
-        if (options === void 0) { options = {}; }
-        return noCase(input, __assign({ delimiter: '', transform: pascalCaseTransform }, options));
+    function pascalCase(input, options) {
+        if (options === void 0) {
+            options = {};
+        }
+        return noCase(input, __assign({delimiter: '', transform: pascalCaseTransform}, options));
     }
 
     ;// CONCATENATED MODULE: ./node_modules/camel-case/dist.es2015/index.js
 
-    function camelCaseTransform (input, index) {
+    function camelCaseTransform(input, index) {
         if (index === 0)
             return input.toLowerCase();
         return pascalCaseTransform(input, index);
     }
 
-    function camelCaseTransformMerge (input, index) {
+    function camelCaseTransformMerge(input, index) {
         if (index === 0)
             return input.toLowerCase();
         return pascalCaseTransformMerge(input);
     }
 
-    function camelCase (input, options) {
-        if (options === void 0) { options = {}; }
-        return pascalCase(input, __assign({ transform: camelCaseTransform }, options));
+    function camelCase(input, options) {
+        if (options === void 0) {
+            options = {};
+        }
+        return pascalCase(input, __assign({transform: camelCaseTransform}, options));
     }
 
     ;// CONCATENATED MODULE: ./node_modules/@wordpress/block-directory/build-module/store/resolvers.js
@@ -1429,7 +1457,8 @@
             });
             const blocks = results.map(result => Object.fromEntries(Object.entries(result).map(([key, value]) => [camelCase(key), value])));
             dispatch(receiveDownloadableBlocks(blocks, filterValue));
-        } catch {}
+        } catch {
+        }
     };
 
     ;// CONCATENATED MODULE: ./node_modules/@wordpress/block-directory/build-module/store/index.js
@@ -1481,7 +1510,7 @@
      */
 
 
-    function AutoBlockUninstaller () {
+    function AutoBlockUninstaller() {
         const {
             uninstallBlockType
         } = (0, external_wp_data_namespaceObject.useDispatch)(store);
@@ -1529,11 +1558,11 @@
      * @return {JSX.Element}  Icon component
      */
 
-    function Icon ({
-                       icon,
-                       size = 24,
-                       ...props
-                   }) {
+    function Icon({
+                      icon,
+                      size = 24,
+                      ...props
+                  }) {
         return (0, external_wp_element_namespaceObject.cloneElement)(icon, {
             width: size,
             height: size,
@@ -1601,9 +1630,9 @@
 
 
 
-    function Stars ({
-                        rating
-                    }) {
+    function Stars({
+                       rating
+                   }) {
         const stars = Math.round(rating / 0.5) * 0.5;
         const fullStarCount = Math.floor(rating);
         const halfStarCount = Math.ceil(rating - fullStarCount);
@@ -1662,9 +1691,9 @@
      */
 
 
-    function DownloadableBlockIcon ({
-                                        icon
-                                    }) {
+    function DownloadableBlockIcon({
+                                       icon
+                                   }) {
         const className = 'block-directory-downloadable-block-icon';
         return icon.match(/\.(jpeg|jpg|gif|png|svg)(?:\?.*)?$/) !== null ? (0, external_wp_element_namespaceObject.createElement)('img', {
             className: className,
@@ -1724,15 +1753,15 @@
 
     // Return the appropriate block item label, given the block data and status.
 
-    function getDownloadableBlockLabel ({
-                                            title,
-                                            rating,
-                                            ratingCount
-                                        }, {
-                                            hasNotice,
-                                            isInstalled,
-                                            isInstalling
-                                        }) {
+    function getDownloadableBlockLabel({
+                                           title,
+                                           rating,
+                                           ratingCount
+                                       }, {
+                                           hasNotice,
+                                           isInstalled,
+                                           isInstalling
+                                       }) {
         const stars = Math.round(rating / 0.5) * 0.5;
 
         if (!isInstalled && hasNotice) {
@@ -1760,11 +1789,11 @@
             (0, external_wp_i18n_namespaceObject._n)('Install %1$s. %2$s stars with %3$s review.', 'Install %1$s. %2$s stars with %3$s reviews.', ratingCount), (0, external_wp_htmlEntities_namespaceObject.decodeEntities)(title), stars, ratingCount);
     }
 
-    function DownloadableBlockListItem ({
-                                            composite,
-                                            item,
-                                            onClick
-                                        }) {
+    function DownloadableBlockListItem({
+                                           composite,
+                                           item,
+                                           onClick
+                                       }) {
         const {
             author,
             description,
@@ -1863,11 +1892,11 @@
     const noop = () => {
     };
 
-    function DownloadableBlocksList ({
-                                         items,
-                                         onHover = noop,
-                                         onSelect
-                                     }) {
+    function DownloadableBlocksList({
+                                        items,
+                                        onHover = noop,
+                                        onSelect
+                                    }) {
         const composite = (0, external_wp_components_namespaceObject.__unstableUseCompositeState)();
         const {
             installBlockType
@@ -1922,11 +1951,11 @@
 
 
 
-    function DownloadableBlocksInserterPanel ({
-                                                  children,
-                                                  downloadableItems,
-                                                  hasLocalBlocks
-                                              }) {
+    function DownloadableBlocksInserterPanel({
+                                                 children,
+                                                 downloadableItems,
+                                                 hasLocalBlocks
+                                             }) {
         const count = downloadableItems.length;
         (0, external_wp_element_namespaceObject.useEffect)(() => {
             (0, external_wp_a11y_namespaceObject.speak)((0, external_wp_i18n_namespaceObject.sprintf)(
@@ -1975,7 +2004,7 @@
 
 
 
-    function DownloadableBlocksNoResults () {
+    function DownloadableBlocksNoResults() {
         return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)('div', {
             className: 'block-editor-inserter__no-results'
         }, (0, external_wp_element_namespaceObject.createElement)(icon, {
@@ -2007,15 +2036,15 @@
 
     const EMPTY_ARRAY = [];
 
-    function DownloadableBlocksPanel ({
-                                          downloadableItems,
-                                          onSelect,
-                                          onHover,
-                                          hasLocalBlocks,
-                                          hasPermission,
-                                          isLoading,
-                                          isTyping
-                                      }) {
+    function DownloadableBlocksPanel({
+                                         downloadableItems,
+                                         onSelect,
+                                         onHover,
+                                         hasLocalBlocks,
+                                         hasPermission,
+                                         isLoading,
+                                         isTyping
+                                     }) {
         if (typeof hasPermission === 'undefined' || isLoading || isTyping) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, hasPermission && !hasLocalBlocks && (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)('p', {
                 className: 'block-directory-downloadable-blocks-panel__no-local'
@@ -2058,7 +2087,7 @@
         } = select(external_wp_blockEditor_namespaceObject.store);
         const hasPermission = select(external_wp_coreData_namespaceObject.store).canUser('read', 'block-directory/search');
 
-        function getInstallableBlocks (term) {
+        function getInstallableBlocks(term) {
             const downloadableBlocks = getDownloadableBlocks(term);
             const installableBlocks = downloadableBlocks.filter(block => canInsertBlockType(block, rootClientId, true));
 
@@ -2095,7 +2124,7 @@
 
 
 
-    function InserterMenuDownloadableBlocksPanel () {
+    function InserterMenuDownloadableBlocksPanel() {
         const [debouncedFilterValue, setFilterValue] = (0, external_wp_element_namespaceObject.useState)('');
         const debouncedSetFilterValue = (0, external_wp_compose_namespaceObject.debounce)(setFilterValue, 400);
         return (0, external_wp_element_namespaceObject.createElement)(external_wp_blockEditor_namespaceObject.__unstableInserterMenuExtension, null, ({
@@ -2138,9 +2167,9 @@
      */
 
 
-    function CompactList ({
-                              items
-                          }) {
+    function CompactList({
+                             items
+                         }) {
         if (!items.length) {
             return null;
         }
@@ -2188,7 +2217,7 @@
             PluginPrePublishPanel
         } = (_window$wp$editPost = window?.wp?.editPost) !== null && _window$wp$editPost !== void 0 ? _window$wp$editPost : {};
 
-    function InstalledBlocksPrePublishPanel () {
+    function InstalledBlocksPrePublishPanel() {
         const newBlockTypes = (0, external_wp_data_namespaceObject.useSelect)(select => select(store).getNewBlockTypes(), []);
 
         if (!newBlockTypes.length) {
@@ -2218,11 +2247,11 @@
      */
 
 
-    function InstallButton ({
-                                attributes,
-                                block,
-                                clientId
-                            }) {
+    function InstallButton({
+                               attributes,
+                               block,
+                               clientId
+                           }) {
         const isInstallingBlock = (0, external_wp_data_namespaceObject.useSelect)(select => select(store).isInstalling(block.id), [block.id]);
         const {
             installBlockType
@@ -2365,7 +2394,7 @@
      */
 
     (0, external_wp_plugins_namespaceObject.registerPlugin)('block-directory', {
-        render () {
+        render() {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)(AutoBlockUninstaller, null), (0, external_wp_element_namespaceObject.createElement)(inserter_menu_downloadable_blocks_panel, null), (0, external_wp_element_namespaceObject.createElement)(InstalledBlocksPrePublishPanel, null));
         }
 

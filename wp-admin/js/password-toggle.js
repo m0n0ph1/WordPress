@@ -15,7 +15,7 @@
         toggle.addEventListener('click', togglePassword);
     });
 
-    function togglePassword () {
+    function togglePassword() {
         status = this.getAttribute('data-toggle');
         input = this.parentElement.children.namedItem('pwd');
         icon = this.getElementsByClassName('dashicons')[0];

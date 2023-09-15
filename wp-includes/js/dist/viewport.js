@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -95,7 +95,7 @@
      *
      * @return {Object} Updated state.
      */
-    function reducer (state = {}, action) {
+    function reducer(state = {}, action) {
         switch (action.type) {
             case 'SET_IS_MATCHING':
                 return action.values;
@@ -120,7 +120,7 @@
      *
      * @return {Object} Action object.
      */
-    function setIsMatching (values) {
+    function setIsMatching(values) {
         return {
             type: 'SET_IS_MATCHING',
             values
@@ -157,7 +157,7 @@
      *
      * @return {boolean} Whether viewport matches query.
      */
-    function isViewportMatch (state, query) {
+    function isViewportMatch(state, query) {
         // Default to `>=` if no operator is present.
         if (query.indexOf(' ') === -1) {
             query = '>= ' + query;

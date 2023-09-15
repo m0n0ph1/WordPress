@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -84,7 +84,7 @@
      *
      * @return {string} Escaped string.
      */
-    function __unstableEscapeGreaterThan (value) {
+    function __unstableEscapeGreaterThan(value) {
         return value.replace(/>/g, '&gt;');
     }
 
@@ -122,7 +122,7 @@
      * @return {string} Escaped string.
      */
 
-    function escapeAmpersand (value) {
+    function escapeAmpersand(value) {
         return value.replace(/&(?!([a-z0-9]+|#[0-9]+|#x[a-f0-9]+);)/gi, '&amp;');
     }
 
@@ -134,7 +134,7 @@
      * @return {string} Escaped string.
      */
 
-    function escapeQuotationMark (value) {
+    function escapeQuotationMark(value) {
         return value.replace(/"/g, '&quot;');
     }
 
@@ -146,7 +146,7 @@
      * @return {string} Escaped string.
      */
 
-    function escapeLessThan (value) {
+    function escapeLessThan(value) {
         return value.replace(/</g, '&lt;');
     }
 
@@ -171,7 +171,7 @@
      * @return {string} Escaped attribute value.
      */
 
-    function escapeAttribute (value) {
+    function escapeAttribute(value) {
         return __unstableEscapeGreaterThan(escapeQuotationMark(escapeAmpersand(value)));
     }
 
@@ -188,7 +188,7 @@
      * @return {string} Escaped HTML element value.
      */
 
-    function escapeHTML (value) {
+    function escapeHTML(value) {
         return escapeLessThan(escapeAmpersand(value));
     }
 
@@ -202,7 +202,7 @@
      * @return {string} Escaped HTML element value.
      */
 
-    function escapeEditableHTML (value) {
+    function escapeEditableHTML(value) {
         return escapeLessThan(value.replace(/&/g, '&amp;'));
     }
 
@@ -214,7 +214,7 @@
      * @return {boolean} Whether attribute is valid.
      */
 
-    function isValidAttributeName (name) {
+    function isValidAttributeName(name) {
         return !REGEXP_INVALID_ATTRIBUTE_NAME.test(name);
     }
 

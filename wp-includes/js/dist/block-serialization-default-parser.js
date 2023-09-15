@@ -18,7 +18,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -45,11 +45,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -167,7 +167,7 @@
      * @return {ParsedBlock} The block object.
      */
 
-    function Block (blockName, attrs, innerBlocks, innerHTML, innerContent) {
+    function Block(blockName, attrs, innerBlocks, innerHTML, innerContent) {
         return {
             blockName,
             attrs,
@@ -185,7 +185,7 @@
      */
 
 
-    function Freeform (innerHTML) {
+    function Freeform(innerHTML) {
         return Block(null, {}, [], innerHTML, [innerHTML]);
     }
 
@@ -201,7 +201,7 @@
      */
 
 
-    function Frame (block, tokenStart, tokenLength, prevOffset, leadingHtmlStart) {
+    function Frame(block, tokenStart, tokenLength, prevOffset, leadingHtmlStart) {
         return {
             block,
             tokenStart,
@@ -309,7 +309,7 @@
      * @return {boolean} Returns true when there is more tokens to parse.
      */
 
-    function proceed () {
+    function proceed() {
         const stackDepth = stack.length;
         const next = nextToken();
         const [tokenType, blockName, attrs, startOffset, tokenLength] = next; // We may have some HTML soup before the next block.
@@ -414,7 +414,7 @@
      */
 
 
-    function parseJSON (input) {
+    function parseJSON(input) {
         try {
             return JSON.parse(input);
         } catch (e) {
@@ -429,7 +429,7 @@
      */
 
 
-    function nextToken () {
+    function nextToken() {
         // Aye the magic
         // we're using a single RegExp to tokenize the block comment delimiters
         // we're also using a trick here because the only difference between a
@@ -477,7 +477,7 @@
      */
 
 
-    function addFreeform (rawLength) {
+    function addFreeform(rawLength) {
         const length = rawLength ? rawLength : document.length - offset;
 
         if (0 === length) {
@@ -497,7 +497,7 @@
      */
 
 
-    function addInnerBlock (block, tokenStart, tokenLength, lastOffset) {
+    function addInnerBlock(block, tokenStart, tokenLength, lastOffset) {
         const parent = stack[stack.length - 1];
         parent.block.innerBlocks.push(block);
         const html = document.substr(parent.prevOffset, tokenStart - parent.prevOffset);
@@ -518,7 +518,7 @@
      */
 
 
-    function addBlockFromStack (endOffset) {
+    function addBlockFromStack(endOffset) {
         const {
             block,
             leadingHtmlStart,

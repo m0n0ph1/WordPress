@@ -8,7 +8,7 @@
 
     var reducedMotionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     var isReducedMotion = reducedMotionMediaQuery.matches;
-    reducedMotionMediaQuery.addEventListener('change', function handleReducedMotionChange (event) {
+    reducedMotionMediaQuery.addEventListener('change', function handleReducedMotionChange(event) {
         isReducedMotion = event.matches;
     });
 
@@ -189,12 +189,12 @@
             notifications = _.values(collection._value);
 
             params = _.extend(
-                { sort: false },
+                {sort: false},
                 args
             );
 
             if (params.sort) {
-                errorTypePriorities = { error: 4, warning: 3, success: 2, info: 1 };
+                errorTypePriorities = {error: 4, warning: 3, success: 2, info: 1};
                 notifications.sort(function (a, b) {
                     var aPriority = 0, bPriority = 0;
                     if (!_.isUndefined(errorTypePriorities[a.type])) {
@@ -230,7 +230,7 @@
                 return;
             }
 
-            notifications = collection.get({ sort: true });
+            notifications = collection.get({sort: true});
             collection.container.toggle(0 !== notifications.length);
 
             // Short-circuit if there are no changes to the notifications.
@@ -312,7 +312,7 @@
          * @param {jQuery.Event} event - Event.
          * @return {void}
          */
-        constrainFocus: function constrainFocus (event) {
+        constrainFocus: function constrainFocus(event) {
             var collection = this, focusableElements;
 
             // Prevent keys from escaping.
@@ -376,7 +376,7 @@
         initialize: function (id, value, options) {
             var setting = this, params;
             params = _.extend(
-                { previewer: api.previewer },
+                {previewer: api.previewer},
                 setting.defaults,
                 options || {}
             );
@@ -480,12 +480,12 @@
 	 * revision for each newly-created initially-dirty setting so that it will
 	 * also be included in changeset update requests.
 	 */
-    api.bind('change', function incrementChangedSettingRevision (setting) {
+    api.bind('change', function incrementChangedSettingRevision(setting) {
         api._latestRevision += 1;
         api._latestSettingRevisions[setting.id] = api._latestRevision;
     });
     api.bind('ready', function () {
-        api.bind('add', function incrementCreatedSettingRevision (setting) {
+        api.bind('add', function incrementCreatedSettingRevision(setting) {
             if (setting._dirty) {
                 api._latestRevision += 1;
                 api._latestSettingRevisions[setting.id] = api._latestRevision;
@@ -505,7 +505,7 @@
      * @param {boolean} [options.unsaved=false] Whether only values not saved yet into a changeset will be returned (differential changes).
      * @return {Object} Dirty setting values.
      */
-    api.dirtyValues = function dirtyValues (options) {
+    api.dirtyValues = function dirtyValues(options) {
         var values = {};
         api.each(function (setting) {
             var settingRevision;
@@ -543,7 +543,7 @@
      * @param {string}  [args.date] - Date to update in the changeset. Optional.
      * @return {jQuery.Promise} Promise resolving with the response data.
      */
-    api.requestChangesetUpdate = function requestChangesetUpdate (changes, args) {
+    api.requestChangesetUpdate = function requestChangesetUpdate(changes, args) {
         var deferred, request, submittedChanges = {}, data, submittedArgs;
         deferred = new $.Deferred();
 
@@ -565,12 +565,12 @@
         }
 
         // Ensure all revised settings (changes pending save) are also included, but not if marked for deletion in changes.
-        _.each(api.dirtyValues({ unsaved: true }), function (dirtyValue, settingId) {
+        _.each(api.dirtyValues({unsaved: true}), function (dirtyValue, settingId) {
             if (!changes || null !== changes[settingId]) {
                 submittedChanges[settingId] = _.extend(
                     {},
                     submittedChanges[settingId] || {},
-                    { value: dirtyValue }
+                    {value: dirtyValue}
                 );
             }
         });
@@ -587,12 +587,12 @@
         // A status would cause a revision to be made, and for this wp.customize.previewer.save() should be used.
         // Status is also disallowed for revisions regardless.
         if (submittedArgs.status) {
-            return deferred.reject({ code: 'illegal_status_in_changeset_update' }).promise();
+            return deferred.reject({code: 'illegal_status_in_changeset_update'}).promise();
         }
 
         // Dates not beung allowed for revisions are is a technical limitation of post revisions.
         if (submittedArgs.date && submittedArgs.autosave) {
-            return deferred.reject({ code: 'illegal_autosave_with_date_gmt' }).promise();
+            return deferred.reject({code: 'illegal_autosave_with_date_gmt'}).promise();
         }
 
         // Make sure that publishing a changeset waits for all changeset update requests to complete.
@@ -602,7 +602,7 @@
         });
 
         // Ensure that if any plugins add data to save requests by extending query() that they get included here.
-        data = api.previewer.query({ excludeCustomizedSaved: true });
+        data = api.previewer.query({excludeCustomizedSaved: true});
         delete data.customized; // Being sent in customize_changeset_data instead.
         _.extend(data, {
             nonce: api.settings.nonce.save,
@@ -624,7 +624,7 @@
 
         request = wp.ajax.post('customize_save', data);
 
-        request.done(function requestChangesetUpdateDone (data) {
+        request.done(function requestChangesetUpdateDone(data) {
             var savedChangesetValues = {};
 
             // Ensure that all settings updated subsequently will be included in the next changeset update request.
@@ -647,9 +647,9 @@
                 });
             }
 
-            api.previewer.send('changeset-saved', _.extend({}, data, { saved_changeset_values: savedChangesetValues }));
+            api.previewer.send('changeset-saved', _.extend({}, data, {saved_changeset_values: savedChangesetValues}));
         });
-        request.fail(function requestChangesetUpdateFail (data) {
+        request.fail(function requestChangesetUpdateFail(data) {
             deferred.reject(data);
             api.trigger('changeset-error', data);
         });
@@ -823,7 +823,7 @@
      *                                         Settings button.
      * @return {Function} An idempotent function that cancels the reminder.
      */
-    api.utils.highlightButton = function highlightButton (button, options) {
+    api.utils.highlightButton = function highlightButton(button, options) {
         var animationClass = 'button-see-me',
             canceled = false,
             params;
@@ -836,7 +836,7 @@
             options
         );
 
-        function cancelReminder () {
+        function cancelReminder() {
             canceled = true;
         }
 
@@ -870,7 +870,7 @@
      *
      * @return {number} Current timestamp.
      */
-    api.utils.getCurrentTimestamp = function getCurrentTimestamp () {
+    api.utils.getCurrentTimestamp = function getCurrentTimestamp() {
         var currentDate, currentClientTimestamp, timestampDifferential;
         currentClientTimestamp = _.now();
         currentDate = new Date(api.settings.initialServerDate.replace(/-/g, '/'));
@@ -890,7 +890,7 @@
      * @param {string|number|Date} datetime - Date time or timestamp of the future date.
      * @return {number} remainingTime - Remaining time in milliseconds.
      */
-    api.utils.getRemainingTime = function getRemainingTime (datetime) {
+    api.utils.getRemainingTime = function getRemainingTime(datetime) {
         var millisecondsDivider = 1000, remainingTime, timestamp;
         if (datetime instanceof Date) {
             timestamp = datetime.getTime();
@@ -934,8 +934,8 @@
     })();
 
     Container = api.Class.extend(/** @lends wp.customize~Container.prototype */{
-        defaultActiveArguments: { duration: 'fast', completeCallback: $.noop },
-        defaultExpandedArguments: { duration: 'fast', completeCallback: $.noop },
+        defaultActiveArguments: {duration: 'fast', completeCallback: $.noop},
+        defaultExpandedArguments: {duration: 'fast', completeCallback: $.noop},
         containerType: 'container',
         defaults: {
             title: '',
@@ -1142,7 +1142,7 @@
                 // Collapse any expanded sections inside of this panel first before deactivating.
                 if (!active) {
                     _.each(construct.sections(), function (section) {
-                        section.collapse({ duration: 0 });
+                        section.collapse({duration: 0});
                     });
                 }
             }
@@ -1365,7 +1365,7 @@
             }
             if (template && container.container) {
                 return template(_.extend(
-                    { id: container.id },
+                    {id: container.id},
                     container.params
                 )).toString().trim();
             }
@@ -1637,7 +1637,7 @@
                 if (!args.allowMultiple) {
                     api.section.each(function (otherSection) {
                         if (otherSection !== section) {
-                            otherSection.collapse({ duration: args.duration });
+                            otherSection.collapse({duration: args.duration});
                         }
                     });
                 }
@@ -1921,7 +1921,7 @@
                 section.filtersHeight = $filterToggle.parent().next('.filter-drawer').height();
 
                 if (0 < $themeContainer.scrollTop()) {
-                    $themeContainer.animate({ scrollTop: 0 }, 400);
+                    $themeContainer.animate({scrollTop: 0}, 400);
 
                     if ($filterToggle.hasClass('open')) {
                         return;
@@ -1949,7 +1949,7 @@
                 api.section('wporg_themes').focus();
             });
 
-            function updateSelectedState () {
+            function updateSelectedState() {
                 var el = section.headerContainer.find('.customize-themes-section-title');
                 el.toggleClass('selected', section.expanded());
                 el.attr('aria-expanded', section.expanded() ? 'true' : 'false');
@@ -1994,7 +1994,7 @@
                 return;
             }
 
-            function expand () {
+            function expand() {
 
                 // Try to load controls if none are loaded yet.
                 if (0 === section.loaded) {
@@ -2023,7 +2023,7 @@
                                     section.filterSearch(searchTerm);
                                 }
                             }
-                            otherSection.collapse({ duration: args.duration });
+                            otherSection.collapse({duration: args.duration});
                         }
                     }
                 });
@@ -2593,12 +2593,12 @@
                 .fadeIn('fast')
                 .focus();
 
-            function disableSwitchButtons () {
+            function disableSwitchButtons() {
                 return !panel.canSwitchTheme(theme.id);
             }
 
             // Temporary special function since supplying SFTP credentials does not work yet. See #42184.
-            function disableInstallButtons () {
+            function disableInstallButtons() {
                 return disableSwitchButtons() || false === api.settings.theme._canInstall || true === api.settings.theme._filesystemCredentialsNeeded;
             }
 
@@ -2958,12 +2958,12 @@
                 // Collapse any sibling sections/panels.
                 api.section.each(function (section) {
                     if (panel.id !== section.panel()) {
-                        section.collapse({ duration: 0 });
+                        section.collapse({duration: 0});
                     }
                 });
                 api.panel.each(function (otherPanel) {
                     if (panel !== otherPanel) {
-                        otherPanel.collapse({ duration: 0 });
+                        otherPanel.collapse({duration: 0});
                     }
                 });
 
@@ -3039,7 +3039,7 @@
             }
             if (template && panel.headContainer) {
                 panel.contentContainer.html(template(_.extend(
-                    { id: panel.id },
+                    {id: panel.id},
                     panel.params
                 )));
             }
@@ -3076,7 +3076,7 @@
          * @param {string} [slug] - Theme slug.
          * @return {boolean} Whether the theme can be switched to.
          */
-        canSwitchTheme: function canSwitchTheme (slug) {
+        canSwitchTheme: function canSwitchTheme(slug) {
             if (slug && slug === api.settings.theme.stylesheet) {
                 return true;
             }
@@ -3104,7 +3104,7 @@
                 }));
             }
 
-            function toggleDisabledNotifications () {
+            function toggleDisabledNotifications() {
                 if (panel.canSwitchTheme()) {
                     panel.notifications.remove('theme_switch_unavailable');
                 } else {
@@ -3365,7 +3365,7 @@
 
                 api.state('processing').unbind(onceProcessingComplete);
 
-                request = api.requestChangesetUpdate({}, { autosave: true });
+                request = api.requestChangesetUpdate({}, {autosave: true});
                 request.done(function () {
                     deferred.resolve();
                     $(window).off('beforeunload.customize-confirm');
@@ -3476,7 +3476,7 @@
     });
 
     api.Control = api.Class.extend(/** @lends wp.customize.Control.prototype */{
-        defaultActiveArguments: { duration: 'fast', completeCallback: $.noop },
+        defaultActiveArguments: {duration: 'fast', completeCallback: $.noop},
 
         /**
          * Default params.
@@ -3835,7 +3835,7 @@
             control.notifications.bind('rendered', function () {
                 var notifications = control.notifications.get();
                 control.container.toggleClass('has-notifications', 0 !== notifications.length);
-                control.container.toggleClass('has-error', 0 !== _.where(notifications, { type: 'error' }).length);
+                control.container.toggleClass('has-error', 0 !== _.where(notifications, {type: 'error'}).length);
             });
 
             onSectionAssigned = function (newSectionId, oldSectionId) {
@@ -4257,7 +4257,7 @@
              *
              * @param {number|string} value Attachment
              */
-            function setAttachmentDataAndRenderContent (value) {
+            function setAttachmentDataAndRenderContent(value) {
                 var hasAttachmentData = $.Deferred();
 
                 if (control.extended(api.UploadControl)) {
@@ -4331,7 +4331,7 @@
                 states: [
                     new wp.media.controller.Library({
                         title: this.params.button_labels.frame_title,
-                        library: wp.media.query({ type: this.params.mime_type }),
+                        library: wp.media.query({type: this.params.mime_type}),
                         multiple: false,
                         date: false
                     })
@@ -4558,7 +4558,7 @@
                 states: [
                     new wp.media.controller.Library({
                         title: this.params.button_labels.frame_title,
-                        library: wp.media.query({ type: 'image' }),
+                        library: wp.media.query({type: 'image'}),
                         multiple: false,
                         date: false,
                         priority: 20,
@@ -4746,7 +4746,7 @@
                 states: [
                     new wp.media.controller.Library({
                         title: this.params.button_labels.frame_title,
-                        library: wp.media.query({ type: 'image' }),
+                        library: wp.media.query({type: 'image'}),
                         multiple: false,
                         date: false,
                         priority: 20,
@@ -5008,7 +5008,7 @@
                 states: [
                     new wp.media.controller.Library({
                         title: l10n.chooseImage,
-                        library: wp.media.query({ type: 'image' }),
+                        library: wp.media.query({type: 'image'}),
                         multiple: false,
                         date: false,
                         priority: 20,
@@ -5128,16 +5128,16 @@
         ready: function () {
             var control = this, panel = api.panel('themes');
 
-            function disableSwitchButtons () {
+            function disableSwitchButtons() {
                 return !panel.canSwitchTheme(control.params.theme.id);
             }
 
             // Temporary special function since supplying SFTP credentials does not work yet. See #42184.
-            function disableInstallButtons () {
+            function disableInstallButtons() {
                 return disableSwitchButtons() || false === api.settings.theme._canInstall || true === api.settings.theme._filesystemCredentialsNeeded;
             }
 
-            function updateButtons () {
+            function updateButtons() {
                 control.container.find('button.preview, button.preview-theme').toggleClass('disabled', disableSwitchButtons());
                 control.container.find('button.theme-install').toggleClass('disabled', disableInstallButtons());
             }
@@ -5461,7 +5461,7 @@
             });
 
             // Prevent collapsing section when hitting Esc to tab out of editor.
-            control.editor.codemirror.on('keydown', function onKeydown (codemirror, event) {
+            control.editor.codemirror.on('keydown', function onKeydown(codemirror, event) {
                 var escKeyCode = 27;
                 if (escKeyCode === event.keyCode) {
                     event.stopPropagation();
@@ -5477,7 +5477,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        onTabNext: function onTabNext () {
+        onTabNext: function onTabNext() {
             var control = this, controls, controlIndex, section;
             section = api.section(control.section());
             controls = section.controls();
@@ -5495,7 +5495,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        onTabPrevious: function onTabPrevious () {
+        onTabPrevious: function onTabPrevious() {
             var control = this, controls, controlIndex, section;
             section = api.section(control.section());
             controls = section.controls();
@@ -5514,7 +5514,7 @@
          * @param {Array} errorAnnotations - Error annotations.
          * @return {void}
          */
-        onUpdateErrorNotice: function onUpdateErrorNotice (errorAnnotations) {
+        onUpdateErrorNotice: function onUpdateErrorNotice(errorAnnotations) {
             var control = this, message;
             control.setting.notifications.remove('csslint_error');
 
@@ -5540,11 +5540,11 @@
         initPlainTextareaEditor: function () {
             var control = this, $textarea = control.container.find('textarea'), textarea = $textarea[0];
 
-            $textarea.on('blur', function onBlur () {
+            $textarea.on('blur', function onBlur() {
                 $textarea.data('next-tab-blurs', false);
             });
 
-            $textarea.on('keydown', function onKeydown (event) {
+            $textarea.on('keydown', function onKeydown(event) {
                 var selectionStart, selectionEnd, value, tabKeyCode = 9, escKeyCode = 27;
 
                 if (escKeyCode === event.keyCode) {
@@ -5597,7 +5597,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        ready: function ready () {
+        ready: function ready() {
             var control = this;
 
             control.inputElements = {};
@@ -5659,7 +5659,7 @@
          * @param {string} datetime - Date/Time string. Accepts Y-m-d[ H:i[:s]] format.
          * @return {Object|null} Returns object containing date components or null if parse error.
          */
-        parseDateTime: function parseDateTime (datetime) {
+        parseDateTime: function parseDateTime(datetime) {
             var control = this, matches, date, midDayHour = 12;
 
             if (datetime) {
@@ -5697,7 +5697,7 @@
          * @since 4.9.0
          * @return {boolean} If date input fields has error.
          */
-        validateInputs: function validateInputs () {
+        validateInputs: function validateInputs() {
             var control = this, components, validityInput;
 
             control.invalidDate = false;
@@ -5751,7 +5751,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        updateDaysForMonth: function updateDaysForMonth () {
+        updateDaysForMonth: function updateDaysForMonth() {
             var control = this, daysInMonth, year, month, day;
 
             month = parseInt(control.inputElements.month(), 10);
@@ -5774,7 +5774,7 @@
          * @since 4.9.0
          * @return {boolean} If setting updated.
          */
-        populateSetting: function populateSetting () {
+        populateSetting: function populateSetting() {
             var control = this, date;
 
             if (control.validateInputs() || !control.params.allowPastDate && !control.isFutureDate()) {
@@ -5792,7 +5792,7 @@
          * @since 4.9.0
          * @return {string} Date string.
          */
-        convertInputDateToString: function convertInputDateToString () {
+        convertInputDateToString: function convertInputDateToString() {
             var control = this, date = '', dateFormat, hourInTwentyFourHourFormat,
                 getElementValue, pad;
 
@@ -5835,7 +5835,7 @@
          * @since 4.9.0
          * @return {boolean} True if future date.
          */
-        isFutureDate: function isFutureDate () {
+        isFutureDate: function isFutureDate() {
             var control = this;
             return 0 < api.utils.getRemainingTime(control.convertInputDateToString());
         },
@@ -5848,7 +5848,7 @@
          * @param {string} meridian - Either 'am' or 'pm'.
          * @return {string} Hour in twenty four hour format.
          */
-        convertHourToTwentyFourHourFormat: function convertHour (hourInTwelveHourFormat, meridian) {
+        convertHourToTwentyFourHourFormat: function convertHour(hourInTwelveHourFormat, meridian) {
             var hourInTwentyFourHourFormat, hour, midDayHour = 12;
 
             hour = parseInt(hourInTwelveHourFormat, 10);
@@ -5873,7 +5873,7 @@
          * @since 4.9.0
          * @return {boolean} Whether the inputs were populated.
          */
-        populateDateInputs: function populateDateInputs () {
+        populateDateInputs: function populateDateInputs() {
             var control = this, parsed;
 
             parsed = control.parseDateTime(control.setting.get());
@@ -5917,7 +5917,7 @@
          * @param {boolean} notify Add or remove the notification.
          * @return {wp.customize.DateTimeControl}
          */
-        toggleFutureDateNotification: function toggleFutureDateNotification (notify) {
+        toggleFutureDateNotification: function toggleFutureDateNotification(notify) {
             var control = this, notificationCode, notification;
 
             notificationCode = 'not_future_date';
@@ -5955,7 +5955,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        ready: function ready () {
+        ready: function ready() {
             var control = this, element, component, node, url, input, button;
 
             _.bindAll(control, 'updatePreviewLink');
@@ -6022,7 +6022,7 @@
          * @since 4.9.0
          * @return {void}
          */
-        updatePreviewLink: function updatePreviewLink () {
+        updatePreviewLink: function updatePreviewLink() {
             var control = this, unsavedDirtyValues;
 
             unsavedDirtyValues = !api.state('saved').get() || '' === api.state('changesetStatus').get() || 'auto-draft' === api.state('changesetStatus').get();
@@ -6040,7 +6040,7 @@
          * @param {boolean} notify Add or remove notification.
          * @return {void}
          */
-        toggleSaveNotification: function toggleSaveNotification (notify) {
+        toggleSaveNotification: function toggleSaveNotification(notify) {
             var control = this, notificationCode, notification;
 
             notificationCode = 'changes_not_saved';
@@ -6124,7 +6124,7 @@
      * @example <caption>Listen for control being removed.</caption>
      * wp.customize.control.bind( 'removed', function( removedControl ) { ... } )
      */
-    api.control = new api.Values({ defaultConstructor: api.Control });
+    api.control = new api.Values({defaultConstructor: api.Control});
 
     /**
      * Callback for resolved sections.
@@ -6159,7 +6159,7 @@
      *
      * @see {@link wp.customize.control} for further examples of how to interact with {@link wp.customize.Values} instances.
      */
-    api.section = new api.Values({ defaultConstructor: api.Section });
+    api.section = new api.Values({defaultConstructor: api.Section});
 
     /**
      * Callback for resolved panels.
@@ -6194,7 +6194,7 @@
      *
      * @see {@link wp.customize.control} for further examples of how to interact with {@link wp.customize.Values} instances.
      */
-    api.panel = new api.Values({ defaultConstructor: api.Panel });
+    api.panel = new api.Values({defaultConstructor: api.Panel});
 
     /**
      * Callback for resolved notifications.
@@ -6265,13 +6265,13 @@
 
             this.container = params.container;
 
-            $.extend(params, { channel: api.PreviewFrame.uuid() });
+            $.extend(params, {channel: api.PreviewFrame.uuid()});
 
             api.Messenger.prototype.initialize.call(this, params, options);
 
             this.add('previewUrl', params.previewUrl);
 
-            this.query = $.extend(params.query || {}, { customize_messenger_channel: this.channel() });
+            this.query = $.extend(params.query || {}, {customize_messenger_channel: this.channel()});
 
             this.run(deferred);
         },
@@ -6424,7 +6424,7 @@
                     reject();
                 }
 
-                iframe = $('<iframe />', { 'src': self.previewUrl(), 'title': api.l10n.previewIframeTitle }).hide();
+                iframe = $('<iframe />', {'src': self.previewUrl(), 'title': api.l10n.previewIframeTitle}).hide();
                 iframe.appendTo(self.container);
                 iframe.on('load', function () {
                     self.triedLogin = true;
@@ -6717,7 +6717,7 @@
          *
          * @return {void}
          */
-        keepPreviewAlive: function keepPreviewAlive () {
+        keepPreviewAlive: function keepPreviewAlive() {
             var previewer = this, keepAliveTick, timeoutId, handleMissingKeepAlive, scheduleKeepAliveCheck;
 
             /**
@@ -6791,7 +6791,7 @@
             previewer.loading = new api.PreviewFrame({
                 url: previewer.url(),
                 previewUrl: previewer.previewUrl(),
-                query: previewer.query({ excludeCustomizedSaved: true }) || {},
+                query: previewer.query({excludeCustomizedSaved: true}) || {},
                 container: previewer.container
             });
 
@@ -6957,7 +6957,7 @@
      * @param {boolean} [args.focusInvalidControl=false]
      * @return {void}
      */
-    api._handleSettingValidities = function handleSettingValidities (args) {
+    api._handleSettingValidities = function handleSettingValidities(args) {
         var invalidSettingControls, invalidSettings = [], wasFocused = false;
 
         // Find the controls that correspond to each invalid setting.
@@ -6969,7 +6969,7 @@
                 if (_.isObject(validity)) {
                     _.each(validity, function (params, code) {
                         var notification, existingNotification, needsReplacement = false;
-                        notification = new api.Notification(code, _.extend({ fromServer: true }, params));
+                        notification = new api.Notification(code, _.extend({fromServer: true}, params));
 
                         // Remove existing notification if already exists for code but differs in parameters.
                         existingNotification = setting.notifications(notification.code);
@@ -7030,7 +7030,7 @@
      * @param {string[]} settingIds Setting IDs.
      * @return {Object<string, wp.customize.Control>} Mapping setting ids to arrays of controls.
      */
-    api.findControlsForSettings = function findControlsForSettings (settingIds) {
+    api.findControlsForSettings = function findControlsForSettings(settingIds) {
         var controls = {}, settingControls;
         _.each(_.unique(settingIds), function (settingId) {
             var setting = api(settingId);
@@ -7251,7 +7251,7 @@
             updateButtonsState();
             section.active.bind(updateButtonsState);
 
-            function highlightScheduleButton () {
+            function highlightScheduleButton() {
                 if (!cancelScheduleButtonReminder) {
                     cancelScheduleButtonReminder = api.utils.highlightButton(btnWrapper, {
                         delay: 1000,
@@ -7266,7 +7266,7 @@
                 }
             }
 
-            function cancelHighlightScheduleButton () {
+            function cancelHighlightScheduleButton() {
                 if (cancelScheduleButtonReminder) {
                     cancelScheduleButtonReminder();
                     cancelScheduleButtonReminder = null;
@@ -7508,7 +7508,7 @@
 
                 api.state('saving').set(true);
 
-                function captureSettingModifiedDuringSave (setting) {
+                function captureSettingModifiedDuringSave(setting) {
                     modifiedWhileSaving[setting.id] = true;
                 }
 
@@ -7563,7 +7563,7 @@
                         }
 
                         deferred.rejectWith(previewer, [
-                            { setting_invalidities: settingInvalidities }
+                            {setting_invalidities: settingInvalidities}
                         ]);
                         api.state('saving').set(false);
                         return deferred.promise();
@@ -7573,7 +7573,7 @@
 					 * Note that excludeCustomizedSaved is intentionally false so that the entire
 					 * set of customized data will be included if bypassed changeset update.
 					 */
-                    query = $.extend(previewer.query({ excludeCustomizedSaved: false }), {
+                    query = $.extend(previewer.query({excludeCustomizedSaved: false}), {
                         nonce: previewer.nonce.save,
                         customize_changeset_status: changesetStatus
                     });
@@ -7758,7 +7758,7 @@
              *
              * @return {jQuery.promise} Promise.
              */
-            trash: function trash () {
+            trash: function trash() {
                 var request, success, fail;
 
                 api.state('trashing').set(true);
@@ -7844,7 +7844,7 @@
         });
 
         // Ensure preview nonce is included with every customized request, to allow post data to be read.
-        $.ajaxPrefilter(function injectPreviewNonce (options) {
+        $.ajaxPrefilter(function injectPreviewNonce(options) {
             if (!/wp_customize=on/.test(options.data)) {
                 return;
             }
@@ -7879,7 +7879,7 @@
         $.each(api.settings.panels, function (id, data) {
             var Constructor = api.panelConstructor[data.type] || api.Panel, options;
             // Inclusion of params alias is for back-compat for custom panels that expect to augment this property.
-            options = _.extend({ params: data }, data);
+            options = _.extend({params: data}, data);
             api.panel.add(new Constructor(id, options));
         });
 
@@ -7887,7 +7887,7 @@
         $.each(api.settings.sections, function (id, data) {
             var Constructor = api.sectionConstructor[data.type] || api.Section, options;
             // Inclusion of params alias is for back-compat for custom sections that expect to augment this property.
-            options = _.extend({ params: data }, data);
+            options = _.extend({params: data}, data);
             api.section.add(new Constructor(id, options));
         });
 
@@ -7895,7 +7895,7 @@
         $.each(api.settings.controls, function (id, data) {
             var Constructor = api.controlConstructor[data.type] || api.Control, options;
             // Inclusion of params alias is for back-compat for custom controls that expect to augment this property.
-            options = _.extend({ params: data }, data);
+            options = _.extend({params: data}, data);
             api.control.add(new Constructor(id, options));
         });
 
@@ -7930,7 +7930,7 @@
         });
 
         // Set up global notifications area.
-        api.bind('ready', function setUpGlobalNotificationsArea () {
+        api.bind('ready', function setUpGlobalNotificationsArea() {
             var sidebar, containerHeight, containerInitialTop;
             api.notifications.container = $('#customize-notifications-area');
 
@@ -7939,7 +7939,7 @@
             }));
 
             sidebar = $('.wp-full-overlay-sidebar-content');
-            api.notifications.bind('rendered', function updateSidebarTop () {
+            api.notifications.bind('rendered', function updateSidebarTop() {
                 sidebar.css('top', '');
                 if (0 !== api.notifications.count()) {
                     containerHeight = api.notifications.container.outerHeight() + 1;
@@ -8134,7 +8134,7 @@
          *
          * @since 4.9.0
          */
-        (function checkAndDisplayLockNotice () {
+        (function checkAndDisplayLockNotice() {
 
             var LockedNotification = api.OverlayNotification.extend(/** @lends wp.customize~LockedNotification.prototype */{
 
@@ -8201,7 +8201,7 @@
                     li = api.OverlayNotification.prototype.render.call(data);
 
                     // Try to autosave the changeset now.
-                    api.requestChangesetUpdate({}, { autosave: true }).fail(function (response) {
+                    api.requestChangesetUpdate({}, {autosave: true}).fail(function (response) {
                         if (!response.autosaved) {
                             li.find('.notice-error').prop('hidden', false).text(response.message || api.l10n.unknownRequestFail);
                         }
@@ -8255,7 +8255,7 @@
              * @param {boolean} [args.allowOverride=false] - Whether override is allowed.
              * @return {void}
              */
-            function startLock (args) {
+            function startLock(args) {
                 if (args && args.lockUser) {
                     api.settings.changeset.lockUser = args.lockUser;
                 }
@@ -8268,7 +8268,7 @@
 
             // Show initial notification.
             if (api.settings.changeset.lockUser) {
-                startLock({ allowOverride: true });
+                startLock({allowOverride: true});
             }
 
             // Check for lock when sending heartbeat requests.
@@ -8314,7 +8314,7 @@
              *
              * @return {string} Customizer URL.
              */
-            function getAutosaveRestorationUrl () {
+            function getAutosaveRestorationUrl() {
                 var urlParser, queryParams;
                 urlParser = document.createElement('a');
                 urlParser.href = location.href;
@@ -8335,7 +8335,7 @@
              * @param {Array} params - Parameter names to remove.
              * @return {void}
              */
-            function stripParamsFromLocation (params) {
+            function stripParamsFromLocation(params) {
                 var urlParser = document.createElement('a'), queryParams, strippedParams = 0;
                 urlParser.href = location.href;
                 queryParams = api.utils.parseQueryString(urlParser.search.substr(1));
@@ -8361,7 +8361,7 @@
              * @param {string} [notification] - A notification to display.
              * @return {void}
              */
-            function addSiteEditorNotification (notification) {
+            function addSiteEditorNotification(notification) {
                 api.notifications.add(new api.Notification('site_editor_block_theme_notice', {
                     message: notification,
                     type: 'info',
@@ -8385,7 +8385,7 @@
              *
              * @return {void}
              */
-            function dismissAutosave () {
+            function dismissAutosave() {
                 if (autosaveDismissed) {
                     return;
                 }
@@ -8404,7 +8404,7 @@
              *
              * @return {void}
              */
-            function addAutosaveRestoreNotification () {
+            function addAutosaveRestoreNotification() {
                 var code = 'autosave_available', onStateChange;
 
                 // Since there is an autosave revision and the user hasn't loaded with autosaved, add notification to prompt to load autosaved version.
@@ -8501,9 +8501,9 @@
             overlay.toggleClass('collapsed', !paneVisible);
 
             if (!paneVisible) {
-                $('.collapse-sidebar').attr({ 'aria-expanded': 'false', 'aria-label': api.l10n.expandSidebar });
+                $('.collapse-sidebar').attr({'aria-expanded': 'false', 'aria-label': api.l10n.expandSidebar});
             } else {
-                $('.collapse-sidebar').attr({ 'aria-expanded': 'true', 'aria-label': api.l10n.collapseSidebar });
+                $('.collapse-sidebar').attr({'aria-expanded': 'true', 'aria-label': api.l10n.collapseSidebar});
             }
         });
 
@@ -8579,7 +8579,7 @@
         /*
 		 * Sticky header feature.
 		 */
-        (function initStickyHeaders () {
+        (function initStickyHeaders() {
             var parentContainer = $('.wp-full-overlay-sidebar-content'),
                 changeContainer, updateHeaderHeight, releaseStickyHeader, resetStickyHeader, positionStickyHeader,
                 activeHeader, lastScrollTop;
@@ -8853,7 +8853,7 @@
         (function () {
             var isInsideIframe = false;
 
-            function isCleanState () {
+            function isCleanState() {
                 var defaultChangesetStatus;
 
                 /*
@@ -8889,7 +8889,7 @@
                 isInsideIframe = true;
             });
 
-            function startPromptingBeforeUnload () {
+            function startPromptingBeforeUnload() {
                 api.unbind('change', startPromptingBeforeUnload);
                 api.state('selectedChangesetStatus').unbind(startPromptingBeforeUnload);
                 api.state('selectedChangesetDate').unbind(startPromptingBeforeUnload);
@@ -8909,7 +8909,7 @@
             api.state('selectedChangesetStatus').bind(startPromptingBeforeUnload);
             api.state('selectedChangesetDate').bind(startPromptingBeforeUnload);
 
-            function requestClose () {
+            function requestClose() {
                 var clearedToClose = $.Deferred(), dismissAutoSave = false, dismissLock = false;
 
                 if (isCleanState()) {
@@ -9198,7 +9198,7 @@
             });
 
             // Set up the section description behaviors.
-            sectionReady.done(function setupSectionDescription (section) {
+            sectionReady.done(function setupSectionDescription(section) {
                 var control = api.control('custom_css');
 
                 // Hide redundant label for visual users.
@@ -9250,7 +9250,7 @@
         });
 
         // Update the setting validities.
-        api.previewer.bind('selective-refresh-setting-validities', function handleSelectiveRefreshedSettingValidities (settingValidities) {
+        api.previewer.bind('selective-refresh-setting-validities', function handleSelectiveRefreshedSettingValidities(settingValidities) {
             api._handleSettingValidities({
                 settingValidities: settingValidities,
                 focusInvalidControl: false
@@ -9305,12 +9305,12 @@
         });
 
         // Autosave changeset.
-        function startAutosaving () {
+        function startAutosaving() {
             var timeoutId, updateChangesetWithReschedule, scheduleChangesetUpdate, updatePending = false;
 
             api.unbind('change', startAutosaving); // Ensure startAutosaving only fires once.
 
-            function onChangeSaved (isSaved) {
+            function onChangeSaved(isSaved) {
                 if (!isSaved && !api.settings.changeset.autosaved) {
                     api.settings.changeset.autosaved = true; // Once a change is made then autosaving kicks in.
                     api.previewer.send('autosaving');
@@ -9329,7 +9329,7 @@
             updateChangesetWithReschedule = function () {
                 if (!updatePending) {
                     updatePending = true;
-                    api.requestChangesetUpdate({}, { autosave: true }).always(function () {
+                    api.requestChangesetUpdate({}, {autosave: true}).always(function () {
                         updatePending = false;
                     });
                 }

@@ -60,7 +60,7 @@
             /******/
             if (!__webpack_require__.o(exports, name)) {
                 /******/
-                Object.defineProperty(exports, name, { enumerable: true, get: getter });
+                Object.defineProperty(exports, name, {enumerable: true, get: getter});
                 /******/
             }
             /******/
@@ -72,11 +72,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -98,7 +98,7 @@
             /******/
             __webpack_require__.r(ns);
             /******/
-            Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+            Object.defineProperty(ns, 'default', {enumerable: true, value: value});
             /******/
             if (mode & 2 && typeof value != 'string') for (var key in value) __webpack_require__.d(ns, key, function (key) {
                 return value[key];
@@ -113,10 +113,10 @@
         __webpack_require__.n = function (module) {
             /******/
             var getter = module && module.__esModule ?
-                /******/            function getDefault () {
+                /******/            function getDefault() {
                     return module['default'];
                 } :
-                /******/            function getModuleExports () {
+                /******/            function getModuleExports() {
                     return module;
                 };
             /******/
@@ -167,8 +167,8 @@
 
 // `Array.prototype.at` method
 // https://github.com/tc39/proposal-relative-indexing-method
-            $({ target: 'Array', proto: true }, {
-                at: function at (index) {
+            $({target: 'Array', proto: true}, {
+                at: function at(index) {
                     var O = toObject(this);
                     var len = lengthOfArrayLike(O);
                     var relativeIndex = toIntegerOrInfinity(index);
@@ -281,12 +281,13 @@
 
 // `Object.getOwnPropertyDescriptor` method
 // https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
-            exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor (O, P) {
+            exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
                 O = toIndexedObject(O);
                 P = toPropertyKey(P);
                 if (IE8_DOM_DEFINE) try {
                     return $getOwnPropertyDescriptor(O, P);
-                } catch (error) { /* empty */ }
+                } catch (error) { /* empty */
+                }
                 if (hasOwn(O, P)) return createPropertyDescriptor(!call(propertyIsEnumerableModule.f, O, P), O[P]);
             };
 
@@ -343,11 +344,11 @@
             var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Nashorn ~ JDK8 bug
-            var NASHORN_BUG = getOwnPropertyDescriptor && !$propertyIsEnumerable.call({ 1: 2 }, 1);
+            var NASHORN_BUG = getOwnPropertyDescriptor && !$propertyIsEnumerable.call({1: 2}, 1);
 
 // `Object.prototype.propertyIsEnumerable` method implementation
 // https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable
-            exports.f = NASHORN_BUG ? function propertyIsEnumerable (V) {
+            exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
                 var descriptor = getOwnPropertyDescriptor(this, V);
                 return !!descriptor && descriptor.enumerable;
             } : $propertyIsEnumerable;
@@ -785,7 +786,7 @@
 
             module.exports = function (key, value) {
                 try {
-                    defineProperty(global, key, { value: value, configurable: true, writable: true });
+                    defineProperty(global, key, {value: value, configurable: true, writable: true});
                 } catch (error) {
                     global[key] = value;
                 }
@@ -804,7 +805,7 @@
 
 // `HasOwnProperty` abstract operation
 // https://tc39.es/ecma262/#sec-hasownproperty
-            module.exports = Object.hasOwn || function hasOwn (it, key) {
+            module.exports = Object.hasOwn || function hasOwn(it, key) {
                 return hasOwnProperty(toObject(it), key);
             };
 
@@ -907,13 +908,14 @@
 
 // `Object.defineProperty` method
 // https://tc39.es/ecma262/#sec-object.defineproperty
-            exports.f = DESCRIPTORS ? $defineProperty : function defineProperty (O, P, Attributes) {
+            exports.f = DESCRIPTORS ? $defineProperty : function defineProperty(O, P, Attributes) {
                 anObject(O);
                 P = toPropertyKey(P);
                 anObject(Attributes);
                 if (IE8_DOM_DEFINE) try {
                     return $defineProperty(O, P, Attributes);
-                } catch (error) { /* empty */ }
+                } catch (error) { /* empty */
+                }
                 if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported');
                 if ('value' in Attributes) O[P] = Attributes.value;
                 return O;
@@ -984,7 +986,7 @@
                 if (simple) O[key] = value;
                 else createNonEnumerableProperty(O, key, value);
 // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-            })(Function.prototype, 'toString', function toString () {
+            })(Function.prototype, 'toString', function toString() {
                 return isCallable(this) && getInternalState(this).source || inspectSource(this);
             });
 
@@ -1132,7 +1134,7 @@
 
             var EXISTS = hasOwn(FunctionPrototype, 'name');
 // additional protection from minified / mangled / dropped function names
-            var PROPER = EXISTS && (function something () { /* empty */
+            var PROPER = EXISTS && (function something() { /* empty */
             }).name === 'something';
             var CONFIGURABLE = EXISTS && (!DESCRIPTORS || (DESCRIPTORS && getDescriptor(FunctionPrototype, 'name').configurable));
 
@@ -1176,7 +1178,7 @@
             var concat = uncurryThis([].concat);
 
 // all object keys, includes non-enumerable and symbols
-            module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys (it) {
+            module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
                 var keys = getOwnPropertyNamesModule.f(anObject(it));
                 var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
                 return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
@@ -1195,7 +1197,7 @@
 // `Object.getOwnPropertyNames` method
 // https://tc39.es/ecma262/#sec-object.getownpropertynames
 // eslint-disable-next-line es/no-object-getownpropertynames -- safe
-            exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames (O) {
+            exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
                 return internalObjectKeys(O, hiddenKeys);
             };
 
@@ -1466,7 +1468,8 @@
             var NullProtoObject = function () {
                 try {
                     activeXDocument = new ActiveXObject('htmlfile');
-                } catch (error) { /* ignore */ }
+                } catch (error) { /* ignore */
+                }
                 NullProtoObject = typeof document != 'undefined'
                     ? document.domain && activeXDocument
                         ? NullProtoObjectViaActiveX(activeXDocument) // old IE
@@ -1481,7 +1484,7 @@
 
 // `Object.create` method
 // https://tc39.es/ecma262/#sec-object.create
-            module.exports = Object.create || function create (O, Properties) {
+            module.exports = Object.create || function create(O, Properties) {
                 var result;
                 if (O !== null) {
                     EmptyConstructor[PROTOTYPE] = anObject(O);
@@ -1507,7 +1510,7 @@
 // `Object.defineProperties` method
 // https://tc39.es/ecma262/#sec-object.defineproperties
 // eslint-disable-next-line es/no-object-defineproperties -- safe
-            module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperties (O, Properties) {
+            module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperties(O, Properties) {
                 anObject(O);
                 var props = toIndexedObject(Properties);
                 var keys = objectKeys(Properties);
@@ -1529,7 +1532,7 @@
 // `Object.keys` method
 // https://tc39.es/ecma262/#sec-object.keys
 // eslint-disable-next-line es/no-object-keys -- safe
-            module.exports = Object.keys || function keys (O) {
+            module.exports = Object.keys || function keys(O) {
                 return internalObjectKeys(O, enumBugKeys);
             };
 
@@ -1552,7 +1555,7 @@
 
 // `Object.hasOwn` method
 // https://github.com/tc39/proposal-accessible-object-hasownproperty
-            $({ target: 'Object', stat: true }, {
+            $({target: 'Object', stat: true}, {
                 hasOwn: hasOwn
             });
 
@@ -1578,8 +1581,8 @@
 
 // `String.prototype.at` method
 // https://github.com/tc39/proposal-relative-indexing-method
-            $({ target: 'String', proto: true, forced: FORCED }, {
-                at: function at (index) {
+            $({target: 'String', proto: true, forced: FORCED}, {
+                at: function at(index) {
                     var S = toString(requireObjectCoercible(this));
                     var len = S.length;
                     var relativeIndex = toIntegerOrInfinity(index);
@@ -1626,7 +1629,8 @@
             var tryGet = function (it, key) {
                 try {
                     return it[key];
-                } catch (error) { /* empty */ }
+                } catch (error) { /* empty */
+                }
             };
 
 // getting tag from ES6+ `Object.prototype.toString`
@@ -1671,7 +1675,7 @@
 
 // `%TypedArray%.prototype.at` method
 // https://github.com/tc39/proposal-relative-indexing-method
-            exportTypedArrayMethod('at', function at (index) {
+            exportTypedArrayMethod('at', function at(index) {
                 var O = aTypedArray(this);
                 var len = lengthOfArrayLike(O);
                 var relativeIndex = toIntegerOrInfinity(index);
@@ -1737,7 +1741,7 @@
                 BigUint64Array: 8
             };
 
-            var isView = function isView (it) {
+            var isView = function isView(it) {
                 if (!isObject(it)) return false;
                 var klass = classof(it);
                 return klass === 'DataView'
@@ -1768,7 +1772,8 @@
                     var TypedArrayConstructor = global[ARRAY];
                     if (TypedArrayConstructor && hasOwn(TypedArrayConstructor.prototype, KEY)) try {
                         delete TypedArrayConstructor.prototype[KEY];
-                    } catch (error) { /* empty */ }
+                    } catch (error) { /* empty */
+                    }
                 }
                 if (!TypedArrayPrototype[KEY] || forced) {
                     redefine(TypedArrayPrototype, KEY, forced ? property
@@ -1784,13 +1789,15 @@
                         TypedArrayConstructor = global[ARRAY];
                         if (TypedArrayConstructor && hasOwn(TypedArrayConstructor, KEY)) try {
                             delete TypedArrayConstructor[KEY];
-                        } catch (error) { /* empty */ }
+                        } catch (error) { /* empty */
+                        }
                     }
                     if (!TypedArray[KEY] || forced) {
                         // V8 ~ Chrome 49-50 `%TypedArray%` methods are non-writable non-configurable
                         try {
                             return redefine(TypedArray, KEY, forced ? property : NATIVE_ARRAY_BUFFER_VIEWS && TypedArray[KEY] || property);
-                        } catch (error) { /* empty */ }
+                        } catch (error) { /* empty */
+                        }
                     } else return;
                 }
                 for (ARRAY in TypedArrayConstructorsList) {
@@ -1817,7 +1824,7 @@
 // WebKit bug - typed arrays constructors prototype is Object.prototype
             if (!NATIVE_ARRAY_BUFFER_VIEWS || !isCallable(TypedArray) || TypedArray === Function.prototype) {
                 // eslint-disable-next-line no-shadow -- safe
-                TypedArray = function TypedArray () {
+                TypedArray = function TypedArray() {
                     throw TypeError('Incorrect invocation');
                 };
                 if (NATIVE_ARRAY_BUFFER_VIEWS) for (NAME in TypedArrayConstructorsList) {
@@ -1907,7 +1914,7 @@
             var fails = __webpack_require__(6);
 
             module.exports = !fails(function () {
-                function F () { /* empty */
+                function F() { /* empty */
                 }
 
                 F.prototype.constructor = null;
@@ -1938,8 +1945,9 @@
                     setter = uncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
                     setter(test, []);
                     CORRECT_SETTER = test instanceof Array;
-                } catch (error) { /* empty */ }
-                return function setPrototypeOf (O, proto) {
+                } catch (error) { /* empty */
+                }
+                return function setPrototypeOf(O, proto) {
                     anObject(O);
                     aPossiblePrototype(proto);
                     if (CORRECT_SETTER) setter(O, proto);

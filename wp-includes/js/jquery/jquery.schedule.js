@@ -10,7 +10,7 @@
                 }, 'args': []
             };
 
-            function _isfn (fn) {
+            function _isfn(fn) {
                 return (!!fn && typeof fn != 'string' && typeof fn[0] == 'undefined' && RegExp('function', 'i').test(fn + ''));
             };var i = 0;
             var override = false;
@@ -116,7 +116,7 @@
             for (var i = 0; i < arguments.length; i++)
                 a.push(arguments[i]);
             return this.each(function () {
-                a[0] = { 'id': this, 'obj': this };
+                a[0] = {'id': this, 'obj': this};
                 return $.schedule.apply($, a);
             });
         }

@@ -563,9 +563,9 @@
                         return;
 
                     // If RTL, swap left/right arrows.
-                    arrows = { '38': 'up', '40': 'down', '37': 'left', '39': 'right' };
+                    arrows = {'38': 'up', '40': 'down', '37': 'left', '39': 'right'};
                     if ($('body').hasClass('rtl'))
-                        arrows = { '38': 'up', '40': 'down', '39': 'left', '37': 'right' };
+                        arrows = {'38': 'up', '40': 'down', '39': 'left', '37': 'right'};
 
                     switch (arrows[e.which]) {
                         case 'up':
@@ -771,7 +771,7 @@
                 }
             });
 
-            function updateSharedVars (ui) {
+            function updateSharedVars(ui) {
                 var depth;
 
                 prev = ui.placeholder.prev('.menu-item');
@@ -791,18 +791,18 @@
                     maxDepth = 0;
             }
 
-            function updateCurrentDepth (ui, depth) {
+            function updateCurrentDepth(ui, depth) {
                 ui.placeholder.updateDepthClass(depth, currentDepth);
                 currentDepth = depth;
             }
 
-            function initialMenuMaxDepth () {
+            function initialMenuMaxDepth() {
                 if (!body[0].className) return 0;
                 var match = body[0].className.match(/menu-max-depth-(\d+)/);
                 return match && match[1] ? parseInt(match[1], 10) : 0;
             }
 
-            function updateMenuMaxDepth (depthChange) {
+            function updateMenuMaxDepth(depthChange) {
                 var depth, newDepth = menuMaxDepth;
                 if (depthChange === 0) {
                     return;

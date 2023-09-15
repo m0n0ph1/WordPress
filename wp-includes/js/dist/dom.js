@@ -18,7 +18,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -37,7 +37,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -64,11 +64,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -162,7 +162,7 @@
      *
      * @return {string} CSS selector.
      */
-    function buildSelector (sequential) {
+    function buildSelector(sequential) {
         return [sequential ? '[tabindex]:not([tabindex^="-"])' : '[tabindex]', 'a[href]', 'button:not([disabled])', 'input:not([type="hidden"]):not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'iframe:not([tabindex^="-"])', 'object', 'embed', 'area[href]', '[contenteditable]:not([contenteditable=false])'].join(',');
     }
 
@@ -176,7 +176,7 @@
      */
 
 
-    function isVisible (element) {
+    function isVisible(element) {
         return element.offsetWidth > 0 || element.offsetHeight > 0 || element.getClientRects().length > 0;
     }
 
@@ -191,7 +191,7 @@
      */
 
 
-    function isValidFocusableArea (element) {
+    function isValidFocusableArea(element) {
         /** @type {HTMLMapElement | null} */
         const map = element.closest('map[name]');
 
@@ -221,7 +221,7 @@
      */
 
 
-    function find (context, {
+    function find(context, {
         sequential = false
     } = {}) {
         /* eslint-disable jsdoc/no-undefined-types */
@@ -267,7 +267,7 @@
      * @return {number} Tab index of element (default 0).
      */
 
-    function getTabIndex (element) {
+    function getTabIndex(element) {
         const tabIndex = element.getAttribute('tabindex');
         return tabIndex === null ? 0 : parseInt(tabIndex, 10);
     }
@@ -281,7 +281,7 @@
      */
 
 
-    function isTabbableIndex (element) {
+    function isTabbableIndex(element) {
         return getTabIndex(element) !== -1;
     }
 
@@ -296,10 +296,10 @@
      * @return {(acc: MaybeHTMLInputElement[], el: MaybeHTMLInputElement) => MaybeHTMLInputElement[]} Radio group collapse reducer.
      */
 
-    function createStatefulCollapseRadioGroup () {
+    function createStatefulCollapseRadioGroup() {
         /** @type {Record<string, MaybeHTMLInputElement>} */
         const CHOSEN_RADIO_BY_NAME = {};
-        return function collapseRadioGroup (
+        return function collapseRadioGroup(
             /** @type {MaybeHTMLInputElement[]} */
             result,
             /** @type {MaybeHTMLInputElement} */
@@ -348,7 +348,7 @@
      */
 
 
-    function mapElementToObjectTabbable (element, index) {
+    function mapElementToObjectTabbable(element, index) {
         return {
             element,
             index
@@ -365,7 +365,7 @@
      */
 
 
-    function mapObjectTabbableToElement (object) {
+    function mapObjectTabbableToElement(object) {
         return object.element;
     }
 
@@ -381,7 +381,7 @@
      */
 
 
-    function compareObjectTabbables (a, b) {
+    function compareObjectTabbables(a, b) {
         const aTabIndex = getTabIndex(a.element);
         const bTabIndex = getTabIndex(b.element);
 
@@ -401,7 +401,7 @@
      */
 
 
-    function filterTabbable (focusables) {
+    function filterTabbable(focusables) {
         return focusables.filter(isTabbableIndex).map(mapElementToObjectTabbable).sort(compareObjectTabbables).map(mapObjectTabbableToElement).reduce(createStatefulCollapseRadioGroup(), []);
     }
 
@@ -411,7 +411,7 @@
      */
 
 
-    function tabbable_find (context) {
+    function tabbable_find(context) {
         return filterTabbable(find(context));
     }
 
@@ -424,7 +424,7 @@
      * @return {Element|undefined} Preceding tabbable element.
      */
 
-    function findPrevious (element) {
+    function findPrevious(element) {
         return filterTabbable(find(element.ownerDocument.body)).reverse().find(focusable => {
             return (// eslint-disable-next-line no-bitwise
                 element.compareDocumentPosition(focusable) & element.DOCUMENT_POSITION_PRECEDING
@@ -441,7 +441,7 @@
      * @return {Element|undefined} Next tabbable element.
      */
 
-    function findNext (element) {
+    function findNext(element) {
         return filterTabbable(find(element.ownerDocument.body)).find(focusable => {
             return (// eslint-disable-next-line no-bitwise
                 element.compareDocumentPosition(focusable) & element.DOCUMENT_POSITION_FOLLOWING
@@ -450,8 +450,9 @@
     }
 
     ;// CONCATENATED MODULE: ./node_modules/@wordpress/dom/build-module/utils/assert-is-defined.js
-    function assertIsDefined (val, name) {
-        if (false) {}
+    function assertIsDefined(val, name) {
+        if (false) {
+        }
     }
 
     ;// CONCATENATED MODULE: ./node_modules/@wordpress/dom/build-module/dom/get-rectangle-from-range.js
@@ -468,7 +469,7 @@
      * @return {DOMRect?} The rectangle.
      */
 
-    function getRectangleFromRange (range) {
+    function getRectangleFromRange(range) {
         // For uncollapsed ranges, get the rectangle that bounds the contents of the
         // range; this a rectangle enclosing the union of the bounding rectangles
         // for all the elements in the range.
@@ -574,7 +575,7 @@
      * @return {DOMRect | null} The rectangle.
      */
 
-    function computeCaretRect (win) {
+    function computeCaretRect(win) {
         const selection = win.getSelection();
         assertIsDefined(selection, 'selection');
         const range = selection.rangeCount ? selection.getRangeAt(0) : null;
@@ -603,7 +604,7 @@
      * @return {boolean} True if there is selection, false if not.
      */
 
-    function documentHasTextSelection (doc) {
+    function documentHasTextSelection(doc) {
         assertIsDefined(doc.defaultView, 'doc.defaultView');
         const selection = doc.defaultView.getSelection();
         assertIsDefined(selection, 'selection');
@@ -618,7 +619,7 @@
      * @param {Node} node
      * @return {node is HTMLInputElement} Whether the node is an HTMLInputElement.
      */
-    function isHTMLInputElement (node) {
+    function isHTMLInputElement(node) {
         /* eslint-enable jsdoc/valid-types */
         return node?.nodeName === 'INPUT';
     }
@@ -640,7 +641,7 @@
      * @return {node is HTMLElement} True if the element is an text field, false if not.
      */
 
-    function isTextField (node) {
+    function isTextField(node) {
         /* eslint-enable jsdoc/valid-types */
         const nonTextInputs = ['button', 'checkbox', 'hidden', 'file', 'radio', 'image', 'range', 'reset', 'submit', 'number', 'email', 'time'];
         return isHTMLInputElement(node) && node.type && !nonTextInputs.includes(node.type) || node.nodeName === 'TEXTAREA' ||
@@ -671,7 +672,7 @@
      * @return {boolean} Whether the input/textareaa element has some "selection".
      */
 
-    function inputFieldHasUncollapsedSelection (element) {
+    function inputFieldHasUncollapsedSelection(element) {
         if (!isHTMLInputElement(element) && !isTextField(element)) {
             return false;
         } // Safari throws a type error when trying to get `selectionStart` and
@@ -713,7 +714,7 @@
      * @return {boolean} Whether there is any recognizable text selection in the document.
      */
 
-    function documentHasUncollapsedSelection (doc) {
+    function documentHasUncollapsedSelection(doc) {
         return documentHasTextSelection(doc) || !!doc.activeElement && inputFieldHasUncollapsedSelection(doc.activeElement);
     }
 
@@ -731,7 +732,7 @@
      * @return {boolean} True if there is selection, false if not.
      */
 
-    function documentHasSelection (doc) {
+    function documentHasSelection(doc) {
         return !!doc.activeElement && (isHTMLInputElement(doc.activeElement) || isTextField(doc.activeElement) || documentHasTextSelection(doc));
     }
 
@@ -747,7 +748,7 @@
      * @return {ReturnType<Window['getComputedStyle']>} The computed style for the element.
      */
 
-    function getComputedStyle (element) {
+    function getComputedStyle(element) {
         /* eslint-enable jsdoc/valid-types */
         assertIsDefined(element.ownerDocument.defaultView, 'element.ownerDocument.defaultView');
         return element.ownerDocument.defaultView.getComputedStyle(element);
@@ -768,7 +769,7 @@
      * @return {Element | undefined} Scrollable container node, if found.
      */
 
-    function getScrollContainer (node, direction = 'vertical') {
+    function getScrollContainer(node, direction = 'vertical') {
         if (!node) {
             return undefined;
         }
@@ -827,7 +828,7 @@
      * @return {Node | null} Offset parent.
      */
 
-    function getOffsetParent (node) {
+    function getOffsetParent(node) {
         // Cannot retrieve computed style or offset parent only anything other than
         // an element node, so find the closest element node.
         let closestElement;
@@ -864,7 +865,7 @@
      * @param {Element} element
      * @return {element is HTMLInputElement | HTMLTextAreaElement} Whether the element is an input or textarea
      */
-    function isInputOrTextArea (element) {
+    function isInputOrTextArea(element) {
         /* eslint-enable jsdoc/valid-types */
         return element.tagName === 'INPUT' || element.tagName === 'TEXTAREA';
     }
@@ -883,7 +884,7 @@
      * @return {boolean} True if entirely selected, false if not.
      */
 
-    function isEntirelySelected (element) {
+    function isEntirelySelected(element) {
         if (isInputOrTextArea(element)) {
             return element.selectionStart === 0 && element.value.length === element.selectionEnd;
         }
@@ -937,7 +938,7 @@
      * @return {boolean} True if query is a deep first/last child of container, false otherwise.
      */
 
-    function isDeepChild (query, container, propName) {
+    function isDeepChild(query, container, propName) {
         /** @type {HTMLElement | ChildNode | null} */
         let candidate = container;
 
@@ -966,7 +967,7 @@
      * @return {boolean} True if form element and false otherwise.
      */
 
-    function isFormElement (element) {
+    function isFormElement(element) {
         if (!element) {
             return false;
         }
@@ -991,7 +992,7 @@
      * @return {boolean} True if rtl, false if ltr.
      */
 
-    function isRTL (element) {
+    function isRTL(element) {
         return getComputedStyle(element).direction === 'rtl';
     }
 
@@ -1003,7 +1004,7 @@
      * @param {Range} range The range to check.
      * @return {number | undefined} Height of the range or undefined if the range has no client rectangles.
      */
-    function getRangeHeight (range) {
+    function getRangeHeight(range) {
         const rects = Array.from(range.getClientRects());
 
         if (!rects.length) {
@@ -1035,7 +1036,7 @@
      * @return {boolean} Whether the selection is forward.
      */
 
-    function isSelectionForward (selection) {
+    function isSelectionForward(selection) {
         const {
             anchorNode,
             focusNode,
@@ -1082,7 +1083,7 @@
      *
      * @return {Range | null} The best range for the given point.
      */
-    function caretRangeFromPoint (doc, x, y) {
+    function caretRangeFromPoint(doc, x, y) {
         if (doc.caretRangeFromPoint) {
             return doc.caretRangeFromPoint(x, y);
         }
@@ -1127,7 +1128,7 @@
      * @return {?Range} The best range for the given point.
      */
 
-    function hiddenCaretRangeFromPoint (doc, x, y, container) {
+    function hiddenCaretRangeFromPoint(doc, x, y, container) {
         const originalZIndex = container.style.zIndex;
         const originalPosition = container.style.position;
         const {
@@ -1162,7 +1163,7 @@
      * @return {boolean} True if at the edge, false if not.
      */
 
-    function isEdge (container, isReverse, onlyVertical = false) {
+    function isEdge(container, isReverse, onlyVertical = false) {
         if (isInputOrTextArea(container) && typeof container.selectionStart === 'number') {
             if (container.selectionStart !== container.selectionEnd) {
                 return false;
@@ -1270,7 +1271,7 @@
      * @return {boolean} True if at the horizontal edge, false if not.
      */
 
-    function isHorizontalEdge (container, isReverse) {
+    function isHorizontalEdge(container, isReverse) {
         return isEdge(container, isReverse);
     }
 
@@ -1296,7 +1297,7 @@
      * @return {node is HTMLInputElement} True if the node is number input.
      */
 
-    function isNumberInput (node) {
+    function isNumberInput(node) {
         external_wp_deprecated_default()('wp.dom.isNumberInput', {
             since: '6.1',
             version: '6.5'
@@ -1320,7 +1321,7 @@
      * @return {boolean} True if at the vertical edge, false if not.
      */
 
-    function isVerticalEdge (container, isReverse) {
+    function isVerticalEdge(container, isReverse) {
         return isEdge(container, isReverse, true);
     }
 
@@ -1339,7 +1340,7 @@
      * @return {Range|null} The range to place.
      */
 
-    function getRange (container, isReverse, x) {
+    function getRange(container, isReverse, x) {
         const {
             ownerDocument
         } = container; // In the case of RTL scripts, the horizontal edge is at the opposite side.
@@ -1371,7 +1372,7 @@
      */
 
 
-    function placeCaretAtEdge (container, isReverse, x) {
+    function placeCaretAtEdge(container, isReverse, x) {
         if (!container) {
             return;
         }
@@ -1436,7 +1437,7 @@
      * @param {boolean}     isReverse True for end, false for start.
      */
 
-    function placeCaretAtHorizontalEdge (container, isReverse) {
+    function placeCaretAtHorizontalEdge(container, isReverse) {
         return placeCaretAtEdge(container, isReverse, undefined);
     }
 
@@ -1453,7 +1454,7 @@
      * @param {DOMRect}     [rect]    The rectangle to position the caret with.
      */
 
-    function placeCaretAtVerticalEdge (container, isReverse, rect) {
+    function placeCaretAtVerticalEdge(container, isReverse, rect) {
         return placeCaretAtEdge(container, isReverse, rect?.left);
     }
 
@@ -1471,7 +1472,7 @@
      * @return {void}
      */
 
-    function insertAfter (newNode, referenceNode) {
+    function insertAfter(newNode, referenceNode) {
         assertIsDefined(referenceNode.parentNode, 'referenceNode.parentNode');
         referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     }
@@ -1488,7 +1489,7 @@
      * @return {void}
      */
 
-    function remove (node) {
+    function remove(node) {
         assertIsDefined(node.parentNode, 'node.parentNode');
         node.parentNode.removeChild(node);
     }
@@ -1506,7 +1507,7 @@
      * @return {void}
      */
 
-    function replace (processedNode, newNode) {
+    function replace(processedNode, newNode) {
         assertIsDefined(processedNode.parentNode, 'processedNode.parentNode');
         insertAfter(newNode, processedNode.parentNode);
         remove(processedNode);
@@ -1525,7 +1526,7 @@
      * @return {void}
      */
 
-    function unwrap (node) {
+    function unwrap(node) {
         const parent = node.parentNode;
         assertIsDefined(parent, 'node.parentNode');
 
@@ -1550,7 +1551,7 @@
      * @return {Element} The new node.
      */
 
-    function replaceTag (node, tagName) {
+    function replaceTag(node, tagName) {
         const newNode = node.ownerDocument.createElement(tagName);
 
         while (node.firstChild) {
@@ -1574,7 +1575,7 @@
      * @param {Element} referenceNode The node to wrap.
      */
 
-    function wrap (newNode, referenceNode) {
+    function wrap(newNode, referenceNode) {
         assertIsDefined(referenceNode.parentNode, 'referenceNode.parentNode');
         referenceNode.parentNode.insertBefore(newNode, referenceNode);
         newNode.appendChild(referenceNode);
@@ -1593,7 +1594,7 @@
      * @return {string} The sanitized HTML.
      */
 
-    function safeHTML (html) {
+    function safeHTML(html) {
         const {
             body
         } = document.implementation.createHTMLDocument('');
@@ -1637,7 +1638,7 @@
      * @return {string} The text content with any html removed.
      */
 
-    function stripHTML (html) {
+    function stripHTML(html) {
         // Remove any script tags or on* attributes otherwise their *contents* will be left
         // in place following removal of HTML tags.
         html = safeHTML(html);
@@ -1655,7 +1656,7 @@
      *
      * @return {boolean} Whether or not the element is empty.
      */
-    function isEmpty (element) {
+    function isEmpty(element) {
         switch (element.nodeType) {
             case element.TEXT_NODE:
                 // We cannot use \s since it includes special spaces which we want
@@ -1814,7 +1815,7 @@
      * @return {Partial<ContentSchema>} Schema.
      */
 
-    function getPhrasingContentSchema (context) {
+    function getPhrasingContentSchema(context) {
         if (context !== 'paste') {
             return phrasingContentSchema;
         }
@@ -1863,7 +1864,7 @@
      * @return {boolean} True if phrasing content, false if not.
      */
 
-    function isPhrasingContent (node) {
+    function isPhrasingContent(node) {
         const tag = node.nodeName.toLowerCase();
         return getPhrasingContentSchema().hasOwnProperty(tag) || tag === 'span';
     }
@@ -1873,7 +1874,7 @@
      * @return {boolean} Node is text content
      */
 
-    function isTextContent (node) {
+    function isTextContent(node) {
         const tag = node.nodeName.toLowerCase();
         return textContentSchema.hasOwnProperty(tag) || tag === 'span';
     }
@@ -1885,7 +1886,7 @@
      * @param {Node | null | undefined} node
      * @return {node is Element} True if node is an Element node
      */
-    function isElement (node) {
+    function isElement(node) {
         /* eslint-enable jsdoc/valid-types */
         return !!node && node.nodeType === node.ELEMENT_NODE;
     }
@@ -1930,7 +1931,7 @@
      */
 
 
-    function cleanNodeList (nodeList, doc, schema, inline) {
+    function cleanNodeList(nodeList, doc, schema, inline) {
         Array.from(nodeList).forEach((
             /** @type {Node & { nextElementSibling?: unknown }} */
             node) => {
@@ -2051,7 +2052,7 @@
      * @return {string} The cleaned up HTML.
      */
 
-    function removeInvalidHTML (HTML, schema, inline) {
+    function removeInvalidHTML(HTML, schema, inline) {
         const doc = document.implementation.createHTMLDocument('');
         doc.body.innerHTML = HTML;
         cleanNodeList(doc.body.childNodes, doc, schema, inline);
@@ -2068,7 +2069,7 @@
      *
      * @return {File[]} An array containing all files.
      */
-    function getFilesFromDataTransfer (dataTransfer) {
+    function getFilesFromDataTransfer(dataTransfer) {
         const files = Array.from(dataTransfer.files);
         Array.from(dataTransfer.items).forEach(item => {
             const file = item.getAsFile();

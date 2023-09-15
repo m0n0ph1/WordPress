@@ -2,11 +2,11 @@
     /**
      * The template for displaying 404 pages (Not Found)
      *
-     * @package WordPress
+     * @package    WordPress
      * @subpackage Twenty_Fourteen
-     * @since Twenty Fourteen 1.0
+     * @since      Twenty Fourteen 1.0
      */
-    
+
     get_header(); ?>
 
 
@@ -18,9 +18,8 @@
             </header>
 
             <div class="page-content">
-                <p><?php _e('It looks like nothing was found at this location. Maybe try a search?',
-                        'twentyfourteen'); ?></p>
-                
+                <p><?php _e('It looks like nothing was found at this location. Maybe try a search?', 'twentyfourteen'); ?></p>
+
                 <?php get_search_form(); ?>
             </div><!-- .page-content -->
 

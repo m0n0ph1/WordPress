@@ -52,7 +52,7 @@
      * @param {Object} el Title element of the accordion section to toggle.
      * @since 3.6.0
      */
-    function accordionSwitch (el) {
+    function accordionSwitch(el) {
         var section = el.closest('.accordion-section'),
             sectionToggleControl = section.find('[aria-expanded]').first(),
             container = section.closest('.accordion-container'),

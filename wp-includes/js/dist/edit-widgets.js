@@ -19,7 +19,7 @@
                 var hasOwn = {}.hasOwnProperty;
                 var nativeCodeString = '[native code]';
 
-                function classNames () {
+                function classNames() {
                     var classes = [];
 
                     for (var i = 0; i < arguments.length; i++) {
@@ -63,7 +63,8 @@
                         return classNames;
                     }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
                     __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-                } else {}
+                } else {
+                }
             }());
 
             /***/
@@ -78,7 +79,7 @@
     /******/
     /******/ 	// The require function
     /******/
-    function __webpack_require__ (moduleId) {
+    function __webpack_require__(moduleId) {
         /******/ 		// Check if module is in cache
         /******/
         var cachedModule = __webpack_module_cache__[moduleId];
@@ -120,7 +121,7 @@
                 /******/                () => (module['default']) :
                 /******/                () => (module);
             /******/
-            __webpack_require__.d(getter, { a: getter });
+            __webpack_require__.d(getter, {a: getter});
             /******/
             return getter;
             /******/
@@ -139,7 +140,7 @@
                 /******/
                 if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
                     /******/
-                    Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                    Object.defineProperty(exports, key, {enumerable: true, get: definition[key]});
                     /******/
                 }
                 /******/
@@ -166,11 +167,11 @@
             /******/
             if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                 /******/
-                Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
                 /******/
             }
             /******/
-            Object.defineProperty(exports, '__esModule', { value: true });
+            Object.defineProperty(exports, '__esModule', {value: true});
             /******/
         };
         /******/
@@ -305,7 +306,7 @@
          * @return {Array} Updated state.
          */
 
-        function widgetAreasOpenState (state = {}, action) {
+        function widgetAreasOpenState(state = {}, action) {
             const {
                 type
             } = action;
@@ -342,7 +343,7 @@
          * @param {Object} action Dispatched action.
          */
 
-        function blockInserterPanel (state = false, action) {
+        function blockInserterPanel(state = false, action) {
             switch (action.type) {
                 case 'SET_IS_LIST_VIEW_OPENED':
                     return action.isOpen ? false : state;
@@ -364,7 +365,7 @@
          * @param {Object} action Dispatched action.
          */
 
-        function listViewPanel (state = false, action) {
+        function listViewPanel(state = false, action) {
             switch (action.type) {
                 case 'SET_IS_INSERTER_OPENED':
                     return action.value ? false : state;
@@ -577,7 +578,7 @@
          * @param {string} featureName The feature name.
          */
 
-        function toggleFeature (scope, featureName) {
+        function toggleFeature(scope, featureName) {
             return function ({
                                  registry
                              }) {
@@ -600,7 +601,7 @@
          * @return {Object} Action object.
          */
 
-        function setFeatureValue (scope, featureName, value) {
+        function setFeatureValue(scope, featureName, value) {
             return function ({
                                  registry
                              }) {
@@ -621,7 +622,7 @@
          * @return {Object} Action object.
          */
 
-        function setFeatureDefaults (scope, defaults) {
+        function setFeatureDefaults(scope, defaults) {
             return function ({
                                  registry
                              }) {
@@ -641,7 +642,7 @@
          * @return {Object} Action object.
          */
 
-        function openModal (name) {
+        function openModal(name) {
             return {
                 type: 'OPEN_MODAL',
                 name
@@ -654,7 +655,7 @@
          * @return {Object} Action object.
          */
 
-        function closeModal () {
+        function closeModal() {
             return {
                 type: 'CLOSE_MODAL'
             };
@@ -738,7 +739,7 @@
          * @return {boolean} Whether the modal is active.
          */
 
-        function isModalActive (state, modalName) {
+        function isModalActive(state, modalName) {
             return state.activeModal === modalName;
         }
 
@@ -747,7 +748,7 @@
          * WordPress dependencies
          */
 
-        function complementaryAreas (state = {}, action) {
+        function complementaryAreas(state = {}, action) {
             switch (action.type) {
                 case 'SET_DEFAULT_COMPLEMENTARY_AREA': {
                     const {
@@ -789,7 +790,7 @@
          * @return {Object} Updated state
          */
 
-        function activeModal (state = null, action) {
+        function activeModal(state = null, action) {
             switch (action.type) {
                 case 'OPEN_MODAL':
                     return action.name;
@@ -869,15 +870,15 @@
 
 
 
-        function ComplementaryAreaToggle ({
-                                              as = external_wp_components_namespaceObject.Button,
-                                              scope,
-                                              identifier,
-                                              icon,
-                                              selectedIcon,
-                                              name,
-                                              ...props
-                                          }) {
+        function ComplementaryAreaToggle({
+                                             as = external_wp_components_namespaceObject.Button,
+                                             scope,
+                                             identifier,
+                                             icon,
+                                             selectedIcon,
+                                             name,
+                                             ...props
+                                         }) {
             const ComponentToUse = as;
             const isSelected = (0, external_wp_data_namespaceObject.useSelect)(select => select(store).getActiveComplementaryArea(scope) === identifier, [identifier]);
             const {
@@ -950,13 +951,13 @@
         const noop = () => {
         };
 
-        function ActionItemSlot ({
-                                     name,
-                                     as: Component = external_wp_components_namespaceObject.ButtonGroup,
-                                     fillProps = {},
-                                     bubblesVirtually,
-                                     ...props
-                                 }) {
+        function ActionItemSlot({
+                                    name,
+                                    as: Component = external_wp_components_namespaceObject.ButtonGroup,
+                                    fillProps = {},
+                                    bubblesVirtually,
+                                    ...props
+                                }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Slot, {
                 name: name,
                 bubblesVirtually: bubblesVirtually,
@@ -994,12 +995,12 @@
             });
         }
 
-        function ActionItem ({
-                                 name,
-                                 as: Component = external_wp_components_namespaceObject.Button,
-                                 onClick,
-                                 ...props
-                             }) {
+        function ActionItem({
+                                name,
+                                as: Component = external_wp_components_namespaceObject.Button,
+                                onClick,
+                                ...props
+                            }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Fill, {
                 name: name
             }, ({
@@ -1043,12 +1044,12 @@
             ...restProps
         });
 
-        function ComplementaryAreaMoreMenuItem ({
-                                                    scope,
-                                                    target,
-                                                    __unstableExplicitMenuItem,
-                                                    ...props
-                                                }) {
+        function ComplementaryAreaMoreMenuItem({
+                                                   scope,
+                                                   target,
+                                                   __unstableExplicitMenuItem,
+                                                   ...props
+                                               }) {
             return (0, external_wp_element_namespaceObject.createElement)(complementary_area_toggle, {
                 as: toggleProps => {
                     return (0, external_wp_element_namespaceObject.createElement)(action_item, {
@@ -1079,21 +1080,21 @@
 
 
 
-        function PinnedItems ({
-                                  scope,
-                                  ...props
-                              }) {
+        function PinnedItems({
+                                 scope,
+                                 ...props
+                             }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Fill, {
                 name: `PinnedItems/${scope}`,
                 ...props
             });
         }
 
-        function PinnedItemsSlot ({
-                                      scope,
-                                      className,
-                                      ...props
-                                  }) {
+        function PinnedItemsSlot({
+                                     scope,
+                                     className,
+                                     ...props
+                                 }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Slot, {
                 name: `PinnedItems/${scope}`,
                 ...props
@@ -1127,21 +1128,21 @@
 
 
 
-        function ComplementaryAreaSlot ({
-                                            scope,
-                                            ...props
-                                        }) {
+        function ComplementaryAreaSlot({
+                                           scope,
+                                           ...props
+                                       }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Slot, {
                 name: `ComplementaryArea/${scope}`,
                 ...props
             });
         }
 
-        function ComplementaryAreaFill ({
-                                            scope,
-                                            children,
-                                            className
-                                        }) {
+        function ComplementaryAreaFill({
+                                           scope,
+                                           children,
+                                           className
+                                       }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Fill, {
                 name: `ComplementaryArea/${scope}`
             }, (0, external_wp_element_namespaceObject.createElement)('div', {
@@ -1149,7 +1150,7 @@
             }, children));
         }
 
-        function useAdjustComplementaryListener (scope, identifier, activeArea, isActive, isSmall) {
+        function useAdjustComplementaryListener(scope, identifier, activeArea, isActive, isSmall) {
             const previousIsSmall = (0, external_wp_element_namespaceObject.useRef)(false);
             const shouldOpenWhenNotSmall = (0, external_wp_element_namespaceObject.useRef)(false);
             const {
@@ -1185,24 +1186,24 @@
             }, [isActive, isSmall, scope, identifier, activeArea]);
         }
 
-        function ComplementaryArea ({
-                                        children,
-                                        className,
-                                        closeLabel = (0, external_wp_i18n_namespaceObject.__)('Close plugin'),
-                                        identifier,
-                                        header,
-                                        headerClassName,
-                                        icon,
-                                        isPinnable = true,
-                                        panelClassName,
-                                        scope,
-                                        name,
-                                        smallScreenTitle,
-                                        title,
-                                        toggleShortcut,
-                                        isActiveByDefault,
-                                        showIconLabels = false
-                                    }) {
+        function ComplementaryArea({
+                                       children,
+                                       className,
+                                       closeLabel = (0, external_wp_i18n_namespaceObject.__)('Close plugin'),
+                                       identifier,
+                                       header,
+                                       headerClassName,
+                                       icon,
+                                       isPinnable = true,
+                                       panelClassName,
+                                       scope,
+                                       name,
+                                       smallScreenTitle,
+                                       title,
+                                       toggleShortcut,
+                                       isActiveByDefault,
+                                       showIconLabels = false
+                                   }) {
             const {
                 isLoading,
                 isActive,
@@ -1299,13 +1300,13 @@
          * External dependencies
          */
 
-        function NavigableRegion ({
-                                      children,
-                                      className,
-                                      ariaLabel,
-                                      as: Tag = 'div',
-                                      ...props
-                                  }) {
+        function NavigableRegion({
+                                     children,
+                                     className,
+                                     ariaLabel,
+                                     as: Tag = 'div',
+                                     ...props
+                                 }) {
             return (0, external_wp_element_namespaceObject.createElement)(Tag, {
                 className: classnames_default()('interface-navigable-region', className),
                 'aria-label': ariaLabel,
@@ -1331,7 +1332,7 @@
 
 
 
-        function useHTMLClass (className) {
+        function useHTMLClass(className) {
             (0, external_wp_element_namespaceObject.useEffect)(() => {
                 const element = document && document.querySelector(`html:not(.${className})`);
 
@@ -1366,23 +1367,23 @@
             }
         };
 
-        function InterfaceSkeleton ({
-                                        isDistractionFree,
-                                        footer,
-                                        header,
-                                        editorNotices,
-                                        sidebar,
-                                        secondarySidebar,
-                                        notices,
-                                        content,
-                                        actions,
-                                        labels,
-                                        className,
-                                        enableRegionNavigation = true,
-                                        // Todo: does this need to be a prop.
-                                        // Can we use a dependency to keyboard-shortcuts directly?
-                                        shortcuts
-                                    }, ref) {
+        function InterfaceSkeleton({
+                                       isDistractionFree,
+                                       footer,
+                                       header,
+                                       editorNotices,
+                                       sidebar,
+                                       secondarySidebar,
+                                       notices,
+                                       content,
+                                       actions,
+                                       labels,
+                                       className,
+                                       enableRegionNavigation = true,
+                                       // Todo: does this need to be a prop.
+                                       // Can we use a dependency to keyboard-shortcuts directly?
+                                       shortcuts
+                                   }, ref) {
             const navigateRegionsProps = (0, external_wp_components_namespaceObject.__unstableUseNavigateRegions)(shortcuts);
             useHTMLClass('interface-interface-skeleton__html-container');
             const defaultLabels = {
@@ -1481,16 +1482,16 @@
 
 
 
-        function MoreMenuDropdown ({
-                                       as: DropdownComponent = external_wp_components_namespaceObject.DropdownMenu,
-                                       className,
+        function MoreMenuDropdown({
+                                      as: DropdownComponent = external_wp_components_namespaceObject.DropdownMenu,
+                                      className,
 
-                                       /* translators: button label text should, if possible, be under 16 characters. */
-                                       label = (0, external_wp_i18n_namespaceObject.__)('Options'),
-                                       popoverProps,
-                                       toggleProps,
-                                       children
-                                   }) {
+                                      /* translators: button label text should, if possible, be under 16 characters. */
+                                      label = (0, external_wp_i18n_namespaceObject.__)('Options'),
+                                      popoverProps,
+                                      toggleProps,
+                                      children
+                                  }) {
             return (0, external_wp_element_namespaceObject.createElement)(DropdownComponent, {
                 className: classnames_default()('interface-more-menu-dropdown', className),
                 icon: more_vertical,
@@ -1525,7 +1526,7 @@
          * @return {Object} a block (converted from the entity record).
          */
 
-        function transformWidgetToBlock (widget) {
+        function transformWidgetToBlock(widget) {
             if (widget.id_base === 'block') {
                 const parsedBlocks = (0, external_wp_blocks_namespaceObject.parse)(widget.instance.raw.content, {
                     __unstableSkipAutop: true
@@ -1562,7 +1563,7 @@
          * @return {Object} the widget object (converted from block).
          */
 
-        function transformBlockToWidget (block, relatedWidget = {}) {
+        function transformBlockToWidget(block, relatedWidget = {}) {
             let widget;
             const isValidLegacyWidgetBlock = block.name === 'core/legacy-widget' && (block.attributes.id || block.attributes.instance);
 
@@ -1635,7 +1636,7 @@
          * @return {Object} Query.
          */
 
-        function buildWidgetAreasQuery () {
+        function buildWidgetAreasQuery() {
             return {
                 per_page: -1
             };
@@ -1647,7 +1648,7 @@
          * @return {Object} Query.
          */
 
-        function buildWidgetsQuery () {
+        function buildWidgetsQuery() {
             return {
                 per_page: -1,
                 _embed: 'about'
@@ -1926,7 +1927,7 @@
          */
 
 
-        function setWidgetIdForClientId (clientId, widgetId) {
+        function setWidgetIdForClientId(clientId, widgetId) {
             return {
                 type: 'SET_WIDGET_ID_FOR_CLIENT_ID',
                 clientId,
@@ -1942,7 +1943,7 @@
          * @return {Object} Action.
          */
 
-        function setWidgetAreasOpenState (widgetAreasOpenState) {
+        function setWidgetAreasOpenState(widgetAreasOpenState) {
             return {
                 type: 'SET_WIDGET_AREAS_OPEN_STATE',
                 widgetAreasOpenState
@@ -1958,7 +1959,7 @@
          * @return {Object} Action.
          */
 
-        function setIsWidgetAreaOpen (clientId, isOpen) {
+        function setIsWidgetAreaOpen(clientId, isOpen) {
             return {
                 type: 'SET_IS_WIDGET_AREA_OPEN',
                 clientId,
@@ -1979,7 +1980,7 @@
          * @return {Object} Action object.
          */
 
-        function setIsInserterOpened (value) {
+        function setIsInserterOpened(value) {
             return {
                 type: 'SET_IS_INSERTER_OPENED',
                 value
@@ -1993,7 +1994,7 @@
          * @return {Object} Action object.
          */
 
-        function setIsListViewOpened (isOpen) {
+        function setIsListViewOpened(isOpen) {
             return {
                 type: 'SET_IS_LIST_VIEW_OPENED',
                 isOpen
@@ -2319,7 +2320,7 @@
          * @return {boolean} Whether the inserter is opened.
          */
 
-        function isInserterOpened (state) {
+        function isInserterOpened(state) {
             return !!state.blockInserterPanel;
         }
 
@@ -2331,7 +2332,7 @@
          * @return {Object} The root client ID and index to insert at.
          */
 
-        function __experimentalGetInsertionPoint (state) {
+        function __experimentalGetInsertionPoint(state) {
             const {
                 rootClientId,
                 insertionIndex
@@ -2369,7 +2370,7 @@
          * @return {boolean} Whether the list view is opened.
          */
 
-        function isListViewOpened (state) {
+        function isListViewOpened(state) {
             return state.listViewPanel;
         }
 
@@ -2510,16 +2511,16 @@
                     ownerDocument
                 } = elementRef.current;
 
-                function handleDragStart (event) {
+                function handleDragStart(event) {
                     // Check the first time when the dragging starts.
                     handleDragEnter(event);
                 } // Set to false whenever the user cancel the drag event by either releasing the mouse or press Escape.
 
-                function handleDragEnd () {
+                function handleDragEnd() {
                     setIsDraggingWithin(false);
                 }
 
-                function handleDragEnter (event) {
+                function handleDragEnter(event) {
                     // Check if the current target is inside the item element.
                     if (elementRef.current.contains(event.target)) {
                         setIsDraggingWithin(true);
@@ -2559,9 +2560,9 @@
          */
 
 
-        function WidgetAreaInnerBlocks ({
-                                            id
-                                        }) {
+        function WidgetAreaInnerBlocks({
+                                           id
+                                       }) {
             const [blocks, onInput, onChange] = (0, external_wp_coreData_namespaceObject.useEntityBlockEditor)('root', 'postType');
             const innerBlocksRef = (0, external_wp_element_namespaceObject.useRef)();
             const isDraggingWithinInnerBlocks = use_is_dragging_within(innerBlocksRef);
@@ -2598,14 +2599,14 @@
 
         /** @typedef {import('@wordpress/element').RefObject} RefObject */
 
-        function WidgetAreaEdit ({
-                                     clientId,
-                                     className,
-                                     attributes: {
-                                         id,
-                                         name
-                                     }
-                                 }) {
+        function WidgetAreaEdit({
+                                    clientId,
+                                    className,
+                                    attributes: {
+                                        id,
+                                        name
+                                    }
+                                }) {
             const isOpen = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).getIsWidgetAreaOpen(clientId), [clientId]);
             const {
                 setIsWidgetAreaOpen
@@ -2671,11 +2672,11 @@
                     ownerDocument
                 } = elementRef.current;
 
-                function handleDragStart () {
+                function handleDragStart() {
                     setIsDragging(true);
                 }
 
-                function handleDragEnd () {
+                function handleDragEnd() {
                     setIsDragging(false);
                 }
 
@@ -2747,10 +2748,10 @@
 
 
 
-        function CopyButton ({
-                                 text,
-                                 children
-                             }) {
+        function CopyButton({
+                                text,
+                                children
+                            }) {
             const ref = (0, external_wp_compose_namespaceObject.useCopyToClipboard)(text);
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Button, {
                 variant: 'secondary',
@@ -2758,10 +2759,10 @@
             }, children);
         }
 
-        function ErrorBoundaryWarning ({
-                                           message,
-                                           error
-                                       }) {
+        function ErrorBoundaryWarning({
+                                          message,
+                                          error
+                                      }) {
             const actions = [(0, external_wp_element_namespaceObject.createElement)(CopyButton, {
                 key: 'copy-error',
                 text: error.stack
@@ -2773,24 +2774,24 @@
         }
 
         class ErrorBoundary extends external_wp_element_namespaceObject.Component {
-            constructor () {
+            constructor() {
                 super(...arguments);
                 this.state = {
                     error: null
                 };
             }
 
-            static getDerivedStateFromError (error) {
+            static getDerivedStateFromError(error) {
                 return {
                     error
                 };
             }
 
-            componentDidCatch (error) {
+            componentDidCatch(error) {
                 (0, external_wp_hooks_namespaceObject.doAction)('editor.ErrorBoundary.errorLogged', error);
             }
 
-            render () {
+            render() {
                 if (!this.state.error) {
                     return this.props.children;
                 }
@@ -2820,7 +2821,7 @@
 
 
 
-        function KeyboardShortcuts () {
+        function KeyboardShortcuts() {
             const {
                 redo,
                 undo
@@ -2886,7 +2887,7 @@
             return null;
         }
 
-        function KeyboardShortcutsRegister () {
+        function KeyboardShortcutsRegister() {
             // Registering the shortcuts.
             const {
                 registerShortcut
@@ -3077,11 +3078,11 @@
             ExperimentalBlockEditorProvider
         } = unlock(external_wp_blockEditor_namespaceObject.privateApis);
 
-        function WidgetAreasBlockEditorProvider ({
-                                                     blockEditorSettings,
-                                                     children,
-                                                     ...props
-                                                 }) {
+        function WidgetAreasBlockEditorProvider({
+                                                    blockEditorSettings,
+                                                    children,
+                                                    ...props
+                                                }) {
             const mediaPermissions = (0, external_wp_coreData_namespaceObject.useResourcePermissions)('media');
             const {
                 reusableBlocks,
@@ -3209,9 +3210,9 @@
          */
 
 
-        function WidgetAreas ({
-                                  selectedWidgetAreaId
-                              }) {
+        function WidgetAreas({
+                                 selectedWidgetAreaId
+                             }) {
             const widgetAreas = (0, external_wp_data_namespaceObject.useSelect)(select => select(store_store).getWidgetAreas(), []);
             const selectedWidgetArea = (0, external_wp_element_namespaceObject.useMemo)(() => selectedWidgetAreaId && widgetAreas?.find(widgetArea => widgetArea.id === selectedWidgetAreaId), [selectedWidgetAreaId, widgetAreas]);
             let description;
@@ -3280,11 +3281,11 @@
 
 
 
-        function ComplementaryAreaTab ({
-                                           identifier,
-                                           label,
-                                           isActive
-                                       }) {
+        function ComplementaryAreaTab({
+                                          identifier,
+                                          label,
+                                          isActive
+                                      }) {
             const {
                 enableComplementaryArea
             } = (0, external_wp_data_namespaceObject.useDispatch)(store);
@@ -3299,7 +3300,7 @@
             }, label);
         }
 
-        function Sidebar () {
+        function Sidebar() {
             const {
                 enableComplementaryArea
             } = (0, external_wp_data_namespaceObject.useDispatch)(store);
@@ -3428,7 +3429,7 @@
 
 
 
-        function SaveButton () {
+        function SaveButton() {
             const {
                 hasEditedWidgetAreaIds,
                 isSaving
@@ -3498,7 +3499,7 @@
 
 
 
-        function UndoButton () {
+        function UndoButton() {
             const hasUndo = (0, external_wp_data_namespaceObject.useSelect)(select => select(external_wp_coreData_namespaceObject.store).hasUndo(), []);
             const {
                 undo
@@ -3526,7 +3527,7 @@
 
 
 
-        function RedoButton () {
+        function RedoButton() {
             const shortcut = (0, external_wp_keycodes_namespaceObject.isAppleOS)() ? external_wp_keycodes_namespaceObject.displayShortcut.primaryShift('z') : external_wp_keycodes_namespaceObject.displayShortcut.primary('y');
             const hasRedo = (0, external_wp_data_namespaceObject.useSelect)(select => select(external_wp_coreData_namespaceObject.store).hasRedo(), []);
             const {
@@ -3633,10 +3634,10 @@
 
 
 
-        function KeyCombination ({
-                                     keyCombination,
-                                     forceAriaLabel
-                                 }) {
+        function KeyCombination({
+                                    keyCombination,
+                                    forceAriaLabel
+                                }) {
             const shortcut = keyCombination.modifier ? external_wp_keycodes_namespaceObject.displayShortcutList[keyCombination.modifier](keyCombination.character) : keyCombination.character;
             const ariaLabel = keyCombination.modifier ? external_wp_keycodes_namespaceObject.shortcutAriaLabel[keyCombination.modifier](keyCombination.character) : keyCombination.character;
             const shortcuts = Array.isArray(shortcut) ? shortcut : [shortcut];
@@ -3657,12 +3658,12 @@
             }));
         }
 
-        function Shortcut ({
-                               description,
-                               keyCombination,
-                               aliases = [],
-                               ariaLabel
-                           }) {
+        function Shortcut({
+                              description,
+                              keyCombination,
+                              aliases = [],
+                              ariaLabel
+                          }) {
             return (0, external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.Fragment, null, (0, external_wp_element_namespaceObject.createElement)('div', {
                 className: 'edit-widgets-keyboard-shortcut-help-modal__shortcut-description'
             }, description), (0, external_wp_element_namespaceObject.createElement)('div', {
@@ -3692,9 +3693,9 @@
 
 
 
-        function DynamicShortcut ({
-                                      name
-                                  }) {
+        function DynamicShortcut({
+                                     name
+                                 }) {
             const {
                 keyCombination,
                 description,
@@ -3793,10 +3794,10 @@
             });
         };
 
-        function KeyboardShortcutHelpModal ({
-                                                isModalActive,
-                                                toggleModal
-                                            }) {
+        function KeyboardShortcutHelpModal({
+                                               isModalActive,
+                                               toggleModal
+                                           }) {
             (0, external_wp_keyboardShortcuts_namespaceObject.useShortcut)('core/edit-widgets/keyboard-shortcuts', toggleModal, {
                 bindGlobal: true
             });
@@ -3868,7 +3869,7 @@
 
 
 
-        function MoreMenu () {
+        function MoreMenu() {
             const [isKeyboardShortcutsModalActive, setIsKeyboardShortcutsModalVisible] = (0, external_wp_element_namespaceObject.useState)(false);
 
             const toggleKeyboardShortcutsModal = () => setIsKeyboardShortcutsModalVisible(!isKeyboardShortcutsModalActive);
@@ -3957,7 +3958,7 @@
             useShouldContextualToolbarShow
         } = unlock(external_wp_blockEditor_namespaceObject.privateApis);
 
-        function Header () {
+        function Header() {
             const isMediumViewport = (0, external_wp_compose_namespaceObject.useViewportMatch)('medium');
             const inserterButton = (0, external_wp_element_namespaceObject.useRef)();
             const widgetAreaClientId = use_last_selected_widget_area();
@@ -4069,7 +4070,7 @@
 
 
 
-        function Notices () {
+        function Notices() {
             const {
                 removeNotice
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_notices_namespaceObject.store);
@@ -4120,9 +4121,9 @@
 
 
 
-        function WidgetAreasBlockEditorContent ({
-                                                    blockEditorSettings
-                                                }) {
+        function WidgetAreasBlockEditorContent({
+                                                   blockEditorSettings
+                                               }) {
             const hasThemeStyles = (0, external_wp_data_namespaceObject.useSelect)(select => !!select(external_wp_preferences_namespaceObject.store).get('core/edit-widgets', 'themeStyles'), []);
             const styles = (0, external_wp_element_namespaceObject.useMemo)(() => {
                 return hasThemeStyles ? blockEditorSettings.styles : [];
@@ -4221,7 +4222,7 @@
 
 
 
-        function InserterSidebar () {
+        function InserterSidebar() {
             const isMobileViewport = (0, external_wp_compose_namespaceObject.useViewportMatch)('medium', '<');
             const {
                 rootClientId,
@@ -4274,7 +4275,7 @@
          */
 
 
-        function ListViewSidebar () {
+        function ListViewSidebar() {
             const {
                 setIsListViewOpened
             } = (0, external_wp_data_namespaceObject.useDispatch)(store_store); // Use internal state instead of a ref to make sure that the component
@@ -4285,7 +4286,7 @@
             const headerFocusReturnRef = (0, external_wp_compose_namespaceObject.useFocusReturn)();
             const contentFocusReturnRef = (0, external_wp_compose_namespaceObject.useFocusReturn)();
 
-            function closeOnEscape (event) {
+            function closeOnEscape(event) {
                 if (event.keyCode === external_wp_keycodes_namespaceObject.ESCAPE && !event.defaultPrevented) {
                     event.preventDefault();
                     setIsListViewOpened(false);
@@ -4328,7 +4329,7 @@
 
 
 
-        function SecondarySidebar () {
+        function SecondarySidebar() {
             const {
                 isInserterOpen,
                 isListViewOpen
@@ -4382,9 +4383,9 @@
             footer: (0, external_wp_i18n_namespaceObject.__)('Widgets footer')
         };
 
-        function Interface ({
-                                blockEditorSettings
-                            }) {
+        function Interface({
+                               blockEditorSettings
+                           }) {
             const isMobileViewport = (0, external_wp_compose_namespaceObject.useViewportMatch)('medium', '<');
             const isHugeViewport = (0, external_wp_compose_namespaceObject.useViewportMatch)('huge', '>=');
             const {
@@ -4467,7 +4468,7 @@
          * @return {WPComponent} The component.
          */
 
-        function UnsavedChangesWarning () {
+        function UnsavedChangesWarning() {
             const isDirty = (0, external_wp_data_namespaceObject.useSelect)(select => {
                 const {
                     getEditedWidgetAreas
@@ -4509,7 +4510,7 @@
          */
 
 
-        function WelcomeGuide () {
+        function WelcomeGuide() {
             var _widgetAreas$filter$l;
 
             const isActive = (0, external_wp_data_namespaceObject.useSelect)(select => !!select(external_wp_preferences_namespaceObject.store).get('core/edit-widgets', 'welcomeGuide'), []);
@@ -4590,10 +4591,10 @@
             });
         }
 
-        function WelcomeGuideImage ({
-                                        nonAnimatedSrc,
-                                        animatedSrc
-                                    }) {
+        function WelcomeGuideImage({
+                                       nonAnimatedSrc,
+                                       animatedSrc
+                                   }) {
             return (0, external_wp_element_namespaceObject.createElement)('picture', {
                 className: 'edit-widgets-welcome-guide__image'
             }, (0, external_wp_element_namespaceObject.createElement)('source', {
@@ -4624,14 +4625,14 @@
 
 
 
-        function Layout ({
-                             blockEditorSettings
-                         }) {
+        function Layout({
+                            blockEditorSettings
+                        }) {
             const {
                 createErrorNotice
             } = (0, external_wp_data_namespaceObject.useDispatch)(external_wp_notices_namespaceObject.store);
 
-            function onPluginAreaError (name) {
+            function onPluginAreaError(name) {
                 createErrorNotice((0, external_wp_i18n_namespaceObject.sprintf)(
                     /* translators: %s: plugin name */
                     (0, external_wp_i18n_namespaceObject.__)('The "%s" plugin has encountered an error and cannot be rendered.'), name));
@@ -4673,7 +4674,7 @@
          * @param {Object} settings Block editor settings.
          */
 
-        function initializeEditor (id, settings) {
+        function initializeEditor(id, settings) {
             const target = document.getElementById(id);
             const root = (0, external_wp_element_namespaceObject.createRoot)(target);
 
@@ -4693,7 +4694,8 @@
             (0, external_wp_blockLibrary_namespaceObject.registerCoreBlocks)(coreBlocks);
             (0, external_wp_widgets_namespaceObject.registerLegacyWidgetBlock)();
 
-            if (false) {}
+            if (false) {
+            }
 
             (0, external_wp_widgets_namespaceObject.registerLegacyWidgetVariations)(settings);
             registerBlock(widget_area_namespaceObject);
@@ -4717,7 +4719,7 @@
 
         const initialize = initializeEditor;
 
-        function reinitializeEditor () {
+        function reinitializeEditor() {
             external_wp_deprecated_default()('wp.editWidgets.reinitializeEditor', {
                 since: '6.2',
                 version: '6.3'

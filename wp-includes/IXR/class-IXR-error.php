@@ -1,35 +1,37 @@
 <?php
 
-/**
- * IXR_Error
- *
- * @package IXR
- * @since 1.5.0
- */
-class IXR_Error
-{
-    var $code;
-    var $message;
-
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct( $code, $message )
+    /**
+     * IXR_Error
+     *
+     * @package IXR
+     * @since   1.5.0
+     */
+    class IXR_Error
     {
-        $this->code = $code;
-        $this->message = htmlspecialchars($message);
-    }
+        var $code;
 
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_Error( $code, $message ) {
-		self::__construct( $code, $message );
-	}
+        var $message;
 
-    function getXml()
-    {
-        $xml = <<<EOD
+        /**
+         * PHP4 constructor.
+         */
+        public function IXR_Error($code, $message)
+        {
+            self::__construct($code, $message);
+        }
+
+        /**
+         * PHP5 constructor.
+         */
+        function __construct($code, $message)
+        {
+            $this->code = $code;
+            $this->message = htmlspecialchars($message);
+        }
+
+        function getXml()
+        {
+            $xml = <<<EOD
 <methodResponse>
   <fault>
     <value>
@@ -48,6 +50,7 @@ class IXR_Error
 </methodResponse>
 
 EOD;
-        return $xml;
+
+            return $xml;
+        }
     }
-}

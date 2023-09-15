@@ -971,7 +971,7 @@
     wp.updates.deletePluginSuccess = function (response) {
 
         // Removes the plugin and updates rows.
-        $('[data-plugin="' + response.plugin + '"]').css({ backgroundColor: '#faafaa' }).fadeOut(350, function () {
+        $('[data-plugin="' + response.plugin + '"]').css({backgroundColor: '#faafaa'}).fadeOut(350, function () {
             var $form = $('#bulk-action-form'),
                 $views = $('.subsubsub'),
                 $pluginRow = $(this),
@@ -1058,7 +1058,7 @@
             if (plugins.all.length) {
                 $views.find('.all .count').text('(' + plugins.all.length + ')');
             } else {
-                $form.find('.tablenav').css({ visibility: 'hidden' });
+                $form.find('.tablenav').css({visibility: 'hidden'});
                 $views.find('.all').remove();
 
                 if (!$form.find('tr.no-items').length) {
@@ -1248,7 +1248,7 @@
             }
         }
 
-        wp.updates.addAdminNotice(_.extend({ selector: $notice }, updatedMessage));
+        wp.updates.addAdminNotice(_.extend({selector: $notice}, updatedMessage));
         wp.a11y.speak(__('Update completed successfully.'));
 
         wp.updates.decrementCount('theme');
@@ -1559,7 +1559,7 @@
         if ('themes-network' === pagenow) {
 
             // Removes the theme and updates rows.
-            $themeRows.css({ backgroundColor: '#faafaa' }).fadeOut(350, function () {
+            $themeRows.css({backgroundColor: '#faafaa'}).fadeOut(350, function () {
                 var $views = $('.subsubsub'),
                     $themeRow = $(this),
                     themes = settings.themes,
@@ -1620,7 +1620,7 @@
 
         // DecrementCount from update count.
         if ('themes' === pagenow) {
-            var theme = _.find(_wpThemeSettings.themes, { id: response.slug });
+            var theme = _.find(_wpThemeSettings.themes, {id: response.slug});
             if (theme.hasUpdate) {
                 wp.updates.decrementCount('theme');
             }
@@ -2418,7 +2418,7 @@
             // Bail if there were no items selected.
             if (!itemsSelected.length) {
                 event.preventDefault();
-                $('html, body').animate({ scrollTop: 0 });
+                $('html, body').animate({scrollTop: 0});
 
                 return wp.updates.addAdminNotice({
                     id: 'no-items-selected',
@@ -2526,7 +2526,7 @@
                 });
 
                 if (error > 0 && !wp.updates.queue.length) {
-                    $('html, body').animate({ scrollTop: 0 });
+                    $('html, body').animate({scrollTop: 0});
                 }
             });
 
@@ -3003,7 +3003,7 @@
                             wp.a11y.speak(__('Auto-updates disabled'));
                         }
 
-                        $document.trigger('wp-auto-update-setting-changed', { state: action, type: type, asset: asset });
+                        $document.trigger('wp-auto-update-setting-changed', {state: action, type: type, asset: asset});
                     })
                     .fail(function () {
                         $parent.find('.notice.notice-error')
