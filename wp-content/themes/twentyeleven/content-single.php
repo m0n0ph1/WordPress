@@ -1,11 +1,5 @@
 <?php
-    /**
-     * The template for displaying content in the single.php template
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Eleven
-     * @since      Twenty Eleven 1.0
-     */
+
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -63,7 +57,7 @@
                 <div id="author-info">
                     <div id="author-avatar">
                         <?php
-                            /** This filter is documented in author.php */
+
                             $author_bio_avatar_size = apply_filters('twentyeleven_author_bio_avatar_size', 68);
                             echo get_avatar(get_the_author_meta('user_email'), $author_bio_avatar_size);
                         ?>

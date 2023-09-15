@@ -1,16 +1,10 @@
 <?php
-    /**
-     * Atom Feed Template for displaying Atom Posts feed.
-     *
-     * @package WordPress
-     */
 
     header('Content-Type: '.feed_content_type('atom').'; charset='.get_option('blog_charset'), true);
     $more = 1;
 
     echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
 
-    /** This action is documented in wp-includes/feed-rss2.php */
     do_action('rss_tag_pre', 'atom');
 ?>
 <feed
@@ -18,11 +12,7 @@
         xmlns:thr="http://purl.org/syndication/thread/1.0"
         xml:lang="<?php bloginfo_rss('language'); ?>"
     <?php
-        /**
-         * Fires at end of the Atom feed root to add namespaces.
-         *
-         * @since 2.0.0
-         */
+
         do_action('atom_ns');
     ?>
 >
@@ -36,11 +26,7 @@
     <link rel="self" type="application/atom+xml" href="<?php self_link(); ?>"/>
 
     <?php
-        /**
-         * Fires just before the first Atom feed entry.
-         *
-         * @since 2.0.0
-         */
+
         do_action('atom_head');
 
         while(have_posts()) :
@@ -57,11 +43,6 @@
                         <?php
                         endif;
 
-                        /**
-                         * Fires at the end of each Atom feed author entry.
-                         *
-                         * @since 3.2.0
-                         */
                         do_action('atom_author');
                     ?>
                 </author>
@@ -85,11 +66,6 @@
                 <?php
                     atom_enclosure();
 
-                    /**
-                     * Fires at the end of each Atom feed item.
-                     *
-                     * @since 2.0.0
-                     */
                     do_action('atom_entry');
 
                     if(get_comments_number() || comments_open()) :

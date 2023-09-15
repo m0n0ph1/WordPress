@@ -1,27 +1,7 @@
 <?php
-    /**
-     * Twenty Twenty Custom CSS
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty
-     * @since      Twenty Twenty 1.0
-     */
 
     if(! function_exists('twentytwenty_generate_css'))
     {
-        /**
-         * Generate CSS.
-         *
-         * @param string $selector The CSS selector.
-         * @param string $style    The CSS style.
-         * @param string $value    The CSS value.
-         * @param string $prefix   The CSS prefix.
-         * @param string $suffix   The CSS suffix.
-         * @param bool   $display  Print the styles.
-         *
-         * @since Twenty Twenty 1.0
-         *
-         */
         function twentytwenty_generate_css($selector, $style, $value, $prefix = '', $suffix = '', $display = true)
         {
             $return = '';
@@ -48,15 +28,6 @@
 
     if(! function_exists('twentytwenty_get_customizer_css'))
     {
-        /**
-         * Get CSS Built from Customizer Options.
-         * Build CSS reflecting colors, fonts and other options set in the Customizer, and return them for output.
-         *
-         * @param string $type Whether to return CSS for the "front-end", "block-editor", or "classic-editor".
-         *
-         * @since Twenty Twenty 1.0
-         *
-         */
         function twentytwenty_get_customizer_css($type = 'front-end')
         {
             // Get variables.

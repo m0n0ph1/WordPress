@@ -1,40 +1,13 @@
 <?php
-    /**
-     * Block Pattern Directory REST API: WP_REST_Pattern_Directory_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.8.0
-     */
 
-    /**
-     * Controller which provides REST endpoint for block patterns.
-     *
-     * This simply proxies the endpoint at http://api.wordpress.org/patterns/1.0/. That isn't necessary for
-     * functionality, but is desired for privacy. It prevents api.wordpress.org from knowing the user's IP address.
-     *
-     * @since 5.8.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Pattern_Directory_Controller extends WP_REST_Controller
     {
-        /**
-         * Constructs the controller.
-         *
-         * @since 5.8.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'pattern-directory';
         }
 
-        /**
-         * Registers the necessary REST API routes.
-         *
-         * @since 5.8.0
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base.'/patterns', [
@@ -48,14 +21,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the search parameters for the block pattern's collection.
-         *
-         * @return array Collection parameters.
-         * @since 6.2.0 Added 'per_page', 'page', 'offset', 'order', and 'orderby' to request.
-         *
-         * @since 5.8.0
-         */
         public function get_collection_params()
         {
             $query_params = parent::get_collection_params();
@@ -112,26 +77,9 @@
                 ],
             ];
 
-            /**
-             * Filter collection parameters for the block pattern directory controller.
-             *
-             * @param array $query_params JSON Schema-formatted collection parameters.
-             *
-             * @since 5.8.0
-             *
-             */
             return apply_filters('rest_pattern_directory_collection_params', $query_params);
         }
 
-        /**
-         * Checks whether a given request has permission to view the local block pattern directory.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has permission, WP_Error object otherwise.
-         * @since 5.8.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             if(current_user_can('edit_posts'))
@@ -150,17 +98,6 @@
             return new WP_Error('rest_pattern_directory_cannot_view', __('Sorry, you are not allowed to browse the local block pattern directory.'), ['status' => rest_authorization_required_code()]);
         }
 
-        /**
-         * Search and retrieve block patterns metadata
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 6.2.0 Added 'per_page', 'page', 'offset', 'order', and 'orderby' to request.
-         *
-         * @since 5.8.0
-         * @since 6.0.0 Added 'slug' to request.
-         */
         public function get_items($request)
         {
             /*
@@ -277,17 +214,6 @@
             return 'wp_remote_block_patterns_'.md5(serialize($query_args));
         }
 
-        /**
-         * Prepare a raw block pattern before it gets output in a REST API response.
-         *
-         * @param object          $item    Raw pattern from api.wordpress.org, before any changes.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response
-         * @since 5.9.0 Renamed `$raw_pattern` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 5.8.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -308,16 +234,6 @@
 
             $response = new WP_REST_Response($prepared_pattern);
 
-            /**
-             * Filters the REST API response for a block pattern.
-             *
-             * @param WP_REST_Response $response    The response object.
-             * @param object           $raw_pattern The unprepared block pattern.
-             * @param WP_REST_Request  $request     The request object.
-             *
-             * @since 5.8.0
-             *
-             */
             return apply_filters('rest_prepare_block_pattern', $response, $raw_pattern, $request);
         }
 
@@ -336,14 +252,6 @@
          * @return string Transient key.
          */
 
-        /**
-         * Retrieves the block pattern's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 6.2.0 Added `'block_types'` to schema.
-         *
-         * @since 5.8.0
-         */
         public function get_item_schema()
         {
             if($this->schema)

@@ -1,26 +1,7 @@
 <?php
-    /**
-     * Widget API: WP_Widget_Recent_Posts class
-     *
-     * @package    WordPress
-     * @subpackage Widgets
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used to implement a Recent Posts widget.
-     *
-     * @since 2.8.0
-     *
-     * @see   WP_Widget
-     */
     class WP_Widget_Recent_Posts extends WP_Widget
     {
-        /**
-         * Sets up a new Recent Posts widget instance.
-         *
-         * @since 2.8.0
-         */
         public function __construct()
         {
             $widget_ops = [
@@ -33,16 +14,6 @@
             $this->alt_option_name = 'widget_recent_entries';
         }
 
-        /**
-         * Outputs the content for the current Recent Posts widget instance.
-         *
-         * @param array $args     Display arguments including 'before_title', 'after_title',
-         *                        'before_widget', and 'after_widget'.
-         * @param array $instance Settings for the current Recent Posts widget instance.
-         *
-         * @since 2.8.0
-         *
-         */
         public function widget($args, $instance)
         {
             if(! isset($args['widget_id']))
@@ -53,7 +24,6 @@
             $default_title = __('Recent Posts');
             $title = (! empty($instance['title'])) ? $instance['title'] : $default_title;
 
-            /** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
             $title = apply_filters('widget_title', $title, $instance, $this->id_base);
 
             $number = (! empty($instance['number'])) ? absint($instance['number']) : 5;
@@ -64,23 +34,12 @@
             $show_date = isset($instance['show_date']) ? $instance['show_date'] : false;
 
             $r = new WP_Query(
-            /**
-             * Filters the arguments for the Recent Posts widget.
-             *
-             * @param array $args     An array of arguments used to retrieve the recent posts.
-             * @param array $instance Array of settings for the current widget.
-             *
-             * @see   WP_Query::get_posts()
-             *
-             * @since 3.4.0
-             * @since 4.9.0 Added the `$instance` parameter.
-             *
-             */ apply_filters('widget_posts_args', [
-                'posts_per_page' => $number,
-                'no_found_rows' => true,
-                'post_status' => 'publish',
-                'ignore_sticky_posts' => true,
-            ],                $instance)
+                apply_filters('widget_posts_args', [
+                    'posts_per_page' => $number,
+                    'no_found_rows' => true,
+                    'post_status' => 'publish',
+                    'ignore_sticky_posts' => true,
+                ],            $instance)
             );
 
             if(! $r->have_posts())
@@ -99,7 +58,6 @@
 
             $format = current_theme_supports('html5', 'navigation-widgets') ? 'html5' : 'xhtml';
 
-            /** This filter is documented in wp-includes/widgets/class-wp-nav-menu-widget.php */
             $format = apply_filters('navigation_widgets_format', $format);
 
             if('html5' === $format)
@@ -141,17 +99,6 @@
             echo $args['after_widget'];
         }
 
-        /**
-         * Handles updating the settings for the current Recent Posts widget instance.
-         *
-         * @param array $new_instance New settings for this instance as input by the user via
-         *                            WP_Widget::form().
-         * @param array $old_instance Old settings for this instance.
-         *
-         * @return array Updated settings to save.
-         * @since 2.8.0
-         *
-         */
         public function update($new_instance, $old_instance)
         {
             $instance = $old_instance;
@@ -162,14 +109,6 @@
             return $instance;
         }
 
-        /**
-         * Outputs the settings form for the Recent Posts widget.
-         *
-         * @param array $instance Current settings.
-         *
-         * @since 2.8.0
-         *
-         */
         public function form($instance)
         {
             $title = isset($instance['title']) ? esc_attr($instance['title']) : '';

@@ -1,37 +1,10 @@
 <?php
-    /**
-     * Elements styles block support.
-     *
-     * @package WordPress
-     * @since   5.8.0
-     */
 
-    /**
-     * Gets the elements class names.
-     *
-     * @param array $block Block object.
-     *
-     * @return string The unique class name.
-     * @since  6.0.0
-     * @access private
-     *
-     */
     function wp_get_elements_class_name($block)
     {
         return 'wp-elements-'.md5(serialize($block));
     }
 
-    /**
-     * Updates the block content with elements class names.
-     *
-     * @param string $block_content Rendered block content.
-     * @param array  $block         Block object.
-     *
-     * @return string Filtered block content.
-     * @since  5.8.0
-     * @access private
-     *
-     */
     function wp_render_elements_support($block_content, $block)
     {
         if(! $block_content)
@@ -88,22 +61,6 @@
         return $tags->get_updated_html();
     }
 
-    /**
-     * Renders the elements stylesheet.
-     *
-     * In the case of nested blocks we want the parent element styles to be rendered before their descendants.
-     * This solves the issue of an element (e.g.: link color) being styled in both the parent and a descendant:
-     * we want the descendant style to take priority, and this is done by loading it after, in DOM order.
-     *
-     * @param string|null $pre_render The pre-rendered content. Default null.
-     * @param array       $block      The block being rendered.
-     *
-     * @return null
-     * @since  6.1.0 Implemented the style engine to generate CSS and classnames.
-     * @access private
-     *
-     * @since  6.0.0
-     */
     function wp_render_elements_support_styles($pre_render, $block)
     {
         $block_type = WP_Block_Type_Registry::get_instance()->get_registered($block['blockName']);

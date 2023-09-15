@@ -1,30 +1,7 @@
 <?php
-    /**
-     * REST API: WP_REST_Menu_Items_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.9.0
-     */
 
-    /**
-     * Core class to access nav items via the REST API.
-     *
-     * @since 5.9.0
-     *
-     * @see   WP_REST_Posts_Controller
-     */
     class WP_REST_Menu_Items_Controller extends WP_REST_Posts_Controller
     {
-        /**
-         * Checks if a given request has access to read menu items.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.9.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             $has_permission = parent::get_items_permissions_check($request);
@@ -37,17 +14,6 @@
             return $this->check_has_read_only_access($request);
         }
 
-        /**
-         * Checks whether the current user has read permission for the endpoint.
-         *
-         * This allows for any user that can `edit_theme_options` or edit any REST API available post type.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
-         * @since 5.9.0
-         *
-         */
         protected function check_has_read_only_access($request)
         {
             if(current_user_can('edit_theme_options'))
@@ -71,15 +37,6 @@
             return new WP_Error('rest_cannot_view', __('Sorry, you are not allowed to view menu items.'), ['status' => rest_authorization_required_code()]);
         }
 
-        /**
-         * Checks if a given request has access to read a menu item if they have access to edit them.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return bool|WP_Error True if the request has read access for the item, WP_Error object or false otherwise.
-         * @since 5.9.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $permission_check = parent::get_item_permissions_check($request);
@@ -92,15 +49,6 @@
             return $this->check_has_read_only_access($request);
         }
 
-        /**
-         * Creates a single post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.9.0
-         *
-         */
         public function create_item($request)
         {
             if(! empty($request['id']))
@@ -139,16 +87,6 @@
                 return $nav_menu_item;
             }
 
-            /**
-             * Fires after a single menu item is created or updated via the REST API.
-             *
-             * @param object          $nav_menu_item Inserted or updated menu item object.
-             * @param WP_REST_Request $request       Request object.
-             * @param bool            $creating      True when creating a menu item, false when updating.
-             *
-             * @since 5.9.0
-             *
-             */
             do_action('rest_insert_nav_menu_item', $nav_menu_item, $request, true);
 
             $schema = $this->get_item_schema();
@@ -173,16 +111,6 @@
 
             $request->set_param('context', 'edit');
 
-            /**
-             * Fires after a single menu item is completely created or updated via the REST API.
-             *
-             * @param object          $nav_menu_item Inserted or updated menu item object.
-             * @param WP_REST_Request $request       Request object.
-             * @param bool            $creating      True when creating a menu item, false when updating.
-             *
-             * @since 5.9.0
-             *
-             */
             do_action('rest_after_insert_nav_menu_item', $nav_menu_item, $request, true);
 
             $post = get_post($nav_menu_item_id);
@@ -197,15 +125,6 @@
             return $response;
         }
 
-        /**
-         * Prepares a single post for create or update.
-         *
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return object|WP_Error
-         * @since 5.9.0
-         *
-         */
         protected function prepare_item_for_database($request)
         {
             $menu_item_db_id = $request['id'];
@@ -379,28 +298,9 @@
 
             $prepared_nav_item = (object) $prepared_nav_item;
 
-            /**
-             * Filters a menu item before it is inserted via the REST API.
-             *
-             * @param object          $prepared_nav_item An object representing a single menu item prepared
-             *                                           for inserting or updating the database.
-             * @param WP_REST_Request $request           Request object.
-             *
-             * @since 5.9.0
-             *
-             */
             return apply_filters('rest_pre_insert_nav_menu_item', $prepared_nav_item, $request);
         }
 
-        /**
-         * Gets the nav menu item, if the ID is valid.
-         *
-         * @param int $id Supplied ID.
-         *
-         * @return object|WP_Error Post object if ID is valid, WP_Error otherwise.
-         * @since 5.9.0
-         *
-         */
         protected function get_nav_menu_item($id)
         {
             $post = $this->get_post($id);
@@ -412,15 +312,6 @@
             return wp_setup_nav_menu_item($post);
         }
 
-        /**
-         * Gets the id of the menu that the given menu item belongs to.
-         *
-         * @param int $menu_item_id Menu item id.
-         *
-         * @return int
-         * @since 5.9.0
-         *
-         */
         protected function get_menu_id($menu_item_id)
         {
             $menu_ids = wp_get_post_terms($menu_item_id, 'nav_menu', ['fields' => 'ids']);
@@ -433,13 +324,6 @@
             return $menu_id;
         }
 
-        /**
-         * Retrieves the term's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.9.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -661,13 +545,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Retrieves Link Description Objects that should be added to the Schema for the posts collection.
-         *
-         * @return array
-         * @since 5.9.0
-         *
-         */
         protected function get_schema_links()
         {
             $links = parent::get_schema_links();
@@ -689,16 +566,6 @@
             return $links;
         }
 
-        /**
-         * Prepares a single post output for response.
-         *
-         * @param WP_Post         $item    Post object.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response Response object.
-         * @since 5.9.0
-         *
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Base fields for every post.
@@ -725,7 +592,6 @@
             {
                 add_filter('protected_title_format', [$this, 'protected_title_format']);
 
-                /** This filter is documented in wp-includes/post-template.php */
                 $title = apply_filters('the_title', $menu_item->title, $menu_item->ID);
 
                 $data['title']['rendered'] = $title;
@@ -863,28 +729,9 @@
                 }
             }
 
-            /**
-             * Filters the menu item data for a REST API response.
-             *
-             * @param WP_REST_Response $response  The response object.
-             * @param object           $menu_item Menu item setup by {@see wp_setup_nav_menu_item()}.
-             * @param WP_REST_Request  $request   Request object.
-             *
-             * @since 5.9.0
-             *
-             */
             return apply_filters('rest_prepare_nav_menu_item', $response, $menu_item, $request);
         }
 
-        /**
-         * Prepares links for the request.
-         *
-         * @param WP_Post $post Post object.
-         *
-         * @return array Links for the given post.
-         * @since 5.9.0
-         *
-         */
         protected function prepare_links($post)
         {
             $links = parent::prepare_links($post);
@@ -921,15 +768,6 @@
             return $links;
         }
 
-        /**
-         * Updates a single nav menu item.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.9.0
-         *
-         */
         public function update_item($request)
         {
             $valid_check = $this->get_nav_menu_item($request['id']);
@@ -971,7 +809,6 @@
                 return $nav_menu_item;
             }
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-menu-items-controller.php */
             do_action('rest_insert_nav_menu_item', $nav_menu_item, $request, false);
 
             $schema = $this->get_item_schema();
@@ -997,7 +834,6 @@
 
             $request->set_param('context', 'edit');
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-menu-items-controller.php */
             do_action('rest_after_insert_nav_menu_item', $nav_menu_item, $request, false);
 
             wp_after_insert_post($post, true, $post_before);
@@ -1007,15 +843,6 @@
             return rest_ensure_response($response);
         }
 
-        /**
-         * Deletes a single menu item.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error True on success, or WP_Error object on failure.
-         * @since 5.9.0
-         *
-         */
         public function delete_item($request)
         {
             $menu_item = $this->get_nav_menu_item($request['id']);
@@ -1046,28 +873,11 @@
                                     'previous' => $previous->get_data(),
                                 ]);
 
-            /**
-             * Fires immediately after a single menu item is deleted via the REST API.
-             *
-             * @param object           $nav_menu_item Inserted or updated menu item object.
-             * @param WP_REST_Response $response      The response data.
-             * @param WP_REST_Request  $request       Request object.
-             *
-             * @since 5.9.0
-             *
-             */
             do_action('rest_delete_nav_menu_item', $menu_item, $response, $request);
 
             return $response;
         }
 
-        /**
-         * Retrieves the query params for the posts collection.
-         *
-         * @return array Collection parameters.
-         * @since 5.9.0
-         *
-         */
         public function get_collection_params()
         {
             $query_params = parent::get_collection_params();
@@ -1108,17 +918,6 @@
             return $query_params;
         }
 
-        /**
-         * Determines the allowed query_vars for a get_items() response and prepares
-         * them for WP_Query.
-         *
-         * @param array           $prepared_args Optional. Prepared WP_Query arguments. Default empty array.
-         * @param WP_REST_Request $request       Optional. Full details about the request.
-         *
-         * @return array Items query arguments.
-         * @since 5.9.0
-         *
-         */
         protected function prepare_items_query($prepared_args = [], $request = null)
         {
             $query_args = parent::prepare_items_query($prepared_args, $request);

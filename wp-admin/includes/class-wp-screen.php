@@ -1,221 +1,50 @@
 <?php
-    /**
-     * Screen API: WP_Screen class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used to implement an admin screen API.
-     *
-     * @since 3.3.0
-     */
     #[AllowDynamicProperties]
     final class WP_Screen
     {
-        /**
-         * Stores old string-based help.
-         *
-         * @var array
-         */
         private static $_old_compat_help = [];
 
-        /**
-         * The screen object registry.
-         *
-         * @since 3.3.0
-         *
-         * @var array
-         */
         private static $_registry = [];
 
-        /**
-         * Any action associated with the screen.
-         *
-         * 'add' for *-add.php and *-new.php screens. Empty otherwise.
-         *
-         * @since 3.3.0
-         * @var string
-         */
         public $action;
 
-        /**
-         * The base type of the screen.
-         *
-         * This is typically the same as `$id` but with any post types and taxonomies stripped.
-         * For example, for an `$id` of 'edit-post' the base is 'edit'.
-         *
-         * @since 3.3.0
-         * @var string
-         */
         public $base;
 
-        /**
-         * The unique ID of the screen.
-         *
-         * @since 3.3.0
-         * @var string
-         */
         public $id;
 
-        /**
-         * Whether the screen is in the network admin.
-         *
-         * Deprecated. Use in_admin() instead.
-         *
-         * @since      3.3.0
-         * @deprecated 3.5.0
-         * @var bool
-         */
         public $is_network;
 
-        /**
-         * Whether the screen is in the user admin.
-         *
-         * Deprecated. Use in_admin() instead.
-         *
-         * @since      3.3.0
-         * @deprecated 3.5.0
-         * @var bool
-         */
         public $is_user;
 
-        /**
-         * The base menu parent.
-         *
-         * This is derived from `$parent_file` by removing the query string and any .php extension.
-         * `$parent_file` values of 'edit.php?post_type=page' and 'edit.php?post_type=post'
-         * have a `$parent_base` of 'edit'.
-         *
-         * @since 3.3.0
-         * @var string|null
-         */
         public $parent_base;
 
-        /**
-         * The parent_file for the screen per the admin menu system.
-         *
-         * Some `$parent_file` values are 'edit.php?post_type=page', 'edit.php', and 'options-general.php'.
-         *
-         * @since 3.3.0
-         * @var string|null
-         */
         public $parent_file;
 
-        /**
-         * The post type associated with the screen, if any.
-         *
-         * The 'edit.php?post_type=page' screen has a post type of 'page'.
-         * The 'edit-tags.php?taxonomy=$taxonomy&post_type=page' screen has a post type of 'page'.
-         *
-         * @since 3.3.0
-         * @var string
-         */
         public $post_type;
 
-        /**
-         * The taxonomy associated with the screen, if any.
-         *
-         * The 'edit-tags.php?taxonomy=category' screen has a taxonomy of 'category'.
-         *
-         * @since 3.3.0
-         * @var string
-         */
         public $taxonomy;
 
-        /**
-         * Whether the screen is using the block editor.
-         *
-         * @since 5.0.0
-         * @var bool
-         */
         public $is_block_editor = false;
 
-        /**
-         * Which admin the screen is in. network | user | site | false
-         *
-         * @since 3.5.0
-         * @var string
-         */
         protected $in_admin;
 
-        /**
-         * The number of columns to display. Access with get_columns().
-         *
-         * @since 3.4.0
-         * @var int
-         */
         private $columns = 0;
 
-        /**
-         * The help tab data associated with the screen, if any.
-         *
-         * @since 3.3.0
-         * @var array
-         */
         private $_help_tabs = [];
 
-        /**
-         * The help sidebar data associated with screen, if any.
-         *
-         * @since 3.3.0
-         * @var string
-         */
         private $_help_sidebar = '';
 
-        /**
-         * The accessible hidden headings and text associated with the screen, if any.
-         *
-         * @since 4.4.0
-         * @var string[]
-         */
         private $_screen_reader_content = [];
 
-        /**
-         * The screen options associated with screen, if any.
-         *
-         * @since 3.3.0
-         * @var array
-         */
         private $_options = [];
 
-        /**
-         * Stores the result of the public show_screen_options function.
-         *
-         * @since 3.3.0
-         * @var bool
-         */
         private $_show_screen_options;
 
-        /**
-         * Stores the 'screen_settings' section of screen options.
-         *
-         * @since 3.3.0
-         * @var string
-         */
         private $_screen_settings;
 
-        /**
-         * Constructor
-         *
-         * @since 3.3.0
-         */
         private function __construct() {}
 
-        /**
-         * Fetches a screen object.
-         *
-         * @param string|WP_Screen $hook_name Optional. The hook name (also known as the hook suffix) used to determine
-         *                                    the screen. Defaults to the current $hook_suffix global.
-         *
-         * @return WP_Screen Screen object.
-         * @since 3.3.0
-         *
-         * @global string          $hook_suffix
-         *
-         */
         public static function get($hook_name = '')
         {
             if($hook_name instanceof WP_Screen)
@@ -359,7 +188,6 @@
                             {
                                 $post_type = $post->post_type;
 
-                                /** This filter is documented in wp-admin/post.php */
                                 $replace_editor = apply_filters('replace_editor', false, $post);
 
                                 if(! $replace_editor)
@@ -464,30 +292,11 @@
             return $screen;
         }
 
-        /**
-         * Sets the old string-based contextual help for the screen for backward compatibility.
-         *
-         * @param WP_Screen $screen A screen object.
-         * @param string    $help   Help text.
-         *
-         * @since 3.3.0
-         *
-         */
         public static function add_old_compat_help($screen, $help)
         {
             self::$_old_compat_help[$screen->id] = $help;
         }
 
-        /**
-         * Makes the screen object the current screen.
-         *
-         * @see   set_current_screen()
-         * @since 3.3.0
-         *
-         * @global WP_Screen $current_screen WordPress current screen object.
-         * @global string    $typenow        The post type of the current screen.
-         * @global string    $taxnow         The taxonomy of the current screen.
-         */
         public function set_current_screen()
         {
             global $current_screen, $taxnow, $typenow;
@@ -496,27 +305,9 @@
             $typenow = $this->post_type;
             $taxnow = $this->taxonomy;
 
-            /**
-             * Fires after the current screen has been set.
-             *
-             * @param WP_Screen $current_screen Current WP_Screen object.
-             *
-             * @since 3.0.0
-             *
-             */
             do_action('current_screen', $current_screen);
         }
 
-        /**
-         * Indicates whether the screen is in a particular admin.
-         *
-         * @param string $admin The admin to check against (network | user | site).
-         *                      If empty any of the three admins will result in true.
-         *
-         * @return bool True if the screen is in the indicated admin, false otherwise.
-         * @since 3.5.0
-         *
-         */
         public function in_admin($admin = null)
         {
             if(empty($admin))
@@ -527,15 +318,6 @@
             return ($admin === $this->in_admin);
         }
 
-        /**
-         * Sets or returns whether the block editor is loading on the current screen.
-         *
-         * @param bool $set Optional. Sets whether the block editor is loading on the current screen or not.
-         *
-         * @return bool True if the block editor is being loaded, false otherwise.
-         * @since 5.0.0
-         *
-         */
         public function is_block_editor($set = null)
         {
             if(null !== $set)
@@ -546,16 +328,6 @@
             return $this->is_block_editor;
         }
 
-        /**
-         * Sets the parent information for the screen.
-         *
-         * This is called in admin-header.php after the menu parent for the screen has been determined.
-         *
-         * @param string $parent_file The parent file of the screen. Typically the $parent_file global.
-         *
-         * @since 3.3.0
-         *
-         */
         public function set_parentage($parent_file)
         {
             $this->parent_file = $parent_file;
@@ -563,50 +335,21 @@
             $this->parent_base = str_replace('.php', '', $this->parent_base);
         }
 
-        /**
-         * Removes an option from the screen.
-         *
-         * @param string $option Option ID.
-         *
-         * @since 3.8.0
-         *
-         */
         public function remove_option($option)
         {
             unset($this->_options[$option]);
         }
 
-        /**
-         * Removes all options from the screen.
-         *
-         * @since 3.8.0
-         */
         public function remove_options()
         {
             $this->_options = [];
         }
 
-        /**
-         * Gets the options registered for the screen.
-         *
-         * @return array Options with arguments.
-         * @since 3.8.0
-         *
-         */
         public function get_options()
         {
             return $this->_options;
         }
 
-        /**
-         * Gets the arguments for a help tab.
-         *
-         * @param string $id Help Tab ID.
-         *
-         * @return array Help tab arguments.
-         * @since 3.4.0
-         *
-         */
         public function get_help_tab($id)
         {
             if(! isset($this->_help_tabs[$id]))
@@ -617,59 +360,21 @@
             return $this->_help_tabs[$id];
         }
 
-        /**
-         * Removes a help tab from the contextual help for the screen.
-         *
-         * @param string $id The help tab ID.
-         *
-         * @since 3.3.0
-         *
-         */
         public function remove_help_tab($id)
         {
             unset($this->_help_tabs[$id]);
         }
 
-        /**
-         * Removes all help tabs from the contextual help for the screen.
-         *
-         * @since 3.3.0
-         */
         public function remove_help_tabs()
         {
             $this->_help_tabs = [];
         }
 
-        /**
-         * Gets the accessible hidden headings and text used in the screen.
-         *
-         * @return string[] An associative array of screen reader text strings.
-         * @see   set_screen_reader_content() For more information on the array format.
-         *
-         * @since 4.4.0
-         *
-         */
         public function get_screen_reader_content()
         {
             return $this->_screen_reader_content;
         }
 
-        /**
-         * Adds accessible hidden headings and text for the screen.
-         *
-         * @param array $content                {
-         *                                      An associative array of screen reader text strings.
-         *
-         * @type string $heading_views          Screen reader text for the filter links heading.
-         *                                      Default 'Filter items list'.
-         * @type string $heading_pagination     Screen reader text for the pagination heading.
-         *                                      Default 'Items list navigation'.
-         * @type string $heading_list           Screen reader text for the items list heading.
-         *                                      Default 'Items list'.
-         *                                      }
-         * @since 4.4.0
-         *
-         */
         public function set_screen_reader_content($content = [])
         {
             $defaults = [
@@ -682,15 +387,6 @@
             $this->_screen_reader_content = $content;
         }
 
-        /**
-         * Gets a screen reader text string.
-         *
-         * @param string $key Screen reader text array named key.
-         *
-         * @return string Screen reader text string.
-         * @since 4.4.0
-         *
-         */
         public function get_screen_reader_text($key)
         {
             if(! isset($this->_screen_reader_content[$key]))
@@ -701,38 +397,13 @@
             return $this->_screen_reader_content[$key];
         }
 
-        /**
-         * Removes all the accessible hidden headings and text for the screen.
-         *
-         * @since 4.4.0
-         */
         public function remove_screen_reader_content()
         {
             $this->_screen_reader_content = [];
         }
 
-        /**
-         * Renders the screen's help section.
-         *
-         * This will trigger the deprecated filters for backward compatibility.
-         *
-         * @since 3.3.0
-         *
-         * @global string $screen_layout_columns
-         */
         public function render_screen_meta()
         {
-            /**
-             * Filters the legacy contextual help list.
-             *
-             * @param array     $old_compat_help Old contextual help.
-             * @param WP_Screen $screen          Current WP_Screen instance.
-             *
-             * @since      2.7.0
-             * @deprecated 3.3.0 Use {@see get_current_screen()->add_help_tab()} or
-             *                   {@see get_current_screen()->remove_help_tab()} instead.
-             *
-             */
             self::$_old_compat_help = apply_filters_deprecated('contextual_help_list', [
                 self::$_old_compat_help,
                 $this,
@@ -740,18 +411,6 @@
 
             $old_help = isset(self::$_old_compat_help[$this->id]) ? self::$_old_compat_help[$this->id] : '';
 
-            /**
-             * Filters the legacy contextual help text.
-             *
-             * @param string    $old_help  Help text that appears on the screen.
-             * @param string    $screen_id Screen ID.
-             * @param WP_Screen $screen    Current WP_Screen instance.
-             *
-             * @deprecated 3.3.0 Use {@see get_current_screen()->add_help_tab()} or
-             *                   {@see get_current_screen()->remove_help_tab()} instead.
-             *
-             * @since      2.7.0
-             */
             $old_help = apply_filters_deprecated('contextual_help', [
                 $old_help,
                 $this->id,
@@ -761,16 +420,6 @@
             // Default help only if there is no old-style block of text and no new-style help tabs.
             if(empty($old_help) && ! $this->get_help_tabs())
             {
-                /**
-                 * Filters the default legacy contextual help text.
-                 *
-                 * @param string $old_help_default Default contextual help text.
-                 *
-                 * @deprecated 3.3.0 Use {@see get_current_screen()->add_help_tab()} or
-                 *                   {@see get_current_screen()->remove_help_tab()} instead.
-                 *
-                 * @since      2.8.0
-                 */
                 $default_help = apply_filters_deprecated('default_contextual_help', [''], '3.3.0', 'get_current_screen()->add_help_tab(), get_current_screen()->remove_help_tab()');
                 if($default_help)
                 {
@@ -862,19 +511,6 @@
                 <?php
                     // Setup layout columns.
 
-                    /**
-                     * Filters the array of screen layout columns.
-                     *
-                     * This hook provides back-compat for plugins using the back-compat
-                     * Filters instead of add_screen_option().
-                     *
-                     * @param array     $empty_columns Empty array.
-                     * @param string    $screen_id     Screen ID.
-                     * @param WP_Screen $screen        Current WP_Screen instance.
-                     *
-                     * @since 2.8.0
-                     *
-                     */
                     $columns = apply_filters('screen_layout_columns', [], $this->id, $this);
 
                     if(! empty($columns) && isset($columns[$this->id]))
@@ -931,14 +567,6 @@
             <?php
         }
 
-        /**
-         * Gets the help tabs registered for the screen.
-         *
-         * @return array Help tabs with arguments.
-         * @since 4.4.0 Help tabs are ordered by their priority.
-         *
-         * @since 3.4.0
-         */
         public function get_help_tabs()
         {
             $help_tabs = $this->_help_tabs;
@@ -970,30 +598,6 @@
             return $sorted;
         }
 
-        /**
-         * Adds a help tab to the contextual help for the screen.
-         *
-         * Call this on the `load-$pagenow` hook for the relevant screen,
-         * or fetch the `$current_screen` object, or use get_current_screen()
-         * and then call the method from the object.
-         *
-         * You may need to filter `$current_screen` using an if or switch statement
-         * to prevent new help tabs from being added to ALL admin screens.
-         *
-         * @param array   $args         {
-         *                              Array of arguments used to display the help tab.
-         *
-         * @type string   $title        Title for the tab. Default false.
-         * @type string   $id           Tab ID. Must be HTML-safe and should be unique for this menu.
-         *                              It is NOT allowed to contain any empty spaces. Default false.
-         * @type string   $content      Optional. Help tab content in plain text or HTML. Default empty string.
-         * @type callable $callback     Optional. A callback to generate the tab content. Default false.
-         * @type int      $priority     Optional. The priority of the tab, used for ordering. Default 10.
-         *                              }
-         * @since 4.4.0 The `$priority` argument was added.
-         *
-         * @since 3.3.0
-         */
         public function add_help_tab($args)
         {
             $defaults = [
@@ -1017,62 +621,21 @@
             $this->_help_tabs[$args['id']] = $args;
         }
 
-        /**
-         * Gets the content from a contextual help sidebar.
-         *
-         * @return string Contents of the help sidebar.
-         * @since 3.4.0
-         *
-         */
         public function get_help_sidebar()
         {
             return $this->_help_sidebar;
         }
 
-        /**
-         * Adds a sidebar to the contextual help for the screen.
-         *
-         * Call this in template files after admin.php is loaded and before admin-header.php is loaded
-         * to add a sidebar to the contextual help.
-         *
-         * @param string $content Sidebar content in plain text or HTML.
-         *
-         * @since 3.3.0
-         *
-         */
         public function set_help_sidebar($content)
         {
             $this->_help_sidebar = $content;
         }
 
-        /**
-         * Adds an option for the screen.
-         *
-         * Call this in template files after admin.php is loaded and before admin-header.php is loaded
-         * to add screen options.
-         *
-         * @param string $option Option ID.
-         * @param mixed  $args   Option-dependent arguments.
-         *
-         * @since 3.3.0
-         *
-         */
         public function add_option($option, $args = [])
         {
             $this->_options[$option] = $args;
         }
 
-        /**
-         * Gets the arguments for an option for the screen.
-         *
-         * @param string       $option Option name.
-         * @param string|false $key    Optional. Specific array key for when the option is an array.
-         *                             Default false.
-         *
-         * @return string The option value if set, null otherwise.
-         * @since 3.3.0
-         *
-         */
         public function get_option($option, $key = false)
         {
             if(! isset($this->_options[$option]))
@@ -1092,11 +655,6 @@
             return $this->_options[$option];
         }
 
-        /**
-         * @return bool
-         * @global array $wp_meta_boxes
-         *
-         */
         public function show_screen_options()
         {
             global $wp_meta_boxes;
@@ -1120,15 +678,6 @@
                 $this->_screen_settings = $expand;
             }
 
-            /**
-             * Filters the screen settings text displayed in the Screen Options tab.
-             *
-             * @param string    $screen_settings Screen settings.
-             * @param WP_Screen $screen          WP_Screen object.
-             *
-             * @since 3.0.0
-             *
-             */
             $this->_screen_settings = apply_filters('screen_settings', $this->_screen_settings, $this);
 
             if($this->_screen_settings || $this->_options)
@@ -1136,32 +685,11 @@
                 $show_screen = true;
             }
 
-            /**
-             * Filters whether to show the Screen Options tab.
-             *
-             * @param bool      $show_screen Whether to show Screen Options tab.
-             *                               Default true.
-             * @param WP_Screen $screen      Current WP_Screen instance.
-             *
-             * @since 3.2.0
-             *
-             */
             $this->_show_screen_options = apply_filters('screen_options_show_screen', $show_screen, $this);
 
             return $this->_show_screen_options;
         }
 
-        /**
-         * Renders the screen options tab.
-         *
-         * @param array $options {
-         *                       Options for the tab.
-         *
-         * @type bool   $wrap    Whether the screen-options-wrap div will be included. Defaults to true.
-         *                       }
-         * @since 3.3.0
-         *
-         */
         public function render_screen_options($options = [])
         {
             $options = wp_parse_args($options, [
@@ -1196,16 +724,6 @@
             $this->render_view_mode();
             echo $this->_screen_settings;
 
-            /**
-             * Filters whether to show the Screen Options submit button.
-             *
-             * @param bool      $show_button Whether to show Screen Options submit button.
-             *                               Default false.
-             * @param WP_Screen $screen      Current WP_Screen instance.
-             *
-             * @since 4.4.0
-             *
-             */
             $show_button = apply_filters('screen_options_show_submit', false, $this);
 
             if($show_button)
@@ -1216,13 +734,6 @@
             echo $form_end.$wrapper_end;
         }
 
-        /**
-         * Renders the meta boxes preferences.
-         *
-         * @since 4.4.0
-         *
-         * @global array $wp_meta_boxes
-         */
         public function render_meta_boxes_preferences()
         {
             global $wp_meta_boxes;
@@ -1268,11 +779,6 @@
             <?php
         }
 
-        /**
-         * Renders the list table columns preferences.
-         *
-         * @since 4.4.0
-         */
         public function render_list_table_columns_preferences()
         {
             $columns = get_column_headers($this);
@@ -1320,11 +826,6 @@
             <?php
         }
 
-        /**
-         * Renders the option for number of columns on the page.
-         *
-         * @since 3.3.0
-         */
         public function render_screen_layout()
         {
             if(! $this->get_option('layout_columns'))
@@ -1352,29 +853,11 @@
             <?php
         }
 
-        /**
-         * Gets the number of layout columns the user has selected.
-         *
-         * The layout_columns option controls the max number and default number of
-         * columns. This method returns the number of columns within that range selected
-         * by the user via Screen Options. If no selection has been made, the default
-         * provisioned in layout_columns is returned. If the screen does not support
-         * selecting the number of layout columns, 0 is returned.
-         *
-         * @return int Number of columns to display.
-         * @since 3.4.0
-         *
-         */
         public function get_columns()
         {
             return $this->columns;
         }
 
-        /**
-         * Renders the items per page option.
-         *
-         * @since 3.3.0
-         */
         public function render_per_page_options()
         {
             if(null === $this->get_option('per_page'))
@@ -1408,24 +891,20 @@
             {
                 $comment_status = isset($_REQUEST['comment_status']) ? $_REQUEST['comment_status'] : 'all';
 
-                /** This filter is documented in wp-admin/includes/class-wp-comments-list-table.php */
                 $per_page = apply_filters('comments_per_page', $per_page, $comment_status);
             }
             elseif('categories_per_page' === $option)
             {
-                /** This filter is documented in wp-admin/includes/class-wp-terms-list-table.php */
                 $per_page = apply_filters('edit_categories_per_page', $per_page);
             }
             else
             {
-                /** This filter is documented in wp-admin/includes/class-wp-list-table.php */
                 $per_page = apply_filters("{$option}", $per_page);
             }
 
             // Back compat.
             if(isset($this->post_type))
             {
-                /** This filter is documented in wp-admin/includes/post.php */
                 $per_page = apply_filters('edit_posts_per_page', $per_page, $this->post_type);
             }
 
@@ -1452,13 +931,6 @@
             <?php
         }
 
-        /**
-         * Renders the list table view mode preferences.
-         *
-         * @since 4.4.0
-         *
-         * @global string $mode List table view mode.
-         */
         public function render_view_mode()
         {
             global $mode;
@@ -1473,15 +945,6 @@
 
             $view_mode_post_types = get_post_types(['show_ui' => true]);
 
-            /**
-             * Filters the post types that have different view mode options.
-             *
-             * @param string[] $view_mode_post_types Array of post types that can change view modes.
-             *                                       Default post types with show_ui on.
-             *
-             * @since 4.4.0
-             *
-             */
             $view_mode_post_types = apply_filters('view_mode_post_types', $view_mode_post_types);
 
             if('edit' === $screen->base && ! in_array($this->post_type, $view_mode_post_types, true))
@@ -1512,15 +975,6 @@
             <?php
         }
 
-        /**
-         * Renders screen reader text.
-         *
-         * @param string $key The screen reader text array named key.
-         * @param string $tag Optional. The HTML tag to wrap the screen reader text. Default h2.
-         *
-         * @since 4.4.0
-         *
-         */
         public function render_screen_reader_content($key = '', $tag = 'h2')
         {
             if(! isset($this->_screen_reader_content[$key]))

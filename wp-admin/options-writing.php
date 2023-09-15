@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Writing settings administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_options'))
@@ -24,7 +17,6 @@
                                            'content' => '<p>'.__('You can submit content in several different ways; this screen holds the settings for all of them. The top section controls the editor within the dashboard, while the rest control external publishing methods. For more information on any of these methods, use the documentation links.').'</p>'.'<p>'.__('You must click the Save Changes button at the bottom of the screen for new settings to take effect.').'</p>',
                                        ]);
 
-    /** This filter is documented in wp-admin/options.php */
     if(apply_filters('enable_post_by_email_configuration', true))
     {
         get_current_screen()->add_help_tab([
@@ -34,7 +26,6 @@
                                            ]);
     }
 
-    /** This filter is documented in wp-admin/options-writing.php */
     if(apply_filters('enable_update_services_configuration', true))
     {
         get_current_screen()->add_help_tab([
@@ -141,7 +132,7 @@
         </table>
 
         <?php
-            /** This filter is documented in wp-admin/options.php */
+
             if(apply_filters('enable_post_by_email_configuration', true))
             {
                 ?>
@@ -223,14 +214,7 @@
             <?php } ?>
 
         <?php
-            /**
-             * Filters whether to enable the Update Services section in the Writing settings screen.
-             *
-             * @param bool $enable Whether to enable the Update Services settings area. Default true.
-             *
-             * @since 3.0.0
-             *
-             */
+
             if(apply_filters('enable_update_services_configuration', true))
             {
                 ?>

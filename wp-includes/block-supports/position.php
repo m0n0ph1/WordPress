@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Position block support flag.
-     *
-     * @package WordPress
-     * @since   6.2.0
-     */
 
-    /**
-     * Registers the style block attribute for block types that support it.
-     *
-     * @param WP_Block_Type $block_type Block Type.
-     *
-     * @since  6.2.0
-     * @access private
-     *
-     */
     function wp_register_position_support($block_type)
     {
         $has_position_support = block_has_support($block_type, 'position', false);
@@ -33,17 +18,6 @@
         }
     }
 
-    /**
-     * Renders position styles to the block wrapper.
-     *
-     * @param string $block_content Rendered block content.
-     * @param array  $block         Block object.
-     *
-     * @return string                Filtered block content.
-     * @since  6.2.0
-     * @access private
-     *
-     */
     function wp_render_position_support($block_content, $block)
     {
         $block_type = WP_Block_Type_Registry::get_instance()->get_registered($block['blockName']);

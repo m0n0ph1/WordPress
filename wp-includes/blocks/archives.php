@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/archives` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/archives` block on server.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string Returns the post content with archives added.
-     * @see WP_Widget_Archives
-     *
-     */
     function render_block_core_archives($attributes)
     {
         $show_post_count = ! empty($attributes['showPostCounts']);
@@ -28,7 +14,6 @@
             $dropdown_id = wp_unique_id('wp-block-archives-');
             $title = __('Archives');
 
-            /** This filter is documented in wp-includes/widgets/class-wp-widget-archives.php */
             $dropdown_args = apply_filters('widget_archives_dropdown_args', [
                 'type' => $type,
                 'format' => 'option',
@@ -69,7 +54,6 @@
             return sprintf('<div %1$s>%2$s</div>', $wrapper_attributes, $block_content);
         }
 
-        /** This filter is documented in wp-includes/widgets/class-wp-widget-archives.php */
         $archives_args = apply_filters('widget_archives_args', [
             'type' => $type,
             'show_post_count' => $show_post_count,
@@ -89,9 +73,6 @@
         return sprintf('<ul %1$s>%2$s</ul>', $wrapper_attributes, $archives);
     }
 
-    /**
-     * Register archives block.
-     */
     function register_block_core_archives()
     {
         register_block_type_from_metadata(__DIR__.'/archives', [

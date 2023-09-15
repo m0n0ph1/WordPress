@@ -24,23 +24,10 @@
 
     class getid3_quicktime extends getid3_handler
     {
-        /** audio-video.quicktime
-         * return all parsed data from all atoms if true, otherwise just returned parsed metadata
-         *
-         * @var bool
-         */
         public $ReturnAtomData = false;
 
-        /** audio-video.quicktime
-         * return all parsed data from all atoms if true, otherwise just returned parsed metadata
-         *
-         * @var bool
-         */
         public $ParseAllPossibleAtoms = false;
 
-        /**
-         * @return bool
-         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
@@ -292,16 +279,6 @@
             return true;
         }
 
-        /**
-         * @param string $atomname
-         * @param int    $atomsize
-         * @param string $atom_data
-         * @param int    $baseoffset
-         * @param array  $atomHierarchy
-         * @param bool   $ParseAllPossibleAtoms
-         *
-         * @return array|false
-         */
         public function QuicktimeParseAtom(
             $atomname, $atomsize, $atom_data, $baseoffset, &$atomHierarchy, $ParseAllPossibleAtoms
         ) {
@@ -2351,14 +2328,6 @@
             return $atom_structure;
         }
 
-        /**
-         * @param string $atom_data
-         * @param int    $baseoffset
-         * @param array  $atomHierarchy
-         * @param bool   $ParseAllPossibleAtoms
-         *
-         * @return array|false
-         */
         public function QuicktimeParseContainerAtom($atom_data, $baseoffset, &$atomHierarchy, $ParseAllPossibleAtoms)
         {
             $atom_structure = [];
@@ -2404,11 +2373,6 @@
             return $atom_structure;
         }
 
-        /**
-         * @param int $languageid
-         *
-         * @return string
-         */
         public function QuicktimeLanguageLookup($languageid)
         {
             // http://developer.apple.com/library/mac/#documentation/QuickTime/QTFF/QTFFChap4/qtff4.html#//apple_ref/doc/uid/TP40000939-CH206-34353
@@ -2550,11 +2514,6 @@
             return (isset($QuicktimeLanguageLookup[$languageid]) ? $QuicktimeLanguageLookup[$languageid] : 'invalid');
         }
 
-        /**
-         * @param int $rtng
-         *
-         * @return string
-         */
         public function QuicktimeContentRatingLookup($rtng)
         {
             static $QuicktimeContentRatingLookup = [];
@@ -2569,11 +2528,6 @@
             return (isset($QuicktimeContentRatingLookup[$rtng]) ? $QuicktimeContentRatingLookup[$rtng] : 'invalid');
         }
 
-        /**
-         * @param int $stik
-         *
-         * @return string
-         */
         public function QuicktimeSTIKLookup($stik)
         {
             static $QuicktimeSTIKLookup = [];
@@ -2594,11 +2548,6 @@
             return (isset($QuicktimeSTIKLookup[$stik]) ? $QuicktimeSTIKLookup[$stik] : 'invalid');
         }
 
-        /**
-         * @param int $sfid
-         *
-         * @return string
-         */
         public function QuicktimeStoreFrontCodeLookup($sfid)
         {
             static $QuicktimeStoreFrontCodeLookup = [];
@@ -2631,13 +2580,6 @@
             return (isset($QuicktimeStoreFrontCodeLookup[$sfid]) ? $QuicktimeStoreFrontCodeLookup[$sfid] : 'invalid');
         }
 
-        /**
-         * @param string       $keyname
-         * @param string|array $data
-         * @param string       $boxname
-         *
-         * @return bool
-         */
         public function CopyToAppropriateCommentsSection($keyname, $data, $boxname = '')
         {
             static $handyatomtranslatorarray = [];
@@ -2777,11 +2719,6 @@
             return true;
         }
 
-        /**
-         * @param string $compressionid
-         *
-         * @return string
-         */
         public function QuicktimeDCOMLookup($compressionid)
         {
             static $QuicktimeDCOMLookup = [];
@@ -2794,11 +2731,6 @@
             return (isset($QuicktimeDCOMLookup[$compressionid]) ? $QuicktimeDCOMLookup[$compressionid] : '');
         }
 
-        /**
-         * @param string $nullterminatedstring
-         *
-         * @return string
-         */
         public function NoNullString($nullterminatedstring)
         {
             // remove the single null terminator on null terminated strings
@@ -2810,11 +2742,6 @@
             return $nullterminatedstring;
         }
 
-        /**
-         * @param string $codecid
-         *
-         * @return string
-         */
         public function QuicktimeVideoCodecLookup($codecid)
         {
             static $QuicktimeVideoCodecLookup = [];
@@ -2878,11 +2805,6 @@
             return (isset($QuicktimeVideoCodecLookup[$codecid]) ? $QuicktimeVideoCodecLookup[$codecid] : '');
         }
 
-        /**
-         * @param string $codecid
-         *
-         * @return mixed|string
-         */
         public function QuicktimeAudioCodecLookup($codecid)
         {
             static $QuicktimeAudioCodecLookup = [];
@@ -2931,11 +2853,6 @@
             return (isset($QuicktimeAudioCodecLookup[$codecid]) ? $QuicktimeAudioCodecLookup[$codecid] : '');
         }
 
-        /**
-         * @param int $colordepthid
-         *
-         * @return string
-         */
         public function QuicktimeColorNameLookup($colordepthid)
         {
             static $QuicktimeColorNameLookup = [];
@@ -2957,11 +2874,6 @@
             return (isset($QuicktimeColorNameLookup[$colordepthid]) ? $QuicktimeColorNameLookup[$colordepthid] : 'invalid');
         }
 
-        /**
-         * @param string $pascalstring
-         *
-         * @return string
-         */
         public function MaybePascal2String($pascalstring)
         {
             // Pascal strings have 1 unsigned byte at the beginning saying how many chars (1-255) are in the string
@@ -2979,12 +2891,6 @@
             return $pascalstring;
         }
 
-        /**
-         * @param string $data
-         * @param int    $offset
-         *
-         * @return int
-         */
         public function quicktime_read_mp4_descr_length($data, &$offset)
         {
             // http://libquicktime.sourcearchive.com/documentation/2:1.0.2plus-pdebian-2build1/esds_8c-source.html
@@ -3000,11 +2906,6 @@
             return $length;
         }
 
-        /**
-         * @param int $audio_profile_id
-         *
-         * @return string
-         */
         public function QuicktimeIODSaudioProfileName($audio_profile_id)
         {
             static $QuicktimeIODSaudioProfileNameLookup = [];
@@ -3067,11 +2968,6 @@
             return (isset($QuicktimeIODSaudioProfileNameLookup[$audio_profile_id]) ? $QuicktimeIODSaudioProfileNameLookup[$audio_profile_id] : 'ISO Reserved / User Private');
         }
 
-        /**
-         * @param int $video_profile_id
-         *
-         * @return string
-         */
         public function QuicktimeIODSvideoProfileName($video_profile_id)
         {
             static $QuicktimeIODSvideoProfileNameLookup = [];
@@ -3146,12 +3042,6 @@
             return (isset($QuicktimeIODSvideoProfileNameLookup[$video_profile_id]) ? $QuicktimeIODSvideoProfileNameLookup[$video_profile_id] : 'ISO Reserved Profile');
         }
 
-        /**
-         * @param string $lstring
-         * @param int    $count
-         *
-         * @return string
-         */
         public function LociString($lstring, &$count)
         {
             // Loci strings are UTF-8 or UTF-16 and null (x00/x0000) terminated. UTF-16 has a BOM
@@ -3195,11 +3085,6 @@
             return '';
         }
 
-        /**
-         * @param array $info
-         *
-         * @return array
-         */
         public function quicktime_time_to_sample_table($info)
         {
             $res = [];
@@ -3222,13 +3107,6 @@
             return [];
         }
 
-        /**
-         * @param array  $info
-         * @param string $k
-         * @param string $v
-         * @param string $history
-         * @param array  $result
-         */
         public function search_tag_by_pair($info, $k, $v, $history, &$result)
         {
             foreach($info as $key => $value)
@@ -3248,15 +3126,6 @@
             }
         }
 
-        /**
-         * Helper functions for m4b audiobook chapters
-         * code by Steffen Hartmann 2015-Nov-08.
-         *
-         * @param array  $info
-         * @param string $tag
-         * @param string $history
-         * @param array  $result
-         */
         public function search_tag_by_key($info, $tag, $history, &$result)
         {
             foreach($info as $key => $value)
@@ -3276,11 +3145,6 @@
             }
         }
 
-        /**
-         * @param array $info
-         *
-         * @return int
-         */
         public function quicktime_bookmark_time_scale($info)
         {
             $time_scale = '';
@@ -3310,11 +3174,6 @@
             return $time_scale;
         }
 
-        /**
-         * @param int $akid
-         *
-         * @return string
-         */
         public function QuicktimeStoreAccountTypeLookup($akid)
         {
             static $QuicktimeStoreAccountTypeLookup = [];
@@ -3327,11 +3186,6 @@
             return (isset($QuicktimeStoreAccountTypeLookup[$akid]) ? $QuicktimeStoreAccountTypeLookup[$akid] : 'invalid');
         }
 
-        /**
-         * @param string $pascalstring
-         *
-         * @return string
-         */
         public function Pascal2String($pascalstring)
         {
             // Pascal strings have 1 unsigned byte at the beginning saying how many chars (1-255) are in the string

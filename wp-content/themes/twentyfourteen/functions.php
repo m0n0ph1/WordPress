@@ -1,62 +1,17 @@
 <?php
-    /**
-     * Twenty Fourteen functions and definitions
-     *
-     * Set up the theme and provides some helper functions, which are used in the
-     * theme as custom template tags. Others are attached to action and filter
-     * hooks in WordPress to change core functionality.
-     *
-     * When using a child theme you can override certain functions (those wrapped
-     * in a function_exists() call) by defining them first in your child theme's
-     * functions.php file. The child theme's functions.php file is included before
-     * the parent theme's file, so the child theme functions would be used.
-     *
-     * @link       https://developer.wordpress.org/themes/basics/theme-functions/
-     * @link       https://developer.wordpress.org/themes/advanced-topics/child-themes/
-     *
-     * Functions that are not pluggable (not wrapped in function_exists()) are
-     * instead attached to a filter or action hook.
-     *
-     * For more information on hooks, actions, and filters,
-     * @link       https://developer.wordpress.org/plugins/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Fourteen
-     * @since      Twenty Fourteen 1.0
-     */
 
-    /**
-     * Set up the content width value based on the theme's design.
-     *
-     * @see   twentyfourteen_content_width()
-     *
-     * @since Twenty Fourteen 1.0
-     */
     if(! isset($content_width))
     {
         $content_width = 474;
     }
 
-    /**
-     * Twenty Fourteen only works in WordPress 3.6 or later.
-     */
     if(version_compare($GLOBALS['wp_version'], '3.6', '<'))
     {
         require get_template_directory().'/inc/back-compat.php';
     }
 
     if(! function_exists('twentyfourteen_setup')) :
-        /**
-         * Twenty Fourteen setup.
-         *
-         * Set up theme defaults and registers support for various WordPress features.
-         *
-         * Note that this function is hooked into the after_setup_theme hook, which
-         * runs before the init hook. The init hook is too late for some features, such
-         * as indicating support post thumbnails.
-         *
-         * @since Twenty Fourteen 1.0
-         */
+
         function twentyfourteen_setup()
         {
             /*
@@ -175,19 +130,9 @@
 
             // This theme allows users to set a custom background.
             add_theme_support(
-                'custom-background', /**
-             * Filters Twenty Fourteen custom-background support arguments.
-             *
-             * @param array $args    {
-             *                       An array of custom-background support arguments.
-             *
-             * @type string $default -color Default color of the background.
-             *                       }
-             * @since Twenty Fourteen 1.0
-             *
-             */ apply_filters('twentyfourteen_custom_background_args', [
-                'default-color' => 'f5f5f5',
-            ])
+                'custom-background', apply_filters('twentyfourteen_custom_background_args', [
+                                       'default-color' => 'f5f5f5',
+                                   ])
             );
 
             // Add support for featured content.
@@ -205,11 +150,6 @@
     endif; // twentyfourteen_setup()
     add_action('after_setup_theme', 'twentyfourteen_setup');
 
-    /**
-     * Adjust content_width value for image attachment template.
-     *
-     * @since Twenty Fourteen 1.0
-     */
     function twentyfourteen_content_width()
     {
         if(is_attachment() && wp_attachment_is_image())
@@ -220,43 +160,16 @@
 
     add_action('template_redirect', 'twentyfourteen_content_width');
 
-    /**
-     * Getter function for Featured Content Plugin.
-     *
-     * @return array An array of WP_Post objects.
-     * @since Twenty Fourteen 1.0
-     *
-     */
     function twentyfourteen_get_featured_posts()
     {
-        /**
-         * Filters the featured posts to return in Twenty Fourteen.
-         *
-         * @param array|bool $posts Array of featured posts, otherwise false.
-         *
-         * @since Twenty Fourteen 1.0
-         *
-         */
         return apply_filters('twentyfourteen_get_featured_posts', []);
     }
 
-    /**
-     * A helper conditional function that returns a boolean value.
-     *
-     * @return bool Whether there are featured posts.
-     * @since Twenty Fourteen 1.0
-     *
-     */
     function twentyfourteen_has_featured_posts()
     {
         return ! is_paged() && (bool) twentyfourteen_get_featured_posts();
     }
 
-    /**
-     * Register three Twenty Fourteen widget areas.
-     *
-     * @since Twenty Fourteen 1.0
-     */
     function twentyfourteen_widgets_init()
     {
         require get_template_directory().'/inc/widgets.php';
@@ -294,14 +207,7 @@
     add_action('widgets_init', 'twentyfourteen_widgets_init');
 
     if(! function_exists('twentyfourteen_font_url')) :
-        /**
-         * Register Lato font for Twenty Fourteen.
-         *
-         * @return string
-         * @since Twenty Fourteen 3.6 Replaced Google URL with self-hosted fonts.
-         *
-         * @since Twenty Fourteen 1.0
-         */
+
         function twentyfourteen_font_url()
         {
             $font_url = '';
@@ -318,11 +224,6 @@
         }
     endif;
 
-    /**
-     * Enqueue scripts and styles for the front end.
-     *
-     * @since Twenty Fourteen 1.0
-     */
     function twentyfourteen_scripts()
     {
         // Add Lato font, used in the main stylesheet.
@@ -377,11 +278,6 @@
 
     add_action('wp_enqueue_scripts', 'twentyfourteen_scripts');
 
-    /**
-     * Enqueue font stylesheet to admin screen for custom header display.
-     *
-     * @since Twenty Fourteen 1.0
-     */
     function twentyfourteen_admin_fonts()
     {
         $font_version = (0 === strpos((string) twentyfourteen_font_url(), get_template_directory_uri().'/')) ? '20230328' : null;
@@ -390,17 +286,6 @@
 
     add_action('admin_print_scripts-appearance_page_custom-header', 'twentyfourteen_admin_fonts');
 
-    /**
-     * Add preconnect for Google Fonts.
-     *
-     * @param array  $urls          URLs to print for resource hints.
-     * @param string $relation_type The relation type the URLs are printed.
-     *
-     * @return array URLs to print for resource hints.
-     * @deprecated Twenty Fourteen 3.6 Disabled filter because, by default, fonts are self-hosted.
-     *
-     * @since      Twenty Fourteen 1.9
-     */
     function twentyfourteen_resource_hints($urls, $relation_type)
     {
         if(wp_style_is('twentyfourteen-lato', 'queue') && 'preconnect' === $relation_type)
@@ -423,11 +308,6 @@
 
 // add_filter( 'wp_resource_hints', 'twentyfourteen_resource_hints', 10, 2 );
 
-    /**
-     * Enqueue styles for the block-based editor.
-     *
-     * @since Twenty Fourteen 2.3
-     */
     function twentyfourteen_block_editor_styles()
     {
         // Block styles.
@@ -440,26 +320,11 @@
     add_action('enqueue_block_editor_assets', 'twentyfourteen_block_editor_styles');
 
     if(! function_exists('twentyfourteen_the_attached_image')) :
-        /**
-         * Print the attached image with a link to the next attached image.
-         *
-         * @since Twenty Fourteen 1.0
-         */
+
         function twentyfourteen_the_attached_image()
         {
             $post = get_post();
-            /**
-             * Filters the default Twenty Fourteen attachment size.
-             *
-             * @param array $dimensions {
-             *                          An array of height and width dimensions.
-             *
-             * @type int    $height     Height of the image in pixels. Default 810.
-             * @type int    $width      Width of the image in pixels. Default 810.
-             *                          }
-             * @since Twenty Fourteen 1.0
-             *
-             */
+
             $attachment_size = apply_filters('twentyfourteen_attachment_size', [810, 810]);
             $next_attachment_url = wp_get_attachment_url();
 
@@ -509,11 +374,7 @@
     endif;
 
     if(! function_exists('twentyfourteen_list_authors')) :
-        /**
-         * Print a list of all site contributors who published at least one post.
-         *
-         * @since Twenty Fourteen 1.0
-         */
+
         function twentyfourteen_list_authors()
         {
             $args = [
@@ -530,14 +391,6 @@
                 unset($args['capability']);
             }
 
-            /**
-             * Filters query arguments for listing authors.
-             *
-             * @param array $args Query arguments.
-             *
-             * @since 3.3
-             *
-             */
             $args = apply_filters('twentyfourteen_list_authors_query_args', $args);
 
             $contributor_ids = get_users($args);
@@ -576,24 +429,6 @@
         }
     endif;
 
-    /**
-     * Extend the default WordPress body classes.
-     *
-     * Adds body classes to denote:
-     * 1. Single or multiple authors.
-     * 2. Presence of header image except in Multisite signup and activate pages.
-     * 3. Index views.
-     * 4. Full-width content layout.
-     * 5. Presence of footer widgets.
-     * 6. Single views.
-     * 7. Featured content layout.
-     *
-     * @param array $classes A list of existing body class values.
-     *
-     * @return array The filtered body class list.
-     * @since Twenty Fourteen 1.0
-     *
-     */
     function twentyfourteen_body_classes($classes)
     {
         if(is_multi_author())
@@ -644,18 +479,6 @@
 
     add_filter('body_class', 'twentyfourteen_body_classes');
 
-    /**
-     * Extend the default WordPress post classes.
-     *
-     * Adds a post class to denote:
-     * Non-password protected page with a post thumbnail.
-     *
-     * @param array $classes A list of existing post class values.
-     *
-     * @return array The filtered post class list.
-     * @since Twenty Fourteen 1.0
-     *
-     */
     function twentyfourteen_post_classes($classes)
     {
         if(! post_password_required() && ! is_attachment() && has_post_thumbnail())
@@ -668,20 +491,6 @@
 
     add_filter('post_class', 'twentyfourteen_post_classes');
 
-    /**
-     * Create a nicely formatted and more specific title element text for output
-     * in head of document, based on current view.
-     *
-     * @param string $title Default title text for current view.
-     * @param string $sep   Optional separator.
-     *
-     * @return string The filtered title.
-     * @since Twenty Fourteen 1.0
-     *
-     * @global int   $paged WordPress archive pagination page count.
-     * @global int   $page  WordPress paginated post page count.
-     *
-     */
     function twentyfourteen_wp_title($title, $sep)
     {
         global $paged, $page;
@@ -713,16 +522,6 @@
 
     add_filter('wp_title', 'twentyfourteen_wp_title', 10, 2);
 
-    /**
-     * Modifies tag cloud widget arguments to display all tags in the same font size
-     * and use list format for better accessibility.
-     *
-     * @param array $args Arguments for tag cloud widget.
-     *
-     * @return array The filtered arguments for tag cloud widget.
-     * @since Twenty Fourteen 2.1
-     *
-     */
     function twentyfourteen_widget_tag_cloud_args($args)
     {
         $args['largest'] = 22;
@@ -758,14 +557,6 @@
         require get_template_directory().'/inc/featured-content.php';
     }
 
-    /**
-     * Add an `is_customize_preview` function if it is missing.
-     *
-     * Enables installing Twenty Fourteen in WordPress versions before 4.0.0 when the
-     * `is_customize_preview` function was introduced.
-     *
-     * @global WP_Customize_Manager $wp_customize Customizer object.
-     */
     if(! function_exists('is_customize_preview')) :
         function is_customize_preview()
         {

@@ -1,35 +1,11 @@
 <?php
-    /**
-     * List Table API: WP_Themes_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying installed themes in a list table.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_Themes_List_Table extends WP_List_Table
     {
         public $features = [];
 
         protected $search_terms = [];
 
-        /**
-         * Constructor.
-         *
-         * @param array $args An associative array of arguments.
-         *
-         * @see   WP_List_Table::__construct() for more information on default arguments.
-         *
-         * @since 3.1.0
-         *
-         */
         public function __construct($args = [])
         {
             parent::__construct([
@@ -38,17 +14,12 @@
                                 ]);
         }
 
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             // Do not check edit_theme_options here. Ajax calls for available themes require switch_themes.
             return current_user_can('switch_themes');
         }
 
-        /**
-         */
         public function prepare_items()
         {
             $themes = wp_get_themes(['allowed' => true]);
@@ -91,11 +62,6 @@
                                        ]);
         }
 
-        /**
-         * @param WP_Theme $theme
-         *
-         * @return bool
-         */
         public function search_theme($theme)
         {
             // Search the features.
@@ -140,13 +106,6 @@
             return true;
         }
 
-        /**
-         * Displays the themes table.
-         *
-         * Overrides the parent display() method to provide a different container.
-         *
-         * @since 3.1.0
-         */
         public function display()
         {
             wp_nonce_field('fetch-list-'.get_class($this), '_ajax_fetch_list_nonce');
@@ -161,9 +120,6 @@
             <?php
         }
 
-        /**
-         * @param string $which
-         */
         public function tablenav($which = 'top')
         {
             if($this->get_pagination_arg('total_pages') <= 1)
@@ -179,8 +135,6 @@
             <?php
         }
 
-        /**
-         */
         public function display_rows_or_placeholder()
         {
             if($this->has_items())
@@ -195,8 +149,6 @@
             }
         }
 
-        /**
-         */
         public function display_rows()
         {
             $themes = $this->items;
@@ -227,10 +179,8 @@
                             $actions['delete'] = sprintf('<a class="submitdelete deletion" href="%s" onclick="return confirm( \'%s\' );">%s</a>', wp_nonce_url('themes.php?action=delete&amp;stylesheet='.urlencode($stylesheet), 'delete-theme_'.$stylesheet), /* translators: %s: Theme name. */ esc_js(sprintf(__("You are about to delete this theme '%s'\n  'Cancel' to stop, 'OK' to delete."), $title)), __('Delete'));
                         }
 
-                        /** This filter is documented in wp-admin/includes/class-wp-ms-themes-list-table.php */
                         $actions = apply_filters('theme_action_links', $actions, $theme, 'all');
 
-                        /** This filter is documented in wp-admin/includes/class-wp-ms-themes-list-table.php */
                         $actions = apply_filters("theme_action_links_{$stylesheet}", $actions, $theme, 'all');
                         $delete_action = isset($actions['delete']) ? '<div class="delete-theme">'.$actions['delete'].'</div>' : '';
                         unset($actions['delete']);
@@ -285,8 +235,6 @@
             endforeach;
         }
 
-        /**
-         */
         public function no_items()
         {
             if($this->search_terms || $this->features)
@@ -326,22 +274,11 @@
             printf(/* translators: %s: Network title. */ __('Only the active theme is available to you. Contact the %s administrator for information about accessing additional themes.'), get_site_option('site_name'));
         }
 
-        /**
-         * @return string[] Array of column titles keyed by their column name.
-         */
         public function get_columns()
         {
             return [];
         }
 
-        /**
-         * Send required variables to JavaScript land
-         *
-         * @param array $extra_args
-         *
-         * @since 3.4.0
-         *
-         */
         public function _js_vars($extra_args = [])
         {
             $search_string = isset($_REQUEST['s']) ? esc_attr(wp_unslash($_REQUEST['s'])) : '';

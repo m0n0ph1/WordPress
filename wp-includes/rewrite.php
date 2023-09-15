@@ -1,143 +1,37 @@
 <?php
-    /**
-     * WordPress Rewrite API
-     *
-     * @package    WordPress
-     * @subpackage Rewrite
-     */
 
-    /**
-     * Endpoint mask that matches nothing.
-     *
-     * @since 2.1.0
-     */
     define('EP_NONE', 0);
 
-    /**
-     * Endpoint mask that matches post permalinks.
-     *
-     * @since 2.1.0
-     */
     define('EP_PERMALINK', 1);
 
-    /**
-     * Endpoint mask that matches attachment permalinks.
-     *
-     * @since 2.1.0
-     */
     define('EP_ATTACHMENT', 2);
 
-    /**
-     * Endpoint mask that matches any date archives.
-     *
-     * @since 2.1.0
-     */
     define('EP_DATE', 4);
 
-    /**
-     * Endpoint mask that matches yearly archives.
-     *
-     * @since 2.1.0
-     */
     define('EP_YEAR', 8);
 
-    /**
-     * Endpoint mask that matches monthly archives.
-     *
-     * @since 2.1.0
-     */
     define('EP_MONTH', 16);
 
-    /**
-     * Endpoint mask that matches daily archives.
-     *
-     * @since 2.1.0
-     */
     define('EP_DAY', 32);
 
-    /**
-     * Endpoint mask that matches the site root.
-     *
-     * @since 2.1.0
-     */
     define('EP_ROOT', 64);
 
-    /**
-     * Endpoint mask that matches comment feeds.
-     *
-     * @since 2.1.0
-     */
     define('EP_COMMENTS', 128);
 
-    /**
-     * Endpoint mask that matches searches.
-     *
-     * Note that this only matches a search at a "pretty" URL such as
-     * `/search/my-search-term`, not `?s=my-search-term`.
-     *
-     * @since 2.1.0
-     */
     define('EP_SEARCH', 256);
 
-    /**
-     * Endpoint mask that matches category archives.
-     *
-     * @since 2.1.0
-     */
     define('EP_CATEGORIES', 512);
 
-    /**
-     * Endpoint mask that matches tag archives.
-     *
-     * @since 2.3.0
-     */
     define('EP_TAGS', 1024);
 
-    /**
-     * Endpoint mask that matches author archives.
-     *
-     * @since 2.1.0
-     */
     define('EP_AUTHORS', 2048);
 
-    /**
-     * Endpoint mask that matches pages.
-     *
-     * @since 2.1.0
-     */
     define('EP_PAGES', 4096);
 
-    /**
-     * Endpoint mask that matches all archive views.
-     *
-     * @since 3.7.0
-     */
     define('EP_ALL_ARCHIVES', EP_DATE | EP_YEAR | EP_MONTH | EP_DAY | EP_CATEGORIES | EP_TAGS | EP_AUTHORS);
 
-    /**
-     * Endpoint mask that matches everything.
-     *
-     * @since 2.1.0
-     */
     define('EP_ALL', EP_PERMALINK | EP_ATTACHMENT | EP_ROOT | EP_COMMENTS | EP_SEARCH | EP_PAGES | EP_ALL_ARCHIVES);
 
-    /**
-     * Adds a rewrite rule that transforms a URL structure to a set of query vars.
-     *
-     * Any value in the $after parameter that isn't 'bottom' will result in the rule
-     * being placed at the top of the rewrite rules.
-     *
-     * @param string       $regex      Regular expression to match request against.
-     * @param string|array $query      The corresponding query vars for this rewrite rule.
-     * @param string       $after      Optional. Priority of the new rule. Accepts 'top'
-     *                                 or 'bottom'. Default 'bottom'.
-     *
-     * @since 2.1.0
-     * @since 4.4.0 Array support was added to the `$query` parameter.
-     *
-     * @global WP_Rewrite  $wp_rewrite WordPress rewrite component.
-     *
-     */
     function add_rewrite_rule($regex, $query, $after = 'bottom')
     {
         global $wp_rewrite;
@@ -145,23 +39,6 @@
         $wp_rewrite->add_rule($regex, $query, $after);
     }
 
-    /**
-     * Adds a new rewrite tag (like %postname%).
-     *
-     * The `$query` parameter is optional. If it is omitted you must ensure that you call
-     * this on, or before, the {@see 'init'} hook. This is because `$query` defaults to
-     * `$tag=`, and for this to work a new query var has to be added.
-     *
-     * @param string      $tag        Name of the new rewrite tag.
-     * @param string      $regex      Regular expression to substitute the tag for in rewrite rules.
-     * @param string      $query      Optional. String to append to the rewritten query. Must end in '='. Default empty.
-     *
-     * @since 2.1.0
-     *
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     * @global WP         $wp         Current WordPress environment instance.
-     *
-     */
     function add_rewrite_tag($tag, $regex, $query = '')
     {
         // Validate the tag's name.
@@ -182,36 +59,12 @@
         $wp_rewrite->add_rewrite_tag($tag, $regex, $query);
     }
 
-    /**
-     * Removes an existing rewrite tag (like %postname%).
-     *
-     * @param string      $tag        Name of the rewrite tag.
-     *
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     *
-     * @since 4.5.0
-     *
-     */
     function remove_rewrite_tag($tag)
     {
         global $wp_rewrite;
         $wp_rewrite->remove_rewrite_tag($tag);
     }
 
-    /**
-     * Adds a permalink structure.
-     *
-     * @param string      $name       Name for permalink structure.
-     * @param string      $struct     Permalink structure.
-     * @param array       $args       Optional. Arguments for building the rules from the permalink structure,
-     *                                see WP_Rewrite::add_permastruct() for full details. Default empty array.
-     *
-     * @since 3.0.0
-     *
-     * @see   WP_Rewrite::add_permastruct()
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     *
-     */
     function add_permastruct($name, $struct, $args = [])
     {
         global $wp_rewrite;
@@ -230,20 +83,6 @@
         $wp_rewrite->add_permastruct($name, $struct, $args);
     }
 
-    /**
-     * Removes a permalink structure.
-     *
-     * Can only be used to remove permastructs that were added using add_permastruct().
-     * Built-in permastructs cannot be removed.
-     *
-     * @param string      $name       Name for permalink structure.
-     *
-     * @see   WP_Rewrite::remove_permastruct()
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     *
-     * @since 4.5.0
-     *
-     */
     function remove_permastruct($name)
     {
         global $wp_rewrite;
@@ -251,18 +90,6 @@
         $wp_rewrite->remove_permastruct($name);
     }
 
-    /**
-     * Adds a new feed type like /atom1/.
-     *
-     * @param string      $feedname   Feed name.
-     * @param callable    $callback   Callback to run on feed display.
-     *
-     * @return string Feed action name.
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     *
-     * @since 2.1.0
-     *
-     */
     function add_feed($feedname, $callback)
     {
         global $wp_rewrite;
@@ -282,17 +109,6 @@
         return $hook;
     }
 
-    /**
-     * Removes rewrite rules and then recreate rewrite rules.
-     *
-     * @param bool        $hard       Whether to update .htaccess (hard flush) or just update
-     *                                rewrite_rules option (soft flush). Default is true (hard).
-     *
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     *
-     * @since 3.0.0
-     *
-     */
     function flush_rewrite_rules($hard = true)
     {
         global $wp_rewrite;
@@ -303,75 +119,12 @@
         }
     }
 
-    /**
-     * Adds an endpoint, like /trackback/.
-     *
-     * Adding an endpoint creates extra rewrite rules for each of the matching
-     * places specified by the provided bitmask. For example:
-     *
-     *     add_rewrite_endpoint( 'json', EP_PERMALINK | EP_PAGES );
-     *
-     * will add a new rewrite rule ending with "json(/(.*))?/?$" for every permastruct
-     * that describes a permalink (post) or page. This is rewritten to "json=$match"
-     * where $match is the part of the URL matched by the endpoint regex (e.g. "foo" in
-     * "[permalink]/json/foo/").
-     *
-     * A new query var with the same name as the endpoint will also be created.
-     *
-     * When specifying $places ensure that you are using the EP_* constants (or a
-     * combination of them using the bitwise OR operator) as their values are not
-     * guaranteed to remain static (especially `EP_ALL`).
-     *
-     * Be sure to flush the rewrite rules - see flush_rewrite_rules() - when your plugin gets
-     * activated and deactivated.
-     *
-     * @param string      $name       Name of the endpoint.
-     * @param int         $places     Endpoint mask describing the places the endpoint should be added.
-     *                                Accepts a mask of:
-     *                                - `EP_ALL`
-     *                                - `EP_NONE`
-     *                                - `EP_ALL_ARCHIVES`
-     *                                - `EP_ATTACHMENT`
-     *                                - `EP_AUTHORS`
-     *                                - `EP_CATEGORIES`
-     *                                - `EP_COMMENTS`
-     *                                - `EP_DATE`
-     *                                - `EP_DAY`
-     *                                - `EP_MONTH`
-     *                                - `EP_PAGES`
-     *                                - `EP_PERMALINK`
-     *                                - `EP_ROOT`
-     *                                - `EP_SEARCH`
-     *                                - `EP_TAGS`
-     *                                - `EP_YEAR`
-     * @param string|bool $query_var  Name of the corresponding query variable. Pass `false` to skip registering a
-     *                                query_var for this endpoint. Defaults to the value of `$name`.
-     *
-     * @since 2.1.0
-     * @since 4.3.0 Added support for skipping query var registration by passing `false` to `$query_var`.
-     *
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     *
-     */
     function add_rewrite_endpoint($name, $places, $query_var = true)
     {
         global $wp_rewrite;
         $wp_rewrite->add_endpoint($name, $places, $query_var);
     }
 
-    /**
-     * Filters the URL base for taxonomies.
-     *
-     * To remove any manually prepended /index.php/.
-     *
-     * @access private
-     *
-     * @param string $base The taxonomy base that we're going to filter
-     *
-     * @return string
-     * @since  2.6.0
-     *
-     */
     function _wp_filter_taxonomy_base($base)
     {
         if(! empty($base))
@@ -383,28 +136,6 @@
         return $base;
     }
 
-    /**
-     * Resolves numeric slugs that collide with date permalinks.
-     *
-     * Permalinks of posts with numeric slugs can sometimes look to WP_Query::parse_query()
-     * like a date archive, as when your permalink structure is `/%year%/%postname%/` and
-     * a post with post_name '05' has the URL `/2015/05/`.
-     *
-     * This function detects conflicts of this type and resolves them in favor of the
-     * post permalink.
-     *
-     * Note that, since 4.3.0, wp_unique_post_slug() prevents the creation of post slugs
-     * that would result in a date archive conflict. The resolution performed in this
-     * function is primarily for legacy content, as well as cases when the admin has changed
-     * the site's permalink structure in a way that introduces URL conflicts.
-     *
-     * @param array $query_vars Optional. Query variables for setting up the loop, as determined in
-     *                          WP::parse_request(). Default empty array.
-     *
-     * @return array Returns the original array of query vars, with date/post conflicts resolved.
-     * @since 4.3.0
-     *
-     */
     function wp_resolve_numeric_slug_conflicts($query_vars = [])
     {
         if(! isset($query_vars['year']) && ! isset($query_vars['monthnum']) && ! isset($query_vars['day']))
@@ -523,32 +254,10 @@
         return $query_vars;
     }
 
-    /**
-     * Examines a URL and try to determine the post ID it represents.
-     *
-     * Checks are supposedly from the hosted site blog.
-     *
-     * @param string      $url        Permalink to check.
-     *
-     * @return int Post ID, or 0 on failure.
-     * @global WP         $wp         Current WordPress environment instance.
-     *
-     * @since 1.0.0
-     *
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     */
     function url_to_postid($url)
     {
         global $wp_rewrite;
 
-        /**
-         * Filters the URL to derive the post ID from.
-         *
-         * @param string $url The URL to derive the post ID from.
-         *
-         * @since 2.2.0
-         *
-         */
         $url = apply_filters('url_to_postid', $url);
 
         $url_host = parse_url($url, PHP_URL_HOST);

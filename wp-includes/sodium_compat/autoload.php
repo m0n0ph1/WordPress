@@ -4,13 +4,6 @@
     {
         if(! is_callable('sodiumCompatAutoloader'))
         {
-            /**
-             * Sodium_Compat autoloader.
-             *
-             * @param string $class Class name to be autoloaded.
-             *
-             * @return bool         Stop autoloading?
-             */
             function sodiumCompatAutoloader($class)
             {
                 $namespace = 'ParagonIE_Sodium_';

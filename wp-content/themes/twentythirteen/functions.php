@@ -1,28 +1,4 @@
 <?php
-    /**
-     * Twenty Thirteen functions and definitions
-     *
-     * Sets up the theme and provides some helper functions, which are used in the
-     * theme as custom template tags. Others are attached to action and filter
-     * hooks in WordPress to change core functionality.
-     *
-     * When using a child theme you can override certain functions (those wrapped
-     * in a function_exists() call) by defining them first in your child theme's
-     * functions.php file. The child theme's functions.php file is included before
-     * the parent theme's file, so the child theme functions would be used.
-     *
-     * @link       https://developer.wordpress.org/themes/basics/theme-functions/
-     * @link       https://developer.wordpress.org/themes/advanced-topics/child-themes/
-     *
-     * Functions that are not pluggable (not wrapped in function_exists()) are
-     * instead attached to a filter or action hook.
-     *
-     * For more information on hooks, actions, and filters, @link https://developer.wordpress.org/plugins/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Thirteen
-     * @since      Twenty Thirteen 1.0
-     */
 
     /*
      * Set up the content width value based on the theme's design.
@@ -34,41 +10,15 @@
         $content_width = 604;
     }
 
-    /**
-     * Add support for a custom header image.
-     */
     require get_template_directory().'/inc/custom-header.php';
 
-    /**
-     * Twenty Thirteen only works in WordPress 3.6 or later.
-     */
     if(version_compare($GLOBALS['wp_version'], '3.6-alpha', '<'))
     {
         require get_template_directory().'/inc/back-compat.php';
     }
 
-    /**
-     * Block Patterns.
-     *
-     * @since Twenty Thirteen 3.4
-     */
     require get_template_directory().'/inc/block-patterns.php';
 
-    /**
-     * Twenty Thirteen setup.
-     *
-     * Sets up theme defaults and registers the various WordPress features that
-     * Twenty Thirteen supports.
-     *
-     * @uses  load_theme_textdomain() For translation/localization support.
-     * @uses  add_editor_style() To add Visual Editor stylesheets.
-     * @uses  add_theme_support() To add support for automatic feed links, post
-     * formats, and post thumbnails.
-     * @uses  register_nav_menu() To add support for a navigation menu.
-     * @uses  set_post_thumbnail_size() To set a custom post thumbnail size.
-     *
-     * @since Twenty Thirteen 1.0
-     */
     function twentythirteen_setup()
     {
         /*
@@ -249,17 +199,7 @@
     add_action('after_setup_theme', 'twentythirteen_setup');
 
     if(! function_exists('twentythirteen_fonts_url')) :
-        /**
-         * Return the font stylesheet URL, if available.
-         *
-         * The use of Source Sans Pro and Bitter by default is localized. For languages
-         * that use characters not supported by the font, the font can be disabled.
-         *
-         * @return string Font stylesheet or empty string if disabled.
-         * @since Twenty Thirteen 3.8 Replaced Google URL with self-hosted fonts.
-         *
-         * @since Twenty Thirteen 1.0
-         */
+
         function twentythirteen_fonts_url()
         {
             $fonts_url = '';
@@ -297,11 +237,6 @@
         }
     endif;
 
-    /**
-     * Enqueue scripts and styles for the front end.
-     *
-     * @since Twenty Thirteen 1.0
-     */
     function twentythirteen_scripts_styles()
     {
         /*
@@ -345,17 +280,6 @@
 
     add_action('wp_enqueue_scripts', 'twentythirteen_scripts_styles');
 
-    /**
-     * Add preconnect for Google Fonts.
-     *
-     * @param array  $urls          URLs to print for resource hints.
-     * @param string $relation_type The relation type the URLs are printed.
-     *
-     * @return array URLs to print for resource hints.
-     * @deprecated Twenty Thirteen 3.8 Disabled filter because, by default, fonts are self-hosted.
-     *
-     * @since      Twenty Thirteen 2.1
-     */
     function twentythirteen_resource_hints($urls, $relation_type)
     {
         if(wp_style_is('twentythirteen-fonts', 'queue') && 'preconnect' === $relation_type)
@@ -378,11 +302,6 @@
 
 // add_filter( 'wp_resource_hints', 'twentythirteen_resource_hints', 10, 2 );
 
-    /**
-     * Enqueue styles for the block-based editor.
-     *
-     * @since Twenty Thirteen 2.5
-     */
     function twentythirteen_block_editor_styles()
     {
         // Block styles.
@@ -394,22 +313,6 @@
 
     add_action('enqueue_block_editor_assets', 'twentythirteen_block_editor_styles');
 
-    /**
-     * Filter the page title.
-     *
-     * Creates a nicely formatted and more specific title element text for output
-     * in head of document, based on current view.
-     *
-     * @param string $title Default title text for current view.
-     * @param string $sep   Optional separator.
-     *
-     * @return string The filtered title.
-     * @since Twenty Thirteen 1.0
-     *
-     * @global int   $paged WordPress archive pagination page count.
-     * @global int   $page  WordPress paginated post page count.
-     *
-     */
     function twentythirteen_wp_title($title, $sep)
     {
         global $paged, $page;
@@ -441,11 +344,6 @@
 
     add_filter('wp_title', 'twentythirteen_wp_title', 10, 2);
 
-    /**
-     * Register two widget areas.
-     *
-     * @since Twenty Thirteen 1.0
-     */
     function twentythirteen_widgets_init()
     {
         register_sidebar([
@@ -472,13 +370,7 @@
     add_action('widgets_init', 'twentythirteen_widgets_init');
 
     if(! function_exists('wp_get_list_item_separator')) :
-        /**
-         * Retrieves the list item separator based on the locale.
-         *
-         * Added for backward compatibility to support pre-6.0.0 WordPress versions.
-         *
-         * @since 6.0.0
-         */
+
         function wp_get_list_item_separator()
         {
             /* translators: Used between list items, there is a space after the comma. */
@@ -487,11 +379,7 @@
     endif;
 
     if(! function_exists('twentythirteen_paging_nav')) :
-        /**
-         * Display navigation to next/previous set of posts when applicable.
-         *
-         * @since Twenty Thirteen 1.0
-         */
+
         function twentythirteen_paging_nav()
         {
             global $wp_query;
@@ -526,13 +414,7 @@
     endif;
 
     if(! function_exists('twentythirteen_post_nav')) :
-        /**
-         * Display navigation to next/previous post when applicable.
-         *
-         * @since Twenty Thirteen 1.0
-         *
-         * @global WP_Post $post Global post object.
-         */
+
         function twentythirteen_post_nav()
         {
             global $post;
@@ -565,13 +447,7 @@
     endif;
 
     if(! function_exists('twentythirteen_entry_meta')) :
-        /**
-         * Print HTML with meta information for current post: categories, tags, permalink, author, and date.
-         *
-         * Create your own twentythirteen_entry_meta() to override in a child theme.
-         *
-         * @since Twenty Thirteen 1.0
-         */
+
         function twentythirteen_entry_meta()
         {
             if(is_sticky() && is_home() && ! is_paged())
@@ -605,17 +481,7 @@
     endif;
 
     if(! function_exists('twentythirteen_entry_date')) :
-        /**
-         * Print HTML with date information for current post.
-         *
-         * Create your own twentythirteen_entry_date() to override in a child theme.
-         *
-         * @param bool $display (optional) Whether to display the date. Default true.
-         *
-         * @return string The HTML-formatted post date.
-         * @since Twenty Thirteen 1.0
-         *
-         */
+
         function twentythirteen_entry_date($display = true)
         {
             if(has_post_format(['chat', 'status']))
@@ -640,24 +506,9 @@
     endif;
 
     if(! function_exists('twentythirteen_the_attached_image')) :
-        /**
-         * Print the attached image with a link to the next attached image.
-         *
-         * @since Twenty Thirteen 1.0
-         */
+
         function twentythirteen_the_attached_image()
         {
-            /**
-             * Filters the image attachment size to use.
-             *
-             * @param array $size {
-             *
-             * @type int The attachment height in pixels.
-             * @type int The attachment width in pixels.
-             *                    }
-             * @since Twenty thirteen 1.0
-             *
-             */
             $attachment_size = apply_filters('twentythirteen_attachment_size', [724, 724]);
             $next_attachment_url = wp_get_attachment_url();
             $post = get_post();
@@ -707,18 +558,6 @@
         }
     endif;
 
-    /**
-     * Return the post URL.
-     *
-     * @return string The Link format URL.
-     * @since Twenty Thirteen 1.0
-     *
-     * @uses  get_url_in_content() to get the URL in the post meta (if it exists) or
-     * the first link found in the post content.
-     *
-     * Falls back to the post permalink if no URL is found in the post.
-     *
-     */
     function twentythirteen_get_link_url()
     {
         $content = get_the_content();
@@ -728,16 +567,7 @@
     }
 
     if(! function_exists('twentythirteen_excerpt_more') && ! is_admin()) :
-        /**
-         * Replaces "[...]" (appended to automatically generated excerpts) with ...
-         * and a Continue reading link.
-         *
-         * @param string $more Default Read More excerpt link.
-         *
-         * @return string Filtered Read More excerpt link.
-         * @since Twenty Thirteen 1.4
-         *
-         */
+
         function twentythirteen_excerpt_more($more)
         {
             $link = sprintf('<a href="%1$s" class="more-link">%2$s</a>', esc_url(get_permalink(get_the_ID())), /* translators: %s: Post title. Only visible to screen readers. */ sprintf(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'twentythirteen'), '<span class="screen-reader-text">'.get_the_title(get_the_ID()).'</span>'));
@@ -748,20 +578,6 @@
         add_filter('excerpt_more', 'twentythirteen_excerpt_more');
     endif;
 
-    /**
-     * Extend the default WordPress body classes.
-     *
-     * Adds body classes to denote:
-     * 1. Single or multiple authors.
-     * 2. Active widgets in the sidebar to change the layout and spacing.
-     * 3. When avatars are disabled in discussion settings.
-     *
-     * @param array $classes A list of existing body class values.
-     *
-     * @return array The filtered body class list.
-     * @since Twenty Thirteen 1.0
-     *
-     */
     function twentythirteen_body_class($classes)
     {
         if(! is_multi_author())
@@ -784,13 +600,6 @@
 
     add_filter('body_class', 'twentythirteen_body_class');
 
-    /**
-     * Adjust content_width value for video post formats and attachment templates.
-     *
-     * @since Twenty Thirteen 1.0
-     *
-     * @global int $content_width Content width.
-     */
     function twentythirteen_content_width()
     {
         global $content_width;
@@ -807,14 +616,6 @@
 
     add_action('template_redirect', 'twentythirteen_content_width');
 
-    /**
-     * Add postMessage support for site title and description for the Customizer.
-     *
-     * @param WP_Customize_Manager $wp_customize Customizer object.
-     *
-     * @since Twenty Thirteen 1.0
-     *
-     */
     function twentythirteen_customize_register($wp_customize)
     {
         $wp_customize->get_setting('blogname')->transport = 'postMessage';
@@ -838,42 +639,16 @@
 
     add_action('customize_register', 'twentythirteen_customize_register');
 
-    /**
-     * Render the site title for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentythirteen_customize_register()
-     *
-     * @since Twenty Thirteen 1.9
-     *
-     */
     function twentythirteen_customize_partial_blogname()
     {
         bloginfo('name');
     }
 
-    /**
-     * Render the site tagline for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentythirteen_customize_register()
-     *
-     * @since Twenty Thirteen 1.9
-     *
-     */
     function twentythirteen_customize_partial_blogdescription()
     {
         bloginfo('description');
     }
 
-    /**
-     * Enqueue JavaScript postMessage handlers for the Customizer.
-     *
-     * Binds JavaScript handlers to make the Customizer preview
-     * reload changes asynchronously.
-     *
-     * @since Twenty Thirteen 1.0
-     */
     function twentythirteen_customize_preview_js()
     {
         wp_enqueue_script('twentythirteen-customizer', get_template_directory_uri().'/js/theme-customizer.js', ['customize-preview'], '20200516', ['in_footer' => true]);
@@ -881,16 +656,6 @@
 
     add_action('customize_preview_init', 'twentythirteen_customize_preview_js');
 
-    /**
-     * Modifies tag cloud widget arguments to display all tags in the same font size
-     * and use list format for better accessibility.
-     *
-     * @param array $args Arguments for tag cloud widget.
-     *
-     * @return array The filtered arguments for tag cloud widget.
-     * @since Twenty Thirteen 2.3
-     *
-     */
     function twentythirteen_widget_tag_cloud_args($args)
     {
         $args['largest'] = 22;
@@ -903,16 +668,6 @@
 
     add_filter('widget_tag_cloud_args', 'twentythirteen_widget_tag_cloud_args');
 
-    /**
-     * Prevents `author-bio.php` partial template from interfering with rendering
-     * an author archive of a user with the `bio` username.
-     *
-     * @param string $template Template file.
-     *
-     * @return string Replacement template file.
-     * @since Twenty Thirteen 3.0
-     *
-     */
     function twentythirteen_author_bio_template($template)
     {
         if(is_author())
@@ -931,36 +686,17 @@
     add_filter('author_template', 'twentythirteen_author_bio_template');
 
     if(! function_exists('wp_body_open')) :
-        /**
-         * Fire the wp_body_open action.
-         *
-         * Added for backward compatibility to support pre-5.2.0 WordPress versions.
-         *
-         * @since Twenty Thirteen 2.8
-         */
+
         function wp_body_open()
         {
-            /**
-             * Triggered after the opening <body> tag.
-             *
-             * @since Twenty Thirteen 2.8
-             */
             do_action('wp_body_open');
         }
     endif;
 
-    /**
-     * Register Custom Block Styles
-     *
-     * @since Twenty Thirteen 3.4
-     */
     if(function_exists('register_block_style'))
     {
         function twentythirteen_register_block_styles()
         {
-            /**
-             * Register block style
-             */
             register_block_style('core/button', [
                 'name' => 'no-shadow',
                 'label' => __('No Shadow', 'twentythirteen'),

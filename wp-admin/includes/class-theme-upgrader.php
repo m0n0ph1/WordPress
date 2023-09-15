@@ -1,65 +1,13 @@
 <?php
-    /**
-     * Upgrade API: Theme_Upgrader class
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      4.6.0
-     */
 
-    /**
-     * Core class used for upgrading/installing themes.
-     *
-     * It is designed to upgrade/install themes from a local zip, remote zip URL,
-     * or uploaded zip file.
-     *
-     * @since 2.8.0
-     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader.php.
-     *
-     * @see   WP_Upgrader
-     */
     class Theme_Upgrader extends WP_Upgrader
     {
-        /**
-         * Result of the theme upgrade offer.
-         *
-         * @since 2.8.0
-         * @var array|WP_Error $result
-         * @see   WP_Upgrader::$result
-         */
         public $result;
 
-        /**
-         * Whether multiple themes are being upgraded/installed in bulk.
-         *
-         * @since 2.9.0
-         * @var bool $bulk
-         */
         public $bulk = false;
 
-        /**
-         * New theme info.
-         *
-         * @since 5.5.0
-         * @var array $new_theme_data
-         *
-         * @see   check_package()
-         */
         public $new_theme_data = [];
 
-        /**
-         * Checks if a child theme is being installed and its parent also needs to be installed.
-         *
-         * Hooked to the {@see 'upgrader_post_install'} filter by Theme_Upgrader::install().
-         *
-         * @param bool  $install_result
-         * @param array $hook_extra
-         * @param array $child_result
-         *
-         * @return bool
-         * @since 3.4.0
-         *
-         */
         public function check_parent_theme_filter($install_result, $hook_extra, $child_result)
         {
             // Check to see if we need to install a parent theme.
@@ -135,18 +83,6 @@
             return $install_result;
         }
 
-        /**
-         * Gets the WP_Theme object for a theme.
-         *
-         * @param string $theme The directory name of the theme. This is optional, and if not supplied,
-         *                      the directory name from the last result will be used.
-         *
-         * @return WP_Theme|false The theme's info object, or false `$theme` is not supplied
-         *                        and the last result isn't set.
-         * @since 2.8.0
-         * @since 3.0.0 The `$theme` argument was added.
-         *
-         */
         public function theme_info($theme = null)
         {
             if(empty($theme))
@@ -167,19 +103,6 @@
             return $theme;
         }
 
-        /**
-         * Don't display the activate and preview actions to the user.
-         *
-         * Hooked to the {@see 'install_theme_complete_actions'} filter by
-         * Theme_Upgrader::check_parent_theme_filter() when installing
-         * a child theme and installing the parent theme fails.
-         *
-         * @param array $actions Preview actions.
-         *
-         * @return array
-         * @since 3.4.0
-         *
-         */
         public function hide_activate_preview_actions($actions)
         {
             unset($actions['activate'], $actions['preview']);
@@ -187,22 +110,6 @@
             return $actions;
         }
 
-        /**
-         * Install a theme package.
-         *
-         * @param string $package             The full local path or URI of the package.
-         * @param array  $args                {
-         *                                    Optional. Other arguments for installing a theme package. Default empty array.
-         *
-         * @type bool    $clear_update_cache  Whether to clear the updates cache if successful.
-         *                                    Default true.
-         *                                    }
-         *
-         * @return bool|WP_Error True if the installation was successful, false or a WP_Error object otherwise.
-         * @since 3.7.0 The `$args` parameter was added, making clearing the update cache optional.
-         *
-         * @since 2.8.0
-         */
         public function install($package, $args = [])
         {
             $defaults = [
@@ -248,18 +155,12 @@
 
             if($parsed_args['overwrite_package'])
             {
-                /** This action is documented in wp-admin/includes/class-plugin-upgrader.php */
                 do_action('upgrader_overwrote_package', $package, $this->new_theme_data, 'theme');
             }
 
             return true;
         }
 
-        /**
-         * Initializes the installation strings.
-         *
-         * @since 2.8.0
-         */
         public function install_strings()
         {
             $this->strings['no_package'] = __('Installation package not available.');
@@ -304,21 +205,6 @@
             }
         }
 
-        /**
-         * Upgrades a theme.
-         *
-         * @param string $theme               The theme slug.
-         * @param array  $args                {
-         *                                    Optional. Other arguments for upgrading a theme. Default empty array.
-         *
-         * @type bool    $clear_update_cache  Whether to clear the update cache if successful.
-         *                                    Default true.
-         *                                    }
-         * @return bool|WP_Error True if the upgrade was successful, false or a WP_Error object otherwise.
-         * @since 3.7.0 The `$args` parameter was added, making clearing the update cache optional.
-         *
-         * @since 2.8.0
-         */
         public function upgrade($theme, $args = [])
         {
             $defaults = [
@@ -396,11 +282,6 @@
             return true;
         }
 
-        /**
-         * Initializes the upgrade strings.
-         *
-         * @since 2.8.0
-         */
         public function upgrade_strings()
         {
             $this->strings['up_to_date'] = __('The theme is at the latest version.');
@@ -414,21 +295,6 @@
             $this->strings['process_success'] = __('Theme updated successfully.');
         }
 
-        /**
-         * Upgrades several themes at once.
-         *
-         * @param string[] $themes             Array of the theme slugs.
-         * @param array    $args               {
-         *                                     Optional. Other arguments for upgrading several themes at once. Default empty array.
-         *
-         * @type bool      $clear_update_cache Whether to clear the update cache if successful.
-         *                                     Default true.
-         *                                     }
-         * @return array[]|false An array of results, or false if unable to connect to the filesystem.
-         * @since 3.7.0 The `$args` parameter was added, making clearing the update cache optional.
-         *
-         * @since 3.0.0
-         */
         public function bulk_upgrade($themes, $args = [])
         {
             $defaults = [
@@ -528,7 +394,6 @@
             // Refresh the Theme Update information.
             wp_clean_themes_cache($parsed_args['clear_update_cache']);
 
-            /** This action is documented in wp-admin/includes/class-wp-upgrader.php */
             do_action('upgrader_process_complete', $this, [
                 'action' => 'update',
                 'type' => 'theme',
@@ -567,20 +432,6 @@
             return $results;
         }
 
-        /**
-         * Checks that the package source contains a valid theme.
-         *
-         * Hooked to the {@see 'upgrader_source_selection'} filter by Theme_Upgrader::install().
-         *
-         * @param string              $source        The path to the downloaded package source.
-         *
-         * @return string|WP_Error The source as passed, or a WP_Error object on failure.
-         * @global string             $wp_version    The WordPress version string.
-         *
-         * @since 3.3.0
-         *
-         * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-         */
         public function check_package($source)
         {
             global $wp_filesystem, $wp_version;
@@ -651,19 +502,6 @@
             return $source;
         }
 
-        /**
-         * Turns on maintenance mode before attempting to upgrade the active theme.
-         *
-         * Hooked to the {@see 'upgrader_pre_install'} filter by Theme_Upgrader::upgrade() and
-         * Theme_Upgrader::bulk_upgrade().
-         *
-         * @param bool|WP_Error $response The installation response before the installation has started.
-         * @param array         $theme    Theme arguments.
-         *
-         * @return bool|WP_Error The original `$response` parameter or WP_Error.
-         * @since 2.8.0
-         *
-         */
         public function current_before($response, $theme)
         {
             if(is_wp_error($response))
@@ -688,19 +526,6 @@
             return $response;
         }
 
-        /**
-         * Turns off maintenance mode after upgrading the active theme.
-         *
-         * Hooked to the {@see 'upgrader_post_install'} filter by Theme_Upgrader::upgrade()
-         * and Theme_Upgrader::bulk_upgrade().
-         *
-         * @param bool|WP_Error $response The installation response after the installation has finished.
-         * @param array         $theme    Theme arguments.
-         *
-         * @return bool|WP_Error The original `$response` parameter or WP_Error.
-         * @since 2.8.0
-         *
-         */
         public function current_after($response, $theme)
         {
             if(is_wp_error($response))
@@ -733,23 +558,6 @@
             return $response;
         }
 
-        /**
-         * Deletes the old theme during an upgrade.
-         *
-         * Hooked to the {@see 'upgrader_clear_destination'} filter by Theme_Upgrader::upgrade()
-         * and Theme_Upgrader::bulk_upgrade().
-         *
-         * @param bool                $removed
-         * @param string              $local_destination
-         * @param string              $remote_destination
-         * @param array               $theme
-         *
-         * @return bool
-         * @global WP_Filesystem_Base $wp_filesystem Subclass
-         *
-         * @since 2.8.0
-         *
-         */
         public function delete_old_theme($removed, $local_destination, $remote_destination, $theme)
         {
             global $wp_filesystem;

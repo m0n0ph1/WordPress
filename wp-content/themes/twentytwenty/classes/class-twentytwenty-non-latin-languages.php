@@ -1,47 +1,14 @@
 <?php
-    /**
-     * Non-latin language handling.
-     *
-     * Handle non-latin language styles.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty
-     * @since      Twenty Twenty 1.0
-     */
 
     if(! class_exists('TwentyTwenty_Non_Latin_Languages'))
     {
-        /**
-         * Language handling.
-         *
-         * @since Twenty Twenty 1.0
-         */
         class TwentyTwenty_Non_Latin_Languages
         {
-            /**
-             * Get custom CSS.
-             *
-             * Return CSS for non-latin language, if available, or null
-             *
-             * @param string $type Whether to return CSS for the "front-end", "block-editor", or "classic-editor".
-             *
-             * @return string|null Custom CSS, or null if not applicable.
-             * @since Twenty Twenty 1.0
-             *
-             */
             public static function get_non_latin_css($type = 'front-end')
             {
                 // Fetch site locale.
                 $locale = get_bloginfo('language');
 
-                /**
-                 * Filters the fallback fonts for non-latin languages.
-                 *
-                 * @param array $font_family An array of locales and font families.
-                 *
-                 * @since Twenty Twenty 1.0
-                 *
-                 */
                 $font_family = apply_filters('twentytwenty_get_localized_font_family_types', [
 
                     // Arabic.
@@ -133,14 +100,6 @@
                     return null;
                 }
 
-                /**
-                 * Filters the elements to apply fallback fonts to.
-                 *
-                 * @param array $elements An array of elements for "front-end", "block-editor", or "classic-editor".
-                 *
-                 * @since Twenty Twenty 1.0
-                 *
-                 */
                 $elements = apply_filters('twentytwenty_get_localized_font_family_elements', [
                     'front-end' => [
                         'body',

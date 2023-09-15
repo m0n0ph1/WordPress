@@ -1,11 +1,4 @@
 <?php
-    /**
-     * The template for displaying Current Discussion on posts
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Nineteen
-     * @since      Twenty Nineteen 1.0
-     */
 
     /* Get data from current discussion on post. */
     $discussion = twentynineteen_get_discussion_data();

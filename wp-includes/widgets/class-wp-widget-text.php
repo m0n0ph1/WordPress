@@ -1,34 +1,9 @@
 <?php
-    /**
-     * Widget API: WP_Widget_Text class
-     *
-     * @package    WordPress
-     * @subpackage Widgets
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used to implement a Text widget.
-     *
-     * @since 2.8.0
-     *
-     * @see   WP_Widget
-     */
     class WP_Widget_Text extends WP_Widget
     {
-        /**
-         * Whether or not the widget has been registered yet.
-         *
-         * @since 4.8.1
-         * @var bool
-         */
         protected $registered = false;
 
-        /**
-         * Sets up a new Text widget instance.
-         *
-         * @since 2.8.0
-         */
         public function __construct()
         {
             $widget_ops = [
@@ -44,12 +19,6 @@
             parent::__construct('text', __('Text'), $widget_ops, $control_ops);
         }
 
-        /**
-         * Renders form template scripts.
-         *
-         * @since 4.8.0
-         * @since 4.9.0 The method is now static.
-         */
         public static function render_control_template_scripts()
         {
             $dismissed_pointers = explode(',', (string) get_user_meta(get_current_user_id(), 'dismissed_wp_pointers', true));
@@ -109,12 +78,6 @@
             <?php
         }
 
-        /**
-         * Adds hooks for enqueueing assets when registering all widget instances of this widget class.
-         *
-         * @param int $number Optional. The unique order number of this widget instance
-         *                    compared to other instances of the same class. Default -1.
-         */
         public function _register_one($number = -1)
         {
             parent::_register_one($number);
@@ -142,18 +105,6 @@
             add_action('admin_footer-widgets.php', ['WP_Widget_Text', 'render_control_template_scripts']);
         }
 
-        /**
-         * Filters gallery shortcode attributes.
-         *
-         * Prevents all of a site's attachments from being shown in a gallery displayed on a
-         * non-singular template where a $post context is not available.
-         *
-         * @param array $attrs Attributes.
-         *
-         * @return array Attributes.
-         * @since 4.9.0
-         *
-         */
         public function _filter_gallery_shortcode_attrs($attrs)
         {
             if(! is_singular() && empty($attrs['id']) && empty($attrs['include']))
@@ -164,25 +115,12 @@
             return $attrs;
         }
 
-        /**
-         * Outputs the content for the current Text widget instance.
-         *
-         * @param array    $args     Display arguments including 'before_title', 'after_title',
-         *                           'before_widget', and 'after_widget'.
-         * @param array    $instance Settings for the current Text widget instance.
-         *
-         * @since 2.8.0
-         *
-         * @global WP_Post $post     Global post object.
-         *
-         */
         public function widget($args, $instance)
         {
             global $post;
 
             $title = ! empty($instance['title']) ? $instance['title'] : '';
 
-            /** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
             $title = apply_filters('widget_title', $title, $instance, $this->id_base);
 
             $text = ! empty($instance['text']) ? $instance['text'] : '';
@@ -228,34 +166,10 @@
             // Prevent dumping out all attachments from the media library.
             add_filter('shortcode_atts_gallery', [$this, '_filter_gallery_shortcode_attrs']);
 
-            /**
-             * Filters the content of the Text widget.
-             *
-             * @param string                               $text     The widget content.
-             * @param array                                $instance Array of settings for the current widget.
-             * @param WP_Widget_Text|WP_Widget_Custom_HTML $widget   Current text or HTML widget instance.
-             *
-             * @since 2.3.0
-             * @since 4.4.0 Added the `$widget` parameter.
-             * @since 4.8.1 The `$widget` param may now be a `WP_Widget_Custom_HTML` object in addition to a `WP_Widget_Text` object.
-             *
-             */
             $text = apply_filters('widget_text', $text, $instance, $this);
 
             if($is_visual_text_widget)
             {
-                /**
-                 * Filters the content of the Text widget to apply changes expected from the visual (TinyMCE) editor.
-                 *
-                 * By default a subset of the_content filters are applied, including wpautop and wptexturize.
-                 *
-                 * @param string         $text     The widget content.
-                 * @param array          $instance Array of settings for the current widget.
-                 * @param WP_Widget_Text $widget   Current Text widget instance.
-                 *
-                 * @since 4.8.0
-                 *
-                 */
                 $text = apply_filters('widget_text_content', $text, $instance, $this);
             }
             else
@@ -314,17 +228,6 @@
             echo $args['after_widget'];
         }
 
-        /**
-         * Injects max-width and removes height for videos too constrained to fit inside sidebars on frontend.
-         *
-         * @param array $matches Pattern matches from preg_replace_callback.
-         *
-         * @return string HTML Output.
-         * @since 4.9.0
-         *
-         * @see   WP_Widget_Media_Video::inject_video_max_width_style()
-         *
-         */
         public function inject_video_max_width_style($matches)
         {
             $html = $matches[0];
@@ -335,17 +238,6 @@
             return $html;
         }
 
-        /**
-         * Handles updating settings for the current Text widget instance.
-         *
-         * @param array $new_instance New settings for this instance as input by the user via
-         *                            WP_Widget::form().
-         * @param array $old_instance Old settings for this instance.
-         *
-         * @return array Settings to save or bool false to cancel saving.
-         * @since 2.8.0
-         *
-         */
         public function update($new_instance, $old_instance)
         {
             $new_instance = wp_parse_args($new_instance, [
@@ -393,15 +285,6 @@
             return $instance;
         }
 
-        /**
-         * Enqueues preview scripts.
-         *
-         * These scripts normally are enqueued just-in-time when a playlist shortcode is used.
-         * However, in the customizer, a playlist shortcode may be used in a text widget and
-         * dynamically added via selective refresh, so it is important to unconditionally enqueue them.
-         *
-         * @since 4.9.3
-         */
         public function enqueue_preview_scripts()
         {
             require_once dirname(__DIR__).'/media.php';
@@ -410,11 +293,6 @@
             wp_playlist_scripts('video');
         }
 
-        /**
-         * Loads the required scripts and styles for the widget control.
-         *
-         * @since 4.8.0
-         */
         public function enqueue_admin_scripts()
         {
             wp_enqueue_editor();
@@ -424,19 +302,6 @@
             wp_add_inline_script('text-widgets', 'wp.textWidgets.init();', 'after');
         }
 
-        /**
-         * Outputs the Text widget settings form.
-         *
-         * @param array $instance Current settings.
-         *
-         * @since 4.8.0 Form only contains hidden inputs which are synced with JS template.
-         * @since 4.8.1 Restored original form to be displayed when in legacy mode.
-         *
-         * @see   WP_Widget_Text::render_control_template_scripts()
-         * @see   _WP_Editors::editor()
-         *
-         * @since 2.8.0
-         */
         public function form($instance)
         {
             $instance = wp_parse_args((array) $instance, [
@@ -457,7 +322,6 @@
                 $default_editor = 'html';
             }
 
-            /** This filter is documented in wp-includes/class-wp-editor.php */
             $text = apply_filters('the_editor_content', $instance['text'], $default_editor);
 
             // Reset filter addition.
@@ -528,20 +392,6 @@
         endif;
         }
 
-        /**
-         * Determines whether a given instance is legacy and should bypass using TinyMCE.
-         *
-         * @param array      $instance {
-         *                             Instance data.
-         *
-         * @type string      $text     Content.
-         * @type bool|string $filter   Whether autop or content filters should apply.
-         * @type bool        $legacy   Whether widget is in legacy mode.
-         *                             }
-         * @return bool Whether Text widget instance contains legacy data.
-         * @since 4.8.1
-         *
-         */
         public function is_legacy_instance($instance)
         {
             // Legacy mode when not in visual mode.
@@ -623,7 +473,6 @@
 
             foreach($body->getElementsByTagName('*') as $element)
             {
-                /** @var DOMElement $element */
                 $tag_name = strtolower($element->nodeName);
 
                 // If the element is not safe, then the instance is legacy.
@@ -641,7 +490,6 @@
                 // If an attribute is not recognized as safe, then the instance is legacy.
                 foreach($element->attributes as $attribute)
                 {
-                    /** @var DOMAttr $attribute */
                     $attribute_name = strtolower($attribute->nodeName);
 
                     if(! isset($safe_elements_attributes[$tag_name][$attribute_name]))

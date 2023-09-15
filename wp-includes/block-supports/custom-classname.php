@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Custom classname block support flag.
-     *
-     * @package WordPress
-     * @since   5.6.0
-     */
 
-    /**
-     * Registers the custom classname block attribute for block types that support it.
-     *
-     * @param WP_Block_Type $block_type Block Type.
-     *
-     * @since  5.6.0
-     * @access private
-     *
-     */
     function wp_register_custom_classname_support($block_type)
     {
         $has_custom_classname_support = block_has_support($block_type, 'customClassName', true);
@@ -35,17 +20,6 @@
         }
     }
 
-    /**
-     * Adds the custom classnames to the output.
-     *
-     * @param WP_Block_Type $block_type       Block Type.
-     * @param array         $block_attributes Block attributes.
-     *
-     * @return array Block CSS classes and inline styles.
-     * @since  5.6.0
-     * @access private
-     *
-     */
     function wp_apply_custom_classname_support($block_type, $block_attributes)
     {
         $has_custom_classname_support = block_has_support($block_type, 'customClassName', true);

@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Logo, navigation, and offset tagline Header block pattern
-     */
+
     return [
         'title' => __('Logo, navigation, and offset tagline Header', 'twentytwentytwo'),
         'categories' => ['header'],

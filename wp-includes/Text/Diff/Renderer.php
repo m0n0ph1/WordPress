@@ -1,47 +1,16 @@
 <?php
 
-    /**
-     * A class to render Diffs in different formats.
-     *
-     * This class renders the diff in classic diff format. It is intended that
-     * this class be customized via inheritance, to obtain fancier outputs.
-     *
-     * Copyright 2004-2010 The Horde Project (http://www.horde.org/)
-     *
-     * See the enclosed file COPYING for license information (LGPL). If you did
-     * not receive this file, see https://opensource.org/license/lgpl-2-1/.
-     *
-     * @package Text_Diff
-     */
     class Text_Diff_Renderer
     {
-        /**
-         * Number of leading context "lines" to preserve.
-         *
-         * This should be left at zero for this class, but subclasses may want to
-         * set this to other values.
-         */
         var $_leading_context_lines = 0;
 
-        /**
-         * Number of trailing context "lines" to preserve.
-         *
-         * This should be left at zero for this class, but subclasses may want to
-         * set this to other values.
-         */
         var $_trailing_context_lines = 0;
 
-        /**
-         * PHP4 constructor.
-         */
         public function Text_Diff_Renderer($params = [])
         {
             self::__construct($params);
         }
 
-        /**
-         * Constructor.
-         */
         function __construct($params = [])
         {
             foreach($params as $param => $value)
@@ -54,11 +23,6 @@
             }
         }
 
-        /**
-         * Get any renderer parameters.
-         *
-         * @return array  All parameters of this renderer object.
-         */
         function getParams()
         {
             $params = [];
@@ -73,13 +37,6 @@
             return $params;
         }
 
-        /**
-         * Renders a diff.
-         *
-         * @param Text_Diff $diff A Text_Diff object.
-         *
-         * @return string  The formatted output.
-         */
         function render($diff)
         {
             $xi = $yi = 1;

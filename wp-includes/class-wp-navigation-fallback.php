@@ -1,39 +1,9 @@
 <?php
-    /**
-     * WP_Navigation_Fallback class
-     *
-     * Manages fallback behavior for Navigation menus.
-     *
-     * @package    WordPress
-     * @subpackage Navigation
-     * @since      6.3.0
-     */
 
-    /**
-     * Manages fallback behavior for Navigation menus.
-     *
-     * @access public
-     * @since  6.3.0
-     */
     class WP_Navigation_Fallback
     {
-        /**
-         * Gets (and/or creates) an appropriate fallback Navigation Menu.
-         *
-         * @return WP_Post|null the fallback Navigation Post or null.
-         * @since 6.3.0
-         *
-         */
         public static function get_fallback()
         {
-            /**
-             * Filters whether or not a fallback should be created.
-             *
-             * @param bool $create Whether to create a fallback navigation menu. Default true.
-             *
-             * @since 6.3.0
-             *
-             */
             $should_create_fallback = apply_filters('wp_navigation_should_create_fallback', true);
 
             $fallback = static::get_most_recently_published_navigation();
@@ -62,13 +32,6 @@
             return null;
         }
 
-        /**
-         * Finds the most recently published `wp_navigation` post type.
-         *
-         * @return WP_Post|null the first non-empty Navigation or null.
-         * @since 6.3.0
-         *
-         */
         private static function get_most_recently_published_navigation()
         {
             $parsed_args = [
@@ -92,13 +55,6 @@
             return null;
         }
 
-        /**
-         * Creates a Navigation Menu post from a Classic Menu.
-         *
-         * @return int|WP_Error The post ID of the default fallback menu or a WP_Error object.
-         * @since 6.3.0
-         *
-         */
         private static function create_classic_menu_fallback()
         {
             // See if we have a classic menu.
@@ -135,13 +91,6 @@
             return $classic_menu_fallback;
         }
 
-        /**
-         * Determines the most appropriate classic navigation menu to use as a fallback.
-         *
-         * @return WP_Term|null The most appropriate classic navigation menu to use as a fallback.
-         * @since 6.3.0
-         *
-         */
         private static function get_fallback_classic_menu()
         {
             $classic_nav_menus = wp_get_nav_menus();
@@ -168,14 +117,6 @@
             return static::get_most_recently_created_nav_menu($classic_nav_menus);
         }
 
-        /**
-         * Gets the classic menu assigned to the `primary` navigation menu location
-         * if it exists.
-         *
-         * @return WP_Term|null The classic nav menu assigned to the `primary` location or null.
-         * @since 6.3.0
-         *
-         */
         private static function get_nav_menu_at_primary_location()
         {
             $locations = get_nav_menu_locations();
@@ -193,15 +134,6 @@
             return null;
         }
 
-        /**
-         * Returns the classic menu with the slug `primary` if it exists.
-         *
-         * @param WP_Term[] $classic_nav_menus Array of classic nav menu term objects.
-         *
-         * @return WP_Term|null The classic nav menu with the slug `primary` or null.
-         * @since 6.3.0
-         *
-         */
         private static function get_nav_menu_with_primary_slug($classic_nav_menus)
         {
             foreach($classic_nav_menus as $classic_nav_menu)
@@ -215,15 +147,6 @@
             return null;
         }
 
-        /**
-         * Sorts the classic menus and returns the most recently created one.
-         *
-         * @param WP_Term[] $classic_nav_menus Array of classic nav menu term objects.
-         *
-         * @return WP_Term The most recently created classic nav menu.
-         * @since 6.3.0
-         *
-         */
         private static function get_most_recently_created_nav_menu($classic_nav_menus)
         {
             usort($classic_nav_menus, static function($a, $b)
@@ -234,13 +157,6 @@
             return $classic_nav_menus[0];
         }
 
-        /**
-         * Creates a default Navigation Block Menu fallback.
-         *
-         * @return int|WP_Error The post ID of the default fallback menu or a WP_Error object.
-         * @since 6.3.0
-         *
-         */
         private static function create_default_fallback()
         {
             $default_blocks = static::get_default_fallback_blocks();
@@ -258,13 +174,6 @@
             return $default_fallback;
         }
 
-        /**
-         * Gets the rendered markup for the default fallback blocks.
-         *
-         * @return string default blocks markup to use a the fallback.
-         * @since 6.3.0
-         *
-         */
         private static function get_default_fallback_blocks()
         {
             $registry = WP_Block_Type_Registry::get_instance();

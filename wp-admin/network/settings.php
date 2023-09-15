@@ -1,16 +1,7 @@
 <?php
-    /**
-     * Multisite network settings administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
-    /** WordPress Translation Installation API */
     require_once ABSPATH.'wp-admin/includes/translation-install.php';
 
     if(! current_user_can('manage_network_options'))
@@ -58,7 +49,6 @@
 
     if($_POST)
     {
-        /** This action is documented in wp-admin/network/edit.php */
         do_action('wpmuadminedit');
 
         check_admin_referer('siteoptions');
@@ -122,11 +112,6 @@
             update_site_option($option_name, $value);
         }
 
-        /**
-         * Fires after the network options are updated.
-         *
-         * @since MU (3.0.0)
-         */
         do_action('update_wpmu_options');
 
         wp_redirect(add_query_arg('updated', 'true', network_admin_url('settings.php')));
@@ -570,22 +555,7 @@
 
         <?php
             $menu_perms = get_site_option('menu_items');
-            /**
-             * Filters available network-wide administration menu options.
-             *
-             * Options returned to this filter are output as individual checkboxes that, when selected,
-             * enable site administrator access to the specified administration menu in certain contexts.
-             *
-             * Adding options for specific menus here hinges on the appropriate checks and capabilities
-             * being in place in the site dashboard on the other side. For instance, when the single
-             * default option, 'plugins' is enabled, site administrators are granted access to the Plugins
-             * screen in their individual sites' dashboards.
-             *
-             * @param string[] $admin_menus Associative array of the menu items available.
-             *
-             * @since MU (3.0.0)
-             *
-             */
+
             $menu_items = apply_filters('mu_menu_items', ['plugins' => __('Plugins')]);
 
             if($menu_items) :
@@ -614,11 +584,7 @@
         ?>
 
         <?php
-            /**
-             * Fires at the end of the Network Settings form, before the submit button.
-             *
-             * @since MU (3.0.0)
-             */
+
             do_action('wpmu_options');
         ?>
         <?php submit_button(); ?>

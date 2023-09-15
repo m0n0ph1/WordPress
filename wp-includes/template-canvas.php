@@ -1,9 +1,5 @@
 <?php
-/**
- * Template canvas file to render the current 'wp_template'.
- *
- * @package WordPress
- */
+
 
 /*
  * Get the template HTML.

@@ -1,32 +1,9 @@
 <?php
-    /**
-     * MagpieRSS: a simple RSS integration tool
-     *
-     * A compiled file for RSS syndication
-     *
-     * @author     Kellan Elliott-McCrea <kellan@protest.net>
-     * @version    0.51
-     * @license    GPL
-     *
-     * @package    External
-     * @subpackage MagpieRSS
-     * @deprecated 3.0.0 Use SimplePie instead.
-     */
 
-    /**
-     * Deprecated. Use SimplePie (class-simplepie.php) instead.
-     */
     _deprecated_file(basename(__FILE__), '3.0.0', WPINC.'/class-simplepie.php');
 
-    /**
-     * Fires before MagpieRSS is loaded, to optionally replace it.
-     *
-     * @since      2.3.0
-     * @deprecated 3.0.0
-     */
     do_action('load_feed_engine');
 
-    /** RSS feed constant. */
     define('RSS', 'RSS');
     define('ATOM', 'Atom');
     define('MAGPIE_USER_AGENT', 'WordPress/'.$GLOBALS['wp_version']);
@@ -70,17 +47,11 @@
 
         var $_CONTENT_CONSTRUCTS = ['content', 'summary', 'info', 'title', 'tagline', 'copyright'];
 
-        /**
-         * PHP4 constructor.
-         */
         public function MagpieRSS($source)
         {
             self::__construct($source);
         }
 
-        /**
-         * PHP5 constructor.
-         */
         function __construct($source)
         {
             # Check if PHP xml isn't compiled
@@ -446,17 +417,7 @@
     }
 
     if(! function_exists('fetch_rss')) :
-        /**
-         * Build Magpie object based on RSS from URL.
-         *
-         * @param string $url URL to retrieve feed.
-         *
-         * @return MagpieRSS|false MagpieRSS object on success, false on failure.
-         * @subpackage MagpieRSS
-         *
-         * @since      1.5.0
-         * @package    External
-         */
+
         function fetch_rss($url)
         {
             // initialize constants
@@ -611,18 +572,6 @@
         } // end fetch_rss()
     endif;
 
-    /**
-     * Retrieve URL headers and content using WP HTTP Request API.
-     *
-     * @param string $url     URL to retrieve
-     * @param array  $headers Optional. Headers to send to the URL. Default empty string.
-     *
-     * @return Snoopy style response
-     * @since      1.5.0
-     * @package    External
-     * @subpackage MagpieRSS
-     *
-     */
     function _fetch_remote_file($url, $headers = "")
     {
         $resp = wp_safe_remote_request($url, ['headers' => $headers, 'timeout' => MAGPIE_FETCH_TIME_OUT]);
@@ -665,17 +614,6 @@
         return $response;
     }
 
-    /**
-     * Retrieve
-     *
-     * @param array $resp
-     *
-     * @return MagpieRSS|bool
-     * @subpackage MagpieRSS
-     *
-     * @since      1.5.0
-     * @package    External
-     */
     function _response_to_rss($resp)
     {
         $rss = new MagpieRSS($resp->results);
@@ -725,13 +663,6 @@
         } // end if ($rss and !$rss->error)
     }
 
-    /**
-     * Set up constants with default values, unless user overrides.
-     *
-     * @since      1.5.0
-     * @package    External
-     * @subpackage MagpieRSS
-     */
     function init()
     {
         if(defined('MAGPIE_INITALIZED'))
@@ -834,17 +765,11 @@
 
         var $ERROR = '';            // accumulate error messages
 
-        /**
-         * PHP4 constructor.
-         */
         public function RSSCache($base = '', $age = '')
         {
             self::__construct($base, $age);
         }
 
-        /**
-         * PHP5 constructor.
-         */
         function __construct($base = '', $age = '')
         {
             $this->BASE_CACHE = WP_CONTENT_DIR.'/cache';
@@ -1040,17 +965,7 @@
     endif;
 
     if(! function_exists('wp_rss')) :
-        /**
-         * Display all RSS items in a HTML ordered list.
-         *
-         * @param string $url       URL of feed to display. Will not auto sense feed URL.
-         * @param int    $num_items Optional. Number of items to display, default is all.
-         *
-         * @subpackage MagpieRSS
-         *
-         * @since      1.5.0
-         * @package    External
-         */
+
         function wp_rss($url, $num_items = -1)
         {
             if($rss = fetch_rss($url))
@@ -1077,23 +992,7 @@
     endif;
 
     if(! function_exists('get_rss')) :
-        /**
-         * Display RSS items in HTML list items.
-         *
-         * You have to specify which HTML list you want, either ordered or unordered
-         * before using the function. You also have to specify how many items you wish
-         * to display. You can't display all of them like you can with wp_rss()
-         * function.
-         *
-         * @param string $url       URL of feed to display. Will not auto sense feed URL.
-         * @param int    $num_items Optional. Number of items to display, default is all.
-         *
-         * @return bool False on failure.
-         * @since      1.5.0
-         * @package    External
-         * @subpackage MagpieRSS
-         *
-         */
+
         function get_rss($url, $num_items = 5)
         { // Like get posts, but for RSS
             $rss = fetch_rss($url);

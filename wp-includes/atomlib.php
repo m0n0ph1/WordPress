@@ -1,76 +1,21 @@
 <?php
-    /**
-     * Atom Syndication Format PHP Library
-     *
-     * @package AtomLib
-     * @link    http://code.google.com/p/phpatomlib/
-     *
-     * @author  Elias Torres <elias@torrez.us>
-     * @version 0.4
-     * @since   2.3.0
-     */
 
-    /**
-     * Structure that store common Atom Feed Properties
-     *
-     * @package AtomLib
-     */
     class AtomFeed
     {
-        /**
-         * Stores Links
-         *
-         * @var array
-         * @access public
-         */
         var $links = [];
 
-        /**
-         * Stores Categories
-         *
-         * @var array
-         * @access public
-         */
         var $categories = [];
 
-        /**
-         * Stores Entries
-         *
-         * @var array
-         * @access public
-         */
         var $entries = [];
     }
 
-    /**
-     * Structure that store Atom Entry Properties
-     *
-     * @package AtomLib
-     */
     class AtomEntry
     {
-        /**
-         * Stores Links
-         *
-         * @var array
-         * @access public
-         */
         var $links = [];
 
-        /**
-         * Stores Categories
-         *
-         * @var array
-         * @access public
-         */
         var $categories = [];
     }
 
-    /**
-     * AtomLib Atom Parser API
-     *
-     * @package AtomLib
-     */
     class AtomParser
     {
         var $NS = 'http://www.w3.org/2005/Atom';
@@ -109,27 +54,11 @@
 
         var $current;
 
-        /**
-         * Map attributes to key="val"
-         *
-         * @param string $k Key
-         * @param string $v Value
-         *
-         * @return string
-         */
         public static function map_attrs($k, $v)
         {
             return "$k=\"$v\"";
         }
 
-        /**
-         * Map XML namespace to string.
-         *
-         * @param indexish $p XML Namespace element index
-         * @param array    $n Two-element array pair. [ 0 => {namespace}, 1 => {url} ]
-         *
-         * @return string 'xmlns="{url}"' or 'xmlns:{namespace}="{url}"'
-         */
         public static function map_xmlns($p, $n)
         {
             $xd = "xmlns";
@@ -141,17 +70,11 @@
             return "{$xd}=\"{$n[1]}\"";
         }
 
-        /**
-         * PHP4 constructor.
-         */
         public function AtomParser()
         {
             self::__construct();
         }
 
-        /**
-         * PHP5 constructor.
-         */
         function __construct()
         {
             $this->feed = new AtomFeed();

@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Multisite Administration hooks
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      4.3.0
-     */
 
 // Media hooks.
     add_filter('wp_handle_upload_prefilter', 'check_upload_size');

@@ -1,12 +1,4 @@
 <?php
-    /**
-     * WordPress Options Header.
-     *
-     * Displays updated message, if updated variable is part of the URL query.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     wp_reset_vars(['action']);
 

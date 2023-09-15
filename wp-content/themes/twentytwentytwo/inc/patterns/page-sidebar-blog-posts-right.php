@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Blog posts with right sidebar block pattern
-     */
+
     return [
         'title' => __('Blog posts with right sidebar', 'twentytwentytwo'),
         'categories' => ['pages'],

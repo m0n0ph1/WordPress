@@ -1,74 +1,18 @@
 <?php
-    /**
-     * Displays Administration Menu.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * The current page.
-     *
-     * @global string $self
-     */
     $self = preg_replace('|^.*/wp-admin/network/|i', '', $_SERVER['PHP_SELF']);
     $self = preg_replace('|^.*/wp-admin/|i', '', $self);
     $self = preg_replace('|^.*/plugins/|i', '', $self);
     $self = preg_replace('|^.*/mu-plugins/|i', '', $self);
 
-    /**
-     * For when admin-header is included from within a function.
-     *
-     * @global array  $menu
-     * @global array  $submenu
-     * @global string $parent_file
-     * @global string $submenu_file
-     */
     global $menu, $submenu, $parent_file, $submenu_file;
 
-    /**
-     * Filters the parent file of an admin menu sub-menu item.
-     *
-     * Allows plugins to move sub-menu items around.
-     *
-     * @param string $parent_file The parent file.
-     *
-     * @since MU (3.0.0)
-     *
-     */
     $parent_file = apply_filters('parent_file', $parent_file);
 
-    /**
-     * Filters the file of an admin menu sub-menu item.
-     *
-     * @param string $submenu_file The submenu file.
-     * @param string $parent_file  The submenu item's parent file.
-     *
-     * @since 4.4.0
-     *
-     */
     $submenu_file = apply_filters('submenu_file', $submenu_file, $parent_file);
 
     get_admin_page_parent();
 
-    /**
-     * Display menu.
-     *
-     * @access private
-     *
-     * @param array   $menu
-     * @param array   $submenu
-     * @param bool    $submenu_as_parent
-     *
-     * @global string $submenu_file
-     * @global string $plugin_page
-     * @global string $typenow The post type of the current screen.
-     *
-     * @since  2.7.0
-     *
-     * @global string $self
-     * @global string $parent_file
-     */
     function _wp_menu_output($menu, $submenu, $submenu_as_parent = true)
     {
         global $self, $parent_file, $submenu_file, $plugin_page, $typenow;
@@ -330,11 +274,7 @@
             <?php
 
                 _wp_menu_output($menu, $submenu);
-                /**
-                 * Fires after the admin menu has been output.
-                 *
-                 * @since 2.5.0
-                 */
+
                 do_action('adminmenu');
 
             ?>

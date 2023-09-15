@@ -1,17 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/template-part` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/template-part` block on the server.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string The render.
-     */
     function render_block_core_template_part($attributes)
     {
         static $seen_ids = [];
@@ -50,17 +38,7 @@
                 {
                     $area = $area_terms[0]->name;
                 }
-                /**
-                 * Fires when a block template part is loaded from a template post stored in the database.
-                 *
-                 * @param string  $template_part_id   The requested template part namespaced to the theme.
-                 * @param array   $attributes         The block attributes.
-                 * @param WP_Post $template_part_post The template part post object.
-                 * @param string  $content            The template part content.
-                 *
-                 * @since 5.9.0
-                 *
-                 */
+
                 do_action('render_block_core_template_part_post', $template_part_id, $attributes, $template_part_post, $content);
             }
             else
@@ -85,31 +63,10 @@
 
                 if('' !== $content && null !== $content)
                 {
-                    /**
-                     * Fires when a block template part is loaded from a template part in the theme.
-                     *
-                     * @param string $template_part_id        The requested template part namespaced to the theme.
-                     * @param array  $attributes              The block attributes.
-                     * @param string $template_part_file_path Absolute path to the template path.
-                     * @param string $content                 The template part content.
-                     *
-                     * @since 5.9.0
-                     *
-                     */
                     do_action('render_block_core_template_part_file', $template_part_id, $attributes, $template_part_file_path, $content);
                 }
                 else
                 {
-                    /**
-                     * Fires when a requested block template part does not exist in the database nor in the theme.
-                     *
-                     * @param string $template_part_id        The requested template part namespaced to the theme.
-                     * @param array  $attributes              The block attributes.
-                     * @param string $template_part_file_path Absolute path to the not found template path.
-                     *
-                     * @since 5.9.0
-                     *
-                     */
                     do_action('render_block_core_template_part_none', $template_part_id, $attributes, $template_part_file_path);
                 }
             }
@@ -186,13 +143,6 @@
         return "<$html_tag $wrapper_attributes>".str_replace(']]>', ']]&gt;', $content)."</$html_tag>";
     }
 
-    /**
-     * Returns an array of area variation objects for the template part block.
-     *
-     * @param array $instance_variations The variations for instances.
-     *
-     * @return array Array containing the block variation objects.
-     */
     function build_template_part_block_area_variations($instance_variations)
     {
         $variations = [];
@@ -230,11 +180,6 @@
         return $variations;
     }
 
-    /**
-     * Returns an array of instance variation objects for the template part block
-     *
-     * @return array Array containing the block variation objects.
-     */
     function build_template_part_block_instance_variations()
     {
         // Block themes are unavailable during installation.
@@ -286,11 +231,6 @@
         return $variations;
     }
 
-    /**
-     * Returns an array of all template part block variations.
-     *
-     * @return array Array containing the block variation objects.
-     */
     function build_template_part_block_variations()
     {
         $instance_variations = build_template_part_block_instance_variations();
@@ -299,9 +239,6 @@
         return array_merge($area_variations, $instance_variations);
     }
 
-    /**
-     * Registers the `core/template-part` block on the server.
-     */
     function register_block_core_template_part()
     {
         register_block_type_from_metadata(__DIR__.'/template-part', [

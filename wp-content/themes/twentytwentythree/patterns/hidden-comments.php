@@ -1,9 +1,5 @@
 <?php
-    /**
-     * Title: Hidden Comments
-     * Slug: twentytwentythree/hidden-comments
-     * Inserter: no
-     */
+
 ?>
 <!-- wp:group {"layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"var:preset|spacing|40","right":"var:preset|spacing|40","bottom":"var:preset|spacing|40","left":"var:preset|spacing|40"}}}} -->
 <div class="wp-block-group"

@@ -1,11 +1,4 @@
 <?php
-    /**
-     * WordPress User Administration Bootstrap
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
     define('WP_USER_ADMIN', true);
 
@@ -19,14 +12,6 @@
 
     $redirect_user_admin_request = (0 !== strcasecmp($current_blog->domain, $current_site->domain) || 0 !== strcasecmp($current_blog->path, $current_site->path));
 
-    /**
-     * Filters whether to redirect the request to the User Admin in Multisite.
-     *
-     * @param bool $redirect_user_admin_request Whether the request should be redirected.
-     *
-     * @since 3.2.0
-     *
-     */
     $redirect_user_admin_request = apply_filters('redirect_user_admin_request', $redirect_user_admin_request);
 
     if($redirect_user_admin_request)

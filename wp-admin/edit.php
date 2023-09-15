@@ -1,17 +1,7 @@
 <?php
-    /**
-     * Edit Posts Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
-    /**
-     * @global string $typenow The post type of the current screen.
-     */
     global $typenow;
 
     if(! $typenow)
@@ -32,10 +22,6 @@
         }
     }
 
-    /**
-     * @global string       $post_type
-     * @global WP_Post_Type $post_type_object
-     */
     global $post_type, $post_type_object;
 
     $post_type = $typenow;
@@ -104,9 +90,6 @@
             // Validate the post status exists.
             if(get_post_status_object($post_status))
             {
-                /**
-                 * @global wpdb $wpdb WordPress database abstraction object.
-                 */
                 global $wpdb;
 
                 $post_ids = $wpdb->get_col($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_type=%s AND post_status = %s", $post_type, $post_status));
@@ -238,22 +221,6 @@
             default:
                 $screen = get_current_screen()->id;
 
-                /**
-                 * Fires when a custom bulk action should be handled.
-                 *
-                 * The redirect link should be modified with success or failure feedback
-                 * from the action to be used to display feedback to the user.
-                 *
-                 * The dynamic portion of the hook name, `$screen`, refers to the current screen ID.
-                 *
-                 * @param string $sendback The redirect URL.
-                 * @param string $doaction The action being taken.
-                 * @param array  $items    The items to take the action on. Accepts an array of IDs of posts,
-                 *                         comments, terms, links, plugins, attachments, or users.
-                 *
-                 * @since 4.7.0
-                 *
-                 */
                 $sendback = apply_filters("handle_bulk_actions-{$screen}", $sendback, $doaction, $post_ids); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                 break;
         }
@@ -392,18 +359,6 @@
         'untrashed' => _n('%s block restored from the Trash.', '%s blocks restored from the Trash.', $bulk_counts['untrashed']),
     ];
 
-    /**
-     * Filters the bulk action updated messages.
-     *
-     * By default, custom post types use the messages for the 'post' post type.
-     *
-     * @param array[] $bulk_messages Arrays of messages, each keyed by the corresponding post type. Messages are
-     *                               keyed with 'updated', 'locked', 'deleted', 'trashed', and 'untrashed'.
-     * @param int[]   $bulk_counts   Array of item counts for each message, used to build internationalized strings.
-     *
-     * @since 3.7.0
-     *
-     */
     $bulk_messages = apply_filters('bulk_post_updated_messages', $bulk_messages, $bulk_counts);
     $bulk_counts = array_filter($bulk_counts);
 

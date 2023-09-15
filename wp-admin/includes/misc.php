@@ -1,74 +1,19 @@
 <?php
-    /**
-     * Misc WordPress Administration API.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Returns whether the server is running Apache with the mod_rewrite module loaded.
-     *
-     * @return bool Whether the server is running Apache with the mod_rewrite module loaded.
-     * @since 2.0.0
-     *
-     */
     function got_mod_rewrite()
     {
         $got_rewrite = apache_mod_loaded('mod_rewrite', true);
 
-        /**
-         * Filters whether Apache and mod_rewrite are present.
-         *
-         * This filter was previously used to force URL rewriting for other servers,
-         * like nginx. Use the {@see 'got_url_rewrite'} filter in got_url_rewrite() instead.
-         *
-         * @param bool $got_rewrite Whether Apache and mod_rewrite are present.
-         *
-         * @see   got_url_rewrite()
-         *
-         * @since 2.5.0
-         *
-         */
         return apply_filters('got_rewrite', $got_rewrite);
     }
 
-    /**
-     * Returns whether the server supports URL rewriting.
-     *
-     * Detects Apache's mod_rewrite, IIS 7.0+ permalink support, and nginx.
-     *
-     * @return bool Whether the server supports URL rewriting.
-     * @global bool $is_nginx
-     *
-     * @since 3.7.0
-     *
-     */
     function got_url_rewrite()
     {
         $got_url_rewrite = (got_mod_rewrite() || $GLOBALS['is_nginx'] || iis7_supports_permalinks());
 
-        /**
-         * Filters whether URL rewriting is available.
-         *
-         * @param bool $got_url_rewrite Whether URL rewriting is available.
-         *
-         * @since 3.7.0
-         *
-         */
         return apply_filters('got_url_rewrite', $got_url_rewrite);
     }
 
-    /**
-     * Extracts strings from between the BEGIN and END markers in the .htaccess file.
-     *
-     * @param string $filename Filename to extract the strings from.
-     * @param string $marker   The marker to extract the strings from.
-     *
-     * @return string[] An array of strings from a file (.htaccess) from between BEGIN and END markers.
-     * @since 1.5.0
-     *
-     */
     function extract_from_markers($filename, $marker)
     {
         $result = [];
@@ -108,21 +53,6 @@
         return $result;
     }
 
-    /**
-     * Inserts an array of strings into a file (.htaccess), placing it between
-     * BEGIN and END markers.
-     *
-     * Replaces existing marked info. Retains surrounding
-     * data. Creates file if none exists.
-     *
-     * @param string       $filename  Filename to alter.
-     * @param string       $marker    The marker to alter.
-     * @param array|string $insertion The new content to insert.
-     *
-     * @return bool True on write success, false on failure.
-     * @since 1.5.0
-     *
-     */
     function insert_with_markers($filename, $marker, $insertion)
     {
         if(! file_exists($filename))
@@ -171,15 +101,6 @@ Any changes to the directives between these markers will be overwritten.'
             $instructions[$line] = '# '.$text;
         }
 
-        /**
-         * Filters the inline instructions inserted before the dynamically generated content.
-         *
-         * @param string[] $instructions Array of lines with inline instructions.
-         * @param string   $marker       The marker being inserted.
-         *
-         * @since 5.3.0
-         *
-         */
         $instructions = apply_filters('insert_with_markers_inline_instructions', $instructions, $marker);
 
         if($switched_locale)
@@ -271,18 +192,6 @@ Any changes to the directives between these markers will be overwritten.'
         return (bool) $bytes;
     }
 
-    /**
-     * Updates the htaccess file with the current rules if it is writable.
-     *
-     * Always writes to the file if it exists and is writable to ensure that we
-     * blank out old rules.
-     *
-     * @return bool|null True on write success, false on failure. Null in multisite.
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     *
-     * @since 1.5.0
-     *
-     */
     function save_mod_rewrite_rules()
     {
         global $wp_rewrite;
@@ -315,16 +224,6 @@ Any changes to the directives between these markers will be overwritten.'
         return false;
     }
 
-    /**
-     * Updates the IIS web.config file with the current rules if it is writable.
-     * If the permalinks do not require rewrite rules then the rules are deleted from the web.config file.
-     *
-     * @return bool|null True on write success, false on failure. Null in multisite.
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     *
-     * @since 2.8.0
-     *
-     */
     function iis7_save_url_rewrite_rules()
     {
         global $wp_rewrite;
@@ -358,14 +257,6 @@ Any changes to the directives between these markers will be overwritten.'
         return false;
     }
 
-    /**
-     * Updates the "recently-edited" file for the plugin or theme file editor.
-     *
-     * @param string $file
-     *
-     * @since 1.5.0
-     *
-     */
     function update_recently_edited($file)
     {
         $oldfiles = (array) get_option('recently_edited');
@@ -390,16 +281,6 @@ Any changes to the directives between these markers will be overwritten.'
         update_option('recently_edited', $oldfiles);
     }
 
-    /**
-     * Makes a tree structure for the theme file editor's file list.
-     *
-     * @param array $allowed_files List of theme file paths.
-     *
-     * @return array Tree structure for listing theme files.
-     * @since  4.9.0
-     * @access private
-     *
-     */
     function wp_make_theme_file_tree($allowed_files)
     {
         $tree_list = [];
@@ -420,22 +301,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $tree_list;
     }
 
-    /**
-     * Outputs the formatted file list for the theme file editor.
-     *
-     * @param array|string $tree          List of file/folder paths, or filename.
-     * @param int          $level         The aria-level for the current iteration.
-     * @param int          $size          The aria-setsize for the current iteration.
-     * @param int          $index         The aria-posinset for the current iteration.
-     *
-     * @global string      $relative_file Name of the file being edited relative to the
-     *                                    theme directory.
-     * @global string      $stylesheet    The stylesheet name of the theme being edited.
-     *
-     * @since  4.9.0
-     * @access private
-     *
-     */
     function wp_print_theme_file_tree($tree, $level = 2, $size = 1, $index = 1)
     {
         global $relative_file, $stylesheet;
@@ -507,16 +372,6 @@ Any changes to the directives between these markers will be overwritten.'
         }
     }
 
-    /**
-     * Makes a tree structure for the plugin file editor's file list.
-     *
-     * @param array $plugin_editable_files List of plugin file paths.
-     *
-     * @return array Tree structure for listing plugin files.
-     * @since  4.9.0
-     * @access private
-     *
-     */
     function wp_make_plugin_file_tree($plugin_editable_files)
     {
         $tree_list = [];
@@ -537,19 +392,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $tree_list;
     }
 
-    /**
-     * Outputs the formatted file list for the plugin file editor.
-     *
-     * @param array|string $tree  List of file/folder paths, or filename.
-     * @param string       $label Name of file or folder to print.
-     * @param int          $level The aria-level for the current iteration.
-     * @param int          $size  The aria-setsize for the current iteration.
-     * @param int          $index The aria-posinset for the current iteration.
-     *
-     * @since  4.9.0
-     * @access private
-     *
-     */
     function wp_print_plugin_file_tree($tree, $label = '', $level = 2, $size = 1, $index = 1)
     {
         global $file, $plugin;
@@ -613,15 +455,6 @@ Any changes to the directives between these markers will be overwritten.'
         }
     }
 
-    /**
-     * Flushes rewrite rules if siteurl, home or page_on_front changed.
-     *
-     * @param string $old_value
-     * @param string $value
-     *
-     * @since 2.1.0
-     *
-     */
     function update_home_siteurl($old_value, $value)
     {
         if(wp_installing())
@@ -639,18 +472,6 @@ Any changes to the directives between these markers will be overwritten.'
         }
     }
 
-    /**
-     * Resets global variables based on $_GET and $_POST.
-     *
-     * This function resets global variables based on the names passed
-     * in the $vars array to the value of $_POST[$var] or $_GET[$var] or ''
-     * if neither is defined.
-     *
-     * @param array $vars An array of globals to reset.
-     *
-     * @since 2.0.0
-     *
-     */
     function wp_reset_vars($vars)
     {
         foreach($vars as $var)
@@ -673,14 +494,6 @@ Any changes to the directives between these markers will be overwritten.'
         }
     }
 
-    /**
-     * Displays the given administration message.
-     *
-     * @param string|WP_Error $message
-     *
-     * @since 2.1.0
-     *
-     */
     function show_message($message)
     {
         if(is_wp_error($message))
@@ -700,13 +513,6 @@ Any changes to the directives between these markers will be overwritten.'
         flush();
     }
 
-    /**
-     * @param string $content
-     *
-     * @return array
-     * @since 2.8.0
-     *
-     */
     function wp_doc_link_parse($content)
     {
         if(! is_string($content) || empty($content))
@@ -752,14 +558,6 @@ Any changes to the directives between these markers will be overwritten.'
         $functions = array_unique($functions);
         sort($functions);
 
-        /**
-         * Filters the list of functions and classes to be ignored from the documentation lookup.
-         *
-         * @param string[] $ignore_functions Array of names of functions and classes to be ignored.
-         *
-         * @since 2.8.0
-         *
-         */
         $ignore_functions = apply_filters('documentation_ignore_functions', $ignore_functions);
 
         $ignore_functions = array_unique($ignore_functions);
@@ -779,11 +577,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $output;
     }
 
-    /**
-     * Saves option for number of rows when listing posts, pages, comments, etc.
-     *
-     * @since 2.8.0
-     */
     function set_screen_options()
     {
         if(! isset($_POST['wp_screen_options']) || ! is_array($_POST['wp_screen_options']))
@@ -856,46 +649,9 @@ Any changes to the directives between these markers will be overwritten.'
 
                 if(str_ends_with($option, '_page') || 'layout_columns' === $option)
                 {
-                    /**
-                     * Filters a screen option value before it is set.
-                     *
-                     * The filter can also be used to modify non-standard [items]_per_page
-                     * settings. See the parent function for a full list of standard options.
-                     *
-                     * Returning false from the filter will skip saving the current option.
-                     *
-                     * @param mixed  $screen_option The value to save instead of the option value.
-                     *                              Default false (to skip saving the current option).
-                     * @param string $option        The option name.
-                     * @param int    $value         The option value.
-                     *
-                     * @since 2.8.0
-                     * @since 5.4.2 Only applied to options ending with '_page',
-                     *              or the 'layout_columns' option.
-                     *
-                     * @see   set_screen_options()
-                     *
-                     */
                     $screen_option = apply_filters('set-screen-option', $screen_option, $option, $value); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                 }
 
-                /**
-                 * Filters a screen option value before it is set.
-                 *
-                 * The dynamic portion of the hook name, `$option`, refers to the option name.
-                 *
-                 * Returning false from the filter will skip saving the current option.
-                 *
-                 * @param mixed  $screen_option  The value to save instead of the option value.
-                 *                               Default false (to skip saving the current option).
-                 * @param string $option         The option name.
-                 * @param int    $value          The option value.
-                 *
-                 * @see   set_screen_options()
-                 *
-                 * @since 5.4.2
-                 *
-                 */
                 $value = apply_filters("set_screen_option_{$option}", $screen_option, $option, $value);
 
                 if(false === $value)
@@ -919,15 +675,6 @@ Any changes to the directives between these markers will be overwritten.'
         exit;
     }
 
-    /**
-     * Checks if rewrite rule for WordPress already exists in the IIS 7+ configuration file.
-     *
-     * @param string $filename The file path to the configuration file.
-     *
-     * @return bool
-     * @since 2.8.0
-     *
-     */
     function iis7_rewrite_rule_exists($filename)
     {
         if(! file_exists($filename))
@@ -958,15 +705,6 @@ Any changes to the directives between these markers will be overwritten.'
         return true;
     }
 
-    /**
-     * Deletes WordPress rewrite rule from web.config file if it exists there.
-     *
-     * @param string $filename Name of the configuration file.
-     *
-     * @return bool
-     * @since 2.8.0
-     *
-     */
     function iis7_delete_rewrite_rule($filename)
     {
         // If configuration file does not exist then rules also do not exist, so there is nothing to delete.
@@ -1003,16 +741,6 @@ Any changes to the directives between these markers will be overwritten.'
         return true;
     }
 
-    /**
-     * Adds WordPress rewrite rule to the IIS 7+ configuration file.
-     *
-     * @param string $filename     The file path to the configuration file.
-     * @param string $rewrite_rule The XML fragment with URL Rewrite rule.
-     *
-     * @return bool
-     * @since 2.8.0
-     *
-     */
     function iis7_add_rewrite_rule($filename, $rewrite_rule)
     {
         if(! class_exists('DOMDocument', false))
@@ -1109,15 +837,6 @@ Any changes to the directives between these markers will be overwritten.'
         return true;
     }
 
-    /**
-     * Saves the XML document into a file.
-     *
-     * @param DOMDocument $doc
-     * @param string      $filename
-     *
-     * @since 2.8.0
-     *
-     */
     function saveDomDocument($doc, $filename)
     { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
         $config = $doc->saveXML();
@@ -1128,16 +847,6 @@ Any changes to the directives between these markers will be overwritten.'
         fclose($fp);
     }
 
-    /**
-     * Displays the default admin color scheme picker (Used in user-edit.php).
-     *
-     * @param int    $user_id User ID.
-     *
-     * @global array $_wp_admin_css_colors
-     *
-     * @since 3.0.0
-     *
-     */
     function admin_color_scheme_picker($user_id)
     {
         global $_wp_admin_css_colors;
@@ -1207,10 +916,6 @@ Any changes to the directives between these markers will be overwritten.'
         <?php
     }
 
-    /**
-     *
-     * @global array $_wp_admin_css_colors
-     */
     function wp_color_scheme_settings()
     {
         global $_wp_admin_css_colors;
@@ -1244,21 +949,8 @@ Any changes to the directives between these markers will be overwritten.'
         echo '<script type="text/javascript">var _wpColorScheme = '.wp_json_encode(['icons' => $icon_colors]).";</script>\n";
     }
 
-    /**
-     * Displays the viewport meta in the admin.
-     *
-     * @since 5.5.0
-     */
     function wp_admin_viewport_meta()
     {
-        /**
-         * Filters the viewport meta in the admin.
-         *
-         * @param string $viewport_meta The viewport meta.
-         *
-         * @since 5.5.0
-         *
-         */
         $viewport_meta = apply_filters('admin_viewport_meta', 'width=device-width,initial-scale=1.0');
 
         if(empty($viewport_meta))
@@ -1269,33 +961,11 @@ Any changes to the directives between these markers will be overwritten.'
         echo '<meta name="viewport" content="'.esc_attr($viewport_meta).'">';
     }
 
-    /**
-     * Adds viewport meta for mobile in Customizer.
-     *
-     * Hooked to the {@see 'admin_viewport_meta'} filter.
-     *
-     * @param string $viewport_meta The viewport meta.
-     *
-     * @return string Filtered viewport meta.
-     * @since 5.5.0
-     *
-     */
     function _customizer_mobile_viewport_meta($viewport_meta)
     {
         return trim($viewport_meta, ',').',minimum-scale=0.5,maximum-scale=1.2';
     }
 
-    /**
-     * Checks lock status for posts displayed on the Posts screen.
-     *
-     * @param array  $response  The Heartbeat response.
-     * @param array  $data      The $_POST data sent.
-     * @param string $screen_id The screen ID.
-     *
-     * @return array The Heartbeat response.
-     * @since 3.6.0
-     *
-     */
     function wp_check_locked_posts($response, $data, $screen_id)
     {
         $checked = [];
@@ -1345,17 +1015,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $response;
     }
 
-    /**
-     * Checks lock status on the New/Edit Post screen and refresh the lock.
-     *
-     * @param array  $response  The Heartbeat response.
-     * @param array  $data      The $_POST data sent.
-     * @param string $screen_id The screen ID.
-     *
-     * @return array The Heartbeat response.
-     * @since 3.6.0
-     *
-     */
     function wp_refresh_post_lock($response, $data, $screen_id)
     {
         if(array_key_exists('wp-refresh-post-lock', $data))
@@ -1410,17 +1069,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $response;
     }
 
-    /**
-     * Checks nonce expiration on the New/Edit Post screen and refresh if needed.
-     *
-     * @param array  $response  The Heartbeat response.
-     * @param array  $data      The $_POST data sent.
-     * @param string $screen_id The screen ID.
-     *
-     * @return array The Heartbeat response.
-     * @since 3.6.0
-     *
-     */
     function wp_refresh_post_nonces($response, $data, $screen_id)
     {
         if(array_key_exists('wp-refresh-post-nonces', $data))
@@ -1455,16 +1103,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $response;
     }
 
-    /**
-     * Refresh nonces used with meta boxes in the block editor.
-     *
-     * @param array $response The Heartbeat response.
-     * @param array $data     The $_POST data sent.
-     *
-     * @return array The Heartbeat response.
-     * @since 6.1.0
-     *
-     */
     function wp_refresh_metabox_loader_nonces($response, $data)
     {
         if(empty($data['wp-refresh-metabox-loader-nonces']))
@@ -1495,15 +1133,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $response;
     }
 
-    /**
-     * Adds the latest Heartbeat and REST-API nonce to the Heartbeat response.
-     *
-     * @param array $response The Heartbeat response.
-     *
-     * @return array The Heartbeat response.
-     * @since 5.0.0
-     *
-     */
     function wp_refresh_heartbeat_nonces($response)
     {
         // Refresh the Rest API nonce.
@@ -1515,17 +1144,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $response;
     }
 
-    /**
-     * Disables suspension of Heartbeat on the Add/Edit Post screens.
-     *
-     * @param array   $settings An array of Heartbeat settings.
-     *
-     * @return array Filtered Heartbeat settings.
-     * @since 3.8.0
-     *
-     * @global string $pagenow  The filename of the current screen.
-     *
-     */
     function wp_heartbeat_set_suspension($settings)
     {
         global $pagenow;
@@ -1538,16 +1156,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $settings;
     }
 
-    /**
-     * Performs autosave with heartbeat.
-     *
-     * @param array $response The Heartbeat response.
-     * @param array $data     The $_POST data sent.
-     *
-     * @return array The Heartbeat response.
-     * @since 3.9.0
-     *
-     */
     function heartbeat_autosave($response, $data)
     {
         if(! empty($data['wp_autosave']))
@@ -1583,14 +1191,6 @@ Any changes to the directives between these markers will be overwritten.'
         return $response;
     }
 
-    /**
-     * Removes single-use URL parameters and create canonical link based on new URL.
-     *
-     * Removes specific query string parameters from a URL, create the canonical link,
-     * put it in the admin header, and change the current URL to match.
-     *
-     * @since 4.2.0
-     */
     function wp_admin_canonical_url()
     {
         $removable_query_args = wp_removable_query_args();
@@ -1613,40 +1213,15 @@ Any changes to the directives between these markers will be overwritten.'
         <?php
     }
 
-    /**
-     * Sends a referrer policy header so referrers are not sent externally from administration screens.
-     *
-     * @since 4.9.0
-     */
     function wp_admin_headers()
     {
         $policy = 'strict-origin-when-cross-origin';
 
-        /**
-         * Filters the admin referrer policy header value.
-         *
-         * @param string $policy The admin referrer policy header value. Default 'strict-origin-when-cross-origin'.
-         *
-         * @since 4.9.5 The default value was changed to 'strict-origin-when-cross-origin'.
-         *
-         * @link  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
-         *
-         * @since 4.9.0
-         */
         $policy = apply_filters('admin_referrer_policy', $policy);
 
         header(sprintf('Referrer-Policy: %s', $policy));
     }
 
-    /**
-     * Outputs JS that reloads the page if the user navigated to it with the Back or Forward button.
-     *
-     * Used on the Edit Post and Add New Post screens. Needed to ensure the page is not loaded from browser cache,
-     * so the post title and editor content are the last saved versions. Ideally this script should run first in the
-     * head.
-     *
-     * @since 4.6.0
-     */
     function wp_page_reload_on_back_button_js()
     {
         ?>
@@ -1658,18 +1233,6 @@ Any changes to the directives between these markers will be overwritten.'
         <?php
     }
 
-    /**
-     * Sends a confirmation request email when a change of site admin email address is attempted.
-     *
-     * The new site admin address will not become active until confirmed.
-     *
-     * @param string $old_value The old site admin email address.
-     * @param string $value     The proposed new site admin email address.
-     *
-     * @since 3.0.0
-     * @since 4.9.0 This function was moved from wp-admin/includes/ms.php so it's no longer Multisite specific.
-     *
-     */
     function update_option_new_admin_email($old_value, $value)
     {
         if(get_option('admin_email') === $value || ! is_email($value))
@@ -1707,27 +1270,6 @@ All at ###SITENAME###
 ###SITEURL###'
         );
 
-        /**
-         * Filters the text of the email sent when a change of site admin email address is attempted.
-         *
-         * The following strings have a special meaning and will get replaced dynamically:
-         * ###USERNAME###  The current user's username.
-         * ###ADMIN_URL### The link to click on to confirm the email change.
-         * ###EMAIL###     The proposed new site admin email address.
-         * ###SITENAME###  The name of the site.
-         * ###SITEURL###   The URL to the site.
-         *
-         * @param string $email_text      Text in the email.
-         * @param array  $new_admin_email {
-         *                                Data relating to the new site admin email address.
-         *
-         * @type string  $hash            The secure hash used in the confirmation link URL.
-         * @type string  $newemail        The proposed new site admin email address.
-         *                                }
-         * @since MU (3.0.0)
-         * @since 4.9.0 This filter is no longer Multisite specific.
-         *
-         */
         $content = apply_filters('new_admin_email_content', $email_text, $new_admin_email);
 
         $current_user = wp_get_current_user();
@@ -1754,18 +1296,6 @@ All at ###SITENAME###
         }
     }
 
-    /**
-     * Appends '(Draft)' to draft page titles in the privacy page dropdown
-     * so that unpublished content is obvious.
-     *
-     * @param string  $title Page title.
-     * @param WP_Post $page  Page data object.
-     *
-     * @return string Page title.
-     * @since  4.9.8
-     * @access private
-     *
-     */
     function _wp_privacy_settings_filter_draft_page_titles($title, $page)
     {
         if('draft' === $page->post_status && 'privacy' === get_current_screen()->id)
@@ -1777,23 +1307,6 @@ All at ###SITENAME###
         return $title;
     }
 
-    /**
-     * Checks if the user needs to update PHP.
-     *
-     * @return array|false {
-     *     Array of PHP version data. False on failure.
-     *
-     * @type string $recommended_version     The PHP version recommended by WordPress.
-     * @type string $minimum_version         The minimum required PHP version.
-     * @type bool   $is_supported            Whether the PHP version is actively supported.
-     * @type bool   $is_secure               Whether the PHP version receives security updates.
-     * @type bool   $is_acceptable           Whether the PHP version is still acceptable or warnings
-     *                                       should be shown and an update recommended.
-     *                                       }
-     * @since 5.1.1 Added the {@see 'wp_is_php_version_acceptable'} filter.
-     *
-     * @since 5.1.0
-     */
     function wp_check_php_version()
     {
         $version = PHP_VERSION;
@@ -1831,20 +1344,6 @@ All at ###SITENAME###
 
         if(isset($response['is_acceptable']) && $response['is_acceptable'])
         {
-            /**
-             * Filters whether the active PHP version is considered acceptable by WordPress.
-             *
-             * Returning false will trigger a PHP version warning to show up in the admin dashboard to administrators.
-             *
-             * This filter is only run if the wordpress.org Serve Happy API considers the PHP version acceptable, ensuring
-             * that this filter can only make this check stricter, but not loosen it.
-             *
-             * @param bool   $is_acceptable Whether the PHP version is considered acceptable. Default true.
-             * @param string $version       PHP version checked.
-             *
-             * @since 5.1.1
-             *
-             */
             $response['is_acceptable'] = (bool) apply_filters('wp_is_php_version_acceptable', true, $version);
         }
 
@@ -1862,25 +1361,6 @@ All at ###SITENAME###
         return $response;
     }
 
-    /**
-     * Creates and returns the markup for an admin notice.
-     *
-     * @param string  $message                The message.
-     * @param array   $args                   {
-     *                                        Optional. An array of arguments for the admin notice. Default empty array.
-     *
-     * @type string   $type                   Optional. The type of admin notice.
-     *                                        For example, 'error', 'success', 'warning', 'info'.
-     *                                        Default empty string.
-     * @type bool     $dismissible            Optional. Whether the admin notice is dismissible. Default false.
-     * @type string   $id                     Optional. The value of the admin notice's ID attribute. Default empty string.
-     * @type string[] $additional_classes     Optional. A string array of class names. Default empty array.
-     * @type bool     $paragraph_wrap         Optional. Whether to wrap the message in paragraph tags. Default true.
-     *                                        }
-     * @return string The markup for an admin notice.
-     * @since 6.4.0
-     *
-     */
     function wp_get_admin_notice($message, $args = [])
     {
         $defaults = [
@@ -1893,15 +1373,6 @@ All at ###SITENAME###
 
         $args = wp_parse_args($args, $defaults);
 
-        /**
-         * Filters the arguments for an admin notice.
-         *
-         * @param array  $args    The arguments for the admin notice.
-         * @param string $message The message for the admin notice.
-         *
-         * @since 6.4.0
-         *
-         */
         $args = apply_filters('wp_admin_notice_args', $args, $message);
         $id = '';
         $classes = 'notice';
@@ -1948,48 +1419,11 @@ All at ###SITENAME###
 
         $markup = sprintf('<div %1$sclass="%2$s">%3$s</div>', $id, $classes, $message);
 
-        /**
-         * Filters the markup for an admin notice.
-         *
-         * @param string $markup  The HTML markup for the admin notice.
-         * @param string $message The message for the admin notice.
-         * @param array  $args    The arguments for the admin notice.
-         *
-         * @since 6.4.0
-         *
-         */
         return apply_filters('wp_admin_notice_markup', $markup, $message, $args);
     }
 
-    /**
-     * Outputs an admin notice.
-     *
-     * @param string  $message                The message to output.
-     * @param array   $args                   {
-     *                                        Optional. An array of arguments for the admin notice. Default empty array.
-     *
-     * @type string   $type                   Optional. The type of admin notice.
-     *                                        For example, 'error', 'success', 'warning', 'info'.
-     *                                        Default empty string.
-     * @type bool     $dismissible            Optional. Whether the admin notice is dismissible. Default false.
-     * @type string   $id                     Optional. The value of the admin notice's ID attribute. Default empty string.
-     * @type string[] $additional_classes     Optional. A string array of class names. Default empty array.
-     * @type bool     $paragraph_wrap         Optional. Whether to wrap the message in paragraph tags. Default true.
-     *                                        }
-     * @since 6.4.0
-     *
-     */
     function wp_admin_notice($message, $args = [])
     {
-        /**
-         * Fires before an admin notice is output.
-         *
-         * @param string $message The message for the admin notice.
-         * @param array  $args    The arguments for the admin notice.
-         *
-         * @since 6.4.0
-         *
-         */
         do_action('wp_admin_notice', $message, $args);
 
         echo wp_kses_post(wp_get_admin_notice($message, $args));

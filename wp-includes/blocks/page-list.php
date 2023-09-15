@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/pages` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Build an array with CSS classes and inline styles defining the colors
-     * which will be applied to the pages markup in the front-end when it is a descendant of navigation.
-     *
-     * @param array $attributes Block attributes.
-     * @param array $context    Navigation block context.
-     *
-     * @return array Colors CSS classes and inline styles.
-     */
     function block_core_page_list_build_css_colors($attributes, $context)
     {
         $colors = [
@@ -119,14 +105,6 @@
         return $colors;
     }
 
-    /**
-     * Build an array with CSS classes and inline styles defining the font sizes
-     * which will be applied to the pages markup in the front-end when it is a descendant of navigation.
-     *
-     * @param array $context Navigation block context.
-     *
-     * @return array Font size CSS classes and inline styles.
-     */
     function block_core_page_list_build_css_font_sizes($context)
     {
         // CSS classes.
@@ -156,20 +134,6 @@
         return $font_sizes;
     }
 
-    /**
-     * Outputs Page list markup from an array of pages with nested children.
-     *
-     * @param boolean $open_submenus_on_click   Whether to open submenus on click instead of hover.
-     * @param boolean $show_submenu_icons       Whether to show submenu indicator icons.
-     * @param boolean $is_navigation_child      If block is a child of Navigation block.
-     * @param array   $nested_pages             The array of nested pages.
-     * @param boolean $is_nested                Whether the submenu is nested or not.
-     * @param array   $active_page_ancestor_ids An array of ancestor ids for active page.
-     * @param array   $colors                   Color information for overlay styles.
-     * @param integer $depth                    The nesting depth.
-     *
-     * @return string List markup.
-     */
     function block_core_page_list_render_nested_page_list(
         $open_submenus_on_click, $show_submenu_icons, $is_navigation_child, $nested_pages, $is_nested, $active_page_ancestor_ids = [], $colors = [], $depth = 0
     ) {
@@ -254,14 +218,6 @@
         return $markup;
     }
 
-    /**
-     * Outputs nested array of pages
-     *
-     * @param array $current_level The level being iterated through.
-     * @param array $children      The children grouped by parent post ID.
-     *
-     * @return array The nested array of pages.
-     */
     function block_core_page_list_nest_pages($current_level, $children)
     {
         if(empty($current_level))
@@ -279,15 +235,6 @@
         return $current_level;
     }
 
-    /**
-     * Renders the `core/page-list` block on server.
-     *
-     * @param array    $attributes The block attributes.
-     * @param string   $content    The saved content.
-     * @param WP_Block $block      The parsed block.
-     *
-     * @return string Returns the page list markup.
-     */
     function render_block_core_page_list($attributes, $content, $block)
     {
         static $block_id = 0;
@@ -379,9 +326,6 @@
         return sprintf($wrapper_markup, $wrapper_attributes, $items_markup);
     }
 
-    /**
-     * Registers the `core/pages` block on server.
-     */
     function register_block_core_page_list()
     {
         register_block_type_from_metadata(__DIR__.'/page-list', [

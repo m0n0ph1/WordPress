@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/query-title` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/query-title` block on the server.
-     * For now it only supports Archive title,
-     * using queried object information
-     *
-     * @param array $attributes Block attributes.
-     *
-     * @return string Returns the query title based on the queried object.
-     */
     function render_block_core_query_title($attributes)
     {
         $type = isset($attributes['type']) ? $attributes['type'] : null;
@@ -55,9 +41,6 @@
         return sprintf('<%1$s %2$s>%3$s</%1$s>', $tag_name, $wrapper_attributes, $title);
     }
 
-    /**
-     * Registers the `core/query-title` block on the server.
-     */
     function register_block_core_query_title()
     {
         register_block_type_from_metadata(__DIR__.'/query-title', [

@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Header with image background and overlay block pattern
-     */
+
     return [
         'title' => __('Header with image background and overlay', 'twentytwentytwo'),
         'categories' => ['header'],

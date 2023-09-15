@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/post-featured-image` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/post-featured-image` block on the server.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string Returns the featured image for the current post.
-     */
     function render_block_core_post_featured_image($attributes, $content, $block)
     {
         if(! isset($block->context['postId']))
@@ -102,13 +88,6 @@
         return "<figure {$wrapper_attributes}>{$featured_image}</figure>";
     }
 
-    /**
-     * Generate markup for the HTML element that will be used for the overlay.
-     *
-     * @param array $attributes Block attributes.
-     *
-     * @return string HTML markup in string format.
-     */
     function get_block_core_post_featured_image_overlay_element_markup($attributes)
     {
         $has_dim_background = isset($attributes['dimRatio']) && $attributes['dimRatio'];
@@ -173,14 +152,6 @@
         return sprintf('<span class="%s" style="%s" aria-hidden="true"></span>', esc_attr(implode(' ', $class_names)), esc_attr(safecss_filter_attr(implode(' ', $styles))));
     }
 
-    /**
-     * Generates class names and styles to apply the border support styles for
-     * the Post Featured Image block.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return array The border-related classnames and styles for the block.
-     */
     function get_block_core_post_featured_image_border_attributes($attributes)
     {
         $border_styles = [];
@@ -234,9 +205,6 @@
         return $attributes;
     }
 
-    /**
-     * Registers the `core/post-featured-image` block on the server.
-     */
     function register_block_core_post_featured_image()
     {
         register_block_type_from_metadata(__DIR__.'/post-featured-image', [

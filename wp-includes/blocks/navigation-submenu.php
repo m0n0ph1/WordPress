@@ -1,29 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/navigation-submenu` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Build an array with CSS classes and inline styles defining the colors
-     * which will be applied to the navigation markup in the front-end.
-     *
-     * @param array $context     Navigation block context.
-     * @param array $attributes  Block attributes.
-     * @param bool  $is_sub_menu Whether the block is a sub-menu.
-     *
-     * @return array Colors CSS classes and inline styles.
-     */
-
-    /**
-     * Build an array with CSS classes and inline styles defining the font sizes
-     * which will be applied to the navigation markup in the front-end.
-     *
-     * @param array $context Navigation block context.
-     *
-     * @return array Font size CSS classes and inline styles.
-     */
     function block_core_navigation_submenu_build_css_font_sizes($context)
     {
         // CSS classes.
@@ -53,25 +29,11 @@
         return $font_sizes;
     }
 
-    /**
-     * Returns the top-level submenu SVG chevron icon.
-     *
-     * @return string
-     */
     function block_core_navigation_submenu_render_submenu_icon()
     {
         return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false"><path d="M1.50002 4L6.00002 8L10.5 4" stroke-width="1.5"></path></svg>';
     }
 
-    /**
-     * Renders the `core/navigation-submenu` block.
-     *
-     * @param array    $attributes The block attributes.
-     * @param string   $content    The saved content.
-     * @param WP_Block $block      The parsed block.
-     *
-     * @return string Returns the post content with the legacy widget added.
-     */
     function render_block_core_navigation_submenu($attributes, $content, $block)
     {
         $navigation_link_has_id = isset($attributes['id']) && is_numeric($attributes['id']);
@@ -257,12 +219,6 @@
         return $html;
     }
 
-    /**
-     * Register the navigation submenu block.
-     *
-     * @throws WP_Error An WP_Error exception parsing the block definition.
-     * @uses render_block_core_navigation_submenu()
-     */
     function register_block_core_navigation_submenu()
     {
         register_block_type_from_metadata(__DIR__.'/navigation-submenu', [

@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Header with image background block pattern
-     */
+
     return [
         'title' => __('Header with image background', 'twentytwentytwo'),
         'categories' => ['header'],

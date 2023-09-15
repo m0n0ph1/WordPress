@@ -1,28 +1,5 @@
 <?php
-    /**
-     * APIs to interact with global settings & styles.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Gets the settings resulting of merging core, theme, and user data.
-     *
-     * @param array $path           Path to the specific setting to retrieve. Optional.
-     *                              If empty, will return all settings.
-     * @param array $context        {
-     *                              Metadata to know where to retrieve the $path from. Optional.
-     *
-     * @type string $block_name     Which block to retrieve the settings from.
-     *                              If empty, it'll return the settings for the global context.
-     * @type string $origin         Which origin to take data from.
-     *                              Valid values are 'all' (core, theme, and user) or 'base' (core and theme).
-     *                              If empty or unknown, 'all' is used.
-     *                              }
-     * @return mixed The settings array or individual setting value to retrieve.
-     * @since 5.9.0
-     *
-     */
     function wp_get_global_settings($path = [], $context = [])
     {
         if(! empty($context['block_name']))
@@ -90,31 +67,6 @@
         return _wp_array_get($settings, $path, $settings);
     }
 
-    /**
-     * Gets the styles resulting of merging core, theme, and user data.
-     *
-     * @param array $path           Path to the specific style to retrieve. Optional.
-     *                              If empty, will return all styles.
-     * @param array $context        {
-     *                              Metadata to know where to retrieve the $path from. Optional.
-     *
-     * @type string $block_name     Which block to retrieve the styles from.
-     *                              If empty, it'll return the styles for the global context.
-     * @type string $origin         Which origin to take data from.
-     *                              Valid values are 'all' (core, theme, and user) or 'base' (core and theme).
-     *                              If empty or unknown, 'all' is used.
-     * @type array  $transforms     Which transformation(s) to apply.
-     *                              Valid value is array( 'resolve-variables' ).
-     *                              If defined, variables are resolved to their value in the styles.
-     *                              }
-     * @return mixed The styles array or individual style value to retrieve.
-     * @since 5.9.0
-     * @since 6.3.0 the internal link format "var:preset|color|secondary" is resolved
-     *                              to "var(--wp--preset--font-size--small)" so consumers don't have to.
-     * @since 6.3.0 `transforms` is now usable in the `context` parameter. In case [`transforms`]['resolve_variables']
-     *                              is defined, variables are resolved to their value in the styles.
-     *
-     */
     function wp_get_global_styles($path = [], $context = [])
     {
         if(! empty($context['block_name']))
@@ -140,20 +92,6 @@
         return _wp_array_get($styles, $path, $styles);
     }
 
-    /**
-     * Returns the stylesheet resulting of merging core, theme, and user data.
-     *
-     * @param array $types Optional. Types of styles to load.
-     *                     It accepts as values 'variables', 'presets', 'styles', 'base-layout-styles'.
-     *                     If empty, it'll load the following:
-     *                     - for themes without theme.json: 'variables', 'presets', 'base-layout-styles'.
-     *                     - for themes with theme.json: 'variables', 'presets', 'styles'.
-     *
-     * @return string Stylesheet.
-     * @since 5.9.0
-     * @since 6.1.0 Added 'base-layout-styles' support.
-     *
-     */
     function wp_get_global_stylesheet($types = [])
     {
         /*
@@ -253,13 +191,6 @@
         return $stylesheet;
     }
 
-    /**
-     * Gets the global styles custom CSS from theme.json.
-     *
-     * @return string The global styles custom CSS.
-     * @since 6.2.0
-     *
-     */
     function wp_get_global_styles_custom_css()
     {
         if(! wp_theme_has_theme_json())
@@ -310,11 +241,6 @@
         return $stylesheet;
     }
 
-    /**
-     * Adds global style rules to the inline style for each block.
-     *
-     * @since 6.1.0
-     */
     function wp_add_global_styles_for_blocks()
     {
         $tree = WP_Theme_JSON_Resolver::get_merged_data();
@@ -362,16 +288,6 @@
         }
     }
 
-    /**
-     * Gets the block name from a given theme.json path.
-     *
-     * @param array $path An array of keys describing the path to a property in theme.json.
-     *
-     * @return string Identified block name, or empty string if none found.
-     * @since  6.3.0
-     * @access private
-     *
-     */
     function wp_get_block_name_from_theme_json_path($path)
     {
         // Block name is expected to be the third item after 'styles' and 'blocks'.
@@ -403,13 +319,6 @@
         return '';
     }
 
-    /**
-     * Checks whether a theme or its parent has a theme.json file.
-     *
-     * @return bool Returns true if theme or its parent has a theme.json file, false otherwise.
-     * @since 6.2.0
-     *
-     */
     function wp_theme_has_theme_json()
     {
         static $theme_has_support = [];
@@ -439,7 +348,6 @@
             $path = $template_directory.'/theme.json';
         }
 
-        /** This filter is documented in wp-includes/link-template.php */
         $path = apply_filters('theme_file_path', $path, 'theme.json');
 
         $theme_has_support[$stylesheet] = file_exists($path);
@@ -447,11 +355,6 @@
         return $theme_has_support[$stylesheet];
     }
 
-    /**
-     * Cleans the caches under the theme_json group.
-     *
-     * @since 6.2.0
-     */
     function wp_clean_theme_json_cache()
     {
         wp_cache_delete('wp_get_global_stylesheet', 'theme_json');
@@ -463,40 +366,16 @@
         WP_Theme_JSON_Resolver::clean_cached_data();
     }
 
-    /**
-     * Returns the current theme's wanted patterns (slugs) to be
-     * registered from Pattern Directory.
-     *
-     * @return string[]
-     * @since 6.3.0
-     *
-     */
     function wp_get_theme_directory_pattern_slugs()
     {
         return WP_Theme_JSON_Resolver::get_theme_data([], ['with_supports' => false])->get_patterns();
     }
 
-    /**
-     * Returns the metadata for the custom templates defined by the theme via theme.json.
-     *
-     * @return array Associative array of `$template_name => $template_data` pairs,
-     *               with `$template_data` having "title" and "postTypes" fields.
-     * @since 6.4.0
-     *
-     */
     function wp_get_theme_data_custom_templates()
     {
         return WP_Theme_JSON_Resolver::get_theme_data([], ['with_supports' => false])->get_custom_templates();
     }
 
-    /**
-     * Returns the metadata for the template parts defined by the theme.
-     *
-     * @return array Associative array of `$part_name => $part_data` pairs,
-     *               with `$part_data` having "title" and "area" fields.
-     * @since 6.4.0
-     *
-     */
     function wp_get_theme_data_template_parts()
     {
         $cache_group = 'theme_json';
@@ -525,18 +404,6 @@
         return $metadata;
     }
 
-    /**
-     * Determines the CSS selector for the block type and property provided,
-     * returning it if available.
-     *
-     * @param WP_Block_Type $block_type The block's type.
-     * @param string|array  $target     The desired selector's target, `root` or array path.
-     * @param boolean       $fallback   Whether to fall back to broader selector.
-     *
-     * @return string|null CSS selector or `null` if no selector available.
-     * @since 6.3.0
-     *
-     */
     function wp_get_block_css_selector($block_type, $target = 'root', $fallback = false)
     {
         if(empty($target))

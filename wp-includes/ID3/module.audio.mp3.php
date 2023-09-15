@@ -21,41 +21,15 @@
 
     class getid3_mp3 extends getid3_handler
     {
-        /**
-         * Forces getID3() to scan the file byte-by-byte and log all the valid audio frame headers - extremely slow,
-         * unrecommended, but may provide data from otherwise-unusable files.
-         *
-         * @var bool
-         */
         public $allow_bruteforce = false;
 
-        /**
-         * number of frames to scan to determine if MPEG-audio sequence is valid
-         * Lower this number to 5-20 for faster scanning
-         * Increase this number to 50+ for most accurate detection of valid VBR/CBR mpeg-audio streams
-         *
-         * @var int
-         */
         public $mp3_valid_check_frames = 50;
 
-        /**
-         * @param string $head4
-         * @param bool   $allowBitrate15
-         *
-         * @return bool
-         */
         public static function MPEGaudioHeaderBytesValid($head4, $allowBitrate15 = false)
         {
             return self::MPEGaudioHeaderValid(self::MPEGaudioHeaderDecode($head4), false, $allowBitrate15);
         }
 
-        /**
-         * @param array $rawarray
-         * @param bool  $echoerrors
-         * @param bool  $allowBitrate15
-         *
-         * @return bool
-         */
         public static function MPEGaudioHeaderValid($rawarray, $echoerrors = false, $allowBitrate15 = false)
         {
             if(! isset($rawarray['synch']) || ($rawarray['synch'] & 0x0FFE) != 0x0FFE)
@@ -152,9 +126,6 @@
             return true;
         }
 
-        /**
-         * @return array
-         */
         public static function MPEGaudioVersionArray()
         {
             static $MPEGaudioVersion = ['2.5', false, '2', '1'];
@@ -162,9 +133,6 @@
             return $MPEGaudioVersion;
         }
 
-        /**
-         * @return array
-         */
         public static function MPEGaudioLayerArray()
         {
             static $MPEGaudioLayer = [false, 3, 2, 1];
@@ -172,9 +140,6 @@
             return $MPEGaudioLayer;
         }
 
-        /**
-         * @return array
-         */
         public static function MPEGaudioBitrateArray()
         {
             static $MPEGaudioBitrate;
@@ -279,9 +244,6 @@
             return $MPEGaudioBitrate;
         }
 
-        /**
-         * @return array
-         */
         public static function MPEGaudioFrequencyArray()
         {
             static $MPEGaudioFrequency;
@@ -297,9 +259,6 @@
             return $MPEGaudioFrequency;
         }
 
-        /**
-         * @return array
-         */
         public static function MPEGaudioChannelModeArray()
         {
             static $MPEGaudioChannelMode = ['stereo', 'joint stereo', 'dual channel', 'mono'];
@@ -307,9 +266,6 @@
             return $MPEGaudioChannelMode;
         }
 
-        /**
-         * @return array
-         */
         public static function MPEGaudioModeExtensionArray()
         {
             static $MPEGaudioModeExtension;
@@ -325,9 +281,6 @@
             return $MPEGaudioModeExtension;
         }
 
-        /**
-         * @return array
-         */
         public static function MPEGaudioEmphasisArray()
         {
             static $MPEGaudioEmphasis = ['none', '50/15ms', false, 'CCIT J.17'];
@@ -335,11 +288,6 @@
             return $MPEGaudioEmphasis;
         }
 
-        /**
-         * @param string $Header4Bytes
-         *
-         * @return array|false
-         */
         public static function MPEGaudioHeaderDecode($Header4Bytes)
         {
             // AAAA AAAA  AAAB BCCD  EEEE FFGH  IIJJ KLMM
@@ -380,9 +328,6 @@
             return $MPEGrawHeader;
         }
 
-        /**
-         * @return bool
-         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
@@ -550,12 +495,6 @@
             return true;
         }
 
-        /**
-         * @param int  $avdataoffset
-         * @param bool $BitrateHistogram
-         *
-         * @return bool
-         */
         public function getOnlyMPEGaudioInfo($avdataoffset, $BitrateHistogram = false)
         {
             // looks for synch, decodes MPEG audio header
@@ -1019,15 +958,6 @@
             return true;
         }
 
-        /**
-         * @param int   $offset
-         * @param array $info
-         * @param bool  $recursivesearch
-         * @param bool  $ScanAsCBR
-         * @param bool  $FastMPEGheaderScan
-         *
-         * @return bool
-         */
         public function decodeMPEGaudioHeader(
             $offset, &$info, $recursivesearch = true, $ScanAsCBR = false, $FastMPEGheaderScan = false
         ) {
@@ -1820,15 +1750,6 @@
             return true;
         }
 
-        /**
-         * @param int|string $bitrate
-         * @param string     $version
-         * @param string     $layer
-         * @param bool       $padding
-         * @param int        $samplerate
-         *
-         * @return int|false
-         */
         public static function MPEGaudioFrameLength(&$bitrate, &$version, &$layer, $padding, &$samplerate)
         {
             static $AudioFrameLengthCache = [];
@@ -1895,12 +1816,6 @@
             return $AudioFrameLengthCache[$bitrate][$version][$layer][$padding][$samplerate];
         }
 
-        /**
-         * @param string $version
-         * @param string $channelmode
-         *
-         * @return int
-         */
         public static function XingVBRidOffset($version, $channelmode)
         {
             static $XingVBRidOffsetCache = [];
@@ -1933,11 +1848,6 @@
             return $XingVBRidOffsetCache[$version][$channelmode];
         }
 
-        /**
-         * @param int $VBRmethodID
-         *
-         * @return string
-         */
         public static function LAMEvbrMethodLookup($VBRmethodID)
         {
             static $LAMEvbrMethodLookup = [
@@ -1956,11 +1866,6 @@
             return (isset($LAMEvbrMethodLookup[$VBRmethodID]) ? $LAMEvbrMethodLookup[$VBRmethodID] : '');
         }
 
-        /**
-         * @param int $StereoModeID
-         *
-         * @return string
-         */
         public static function LAMEmiscStereoModeLookup($StereoModeID)
         {
             static $LAMEmiscStereoModeLookup = [
@@ -1977,11 +1882,6 @@
             return (isset($LAMEmiscStereoModeLookup[$StereoModeID]) ? $LAMEmiscStereoModeLookup[$StereoModeID] : '');
         }
 
-        /**
-         * @param int $SourceSampleFrequencyID
-         *
-         * @return string
-         */
         public static function LAMEmiscSourceSampleFrequencyLookup($SourceSampleFrequencyID)
         {
             static $LAMEmiscSourceSampleFrequencyLookup = [
@@ -1994,11 +1894,6 @@
             return (isset($LAMEmiscSourceSampleFrequencyLookup[$SourceSampleFrequencyID]) ? $LAMEmiscSourceSampleFrequencyLookup[$SourceSampleFrequencyID] : '');
         }
 
-        /**
-         * @param int $SurroundInfoID
-         *
-         * @return string
-         */
         public static function LAMEsurroundInfoLookup($SurroundInfoID)
         {
             static $LAMEsurroundInfoLookup = [
@@ -2011,11 +1906,6 @@
             return (isset($LAMEsurroundInfoLookup[$SurroundInfoID]) ? $LAMEsurroundInfoLookup[$SurroundInfoID] : 'reserved');
         }
 
-        /**
-         * @param array $LAMEtag
-         *
-         * @return string
-         */
         public static function LAMEpresetUsedLookup($LAMEtag)
         {
             if($LAMEtag['preset_used_id'] == 0)
@@ -2072,11 +1962,6 @@
             return (isset($LAMEpresetUsedLookup[$LAMEtag['preset_used_id']]) ? $LAMEpresetUsedLookup[$LAMEtag['preset_used_id']] : 'new/unknown preset: '.$LAMEtag['preset_used_id'].' - report to info@getid3.org');
         }
 
-        /**
-         * @param float|int $bit_rate
-         *
-         * @return int|float|string
-         */
         public static function ClosestStandardMP3Bitrate($bit_rate)
         {
             static $standard_bit_rates = [
@@ -2123,13 +2008,6 @@
             return $bit_rate_table[$round_bit_rate];
         }
 
-        /**
-         * @param int  $offset
-         * @param int  $nextframetestoffset
-         * @param bool $ScanAsCBR
-         *
-         * @return bool
-         */
         public function RecursiveFrameScanning(&$offset, &$nextframetestoffset, $ScanAsCBR)
         {
             $info = &$this->getid3->info;
@@ -2159,7 +2037,6 @@
                 ];
                 if($this->decodeMPEGaudioHeader($nextframetestoffset, $nextframetestarray, false))
                 {
-                    /** @phpstan-ignore-next-line */
                     getid3_lib::safe_inc($info['mp3_validity_check_bitrates'][$nextframetestarray['mpeg']['audio']['bitrate']]);
                     if($ScanAsCBR)
                     {
@@ -2199,12 +2076,6 @@
             return true;
         }
 
-        /**
-         * @param int  $offset
-         * @param bool $deepscan
-         *
-         * @return int|false
-         */
         public function FreeFormatFrameLength($offset, $deepscan = false)
         {
             $info = &$this->getid3->info;
@@ -2303,9 +2174,6 @@
             return $framelength;
         }
 
-        /**
-         * @return bool
-         */
         public function getOnlyMPEGaudioInfoBruteForce()
         {
             $MPEGaudioHeaderDecodeCache = [];
@@ -2472,9 +2340,6 @@
             return true;
         }
 
-        /**
-         * @return string
-         */
         public function GuessEncoderOptions()
         {
             // shortcuts

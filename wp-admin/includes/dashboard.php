@@ -1,22 +1,5 @@
 <?php
-    /**
-     * WordPress Dashboard Widget Administration Screen API
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Registers dashboard widgets.
-     *
-     * Handles POST data, sets up filters.
-     *
-     * @since 2.5.0
-     *
-     * @global array      $wp_registered_widgets
-     * @global array      $wp_registered_widget_controls
-     * @global callable[] $wp_dashboard_control_callbacks
-     */
     function wp_dashboard_setup()
     {
         global $wp_registered_widgets, $wp_registered_widget_controls, $wp_dashboard_control_callbacks;
@@ -109,59 +92,20 @@
 
         if(is_network_admin())
         {
-            /**
-             * Fires after core widgets for the Network Admin dashboard have been registered.
-             *
-             * @since 3.1.0
-             */
             do_action('wp_network_dashboard_setup');
 
-            /**
-             * Filters the list of widgets to load for the Network Admin dashboard.
-             *
-             * @param string[] $dashboard_widgets An array of dashboard widget IDs.
-             *
-             * @since 3.1.0
-             *
-             */
             $dashboard_widgets = apply_filters('wp_network_dashboard_widgets', []);
         }
         elseif(is_user_admin())
         {
-            /**
-             * Fires after core widgets for the User Admin dashboard have been registered.
-             *
-             * @since 3.1.0
-             */
             do_action('wp_user_dashboard_setup');
 
-            /**
-             * Filters the list of widgets to load for the User Admin dashboard.
-             *
-             * @param string[] $dashboard_widgets An array of dashboard widget IDs.
-             *
-             * @since 3.1.0
-             *
-             */
             $dashboard_widgets = apply_filters('wp_user_dashboard_widgets', []);
         }
         else
         {
-            /**
-             * Fires after core widgets for the admin dashboard have been registered.
-             *
-             * @since 2.5.0
-             */
             do_action('wp_dashboard_setup');
 
-            /**
-             * Filters the list of widgets to load for the admin dashboard.
-             *
-             * @param string[] $dashboard_widgets An array of dashboard widget IDs.
-             *
-             * @since 2.5.0
-             *
-             */
             $dashboard_widgets = apply_filters('wp_dashboard_widgets', []);
         }
 
@@ -181,34 +125,11 @@
             exit;
         }
 
-        /** This action is documented in wp-admin/includes/meta-boxes.php */
         do_action('do_meta_boxes', $screen->id, 'normal', '');
 
-        /** This action is documented in wp-admin/includes/meta-boxes.php */
         do_action('do_meta_boxes', $screen->id, 'side', '');
     }
 
-    /**
-     * Adds a new dashboard widget.
-     *
-     * @param string      $widget_id        Widget ID  (used in the 'id' attribute for the widget).
-     * @param string      $widget_name      Title of the widget.
-     * @param callable    $callback         Function that fills the widget with the desired content.
-     *                                      The function should echo its output.
-     * @param callable    $control_callback Optional. Function that outputs controls for the widget. Default null.
-     * @param array       $callback_args    Optional. Data that should be set as the $args property of the widget array
-     *                                      (which is the second parameter passed to your callback). Default null.
-     * @param string      $context          Optional. The context within the screen where the box should display.
-     *                                      Accepts 'normal', 'side', 'column3', or 'column4'. Default 'normal'.
-     * @param string      $priority         Optional. The priority within the context where the box should show.
-     *                                      Accepts 'high', 'core', 'default', or 'low'. Default 'core'.
-     *
-     * @since 2.7.0
-     * @since 5.6.0 The `$context` and `$priority` parameters were added.
-     *
-     * @global callable[] $wp_dashboard_control_callbacks
-     *
-     */
     function wp_add_dashboard_widget(
         $widget_id, $widget_name, $callback, $control_callback = null, $callback_args = null, $context = 'normal', $priority = 'core'
     ) {
@@ -271,17 +192,6 @@
         add_meta_box($widget_id, $widget_name, $callback, $screen, $context, $priority, $callback_args);
     }
 
-    /**
-     * Outputs controls for the current dashboard widget.
-     *
-     * @access private
-     *
-     * @param mixed $dashboard
-     * @param array $meta_box
-     *
-     * @since  2.7.0
-     *
-     */
     function _wp_dashboard_control_callback($dashboard, $meta_box)
     {
         echo '<form method="post" class="dashboard-widget-control-form wp-clearfix">';
@@ -292,11 +202,6 @@
         echo '</form>';
     }
 
-    /**
-     * Displays the dashboard.
-     *
-     * @since 2.5.0
-     */
     function wp_dashboard()
     {
         $screen = get_current_screen();
@@ -332,13 +237,6 @@
 // Dashboard Widgets.
 //
 
-    /**
-     * Dashboard widget that displays some basic stats about the site.
-     *
-     * Formerly 'Right Now'. A streamlined 'At a Glance' as of 3.8.
-     *
-     * @since 2.7.0
-     */
     function wp_dashboard_right_now()
     {
         ?>
@@ -400,18 +298,6 @@
                         <?php
                     }
 
-                    /**
-                     * Filters the array of extra elements to list in the 'At a Glance'
-                     * dashboard widget.
-                     *
-                     * Prior to 3.8.0, the widget was named 'Right Now'. Each element
-                     * is wrapped in list-item tags on output.
-                     *
-                     * @param string[] $items Array of extra 'At a Glance' widget items.
-                     *
-                     * @since 3.8.0
-                     *
-                     */
                     $elements = apply_filters('dashboard_glance_items', []);
 
                     if($elements)
@@ -427,31 +313,8 @@
                 // Check if search engines are asked not to index this site.
                 if(! is_network_admin() && ! is_user_admin() && current_user_can('manage_options') && ! get_option('blog_public'))
                 {
-                    /**
-                     * Filters the link title attribute for the 'Search engines discouraged'
-                     * message displayed in the 'At a Glance' dashboard widget.
-                     *
-                     * Prior to 3.8.0, the widget was named 'Right Now'.
-                     *
-                     * @param string $title Default attribute text.
-                     *
-                     * @since 4.5.0 The default for `$title` was updated to an empty string.
-                     *
-                     * @since 3.0.0
-                     */
                     $title = apply_filters('privacy_on_link_title', '');
 
-                    /**
-                     * Filters the link label for the 'Search engines discouraged' message
-                     * displayed in the 'At a Glance' dashboard widget.
-                     *
-                     * Prior to 3.8.0, the widget was named 'Right Now'.
-                     *
-                     * @param string $content Default text.
-                     *
-                     * @since 3.0.0
-                     *
-                     */
                     $content = apply_filters('privacy_on_link_text', __('Search engines discouraged'));
 
                     $title_attr = '' === $title ? '' : " title='$title'";
@@ -467,22 +330,8 @@
          */
         ob_start();
 
-        /**
-         * Fires at the end of the 'At a Glance' dashboard widget.
-         *
-         * Prior to 3.8.0, the widget was named 'Right Now'.
-         *
-         * @since 2.5.0
-         */
         do_action('rightnow_end');
 
-        /**
-         * Fires at the end of the 'At a Glance' dashboard widget.
-         *
-         * Prior to 3.8.0, the widget was named 'Right Now'.
-         *
-         * @since 2.0.0
-         */
         do_action('activity_box_end');
 
         $actions = ob_get_clean();
@@ -496,9 +345,6 @@
         endif;
     }
 
-    /**
-     * @since 3.1.0
-     */
     function wp_network_dashboard_right_now()
     {
         $actions = [];
@@ -540,12 +386,7 @@
 
 
         <?php
-        /**
-         * Fires in the Network Admin 'Right Now' dashboard widget
-         * just before the user and site search form fields.
-         *
-         * @since MU (3.0.0)
-         */
+
         do_action('wpmuadminresult');
         ?>
 
@@ -575,31 +416,12 @@
             </p>
         </form>
         <?php
-        /**
-         * Fires at the end of the 'Right Now' widget in the Network Admin dashboard.
-         *
-         * @since MU (3.0.0)
-         */
+
         do_action('mu_rightnow_end');
 
-        /**
-         * Fires at the end of the 'Right Now' widget in the Network Admin dashboard.
-         *
-         * @since MU (3.0.0)
-         */
         do_action('mu_activity_box_end');
     }
 
-    /**
-     * Displays the Quick Draft widget.
-     *
-     * @param string|false $error_msg Optional. Error message. Default false.
-     *
-     * @global int         $post_ID
-     *
-     * @since 3.8.0
-     *
-     */
     function wp_dashboard_quick_press($error_msg = false)
     {
         global $post_ID;
@@ -654,7 +476,7 @@
             <div class="input-text-wrap" id="title-wrap">
                 <label for="title">
                     <?php
-                        /** This filter is documented in wp-admin/edit-form-advanced.php */
+
                         echo apply_filters('enter_title_here', __('Title'), $post);
                     ?>
                 </label>
@@ -686,14 +508,6 @@
         wp_dashboard_recent_drafts();
     }
 
-    /**
-     * Show recent drafts of the user on the dashboard.
-     *
-     * @param WP_Post[]|false $drafts Optional. Array of posts to display. Default false.
-     *
-     * @since 2.7.0
-     *
-     */
     function wp_dashboard_recent_drafts($drafts = false)
     {
         if(! $drafts)
@@ -707,14 +521,6 @@
                 'order' => 'DESC',
             ];
 
-            /**
-             * Filters the post query arguments for the 'Recent Drafts' dashboard widget.
-             *
-             * @param array $query_args The query arguments for the 'Recent Drafts' dashboard widget.
-             *
-             * @since 4.4.0
-             *
-             */
             $query_args = apply_filters('dashboard_recent_drafts_query_args', $query_args);
 
             $drafts = get_posts($query_args);
@@ -759,19 +565,6 @@
         echo '</div>';
     }
 
-    /**
-     * Outputs a row for the Recent Comments widget.
-     *
-     * @access private
-     *
-     * @param WP_Comment  $comment   The current comment.
-     * @param bool        $show_date Optional. Whether to display the date.
-     *
-     * @since  2.7.0
-     *
-     * @global WP_Comment $comment   Global comment object.
-     *
-     */
     function _wp_dashboard_recent_comments_row(&$comment, $show_date = true)
     {
         $GLOBALS['comment'] = clone $comment;
@@ -832,18 +625,6 @@
 
             $actions['view'] = sprintf('<a class="comment-link" href="%s" aria-label="%s">%s</a>', esc_url(get_comment_link($comment)), esc_attr__('View this comment'), __('View'));
 
-            /**
-             * Filters the action links displayed for each comment in the 'Recent Comments'
-             * dashboard widget.
-             *
-             * @param string[]   $actions An array of comment actions. Default actions include:
-             *                            'Approve', 'Unapprove', 'Edit', 'Reply', 'Spam',
-             *                            'Delete', and 'Trash'.
-             * @param WP_Comment $comment The comment object.
-             *
-             * @since 2.6.0
-             *
-             */
             $actions = apply_filters('comment_row_actions', array_filter($actions), $comment);
 
             $i = 0;
@@ -952,13 +733,6 @@
         $GLOBALS['comment'] = null;
     }
 
-    /**
-     * Outputs the Activity widget.
-     *
-     * Callback function for {@see 'dashboard_activity'}.
-     *
-     * @since 3.8.0
-     */
     function wp_dashboard_site_activity()
     {
         echo '<div id="activity-widget">';
@@ -990,22 +764,6 @@
         echo '</div>';
     }
 
-    /**
-     * Generates Publishing Soon and Recently Published sections.
-     *
-     * @param array $args   {
-     *                      An array of query and display arguments.
-     *
-     * @type int    $max    Number of posts to display.
-     * @type string $status Post status.
-     * @type string $order  Designates ascending ('ASC') or descending ('DESC') order.
-     * @type string $title  Section title.
-     * @type string $id     The container id.
-     *                      }
-     * @return bool False if no posts were found. True otherwise.
-     * @since 3.8.0
-     *
-     */
     function wp_dashboard_recent_posts($args)
     {
         $query_args = [
@@ -1019,14 +777,6 @@
             'perm' => ('future' === $args['status']) ? 'editable' : 'readable',
         ];
 
-        /**
-         * Filters the query arguments used for the Recent Posts widget.
-         *
-         * @param array $query_args The arguments passed to WP_Query to produce the list of posts.
-         *
-         * @since 4.2.0
-         *
-         */
         $query_args = apply_filters('dashboard_recent_posts_query_args', $query_args);
 
         $posts = new WP_Query($query_args);
@@ -1088,15 +838,6 @@
         return true;
     }
 
-    /**
-     * Show Comments section.
-     *
-     * @param int $total_items Optional. Number of comments to query. Default 5.
-     *
-     * @return bool False if no comments were found. True otherwise.
-     * @since 3.8.0
-     *
-     */
     function wp_dashboard_recent_comments($total_items = 5)
     {
         // Select all comment types and filter out spam later for better query performance.
@@ -1169,14 +910,6 @@
         return true;
     }
 
-    /**
-     * Display generic dashboard RSS widget feed.
-     *
-     * @param string $widget_id
-     *
-     * @since 2.5.0
-     *
-     */
     function wp_dashboard_rss_output($widget_id)
     {
         $widgets = get_option('dashboard_widget_options');
@@ -1185,25 +918,6 @@
         echo '</div>';
     }
 
-    /**
-     * Checks to see if all of the feed url in $check_urls are cached.
-     *
-     * If $check_urls is empty, look for the rss feed url found in the dashboard
-     * widget options of $widget_id. If cached, call $callback, a function that
-     * echoes out output for this widget. If not cache, echo a "Loading..." stub
-     * which is later replaced by Ajax call (see top of /wp-admin/index.php)
-     *
-     * @param string   $widget_id  The widget ID.
-     * @param callable $callback   The callback function used to display each feed.
-     * @param array    $check_urls RSS feeds.
-     * @param mixed    ...$args    Optional additional parameters to pass to the callback function.
-     *
-     * @return bool True on success, false on failure.
-     * @since 5.3.0 Formalized the existing and already documented `...$args` parameter
-     *              by adding it to the function signature.
-     *
-     * @since 2.5.0
-     */
     function wp_dashboard_cached_rss_widget($widget_id, $callback, $check_urls = [], ...$args)
     {
         $loading = '<p class="widget-loading hide-if-no-js">'.__('Loading&hellip;').'</p><div class="hide-if-js notice notice-error inline"><p>'.__('This widget requires JavaScript.').'</p></div>';
@@ -1257,16 +971,6 @@
 // Dashboard Widgets Controls.
 //
 
-    /**
-     * Calls widget control callback.
-     *
-     * @param int|false   $widget_control_id Optional. Registered widget ID. Default false.
-     *
-     * @global callable[] $wp_dashboard_control_callbacks
-     *
-     * @since 2.5.0
-     *
-     */
     function wp_dashboard_trigger_widget_control($widget_control_id = false)
     {
         global $wp_dashboard_control_callbacks;
@@ -1280,17 +984,6 @@
         }
     }
 
-    /**
-     * Sets up the RSS dashboard widget control and $args to be used as input to wp_widget_rss_form().
-     *
-     * Handles POST data from RSS-type widgets.
-     *
-     * @param string $widget_id
-     * @param array  $form_inputs
-     *
-     * @since 2.5.0
-     *
-     */
     function wp_dashboard_rss_control($widget_id, $form_inputs = [])
     {
         $widget_options = get_option('dashboard_widget_options');
@@ -1341,11 +1034,6 @@
         wp_widget_rss_form($widget_options[$widget_id], $form_inputs);
     }
 
-    /**
-     * Renders the Events and News dashboard widget.
-     *
-     * @since 4.8.0
-     */
     function wp_dashboard_events_news()
     {
         wp_print_community_events_markup();
@@ -1377,11 +1065,6 @@
         <?php
     }
 
-    /**
-     * Prints the markup for the Community Events section of the Events and News Dashboard widget.
-     *
-     * @since 4.8.0
-     */
     function wp_print_community_events_markup()
     {
         ?>
@@ -1456,11 +1139,6 @@
         <?php
     }
 
-    /**
-     * Renders the events templates for the Event and News widget.
-     *
-     * @since 4.8.0
-     */
     function wp_print_community_events_templates()
     {
         ?>
@@ -1531,45 +1209,15 @@
         <?php
     }
 
-    /**
-     * 'WordPress Events and News' dashboard widget.
-     *
-     * @since 2.7.0
-     * @since 4.8.0 Removed popular plugins feed.
-     */
     function wp_dashboard_primary()
     {
         $feeds = [
             'news' => [
 
-                /**
-                 * Filters the primary link URL for the 'WordPress Events and News' dashboard widget.
-                 *
-                 * @param string $link The widget's primary link URL.
-                 *
-                 * @since 2.5.0
-                 *
-                 */
                 'link' => apply_filters('dashboard_primary_link', __('https://wordpress.org/news/')),
 
-                /**
-                 * Filters the primary feed URL for the 'WordPress Events and News' dashboard widget.
-                 *
-                 * @param string $url The widget's primary feed URL.
-                 *
-                 * @since 2.3.0
-                 *
-                 */
                 'url' => apply_filters('dashboard_primary_feed', __('https://wordpress.org/news/feed/')),
 
-                /**
-                 * Filters the primary link title for the 'WordPress Events and News' dashboard widget.
-                 *
-                 * @param string $title Title attribute for the widget's primary link.
-                 *
-                 * @since 2.3.0
-                 *
-                 */
                 'title' => apply_filters('dashboard_primary_title', __('WordPress Blog')),
                 'items' => 2,
                 'show_summary' => 0,
@@ -1578,44 +1226,12 @@
             ],
             'planet' => [
 
-                /**
-                 * Filters the secondary link URL for the 'WordPress Events and News' dashboard widget.
-                 *
-                 * @param string $link The widget's secondary link URL.
-                 *
-                 * @since 2.3.0
-                 *
-                 */
                 'link' => apply_filters('dashboard_secondary_link', __('https://planet.wordpress.org/')),
 
-                /**
-                 * Filters the secondary feed URL for the 'WordPress Events and News' dashboard widget.
-                 *
-                 * @param string $url The widget's secondary feed URL.
-                 *
-                 * @since 2.3.0
-                 *
-                 */
                 'url' => apply_filters('dashboard_secondary_feed', __('https://planet.wordpress.org/feed/')),
 
-                /**
-                 * Filters the secondary link title for the 'WordPress Events and News' dashboard widget.
-                 *
-                 * @param string $title Title attribute for the widget's secondary link.
-                 *
-                 * @since 2.3.0
-                 *
-                 */
                 'title' => apply_filters('dashboard_secondary_title', __('Other WordPress News')),
 
-                /**
-                 * Filters the number of secondary link items for the 'WordPress Events and News' dashboard widget.
-                 *
-                 * @param string $items How many items to show in the secondary feed.
-                 *
-                 * @since 4.4.0
-                 *
-                 */
                 'items' => apply_filters('dashboard_secondary_items', 3),
                 'show_summary' => 0,
                 'show_author' => 0,
@@ -1626,16 +1242,6 @@
         wp_dashboard_cached_rss_widget('dashboard_primary', 'wp_dashboard_primary_output', $feeds);
     }
 
-    /**
-     * Displays the WordPress events and news feeds.
-     *
-     * @param string $widget_id Widget ID.
-     * @param array  $feeds     Array of RSS feeds.
-     *
-     * @since 3.8.0
-     * @since 4.8.0 Removed popular plugins feed.
-     *
-     */
     function wp_dashboard_primary_output($widget_id, $feeds)
     {
         foreach($feeds as $type => $args)
@@ -1647,15 +1253,6 @@
         }
     }
 
-    /**
-     * Displays file upload quota on dashboard.
-     *
-     * Runs on the {@see 'activity_box_end'} hook in wp_dashboard_right_now().
-     *
-     * @return true|void True if not multisite, user can't upload files, or the space check option is disabled.
-     * @since 3.0.0
-     *
-     */
     function wp_dashboard_quota()
     {
         if(! is_multisite() || ! current_user_can('upload_files') || get_site_option('upload_space_check_disabled'))
@@ -1700,14 +1297,6 @@
         <?php
     }
 
-    /**
-     * Displays the browser update nag.
-     *
-     * @since 3.2.0
-     * @since 5.8.0 Added a special message for Internet Explorer users.
-     *
-     * @global bool $is_IE
-     */
     function wp_dashboard_browser_nag()
     {
         global $is_IE;
@@ -1761,28 +1350,9 @@
             $notice .= '<div class="clear"></div>';
         }
 
-        /**
-         * Filters the notice output for the 'Browse Happy' nag meta box.
-         *
-         * @param string      $notice   The notice content.
-         * @param array|false $response An array containing web browser information, or
-         *                              false on failure. See wp_check_browser_version().
-         *
-         * @since 3.2.0
-         *
-         */
         echo apply_filters('browse-happy-notice', $notice, $response); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
     }
 
-    /**
-     * Adds an additional class to the browser nag if the current version is insecure.
-     *
-     * @param string[] $classes Array of meta box classes.
-     *
-     * @return string[] Modified array of meta box classes.
-     * @since 3.2.0
-     *
-     */
     function dashboard_browser_nag_class($classes)
     {
         $response = wp_check_browser_version();
@@ -1795,13 +1365,6 @@
         return $classes;
     }
 
-    /**
-     * Checks if the user needs a browser update.
-     *
-     * @return array|false Array of browser data on success, false on failure.
-     * @since 3.2.0
-     *
-     */
     function wp_check_browser_version()
     {
         if(empty($_SERVER['HTTP_USER_AGENT']))
@@ -1836,18 +1399,6 @@
                 return false;
             }
 
-            /**
-             * Response should be an array with:
-             *  'platform' - string - A user-friendly platform name, if it can be determined
-             *  'name' - string - A user-friendly browser name
-             *  'version' - string - The version of the browser the user is using
-             *  'current_version' - string - The most recent version of the browser
-             *  'upgrade' - boolean - Whether the browser needs an upgrade
-             *  'insecure' - boolean - Whether the browser is deemed insecure
-             *  'update_url' - string - The url to visit to upgrade
-             *  'img_src' - string - An image representing the browser
-             *  'img_src_ssl' - string - An image (over SSL) representing the browser
-             */
             $response = json_decode(wp_remote_retrieve_body($response), true);
 
             if(! is_array($response))
@@ -1861,11 +1412,6 @@
         return $response;
     }
 
-    /**
-     * Displays the PHP update nag.
-     *
-     * @since 5.1.0
-     */
     function wp_dashboard_php_nag()
     {
         $response = wp_check_php_version();
@@ -1921,15 +1467,6 @@
         wp_direct_php_update_button();
     }
 
-    /**
-     * Adds an additional class to the PHP nag if the current version is insecure.
-     *
-     * @param string[] $classes Array of meta box classes.
-     *
-     * @return string[] Modified array of meta box classes.
-     * @since 5.1.0
-     *
-     */
     function dashboard_php_nag_class($classes)
     {
         $response = wp_check_php_version();
@@ -1951,11 +1488,6 @@
         return $classes;
     }
 
-    /**
-     * Displays the Site Health Status widget.
-     *
-     * @since 5.4.0
-     */
     function wp_dashboard_site_health()
     {
         $get_issues = get_transient('health-check-site-status-result');
@@ -2048,21 +1580,8 @@
         <?php
     }
 
-    /**
-     * Outputs empty dashboard widget to be populated by JS later.
-     *
-     * Usable by plugins.
-     *
-     * @since 2.5.0
-     */
     function wp_dashboard_empty() {}
 
-    /**
-     * Displays a welcome panel to introduce users to WordPress.
-     *
-     * @since 3.3.0
-     * @since 5.9.0 Send users to the Site Editor if the active theme is block-based.
-     */
     function wp_welcome_panel()
     {
         [$display_version] = explode('-', get_bloginfo('version'));

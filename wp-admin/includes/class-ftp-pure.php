@@ -1,30 +1,5 @@
 <?php
-    /**
-     * PemFTP - An Ftp implementation in pure PHP
-     *
-     * @package   PemFTP
-     * @since     2.5.0
-     *
-     * @version   1.0
-     * @copyright Alexey Dotsenko
-     * @author    Alexey Dotsenko
-     * @link      https://www.phpclasses.org/package/1743-PHP-FTP-client-in-pure-PHP.html
-     * @license   LGPL https://opensource.org/licenses/lgpl-license.html
-     */
 
-    /**
-     * FTP implementation using fsockopen to connect.
-     *
-     * @package    PemFTP
-     * @subpackage Pure
-     * @since      2.5.0
-     *
-     * @version    1.0
-     * @copyright  Alexey Dotsenko
-     * @author     Alexey Dotsenko
-     * @link       https://www.phpclasses.org/package/1743-PHP-FTP-client-in-pure-PHP.html
-     * @license    LGPL https://opensource.org/licenses/lgpl-license.html
-     */
     class ftp_pure extends ftp_base
     {
         function __construct($verb = false, $le = false)

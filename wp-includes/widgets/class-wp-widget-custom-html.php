@@ -1,45 +1,14 @@
 <?php
-    /**
-     * Widget API: WP_Widget_Custom_HTML class
-     *
-     * @package    WordPress
-     * @subpackage Widgets
-     * @since      4.8.1
-     */
 
-    /**
-     * Core class used to implement a Custom HTML widget.
-     *
-     * @since 4.8.1
-     *
-     * @see   WP_Widget
-     */
     class WP_Widget_Custom_HTML extends WP_Widget
     {
-        /**
-         * Whether or not the widget has been registered yet.
-         *
-         * @since 4.9.0
-         * @var bool
-         */
         protected $registered = false;
 
-        /**
-         * Default instance.
-         *
-         * @since 4.8.1
-         * @var array
-         */
         protected $default_instance = [
             'title' => '',
             'content' => '',
         ];
 
-        /**
-         * Sets up a new Custom HTML widget instance.
-         *
-         * @since 4.8.1
-         */
         public function __construct()
         {
             $widget_ops = [
@@ -55,11 +24,6 @@
             parent::__construct('custom_html', __('Custom HTML'), $widget_ops, $control_ops);
         }
 
-        /**
-         * Render form template scripts.
-         *
-         * @since 4.9.0
-         */
         public static function render_control_template_scripts()
         {
             ?>
@@ -100,11 +64,6 @@
             <?php
         }
 
-        /**
-         * Add help text to widgets admin screen.
-         *
-         * @since 4.9.0
-         */
         public static function add_help_text()
         {
             $screen = get_current_screen();
@@ -134,15 +93,6 @@
                                   ]);
         }
 
-        /**
-         * Add hooks for enqueueing assets when registering all widget instances of this widget class.
-         *
-         * @param int $number Optional. The unique order number of this widget instance
-         *                    compared to other instances of the same class. Default -1.
-         *
-         * @since 4.9.0
-         *
-         */
         public function _register_one($number = -1)
         {
             parent::_register_one($number);
@@ -168,18 +118,6 @@
             add_action('admin_head-widgets.php', ['WP_Widget_Custom_HTML', 'add_help_text']);
         }
 
-        /**
-         * Filters gallery shortcode attributes.
-         *
-         * Prevents all of a site's attachments from being shown in a gallery displayed on a
-         * non-singular template where a $post context is not available.
-         *
-         * @param array $attrs Attributes.
-         *
-         * @return array Attributes.
-         * @since 4.9.0
-         *
-         */
         public function _filter_gallery_shortcode_attrs($attrs)
         {
             if(! is_singular() && empty($attrs['id']) && empty($attrs['include']))
@@ -190,18 +128,6 @@
             return $attrs;
         }
 
-        /**
-         * Outputs the content for the current Custom HTML widget instance.
-         *
-         * @param array    $args     Display arguments including 'before_title', 'after_title',
-         *                           'before_widget', and 'after_widget'.
-         * @param array    $instance Settings for the current Custom HTML widget instance.
-         *
-         * @since 4.8.1
-         *
-         * @global WP_Post $post     Global post object.
-         *
-         */
         public function widget($args, $instance)
         {
             global $post;
@@ -224,7 +150,6 @@
 
             $instance = array_merge($this->default_instance, $instance);
 
-            /** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
             $title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
 
             // Prepare instance data that looks like a normal Text widget.
@@ -235,22 +160,11 @@
             ]);
             unset($simulated_text_widget_instance['content']); // Was moved to 'text' prop.
 
-            /** This filter is documented in wp-includes/widgets/class-wp-widget-text.php */
             $content = apply_filters('widget_text', $instance['content'], $simulated_text_widget_instance, $this);
 
             // Adds 'noopener' relationship, without duplicating values, to all HTML A elements that have a target.
             $content = wp_targeted_link_rel($content);
 
-            /**
-             * Filters the content of the Custom HTML widget.
-             *
-             * @param string                $content  The widget content.
-             * @param array                 $instance Array of settings for the current widget.
-             * @param WP_Widget_Custom_HTML $widget   Current Custom HTML widget instance.
-             *
-             * @since 4.8.1
-             *
-             */
             $content = apply_filters('widget_custom_html_content', $content, $instance, $this);
 
             // Restore post global.
@@ -271,17 +185,6 @@
             echo $args['after_widget'];
         }
 
-        /**
-         * Handles updating settings for the current Custom HTML widget instance.
-         *
-         * @param array $new_instance New settings for this instance as input by the user via
-         *                            WP_Widget::form().
-         * @param array $old_instance Old settings for this instance.
-         *
-         * @return array Settings to save or bool false to cancel saving.
-         * @since 4.8.1
-         *
-         */
         public function update($new_instance, $old_instance)
         {
             $instance = array_merge($this->default_instance, $old_instance);
@@ -298,11 +201,6 @@
             return $instance;
         }
 
-        /**
-         * Loads the required scripts and styles for the widget control.
-         *
-         * @since 4.9.0
-         */
         public function enqueue_admin_scripts()
         {
             $settings = wp_enqueue_code_editor([
@@ -336,18 +234,6 @@
             wp_add_inline_script('custom-html-widgets', sprintf('jQuery.extend( wp.customHtmlWidgets.l10n, %s );', wp_json_encode($l10n)), 'after');
         }
 
-        /**
-         * Outputs the Custom HTML widget settings form.
-         *
-         * @param array $instance Current instance.
-         *
-         * @since 4.9.0 The form contains only hidden sync inputs. For the control UI, see
-         *     `WP_Widget_Custom_HTML::render_control_template_scripts()`.
-         *
-         * @see   WP_Widget_Custom_HTML::render_control_template_scripts()
-         *
-         * @since 4.8.1
-         */
         public function form($instance)
         {
             $instance = wp_parse_args((array) $instance, $this->default_instance);

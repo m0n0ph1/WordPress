@@ -1,22 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/gallery` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Handles backwards compatibility for Gallery Blocks,
-     * whose images feature a `data-id` attribute.
-     *
-     * Now that the Gallery Block contains inner Image Blocks,
-     * we add a custom `data-id` attribute before rendering the gallery
-     * so that the Image Block can pick it up in its render_callback.
-     *
-     * @param array $parsed_block The block being rendered.
-     *
-     * @return array The migrated block object.
-     */
     function block_core_gallery_data_id_backcompatibility($parsed_block)
     {
         if('core/gallery' === $parsed_block['blockName'])
@@ -38,18 +21,6 @@
 
     add_filter('render_block_data', 'block_core_gallery_data_id_backcompatibility');
 
-    /**
-     * Adds a style tag for the --wp--style--unstable-gallery-gap var.
-     *
-     * The Gallery block needs to recalculate Image block width based on
-     * the current gap setting in order to maintain the number of flex columns
-     * so a css var is added to allow this.
-     *
-     * @param array  $attributes Attributes of the block being rendered.
-     * @param string $content    Content of the block being rendered.
-     *
-     * @return string The content of the block being rendered.
-     */
     function block_core_gallery_render($attributes, $content)
     {
         $gap = _wp_array_get($attributes, ['style', 'spacing', 'blockGap']);
@@ -132,9 +103,6 @@
         return (string) $processed_content;
     }
 
-    /**
-     * Registers the `core/gallery` block on server.
-     */
     function register_block_core_gallery()
     {
         register_block_type_from_metadata(__DIR__.'/gallery', [

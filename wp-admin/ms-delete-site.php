@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Multisite delete site panel.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
     require_once __DIR__.'/admin.php';
 
@@ -73,14 +66,7 @@ Thank you for using the site,
 All at ###SITENAME###
 ###SITEURL###"
         );
-        /**
-         * Filters the text for the email sent to the site admin when a request to delete a site in a Multisite network is submitted.
-         *
-         * @param string $content The email text.
-         *
-         * @since 3.0.0
-         *
-         */
+
         $content = apply_filters('delete_site_email_content', $content);
 
         $content = str_replace('###USERNAME###', $user->user_login, $content);

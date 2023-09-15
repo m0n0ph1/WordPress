@@ -1,12 +1,5 @@
 <?php
 
-    /**
-     * IXR_MESSAGE
-     *
-     * @package IXR
-     * @since   1.5.0
-     *
-     */
     class IXR_Message
     {
         var $message = false;
@@ -39,17 +32,11 @@
         // The XML parser
         var $_parser;
 
-        /**
-         * PHP4 constructor.
-         */
         public function IXR_Message($message)
         {
             self::__construct($message);
         }
 
-        /**
-         * PHP5 constructor.
-         */
         function __construct($message)
         {
             $this->message =& $message;
@@ -96,14 +83,6 @@
             $element_limit = 30000;
             if(function_exists('apply_filters'))
             {
-                /**
-                 * Filters the number of elements to parse in an XML-RPC response.
-                 *
-                 * @param int $element_limit Default elements limit.
-                 *
-                 * @since 4.0.0
-                 *
-                 */
                 $element_limit = apply_filters('xmlrpc_element_limit', $element_limit);
             }
             if($element_limit && 2 * $element_limit < substr_count($this->message, '<'))
@@ -122,14 +101,6 @@
             // 256Kb, parse in chunks to avoid the RAM usage on very large messages
             $chunk_size = 262144;
 
-            /**
-             * Filters the chunk size that can be used to parse an XML-RPC response message.
-             *
-             * @param int $chunk_size Chunk size to parse in bytes.
-             *
-             * @since 4.4.0
-             *
-             */
             $chunk_size = apply_filters('xmlrpc_chunk_parsing_size', $chunk_size);
 
             $final = false;

@@ -1,46 +1,5 @@
 <?php
-    /**
-     * Site API
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      5.1.0
-     */
 
-    /**
-     * Inserts a new site into the database.
-     *
-     * @param array $data             {
-     *                                Data for the new site that should be inserted.
-     *
-     * @type string $domain           Site domain. Default empty string.
-     * @type string $path             Site path. Default '/'.
-     * @type int    $network_id       The site's network ID. Default is the current network ID.
-     * @type string $registered       When the site was registered, in SQL datetime format. Default is
-     *                                the current time.
-     * @type string $last_updated     When the site was last updated, in SQL datetime format. Default is
-     *                                the value of $registered.
-     * @type int    $public           Whether the site is public. Default 1.
-     * @type int    $archived         Whether the site is archived. Default 0.
-     * @type int    $mature           Whether the site is mature. Default 0.
-     * @type int    $spam             Whether the site is spam. Default 0.
-     * @type int    $deleted          Whether the site is deleted. Default 0.
-     * @type int    $lang_id          The site's language ID. Currently unused. Default 0.
-     * @type int    $user_id          User ID for the site administrator. Passed to the
-     *                                `wp_initialize_site` hook.
-     * @type string $title            Site title. Default is 'Site %d' where %d is the site ID. Passed
-     *                                to the `wp_initialize_site` hook.
-     * @type array  $options          Custom option $key => $value pairs to use. Default empty array. Passed
-     *                                to the `wp_initialize_site` hook.
-     * @type array  $meta             Custom site metadata $key => $value pairs to use. Default empty array.
-     *                                Passed to the `wp_initialize_site` hook.
-     *                                }
-     * @return int|WP_Error The new site's ID on success, or error object on failure.
-     * @since 5.1.0
-     *
-     * @global wpdb $wpdb             WordPress database abstraction object.
-     *
-     */
     function wp_insert_site(array $data)
     {
         global $wpdb;
@@ -83,14 +42,6 @@
             return new WP_Error('get_site_error', __('Could not retrieve site data.'));
         }
 
-        /**
-         * Fires once a site has been inserted into the database.
-         *
-         * @param WP_Site $new_site New site object.
-         *
-         * @since 5.1.0
-         *
-         */
         do_action('wp_insert_site', $new_site);
 
         // Extract the passed arguments that may be relevant for site initialization.
@@ -100,15 +51,6 @@
             unset($args['site_id']);
         }
 
-        /**
-         * Fires when a site's initialization routine should be executed.
-         *
-         * @param WP_Site $new_site New site object.
-         * @param array   $args     Arguments for the initialization.
-         *
-         * @since 5.1.0
-         *
-         */
         do_action('wp_initialize_site', $new_site, $args);
 
         // Only compute extra hook parameters if the deprecated hook is actually in use.
@@ -130,20 +72,6 @@
             $allowed_data_fields = ['public', 'archived', 'mature', 'spam', 'deleted', 'lang_id'];
             $meta = array_merge(array_intersect_key($data, array_flip($allowed_data_fields)), $meta);
 
-            /**
-             * Fires immediately after a new site is created.
-             *
-             * @param int    $site_id    Site ID.
-             * @param int    $user_id    User ID.
-             * @param string $domain     Site domain.
-             * @param string $path       Site path.
-             * @param int    $network_id Network ID. Only relevant on multi-network installations.
-             * @param array  $meta       Meta data. Used to set initial site options.
-             *
-             * @since      MU (3.0.0)
-             * @deprecated 5.1.0 Use {@see 'wp_initialize_site'} instead.
-             *
-             */
             do_action_deprecated('wpmu_new_blog', [
                 $new_site->id,
                 $user_id,
@@ -157,18 +85,6 @@
         return (int) $new_site->id;
     }
 
-    /**
-     * Updates a site in the database.
-     *
-     * @param int   $site_id ID of the site that should be updated.
-     * @param array $data    Site data to update. See {@see wp_insert_site()} for the list of supported keys.
-     *
-     * @return int|WP_Error The updated site's ID on success, or error object on failure.
-     * @global wpdb $wpdb    WordPress database abstraction object.
-     *
-     * @since 5.1.0
-     *
-     */
     function wp_update_site($site_id, array $data)
     {
         global $wpdb;
@@ -204,31 +120,11 @@
 
         $new_site = get_site($old_site->id);
 
-        /**
-         * Fires once a site has been updated in the database.
-         *
-         * @param WP_Site $new_site New site object.
-         * @param WP_Site $old_site Old site object.
-         *
-         * @since 5.1.0
-         *
-         */
         do_action('wp_update_site', $new_site, $old_site);
 
         return (int) $new_site->id;
     }
 
-    /**
-     * Deletes a site from the database.
-     *
-     * @param int   $site_id ID of the site that should be deleted.
-     *
-     * @return WP_Site|WP_Error The deleted site object on success, or error object on failure.
-     * @since 5.1.0
-     *
-     * @global wpdb $wpdb    WordPress database abstraction object.
-     *
-     */
     function wp_delete_site($site_id)
     {
         global $wpdb;
@@ -246,18 +142,6 @@
 
         $errors = new WP_Error();
 
-        /**
-         * Fires before a site should be deleted from the database.
-         *
-         * Plugins should amend the `$errors` object via its `WP_Error::add()` method. If any errors
-         * are present, the site will not be deleted.
-         *
-         * @param WP_Error $errors   Error object to add validation errors to.
-         * @param WP_Site  $old_site The site object to be deleted.
-         *
-         * @since 5.1.0
-         *
-         */
         do_action('wp_validate_site_deletion', $errors, $old_site);
 
         if(! empty($errors->errors))
@@ -265,26 +149,8 @@
             return $errors;
         }
 
-        /**
-         * Fires before a site is deleted.
-         *
-         * @param int  $site_id The site ID.
-         * @param bool $drop    True if site's table should be dropped. Default false.
-         *
-         * @since      MU (3.0.0)
-         * @deprecated 5.1.0
-         *
-         */
         do_action_deprecated('delete_blog', [$old_site->id, true], '5.1.0');
 
-        /**
-         * Fires when a site's uninitialization routine should be executed.
-         *
-         * @param WP_Site $old_site Deleted site object.
-         *
-         * @since 5.1.0
-         *
-         */
         do_action('wp_uninitialize_site', $old_site);
 
         if(is_site_meta_supported())
@@ -303,43 +169,13 @@
 
         clean_blog_cache($old_site);
 
-        /**
-         * Fires once a site has been deleted from the database.
-         *
-         * @param WP_Site $old_site Deleted site object.
-         *
-         * @since 5.1.0
-         *
-         */
         do_action('wp_delete_site', $old_site);
 
-        /**
-         * Fires after the site is deleted from the network.
-         *
-         * @param int  $site_id The site ID.
-         * @param bool $drop    True if site's tables should be dropped. Default false.
-         *
-         * @since      4.8.0
-         * @deprecated 5.1.0
-         *
-         */
         do_action_deprecated('deleted_blog', [$old_site->id, true], '5.1.0');
 
         return $old_site;
     }
 
-    /**
-     * Retrieves site data given a site ID or site object.
-     *
-     * Site data will be cached and returned after being passed through a filter.
-     * If the provided site is empty, the current site global will be used.
-     *
-     * @param WP_Site|int|null $site Optional. Site to retrieve. Default is the current site.
-     *
-     * @return WP_Site|null The site object or null if not found.
-     * @since 4.6.0
-     *
-     */
     function get_site($site = null)
     {
         if(empty($site))
@@ -365,34 +201,11 @@
             return null;
         }
 
-        /**
-         * Fires after a site is retrieved.
-         *
-         * @param WP_Site $_site Site data.
-         *
-         * @since 4.6.0
-         *
-         */
         $_site = apply_filters('get_site', $_site);
 
         return $_site;
     }
 
-    /**
-     * Adds any sites from the given IDs to the cache that do not already exist in cache.
-     *
-     * @param array $ids               ID list.
-     * @param bool  $update_meta_cache Optional. Whether to update the meta cache. Default true.
-     *
-     * @since 6.1.0 This function is no longer marked as "private".
-     * @since 6.3.0 Use wp_lazyload_site_meta() for lazy-loading of site meta.
-     *
-     * @see   update_site_cache()
-     * @global wpdb $wpdb              WordPress database abstraction object.
-     *
-     * @since 4.6.0
-     * @since 5.1.0 Introduced the `$update_meta_cache` parameter.
-     */
     function _prime_site_caches($ids, $update_meta_cache = true)
     {
         global $wpdb;
@@ -411,14 +224,6 @@
         }
     }
 
-    /**
-     * Queue site meta for lazy-loading.
-     *
-     * @param array $site_ids List of site IDs.
-     *
-     * @since 6.3.0
-     *
-     */
     function wp_lazyload_site_meta(array $site_ids)
     {
         if(empty($site_ids))
@@ -429,16 +234,6 @@
         $lazyloader->queue_objects('blog', $site_ids);
     }
 
-    /**
-     * Updates sites in cache.
-     *
-     * @param array $sites             Array of site objects.
-     * @param bool  $update_meta_cache Whether to update site meta cache. Default true.
-     *
-     * @since 4.6.0
-     * @since 5.1.0 Introduced the `$update_meta_cache` parameter.
-     *
-     */
     function update_site_cache($sites, $update_meta_cache = true)
     {
         if(! $sites)
@@ -463,18 +258,6 @@
         }
     }
 
-    /**
-     * Updates metadata cache for list of site IDs.
-     *
-     * Performs SQL query to retrieve all metadata for the sites matching `$site_ids` and stores them in the cache.
-     * Subsequent calls to `get_site_meta()` will not need to query the database.
-     *
-     * @param array $site_ids List of site IDs.
-     *
-     * @return array|false An array of metadata on success, false if there is nothing to update.
-     * @since 5.1.0
-     *
-     */
     function update_sitemeta_cache($site_ids)
     {
         // Ensure this filter is hooked in even if the function is called early.
@@ -486,20 +269,6 @@
         return update_meta_cache('blog', $site_ids);
     }
 
-    /**
-     * Retrieves a list of sites matching requested arguments.
-     *
-     * @param string|array $args Optional. Array or string of arguments. See WP_Site_Query::__construct()
-     *                           for information on accepted arguments. Default empty array.
-     *
-     * @return array|int List of WP_Site objects, a list of site IDs when 'fields' is set to 'ids',
-     *                   or the number of sites when 'count' is passed as a query var.
-     * @see   WP_Site_Query::parse_query()
-     *
-     * @since 4.6.0
-     * @since 4.8.0 Introduced the 'lang_id', 'lang__in', and 'lang__not_in' parameters.
-     *
-     */
     function get_sites($args = [])
     {
         $query = new WP_Site_Query();
@@ -507,20 +276,6 @@
         return $query->query($args);
     }
 
-    /**
-     * Prepares site data for insertion or update in the database.
-     *
-     * @param array        $data     Associative array of site data passed to the respective function.
-     *                               See {@see wp_insert_site()} for the possibly included data.
-     * @param array        $defaults Site data defaults to parse $data against.
-     * @param WP_Site|null $old_site Optional. Old site object if an update, or null if an insertion.
-     *                               Default null.
-     *
-     * @return array|WP_Error Site data ready for a database transaction, or WP_Error in case a validation
-     *                        error occurred.
-     * @since 5.1.0
-     *
-     */
     function wp_prepare_site_data($data, $defaults, $old_site = null)
     {
         // Maintain backward-compatibility with `$site_id` as network ID.
@@ -533,15 +288,6 @@
             unset($data['site_id']);
         }
 
-        /**
-         * Filters passed site data in order to normalize it.
-         *
-         * @param array $data Associative array of site data passed to the respective function.
-         *                    See {@see wp_insert_site()} for the possibly included data.
-         *
-         * @since 5.1.0
-         *
-         */
         $data = apply_filters('wp_normalize_site_data', $data);
 
         $allowed_data_fields = [
@@ -561,20 +307,6 @@
 
         $errors = new WP_Error();
 
-        /**
-         * Fires when data should be validated for a site prior to inserting or updating in the database.
-         *
-         * Plugins should amend the `$errors` object via its `WP_Error::add()` method.
-         *
-         * @param WP_Error     $errors   Error object to add validation errors to.
-         * @param array        $data     Associative array of complete site data. See {@see wp_insert_site()}
-         *                               for the included data.
-         * @param WP_Site|null $old_site The old site object if the data belongs to a site being updated,
-         *                               or null if it is a new site being inserted.
-         *
-         * @since 5.1.0
-         *
-         */
         do_action('wp_validate_site_data', $errors, $data, $old_site);
 
         if(! empty($errors->errors))
@@ -589,16 +321,6 @@
         return $data;
     }
 
-    /**
-     * Normalizes data for a site prior to inserting or updating in the database.
-     *
-     * @param array $data Associative array of site data passed to the respective function.
-     *                    See {@see wp_insert_site()} for the possibly included data.
-     *
-     * @return array Normalized site data.
-     * @since 5.1.0
-     *
-     */
     function wp_normalize_site_data($data)
     {
         // Sanitize domain if passed.
@@ -652,19 +374,6 @@
         return $data;
     }
 
-    /**
-     * Validates data for a site prior to inserting or updating in the database.
-     *
-     * @param WP_Error     $errors   Error object, passed by reference. Will contain validation errors if
-     *                               any occurred.
-     * @param array        $data     Associative array of complete site data. See {@see wp_insert_site()}
-     *                               for the included data.
-     * @param WP_Site|null $old_site The old site object if the data belongs to a site being updated,
-     *                               or null if it is a new site being inserted.
-     *
-     * @since 5.1.0
-     *
-     */
     function wp_validate_site_data($errors, $data, $old_site = null)
     {
         // A domain must always be present.
@@ -725,31 +434,6 @@
         }
     }
 
-    /**
-     * Runs the initialization routine for a given site.
-     *
-     * This process includes creating the site's database tables and
-     * populating them with defaults.
-     *
-     * @param int|WP_Site $site_id  Site ID or object.
-     * @param array       $args     {
-     *                              Optional. Arguments to modify the initialization behavior.
-     *
-     * @type int          $user_id  Required. User ID for the site administrator.
-     * @type string       $title    Site title. Default is 'Site %d' where %d is the
-     *                              site ID.
-     * @type array        $options  Custom option $key => $value pairs to use. Default
-     *                              empty array.
-     * @type array        $meta     Custom site metadata $key => $value pairs to use.
-     *                              Default empty array.
-     *                              }
-     * @return true|WP_Error True on success, or error object on failure.
-     * @since 5.1.0
-     *
-     * @global wpdb       $wpdb     WordPress database abstraction object.
-     * @global WP_Roles   $wp_roles WordPress role management object.
-     *
-     */
     function wp_initialize_site($site_id, array $args = [])
     {
         global $wpdb, $wp_roles;
@@ -783,16 +467,6 @@
             'meta' => [],
         ]);
 
-        /**
-         * Filters the arguments for initializing a site.
-         *
-         * @param array      $args    Arguments to modify the initialization behavior.
-         * @param WP_Site    $site    Site that is being initialized.
-         * @param WP_Network $network Network that the site belongs to.
-         *
-         * @since 5.1.0
-         *
-         */
         $args = apply_filters('wp_initialize_site_args', $args, $site, $network);
 
         $orig_installing = wp_installing();
@@ -875,19 +549,6 @@
         return true;
     }
 
-    /**
-     * Runs the uninitialization routine for a given site.
-     *
-     * This process includes dropping the site's database tables and deleting its uploads directory.
-     *
-     * @param int|WP_Site $site_id Site ID or object.
-     *
-     * @return true|WP_Error True on success, or error object on failure.
-     * @since 5.1.0
-     *
-     * @global wpdb       $wpdb    WordPress database abstraction object.
-     *
-     */
     function wp_uninitialize_site($site_id)
     {
         global $wpdb;
@@ -933,15 +594,6 @@
 
         $tables = $wpdb->tables('blog');
 
-        /**
-         * Filters the tables to drop when the site is deleted.
-         *
-         * @param string[] $tables  Array of names of the site tables to be dropped.
-         * @param int      $site_id The ID of the site to drop tables for.
-         *
-         * @since MU (3.0.0)
-         *
-         */
         $drop_tables = apply_filters('wpmu_drop_tables', $tables, $site->id);
 
         foreach((array) $drop_tables as $table)
@@ -949,15 +601,6 @@
             $wpdb->query("DROP TABLE IF EXISTS `$table`"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         }
 
-        /**
-         * Filters the upload base directory to delete when the site is deleted.
-         *
-         * @param string $basedir Uploads path without subdirectory. See {@see wp_upload_dir()}.
-         * @param int    $site_id The site ID.
-         *
-         * @since MU (3.0.0)
-         *
-         */
         $dir = apply_filters('wpmu_delete_blog_upload_dir', $uploads['basedir'], $site->id);
         $dir = rtrim($dir, DIRECTORY_SEPARATOR);
         $top_dir = $dir;
@@ -1016,19 +659,6 @@
         return true;
     }
 
-    /**
-     * Checks whether a site is initialized.
-     *
-     * A site is considered initialized when its database tables are present.
-     *
-     * @param int|WP_Site $site_id Site ID or object.
-     *
-     * @return bool True if the site is initialized, false otherwise.
-     * @since 5.1.0
-     *
-     * @global wpdb       $wpdb    WordPress database abstraction object.
-     *
-     */
     function wp_is_site_initialized($site_id)
     {
         global $wpdb;
@@ -1039,19 +669,6 @@
         }
         $site_id = (int) $site_id;
 
-        /**
-         * Filters the check for whether a site is initialized before the database is accessed.
-         *
-         * Returning a non-null value will effectively short-circuit the function, returning
-         * that value instead.
-         *
-         * @param bool|null $pre     The value to return instead. Default null
-         *                           to continue with the check.
-         * @param int       $site_id The site ID that is being checked.
-         *
-         * @since 5.1.0
-         *
-         */
         $pre = apply_filters('pre_wp_is_site_initialized', null, $site_id);
         if(null !== $pre)
         {
@@ -1079,16 +696,6 @@
         return $result;
     }
 
-    /**
-     * Clean the blog cache
-     *
-     * @param WP_Site|int $blog The site object or ID to be cleared from cache.
-     *
-     * @global bool       $_wp_suspend_cache_invalidation
-     *
-     * @since 3.5.0
-     *
-     */
     function clean_blog_cache($blog)
     {
         global $_wp_suspend_cache_invalidation;
@@ -1133,144 +740,38 @@
         wp_cache_delete($domain_path_key, 'blog-id-cache');
         wp_cache_delete($blog_id, 'blog_meta');
 
-        /**
-         * Fires immediately after a site has been removed from the object cache.
-         *
-         * @param string  $id              Site ID as a numeric string.
-         * @param WP_Site $blog            Site object.
-         * @param string  $domain_path_key md5 hash of domain and path.
-         *
-         * @since 4.6.0
-         *
-         */
         do_action('clean_site_cache', $blog_id, $blog, $domain_path_key);
 
         wp_cache_set_sites_last_changed();
 
-        /**
-         * Fires after the blog details cache is cleared.
-         *
-         * @param int $blog_id Blog ID.
-         *
-         * @deprecated 4.9.0 Use {@see 'clean_site_cache'} instead.
-         *
-         * @since      3.4.0
-         */
         do_action_deprecated('refresh_blog_details', [$blog_id], '4.9.0', 'clean_site_cache');
     }
 
-    /**
-     * Adds metadata to a site.
-     *
-     * @param int    $site_id    Site ID.
-     * @param string $meta_key   Metadata name.
-     * @param mixed  $meta_value Metadata value. Must be serializable if non-scalar.
-     * @param bool   $unique     Optional. Whether the same key should not be added.
-     *                           Default false.
-     *
-     * @return int|false Meta ID on success, false on failure.
-     * @since 5.1.0
-     *
-     */
     function add_site_meta($site_id, $meta_key, $meta_value, $unique = false)
     {
         return add_metadata('blog', $site_id, $meta_key, $meta_value, $unique);
     }
 
-    /**
-     * Removes metadata matching criteria from a site.
-     *
-     * You can match based on the key, or key and value. Removing based on key and
-     * value, will keep from removing duplicate metadata with the same key. It also
-     * allows removing all metadata matching key, if needed.
-     *
-     * @param int    $site_id    Site ID.
-     * @param string $meta_key   Metadata name.
-     * @param mixed  $meta_value Optional. Metadata value. If provided,
-     *                           rows will only be removed that match the value.
-     *                           Must be serializable if non-scalar. Default empty.
-     *
-     * @return bool True on success, false on failure.
-     * @since 5.1.0
-     *
-     */
     function delete_site_meta($site_id, $meta_key, $meta_value = '')
     {
         return delete_metadata('blog', $site_id, $meta_key, $meta_value);
     }
 
-    /**
-     * Retrieves metadata for a site.
-     *
-     * @param int    $site_id Site ID.
-     * @param string $key     Optional. The meta key to retrieve. By default,
-     *                        returns data for all keys. Default empty.
-     * @param bool   $single  Optional. Whether to return a single value.
-     *                        This parameter has no effect if `$key` is not specified.
-     *                        Default false.
-     *
-     * @return mixed An array of values if `$single` is false.
-     *               The value of meta data field if `$single` is true.
-     *               False for an invalid `$site_id` (non-numeric, zero, or negative value).
-     *               An empty string if a valid but non-existing site ID is passed.
-     * @since 5.1.0
-     *
-     */
     function get_site_meta($site_id, $key = '', $single = false)
     {
         return get_metadata('blog', $site_id, $key, $single);
     }
 
-    /**
-     * Updates metadata for a site.
-     *
-     * Use the $prev_value parameter to differentiate between meta fields with the
-     * same key and site ID.
-     *
-     * If the meta field for the site does not exist, it will be added.
-     *
-     * @param int    $site_id    Site ID.
-     * @param string $meta_key   Metadata key.
-     * @param mixed  $meta_value Metadata value. Must be serializable if non-scalar.
-     * @param mixed  $prev_value Optional. Previous value to check before updating.
-     *                           If specified, only update existing metadata entries with
-     *                           this value. Otherwise, update all entries. Default empty.
-     *
-     * @return int|bool Meta ID if the key didn't exist, true on successful update,
-     *                  false on failure or if the value passed to the function
-     *                  is the same as the one that is already in the database.
-     * @since 5.1.0
-     *
-     */
     function update_site_meta($site_id, $meta_key, $meta_value, $prev_value = '')
     {
         return update_metadata('blog', $site_id, $meta_key, $meta_value, $prev_value);
     }
 
-    /**
-     * Deletes everything from site meta matching meta key.
-     *
-     * @param string $meta_key Metadata key to search for when deleting.
-     *
-     * @return bool Whether the site meta key was deleted from the database.
-     * @since 5.1.0
-     *
-     */
     function delete_site_meta_by_key($meta_key)
     {
         return delete_metadata('blog', null, $meta_key, '', true);
     }
 
-    /**
-     * Updates the count of sites for a network based on a changed site.
-     *
-     * @param WP_Site      $new_site The site object that has been inserted, updated or deleted.
-     * @param WP_Site|null $old_site Optional. If $new_site has been updated, this must be the previous
-     *                               state of that site. Default null.
-     *
-     * @since 5.1.0
-     *
-     */
     function wp_maybe_update_network_site_counts_on_update($new_site, $old_site = null)
     {
         if(null === $old_site)
@@ -1287,16 +788,6 @@
         }
     }
 
-    /**
-     * Triggers actions on site status updates.
-     *
-     * @param WP_Site      $new_site The site object after the update.
-     * @param WP_Site|null $old_site Optional. If $new_site has been updated, this must be the previous
-     *                               state of that site. Default null.
-     *
-     * @since 5.1.0
-     *
-     */
     function wp_maybe_transition_site_statuses_on_update($new_site, $old_site = null)
     {
         $site_id = $new_site->id;
@@ -1311,26 +802,10 @@
         {
             if('1' === $new_site->spam)
             {
-                /**
-                 * Fires when the 'spam' status is added to a site.
-                 *
-                 * @param int $site_id Site ID.
-                 *
-                 * @since MU (3.0.0)
-                 *
-                 */
                 do_action('make_spam_blog', $site_id);
             }
             else
             {
-                /**
-                 * Fires when the 'spam' status is removed from a site.
-                 *
-                 * @param int $site_id Site ID.
-                 *
-                 * @since MU (3.0.0)
-                 *
-                 */
                 do_action('make_ham_blog', $site_id);
             }
         }
@@ -1339,26 +814,10 @@
         {
             if('1' === $new_site->mature)
             {
-                /**
-                 * Fires when the 'mature' status is added to a site.
-                 *
-                 * @param int $site_id Site ID.
-                 *
-                 * @since 3.1.0
-                 *
-                 */
                 do_action('mature_blog', $site_id);
             }
             else
             {
-                /**
-                 * Fires when the 'mature' status is removed from a site.
-                 *
-                 * @param int $site_id Site ID.
-                 *
-                 * @since 3.1.0
-                 *
-                 */
                 do_action('unmature_blog', $site_id);
             }
         }
@@ -1367,26 +826,10 @@
         {
             if('1' === $new_site->archived)
             {
-                /**
-                 * Fires when the 'archived' status is added to a site.
-                 *
-                 * @param int $site_id Site ID.
-                 *
-                 * @since MU (3.0.0)
-                 *
-                 */
                 do_action('archive_blog', $site_id);
             }
             else
             {
-                /**
-                 * Fires when the 'archived' status is removed from a site.
-                 *
-                 * @param int $site_id Site ID.
-                 *
-                 * @since MU (3.0.0)
-                 *
-                 */
                 do_action('unarchive_blog', $site_id);
             }
         }
@@ -1395,55 +838,20 @@
         {
             if('1' === $new_site->deleted)
             {
-                /**
-                 * Fires when the 'deleted' status is added to a site.
-                 *
-                 * @param int $site_id Site ID.
-                 *
-                 * @since 3.5.0
-                 *
-                 */
                 do_action('make_delete_blog', $site_id);
             }
             else
             {
-                /**
-                 * Fires when the 'deleted' status is removed from a site.
-                 *
-                 * @param int $site_id Site ID.
-                 *
-                 * @since 3.5.0
-                 *
-                 */
                 do_action('make_undelete_blog', $site_id);
             }
         }
 
         if($new_site->public !== $old_site->public)
         {
-            /**
-             * Fires after the current blog's 'public' setting is updated.
-             *
-             * @param int    $site_id   Site ID.
-             * @param string $is_public Whether the site is public. A numeric string,
-             *                          for compatibility reasons. Accepts '1' or '0'.
-             *
-             * @since MU (3.0.0)
-             *
-             */
             do_action('update_blog_public', $site_id, $new_site->public);
         }
     }
 
-    /**
-     * Cleans the necessary caches after specific site data has been updated.
-     *
-     * @param WP_Site $new_site The site object after the update.
-     * @param WP_Site $old_site The site object prior to the update.
-     *
-     * @since 5.1.0
-     *
-     */
     function wp_maybe_clean_new_site_cache_on_update($new_site, $old_site)
     {
         if($old_site->domain !== $new_site->domain || $old_site->path !== $new_site->path)
@@ -1452,16 +860,6 @@
         }
     }
 
-    /**
-     * Updates the `blog_public` option for a given site ID.
-     *
-     * @param int    $site_id   Site ID.
-     * @param string $is_public Whether the site is public. A numeric string,
-     *                          for compatibility reasons. Accepts '1' or '0'.
-     *
-     * @since 5.1.0
-     *
-     */
     function wp_update_blog_public_option_on_site_update($site_id, $is_public)
     {
         // Bail if the site's database tables do not exist (yet).
@@ -1473,27 +871,11 @@
         update_blog_option($site_id, 'blog_public', $is_public);
     }
 
-    /**
-     * Sets the last changed time for the 'sites' cache group.
-     *
-     * @since 5.1.0
-     */
     function wp_cache_set_sites_last_changed()
     {
         wp_cache_set_last_changed('sites');
     }
 
-    /**
-     * Aborts calls to site meta if it is not supported.
-     *
-     * @param mixed $check Skip-value for whether to proceed site meta function execution.
-     *
-     * @return mixed Original value of $check, or false if site meta is not supported.
-     * @since 5.1.0
-     *
-     * @global wpdb $wpdb  WordPress database abstraction object.
-     *
-     */
     function wp_check_site_meta_support_prefilter($check)
     {
         if(! is_site_meta_supported())

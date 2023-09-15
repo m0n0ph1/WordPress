@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Header with centered logo block pattern
-     */
+
     return [
         'title' => __('Header with centered logo', 'twentytwentytwo'),
         'categories' => ['header'],

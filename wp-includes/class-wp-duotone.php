@@ -1,168 +1,17 @@
 <?php
-    /**
-     * WP_Duotone class
-     *
-     * Parts of this source were derived and modified from colord,
-     * released under the MIT license.
-     *
-     * https://github.com/omgovich/colord
-     *
-     * Copyright (c) 2020 Vlad Shilov omgovich@ya.ru
-     *
-     * Permission is hereby granted, free of charge, to any person obtaining
-     * a copy of this software and associated documentation files (the
-     * "Software"), to deal in the Software without restriction, including
-     * without limitation the rights to use, copy, modify, merge, publish,
-     * distribute, sublicense, and/or sell copies of the Software, and to
-     * permit persons to whom the Software is furnished to do so, subject to
-     * the following conditions:
-     *
-     * The above copyright notice and this permission notice shall be
-     * included in all copies or substantial portions of the Software.
-     *
-     * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-     * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-     * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-     * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-     * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-     * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-     * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-     *
-     * @package WordPress
-     * @since   6.3.0
-     */
 
-    /**
-     * Manages duotone block supports and global styles.
-     *
-     * @access private
-     */
     class WP_Duotone
     {
-        /**
-         * Block names from global, theme, and custom styles that use duotone presets and the slug of
-         * the preset they are using.
-         *
-         * Example:
-         *  [
-         *      'core/featured-image' => 'blue-orange',
-         *       …
-         *  ]
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @var array
-         */
         private static $global_styles_block_names;
 
-        /**
-         * An array of duotone filter data from global, theme, and custom presets.
-         *
-         * Example:
-         *  [
-         *      'wp-duotone-blue-orange' => [
-         *          'slug'  => 'blue-orange',
-         *          'colors' => [ '#0000ff', '#ffcc00' ],
-         *      ],
-         *      'wp-duotone-red-yellow' => [
-         *          'slug'   => 'red-yellow',
-         *          'colors' => [ '#cc0000', '#ffff33' ],
-         *      ],
-         *      …
-         *  ]
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @var array
-         */
         private static $global_styles_presets;
 
-        /**
-         * All of the duotone filter data from presets for CSS custom properties on
-         * the page.
-         *
-         * Example:
-         *  [
-         *      'wp-duotone-blue-orange' => [
-         *          'slug'   => 'blue-orange',
-         *          'colors' => [ '#0000ff', '#ffcc00' ],
-         *      ],
-         *      …
-         *  ]
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @var array
-         */
         private static $used_global_styles_presets = [];
 
-        /**
-         * All of the duotone filter data for SVGs on the page. Includes both
-         * presets and custom filters.
-         *
-         * Example:
-         *  [
-         *      'wp-duotone-blue-orange' => [
-         *          'slug'   => 'blue-orange',
-         *          'colors' => [ '#0000ff', '#ffcc00' ],
-         *      ],
-         *      'wp-duotone-000000-ffffff-2' => [
-         *          'slug'   => '000000-ffffff-2',
-         *          'colors' => [ '#000000', '#ffffff' ],
-         *      ],
-         *      …
-         *  ]
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @var array
-         */
         private static $used_svg_filter_data = [];
 
-        /**
-         * All of the block CSS declarations for styles on the page.
-         *
-         * Example:
-         *  [
-         *      [
-         *          'selector'     => '.wp-duotone-000000-ffffff-2.wp-block-image img',
-         *          'declarations' => [
-         *              'filter' => 'url(#wp-duotone-000000-ffffff-2)',
-         *          ],
-         *      ],
-         *      …
-         *  ]
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @var array
-         */
         private static $block_css_declarations = [];
 
-        /**
-         * Gets the SVG for the duotone filter definition from a preset.
-         *
-         * Exported for the deprecated function wp_get_duotone_filter_property().
-         *
-         * @param array $preset The duotone preset.
-         *
-         * @return string The SVG for the filter definition.
-         * @deprecated 6.3.0
-         *
-         * @internal
-         *
-         * @since      6.3.0
-         */
         public static function get_filter_svg_from_preset($preset)
         {
             _deprecated_function(__FUNCTION__, '6.3.0');
@@ -172,20 +21,6 @@
             return self::get_filter_svg($filter_id, $preset['colors']);
         }
 
-        /**
-         * Returns the prefixed id for the duotone filter for use as a CSS id.
-         *
-         * Exported for the deprecated function wp_get_duotone_filter_id().
-         *
-         * @param array $preset Duotone preset value as seen in theme.json.
-         *
-         * @return string        Duotone filter CSS id.
-         * @deprecated 6.3.0
-         *
-         * @internal
-         *
-         * @since      6.3.0
-         */
         public static function get_filter_id_from_preset($preset)
         {
             _deprecated_function(__FUNCTION__, '6.3.0');
@@ -199,39 +34,11 @@
             return $filter_id;
         }
 
-        /**
-         * Get the ID of the duotone filter.
-         *
-         * Example output:
-         *  wp-duotone-blue-orange
-         *
-         * @param string $slug The slug of the duotone preset.
-         *
-         * @return string The ID of the duotone filter.
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         */
         private static function get_filter_id($slug)
         {
             return "wp-duotone-$slug";
         }
 
-        /**
-         * Gets the SVG for the duotone filter definition.
-         *
-         * Whitespace is removed when SCRIPT_DEBUG is not enabled.
-         *
-         * @param string $filter_id The ID of the filter.
-         * @param array  $colors    An array of color strings.
-         *
-         * @return string An SVG with a duotone filter definition.
-         * @since 6.3.0
-         *
-         * @internal
-         *
-         */
         private static function get_filter_svg($filter_id, $colors)
         {
             $duotone_values = [
@@ -314,23 +121,6 @@
             return $svg;
         }
 
-        /**
-         * Tries to convert an incoming string into RGBA values.
-         *
-         * Direct port of colord's parse function simplified for our use case. This
-         * version only supports string parsing and only returns RGBA values.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/parse.ts#L37
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param string $input The string to parse.
-         *
-         * @return array|null An array of RGBA values or null if the string is invalid.
-         */
         private static function colord_parse($input)
         {
             $result = self::colord_parse_hex($input);
@@ -348,22 +138,6 @@
             return $result;
         }
 
-        /**
-         * Parses any valid Hex3, Hex4, Hex6 or Hex8 string and converts it to an RGBA object
-         *
-         * Direct port of colord's parseHex function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/colorModels/hex.ts#L8
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param string $hex The hex string to parse.
-         *
-         * @return array|null An array of RGBA values or null if the hex string is invalid.
-         */
         private static function colord_parse_hex($hex)
         {
             $is_match = preg_match('/^#([0-9a-f]{3,8})$/i', $hex, $hex_match);
@@ -398,22 +172,6 @@
             return null;
         }
 
-        /**
-         * Parses a valid RGB[A] CSS color function/string
-         *
-         * Direct port of colord's parseRgbaString function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/colorModels/rgbString.ts#L18
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param string $input The RGBA string to parse.
-         *
-         * @return array|null An array of RGBA values or null if the RGB string is invalid.
-         */
         private static function colord_parse_rgba_string($input)
         {
             // Functional syntax.
@@ -455,22 +213,6 @@
                                            ]);
         }
 
-        /**
-         * Clamps an array of RGBA values.
-         *
-         * Direct port of colord's clampRgba function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/colorModels/rgb.ts#L5
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param array $rgba The RGBA array to clamp.
-         *
-         * @return array The clamped RGBA array.
-         */
         private static function colord_clamp_rgba($rgba)
         {
             $rgba['r'] = self::colord_clamp($rgba['r'], 0, 255);
@@ -481,45 +223,11 @@
             return $rgba;
         }
 
-        /**
-         * Clamps a value between an upper and lower bound.
-         *
-         * Direct port of colord's clamp function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/helpers.ts#L23
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param float $number The number to clamp.
-         * @param float $min    The minimum value.
-         * @param float $max    The maximum value.
-         *
-         * @return float The clamped value.
-         */
         private static function colord_clamp($number, $min = 0, $max = 1)
         {
             return $number > $max ? $max : ($number > $min ? $number : $min);
         }
 
-        /**
-         * Parses a valid HSL[A] CSS color function/string.
-         *
-         * Direct port of colord's parseHslaString function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/colorModels/hslString.ts#L17
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param string $input The HSLA string to parse.
-         *
-         * @return array|null An array of RGBA values or null if the RGB string is invalid.
-         */
         private static function colord_parse_hsla_string($input)
         {
             // Functional syntax.
@@ -558,22 +266,6 @@
             return self::colord_hsla_to_rgba($hsla);
         }
 
-        /**
-         * Clamps an array of HSLA values.
-         *
-         * Direct port of colord's clampHsla function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/colorModels/hsl.ts#L6
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param array $hsla The HSLA array to clamp.
-         *
-         * @return array The clamped HSLA array.
-         */
         private static function colord_clamp_hsla($hsla)
         {
             $hsla['h'] = self::colord_clamp_hue($hsla['h']);
@@ -584,22 +276,6 @@
             return $hsla;
         }
 
-        /**
-         * Processes and clamps a degree (angle) value properly.
-         *
-         * Direct port of colord's clampHue function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/helpers.ts#L32
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param float $degrees The hue to clamp.
-         *
-         * @return float The clamped hue.
-         */
         private static function colord_clamp_hue($degrees)
         {
             $degrees = is_finite($degrees) ? $degrees % 360 : 0;
@@ -607,23 +283,6 @@
             return $degrees > 0 ? $degrees : $degrees + 360;
         }
 
-        /**
-         * Converts a hue value to degrees from 0 to 360 inclusive.
-         *
-         * Direct port of colord's parseHue function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/helpers.ts#L40
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param float  $value The hue value to parse.
-         * @param string $unit  The unit of the hue value.
-         *
-         * @return float The parsed hue value.
-         */
         private static function colord_parse_hue($value, $unit = 'deg')
         {
             $angle_units = [
@@ -641,43 +300,11 @@
             return (float) $value * $factor;
         }
 
-        /**
-         * Converts an HSLA array to RGBA.
-         *
-         * Direct port of colord's hslaToRgba function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/colorModels/hsl.ts#L55
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param array $hsla The HSLA array to convert.
-         *
-         * @return array The RGBA array.
-         */
         private static function colord_hsla_to_rgba($hsla)
         {
             return self::colord_hsva_to_rgba(self::colord_hsla_to_hsva($hsla));
         }
 
-        /**
-         * Converts an HSVA array to RGBA.
-         *
-         * Direct port of colord's hsvaToRgba function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/colorModels/hsv.ts#L52
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param array $hsva The HSVA array to convert.
-         *
-         * @return array The RGBA array.
-         */
         private static function colord_hsva_to_rgba($hsva)
         {
             $h = ($hsva['h'] / 360) * 6;
@@ -699,22 +326,6 @@
             ];
         }
 
-        /**
-         * Converts an HSLA array to HSVA.
-         *
-         * Direct port of colord's hslaToHsva function.
-         *
-         * @link  https://github.com/omgovich/colord/blob/3f859e03b0ca622eb15480f611371a0f15c9427f/src/colorModels/hsl.ts#L33
-         *     Sourced from colord.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         * @param array $hsla The HSLA array to convert.
-         *
-         * @return array The HSVA array.
-         */
         private static function colord_hsla_to_hsva($hsla)
         {
             $h = $hsla['h'];
@@ -732,16 +343,6 @@
             ];
         }
 
-        /**
-         * Registers the style and colors block attributes for block types that support it.
-         *
-         * Block support is added with `supports.filter.duotone` in block.json.
-         *
-         * @param WP_Block_Type $block_type Block Type.
-         *
-         * @since 6.3.0
-         *
-         */
         public static function register_duotone_support($block_type)
         {
             /*
@@ -764,20 +365,6 @@
             }
         }
 
-        /**
-         * Render out the duotone CSS styles and SVG.
-         *
-         * The hooks self::set_global_style_block_names and self::set_global_styles_presets
-         * must be called before this function.
-         *
-         * @param string   $block_content Rendered block content.
-         * @param array    $block         Block object.
-         * @param WP_Block $wp_block      The block instance.
-         *
-         * @return string Filtered block content.
-         * @since 6.3.0
-         *
-         */
         public static function render_duotone_support($block_content, $block, $wp_block)
         {
             if(empty($block_content) || ! $block['blockName'])
@@ -869,19 +456,6 @@
             return $tags->get_updated_html();
         }
 
-        /**
-         * Get the CSS selector for a block type.
-         *
-         * This handles selectors defined in `color.__experimentalDuotone` support
-         * if `filter.duotone` support is not defined.
-         *
-         * @param WP_Block_Type $block_type Block type to check for support.
-         *
-         * @return string|null The CSS selector or null if there is no support.
-         * @internal
-         * @since 6.3.0
-         *
-         */
         private static function get_selector($block_type)
         {
             if(! ($block_type instanceof WP_Block_Type))
@@ -918,16 +492,6 @@
             return wp_get_block_css_selector($block_type, ['filter', 'duotone'], true);
         }
 
-        /**
-         * Scrape all block names from global styles and store in self::$global_styles_block_names.
-         *
-         * Used in conjunction with self::render_duotone_support to output the
-         * duotone filters defined in the theme.json global styles.
-         *
-         * @return string[] An array of global style block slugs, keyed on the block name.
-         * @since 6.3.0
-         *
-         */
         private static function get_all_global_style_block_names()
         {
             if(isset(self::$global_styles_block_names))
@@ -969,21 +533,6 @@
             return self::$global_styles_block_names;
         }
 
-        /**
-         * Takes the inline CSS duotone variable from a block and return the slug.
-         *
-         * Handles styles slugs like:
-         * var:preset|duotone|blue-orange
-         * var(--wp--preset--duotone--blue-orange)
-         *
-         * @param string $duotone_attr The duotone attribute from a block.
-         *
-         * @return string The slug of the duotone preset or an empty string if no slug is found.
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         */
         private static function get_slug_from_attribute($duotone_attr)
         {
             // Uses Branch Reset Groups `(?|…)` to return one capture group.
@@ -992,19 +541,6 @@
             return ! empty($matches[1]) ? $matches[1] : '';
         }
 
-        /**
-         * Checks if we have a valid duotone preset.
-         *
-         * Valid presets are defined in the $global_styles_presets array.
-         *
-         * @param string $duotone_attr The duotone attribute from a block.
-         *
-         * @return bool True if the duotone preset present and valid.
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         */
         private static function is_preset($duotone_attr)
         {
             $slug = self::get_slug_from_attribute($duotone_attr);
@@ -1013,17 +549,6 @@
             return array_key_exists($filter_id, self::get_all_global_styles_presets());
         }
 
-        /**
-         * Scrape all possible duotone presets from global and theme styles and
-         * store them in self::$global_styles_presets.
-         *
-         * Used in conjunction with self::render_duotone_support for blocks that
-         * use duotone preset filters.
-         *
-         * @return array An array of global styles presets, keyed on the filter ID.
-         * @since 6.3.0
-         *
-         */
         private static function get_all_global_styles_presets()
         {
             if(isset(self::$global_styles_presets))
@@ -1048,20 +573,6 @@
             return self::$global_styles_presets;
         }
 
-        /**
-         * Get the CSS variable for a duotone preset.
-         *
-         * Example output:
-         *  var(--wp--preset--duotone--blue-orange)
-         *
-         * @param string $slug The slug of the duotone preset.
-         *
-         * @return string The CSS variable.
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         */
         private static function get_css_var($slug)
         {
             $name = self::get_css_custom_property_name($slug);
@@ -1069,39 +580,11 @@
             return "var($name)";
         }
 
-        /**
-         * Gets the CSS variable name for a duotone preset.
-         *
-         * Example output:
-         *  --wp--preset--duotone--blue-orange
-         *
-         * @param string $slug The slug of the duotone preset.
-         *
-         * @return string The CSS variable name.
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         */
         private static function get_css_custom_property_name($slug)
         {
             return "--wp--preset--duotone--$slug";
         }
 
-        /**
-         * Enqueue preset assets for the page.
-         *
-         * Includes a CSS custom property, SVG filter, and block CSS declaration.
-         *
-         * @param string $filter_id        The filter ID. e.g. 'wp-duotone-blue-orange'.
-         * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
-         * @param string $filter_value     The filter CSS value. e.g. 'url(#wp-duotone-blue-orange)' or 'unset'.
-         *
-         * @since 6.3.0
-         *
-         * @internal
-         *
-         */
         private static function enqueue_global_styles_preset($filter_id, $duotone_selector, $filter_value)
         {
             $global_styles_presets = self::get_all_global_styles_presets();
@@ -1116,41 +599,12 @@
             self::enqueue_custom_filter($filter_id, $duotone_selector, $filter_value, $global_styles_presets[$filter_id]);
         }
 
-        /**
-         * Enqueue custom filter assets for the page.
-         *
-         * Includes an SVG filter and block CSS declaration.
-         *
-         * @param string $filter_id        The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
-         * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
-         * @param string $filter_value     The filter CSS value. e.g. 'url(#wp-duotone-000000-ffffff-2)' or 'unset'.
-         * @param array  $filter_data      Duotone filter data with 'slug' and 'colors' keys.
-         *
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         */
         private static function enqueue_custom_filter($filter_id, $duotone_selector, $filter_value, $filter_data)
         {
             self::$used_svg_filter_data[$filter_id] = $filter_data;
             self::enqueue_block_css($filter_id, $duotone_selector, $filter_value);
         }
 
-        /**
-         * Enqueue a block CSS declaration for the page.
-         *
-         * This does not include any SVGs.
-         *
-         * @param string $filter_id        The filter ID. e.g. 'wp-duotone-000000-ffffff-2'.
-         * @param string $duotone_selector The block's duotone selector. e.g. '.wp-block-image img'.
-         * @param string $filter_value     The filter CSS value. e.g. 'url(#wp-duotone-000000-ffffff-2)' or 'unset'.
-         *
-         * @since 6.3.0
-         *
-         * @internal
-         *
-         */
         private static function enqueue_block_css($filter_id, $duotone_selector, $filter_value)
         {
             // Build the CSS selectors to which the filter will be applied.
@@ -1177,32 +631,11 @@
             ];
         }
 
-        /**
-         * Get the URL for a duotone filter.
-         *
-         * Example output:
-         *  url(#wp-duotone-blue-orange)
-         *
-         * @param string $filter_id The ID of the filter.
-         *
-         * @return string The URL for the duotone filter.
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         */
         private static function get_filter_url($filter_id)
         {
             return "url(#$filter_id)";
         }
 
-        /**
-         * Appends the used block duotone filter declarations to the inline block supports CSS.
-         *
-         * Uses the declarations saved in earlier calls to self::enqueue_block_css.
-         *
-         * @since 6.3.0
-         */
         public static function output_block_styles()
         {
             if(! empty(self::$block_css_declarations))
@@ -1213,14 +646,6 @@
             }
         }
 
-        /**
-         * Appends the used global style duotone filter presets (CSS custom
-         * properties) to the inline global styles CSS.
-         *
-         * Uses the declarations saved in earlier calls to self::enqueue_global_styles_preset.
-         *
-         * @since 6.3.0
-         */
         public static function output_global_styles()
         {
             if(! empty(self::$used_global_styles_presets))
@@ -1229,20 +654,6 @@
             }
         }
 
-        /**
-         * Get the CSS for global styles.
-         *
-         * Example output:
-         *  body{--wp--preset--duotone--blue-orange:url('#wp-duotone-blue-orange');}
-         *
-         * @param array $sources The duotone presets.
-         *
-         * @return string The CSS for global styles.
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         */
         private static function get_global_styles_presets($sources)
         {
             $css = 'body{';
@@ -1259,14 +670,6 @@
             return $css;
         }
 
-        /**
-         * Outputs all necessary SVG for duotone filters, CSS for classic themes.
-         *
-         * Uses the declarations saved in earlier calls to self::enqueue_global_styles_preset
-         * and self::enqueue_custom_filter.
-         *
-         * @since 6.3.0
-         */
         public static function output_footer_assets()
         {
             if(! empty(self::$used_svg_filter_data))
@@ -1291,20 +694,6 @@
             }
         }
 
-        /**
-         * Get the SVGs for the duotone filters.
-         *
-         * Example output:
-         *  <svg><defs><filter id="wp-duotone-blue-orange">…</filter></defs></svg><svg>…</svg>
-         *
-         * @param array $sources The duotone presets.
-         *
-         * @return string The SVGs for the duotone filters.
-         * @internal
-         *
-         * @since 6.3.0
-         *
-         */
         private static function get_svg_definitions($sources)
         {
             $svgs = '';
@@ -1317,18 +706,6 @@
             return $svgs;
         }
 
-        /**
-         * Adds the duotone SVGs and CSS custom properties to the editor settings.
-         *
-         * This allows the properties to be pulled in by the EditorStyles component
-         * in JS and rendered in the post editor.
-         *
-         * @param array $settings The block editor settings from the `block_editor_settings_all` filter.
-         *
-         * @return array The editor settings with duotone SVGs and CSS custom properties.
-         * @since 6.3.0
-         *
-         */
         public static function add_editor_settings($settings)
         {
             $global_styles_presets = self::get_all_global_styles_presets();
@@ -1361,18 +738,6 @@
             return $settings;
         }
 
-        /**
-         * Migrates the experimental duotone support flag to the stabilized location.
-         *
-         * This moves `supports.color.__experimentalDuotone` to `supports.filter.duotone`.
-         *
-         * @param array $settings Current block type settings.
-         * @param array $metadata Block metadata as read in via block.json.
-         *
-         * @return array Filtered block type settings.
-         * @since 6.3.0
-         *
-         */
         public static function migrate_experimental_duotone_support_flag($settings, $metadata)
         {
             $duotone_support = _wp_array_get($metadata, ['supports', 'color', '__experimentalDuotone'], null);
@@ -1385,20 +750,6 @@
             return $settings;
         }
 
-        /**
-         * Gets the CSS filter property value from a preset.
-         *
-         * Exported for the deprecated function wp_get_duotone_filter_id().
-         *
-         * @param array $preset The duotone preset.
-         *
-         * @return string The CSS filter property value.
-         * @deprecated 6.3.0
-         *
-         * @internal
-         *
-         * @since      6.3.0
-         */
         public static function get_filter_css_property_value_from_preset($preset)
         {
             _deprecated_function(__FUNCTION__, '6.3.0');

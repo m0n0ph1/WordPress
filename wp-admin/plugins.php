@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Plugins administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('activate_plugins'))
@@ -231,7 +224,7 @@
                 ini_set('display_errors', true); // Ensure that fatal errors are displayed.
                 // Go back to "sandbox" scope so we get the same errors as before.
                 plugin_sandbox_scrape($plugin);
-                /** This action is documented in wp-admin/includes/plugin.php */
+
                 do_action("activate_{$plugin}");
                 exit;
 
@@ -618,7 +611,6 @@
                     $redirect = add_query_arg($query_args, $redirect);
                 }
 
-                /** This filter is documented in wp-admin/includes/class-wp-plugins-list-table.php */
                 $all_items = apply_filters('all_plugins', get_plugins());
 
                 // Remove plugins that don't exist or have been deleted since the option was last updated.
@@ -637,7 +629,6 @@
                     $sendback = wp_get_referer();
                     $plugins = isset($_POST['checked']) ? (array) wp_unslash($_POST['checked']) : [];
 
-                    /** This action is documented in wp-admin/edit.php */
                     $sendback = apply_filters("handle_bulk_actions-{$screen}", $sendback, $action, $plugins); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                     wp_safe_redirect($sendback);
                     exit;
@@ -841,19 +832,7 @@
         <hr class="wp-header-end">
 
         <?php
-            /**
-             * Fires before the plugins list table is rendered.
-             *
-             * This hook also fires before the plugins list table is rendered in the Network Admin.
-             *
-             * Please note: The 'active' portion of the hook name does not refer to whether the current
-             * view is for active plugins, but rather all plugins actively-installed.
-             *
-             * @param array[] $plugins_all An array of arrays containing information on all installed plugins.
-             *
-             * @since 3.0.0
-             *
-             */
+
             do_action('pre_current_active_plugins', $plugins['all']);
         ?>
 

@@ -5,52 +5,20 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_Sodium_Core32_Poly1305_State
-     */
     class ParagonIE_Sodium_Core32_Poly1305_State extends ParagonIE_Sodium_Core32_Util
     {
-        /**
-         * @var array<int, ParagonIE_Sodium_Core32_Int32>
-         */
         public $h;
 
-        /**
-         * @var array<int, ParagonIE_Sodium_Core32_Int32>
-         */
         public $r;
 
-        /**
-         * @var array<int, ParagonIE_Sodium_Core32_Int64>
-         */
         public $pad;
 
-        /**
-         * @var array<int, int>
-         */
         protected $buffer = [];
 
-        /**
-         * @var bool
-         */
         protected $final = false;
 
-        /**
-         * @var int
-         */
         protected $leftover = 0;
 
-        /**
-         * ParagonIE_Sodium_Core32_Poly1305_State constructor.
-         *
-         * @param string $key
-         *
-         * @throws InvalidArgumentException
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public function __construct($key = '')
         {
             if(self::strlen($key) < 32)
@@ -92,15 +60,6 @@
             $this->final = false;
         }
 
-        /**
-         * @param string $message
-         *
-         * @return self
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public function update($message = '')
         {
             $bytes = self::strlen($message);
@@ -108,7 +67,6 @@
             /* handle leftover */
             if($this->leftover)
             {
-                /** @var int $want */
                 $want = ParagonIE_Sodium_Core32_Poly1305::BLOCK_SIZE - $this->leftover;
                 if($want > $bytes)
                 {
@@ -136,11 +94,9 @@
             /* process full blocks */
             if($bytes >= ParagonIE_Sodium_Core32_Poly1305::BLOCK_SIZE)
             {
-                /** @var int $want */
                 $want = $bytes & ~(ParagonIE_Sodium_Core32_Poly1305::BLOCK_SIZE - 1);
                 if($want >= ParagonIE_Sodium_Core32_Poly1305::BLOCK_SIZE)
                 {
-                    /** @var string $block */
                     $block = self::substr($message, 0, $want);
                     if(self::strlen($block) >= ParagonIE_Sodium_Core32_Poly1305::BLOCK_SIZE)
                     {
@@ -165,16 +121,6 @@
             return $this;
         }
 
-        /**
-         * @param string $message
-         * @param int    $bytes
-         *
-         * @return self
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public function blocks($message, $bytes)
         {
             if(self::strlen($message) < 16)
@@ -184,24 +130,7 @@
             $hibit = ParagonIE_Sodium_Core32_Int32::fromInt((int) ($this->final ? 0 : 1 << 24)); /* 1 << 128 */
             $hibit->setUnsignedInt(true);
             $zero = new ParagonIE_Sodium_Core32_Int64([0, 0, 0, 0], true);
-            /**
-             * @var ParagonIE_Sodium_Core32_Int64 $d0
-             * @var ParagonIE_Sodium_Core32_Int64 $d1
-             * @var ParagonIE_Sodium_Core32_Int64 $d2
-             * @var ParagonIE_Sodium_Core32_Int64 $d3
-             * @var ParagonIE_Sodium_Core32_Int64 $d4
-             * @var ParagonIE_Sodium_Core32_Int64 $r0
-             * @var ParagonIE_Sodium_Core32_Int64 $r1
-             * @var ParagonIE_Sodium_Core32_Int64 $r2
-             * @var ParagonIE_Sodium_Core32_Int64 $r3
-             * @var ParagonIE_Sodium_Core32_Int64 $r4
-             *
-             * @var ParagonIE_Sodium_Core32_Int32 $h0
-             * @var ParagonIE_Sodium_Core32_Int32 $h1
-             * @var ParagonIE_Sodium_Core32_Int32 $h2
-             * @var ParagonIE_Sodium_Core32_Int32 $h3
-             * @var ParagonIE_Sodium_Core32_Int32 $h4
-             */
+
             $r0 = $this->r[0]->toInt64();
             $r1 = $this->r[1]->toInt64();
             $r2 = $this->r[2]->toInt64();
@@ -269,19 +198,11 @@
                 $bytes -= ParagonIE_Sodium_Core32_Poly1305::BLOCK_SIZE;
             }
 
-            /** @var array<int, ParagonIE_Sodium_Core32_Int32> $h */
             $this->h = [$h0, $h1, $h2, $h3, $h4];
 
             return $this;
         }
 
-        /**
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public function finish()
         {
             /* process the remaining block */
@@ -297,19 +218,6 @@
                 $this->blocks(self::substr(self::intArrayToString($this->buffer), 0, ParagonIE_Sodium_Core32_Poly1305::BLOCK_SIZE), $b = ParagonIE_Sodium_Core32_Poly1305::BLOCK_SIZE);
             }
 
-            /**
-             * @var ParagonIE_Sodium_Core32_Int32 $f
-             * @var ParagonIE_Sodium_Core32_Int32 $g0
-             * @var ParagonIE_Sodium_Core32_Int32 $g1
-             * @var ParagonIE_Sodium_Core32_Int32 $g2
-             * @var ParagonIE_Sodium_Core32_Int32 $g3
-             * @var ParagonIE_Sodium_Core32_Int32 $g4
-             * @var ParagonIE_Sodium_Core32_Int32 $h0
-             * @var ParagonIE_Sodium_Core32_Int32 $h1
-             * @var ParagonIE_Sodium_Core32_Int32 $h2
-             * @var ParagonIE_Sodium_Core32_Int32 $h3
-             * @var ParagonIE_Sodium_Core32_Int32 $h4
-             */
             $h0 = $this->h[0];
             $h1 = $this->h[1];
             $h2 = $this->h[2];
@@ -361,7 +269,6 @@
             $g3 = $g3->mask($mask);
             $g4 = $g4->mask($mask);
 
-            /** @var int $mask */
             $mask = ~$mask;
 
             $h0 = $h0->mask($mask)->orInt32($g0);

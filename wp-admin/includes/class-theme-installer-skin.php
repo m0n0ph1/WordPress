@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Upgrader API: Theme_Installer_Skin class
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      4.6.0
-     */
 
-    /**
-     * Theme Installer Skin for the WordPress Theme Installer.
-     *
-     * @since 2.8.0
-     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader-skins.php.
-     *
-     * @see   WP_Upgrader_Skin
-     */
     class Theme_Installer_Skin extends WP_Upgrader_Skin
     {
         public $api;
@@ -27,9 +12,6 @@
 
         private $is_downgrading = false;
 
-        /**
-         * @param array $args
-         */
         public function __construct($args = [])
         {
             $defaults = [
@@ -50,11 +32,6 @@
             parent::__construct($args);
         }
 
-        /**
-         * Performs an action before installing a theme.
-         *
-         * @since 2.8.0
-         */
         public function before()
         {
             if(! empty($this->api))
@@ -63,15 +40,6 @@
             }
         }
 
-        /**
-         * Hides the `process_failed` error when updating a theme by uploading a zip file.
-         *
-         * @param WP_Error $wp_error WP_Error object.
-         *
-         * @return bool True if the error should be hidden, false otherwise.
-         * @since 5.5.0
-         *
-         */
         public function hide_process_failed($wp_error)
         {
             if('upload' === $this->type && '' === $this->overwrite && $wp_error->get_error_code() === 'folder_exists')
@@ -82,11 +50,6 @@
             return false;
         }
 
-        /**
-         * Performs an action following a single theme install.
-         *
-         * @since 2.8.0
-         */
         public function after()
         {
             if($this->do_overwrite())
@@ -153,17 +116,6 @@
                 unset($install_actions['activate']);
             }
 
-            /**
-             * Filters the list of action links available following a single theme installation.
-             *
-             * @param string[] $install_actions Array of theme action links.
-             * @param object   $api             Object containing WordPress.org API theme data.
-             * @param string   $stylesheet      Theme directory name.
-             * @param WP_Theme $theme_info      Theme object.
-             *
-             * @since 2.8.0
-             *
-             */
             $install_actions = apply_filters('install_theme_complete_actions', $install_actions, $this->api, $stylesheet, $theme_info);
             if(! empty($install_actions))
             {
@@ -171,13 +123,6 @@
             }
         }
 
-        /**
-         * Checks if the theme can be overwritten and outputs the HTML for overwriting a theme on upload.
-         *
-         * @return bool Whether the theme can be overwritten and HTML was outputted.
-         * @since 5.5.0
-         *
-         */
         private function do_overwrite()
         {
             if('upload' !== $this->type || ! is_wp_error($this->result) || 'folder_exists' !== $this->result->get_error_code())
@@ -271,16 +216,6 @@
 
             $table .= '</tbody></table>';
 
-            /**
-             * Filters the compare table output for overwriting a theme package on upload.
-             *
-             * @param string   $table              The output table with Name, Version, Author, RequiresWP, and RequiresPHP info.
-             * @param WP_Theme $current_theme_data Active theme data.
-             * @param array    $new_theme_data     Array with uploaded theme data.
-             *
-             * @since 5.5.0
-             *
-             */
             echo apply_filters('install_theme_overwrite_comparison', $table, $current_theme_data, $new_theme_data);
 
             $install_actions = [];
@@ -336,17 +271,6 @@
 
             $install_actions['themes_page'] = sprintf('<a class="button" href="%s" target="_parent">%s</a>', wp_nonce_url($cancel_url, 'theme-upload-cancel-overwrite'), __('Cancel and go back'));
 
-            /**
-             * Filters the list of action links available following a single theme installation failure
-             * when overwriting is allowed.
-             *
-             * @param string[] $install_actions Array of theme action links.
-             * @param object   $api             Object containing WordPress.org API theme data.
-             * @param array    $new_theme_data  Array with uploaded theme data.
-             *
-             * @since 5.5.0
-             *
-             */
             $install_actions = apply_filters('install_theme_overwrite_actions', $install_actions, $this->api, $new_theme_data);
 
             if(! empty($install_actions))

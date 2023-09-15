@@ -1,32 +1,10 @@
 <?php
-    /**
-     * WordPress Bookmark Administration API
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Adds a link using values provided in $_POST.
-     *
-     * @return int|WP_Error Value 0 or WP_Error on failure. The link ID on success.
-     * @since 2.0.0
-     *
-     */
     function add_link()
     {
         return edit_link();
     }
 
-    /**
-     * Updates or inserts a link using values provided in $_POST.
-     *
-     * @param int $link_id Optional. ID of the link to edit. Default 0.
-     *
-     * @return int|WP_Error Value 0 or WP_Error on failure. The link ID on success.
-     * @since 2.0.0
-     *
-     */
     function edit_link($link_id = 0)
     {
         if(! current_user_can('manage_links'))
@@ -55,13 +33,6 @@
         }
     }
 
-    /**
-     * Retrieves the default link for editing.
-     *
-     * @return stdClass Default link object.
-     * @since 2.0.0
-     *
-     */
     function get_default_link_to_edit()
     {
         $link = new stdClass();
@@ -88,42 +59,16 @@
         return $link;
     }
 
-    /**
-     * Deletes a specified link from the database.
-     *
-     * @param int   $link_id ID of the link to delete.
-     *
-     * @return true Always true.
-     * @since 2.0.0
-     *
-     * @global wpdb $wpdb    WordPress database abstraction object.
-     *
-     */
     function wp_delete_link($link_id)
     {
         global $wpdb;
-        /**
-         * Fires before a link is deleted.
-         *
-         * @param int $link_id ID of the link to delete.
-         *
-         * @since 2.0.0
-         *
-         */
+
         do_action('delete_link', $link_id);
 
         wp_delete_object_term_relationships($link_id, 'link_category');
 
         $wpdb->delete($wpdb->links, ['link_id' => $link_id]);
 
-        /**
-         * Fires after a link has been deleted.
-         *
-         * @param int $link_id ID of the deleted link.
-         *
-         * @since 2.2.0
-         *
-         */
         do_action('deleted_link', $link_id);
 
         clean_bookmark_cache($link_id);
@@ -131,15 +76,6 @@
         return true;
     }
 
-    /**
-     * Retrieves the link category IDs associated with the link specified.
-     *
-     * @param int $link_id Link ID to look up.
-     *
-     * @return int[] The IDs of the requested link's categories.
-     * @since 2.1.0
-     *
-     */
     function wp_get_link_cats($link_id = 0)
     {
         $cats = wp_get_object_terms($link_id, 'link_category', ['fields' => 'ids']);
@@ -147,53 +83,11 @@
         return array_unique($cats);
     }
 
-    /**
-     * Retrieves link data based on its ID.
-     *
-     * @param int|stdClass $link Link ID or object to retrieve.
-     *
-     * @return object Link object for editing.
-     * @since 2.0.0
-     *
-     */
     function get_link_to_edit($link)
     {
         return get_bookmark($link, OBJECT, 'edit');
     }
 
-    /**
-     * Inserts a link into the database, or updates an existing link.
-     *
-     * Runs all the necessary sanitizing, provides default values if arguments are missing,
-     * and finally saves the link.
-     *
-     * @param array $linkdata             {
-     *                                    Elements that make up the link to insert.
-     *
-     * @type int    $link_id              Optional. The ID of the existing link if updating.
-     * @type string $link_url             The URL the link points to.
-     * @type string $link_name            The title of the link.
-     * @type string $link_image           Optional. A URL of an image.
-     * @type string $link_target          Optional. The target element for the anchor tag.
-     * @type string $link_description     Optional. A short description of the link.
-     * @type string $link_visible         Optional. 'Y' means visible, anything else means not.
-     * @type int    $link_owner           Optional. A user ID.
-     * @type int    $link_rating          Optional. A rating for the link.
-     * @type string $link_rel             Optional. A relationship of the link to you.
-     * @type string $link_notes           Optional. An extended description of or notes on the link.
-     * @type string $link_rss             Optional. A URL of an associated RSS feed.
-     * @type int    $link_category        Optional. The term ID of the link category.
-     *                                    If empty, uses default link category.
-     *                                    }
-     *
-     * @param bool  $wp_error             Optional. Whether to return a WP_Error object on failure. Default false.
-     *
-     * @return int|WP_Error Value 0 or WP_Error on failure. The link ID on success.
-     * @global wpdb $wpdb                 WordPress database abstraction object.
-     *
-     * @since 2.0.0
-     *
-     */
     function wp_insert_link($linkdata, $wp_error = false)
     {
         global $wpdb;
@@ -286,26 +180,10 @@
 
         if($update)
         {
-            /**
-             * Fires after a link was updated in the database.
-             *
-             * @param int $link_id ID of the link that was updated.
-             *
-             * @since 2.0.0
-             *
-             */
             do_action('edit_link', $link_id);
         }
         else
         {
-            /**
-             * Fires after a link was added to the database.
-             *
-             * @param int $link_id ID of the link that was added.
-             *
-             * @since 2.0.0
-             *
-             */
             do_action('add_link', $link_id);
         }
         clean_bookmark_cache($link_id);
@@ -313,15 +191,6 @@
         return $link_id;
     }
 
-    /**
-     * Updates link with the specified link categories.
-     *
-     * @param int   $link_id         ID of the link to update.
-     * @param int[] $link_categories Array of link category IDs to add the link to.
-     *
-     * @since 2.1.0
-     *
-     */
     function wp_set_link_cats($link_id = 0, $link_categories = [])
     {
         // If $link_categories isn't already an array, make it one:
@@ -338,15 +207,6 @@
         clean_bookmark_cache($link_id);
     }
 
-    /**
-     * Updates a link in the database.
-     *
-     * @param array $linkdata Link data to update. See wp_insert_link() for accepted arguments.
-     *
-     * @return int|WP_Error Value 0 or WP_Error on failure. The updated link ID on success.
-     * @since 2.0.0
-     *
-     */
     function wp_update_link($linkdata)
     {
         $link_id = (int) $linkdata['link_id'];
@@ -373,14 +233,6 @@
         return wp_insert_link($linkdata);
     }
 
-    /**
-     * Outputs the 'disabled' message for the WordPress Link Manager.
-     *
-     * @since  3.5.0
-     * @access private
-     *
-     * @global string $pagenow The filename of the current screen.
-     */
     function wp_link_manager_disabled_message()
     {
         global $pagenow;

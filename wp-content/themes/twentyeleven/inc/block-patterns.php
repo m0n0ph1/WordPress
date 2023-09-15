@@ -1,26 +1,10 @@
 <?php
-    /**
-     * Block Patterns
-     *
-     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern/
-     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern_category/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Eleven
-     * @since      Twenty Eleven 3.8
-     */
 
-    /**
-     * Register Block Pattern Category.
-     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentyeleven', ['label' => esc_html__('Twenty Eleven', 'twentyeleven')]);
     }
 
-    /**
-     * Register Block Patterns.
-     */
     if(function_exists('register_block_pattern'))
     {
         // Heading, and two columns featuring an image and dropcap.

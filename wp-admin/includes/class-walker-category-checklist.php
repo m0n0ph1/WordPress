@@ -1,21 +1,5 @@
 <?php
-    /**
-     * Taxonomy API: Walker_Category_Checklist class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      4.4.0
-     */
 
-    /**
-     * Core walker class to output an unordered list of category checkbox input elements.
-     *
-     * @since 2.5.1
-     *
-     * @see   Walker
-     * @see   wp_category_checklist()
-     * @see   wp_terms_checklist()
-     */
     class Walker_Category_Checklist extends Walker
     {
         public $tree_type = 'category';
@@ -25,58 +9,18 @@
             'id' => 'term_id',
         ]; // TODO: Decouple this.
 
-        /**
-         * Starts the list before the elements are added.
-         *
-         * @param string $output Used to append additional content (passed by reference).
-         * @param int    $depth  Depth of category. Used for tab indentation.
-         * @param array  $args   An array of arguments. See {@see wp_terms_checklist()}.
-         *
-         * @since 2.5.1
-         *
-         * @see   Walker:start_lvl()
-         *
-         */
         public function start_lvl(&$output, $depth = 0, $args = [])
         {
             $indent = str_repeat("\t", $depth);
             $output .= "$indent<ul class='children'>\n";
         }
 
-        /**
-         * Ends the list of after the elements are added.
-         *
-         * @param string $output Used to append additional content (passed by reference).
-         * @param int    $depth  Depth of category. Used for tab indentation.
-         * @param array  $args   An array of arguments. See {@see wp_terms_checklist()}.
-         *
-         * @since 2.5.1
-         *
-         * @see   Walker::end_lvl()
-         *
-         */
         public function end_lvl(&$output, $depth = 0, $args = [])
         {
             $indent = str_repeat("\t", $depth);
             $output .= "$indent</ul>\n";
         }
 
-        /**
-         * Start the element output.
-         *
-         * @param string  $output            Used to append additional content (passed by reference).
-         * @param WP_Term $data_object       The current term object.
-         * @param int     $depth             Depth of the term in reference to parents. Default 0.
-         * @param array   $args              An array of arguments. See {@see wp_terms_checklist()}.
-         * @param int     $current_object_id Optional. ID of the current term. Default 0.
-         *
-         * @since 5.9.0 Renamed `$category` to `$data_object` and `$id` to `$current_object_id`
-         *              to match parent class for PHP 8 named parameter support.
-         *
-         * @see   Walker::start_el()
-         *
-         * @since 2.5.1
-         */
         public function start_el(&$output, $data_object, $depth = 0, $args = [], $current_object_id = 0)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -117,33 +61,17 @@
                     $aria_checked = 'true';
                 }
 
-                $output .= "\n".'<li'.$class.'>'.'<div class="'.$inner_class.'" data-term-id='.$category->term_id.' tabindex="0" role="checkbox" aria-checked="'.$aria_checked.'">'./** This filter is documented in wp-includes/category-template.php */
-                    esc_html(apply_filters('the_category', $category->name, '', '')).'</div>';
+                $output .= "\n".'<li'.$class.'>'.'<div class="'.$inner_class.'" data-term-id='.$category->term_id.' tabindex="0" role="checkbox" aria-checked="'.$aria_checked.'">'.esc_html(apply_filters('the_category', $category->name, '', '')).'</div>';
             }
             else
             {
                 $is_selected = in_array($category->term_id, $args['selected_cats'], true);
                 $is_disabled = ! empty($args['disabled']);
 
-                $output .= "\n<li id='{$taxonomy}-{$category->term_id}'$class>".'<label class="selectit"><input value="'.$category->term_id.'" type="checkbox" name="'.$name.'[]" id="in-'.$taxonomy.'-'.$category->term_id.'"'.checked($is_selected, true, false).disabled($is_disabled, true, false).' /> './** This filter is documented in wp-includes/category-template.php */
-                    esc_html(apply_filters('the_category', $category->name, '', '')).'</label>';
+                $output .= "\n<li id='{$taxonomy}-{$category->term_id}'$class>".'<label class="selectit"><input value="'.$category->term_id.'" type="checkbox" name="'.$name.'[]" id="in-'.$taxonomy.'-'.$category->term_id.'"'.checked($is_selected, true, false).disabled($is_disabled, true, false).' /> '.esc_html(apply_filters('the_category', $category->name, '', '')).'</label>';
             }
         }
 
-        /**
-         * Ends the element output, if needed.
-         *
-         * @param string  $output      Used to append additional content (passed by reference).
-         * @param WP_Term $data_object The current term object.
-         * @param int     $depth       Depth of the term in reference to parents. Default 0.
-         * @param array   $args        An array of arguments. See {@see wp_terms_checklist()}.
-         *
-         * @since 2.5.1
-         * @since 5.9.0 Renamed `$category` to `$data_object` to match parent class for PHP 8 named parameter support.
-         *
-         * @see   Walker::end_el()
-         *
-         */
         public function end_el(&$output, $data_object, $depth = 0, $args = [])
         {
             $output .= "</li>\n";

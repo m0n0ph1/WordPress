@@ -1,16 +1,5 @@
 <?php
-    /**
-     * WordPress Administration Bootstrap
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * In WordPress Administration Screens
-     *
-     * @since 2.3.2
-     */
     if(! defined('WP_ADMIN'))
     {
         define('WP_ADMIN', true);
@@ -45,11 +34,6 @@
         flush_rewrite_rules();
         update_option('db_upgraded', false);
 
-        /**
-         * Fires on the next page load after a successful DB upgrade.
-         *
-         * @since 2.8.0
-         */
         do_action('after_db_upgrade');
     }
     elseif(! wp_doing_ajax() && empty($_POST) && (int) get_option('db_version') !== $wp_db_version)
@@ -60,21 +44,6 @@
             exit;
         }
 
-        /**
-         * Filters whether to attempt to perform the multisite DB upgrade routine.
-         *
-         * In single site, the user would be redirected to wp-admin/upgrade.php.
-         * In multisite, the DB upgrade routine is automatically fired, but only
-         * when this filter returns true.
-         *
-         * If the network is 50 sites or less, it will run every time. Otherwise,
-         * it will throttle itself to reduce load.
-         *
-         * @param bool $do_mu_upgrade Whether to perform the Multisite upgrade routine. Default true.
-         *
-         * @since MU (3.0.0)
-         *
-         */
         if(apply_filters('do_mu_upgrade', true))
         {
             $c = get_blog_count();
@@ -90,7 +59,7 @@
                     'timeout' => 120,
                     'httpversion' => '1.1',
                 ]);
-                /** This action is documented in wp-admin/network/upgrade.php */
+
                 do_action('after_mu_upgrade', $response);
                 unset($response);
             }
@@ -121,18 +90,6 @@
 
     wp_enqueue_script('common');
 
-    /**
-     * $pagenow is set in vars.php.
-     * $wp_importers is sometimes set in wp-admin/includes/import.php.
-     * The remaining variables are imported as globals elsewhere, declared as globals here.
-     *
-     * @global string $pagenow The filename of the current screen.
-     * @global array  $wp_importers
-     * @global string $hook_suffix
-     * @global string $plugin_page
-     * @global string $typenow The post type of the current screen.
-     * @global string $taxnow  The taxonomy of the current screen.
-     */
     global $pagenow, $wp_importers, $hook_suffix, $plugin_page, $typenow, $taxnow;
 
     $page_hook = null;
@@ -181,16 +138,6 @@
         wp_raise_memory_limit('admin');
     }
 
-    /**
-     * Fires as an admin screen or script is being initialized.
-     *
-     * Note, this does not just run on user-facing admin screens.
-     * It runs on admin-ajax.php and admin-post.php as well.
-     *
-     * This is roughly analogous to the more general {@see 'init'} hook, which fires earlier.
-     *
-     * @since 2.5.0
-     */
     do_action('admin_init');
 
     if(isset($plugin_page))
@@ -249,49 +196,12 @@
     {
         if($page_hook)
         {
-            /**
-             * Fires before a particular screen is loaded.
-             *
-             * The load-* hook fires in a number of contexts. This hook is for plugin screens
-             * where a callback is provided when the screen is registered.
-             *
-             * The dynamic portion of the hook name, `$page_hook`, refers to a mixture of plugin
-             * page information including:
-             * 1. The page type. If the plugin page is registered as a submenu page, such as for
-             *    Settings, the page type would be 'settings'. Otherwise the type is 'toplevel'.
-             * 2. A separator of '_page_'.
-             * 3. The plugin basename minus the file extension.
-             *
-             * Together, the three parts form the `$page_hook`. Citing the example above,
-             * the hook name used would be 'load-settings_page_pluginbasename'.
-             *
-             * @see   get_plugin_page_hook()
-             *
-             * @since 2.1.0
-             */
             do_action("load-{$page_hook}"); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
             if(! isset($_GET['noheader']))
             {
                 require_once ABSPATH.'wp-admin/admin-header.php';
             }
 
-            /**
-             * Used to call the registered callback for a plugin screen.
-             *
-             * This hook uses a dynamic hook name, `$page_hook`, which refers to a mixture of plugin
-             * page information including:
-             * 1. The page type. If the plugin page is registered as a submenu page, such as for
-             *    Settings, the page type would be 'settings'. Otherwise the type is 'toplevel'.
-             * 2. A separator of '_page_'.
-             * 3. The plugin basename minus the file extension.
-             *
-             * Together, the three parts form the `$page_hook`. Citing the example above,
-             * the hook name used would be 'settings_page_pluginbasename'.
-             *
-             * @see   get_plugin_page_hook()
-             *
-             * @since 1.5.0
-             */
             do_action($page_hook);
         }
         else
@@ -307,18 +217,6 @@
                 wp_die(sprintf(__('Cannot load %s.'), htmlentities($plugin_page)));
             }
 
-            /**
-             * Fires before a particular screen is loaded.
-             *
-             * The load-* hook fires in a number of contexts. This hook is for plugin screens
-             * where the file to load is directly included, rather than the use of a function.
-             *
-             * The dynamic portion of the hook name, `$plugin_page`, refers to the plugin basename.
-             *
-             * @see   plugin_basename()
-             *
-             * @since 1.5.0
-             */
             do_action("load-{$plugin_page}"); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
             if(! isset($_GET['noheader']))
@@ -361,23 +259,6 @@
             exit;
         }
 
-        /**
-         * Fires before an importer screen is loaded.
-         *
-         * The dynamic portion of the hook name, `$importer`, refers to the importer slug.
-         *
-         * Possible hook names include:
-         *
-         *  - `load-importer-blogger`
-         *  - `load-importer-wpcat2tag`
-         *  - `load-importer-livejournal`
-         *  - `load-importer-mt`
-         *  - `load-importer-rss`
-         *  - `load-importer-tumblr`
-         *  - `load-importer-wordpress`
-         *
-         * @since 3.5.0
-         */
         do_action("load-importer-{$importer}"); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
         // Used in the HTML title tag.
@@ -394,17 +275,6 @@
 
         define('WP_IMPORTING', true);
 
-        /**
-         * Filters whether to filter imported data through kses on import.
-         *
-         * Multisite uses this hook to filter all data through kses by default,
-         * as a super administrator may be assisting an untrusted user.
-         *
-         * @param bool $force Whether to force data to be filtered through kses. Default false.
-         *
-         * @since 3.1.0
-         *
-         */
         if(apply_filters('force_filtered_html_on_import', false))
         {
             kses_init_filters();  // Always filter imported data with kses on multisite.
@@ -421,18 +291,6 @@
     }
     else
     {
-        /**
-         * Fires before a particular screen is loaded.
-         *
-         * The load-* hook fires in a number of contexts. This hook is for core screens.
-         *
-         * The dynamic portion of the hook name, `$pagenow`, is a global variable
-         * referring to the filename of the current screen, such as 'admin.php',
-         * 'post-new.php' etc. A complete hook for the latter would be
-         * 'load-post-new.php'.
-         *
-         * @since 2.1.0
-         */
         do_action("load-{$pagenow}"); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
         /*
@@ -471,13 +329,5 @@
     {
         $action = $_REQUEST['action'];
 
-        /**
-         * Fires when an 'action' request variable is sent.
-         *
-         * The dynamic portion of the hook name, `$action`, refers to
-         * the action derived from the `GET` or `POST` request.
-         *
-         * @since 2.6.0
-         */
         do_action("admin_action_{$action}");
     }

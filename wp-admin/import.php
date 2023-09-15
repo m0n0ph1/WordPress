@@ -1,14 +1,7 @@
 <?php
-    /**
-     * Import WordPress Administration Screen
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     define('WP_LOAD_IMPORTERS', true);
 
-    /** Load WordPress Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('import'))

@@ -1,21 +1,5 @@
 <?php
-    /**
-     * WordPress Image Editor
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Loads the WP image-editing interface.
-     *
-     * @param int          $post_id Attachment post ID.
-     * @param false|object $msg     Optional. Message to display for image editor updates or errors.
-     *                              Default false.
-     *
-     * @since 2.9.0
-     *
-     */
     function wp_image_editor($post_id, $msg = false)
     {
         $nonce = wp_create_nonce("image_editor-$post_id");
@@ -55,14 +39,6 @@
             }
         }
 
-        /**
-         * Shows the settings in the Image Editor that allow selecting to edit only the thumbnail of an image.
-         *
-         * @param bool $show Whether to show the settings in the Image Editor. Default false.
-         *
-         * @since 6.3.0
-         *
-         */
         $edit_thumbnails_separately = (bool) apply_filters('image_edit_thumbnails_separately', false);
 
         ?>
@@ -498,30 +474,10 @@
         <?php
     }
 
-    /**
-     * Streams image in WP_Image_Editor to browser.
-     *
-     * @param WP_Image_Editor $image         The image editor instance.
-     * @param string          $mime_type     The mime type of the image.
-     * @param int             $attachment_id The image's attachment post ID.
-     *
-     * @return bool True on success, false on failure.
-     * @since 2.9.0
-     *
-     */
     function wp_stream_image($image, $mime_type, $attachment_id)
     {
         if($image instanceof WP_Image_Editor)
         {
-            /**
-             * Filters the WP_Image_Editor instance for the image to be streamed to the browser.
-             *
-             * @param WP_Image_Editor $image         The image editor instance.
-             * @param int             $attachment_id The attachment post ID.
-             *
-             * @since 3.5.0
-             *
-             */
             $image = apply_filters('image_editor_save_pre', $image, $attachment_id);
 
             if(is_wp_error($image->stream($mime_type)))
@@ -536,16 +492,6 @@
             /* translators: 1: $image, 2: WP_Image_Editor */
             _deprecated_argument(__FUNCTION__, '3.5.0', sprintf(__('%1$s needs to be a %2$s object.'), '$image', 'WP_Image_Editor'));
 
-            /**
-             * Filters the GD image resource to be streamed to the browser.
-             *
-             * @param resource|GdImage $image         Image resource to be streamed.
-             * @param int              $attachment_id The attachment post ID.
-             *
-             * @since      2.9.0
-             * @deprecated 3.5.0 Use {@see 'image_editor_save_pre'} instead.
-             *
-             */
             $image = apply_filters_deprecated('image_save_pre', [
                 $image,
                 $attachment_id
@@ -580,54 +526,12 @@
         }
     }
 
-    /**
-     * Saves image to file.
-     *
-     * @param string          $filename  Name of the file to be saved.
-     * @param WP_Image_Editor $image     The image editor instance.
-     * @param string          $mime_type The mime type of the image.
-     * @param int             $post_id   Attachment post ID.
-     *
-     * @return array|WP_Error|bool {
-     *     Array on success or WP_Error if the file failed to save.
-     *     When called with a deprecated value for the `$image` parameter,
-     *     i.e. a non-`WP_Image_Editor` image resource or `GdImage` instance,
-     *     the function will return true on success, false on failure.
-     *
-     * @type string           $path      Path to the image file.
-     * @type string           $file      Name of the image file.
-     * @type int              $width     Image width.
-     * @type int              $height    Image height.
-     * @type string           $mime      -type The mime type of the image.
-     * @type int              $filesize  File size of the image.
-     *                                   }
-     * @since 6.0.0 The `$filesize` value was added to the returned array.
-     *
-     * @since 2.9.0
-     * @since 3.5.0 The `$image` parameter expects a `WP_Image_Editor` instance.
-     */
     function wp_save_image_file($filename, $image, $mime_type, $post_id)
     {
         if($image instanceof WP_Image_Editor)
         {
-            /** This filter is documented in wp-admin/includes/image-edit.php */
             $image = apply_filters('image_editor_save_pre', $image, $post_id);
 
-            /**
-             * Filters whether to skip saving the image file.
-             *
-             * Returning a non-null value will short-circuit the save method,
-             * returning that value instead.
-             *
-             * @param bool|null       $override  Value to return instead of saving. Default null.
-             * @param string          $filename  Name of the file to be saved.
-             * @param WP_Image_Editor $image     The image editor instance.
-             * @param string          $mime_type The mime type of the image.
-             * @param int             $post_id   Attachment post ID.
-             *
-             * @since 3.5.0
-             *
-             */
             $saved = apply_filters('wp_save_image_editor_file', null, $filename, $image, $mime_type, $post_id);
 
             if(null !== $saved)
@@ -642,25 +546,8 @@
             /* translators: 1: $image, 2: WP_Image_Editor */
             _deprecated_argument(__FUNCTION__, '3.5.0', sprintf(__('%1$s needs to be a %2$s object.'), '$image', 'WP_Image_Editor'));
 
-            /** This filter is documented in wp-admin/includes/image-edit.php */
             $image = apply_filters_deprecated('image_save_pre', [$image, $post_id], '3.5.0', 'image_editor_save_pre');
 
-            /**
-             * Filters whether to skip saving the image file.
-             *
-             * Returning a non-null value will short-circuit the save method,
-             * returning that value instead.
-             *
-             * @param bool|null        $override  Value to return instead of saving. Default null.
-             * @param string           $filename  Name of the file to be saved.
-             * @param resource|GdImage $image     Image resource or GdImage instance.
-             * @param string           $mime_type The mime type of the image.
-             * @param int              $post_id   Attachment post ID.
-             *
-             * @deprecated 3.5.0 Use {@see 'wp_save_image_editor_file'} instead.
-             *
-             * @since      2.9.0
-             */
             $saved = apply_filters_deprecated('wp_save_image_file', [
                 null,
                 $filename,
@@ -677,7 +564,7 @@
             switch($mime_type)
             {
                 case 'image/jpeg':
-                    /** This filter is documented in wp-includes/class-wp-image-editor.php */ return imagejpeg($image, $filename, apply_filters('jpeg_quality', 90, 'edit_image'));
+                    return imagejpeg($image, $filename, apply_filters('jpeg_quality', 90, 'edit_image'));
                 case 'image/png':
                     return imagepng($image, $filename);
                 case 'image/gif':
@@ -695,17 +582,6 @@
         }
     }
 
-    /**
-     * Image preview ratio. Internal use only.
-     *
-     * @param int $w Image width in pixels.
-     * @param int $h Image height in pixels.
-     *
-     * @return float|int Image preview ratio.
-     * @ignore
-     * @since 2.9.0
-     *
-     */
     function _image_get_preview_ratio($w, $h)
     {
         $max = max($w, $h);
@@ -713,19 +589,6 @@
         return $max > 600 ? (600 / $max) : 1;
     }
 
-    /**
-     * Returns an image resource. Internal use only.
-     *
-     * @param resource|GdImage $img   Image resource.
-     * @param float|int        $angle Image rotation angle, in degrees.
-     *
-     * @return resource|GdImage|false GD image resource or GdImage instance, false otherwise.
-     * @ignore
-     * @since      2.9.0
-     * @deprecated 3.5.0 Use WP_Image_Editor::rotate()
-     * @see        WP_Image_Editor::rotate()
-     *
-     */
     function _rotate_image_resource($img, $angle)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'WP_Image_Editor::rotate()');
@@ -744,20 +607,6 @@
         return $img;
     }
 
-    /**
-     * Flips an image resource. Internal use only.
-     *
-     * @param resource|GdImage $img  Image resource or GdImage instance.
-     * @param bool             $horz Whether to flip horizontally.
-     * @param bool             $vert Whether to flip vertically.
-     *
-     * @return resource|GdImage (maybe) flipped image resource or GdImage instance.
-     * @since      2.9.0
-     * @deprecated 3.5.0 Use WP_Image_Editor::flip()
-     * @see        WP_Image_Editor::flip()
-     *
-     * @ignore
-     */
     function _flip_image_resource($img, $horz, $vert)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'WP_Image_Editor::flip()');
@@ -783,20 +632,6 @@
         return $img;
     }
 
-    /**
-     * Crops an image resource. Internal use only.
-     *
-     * @param resource|GdImage $img Image resource or GdImage instance.
-     * @param float            $x   Source point x-coordinate.
-     * @param float            $y   Source point y-coordinate.
-     * @param float            $w   Source width.
-     * @param float            $h   Source height.
-     *
-     * @return resource|GdImage (maybe) cropped image resource or GdImage instance.
-     * @since 2.9.0
-     *
-     * @ignore
-     */
     function _crop_image_resource($img, $x, $y, $w, $h)
     {
         $dst = wp_imagecreatetruecolor($w, $h);
@@ -813,16 +648,6 @@
         return $img;
     }
 
-    /**
-     * Performs group of changes on Editor specified.
-     *
-     * @param WP_Image_Editor $image   WP_Image_Editor instance.
-     * @param array           $changes Array of change operations.
-     *
-     * @return WP_Image_Editor WP_Image_Editor instance with changes applied.
-     * @since 2.9.0
-     *
-     */
     function image_edit_apply_changes($image, $changes)
     {
         if(is_gd_image($image))
@@ -898,29 +723,10 @@
         // Image resource before applying the changes.
         if($image instanceof WP_Image_Editor)
         {
-            /**
-             * Filters the WP_Image_Editor instance before applying changes to the image.
-             *
-             * @param WP_Image_Editor $image   WP_Image_Editor instance.
-             * @param array           $changes Array of change operations.
-             *
-             * @since 3.5.0
-             *
-             */
             $image = apply_filters('wp_image_editor_before_change', $image, $changes);
         }
         elseif(is_gd_image($image))
         {
-            /**
-             * Filters the GD image resource before applying changes to the image.
-             *
-             * @param resource|GdImage $image   GD image resource or GdImage instance.
-             * @param array            $changes Array of change operations.
-             *
-             * @since      2.9.0
-             * @deprecated 3.5.0 Use {@see 'wp_image_editor_before_change'} instead.
-             *
-             */
             $image = apply_filters_deprecated('image_edit_before_change', [
                 $image,
                 $changes,
@@ -981,16 +787,6 @@
         return $image;
     }
 
-    /**
-     * Streams image in post to browser, along with enqueued changes
-     * in `$_REQUEST['history']`.
-     *
-     * @param int $post_id Attachment post ID.
-     *
-     * @return bool True on success, false on failure.
-     * @since 2.9.0
-     *
-     */
     function stream_preview_image($post_id)
     {
         $post = get_post($post_id);
@@ -1027,15 +823,6 @@
         return wp_stream_image($img, $post->post_mime_type, $post_id);
     }
 
-    /**
-     * Restores the metadata for a given attachment.
-     *
-     * @param int $post_id Attachment post ID.
-     *
-     * @return stdClass Image restoration message object.
-     * @since 2.9.0
-     *
-     */
     function wp_restore_image($post_id)
     {
         $meta = wp_get_attachment_metadata($post_id);
@@ -1143,16 +930,6 @@
         return $msg;
     }
 
-    /**
-     * Saves image to post, along with enqueued changes
-     * in `$_REQUEST['history']`.
-     *
-     * @param int $post_id Attachment post ID.
-     *
-     * @return stdClass
-     * @since 2.9.0
-     *
-     */
     function wp_save_image($post_id)
     {
         $_wp_additional_image_sizes = wp_get_additional_image_sizes();
@@ -1178,7 +955,6 @@
         $target = ! empty($_REQUEST['target']) ? preg_replace('/[^a-z0-9_-]+/i', '', $_REQUEST['target']) : '';
         $scale = ! empty($_REQUEST['do']) && 'scale' === $_REQUEST['do'];
 
-        /** This filter is documented in wp-admin/includes/image-edit.php */
         $edit_thumbnails_separately = (bool) apply_filters('image_edit_thumbnails_separately', false);
 
         if($scale)

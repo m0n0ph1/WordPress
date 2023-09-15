@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Class for working with MO files
-     *
-     * @version    $Id: mo.php 1157 2015-11-20 04:30:11Z dd32 $
-     * @package    pomo
-     * @subpackage mo
-     */
 
     require_once __DIR__.'/translations.php';
     require_once __DIR__.'/streams.php';
@@ -13,37 +6,15 @@
     if(! class_exists('MO', false)) :
         class MO extends Gettext_Translations
         {
-            /**
-             * Number of plural forms.
-             *
-             * @var int
-             */
             public $_nplurals = 2;
 
-            /**
-             * Loaded MO file.
-             *
-             * @var string
-             */
             private $filename = '';
 
-            /**
-             * Returns the loaded MO file.
-             *
-             * @return string The loaded MO file.
-             */
             public function get_filename()
             {
                 return $this->filename;
             }
 
-            /**
-             * Fills up with the entries from MO file $filename
-             *
-             * @param string $filename MO file to load
-             *
-             * @return bool True if the import from file was successful, otherwise false.
-             */
             public function import_from_file($filename)
             {
                 $reader = new POMO_FileReader($filename);
@@ -58,11 +29,6 @@
                 return $this->import_from_reader($reader);
             }
 
-            /**
-             * @param string $filename
-             *
-             * @return bool
-             */
             public function export_to_file($filename)
             {
                 $fh = fopen($filename, 'wb');
@@ -76,9 +42,6 @@
                 return $res;
             }
 
-            /**
-             * @return string|false
-             */
             public function export()
             {
                 $tmp_fh = fopen('php://temp', 'r+');
@@ -92,11 +55,6 @@
                 return stream_get_contents($tmp_fh);
             }
 
-            /**
-             * @param Translation_Entry $entry
-             *
-             * @return bool
-             */
             public function is_entry_good_for_export($entry)
             {
                 if(empty($entry->translations))
@@ -112,11 +70,6 @@
                 return true;
             }
 
-            /**
-             * @param resource $fh
-             *
-             * @return true
-             */
             public function export_to_file_handle($fh)
             {
                 $entries = array_filter($this->entries, [$this, 'is_entry_good_for_export']);
@@ -166,11 +119,6 @@
                 return true;
             }
 
-            /**
-             * @param Translation_Entry $entry
-             *
-             * @return string
-             */
             public function export_original($entry)
             {
                 // TODO: Warnings for control characters.
@@ -187,20 +135,12 @@
                 return $exported;
             }
 
-            /**
-             * @param Translation_Entry $entry
-             *
-             * @return string
-             */
             public function export_translations($entry)
             {
                 // TODO: Warnings for control characters.
                 return $entry->is_plural ? implode("\0", $entry->translations) : $entry->translations[0];
             }
 
-            /**
-             * @return string
-             */
             public function export_headers()
             {
                 $exported = '';
@@ -212,11 +152,6 @@
                 return $exported;
             }
 
-            /**
-             * @param int $magic
-             *
-             * @return string|false
-             */
             public function get_byteorder($magic)
             {
                 // The magic is 0x950412de.
@@ -240,11 +175,6 @@
                 }
             }
 
-            /**
-             * @param POMO_FileReader $reader
-             *
-             * @return bool True if the import was successful, otherwise false.
-             */
             public function import_from_reader($reader)
             {
                 $endian_string = MO::get_byteorder($reader->readint32());
@@ -346,19 +276,6 @@
                 return true;
             }
 
-            /**
-             * Build a Translation_Entry from original string and translation strings,
-             * found in a MO file
-             *
-             * @static
-             *
-             * @param string $original    original string to translate from MO file. Might contain
-             *                            0x04 as context separator or 0x00 as singular/plural separator
-             * @param string $translation translation string from MO file. Might contain
-             *                            0x00 as a plural translations separator
-             *
-             * @return Translation_Entry Entry instance.
-             */
             public function &make_entry($original, $translation)
             {
                 $entry = new Translation_Entry();
@@ -383,19 +300,11 @@
                 return $entry;
             }
 
-            /**
-             * @param int $count
-             *
-             * @return string
-             */
             public function select_plural_form($count)
             {
                 return $this->gettext_select_plural_form($count);
             }
 
-            /**
-             * @return int
-             */
             public function get_plural_forms_count()
             {
                 return $this->_nplurals;

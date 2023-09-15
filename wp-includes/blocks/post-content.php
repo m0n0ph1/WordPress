@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/post-content` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/post-content` block on the server.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string Returns the filtered post content of the current post.
-     */
     function render_block_core_post_content($attributes, $content, $block)
     {
         static $seen_ids = [];
@@ -54,7 +40,6 @@
             $content .= wp_link_pages(['echo' => 0]);
         }
 
-        /** This filter is documented in wp-includes/post-template.php */
         $content = apply_filters('the_content', str_replace(']]>', ']]&gt;', $content));
         unset($seen_ids[$post_id]);
 
@@ -68,9 +53,6 @@
         return ('<div '.$wrapper_attributes.'>'.$content.'</div>');
     }
 
-    /**
-     * Registers the `core/post-content` block on the server.
-     */
     function register_block_core_post_content()
     {
         register_block_type_from_metadata(__DIR__.'/post-content', [

@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Video with header and details block pattern
-     */
+
     return [
         'title' => __('Video with header and details', 'twentytwentytwo'),
         'categories' => ['featured', 'columns'],

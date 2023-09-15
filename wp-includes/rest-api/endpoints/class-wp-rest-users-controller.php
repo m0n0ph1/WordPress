@@ -1,34 +1,9 @@
 <?php
-    /**
-     * REST API: WP_REST_Users_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      4.7.0
-     */
 
-    /**
-     * Core class used to manage users via the REST API.
-     *
-     * @since 4.7.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Users_Controller extends WP_REST_Controller
     {
-        /**
-         * Instance of a user meta fields object.
-         *
-         * @since 4.7.0
-         * @var WP_REST_User_Meta_Fields
-         */
         protected $meta;
 
-        /**
-         * Constructor.
-         *
-         * @since 4.7.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
@@ -37,13 +12,6 @@
             $this->meta = new WP_REST_User_Meta_Fields();
         }
 
-        /**
-         * Registers the routes for users.
-         *
-         * @since 4.7.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -141,13 +109,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for collections.
-         *
-         * @return array Collection parameters.
-         * @since 4.7.0
-         *
-         */
         public function get_collection_params()
         {
             $query_params = parent::get_collection_params();
@@ -241,34 +202,9 @@
                 ],
             ];
 
-            /**
-             * Filters REST API collection parameters for the users controller.
-             *
-             * This filter registers the collection parameter, but does not map the
-             * collection parameter to an internal WP_User_Query parameter.  Use the
-             * `rest_user_query` filter to set WP_User_Query arguments.
-             *
-             * @param array $query_params JSON Schema-formatted collection parameters.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters('rest_user_collection_params', $query_params);
         }
 
-        /**
-         * Checks for a valid value for the reassign parameter when deleting users.
-         *
-         * The value can be an integer, 'false', false, or ''.
-         *
-         * @param int|bool        $value   The value passed to the reassign parameter.
-         * @param WP_REST_Request $request Full details about the request.
-         * @param string          $param   The parameter that is being sanitized.
-         *
-         * @return int|bool|WP_Error
-         * @since 4.7.0
-         *
-         */
         public function check_reassign($value, $request, $param)
         {
             if(is_numeric($value))
@@ -284,15 +220,6 @@
             return new WP_Error('rest_invalid_param', __('Invalid user parameter(s).'), ['status' => 400]);
         }
 
-        /**
-         * Permissions check for getting all users.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, otherwise WP_Error object.
-         * @since 4.7.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             // Check if roles is specified in GET request and if user can list users.
@@ -335,15 +262,6 @@
             return true;
         }
 
-        /**
-         * Retrieves all users.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_items($request)
         {
             // Retrieve the list of registered collection query parameters.
@@ -422,16 +340,7 @@
             {
                 $prepared_args['search'] = '*'.$prepared_args['search'].'*';
             }
-            /**
-             * Filters WP_User_Query arguments when querying users via the REST API.
-             *
-             * @link  https://developer.wordpress.org/reference/classes/wp_user_query/
-             *
-             * @since 4.7.0
-             *
-             * @param array           $prepared_args Array of arguments for WP_User_Query.
-             * @param WP_REST_Request $request       The REST API request.
-             */
+
             $prepared_args = apply_filters('rest_user_query', $prepared_args, $request);
 
             $query = new WP_User_Query($prepared_args);
@@ -492,17 +401,6 @@
             return $response;
         }
 
-        /**
-         * Prepares a single user output for response.
-         *
-         * @param WP_User         $item    User object.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response Response object.
-         * @since 5.9.0 Renamed `$user` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.7.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -615,28 +513,9 @@
                 $response->add_links($this->prepare_links($user));
             }
 
-            /**
-             * Filters user data returned from the REST API.
-             *
-             * @param WP_REST_Response $response The response object.
-             * @param WP_User          $user     User object used to create response.
-             * @param WP_REST_Request  $request  Request object.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters('rest_prepare_user', $response, $user, $request);
         }
 
-        /**
-         * Prepares links for the user request.
-         *
-         * @param WP_User $user User object.
-         *
-         * @return array Links for the given user.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_links($user)
         {
             $links = [
@@ -651,15 +530,6 @@
             return $links;
         }
 
-        /**
-         * Checks if a given request has access to read a user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, otherwise WP_Error object.
-         * @since 4.7.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $user = $this->get_user($request['id']);
@@ -687,15 +557,6 @@
             return true;
         }
 
-        /**
-         * Get the user, if the ID is valid.
-         *
-         * @param int $id Supplied ID.
-         *
-         * @return WP_User|WP_Error True if ID is valid, WP_Error otherwise.
-         * @since 4.7.2
-         *
-         */
         protected function get_user($id)
         {
             $error = new WP_Error('rest_user_invalid_id', __('Invalid user ID.'), ['status' => 404]);
@@ -719,15 +580,6 @@
             return $user;
         }
 
-        /**
-         * Retrieves a single user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_item($request)
         {
             $user = $this->get_user($request['id']);
@@ -742,15 +594,6 @@
             return $response;
         }
 
-        /**
-         * Retrieves the current user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_current_item($request)
         {
             $current_user_id = get_current_user_id();
@@ -767,15 +610,6 @@
             return $response;
         }
 
-        /**
-         * Checks if a given request has access create users.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to create items, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function create_item_permissions_check($request)
         {
             if(! current_user_can('create_users'))
@@ -786,15 +620,6 @@
             return true;
         }
 
-        /**
-         * Creates a single user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function create_item($request)
         {
             if(! empty($request['id']))
@@ -878,16 +703,6 @@
 
             $user = get_user_by('id', $user_id);
 
-            /**
-             * Fires immediately after a user is created or updated via the REST API.
-             *
-             * @param WP_User         $user     Inserted or updated user object.
-             * @param WP_REST_Request $request  Request object.
-             * @param bool            $creating True when creating a user, false when updating.
-             *
-             * @since 4.7.0
-             *
-             */
             do_action('rest_insert_user', $user, $request, true);
 
             if(! empty($request['roles']) && ! empty($schema['properties']['roles']))
@@ -915,16 +730,6 @@
 
             $request->set_param('context', 'edit');
 
-            /**
-             * Fires after a user is completely created or updated via the REST API.
-             *
-             * @param WP_User         $user     Inserted or updated user object.
-             * @param WP_REST_Request $request  Request object.
-             * @param bool            $creating True when creating a user, false when updating.
-             *
-             * @since 5.0.0
-             *
-             */
             do_action('rest_after_insert_user', $user, $request, true);
 
             $response = $this->prepare_item_for_response($user, $request);
@@ -936,13 +741,6 @@
             return $response;
         }
 
-        /**
-         * Retrieves the user's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 4.7.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -1113,19 +911,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Determines if the current user is allowed to make the desired roles change.
-         *
-         * @param int       $user_id  User ID.
-         * @param array     $roles    New user roles.
-         *
-         * @return true|WP_Error True if the current user is allowed to make the role change,
-         *                       otherwise a WP_Error object.
-         * @global WP_Roles $wp_roles WordPress role management object.
-         *
-         * @since 4.7.0
-         *
-         */
         protected function check_role_update($user_id, $roles)
         {
             global $wp_roles;
@@ -1163,15 +948,6 @@
             return true;
         }
 
-        /**
-         * Prepares a single user for creation or update.
-         *
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return object User object.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_item_for_database($request)
         {
             $prepared_user = new stdClass();
@@ -1246,27 +1022,9 @@
                 $prepared_user->role = false;
             }
 
-            /**
-             * Filters user data before insertion via the REST API.
-             *
-             * @param object          $prepared_user User object.
-             * @param WP_REST_Request $request       Request object.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters('rest_pre_insert_user', $prepared_user, $request);
         }
 
-        /**
-         * Checks if a given request has access to update the current user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to update the item, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function update_current_item_permissions_check($request)
         {
             $request['id'] = get_current_user_id();
@@ -1274,15 +1032,6 @@
             return $this->update_item_permissions_check($request);
         }
 
-        /**
-         * Checks if a given request has access to update a user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to update the item, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function update_item_permissions_check($request)
         {
             $user = $this->get_user($request['id']);
@@ -1318,15 +1067,6 @@
             return true;
         }
 
-        /**
-         * Updates the current user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function update_current_item($request)
         {
             $request['id'] = get_current_user_id();
@@ -1334,15 +1074,6 @@
             return $this->update_item($request);
         }
 
-        /**
-         * Updates a single user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function update_item($request)
         {
             $user = $this->get_user($request['id']);
@@ -1398,7 +1129,6 @@
 
             $user = get_user_by('id', $user_id);
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-users-controller.php */
             do_action('rest_insert_user', $user, $request, false);
 
             if(! empty($request['roles']))
@@ -1428,7 +1158,6 @@
 
             $request->set_param('context', 'edit');
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-users-controller.php */
             do_action('rest_after_insert_user', $user, $request, false);
 
             $response = $this->prepare_item_for_response($user, $request);
@@ -1437,15 +1166,6 @@
             return $response;
         }
 
-        /**
-         * Checks if a given request has access to delete the current user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to delete the item, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function delete_current_item_permissions_check($request)
         {
             $request['id'] = get_current_user_id();
@@ -1453,15 +1173,6 @@
             return $this->delete_item_permissions_check($request);
         }
 
-        /**
-         * Checks if a given request has access delete a user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to delete the item, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function delete_item_permissions_check($request)
         {
             $user = $this->get_user($request['id']);
@@ -1478,15 +1189,6 @@
             return true;
         }
 
-        /**
-         * Deletes the current user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function delete_current_item($request)
         {
             $request['id'] = get_current_user_id();
@@ -1494,15 +1196,6 @@
             return $this->delete_item($request);
         }
 
-        /**
-         * Deletes a single user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function delete_item($request)
         {
             // We don't support delete requests in multisite.
@@ -1556,34 +1249,11 @@
                                     'previous' => $previous->get_data(),
                                 ]);
 
-            /**
-             * Fires immediately after a user is deleted via the REST API.
-             *
-             * @param WP_User          $user     The user data.
-             * @param WP_REST_Response $response The response returned from the API.
-             * @param WP_REST_Request  $request  The request sent to the API.
-             *
-             * @since 4.7.0
-             *
-             */
             do_action('rest_delete_user', $user, $response, $request);
 
             return $response;
         }
 
-        /**
-         * Check a username for the REST API.
-         *
-         * Performs a couple of checks like edit_user() in wp-admin/includes/user.php.
-         *
-         * @param string          $value   The username submitted in the request.
-         * @param WP_REST_Request $request Full details about the request.
-         * @param string          $param   The parameter name.
-         *
-         * @return string|WP_Error The sanitized username, if valid, otherwise an error.
-         * @since 4.7.0
-         *
-         */
         public function check_username($value, $request, $param)
         {
             $username = (string) $value;
@@ -1593,7 +1263,6 @@
                 return new WP_Error('rest_user_invalid_username', __('This username is invalid because it uses illegal characters. Please enter a valid username.'), ['status' => 400]);
             }
 
-            /** This filter is documented in wp-includes/user.php */
             $illegal_logins = (array) apply_filters('illegal_user_logins', []);
 
             if(in_array(strtolower($username), array_map('strtolower', $illegal_logins), true))
@@ -1604,19 +1273,6 @@
             return $username;
         }
 
-        /**
-         * Check a user password for the REST API.
-         *
-         * Performs a couple of checks like edit_user() in wp-admin/includes/user.php.
-         *
-         * @param string          $value   The password submitted in the request.
-         * @param WP_REST_Request $request Full details about the request.
-         * @param string          $param   The parameter name.
-         *
-         * @return string|WP_Error The sanitized password, if valid, otherwise an error.
-         * @since 4.7.0
-         *
-         */
         public function check_user_password($value, $request, $param)
         {
             $password = (string) $value;

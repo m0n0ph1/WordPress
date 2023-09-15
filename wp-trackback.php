@@ -1,12 +1,4 @@
 <?php
-    /**
-     * Handle Trackbacks and Pingbacks Sent to WordPress
-     *
-     * @since      0.71
-     *
-     * @package    WordPress
-     * @subpackage Trackbacks
-     */
 
     if(empty($wp))
     {
@@ -17,18 +9,6 @@
 // Always run as an unauthenticated user.
     wp_set_current_user(0);
 
-    /**
-     * Response to a trackback.
-     *
-     * Responds with an error or success XML message.
-     *
-     * @param int|bool $error         Whether there was an error.
-     *                                Default '0'. Accepts '0' or '1', true or false.
-     * @param string   $error_message Error message if an error occurred. Default empty string.
-     *
-     * @since 0.71
-     *
-     */
     function trackback_response($error = 0, $error_message = '')
     {
         header('Content-Type: text/xml; charset='.get_option('blog_charset'));
@@ -112,19 +92,6 @@
 
     if(! empty($trackback_url) && ! empty($title))
     {
-        /**
-         * Fires before the trackback is added to a post.
-         *
-         * @param int    $post_id       Post ID related to the trackback.
-         * @param string $trackback_url Trackback URL.
-         * @param string $charset       Character set.
-         * @param string $title         Trackback title.
-         * @param string $excerpt       Trackback excerpt.
-         * @param string $blog_name     Site name.
-         *
-         * @since 4.7.0
-         *
-         */
         do_action('pre_trackback_post', $post_id, $trackback_url, $charset, $title, $excerpt, $blog_name);
 
         header('Content-Type: text/xml; charset='.get_option('blog_charset'));
@@ -166,14 +133,6 @@
 
         $trackback_id = $wpdb->insert_id;
 
-        /**
-         * Fires after a trackback is added to a post.
-         *
-         * @param int $trackback_id Trackback ID.
-         *
-         * @since 1.2.0
-         *
-         */
         do_action('trackback_post', $trackback_id);
 
         trackback_response(0);

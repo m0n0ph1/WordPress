@@ -1,29 +1,7 @@
 <?php
-    /**
-     * Custom comment walker for this theme
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Nineteen
-     * @since      Twenty Nineteen 1.0
-     */
 
-    /**
-     * This class outputs custom comment walker for HTML5 friendly WordPress comment and threaded replies.
-     *
-     * @since Twenty Nineteen 1.0
-     */
     class TwentyNineteen_Walker_Comment extends Walker_Comment
     {
-        /**
-         * Outputs a comment in the HTML5 format.
-         *
-         * @param WP_Comment $comment Comment to display.
-         * @param int        $depth   Depth of the current comment.
-         * @param array      $args    An array of arguments.
-         *
-         * @see wp_list_comments()
-         *
-         */
         protected function html5_comment($comment, $depth, $args)
         {
             $tag = ('div' === $args['style']) ? 'div' : 'li';

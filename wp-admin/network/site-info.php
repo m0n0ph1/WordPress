@@ -1,13 +1,5 @@
 <?php
-    /**
-     * Edit Site Info Administration Screen
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.1.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_sites'))
@@ -250,14 +242,7 @@
             </table>
 
             <?php
-                /**
-                 * Fires at the end of the site info form in network admin.
-                 *
-                 * @param int $id The site ID.
-                 *
-                 * @since 5.6.0
-                 *
-                 */
+
                 do_action('network_site_info_form', $id);
 
                 submit_button();

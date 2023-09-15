@@ -1,13 +1,5 @@
 <?php
-    /**
-     * Multisite sites administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_sites'))
@@ -41,7 +33,6 @@
 
     if(isset($_GET['action']))
     {
-        /** This action is documented in wp-admin/network/edit.php */
         do_action('wpmuadminedit');
 
         // A list of valid actions and their associated messaging for confirmation output.
@@ -237,7 +228,6 @@
                         $redirect_to = wp_get_referer();
                         $blogs = (array) $_POST['allblogs'];
 
-                        /** This action is documented in wp-admin/network/site-themes.php */
                         $redirect_to = apply_filters('handle_network_bulk_actions-'.get_current_screen()->id, $redirect_to, $doaction, $blogs, $id); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
                         wp_safe_redirect($redirect_to);
@@ -266,26 +256,11 @@
             case 'activateblog':
                 update_blog_status($id, 'deleted', '0');
 
-                /**
-                 * Fires after a network site is activated.
-                 *
-                 * @param int $id The ID of the activated site.
-                 *
-                 * @since MU (3.0.0)
-                 *
-                 */
                 do_action('activate_blog', $id);
                 break;
 
             case 'deactivateblog':
-                /**
-                 * Fires before a network site is deactivated.
-                 *
-                 * @param int $id The ID of the site being deactivated.
-                 *
-                 * @since MU (3.0.0)
-                 *
-                 */
+
                 do_action('deactivate_blog', $id);
 
                 update_blog_status($id, 'deleted', '1');
@@ -355,17 +330,7 @@
                 $msg = __('Site marked as spam.');
                 break;
             default:
-                /**
-                 * Filters a specific, non-default, site-updated message in the Network admin.
-                 *
-                 * The dynamic portion of the hook name, `$action`, refers to the non-default
-                 * site update action.
-                 *
-                 * @param string $msg The update message. Default 'Settings saved'.
-                 *
-                 * @since 3.1.0
-                 *
-                 */
+
                 $msg = apply_filters("network_sites_updated_message_{$action}", __('Settings saved.'));
                 break;
         }

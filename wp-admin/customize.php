@@ -1,15 +1,7 @@
 <?php
-    /**
-     * Theme Customize Screen.
-     *
-     * @package    WordPress
-     * @subpackage Customize
-     * @since      3.4.0
-     */
 
     define('IFRAME_REQUEST', true);
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('customize'))
@@ -17,10 +9,6 @@
         wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to customize this site.').'</p>', 403);
     }
 
-    /**
-     * @global WP_Scripts           $wp_scripts
-     * @global WP_Customize_Manager $wp_customize
-     */
     global $wp_scripts, $wp_customize;
 
     if($wp_customize->changeset_post_id())
@@ -91,22 +79,12 @@
     add_action('customize_controls_print_footer_scripts', '_wp_footer_scripts');
     add_action('customize_controls_print_styles', 'print_admin_styles', 20);
 
-    /**
-     * Fires when Customizer controls are initialized, before scripts are enqueued.
-     *
-     * @since 3.4.0
-     */
     do_action('customize_controls_init');
 
     wp_enqueue_script('heartbeat');
     wp_enqueue_script('customize-controls');
     wp_enqueue_style('customize-controls');
 
-    /**
-     * Fires when enqueuing Customizer control scripts.
-     *
-     * @since 3.4.0
-     */
     do_action('customize_controls_enqueue_scripts');
 
     // Let's roll.
@@ -149,25 +127,11 @@
 </script>
 
 <?php
-    /**
-     * Fires when Customizer control styles are printed.
-     *
-     * @since 3.4.0
-     */
+
     do_action('customize_controls_print_styles');
 
-    /**
-     * Fires when Customizer control scripts are printed.
-     *
-     * @since 3.4.0
-     */
     do_action('customize_controls_print_scripts');
 
-    /**
-     * Fires in head section of Customizer controls.
-     *
-     * @since 5.5.0
-     */
     do_action('customize_controls_head');
 ?>
 </head>
@@ -304,11 +268,6 @@
     <div id="customize-preview" class="wp-full-overlay-main"></div>
     <?php
 
-        /**
-         * Prints templates, control scripts, and settings in the footer.
-         *
-         * @since 3.4.0
-         */
         do_action('customize_controls_print_footer_scripts');
     ?>
 </div>

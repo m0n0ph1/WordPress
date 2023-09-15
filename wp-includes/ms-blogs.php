@@ -1,46 +1,17 @@
 <?php
 
-    /**
-     * Site/blog functions that work with the blogs table and related data.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      MU (3.0.0)
-     */
-
     require_once ABSPATH.WPINC.'/ms-site.php';
     require_once ABSPATH.WPINC.'/ms-network.php';
 
-    /**
-     * Updates the last_updated field for the current site.
-     *
-     * @since MU (3.0.0)
-     */
     function wpmu_update_blogs_date()
     {
         $site_id = get_current_blog_id();
 
         update_blog_details($site_id, ['last_updated' => current_time('mysql', true)]);
-        /**
-         * Fires after the blog details are updated.
-         *
-         * @param int $blog_id Site ID.
-         *
-         * @since MU (3.0.0)
-         *
-         */
+
         do_action('wpmu_blog_updated', $site_id);
     }
 
-    /**
-     * Gets a full site URL, given a site ID.
-     *
-     * @param int $blog_id Site ID.
-     *
-     * @return string Full site URL if found. Empty string if not.
-     * @since MU (3.0.0)
-     *
-     */
     function get_blogaddress_by_id($blog_id)
     {
         $bloginfo = get_site((int) $blog_id);
@@ -56,15 +27,6 @@
         return esc_url($scheme.'://'.$bloginfo->domain.$bloginfo->path);
     }
 
-    /**
-     * Gets a full site URL, given a site name.
-     *
-     * @param string $blogname Name of the subdomain or directory.
-     *
-     * @return string
-     * @since MU (3.0.0)
-     *
-     */
     function get_blogaddress_by_name($blogname)
     {
         if(is_subdomain_install())
@@ -87,16 +49,6 @@
         return esc_url($url.'/');
     }
 
-    /**
-     * Retrieves a site's ID given its (subdomain or directory) slug.
-     *
-     * @param string $slug A site's slug.
-     *
-     * @return int|null The site ID, or null if no site is found for the given slug.
-     * @since MU (3.0.0)
-     * @since 4.7.0 Converted to use `get_sites()`.
-     *
-     */
     function get_id_from_blogname($slug)
     {
         $current_network = get_network();
@@ -129,20 +81,6 @@
         return array_shift($site_ids);
     }
 
-    /**
-     * Retrieves the details for a blog from the blogs table and blog options.
-     *
-     * @param int|string|array $fields  Optional. A blog ID, a blog slug, or an array of fields to query against.
-     *                                  Defaults to the current blog ID.
-     * @param bool             $get_all Whether to retrieve all details or only the details in the blogs table.
-     *                                  Default is true.
-     *
-     * @return WP_Site|false Blog details on success. False on failure.
-     * @global wpdb            $wpdb    WordPress database abstraction object.
-     *
-     * @since MU (3.0.0)
-     *
-     */
     function get_blog_details($fields = null, $get_all = true)
     {
         global $wpdb;
@@ -327,15 +265,6 @@
             restore_current_blog();
         }
 
-        /**
-         * Filters a blog's details.
-         *
-         * @param WP_Site $details The blog details.
-         *
-         * @deprecated 4.7.0 Use {@see 'site_details'} instead.
-         *
-         * @since      MU (3.0.0)
-         */
         $details = apply_filters_deprecated('blog_details', [$details], '4.7.0', 'site_details');
 
         wp_cache_set($blog_id.$all, $details, 'blog-details');
@@ -346,14 +275,6 @@
         return $details;
     }
 
-    /**
-     * Clears the blog details cache.
-     *
-     * @param int $blog_id Optional. Blog ID. Defaults to current blog.
-     *
-     * @since MU (3.0.0)
-     *
-     */
     function refresh_blog_details($blog_id = 0)
     {
         $blog_id = (int) $blog_id;
@@ -365,18 +286,6 @@
         clean_blog_cache($blog_id);
     }
 
-    /**
-     * Updates the details for a blog and the blogs table for a given blog ID.
-     *
-     * @param int   $blog_id Blog ID.
-     * @param array $details Array of details keyed by blogs table field names.
-     *
-     * @return bool True if update succeeds, false otherwise.
-     * @global wpdb $wpdb    WordPress database abstraction object.
-     *
-     * @since MU (3.0.0)
-     *
-     */
     function update_blog_details($blog_id, $details = [])
     {
         global $wpdb;
@@ -401,14 +310,6 @@
         return true;
     }
 
-    /**
-     * Cleans the site details cache for a site.
-     *
-     * @param int $site_id Optional. Site ID. Default is the current site ID.
-     *
-     * @since 4.7.4
-     *
-     */
     function clean_site_details_cache($site_id = 0)
     {
         $site_id = (int) $site_id;
@@ -421,24 +322,6 @@
         wp_cache_delete($site_id, 'blog-details');
     }
 
-    /**
-     * Retrieves option value for a given blog id based on name of option.
-     *
-     * If the option does not exist or does not have a value, then the return value
-     * will be false. This is useful to check whether you need to install an option
-     * and is commonly used during installation of plugin options and to test
-     * whether upgrading is required.
-     *
-     * If the option was serialized then it will be unserialized when it is returned.
-     *
-     * @param int    $id            A blog ID. Can be null to refer to the current blog.
-     * @param string $option        Name of option to retrieve. Expected to not be SQL-escaped.
-     * @param mixed  $default_value Optional. Default value to return if the option does not exist.
-     *
-     * @return mixed Value set for the option.
-     * @since MU (3.0.0)
-     *
-     */
     function get_blog_option($id, $option, $default_value = false)
     {
         $id = (int) $id;
@@ -457,40 +340,9 @@
         $value = get_option($option, $default_value);
         restore_current_blog();
 
-        /**
-         * Filters a blog option value.
-         *
-         * The dynamic portion of the hook name, `$option`, refers to the blog option name.
-         *
-         * @param string $value The option value.
-         * @param int    $id    Blog ID.
-         *
-         * @since 3.5.0
-         *
-         */
         return apply_filters("blog_option_{$option}", $value, $id);
     }
 
-    /**
-     * Adds a new option for a given blog ID.
-     *
-     * You do not need to serialize values. If the value needs to be serialized, then
-     * it will be serialized before it is inserted into the database. Remember,
-     * resources can not be serialized or added as an option.
-     *
-     * You can create options without values and then update the values later.
-     * Existing options will not be updated and checks are performed to ensure that you
-     * aren't adding a protected WordPress option. Care should be taken to not name
-     * options the same as the ones which are protected.
-     *
-     * @param int    $id     A blog ID. Can be null to refer to the current blog.
-     * @param string $option Name of option to add. Expected to not be SQL-escaped.
-     * @param mixed  $value  Option value, can be anything. Expected to not be SQL-escaped.
-     *
-     * @return bool True if the option was added, false otherwise.
-     * @since MU (3.0.0)
-     *
-     */
     function add_blog_option($id, $option, $value)
     {
         $id = (int) $id;
@@ -512,16 +364,6 @@
         return $return;
     }
 
-    /**
-     * Removes an option by name for a given blog ID. Prevents removal of protected WordPress options.
-     *
-     * @param int    $id     A blog ID. Can be null to refer to the current blog.
-     * @param string $option Name of option to remove. Expected to not be SQL-escaped.
-     *
-     * @return bool True if the option was deleted, false otherwise.
-     * @since MU (3.0.0)
-     *
-     */
     function delete_blog_option($id, $option)
     {
         $id = (int) $id;
@@ -543,18 +385,6 @@
         return $return;
     }
 
-    /**
-     * Updates an option for a particular blog.
-     *
-     * @param int    $id         The blog ID.
-     * @param string $option     The option key.
-     * @param mixed  $value      The option value.
-     * @param mixed  $deprecated Not used.
-     *
-     * @return bool True if the value was updated, false otherwise.
-     * @since MU (3.0.0)
-     *
-     */
     function update_blog_option($id, $option, $value, $deprecated = null)
     {
         $id = (int) $id;
@@ -576,30 +406,6 @@
         return $return;
     }
 
-    /**
-     * Switches the current blog.
-     *
-     * This function is useful if you need to pull posts, or other information,
-     * from other blogs. You can switch back afterwards using restore_current_blog().
-     *
-     * Things that aren't switched:
-     *  - plugins. See #14941
-     *
-     * @param int              $new_blog_id The ID of the blog to switch to. Default: current blog.
-     * @param bool             $deprecated  Not used.
-     *
-     * @return true Always returns true.
-     * @see   restore_current_blog()
-     * @since MU (3.0.0)
-     *
-     * @global wpdb            $wpdb        WordPress database abstraction object.
-     * @global int             $blog_id
-     * @global array           $_wp_switched_stack
-     * @global bool            $switched
-     * @global string          $table_prefix
-     * @global WP_Object_Cache $wp_object_cache
-     *
-     */
     function switch_to_blog($new_blog_id, $deprecated = null)
     {
         global $wpdb;
@@ -619,18 +425,6 @@
          */
         if($new_blog_id == $prev_blog_id)
         {
-            /**
-             * Fires when the blog is switched.
-             *
-             * @param int    $new_blog_id  New blog ID.
-             * @param int    $prev_blog_id Previous blog ID.
-             * @param string $context      Additional context. Accepts 'switch' when called from switch_to_blog()
-             *                             or 'restore' when called from restore_current_blog().
-             *
-             * @since 5.4.0 The `$context` parameter was added.
-             *
-             * @since MU (3.0.0)
-             */
             do_action('switch_blog', $new_blog_id, $prev_blog_id, 'switch');
 
             $GLOBALS['switched'] = true;
@@ -696,7 +490,6 @@
             }
         }
 
-        /** This filter is documented in wp-includes/ms-blogs.php */
         do_action('switch_blog', $new_blog_id, $prev_blog_id, 'switch');
 
         $GLOBALS['switched'] = true;
@@ -704,21 +497,6 @@
         return true;
     }
 
-    /**
-     * Restores the current blog, after calling switch_to_blog().
-     *
-     * @return bool True on success, false if we're already on the current blog.
-     * @since MU (3.0.0)
-     *
-     * @global wpdb            $wpdb WordPress database abstraction object.
-     * @global array           $_wp_switched_stack
-     * @global int             $blog_id
-     * @global bool            $switched
-     * @global string          $table_prefix
-     * @global WP_Object_Cache $wp_object_cache
-     *
-     * @see   switch_to_blog()
-     */
     function restore_current_blog()
     {
         global $wpdb;
@@ -733,7 +511,6 @@
 
         if($new_blog_id == $prev_blog_id)
         {
-            /** This filter is documented in wp-includes/ms-blogs.php */
             do_action('switch_blog', $new_blog_id, $prev_blog_id, 'restore');
 
             // If we still have items in the switched stack, consider ourselves still 'switched'.
@@ -800,7 +577,6 @@
             }
         }
 
-        /** This filter is documented in wp-includes/ms-blogs.php */
         do_action('switch_blog', $new_blog_id, $prev_blog_id, 'restore');
 
         // If we still have items in the switched stack, consider ourselves still 'switched'.
@@ -809,15 +585,6 @@
         return true;
     }
 
-    /**
-     * Switches the initialized roles and current user capabilities to another site.
-     *
-     * @param int $new_site_id New site ID.
-     * @param int $old_site_id Old site ID.
-     *
-     * @since 4.9.0
-     *
-     */
     function wp_switch_roles_and_user($new_site_id, $old_site_id)
     {
         if($new_site_id == $old_site_id)
@@ -834,44 +601,16 @@
         wp_get_current_user()->for_site($new_site_id);
     }
 
-    /**
-     * Determines if switch_to_blog() is in effect.
-     *
-     * @return bool True if switched, false otherwise.
-     * @global array $_wp_switched_stack
-     *
-     * @since 3.5.0
-     *
-     */
     function ms_is_switched()
     {
         return ! empty($GLOBALS['_wp_switched_stack']);
     }
 
-    /**
-     * Checks if a particular blog is archived.
-     *
-     * @param int $id Blog ID.
-     *
-     * @return string Whether the blog is archived or not.
-     * @since MU (3.0.0)
-     *
-     */
     function is_archived($id)
     {
         return get_blog_status($id, 'archived');
     }
 
-    /**
-     * Updates the 'archived' status of a particular blog.
-     *
-     * @param int    $id       Blog ID.
-     * @param string $archived The new status.
-     *
-     * @return string $archived
-     * @since MU (3.0.0)
-     *
-     */
     function update_archived($id, $archived)
     {
         update_blog_status($id, 'archived', $archived);
@@ -879,21 +618,6 @@
         return $archived;
     }
 
-    /**
-     * Updates a blog details field.
-     *
-     * @param int    $blog_id    Blog ID.
-     * @param string $pref       Field name.
-     * @param string $value      Field value.
-     * @param null   $deprecated Not used.
-     *
-     * @return string|false $value
-     * @global wpdb  $wpdb       WordPress database abstraction object.
-     *
-     * @since MU (3.0.0)
-     * @since 5.1.0 Use wp_update_site() internally.
-     *
-     */
     function update_blog_status($blog_id, $pref, $value, $deprecated = null)
     {
         global $wpdb;
@@ -934,18 +658,6 @@
         return $value;
     }
 
-    /**
-     * Gets a blog details field.
-     *
-     * @param int    $id   Blog ID.
-     * @param string $pref Field name.
-     *
-     * @return bool|string|null $value
-     * @global wpdb  $wpdb WordPress database abstraction object.
-     *
-     * @since MU (3.0.0)
-     *
-     */
     function get_blog_status($id, $pref)
     {
         global $wpdb;
@@ -959,20 +671,6 @@
         return $wpdb->get_var($wpdb->prepare("SELECT %s FROM {$wpdb->blogs} WHERE blog_id = %d", $pref, $id));
     }
 
-    /**
-     * Gets a list of most recently updated blogs.
-     *
-     * @param mixed $deprecated Not used.
-     * @param int   $start      Optional. Number of blogs to offset the query. Used to build LIMIT clause.
-     *                          Can be used for pagination. Default 0.
-     * @param int   $quantity   Optional. The maximum number of blogs to retrieve. Default 40.
-     *
-     * @return array The list of blogs.
-     * @since MU (3.0.0)
-     *
-     * @global wpdb $wpdb       WordPress database abstraction object.
-     *
-     */
     function get_last_updated($deprecated = '', $start = 0, $quantity = 40)
     {
         global $wpdb;
@@ -985,17 +683,6 @@
         return $wpdb->get_results($wpdb->prepare("SELECT blog_id, domain, path FROM $wpdb->blogs WHERE site_id = %d AND public = '1' AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0' AND last_updated != '0000-00-00 00:00:00' ORDER BY last_updated DESC limit %d, %d", get_current_network_id(), $start, $quantity), ARRAY_A);
     }
 
-    /**
-     * Handler for updating the site's last updated date when a post is published or
-     * an already published post is changed.
-     *
-     * @param string  $new_status The new post status.
-     * @param string  $old_status The old post status.
-     * @param WP_Post $post       Post object.
-     *
-     * @since 3.3.0
-     *
-     */
     function _update_blog_date_on_post_publish($new_status, $old_status, $post)
     {
         $post_type_obj = get_post_type_object($post->post_type);
@@ -1014,15 +701,6 @@
         wpmu_update_blogs_date();
     }
 
-    /**
-     * Handler for updating the current site's last updated date when a published
-     * post is deleted.
-     *
-     * @param int $post_id Post ID
-     *
-     * @since 3.4.0
-     *
-     */
     function _update_blog_date_on_post_delete($post_id)
     {
         $post = get_post($post_id);
@@ -1041,16 +719,6 @@
         wpmu_update_blogs_date();
     }
 
-    /**
-     * Handler for updating the current site's posts count when a post is deleted.
-     *
-     * @param int     $post_id Post ID.
-     * @param WP_Post $post    Post object.
-     *
-     * @since 4.0.0
-     * @since 6.2.0 Added the `$post` parameter.
-     *
-     */
     function _update_posts_count_on_delete($post_id, $post)
     {
         if(! $post || 'publish' !== $post->post_status || 'post' !== $post->post_type)
@@ -1061,17 +729,6 @@
         update_posts_count();
     }
 
-    /**
-     * Handler for updating the current site's posts count when a post status changes.
-     *
-     * @param string  $new_status The status the post is changing to.
-     * @param string  $old_status The status the post is changing from.
-     * @param WP_Post $post       Post object
-     *
-     * @since 4.9.0 Added the `$post` parameter.
-     *
-     * @since 4.0.0
-     */
     function _update_posts_count_on_transition_post_status($new_status, $old_status, $post = null)
     {
         if($new_status === $old_status)
@@ -1092,24 +749,6 @@
         update_posts_count();
     }
 
-    /**
-     * Counts number of sites grouped by site status.
-     *
-     * @param int $network_id Optional. The network to get counts for. Default is the current network ID.
-     *
-     * @return int[] {
-     *     Numbers of sites grouped by site status.
-     *
-     * @type int  $all        The total number of sites.
-     * @type int  $public     The number of public sites.
-     * @type int  $archived   The number of archived sites.
-     * @type int  $mature     The number of mature sites.
-     * @type int  $spam       The number of spam sites.
-     * @type int  $deleted    The number of deleted sites.
-     *                        }
-     * @since 5.3.0
-     *
-     */
     function wp_count_sites($network_id = null)
     {
         if(empty($network_id))

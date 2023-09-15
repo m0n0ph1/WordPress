@@ -1,68 +1,18 @@
 <?php
-    /**
-     * Customize API: WP_Customize_Nav_Menu_Item_Control class
-     *
-     * @package    WordPress
-     * @subpackage Customize
-     * @since      4.4.0
-     */
 
-    /**
-     * Customize control to represent the name field for a given menu.
-     *
-     * @since 4.3.0
-     *
-     * @see   WP_Customize_Control
-     */
     class WP_Customize_Nav_Menu_Item_Control extends WP_Customize_Control
     {
-        /**
-         * Control type.
-         *
-         * @since 4.3.0
-         * @var string
-         */
         public $type = 'nav_menu_item';
 
-        /**
-         * The nav menu item setting.
-         *
-         * @since 4.3.0
-         * @var WP_Customize_Nav_Menu_Item_Setting
-         */
         public $setting;
 
-        /**
-         * Constructor.
-         *
-         * @param WP_Customize_Manager $manager Customizer bootstrap instance.
-         * @param string               $id      The control ID.
-         * @param array                $args    Optional. Arguments to override class property defaults.
-         *                                      See WP_Customize_Control::__construct() for information
-         *                                      on accepted arguments. Default empty array.
-         *
-         * @see   WP_Customize_Control::__construct()
-         *
-         * @since 4.3.0
-         *
-         */
         public function __construct($manager, $id, $args = [])
         {
             parent::__construct($manager, $id, $args);
         }
 
-        /**
-         * Don't render the control's content - it's rendered with a JS template.
-         *
-         * @since 4.3.0
-         */
         public function render_content() {}
 
-        /**
-         * JS/Underscore template for the control UI.
-         *
-         * @since 4.3.0
-         */
         public function content_template()
         {
             ?>
@@ -165,13 +115,7 @@
                 </p>
 
                 <?php
-                    /**
-                     * Fires at the end of the form field template for nav menu items in the customizer.
-                     *
-                     * Additional fields can be rendered here and managed in JavaScript.
-                     *
-                     * @since 5.4.0
-                     */
+
                     do_action('wp_nav_menu_item_custom_fields_customize_template');
                 ?>
 
@@ -203,13 +147,6 @@
             <?php
         }
 
-        /**
-         * Return parameters for this control.
-         *
-         * @return array Exported parameters.
-         * @since 4.3.0
-         *
-         */
         public function json()
         {
             $exported = parent::json();

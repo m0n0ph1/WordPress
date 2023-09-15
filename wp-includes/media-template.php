@@ -1,18 +1,5 @@
 <?php
-    /**
-     * WordPress media templates.
-     *
-     * @package    WordPress
-     * @subpackage Media
-     * @since      3.5.0
-     */
 
-    /**
-     * Outputs the markup for an audio tag to be used in an Underscore template
-     * when data.model is passed.
-     *
-     * @since 3.9.0
-     */
     function wp_underscore_audio_template()
     {
         $audio_types = wp_get_audio_extensions();
@@ -50,12 +37,6 @@
         <?php
     }
 
-    /**
-     * Outputs the markup for a video tag to be used in an Underscore template
-     * when data.model is passed.
-     *
-     * @since 3.9.0
-     */
     function wp_underscore_video_template()
     {
         $video_types = wp_get_video_extensions();
@@ -156,11 +137,6 @@
         <?php
     }
 
-    /**
-     * Prints the templates used in the media manager.
-     *
-     * @since 3.5.0
-     */
     function wp_print_media_templates()
     {
         $class = 'media-modal wp-core-ui';
@@ -255,7 +231,7 @@
                     <div class="upload-ui">
                         <h2 class="upload-instructions"><?php _e('Upload Limit Exceeded'); ?></h2>
                         <?php
-                            /** This action is documented in wp-admin/includes/media.php */
+
                             do_action('upload_ui_over_quota');
                         ?>
                     </div>
@@ -272,20 +248,18 @@
 
                     <div class="post-upload-ui" id="post-upload-info">
                         <?php
-                            /** This action is documented in wp-admin/includes/media.php */
+
                             do_action('pre-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-                            /** This action is documented in wp-admin/includes/media.php */
+
                             do_action('pre-plupload-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
                             if(10 === remove_action('post-plupload-upload-ui', 'media_upload_flash_bypass'))
                             {
-                                /** This action is documented in wp-admin/includes/media.php */
                                 do_action('post-plupload-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                                 add_action('post-plupload-upload-ui', 'media_upload_flash_bypass');
                             }
                             else
                             {
-                                /** This action is documented in wp-admin/includes/media.php */
                                 do_action('post-plupload-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                             }
 
@@ -312,7 +286,7 @@
                         <# } #>
 
                         <?php
-                            /** This action is documented in wp-admin/includes/media.php */
+
                             do_action('post-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                         ?>
                     </div>
@@ -983,7 +957,7 @@
 						data-user-setting="imgsize"
 					<# } #>>
 					<?php
-                        /** This filter is documented in wp-admin/includes/media.php */
+
                         $sizes = apply_filters('image_size_names_choose', [
                             'thumbnail' => __('Thumbnail'),
                             'medium' => __('Medium'),
@@ -1062,7 +1036,7 @@
 				<# } #>
 				>
 				<?php
-                    /** This filter is documented in wp-admin/includes/media.php */
+
                     $size_names = apply_filters('image_size_names_choose', [
                         'thumbnail' => __('Thumbnail'),
                         'medium' => __('Medium'),
@@ -1152,7 +1126,7 @@
             <p class="description" id="alt-text-description"><?php echo $alt_text_description; ?></p>
 
             <?php
-                /** This filter is documented in wp-admin/includes/media.php */
+
                 if(! apply_filters('disable_captions', '')) :
                     ?>
                     <span class="setting caption">
@@ -1221,7 +1195,7 @@
                         <p class="description" id="alt-text-description"><?php echo $alt_text_description; ?></p>
 
                         <?php
-                            /** This filter is documented in wp-admin/includes/media.php */
+
                             if(! apply_filters('disable_captions', '')) :
                                 ?>
                                 <span class="setting caption">
@@ -1262,7 +1236,7 @@
 										data-user-setting="imgsize"
 									<# } #>>
 									<?php
-                                        /** This filter is documented in wp-admin/includes/media.php */
+
                                         $sizes = apply_filters('image_size_names_choose', [
                                             'thumbnail' => __('Thumbnail'),
                                             'medium' => __('Medium'),
@@ -1729,10 +1703,5 @@
 
         <?php
 
-        /**
-         * Fires when the custom Backbone media templates are printed.
-         *
-         * @since 3.5.0
-         */
         do_action('print_media_templates');
     }

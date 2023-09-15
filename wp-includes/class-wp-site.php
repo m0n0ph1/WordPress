@@ -1,161 +1,32 @@
 <?php
-    /**
-     * Site API: WP_Site class
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      4.5.0
-     */
 
-    /**
-     * Core class used for interacting with a multisite site.
-     *
-     * This class is used during load to populate the `$current_blog` global and
-     * setup the current site.
-     *
-     * @since 4.5.0
-     *
-     * @property int    $id
-     * @property int    $network_id
-     * @property string $blogname
-     * @property string $siteurl
-     * @property int    $post_count
-     * @property string $home
-     */
     #[AllowDynamicProperties]
     final class WP_Site
     {
-        /**
-         * Site ID.
-         *
-         * Named "blog" vs. "site" for legacy reasons.
-         *
-         * A numeric string, for compatibility reasons.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $blog_id;
 
-        /**
-         * Domain of the site.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $domain = '';
 
-        /**
-         * Path of the site.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $path = '';
 
-        /**
-         * The ID of the site's parent network.
-         *
-         * Named "site" vs. "network" for legacy reasons. An individual site's "site" is
-         * its network.
-         *
-         * A numeric string, for compatibility reasons.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $site_id = '0';
 
-        /**
-         * The date and time on which the site was created or registered.
-         *
-         * @since 4.5.0
-         * @var string Date in MySQL's datetime format.
-         */
         public $registered = '0000-00-00 00:00:00';
 
-        /**
-         * The date and time on which site settings were last updated.
-         *
-         * @since 4.5.0
-         * @var string Date in MySQL's datetime format.
-         */
         public $last_updated = '0000-00-00 00:00:00';
 
-        /**
-         * Whether the site should be treated as public.
-         *
-         * A numeric string, for compatibility reasons.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $public = '1';
 
-        /**
-         * Whether the site should be treated as archived.
-         *
-         * A numeric string, for compatibility reasons.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $archived = '0';
 
-        /**
-         * Whether the site should be treated as mature.
-         *
-         * Handling for this does not exist throughout WordPress core, but custom
-         * implementations exist that require the property to be present.
-         *
-         * A numeric string, for compatibility reasons.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $mature = '0';
 
-        /**
-         * Whether the site should be treated as spam.
-         *
-         * A numeric string, for compatibility reasons.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $spam = '0';
 
-        /**
-         * Whether the site should be treated as deleted.
-         *
-         * A numeric string, for compatibility reasons.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $deleted = '0';
 
-        /**
-         * The language pack associated with this site.
-         *
-         * A numeric string, for compatibility reasons.
-         *
-         * @since 4.5.0
-         * @var string
-         */
         public $lang_id = '0';
 
-        /**
-         * Creates a new WP_Site object.
-         *
-         * Will populate object properties from the object provided and assign other
-         * default properties based on that information.
-         *
-         * @param WP_Site|object $site A site object.
-         *
-         * @since 4.5.0
-         *
-         */
         public function __construct($site)
         {
             foreach(get_object_vars($site) as $key => $value)
@@ -164,17 +35,6 @@
             }
         }
 
-        /**
-         * Retrieves a site from the database by its ID.
-         *
-         * @param int   $site_id The ID of the site to retrieve.
-         *
-         * @return WP_Site|false The site's object if found. False if not.
-         * @since 4.5.0
-         *
-         * @global wpdb $wpdb    WordPress database abstraction object.
-         *
-         */
         public static function get_instance($site_id)
         {
             global $wpdb;
@@ -207,30 +67,11 @@
             return new WP_Site($_site);
         }
 
-        /**
-         * Converts an object to array.
-         *
-         * @return array Object as array.
-         * @since 4.6.0
-         *
-         */
         public function to_array()
         {
             return get_object_vars($this);
         }
 
-        /**
-         * Getter.
-         *
-         * Allows current multisite naming conventions when getting properties.
-         * Allows access to extended site properties.
-         *
-         * @param string $key Property to get.
-         *
-         * @return mixed Value of the property. Null if not available.
-         * @since 4.6.0
-         *
-         */
         public function __get($key)
         {
             switch($key)
@@ -259,17 +100,6 @@
             return null;
         }
 
-        /**
-         * Setter.
-         *
-         * Allows current multisite naming conventions while setting properties.
-         *
-         * @param string $key   Property to set.
-         * @param mixed  $value Value to assign to the property.
-         *
-         * @since 4.6.0
-         *
-         */
         public function __set($key, $value)
         {
             switch($key)
@@ -285,17 +115,6 @@
             }
         }
 
-        /**
-         * Retrieves the details for this site.
-         *
-         * This method is used internally to lazy-load the extended properties of a site.
-         *
-         * @return stdClass A raw site object with all details included.
-         * @see   WP_Site::__get()
-         *
-         * @since 4.6.0
-         *
-         */
         private function get_details()
         {
             $details = wp_cache_get($this->blog_id, 'site-details');
@@ -318,34 +137,13 @@
                 wp_cache_set($this->blog_id, $details, 'site-details');
             }
 
-            /** This filter is documented in wp-includes/ms-blogs.php */
             $details = apply_filters_deprecated('blog_details', [$details], '4.7.0', 'site_details');
 
-            /**
-             * Filters a site's extended properties.
-             *
-             * @param stdClass $details The site details.
-             *
-             * @since 4.6.0
-             *
-             */
             $details = apply_filters('site_details', $details);
 
             return $details;
         }
 
-        /**
-         * Isset-er.
-         *
-         * Allows current multisite naming conventions when checking for properties.
-         * Checks for extended site properties.
-         *
-         * @param string $key Property to check if set.
-         *
-         * @return bool Whether the property is set.
-         * @since 4.6.0
-         *
-         */
         public function __isset($key)
         {
             switch($key)

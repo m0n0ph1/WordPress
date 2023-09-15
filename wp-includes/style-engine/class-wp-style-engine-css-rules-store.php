@@ -1,57 +1,14 @@
 <?php
-    /**
-     * Style Engine: WP_Style_Engine_CSS_Rules_Store class
-     *
-     * @package    WordPress
-     * @subpackage StyleEngine
-     * @since      6.1.0
-     */
 
-    /**
-     * Core class used as a store for WP_Style_Engine_CSS_Rule objects.
-     *
-     * Holds, sanitizes, processes, and prints CSS declarations for the style engine.
-     *
-     * @since 6.1.0
-     */
     #[AllowDynamicProperties]
     class WP_Style_Engine_CSS_Rules_Store
     {
-        /**
-         * An array of named WP_Style_Engine_CSS_Rules_Store objects.
-         *
-         * @static
-         *
-         * @since 6.1.0
-         * @var WP_Style_Engine_CSS_Rules_Store[]
-         */
         protected static $stores = [];
 
-        /**
-         * The store name.
-         *
-         * @since 6.1.0
-         * @var string
-         */
         protected $name = '';
 
-        /**
-         * An array of CSS Rules objects assigned to the store.
-         *
-         * @since 6.1.0
-         * @var WP_Style_Engine_CSS_Rule[]
-         */
         protected $rules = [];
 
-        /**
-         * Gets an instance of the store.
-         *
-         * @param string $store_name The name of the store.
-         *
-         * @return WP_Style_Engine_CSS_Rules_Store|void
-         * @since 6.1.0
-         *
-         */
         public static function get_store($store_name = 'default')
         {
             if(! is_string($store_name) || empty($store_name))
@@ -68,76 +25,31 @@
             return static::$stores[$store_name];
         }
 
-        /**
-         * Gets an array of all available stores.
-         *
-         * @return WP_Style_Engine_CSS_Rules_Store[]
-         * @since 6.1.0
-         *
-         */
         public static function get_stores()
         {
             return static::$stores;
         }
 
-        /**
-         * Clears all stores from static::$stores.
-         *
-         * @since 6.1.0
-         */
         public static function remove_all_stores()
         {
             static::$stores = [];
         }
 
-        /**
-         * Gets the store name.
-         *
-         * @return string
-         * @since 6.1.0
-         *
-         */
         public function get_name()
         {
             return $this->name;
         }
 
-        /**
-         * Sets the store name.
-         *
-         * @param string $name The store name.
-         *
-         * @since 6.1.0
-         *
-         */
         public function set_name($name)
         {
             $this->name = $name;
         }
 
-        /**
-         * Gets an array of all rules.
-         *
-         * @return WP_Style_Engine_CSS_Rule[]
-         * @since 6.1.0
-         *
-         */
         public function get_all_rules()
         {
             return $this->rules;
         }
 
-        /**
-         * Gets a WP_Style_Engine_CSS_Rule object by its selector.
-         * If the rule does not exist, it will be created.
-         *
-         * @param string $selector The CSS selector.
-         *
-         * @return WP_Style_Engine_CSS_Rule|void Returns a WP_Style_Engine_CSS_Rule object,
-         *                                       or void if the selector is empty.
-         * @since 6.1.0
-         *
-         */
         public function add_rule($selector)
         {
             $selector = trim($selector);
@@ -157,14 +69,6 @@
             return $this->rules[$selector];
         }
 
-        /**
-         * Removes a selector from the store.
-         *
-         * @param string $selector The CSS selector.
-         *
-         * @since 6.1.0
-         *
-         */
         public function remove_rule($selector)
         {
             unset($this->rules[$selector]);

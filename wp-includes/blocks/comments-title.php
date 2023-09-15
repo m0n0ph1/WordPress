@@ -1,17 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/comments-title` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/comments-title` block on the server.
-     *
-     * @param array $attributes Block attributes.
-     *
-     * @return string Return the post comments title.
-     */
     function render_block_core_comments_title($attributes)
     {
         if(post_password_required())
@@ -85,9 +73,6 @@
         return sprintf('<%1$s id="comments" %2$s>%3$s</%1$s>', $tag_name, $wrapper_attributes, $comments_title);
     }
 
-    /**
-     * Registers the `core/comments-title` block on the server.
-     */
     function register_block_core_comments_title()
     {
         register_block_type_from_metadata(__DIR__.'/comments-title', [

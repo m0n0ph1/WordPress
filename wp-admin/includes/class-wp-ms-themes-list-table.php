@@ -1,49 +1,15 @@
 <?php
-    /**
-     * List Table API: WP_MS_Themes_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying themes in a list table for the network admin.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_MS_Themes_List_Table extends WP_List_Table
     {
         public $site_id;
 
         public $is_site_themes;
 
-        /**
-         * Whether to show the auto-updates UI.
-         *
-         * @since 5.5.0
-         *
-         * @var bool True if auto-updates UI is to be shown, false otherwise.
-         */
         protected $show_autoupdates = true;
 
         private $has_items;
 
-        /**
-         * Constructor.
-         *
-         * @param array   $args An associative array of arguments.
-         *
-         * @see   WP_List_Table::__construct() for more information on default arguments.
-         *
-         * @global string $status
-         * @global int    $page
-         *
-         * @since 3.1.0
-         *
-         */
         public function __construct($args = [])
         {
             global $status, $page;
@@ -82,9 +48,6 @@
             $this->show_autoupdates = wp_is_auto_update_enabled_for_type('theme') && ! $this->is_site_themes && current_user_can('update_themes');
         }
 
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             if($this->is_site_themes)
@@ -97,14 +60,6 @@
             }
         }
 
-        /**
-         * @global string $status
-         * @global array  $totals
-         * @global int    $page
-         * @global string $orderby
-         * @global string $order
-         * @global string $s
-         */
         public function prepare_items()
         {
             global $status, $totals, $page, $orderby, $order, $s;
@@ -112,15 +67,7 @@
             wp_reset_vars(['orderby', 'order', 's']);
 
             $themes = [
-                /**
-                 * Filters the full array of WP_Theme objects to list in the Multisite
-                 * themes list table.
-                 *
-                 * @param WP_Theme[] $all Array of WP_Theme objects to display in the list table.
-                 *
-                 * @since 3.1.0
-                 *
-                 */
+
                 'all' => apply_filters('all_themes', wp_get_themes()),
                 'search' => [],
                 'enabled' => [],
@@ -293,11 +240,6 @@
                                        ]);
         }
 
-        /**
-         * @param WP_Theme $theme
-         *
-         * @return bool
-         */
         public function _search_callback($theme)
         {
             static $term = null;
@@ -328,14 +270,6 @@
             return false;
         }
 
-        /**
-         * @param array   $theme_a
-         * @param array   $theme_b
-         *
-         * @return int
-         * @global string $order
-         * @global string $orderby
-         */
         public function _order_callback($theme_a, $theme_b)
         {
             global $orderby, $order;
@@ -360,8 +294,6 @@
 
         // Not used by any core columns.
 
-        /**
-         */
         public function no_items()
         {
             if($this->has_items)
@@ -374,9 +306,6 @@
             }
         }
 
-        /**
-         * @return string[] Array of column titles keyed by their column name.
-         */
         public function get_columns()
         {
             $columns = [
@@ -393,8 +322,6 @@
             return $columns;
         }
 
-        /**
-         */
         public function display_rows()
         {
             foreach($this->items as $theme)
@@ -403,13 +330,6 @@
             }
         }
 
-        /**
-         * @param WP_Theme $theme
-         *
-         * @global array   $totals
-         *
-         * @global string  $status
-         */
         public function single_row($theme)
         {
             global $status, $totals;
@@ -442,43 +362,11 @@
                 remove_action("after_theme_row_$stylesheet", 'wp_theme_update_row');
             }
 
-            /**
-             * Fires after each row in the Multisite themes list table.
-             *
-             * @param string   $stylesheet Directory name of the theme.
-             * @param WP_Theme $theme      Current WP_Theme object.
-             * @param string   $status     Status of the theme.
-             *
-             * @since 3.1.0
-             *
-             */
             do_action('after_theme_row', $stylesheet, $theme, $status);
 
-            /**
-             * Fires after each specific row in the Multisite themes list table.
-             *
-             * The dynamic portion of the hook name, `$stylesheet`, refers to the
-             * directory name of the theme, most often synonymous with the template
-             * name of the theme.
-             *
-             * @param string   $stylesheet Directory name of the theme.
-             * @param WP_Theme $theme      Current WP_Theme object.
-             * @param string   $status     Status of the theme.
-             *
-             * @since 3.5.0
-             *
-             */
             do_action("after_theme_row_{$stylesheet}", $stylesheet, $theme, $status);
         }
 
-        /**
-         * Handles the output for a single table row.
-         *
-         * @param WP_Theme $item The current WP_Theme object.
-         *
-         * @since 4.3.0
-         *
-         */
         public function single_row_columns($item)
         {
             [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
@@ -556,15 +444,6 @@
             }
         }
 
-        /**
-         * Handles the checkbox column output.
-         *
-         * @param WP_Theme $item The current WP_Theme object.
-         *
-         * @since 5.9.0 Renamed `$theme` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.3.0
-         */
         public function column_cb($item)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -586,18 +465,6 @@
             <?php
         }
 
-        /**
-         * Handles the name column output.
-         *
-         * @param WP_Theme $theme The current WP_Theme object.
-         *
-         * @global string  $status
-         * @global int     $page
-         * @global string  $s
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_name($theme)
         {
             global $status, $page, $s;
@@ -688,62 +555,14 @@
 
                 $actions['delete'] = sprintf('<a href="%s" class="delete" aria-label="%s">%s</a>', esc_url(wp_nonce_url($url, 'bulk-themes')), esc_attr($aria_label), __('Delete'));
             }
-            /**
-             * Filters the action links displayed for each theme in the Multisite
-             * themes list table.
-             *
-             * The action links displayed are determined by the theme's status, and
-             * which Multisite themes list table is being displayed - the Network
-             * themes list table (themes.php), which displays all installed themes,
-             * or the Site themes list table (site-themes.php), which displays the
-             * non-network enabled themes when editing a site in the Network admin.
-             *
-             * The default action links for the Network themes list table include
-             * 'Network Enable', 'Network Disable', and 'Delete'.
-             *
-             * The default action links for the Site themes list table include
-             * 'Enable', and 'Disable'.
-             *
-             * @param string[] $actions An array of action links.
-             * @param WP_Theme $theme   The current WP_Theme object.
-             * @param string   $context Status of the theme, one of 'all', 'enabled', or 'disabled'.
-             *
-             * @since 2.8.0
-             *
-             */
+
             $actions = apply_filters('theme_action_links', array_filter($actions), $theme, $context);
 
-            /**
-             * Filters the action links of a specific theme in the Multisite themes
-             * list table.
-             *
-             * The dynamic portion of the hook name, `$stylesheet`, refers to the
-             * directory name of the theme, which in most cases is synonymous
-             * with the template name.
-             *
-             * @param string[] $actions An array of action links.
-             * @param WP_Theme $theme   The current WP_Theme object.
-             * @param string   $context Status of the theme, one of 'all', 'enabled', or 'disabled'.
-             *
-             * @since 3.1.0
-             *
-             */
             $actions = apply_filters("theme_action_links_{$stylesheet}", $actions, $theme, $context);
 
             echo $this->row_actions($actions, true);
         }
 
-        /**
-         * Handles the description column output.
-         *
-         * @param WP_Theme $theme The current WP_Theme object.
-         *
-         * @global string  $status
-         * @global array   $totals
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_description($theme)
         {
             global $status, $totals;
@@ -797,19 +616,6 @@
                 $theme_meta[] = sprintf(/* translators: %s: Theme name. */ __('Child theme of %s'), '<strong>'.$theme->parent()->display('Name').'</strong>');
             }
 
-            /**
-             * Filters the array of row meta for each theme in the Multisite themes
-             * list table.
-             *
-             * @param string[] $theme_meta An array of the theme's metadata, including
-             *                             the version, author, and theme URI.
-             * @param string   $stylesheet Directory name of the theme.
-             * @param WP_Theme $theme      WP_Theme object.
-             * @param string   $status     Status of the theme.
-             *
-             * @since 3.1.0
-             *
-             */
             $theme_meta = apply_filters('theme_row_meta', $theme_meta, $stylesheet, $theme, $status);
 
             echo implode(' | ', $theme_meta);
@@ -817,17 +623,6 @@
             echo '</div>';
         }
 
-        /**
-         * Handles the auto-updates column output.
-         *
-         * @param WP_Theme $theme The current WP_Theme object.
-         *
-         * @global string  $status
-         * @global int     $page
-         *
-         * @since 5.5.0
-         *
-         */
         public function column_autoupdates($theme)
         {
             global $status, $page;
@@ -907,17 +702,6 @@
 
             $html = implode('', $html);
 
-            /**
-             * Filters the HTML of the auto-updates setting for each theme in the Themes list table.
-             *
-             * @param string   $html       The HTML for theme's auto-update setting, including
-             *                             toggle auto-update action link and time to next update.
-             * @param string   $stylesheet Directory name of the theme.
-             * @param WP_Theme $theme      WP_Theme object.
-             *
-             * @since 5.5.0
-             *
-             */
             echo apply_filters('theme_auto_update_setting_html', $html, $stylesheet, $theme);
 
             wp_admin_notice('', [
@@ -926,16 +710,6 @@
             ]);
         }
 
-        /**
-         * Handles default column output.
-         *
-         * @param WP_Theme $item        The current WP_Theme object.
-         * @param string   $column_name The current column name.
-         *
-         * @since 4.3.0
-         * @since 5.9.0 Renamed `$theme` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         public function column_default($item, $column_name)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -943,31 +717,15 @@
 
             $stylesheet = $theme->get_stylesheet();
 
-            /**
-             * Fires inside each custom column of the Multisite themes list table.
-             *
-             * @param string   $column_name Name of the column.
-             * @param string   $stylesheet  Directory name of the theme.
-             * @param WP_Theme $theme       Current WP_Theme object.
-             *
-             * @since 3.1.0
-             *
-             */
             do_action('manage_themes_custom_column', $column_name, $stylesheet, $theme);
         }
 
-        /**
-         * @return array
-         */
         protected function get_table_classes()
         {
             // @todo Remove and add CSS for .themes.
             return ['widefat', 'plugins'];
         }
 
-        /**
-         * @return array
-         */
         protected function get_sortable_columns()
         {
             return [
@@ -975,23 +733,11 @@
             ];
         }
 
-        /**
-         * Gets the name of the primary column.
-         *
-         * @return string Unalterable name of the primary column name, in this case, 'name'.
-         * @since 4.3.0
-         *
-         */
         protected function get_primary_column_name()
         {
             return 'name';
         }
 
-        /**
-         * @return array
-         * @global string $status
-         * @global array  $totals
-         */
         protected function get_views()
         {
             global $totals, $status;
@@ -1051,11 +797,6 @@
             return $this->get_views_links($status_links);
         }
 
-        /**
-         * @return array
-         * @global string $status
-         *
-         */
         protected function get_bulk_actions()
         {
             global $status;

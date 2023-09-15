@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Privacy Policy Guide Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_privacy_options'))

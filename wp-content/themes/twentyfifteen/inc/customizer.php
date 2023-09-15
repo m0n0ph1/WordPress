@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Twenty Fifteen Customizer functionality
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Fifteen
-     * @since      Twenty Fifteen 1.0
-     */
 
-    /**
-     * Add postMessage support for site title and description for the Customizer.
-     *
-     * @param WP_Customize_Manager $wp_customize Customizer object.
-     *
-     * @since Twenty Fifteen 1.0
-     *
-     */
     function twentyfifteen_customize_register($wp_customize)
     {
         $color_scheme = twentyfifteen_get_color_scheme();
@@ -90,74 +75,18 @@
 
     add_action('customize_register', 'twentyfifteen_customize_register', 11);
 
-    /**
-     * Render the site title for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentyfifteen_customize_register()
-     *
-     * @since Twenty Fifteen 1.5
-     *
-     */
     function twentyfifteen_customize_partial_blogname()
     {
         bloginfo('name');
     }
 
-    /**
-     * Render the site tagline for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentyfifteen_customize_register()
-     *
-     * @since Twenty Fifteen 1.5
-     *
-     */
     function twentyfifteen_customize_partial_blogdescription()
     {
         bloginfo('description');
     }
 
-    /**
-     * Register color schemes for Twenty Fifteen.
-     *
-     * Can be filtered with {@see 'twentyfifteen_color_schemes'}.
-     *
-     * The order of colors in a colors array:
-     * 1. Main Background Color.
-     * 2. Sidebar Background Color.
-     * 3. Box Background Color.
-     * 4. Main Text and Link Color.
-     * 5. Sidebar Text and Link Color.
-     * 6. Meta Box Background Color.
-     *
-     * @return array An associative array of color scheme options.
-     * @since Twenty Fifteen 1.0
-     *
-     */
     function twentyfifteen_get_color_schemes()
     {
-        /**
-         * Filters the color schemes registered for use with Twenty Fifteen.
-         *
-         * The default schemes include 'default', 'dark', 'yellow', 'pink', 'purple', and 'blue'.
-         *
-         * @param array $schemes        {
-         *                              Associative array of color schemes data.
-         *
-         * @type array  $slug           {
-         *                              Associative array of information for setting up the color scheme.
-         *
-         * @type string $label          Color scheme label.
-         * @type array  $colors         HEX codes for default colors prepended with a hash symbol ('#').
-         *                              Colors are defined in the following order: Main background, sidebar
-         *                              background, box background, main text and link, sidebar text and link,
-         *                              meta box background.
-         *                              }
-         *                              }
-         * @since Twenty Fifteen 1.0
-         *
-         */
         return apply_filters('twentyfifteen_color_schemes', [
             'default' => [
                 'label' => __('Default', 'twentyfifteen'),
@@ -229,13 +158,7 @@
     }
 
     if(! function_exists('twentyfifteen_get_color_scheme')) :
-        /**
-         * Get the current Twenty Fifteen color scheme.
-         *
-         * @return array An associative array of either the current or default color scheme hex values.
-         * @since Twenty Fifteen 1.0
-         *
-         */
+
         function twentyfifteen_get_color_scheme()
         {
             $color_scheme_option = get_theme_mod('color_scheme', 'default');
@@ -251,13 +174,7 @@
     endif; // twentyfifteen_get_color_scheme()
 
     if(! function_exists('twentyfifteen_get_color_scheme_choices')) :
-        /**
-         * Returns an array of color scheme choices registered for Twenty Fifteen.
-         *
-         * @return array Array of color schemes.
-         * @since Twenty Fifteen 1.0
-         *
-         */
+
         function twentyfifteen_get_color_scheme_choices()
         {
             $color_schemes = twentyfifteen_get_color_schemes();
@@ -273,15 +190,7 @@
     endif; // twentyfifteen_get_color_scheme_choices()
 
     if(! function_exists('twentyfifteen_sanitize_color_scheme')) :
-        /**
-         * Sanitization callback for color schemes.
-         *
-         * @param string $value Color scheme name value.
-         *
-         * @return string Color scheme name.
-         * @since Twenty Fifteen 1.0
-         *
-         */
+
         function twentyfifteen_sanitize_color_scheme($value)
         {
             $color_schemes = twentyfifteen_get_color_scheme_choices();
@@ -295,13 +204,6 @@
         }
     endif; // twentyfifteen_sanitize_color_scheme()
 
-    /**
-     * Enqueues front-end CSS for color scheme.
-     *
-     * @since Twenty Fifteen 1.0
-     *
-     * @see   wp_add_inline_style()
-     */
     function twentyfifteen_color_scheme_css()
     {
         $color_scheme_option = get_theme_mod('color_scheme', 'default');
@@ -339,13 +241,6 @@
 
     add_action('wp_enqueue_scripts', 'twentyfifteen_color_scheme_css');
 
-    /**
-     * Binds JS listener to make Customizer color_scheme control.
-     *
-     * Passes color scheme data as colorScheme global.
-     *
-     * @since Twenty Fifteen 1.0
-     */
     function twentyfifteen_customize_control_js()
     {
         wp_enqueue_script('color-scheme-control', get_template_directory_uri().'/js/color-scheme-control.js', [
@@ -359,11 +254,6 @@
 
     add_action('customize_controls_enqueue_scripts', 'twentyfifteen_customize_control_js');
 
-    /**
-     * Binds JS handlers to make the Customizer preview reload changes asynchronously.
-     *
-     * @since Twenty Fifteen 1.0
-     */
     function twentyfifteen_customize_preview_js()
     {
         wp_enqueue_script('twentyfifteen-customize-preview', get_template_directory_uri().'/js/customize-preview.js', ['customize-preview'], '20141216', ['in_footer' => true]);
@@ -371,15 +261,6 @@
 
     add_action('customize_preview_init', 'twentyfifteen_customize_preview_js');
 
-    /**
-     * Returns CSS for the color schemes.
-     *
-     * @param array $colors Color scheme colors.
-     *
-     * @return string Color scheme CSS.
-     * @since Twenty Fifteen 1.0
-     *
-     */
     function twentyfifteen_get_color_scheme_css($colors)
     {
         $colors = wp_parse_args($colors, [
@@ -765,14 +646,6 @@ CSS;
         return $css;
     }
 
-    /**
-     * Output an Underscore template for generating CSS for the color scheme.
-     *
-     * The template generates the css dynamically for instant display in the Customizer
-     * preview.
-     *
-     * @since Twenty Fifteen 1.0
-     */
     function twentyfifteen_color_scheme_css_template()
     {
         $colors = [

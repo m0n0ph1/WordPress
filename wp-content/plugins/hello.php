@@ -1,8 +1,5 @@
 <?php
-    /**
-     * @package Hello_Dolly
-     * @version 1.7.2
-     */
+
     /*
     Plugin Name: Hello Dolly
     Plugin URI: http://wordpress.org/plugins/hello-dolly/
@@ -14,7 +11,6 @@
 
     function hello_dolly_get_lyric()
     {
-        /** These are the lyrics to Hello Dolly */
         $lyrics = "Hello, Dolly
 Well, hello, Dolly
 It's so nice to have you back where you belong

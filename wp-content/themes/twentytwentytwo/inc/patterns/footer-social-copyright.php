@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Footer with social links and copyright
-     */
+
     return [
         'title' => __('Footer with social links and copyright', 'twentytwentytwo'),
         'categories' => ['footer'],

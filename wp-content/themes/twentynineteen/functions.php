@@ -1,17 +1,5 @@
 <?php
-    /**
-     * Twenty Nineteen functions and definitions
-     *
-     * @link       https://developer.wordpress.org/themes/basics/theme-functions/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Nineteen
-     * @since      Twenty Nineteen 1.0
-     */
 
-    /**
-     * Twenty Nineteen only works in WordPress 4.7 or later.
-     */
     if(version_compare($GLOBALS['wp_version'], '4.7', '<'))
     {
         require get_template_directory().'/inc/back-compat.php';
@@ -20,13 +8,7 @@
     }
 
     if(! function_exists('twentynineteen_setup')) :
-        /**
-         * Sets up theme defaults and registers support for various WordPress features.
-         *
-         * Note that this function is hooked into the after_setup_theme hook, which
-         * runs before the init hook. The init hook is too late for some features, such
-         * as indicating support for post thumbnails.
-         */
+
         function twentynineteen_setup()
         {
             // Add default posts and comments RSS feed links to head.
@@ -70,11 +52,6 @@
                 'navigation-widgets',
             ]);
 
-            /**
-             * Add support for core custom logo.
-             *
-             * @link https://codex.wordpress.org/Theme_Logo
-             */
             add_theme_support('custom-logo', [
                 'height' => 190,
                 'width' => 190,
@@ -164,13 +141,7 @@
     add_action('after_setup_theme', 'twentynineteen_setup');
 
     if(! function_exists('wp_get_list_item_separator')) :
-        /**
-         * Retrieves the list item separator based on the locale.
-         *
-         * Added for backward compatibility to support pre-6.0.0 WordPress versions.
-         *
-         * @since 6.0.0
-         */
+
         function wp_get_list_item_separator()
         {
             /* translators: Used between list items, there is a space after the comma. */
@@ -178,11 +149,6 @@
         }
     endif;
 
-    /**
-     * Register widget area.
-     *
-     * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
-     */
     function twentynineteen_widgets_init()
     {
         register_sidebar([
@@ -198,16 +164,6 @@
 
     add_action('widgets_init', 'twentynineteen_widgets_init');
 
-    /**
-     * Replaces "[...]" (appended to automatically generated excerpts) with ... and
-     * a 'Continue reading' link.
-     *
-     * @param string $link Link to single post/page.
-     *
-     * @return string 'Continue reading' link prepended with an ellipsis.
-     * @since Twenty Nineteen 2.0
-     *
-     */
     function twentynineteen_excerpt_more($link)
     {
         if(is_admin())
@@ -222,13 +178,6 @@
 
     add_filter('excerpt_more', 'twentynineteen_excerpt_more');
 
-    /**
-     * Set the content width in pixels, based on the theme's design and stylesheet.
-     *
-     * Priority 0 to make it available to lower priority callbacks.
-     *
-     * @global int $content_width Content width.
-     */
     function twentynineteen_content_width()
     {
         // This variable is intended to be overruled from themes.
@@ -239,9 +188,6 @@
 
     add_action('after_setup_theme', 'twentynineteen_content_width', 0);
 
-    /**
-     * Enqueue scripts and styles.
-     */
     function twentynineteen_scripts()
     {
         wp_enqueue_style('twentynineteen-style', get_stylesheet_uri(), [], wp_get_theme()->get('Version'));
@@ -270,17 +216,6 @@
 
     add_action('wp_enqueue_scripts', 'twentynineteen_scripts');
 
-    /**
-     * Fix skip link focus in IE11.
-     *
-     * This does not enqueue the script because it is tiny and because it is only for IE11,
-     * thus it does not warrant having an entire dedicated blocking script being loaded.
-     *
-     * @since      Twenty Nineteen 1.0
-     * @deprecated Twenty Nineteen 2.6 Removed from wp_print_footer_scripts action.
-     *
-     * @link       https://git.io/vWdr2
-     */
     function twentynineteen_skip_link_focus_fix()
     {
         // The following is minified via `terser --compress --mangle -- js/skip-link-focus-fix.js`.
@@ -294,9 +229,6 @@
         <?php
     }
 
-    /**
-     * Enqueue supplemental block editor styles.
-     */
     function twentynineteen_editor_customizer_styles()
     {
         wp_enqueue_style('twentynineteen-editor-customizer-styles', get_theme_file_uri('/style-editor-customizer.css'), false, '2.1', 'all');
@@ -311,9 +243,6 @@
 
     add_action('enqueue_block_editor_assets', 'twentynineteen_editor_customizer_styles');
 
-    /**
-     * Display custom color CSS in customizer and on frontend.
-     */
     function twentynineteen_colors_css_wrap()
     {
         // Only include custom colors in customizer or frontend.
@@ -340,42 +269,18 @@
 
     add_action('wp_head', 'twentynineteen_colors_css_wrap');
 
-    /**
-     * SVG Icons class.
-     */
     require get_template_directory().'/classes/class-twentynineteen-svg-icons.php';
 
-    /**
-     * Custom Comment Walker template.
-     */
     require get_template_directory().'/classes/class-twentynineteen-walker-comment.php';
 
-    /**
-     * Common theme functions.
-     */
     require get_template_directory().'/inc/helper-functions.php';
 
-    /**
-     * SVG Icons related functions.
-     */
     require get_template_directory().'/inc/icon-functions.php';
 
-    /**
-     * Enhance the theme by hooking into WordPress.
-     */
     require get_template_directory().'/inc/template-functions.php';
 
-    /**
-     * Custom template tags for the theme.
-     */
     require get_template_directory().'/inc/template-tags.php';
 
-    /**
-     * Customizer additions.
-     */
     require get_template_directory().'/inc/customizer.php';
 
-    /**
-     * Block Patterns.
-     */
     require get_template_directory().'/inc/block-patterns.php';

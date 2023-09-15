@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Blog footer
-     */
+
     return [
         'title' => __('Blog footer', 'twentytwentytwo'),
         'categories' => ['footer'],

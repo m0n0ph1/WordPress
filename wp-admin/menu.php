@@ -1,25 +1,4 @@
 <?php
-    /**
-     * Build Administration Menu.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
-
-    /**
-     * Constructs the admin menu.
-     *
-     * The elements in the array are:
-     *     0: Menu item name.
-     *     1: Minimum level or capability required.
-     *     2: The URL of the item's file.
-     *     3: Page title.
-     *     4: Classes.
-     *     5: ID.
-     *     6: Icon for top level menu.
-     *
-     * @global array $menu
-     */
 
     $menu[2] = [
         __('Dashboard'),
@@ -340,27 +319,12 @@
         // Must use API on the admin_menu hook, direct modification is only possible on/before the _admin_menu hook.
         add_action('admin_menu', '_add_themes_utility_last', 101);
     }
-    /**
-     * Adds the 'Theme File Editor' menu item to the bottom of the Appearance (non-block themes)
-     * or Tools (block themes) menu.
-     *
-     * @access private
-     * @since  3.0.0
-     * @since  5.9.0 Renamed 'Theme Editor' to 'Theme File Editor'.
-     *              Relocates to Tools for block themes.
-     */
+
     function _add_themes_utility_last()
     {
         add_submenu_page(wp_is_block_theme() ? 'tools.php' : 'themes.php', __('Theme File Editor'), __('Theme File Editor'), 'edit_themes', 'theme-editor.php');
     }
 
-    /**
-     * Adds the 'Plugin File Editor' menu item after the 'Themes File Editor' in Tools
-     * for block themes.
-     *
-     * @access private
-     * @since  5.9.0
-     */
     function _add_plugin_file_editor_to_tools()
     {
         if(! wp_is_block_theme())

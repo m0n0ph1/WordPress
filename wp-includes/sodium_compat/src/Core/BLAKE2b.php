@@ -5,11 +5,6 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_Sodium_Core_BLAKE2b
-     *
-     * Based on the work of Devi Mandiri in devi/salt.
-     */
     abstract class ParagonIE_Sodium_Core_BLAKE2b extends ParagonIE_Sodium_Core_Util
     {
         const BLOCKBYTES = 128;
@@ -18,14 +13,8 @@
 
         const KEYBYTES = 64;
 
-        /**
-         * @var SplFixedArray
-         */
         protected static $iv;
 
-        /**
-         * @var array<int, array<int, int>>
-         */
         protected static $sigma = [
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
             [14, 10, 4, 8, 9, 15, 13, 6, 1, 12, 0, 2, 11, 7, 5, 3],
@@ -41,22 +30,6 @@
             [14, 10, 4, 8, 9, 15, 13, 6, 1, 12, 0, 2, 11, 7, 5, 3]
         ];
 
-        /**
-         * @param SplFixedArray $ctx
-         * @param SplFixedArray $out
-         *
-         * @return SplFixedArray
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedArrayAccess
-         * @psalm-suppress MixedArrayAssignment
-         * @psalm-suppress MixedArrayOffset
-         * @psalm-suppress MixedOperand
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function finish(SplFixedArray $ctx, SplFixedArray $out)
         {
             self::pseudoConstructor();
@@ -94,13 +67,6 @@
             return $out;
         }
 
-        /**
-         * This just sets the $iv static variable.
-         *
-         * @return void
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function pseudoConstructor()
         {
             static $called = false;
@@ -121,17 +87,6 @@
             $called = true;
         }
 
-        /**
-         * Turn two 32-bit integers into a fixed array representing a 64-bit integer.
-         *
-         * @param int $high
-         * @param int $low
-         *
-         * @return SplFixedArray
-         * @psalm-suppress MixedAssignment
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function new64($high, $low)
         {
             if(PHP_INT_SIZE === 4)
@@ -145,18 +100,6 @@
             return $i64;
         }
 
-        /**
-         * @param SplFixedArray $ctx
-         * @param int           $inc
-         *
-         * @return void
-         * @throws SodiumException
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress MixedArrayAccess
-         * @psalm-suppress MixedArrayAssignment
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function increment_counter($ctx, $inc)
         {
             if($inc < 0)
@@ -176,16 +119,6 @@
             }
         }
 
-        /**
-         * Convert an arbitrary number into an SplFixedArray of two 32-bit integers
-         * that represents a 64-bit integer.
-         *
-         * @param int $num
-         *
-         * @return SplFixedArray
-         * @internal You should not use this directly from another application
-         *
-         */
         protected static function to64($num)
         {
             [$hi, $lo] = self::numericTo64BitInteger($num);
@@ -193,20 +126,6 @@
             return self::new64($hi, $lo);
         }
 
-        /**
-         * Adds two 64-bit integers together, returning their sum as a SplFixedArray
-         * containing two 32-bit integers (representing a 64-bit integer).
-         *
-         * @param SplFixedArray $x
-         * @param SplFixedArray $y
-         *
-         * @return SplFixedArray
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedOperand
-         * @internal       You should not use this directly from another application
-         *
-         */
         protected static function add64($x, $y)
         {
             if(PHP_INT_SIZE === 4)
@@ -218,34 +137,11 @@
             return self::new64((int) ($x[0] + $y[0] + (($l < $x[1]) ? 1 : 0)), (int) $l);
         }
 
-        /**
-         * @param SplFixedArray $x
-         *
-         * @return int
-         * @psalm-suppress MixedOperand
-         * @internal       You should not use this directly from another application
-         *
-         */
         protected static function flatten64($x)
         {
             return (int) ($x[0] * 4294967296 + $x[1]);
         }
 
-        /**
-         * @param SplFixedArray $ctx
-         * @param SplFixedArray $buf
-         *
-         * @return void
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedArrayAccess
-         * @psalm-suppress MixedArrayAssignment
-         * @psalm-suppress MixedArrayOffset
-         * @internal       You should not use this directly from another application
-         *
-         */
         protected static function compress(SplFixedArray $ctx, SplFixedArray $buf)
         {
             $m = new SplFixedArray(16);
@@ -289,36 +185,15 @@
             }
         }
 
-        /**
-         * @param SplFixedArray $x
-         * @param int           $i
-         *
-         * @return SplFixedArray
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress MixedArrayOffset
-         * @internal       You should not use this directly from another application
-         *
-         */
         protected static function load64(SplFixedArray $x, $i)
         {
-            /** @var int $l */
             $l = (int) ($x[$i]) | ((int) ($x[$i + 1]) << 8) | ((int) ($x[$i + 2]) << 16) | ((int) ($x[$i + 3]) << 24);
-            /** @var int $h */
+
             $h = (int) ($x[$i + 4]) | ((int) ($x[$i + 5]) << 8) | ((int) ($x[$i + 6]) << 16) | ((int) ($x[$i + 7]) << 24);
 
             return self::new64($h, $l);
         }
 
-        /**
-         * @param SplFixedArray $x
-         * @param SplFixedArray $y
-         *
-         * @return SplFixedArray
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         protected static function xor64(SplFixedArray $x, SplFixedArray $y)
         {
             if(PHP_INT_SIZE === 4)
@@ -345,24 +220,6 @@
             return self::new64((int) (($x[0] ^ $y[0]) & 0xffffffff), (int) (($x[1] ^ $y[1]) & 0xffffffff));
         }
 
-        /**
-         * @param int           $r
-         * @param int           $i
-         * @param int           $a
-         * @param int           $b
-         * @param int           $c
-         * @param int           $d
-         * @param SplFixedArray $v
-         * @param SplFixedArray $m
-         *
-         * @return SplFixedArray
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress MixedArrayOffset
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function G($r, $i, $a, $b, $c, $d, SplFixedArray $v, SplFixedArray $m)
         {
             $v[$a] = self::add364($v[$a], $v[$b], $m[self::$sigma[$r][$i << 1]]);
@@ -377,29 +234,11 @@
             return $v;
         }
 
-        /**
-         * @param SplFixedArray $x
-         * @param SplFixedArray $y
-         * @param SplFixedArray $z
-         *
-         * @return SplFixedArray
-         * @internal You should not use this directly from another application
-         *
-         */
         protected static function add364($x, $y, $z)
         {
             return self::add64($x, self::add64($y, $z));
         }
 
-        /**
-         * @param SplFixedArray $x
-         * @param int           $c
-         *
-         * @return SplFixedArray
-         * @psalm-suppress MixedAssignment
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function rotr64($x, $c)
         {
             if(PHP_INT_SIZE === 4)
@@ -412,7 +251,6 @@
             }
             if($c >= 32)
             {
-                /** @var int $tmp */
                 $tmp = $x[0];
                 $x[0] = $x[1];
                 $x[1] = $tmp;
@@ -426,7 +264,6 @@
             $l0 = 0;
             $c = 64 - $c;
 
-            /** @var int $c */
             if($c < 32)
             {
                 $h0 = ((int) ($x[0]) << $c) | (((int) ($x[1]) & ((1 << $c) - 1) << (32 - $c)) >> (32 - $c));
@@ -453,16 +290,6 @@
             return self::new64($h0 | $h1, $l0 | $l1);
         }
 
-        /**
-         * @param SplFixedArray $x
-         * @param int           $i
-         * @param SplFixedArray $u
-         *
-         * @return void
-         * @psalm-suppress MixedAssignment
-         * @internal       You should not use this directly from another application
-         *
-         */
         protected static function store64(SplFixedArray $x, $i, SplFixedArray $u)
         {
             $maxLength = $x->getSize() - 1;
@@ -473,35 +300,18 @@
                         ... becomes ...
                    [0, 0, 0, 0, 1, 1, 1, 1]
                 */
-                /** @var int $uIdx */
+
                 $uIdx = ((7 - $j) & 4) >> 2;
                 $x[$i] = ((int) ($u[$uIdx]) & 0xff);
                 if(++$i > $maxLength)
                 {
                     return;
                 }
-                /** @psalm-suppress MixedOperand */
+
                 $u[$uIdx] >>= 8;
             }
         }
 
-        /**
-         * @param SplFixedArray|null $key
-         * @param int                $outlen
-         * @param SplFixedArray|null $salt
-         * @param SplFixedArray|null $personal
-         *
-         * @return SplFixedArray
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedArrayAccess
-         * @psalm-suppress MixedArrayAssignment
-         * @psalm-suppress MixedArrayOffset
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function init(
             $key = null, $outlen = 64, $salt = null, $personal = null
         ) {
@@ -581,16 +391,6 @@
             return $ctx;
         }
 
-        /**
-         * Returns a fresh BLAKE2 context.
-         *
-         * @return SplFixedArray
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedArrayAccess
-         * @psalm-suppress MixedArrayAssignment
-         * @internal       You should not use this directly from another application
-         *
-         */
         protected static function context()
         {
             $ctx = new SplFixedArray(6);
@@ -619,23 +419,6 @@
             return $ctx;
         }
 
-        /**
-         * @param SplFixedArray $ctx
-         * @param SplFixedArray $p
-         * @param int           $plen
-         *
-         * @return void
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedArrayAccess
-         * @psalm-suppress MixedArrayAssignment
-         * @psalm-suppress MixedArrayOffset
-         * @psalm-suppress MixedOperand
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function update(SplFixedArray $ctx, SplFixedArray $p, $plen)
         {
             self::pseudoConstructor();
@@ -691,24 +474,10 @@
             }
         }
 
-        /**
-         * @param SplFixedArray $ctx
-         *
-         * @return string
-         * @throws TypeError
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedArrayAccess
-         * @psalm-suppress MixedArrayAssignment
-         * @psalm-suppress MixedArrayOffset
-         * @psalm-suppress MixedMethodCall
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function contextToString(SplFixedArray $ctx)
         {
             $str = '';
-            /** @var array<int, array<int, int>> $ctxA */
+
             $ctxA = $ctx[0]->toArray();
 
             # uint64_t h[8];
@@ -732,7 +501,6 @@
             # uint8_t buf[2 * 128];
             $str .= self::SplFixedArrayToString($ctx[3]);
 
-            /** @var int $ctx4 */
             $ctx4 = (int) $ctx[4];
 
             # size_t buflen;
@@ -751,21 +519,8 @@
             return $str.self::intToChr($ctx[5]).str_repeat("\x00", 23);
         }
 
-        /**
-         * Convert an SplFixedArray of integers into a string
-         *
-         * @param SplFixedArray $a
-         *
-         * @return string
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function SplFixedArrayToString(SplFixedArray $a)
         {
-            /**
-             * @var array<int, int|string> $arr
-             */
             $arr = $a->toArray();
             $c = $a->count();
             array_unshift($arr, str_repeat('C', $c));
@@ -773,19 +528,6 @@
             return (string) (call_user_func_array('pack', $arr));
         }
 
-        /**
-         * Creates an SplFixedArray containing other SplFixedArray elements, from
-         * a string (compatible with \Sodium\crypto_generichash_{init, update, final})
-         *
-         * @param string $string
-         *
-         * @return SplFixedArray
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArrayAssignment
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function stringToContext($string)
         {
             $ctx = self::context();
@@ -827,16 +569,6 @@
             return $ctx;
         }
 
-        /**
-         * Convert a string into an SplFixedArray of integers
-         *
-         * @param string $str
-         *
-         * @return SplFixedArray
-         * @psalm-suppress MixedArgumentTypeCoercion
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function stringToSplFixedArray($str = '')
         {
             $values = unpack('C*', $str);

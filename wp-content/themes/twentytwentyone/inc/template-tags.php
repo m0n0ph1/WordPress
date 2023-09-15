@@ -1,21 +1,7 @@
 <?php
-    /**
-     * Custom template tags for this theme
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty_One
-     * @since      Twenty Twenty-One 1.0
-     */
 
     if(! function_exists('twenty_twenty_one_posted_on'))
     {
-        /**
-         * Prints HTML with meta information for the current post-date/time.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         function twenty_twenty_one_posted_on()
         {
             $time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
@@ -30,13 +16,6 @@
 
     if(! function_exists('twenty_twenty_one_posted_by'))
     {
-        /**
-         * Prints HTML with meta information about theme author.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         function twenty_twenty_one_posted_by()
         {
             if(! get_the_author_meta('description') && post_type_supports(get_post_type(), 'author'))
@@ -50,14 +29,6 @@
 
     if(! function_exists('twenty_twenty_one_entry_meta_footer'))
     {
-        /**
-         * Prints HTML with meta information for the categories, tags and comments.
-         * Footer entry meta is displayed differently in archives and single posts.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         function twenty_twenty_one_entry_meta_footer()
         {
             // Early exit if not a post.
@@ -142,16 +113,6 @@
 
     if(! function_exists('twenty_twenty_one_post_thumbnail'))
     {
-        /**
-         * Displays an optional post thumbnail.
-         *
-         * Wraps the post thumbnail in an anchor element on index views, or a div
-         * element when on single views.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         function twenty_twenty_one_post_thumbnail()
         {
             if(! twenty_twenty_one_can_show_post_thumbnail())
@@ -195,13 +156,6 @@
 
     if(! function_exists('twenty_twenty_one_the_posts_navigation'))
     {
-        /**
-         * Print the next and previous posts navigation.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         function twenty_twenty_one_the_posts_navigation()
         {
             the_posts_pagination([
@@ -209,10 +163,10 @@
                                      'mid_size' => 0,
                                      'prev_text' => sprintf(
                                          '%s <span class="nav-prev-text">%s</span>', is_rtl() ? twenty_twenty_one_get_icon_svg('ui', 'arrow_right') : twenty_twenty_one_get_icon_svg('ui', 'arrow_left'), wp_kses(__('Newer <span class="nav-short">posts</span>', 'twentytwentyone'), [
-                                         'span' => [
-                                             'class' => [],
-                                         ],
-                                     ])
+                                                                                       'span' => [
+                                                                                           'class' => [],
+                                                                                       ],
+                                                                                   ])
                                      ),
                                      'next_text' => sprintf(
                                          '<span class="nav-next-text">%s</span> %s', wp_kses(__('Older <span class="nav-short">posts</span>', 'twentytwentyone'), [

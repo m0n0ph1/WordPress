@@ -1,18 +1,5 @@
 <?php
-    /**
-     * WordPress Administration Update API
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Selects the first update version from the update_core option.
-     *
-     * @return object|array|false The response from the API on success, false on failure.
-     * @since 2.7.0
-     *
-     */
     function get_preferred_from_update_core()
     {
         $updates = get_core_updates();
@@ -30,16 +17,6 @@
         return $updates[0];
     }
 
-    /**
-     * Gets available core updates.
-     *
-     * @param array $options Set $options['dismissed'] to true to show dismissed upgrades too,
-     *                       set $options['available'] to false to skip not-dismissed updates.
-     *
-     * @return array|false Array of the update objects on success, false on failure.
-     * @since 2.7.0
-     *
-     */
     function get_core_updates($options = [])
     {
         $options = array_merge([
@@ -92,15 +69,6 @@
         return $result;
     }
 
-    /**
-     * Gets the best available (and enabled) Auto-Update for WordPress core.
-     *
-     * If there's 1.2.3 and 1.3 on offer, it'll choose 1.3 if the installation allows it, else, 1.2.3.
-     *
-     * @return object|false The core update offering on success, false on failure.
-     * @since 3.7.0
-     *
-     */
     function find_core_auto_update()
     {
         $updates = get_site_transient('update_core');
@@ -136,16 +104,6 @@
         return $auto_update;
     }
 
-    /**
-     * Gets and caches the checksums for the given version of WordPress.
-     *
-     * @param string $version Version string to query.
-     * @param string $locale  Locale to query.
-     *
-     * @return array|false An array of checksums on success, false on failure.
-     * @since 3.7.0
-     *
-     */
     function get_core_checksums($version, $locale)
     {
         $http_url = 'http://api.wordpress.org/core/checksums/1.0/?'.http_build_query(compact('version', 'locale'), '', '&');
@@ -187,15 +145,6 @@
         return $body['checksums'];
     }
 
-    /**
-     * Dismisses core update.
-     *
-     * @param object $update
-     *
-     * @return bool
-     * @since 2.7.0
-     *
-     */
     function dismiss_core_update($update)
     {
         $dismissed = get_site_option('dismissed_update_core');
@@ -204,16 +153,6 @@
         return update_site_option('dismissed_update_core', $dismissed);
     }
 
-    /**
-     * Undismisses core update.
-     *
-     * @param string $version
-     * @param string $locale
-     *
-     * @return bool
-     * @since 2.7.0
-     *
-     */
     function undismiss_core_update($version, $locale)
     {
         $dismissed = get_site_option('dismissed_update_core');
@@ -229,16 +168,6 @@
         return update_site_option('dismissed_update_core', $dismissed);
     }
 
-    /**
-     * Finds the available update for WordPress core.
-     *
-     * @param string $version Version string to find the update for.
-     * @param string $locale  Locale to find the update for.
-     *
-     * @return object|false The core update offering on success, false on failure.
-     * @since 2.7.0
-     *
-     */
     function find_core_update($version, $locale)
     {
         $from_api = get_site_transient('update_core');
@@ -261,15 +190,6 @@
         return false;
     }
 
-    /**
-     * Returns core update footer message.
-     *
-     * @param string $msg
-     *
-     * @return string
-     * @since 2.3.0
-     *
-     */
     function core_update_footer($msg = '')
     {
         if(! current_user_can('update_core'))
@@ -316,14 +236,6 @@
         }
     }
 
-    /**
-     * Returns core update notification message.
-     *
-     * @return void|false
-     * @global string $pagenow The filename of the current screen.
-     * @since 2.3.0
-     *
-     */
     function update_nag()
     {
         global $pagenow;
@@ -359,11 +271,6 @@
         echo "<div class='update-nag notice notice-warning inline'>$msg</div>";
     }
 
-    /**
-     * Displays WordPress version and active theme in the 'At a Glance' dashboard widget.
-     *
-     * @since 2.5.0
-     */
     function update_right_now_message()
     {
         $theme_name = wp_get_theme();
@@ -388,16 +295,6 @@
         /* translators: 1: Version number, 2: Theme name. */
         $content = __('WordPress %1$s running %2$s theme.');
 
-        /**
-         * Filters the text displayed in the 'At a Glance' dashboard widget.
-         *
-         * Prior to 3.8.0, the widget was named 'Right Now'.
-         *
-         * @param string $content Default text.
-         *
-         * @since 4.4.0
-         *
-         */
         $content = apply_filters('update_right_now_text', $content);
 
         $msg .= sprintf('<span id="wp-version">'.$content.'</span>', get_bloginfo('version', 'display'), $theme_name);
@@ -405,13 +302,6 @@
         echo "<p id='wp-version-message'>$msg</p>";
     }
 
-    /**
-     * Retrieves plugins with updates available.
-     *
-     * @return array
-     * @since 2.9.0
-     *
-     */
     function get_plugin_updates()
     {
         $all_plugins = get_plugins();
@@ -430,11 +320,6 @@
         return $upgrade_plugins;
     }
 
-    /**
-     * Adds a callback to display update information for plugins with updates available.
-     *
-     * @since 2.9.0
-     */
     function wp_plugin_update_rows()
     {
         if(! current_user_can('update_plugins'))
@@ -455,16 +340,6 @@
         }
     }
 
-    /**
-     * Displays update information for a plugin.
-     *
-     * @param string $file        Plugin basename.
-     * @param array  $plugin_data Plugin information.
-     *
-     * @return void|false
-     * @since 2.3.0
-     *
-     */
     function wp_plugin_update_row($file, $plugin_data)
     {
         $current = get_site_transient('update_plugins');
@@ -510,7 +385,6 @@
                                          'height' => 800,
                                      ], $details_url);
 
-        /** @var WP_Plugins_List_Table $wp_list_table */
         $wp_list_table = _get_list_table('WP_Plugins_List_Table', [
             'screen' => get_current_screen(),
         ]);
@@ -553,48 +427,12 @@
                 }
             }
 
-            /**
-             * Fires at the end of the update message container in each
-             * row of the plugins list table.
-             *
-             * The dynamic portion of the hook name, `$file`, refers to the path
-             * of the plugin's primary file relative to the plugins directory.
-             *
-             * @param array   $plugin_data  An array of plugin metadata. See get_plugin_data()
-             *                              and the {@see 'plugin_row_meta'} filter for the list
-             *                              of possible values.
-             * @param object  $response     {
-             *                              An object of metadata about the available plugin update.
-             *
-             * @type string   $id           Plugin ID, e.g. `w.org/plugins/[plugin-name]`.
-             * @type string   $slug         Plugin slug.
-             * @type string   $plugin       Plugin basename.
-             * @type string   $new_version  New plugin version.
-             * @type string   $url          Plugin URL.
-             * @type string   $package      Plugin update package URL.
-             * @type string[] $icons        An array of plugin icon URLs.
-             * @type string[] $banners      An array of plugin banner URLs.
-             * @type string[] $banners_rtl  An array of plugin RTL banner URLs.
-             * @type string   $requires     The version of WordPress which the plugin requires.
-             * @type string   $tested       The version of WordPress the plugin is tested against.
-             * @type string   $requires_php The version of PHP which the plugin requires.
-             *                              }
-             * @since 2.8.0
-             *
-             */
             do_action("in_plugin_update_message-{$file}", $plugin_data, $response); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
             echo '</p></div></td></tr>';
         }
     }
 
-    /**
-     * Retrieves themes with updates available.
-     *
-     * @return array
-     * @since 2.9.0
-     *
-     */
     function get_theme_updates()
     {
         $current = get_site_transient('update_themes');
@@ -615,11 +453,6 @@
         return $update_themes;
     }
 
-    /**
-     * Adds a callback to display update information for themes with updates available.
-     *
-     * @since 3.1.0
-     */
     function wp_theme_update_rows()
     {
         if(! current_user_can('update_themes'))
@@ -640,16 +473,6 @@
         }
     }
 
-    /**
-     * Displays update information for a theme.
-     *
-     * @param string   $theme_key Theme stylesheet.
-     * @param WP_Theme $theme     Theme object.
-     *
-     * @return void|false
-     * @since 3.1.0
-     *
-     */
     function wp_theme_update_row($theme_key, $theme)
     {
         $current = get_site_transient('update_themes');
@@ -667,7 +490,6 @@
                                          'height' => 800,
                                      ], $current->response[$theme_key]['url']);
 
-        /** @var WP_MS_Themes_List_Table $wp_list_table */
         $wp_list_table = _get_list_table('WP_MS_Themes_List_Table');
 
         $active = $theme->is_allowed('network') ? ' active' : '';
@@ -734,38 +556,11 @@
             }
         }
 
-        /**
-         * Fires at the end of the update message container in each
-         * row of the themes list table.
-         *
-         * The dynamic portion of the hook name, `$theme_key`, refers to
-         * the theme slug as found in the WordPress.org themes repository.
-         *
-         * @param WP_Theme $theme       The WP_Theme object.
-         * @param array    $response    {
-         *                              An array of metadata about the available theme update.
-         *
-         * @type string    $new_version New theme version.
-         * @type string    $url         Theme URL.
-         * @type string    $package     Theme update package URL.
-         *                              }
-         * @since 3.1.0
-         *
-         */
         do_action("in_theme_update_message-{$theme_key}", $theme, $response); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
         echo '</p></div></td></tr>';
     }
 
-    /**
-     * Displays maintenance nag HTML message.
-     *
-     * @return void|false
-     * @global int $upgrading
-     *
-     * @since 2.7.0
-     *
-     */
     function maintenance_nag()
     {
         // Include an unmodified $wp_version.
@@ -811,22 +606,6 @@
         echo "<div class='update-nag notice notice-warning inline'>$msg</div>";
     }
 
-    /**
-     * Prints the JavaScript templates for update admin notices.
-     *
-     * @since 4.6.0
-     *
-     * Template takes one argument with four values:
-     *
-     *     param {object} data {
-     *         Arguments for admin notice.
-     *
-     * @type string id        ID of the notice.
-     * @type string className Class names for the notice.
-     * @type string message   The notice's message.
-     * @type string type      The type of update the notice is for. Either 'plugin' or 'theme'.
-     *     }
-     */
     function wp_print_admin_notice_templates()
     {
         ?>
@@ -900,33 +679,6 @@
         <?php
     }
 
-    /**
-     * Prints the JavaScript templates for update and deletion rows in list tables.
-     *
-     * @since 4.6.0
-     *
-     * The update template takes one argument with four values:
-     *
-     *     param {object} data {
-     *         Arguments for the update row
-     *
-     * @type string slug    Plugin slug.
-     * @type string plugin  Plugin base name.
-     * @type string colspan The number of table columns this row spans.
-     * @type string content The row content.
-     *     }
-     *
-     * The delete template takes one argument with four values:
-     *
-     *     param {object} data {
-     *         Arguments for the update row
-     *
-     * @type string slug    Plugin slug.
-     * @type string plugin  Plugin base name.
-     * @type string name    Plugin name.
-     * @type string colspan The number of table columns this row spans.
-     *     }
-     */
     function wp_print_update_row_templates()
     {
         ?>
@@ -959,11 +711,6 @@
         <?php
     }
 
-    /**
-     * Displays a notice when the user is in recovery mode.
-     *
-     * @since 5.2.0
-     */
     function wp_recovery_mode_nag()
     {
         if(! wp_is_recovery_mode())
@@ -979,15 +726,6 @@
         wp_admin_notice($message, ['type' => 'info']);
     }
 
-    /**
-     * Checks whether auto-updates are enabled.
-     *
-     * @param string $type The type of update being checked: 'theme' or 'plugin'.
-     *
-     * @return bool True if auto-updates are enabled for `$type`, false otherwise.
-     * @since 5.5.0
-     *
-     */
     function wp_is_auto_update_enabled_for_type($type)
     {
         if(! class_exists('WP_Automatic_Updater'))
@@ -1001,53 +739,19 @@
         switch($type)
         {
             case 'plugin':
-                /**
-                 * Filters whether plugins auto-update is enabled.
-                 *
-                 * @param bool $enabled True if plugins auto-update is enabled, false otherwise.
-                 *
-                 * @since 5.5.0
-                 *
-                 */ return apply_filters('plugins_auto_update_enabled', $enabled);
+                return apply_filters('plugins_auto_update_enabled', $enabled);
             case 'theme':
-                /**
-                 * Filters whether themes auto-update is enabled.
-                 *
-                 * @param bool $enabled True if themes auto-update is enabled, false otherwise.
-                 *
-                 * @since 5.5.0
-                 *
-                 */ return apply_filters('themes_auto_update_enabled', $enabled);
+                return apply_filters('themes_auto_update_enabled', $enabled);
         }
 
         return false;
     }
 
-    /**
-     * Checks whether auto-updates are forced for an item.
-     *
-     * @param string    $type   The type of update being checked: 'theme' or 'plugin'.
-     * @param bool|null $update Whether to update. The value of null is internally used
-     *                          to detect whether nothing has hooked into this filter.
-     * @param object    $item   The update offer.
-     *
-     * @return bool True if auto-updates are forced for `$item`, false otherwise.
-     * @since 5.6.0
-     *
-     */
     function wp_is_auto_update_forced_for_item($type, $update, $item)
     {
-        /** This filter is documented in wp-admin/includes/class-wp-automatic-updater.php */
         return apply_filters("auto_update_{$type}", $update, $item);
     }
 
-    /**
-     * Determines the appropriate auto-update message to be displayed.
-     *
-     * @return string The update message to be shown.
-     * @since 5.5.0
-     *
-     */
     function wp_get_auto_update_message()
     {
         $next_update_time = wp_next_scheduled('wp_version_check');

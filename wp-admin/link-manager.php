@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Link Management Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
     if(! current_user_can('manage_links'))
     {
@@ -40,7 +33,6 @@
         {
             $screen = get_current_screen()->id;
 
-            /** This action is documented in wp-admin/edit.php */
             $redirect_to = apply_filters("handle_bulk_actions-{$screen}", $redirect_to, $doaction, $bulklinks); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
         }
         wp_redirect($redirect_to);

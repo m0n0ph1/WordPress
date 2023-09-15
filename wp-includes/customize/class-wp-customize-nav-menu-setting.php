@@ -1,23 +1,5 @@
 <?php
-    /**
-     * Customize API: WP_Customize_Nav_Menu_Setting class
-     *
-     * @package    WordPress
-     * @subpackage Customize
-     * @since      4.4.0
-     */
 
-    /**
-     * Customize Setting to represent a nav_menu.
-     *
-     * Subclass of WP_Customize_Setting to represent a nav_menu taxonomy term, and
-     * the IDs for the nav_menu_items associated with the nav menu.
-     *
-     * @since 4.3.0
-     *
-     * @see   wp_get_nav_menu_object()
-     * @see   WP_Customize_Setting
-     */
     class WP_Customize_Nav_Menu_Setting extends WP_Customize_Setting
     {
         const ID_PATTERN = '/^nav_menu\[(?P<id>-?\d+)\]$/';
@@ -26,22 +8,8 @@
 
         const TYPE = 'nav_menu';
 
-        /**
-         * Setting type.
-         *
-         * @since 4.3.0
-         * @var string
-         */
         public $type = self::TYPE;
 
-        /**
-         * Default setting value.
-         *
-         * @since 4.3.0
-         * @var array
-         *
-         * @see   wp_get_nav_menu_object()
-         */
         public $default = [
             'name' => '',
             'description' => '',
@@ -49,113 +17,22 @@
             'auto_add' => false,
         ];
 
-        /**
-         * Default transport.
-         *
-         * @since 4.3.0
-         * @var string
-         */
         public $transport = 'postMessage';
 
-        /**
-         * The term ID represented by this setting instance.
-         *
-         * A negative value represents a placeholder ID for a new menu not yet saved.
-         *
-         * @since 4.3.0
-         * @var int
-         */
         public $term_id;
 
-        /**
-         * Previous (placeholder) term ID used before creating a new menu.
-         *
-         * This value will be exported to JS via the {@see 'customize_save_response'} filter
-         * so that JavaScript can update the settings to refer to the newly-assigned
-         * term ID. This value is always negative to indicate it does not refer to
-         * a real term.
-         *
-         * @since 4.3.0
-         * @var int
-         *
-         * @see   WP_Customize_Nav_Menu_Setting::update()
-         * @see   WP_Customize_Nav_Menu_Setting::amend_customize_save_response()
-         */
         public $previous_term_id;
 
-        /**
-         * Status for calling the update method, used in customize_save_response filter.
-         *
-         * See {@see 'customize_save_response'}.
-         *
-         * When status is inserted, the placeholder term ID is stored in `$previous_term_id`.
-         * When status is error, the error is stored in `$update_error`.
-         *
-         * @since 4.3.0
-         * @var string updated|inserted|deleted|error
-         *
-         * @see   WP_Customize_Nav_Menu_Setting::update()
-         * @see   WP_Customize_Nav_Menu_Setting::amend_customize_save_response()
-         */
         public $update_status;
 
-        /**
-         * Any error object returned by wp_update_nav_menu_object() when setting is updated.
-         *
-         * @since 4.3.0
-         * @var WP_Error
-         *
-         * @see   WP_Customize_Nav_Menu_Setting::update()
-         * @see   WP_Customize_Nav_Menu_Setting::amend_customize_save_response()
-         */
         public $update_error;
 
-        /**
-         * Whether or not update() was called.
-         *
-         * @since 4.3.0
-         * @var bool
-         */
         protected $is_updated = false;
 
-        /**
-         * Temporary non-closure passing of orderby value to function.
-         *
-         * @since 4.3.0
-         * @var string
-         *
-         * @see   WP_Customize_Nav_Menu_Setting::filter_wp_get_nav_menus()
-         * @see   WP_Customize_Nav_Menu_Setting::_sort_menus_by_orderby()
-         */
         protected $_current_menus_sort_orderby;
 
-        /**
-         * Storage for data to be sent back to client in customize_save_response filter.
-         *
-         * See {@see 'customize_save_response'}.
-         *
-         * @since 4.3.0
-         * @var array
-         *
-         * @see   WP_Customize_Nav_Menu_Setting::amend_customize_save_response()
-         */
         protected $_widget_nav_menu_updates = [];
 
-        /**
-         * Constructor.
-         *
-         * Any supplied $args override class property defaults.
-         *
-         * @param WP_Customize_Manager $manager Customizer bootstrap instance.
-         * @param string               $id      A specific ID of the setting.
-         *                                      Can be a theme mod or option name.
-         * @param array                $args    Optional. Setting arguments.
-         *
-         * @throws Exception If $id is not valid for this setting type.
-         *
-         * @since 4.3.0
-         *
-         */
         public function __construct(WP_Customize_Manager $manager, $id, array $args = [])
         {
             if(empty($manager->nav_menus))
@@ -173,16 +50,6 @@
             parent::__construct($manager, $id, $args);
         }
 
-        /**
-         * Handle previewing the setting.
-         *
-         * @return bool False if method short-circuited due to no-op.
-         * @since 4.4.0 Added boolean return value
-         *
-         * @see   WP_Customize_Manager::post_value()
-         *
-         * @since 4.3.0
-         */
         public function preview()
         {
             if($this->is_previewed)
@@ -210,15 +77,6 @@
             return true;
         }
 
-        /**
-         * Get the instance data for a given widget setting.
-         *
-         * @return array Instance data.
-         * @see   wp_get_nav_menu_object()
-         *
-         * @since 4.3.0
-         *
-         */
         public function value()
         {
             if($this->is_previewed && get_current_blog_id() === $this->_previewed_blog_id)
@@ -267,19 +125,6 @@
             return $value;
         }
 
-        /**
-         * Filters the wp_get_nav_menus() result to ensure the inserted menu object is included, and the deleted one is
-         * removed.
-         *
-         * @param WP_Term[] $menus An array of menu objects.
-         * @param array     $args  An array of arguments used to retrieve menu objects.
-         *
-         * @return WP_Term[] Array of menu objects.
-         * @see   wp_get_nav_menus()
-         *
-         * @since 4.3.0
-         *
-         */
         public function filter_wp_get_nav_menus($menus, $args)
         {
             if(get_current_blog_id() !== $this->_previewed_blog_id)
@@ -338,20 +183,6 @@
             return $menus;
         }
 
-        /**
-         * Filters the wp_get_nav_menu_object() result to supply the previewed menu object.
-         *
-         * Requesting a nav_menu object by anything but ID is not supported.
-         *
-         * @param object|null $menu_obj Object returned by wp_get_nav_menu_object().
-         * @param string      $menu_id  ID of the nav_menu term. Requests by slug or name will be ignored.
-         *
-         * @return object|null
-         * @see   wp_get_nav_menu_object()
-         *
-         * @since 4.3.0
-         *
-         */
         public function filter_wp_get_nav_menu_object($menu_obj, $menu_id)
         {
             $ok = (get_current_blog_id() === $this->_previewed_blog_id && is_int($menu_id) && $menu_id === $this->term_id);
@@ -387,15 +218,6 @@
             return $menu_obj;
         }
 
-        /**
-         * Filters the nav_menu_options option to include this menu's auto_add preference.
-         *
-         * @param array $nav_menu_options Nav menu options including auto_add.
-         *
-         * @return array (Maybe) modified nav menu options.
-         * @since 4.3.0
-         *
-         */
         public function filter_nav_menu_options($nav_menu_options)
         {
             if(get_current_blog_id() !== $this->_previewed_blog_id)
@@ -409,20 +231,6 @@
             return $nav_menu_options;
         }
 
-        /**
-         * Updates a nav_menu_options array.
-         *
-         * @param array $nav_menu_options Array as returned by get_option( 'nav_menu_options' ).
-         * @param int   $menu_id          The term ID for the given menu.
-         * @param bool  $auto_add         Whether to auto-add or not.
-         *
-         * @return array (Maybe) modified nav_menu_options array.
-         * @see   WP_Customize_Nav_Menu_Setting::filter_nav_menu_options()
-         * @see   WP_Customize_Nav_Menu_Setting::update()
-         *
-         * @since 4.3.0
-         *
-         */
         protected function filter_nav_menu_options_value($nav_menu_options, $menu_id, $auto_add)
         {
             $nav_menu_options = (array) $nav_menu_options;
@@ -445,19 +253,6 @@
             return $nav_menu_options;
         }
 
-        /**
-         * Sanitize an input.
-         *
-         * Note that parent::sanitize() erroneously does wp_unslash() on $value, but
-         * we remove that in this override.
-         *
-         * @param array $value The menu value to sanitize.
-         *
-         * @return array|false|null Null if an input isn't valid. False if it is marked for deletion.
-         *                          Otherwise the sanitized value.
-         * @since 4.3.0
-         *
-         */
         public function sanitize($value)
         {
             // Menu is marked for deletion.
@@ -491,21 +286,9 @@
                 $value['name'] = _x('(unnamed)', 'Missing menu name.');
             }
 
-            /** This filter is documented in wp-includes/class-wp-customize-setting.php */
             return apply_filters("customize_sanitize_{$this->id}", $value, $this);
         }
 
-        /**
-         * Export data for the JS client.
-         *
-         * @param array $data Additional information passed back to the 'saved' event on `wp.customize`.
-         *
-         * @return array Export data.
-         * @since 4.3.0
-         *
-         * @see   WP_Customize_Nav_Menu_Setting::update()
-         *
-         */
         public function amend_customize_save_response($data)
         {
             if(! isset($data['nav_menu_updates']))
@@ -531,21 +314,6 @@
             return $data;
         }
 
-        /**
-         * Sort menu objects by the class-supplied orderby property.
-         *
-         * This is a workaround for a lack of closures.
-         *
-         * @param object $menu1
-         * @param object $menu2
-         *
-         * @return int
-         *
-         * @deprecated 4.7.0 Use wp_list_sort()
-         *
-         * @since      4.3.0
-         * @see        WP_Customize_Nav_Menu_Setting::filter_wp_get_nav_menus()
-         */
         protected function _sort_menus_by_orderby($menu1, $menu2)
         {
             _deprecated_function(__METHOD__, '4.7.0', 'wp_list_sort');
@@ -555,30 +323,6 @@
             return strcmp($menu1->$key, $menu2->$key);
         }
 
-        /**
-         * Create/update the nav_menu term for this setting.
-         *
-         * Any created menus will have their assigned term IDs exported to the client
-         * via the {@see 'customize_save_response'} filter. Likewise, any errors will be exported
-         * to the client via the customize_save_response() filter.
-         *
-         * To delete a menu, the client can send false as the value.
-         *
-         * @param array|false $value       {
-         *                                 The value to update. Note that slug cannot be updated via wp_update_nav_menu_object().
-         *                                 If false, then the menu will be deleted entirely.
-         *
-         * @type string       $name        The name of the menu to save.
-         * @type string       $description The term description. Default empty string.
-         * @type int          $parent      The id of the parent term. Default 0.
-         * @type bool         $auto_add    Whether pages will auto_add to this menu. Default false.
-         *                                 }
-         * @return null|void
-         * @since 4.3.0
-         *
-         * @see   wp_update_nav_menu_object()
-         *
-         */
         protected function update($value)
         {
             if($this->is_updated)

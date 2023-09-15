@@ -39,9 +39,6 @@
             3 => 'Nearest Past Cleanpoint'
         ];
 
-        /**
-         * @param getID3 $getid3
-         */
         public function __construct(getID3 $getid3)
         {
             parent::__construct($getid3);  // extends getid3_handler::__construct()
@@ -57,9 +54,6 @@
             }
         }
 
-        /**
-         * @return array
-         */
         public static function KnownGUIDs()
         {
             static $GUIDarray = [
@@ -179,11 +173,6 @@
             return $GUIDarray;
         }
 
-        /**
-         * @param string $GUIDstring
-         *
-         * @return string
-         */
         public static function GUIDtoBytestring($GUIDstring)
         {
             // Microsoft defines these 16-byte (128-bit) GUIDs in the strangest way:
@@ -220,9 +209,6 @@
             return $hexbytecharstring;
         }
 
-        /**
-         * @return bool
-         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
@@ -507,7 +493,7 @@
 
                         // shortcut
                         $thisfile_asf['codec_list_object'] = [];
-                        /** @var mixed[] $thisfile_asf_codeclistobject */
+
                         $thisfile_asf_codeclistobject = &$thisfile_asf['codec_list_object'];
 
                         $thisfile_asf_codeclistobject['offset'] = $NextObjectOffset + $offset;
@@ -1736,11 +1722,6 @@
             return true;
         }
 
-        /**
-         * @param string $Bytestring
-         *
-         * @return string
-         */
         public static function BytestringToGUID($Bytestring)
         {
             $GUIDstring = str_pad(dechex(ord($Bytestring[3])), 2, '0', STR_PAD_LEFT);
@@ -1767,12 +1748,6 @@
             return strtoupper($GUIDstring);
         }
 
-        /**
-         * @param int  $FILETIME
-         * @param bool $round
-         *
-         * @return float|int
-         */
         public static function FILETIMEtoUNIXtime($FILETIME, $round = true)
         {
             // FILETIME is a 64-bit unsigned integer representing
@@ -1787,12 +1762,6 @@
             return ($FILETIME - 116444736000000000) / 10000000;
         }
 
-        /**
-         * @param string $asf_header_extension_object_data
-         * @param int    $unhandled_sections
-         *
-         * @return array
-         */
         public function HeaderExtensionObjectDataParse(&$asf_header_extension_object_data, &$unhandled_sections)
         {
             // https://web.archive.org/web/20140419205228/http://msdn.microsoft.com/en-us/library/bb643323.aspx
@@ -2183,11 +2152,6 @@
             return $HeaderExtensionObjectParsed;
         }
 
-        /**
-         * @param string $GUIDstring
-         *
-         * @return string|false
-         */
         public static function GUIDname($GUIDstring)
         {
             static $GUIDarray = [];
@@ -2199,11 +2163,6 @@
             return array_search($GUIDstring, $GUIDarray);
         }
 
-        /**
-         * @param int $id
-         *
-         * @return string
-         */
         public static function metadataLibraryObjectDataTypeLookup($id)
         {
             static $lookup = [
@@ -2226,11 +2185,6 @@
             return (isset($lookup[$id]) ? $lookup[$id] : 'invalid');
         }
 
-        /**
-         * @param string $data
-         *
-         * @return array
-         */
         public function ASF_WMpicture(&$data)
         {
             // typedef struct _WMPicture{
@@ -2291,11 +2245,6 @@
             return $WMpicture;
         }
 
-        /**
-         * @param int $WMpictureType
-         *
-         * @return string
-         */
         public static function WMpictureTypeLookup($WMpictureType)
         {
             static $lookup = null;
@@ -2330,11 +2279,6 @@
             return (isset($lookup[$WMpictureType]) ? $lookup[$WMpictureType] : '');
         }
 
-        /**
-         * @param int $CodecListType
-         *
-         * @return string
-         */
         public static function codecListObjectTypeLookup($CodecListType)
         {
             static $lookup = [
@@ -2346,25 +2290,11 @@
             return (isset($lookup[$CodecListType]) ? $lookup[$CodecListType] : 'Invalid Codec Type');
         }
 
-        /**
-         * Remove terminator 00 00 and convert UTF-16LE to Latin-1.
-         *
-         * @param string $string
-         *
-         * @return string
-         */
         public static function TrimConvert($string)
         {
             return trim(getid3_lib::iconv_fallback('UTF-16LE', 'ISO-8859-1', self::TrimTerm($string)), ' ');
         }
 
-        /**
-         * Remove terminator 00 00.
-         *
-         * @param string $string
-         *
-         * @return string
-         */
         public static function TrimTerm($string)
         {
             // remove terminator, only if present (it should be, but...)
@@ -2376,11 +2306,6 @@
             return $string;
         }
 
-        /**
-         * @param int $id
-         *
-         * @return string
-         */
         public static function ASFIndexObjectIndexTypeLookup($id)
         {
             static $ASFIndexObjectIndexTypeLookup = [];

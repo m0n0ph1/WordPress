@@ -1,10 +1,4 @@
 <?php
-    /**
-     * The block-based widgets editor, for use in widgets.php.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
 // Don't load directly.
     if(! defined('ABSPATH'))
@@ -35,10 +29,10 @@
 
     wp_add_inline_script(
         'wp-edit-widgets', sprintf(
-        'wp.domReady( function() {
+                             'wp.domReady( function() {
 			wp.editWidgets.initialize( "widgets-editor", %s );
 		} );', wp_json_encode($editor_settings)
-    )
+                         )
     );
 
 // Preload server-registered block schemas.
@@ -50,22 +44,19 @@
     wp_enqueue_script('admin-widgets');
     wp_enqueue_style('wp-edit-widgets');
 
-    /** This action is documented in wp-admin/edit-form-blocks.php */
     do_action('enqueue_block_editor_assets');
 
-    /** This action is documented in wp-admin/widgets-form.php */
     do_action('sidebar_admin_setup');
 
     require_once ABSPATH.'wp-admin/admin-header.php';
 
-    /** This action is documented in wp-admin/widgets-form.php */
     do_action('widgets_admin_page');
 ?>
 
     <div id="widgets-editor" class="blocks-widgets-container"></div>
 
 <?php
-    /** This action is documented in wp-admin/widgets-form.php */
+
     do_action('sidebar_admin_page');
 
     require_once ABSPATH.'wp-admin/admin-footer.php';

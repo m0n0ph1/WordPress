@@ -1,26 +1,10 @@
 <?php
-    /**
-     * Block Patterns
-     *
-     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern/
-     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern_category/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Fifteen
-     * @since      Twenty Fifteen 3.0
-     */
 
-    /**
-     * Register Block Pattern Category.
-     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentyfifteen', ['label' => esc_html__('Twenty Fifteen', 'twentyfifteen')]);
     }
 
-    /**
-     * Register Block Patterns.
-     */
     if(function_exists('register_block_pattern'))
     {
         // Gallery and Description.

@@ -1,17 +1,5 @@
 <?php
-    /**
-     * These functions are needed to load WordPress.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Returns the HTTP protocol sent by the server.
-     *
-     * @return string The HTTP protocol. Default: HTTP/1.0.
-     * @since 4.4.0
-     *
-     */
     function wp_get_server_protocol()
     {
         $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : '';
@@ -24,15 +12,6 @@
         return $protocol;
     }
 
-    /**
-     * Fixes `$_SERVER` variables for various setups.
-     *
-     * @since  3.0.0
-     * @access private
-     *
-     * @global string $PHP_SELF The filename of the currently executing script,
-     *                          relative to the document root.
-     */
     function wp_fix_server_vars()
     {
         global $PHP_SELF;
@@ -109,15 +88,6 @@
         wp_populate_basic_auth_from_authorization_header();
     }
 
-    /**
-     * Populates the Basic Auth server details from the Authorization header.
-     *
-     * Some servers running in CGI or FastCGI mode don't pass the Authorization
-     * header on to WordPress.  If it's been rewritten to the `HTTP_AUTHORIZATION` header,
-     * fill in the proper $_SERVER variables instead.
-     *
-     * @since 5.6.0
-     */
     function wp_populate_basic_auth_from_authorization_header()
     {
         // If we don't have anything to pull from, return early.
@@ -152,18 +122,6 @@
         $_SERVER['PHP_AUTH_PW'] = $pass;
     }
 
-    /**
-     * Checks for the required PHP version, and the mysqli extension or
-     * a database drop-in.
-     *
-     * Dies if requirements are not met.
-     *
-     * @since  3.0.0
-     * @access private
-     *
-     * @global string $required_php_version The required PHP version string.
-     * @global string $wp_version           The WordPress version string.
-     */
     function wp_check_php_mysql_versions()
     {
         global $required_php_version, $wp_version;
@@ -202,21 +160,6 @@
         }
     }
 
-    /**
-     * Retrieves the current environment type.
-     *
-     * The type can be set via the `WP_ENVIRONMENT_TYPE` global system variable,
-     * or a constant of the same name.
-     *
-     * Possible values are 'local', 'development', 'staging', and 'production'.
-     * If not set, the type defaults to 'production'.
-     *
-     * @return string The current environment type.
-     * @since 5.5.1 Added the 'local' type.
-     * @since 5.5.1 Removed the ability to alter the list of types.
-     *
-     * @since 5.5.0
-     */
     function wp_get_environment_type()
     {
         static $current_env = '';
@@ -274,27 +217,6 @@
         return $current_env;
     }
 
-    /**
-     * Retrieves the current development mode.
-     *
-     * The development mode affects how certain parts of the WordPress application behave,
-     * which is relevant when developing for WordPress.
-     *
-     * Development mode can be set via the `WP_DEVELOPMENT_MODE` constant in `wp-config.php`.
-     * Possible values are 'core', 'plugin', 'theme', 'all', or an empty string to disable
-     * development mode. 'all' is a special value to signify that all three development modes
-     * ('core', 'plugin', and 'theme') are enabled.
-     *
-     * Development mode is considered separately from `WP_DEBUG` and wp_get_environment_type().
-     * It does not affect debugging output, but rather functional nuances in WordPress.
-     *
-     * This function retrieves the currently set development mode value. To check whether
-     * a specific development mode is enabled, use wp_is_development_mode().
-     *
-     * @return string The current development mode.
-     * @since 6.3.0
-     *
-     */
     function wp_get_development_mode()
     {
         static $current_mode = null;
@@ -330,15 +252,6 @@
         return $current_mode;
     }
 
-    /**
-     * Checks whether the site is in the given development mode.
-     *
-     * @param string $mode Development mode to check for. Either 'core', 'plugin', 'theme', or 'all'.
-     *
-     * @return bool True if the given mode is covered by the current development mode, false otherwise.
-     * @since 6.3.0
-     *
-     */
     function wp_is_development_mode($mode)
     {
         $current_mode = wp_get_development_mode();
@@ -357,14 +270,6 @@
         return $mode === $current_mode;
     }
 
-    /**
-     * Ensures all of WordPress is not loaded when handling a favicon.ico request.
-     *
-     * Instead, send the headers for a zero-length favicon and bail.
-     *
-     * @since      3.0.0
-     * @deprecated 5.4.0 Deprecated in favor of do_favicon().
-     */
     function wp_favicon_request()
     {
         if('/favicon.ico' === $_SERVER['REQUEST_URI'])
@@ -374,15 +279,6 @@
         }
     }
 
-    /**
-     * Dies with a maintenance message when conditions are met.
-     *
-     * The default message can be replaced by using a drop-in (maintenance.php in
-     * the wp-content directory).
-     *
-     * @since  3.0.0
-     * @access private
-     */
     function wp_maintenance()
     {
         // Return if maintenance mode is disabled.
@@ -405,20 +301,6 @@
         wp_die(__('Briefly unavailable for scheduled maintenance. Check back in a minute.'), __('Maintenance'), 503);
     }
 
-    /**
-     * Checks if maintenance mode is enabled.
-     *
-     * Checks for a file in the WordPress root directory named ".maintenance".
-     * This file will contain the variable $upgrading, set to the time the file
-     * was created. If the file was created less than 10 minutes ago, WordPress
-     * is in maintenance mode.
-     *
-     * @return bool True if maintenance mode is enabled, false otherwise.
-     * @global int $upgrading The Unix timestamp marking when upgrading WordPress began.
-     *
-     * @since 5.5.0
-     *
-     */
     function wp_is_maintenance_mode()
     {
         global $upgrading;
@@ -436,20 +318,6 @@
             return false;
         }
 
-        /**
-         * Filters whether to enable maintenance mode.
-         *
-         * This filter runs before it can be used by plugins. It is designed for
-         * non-web runtimes. If this filter returns true, maintenance mode will be
-         * active and the request will end. If false, the request will be allowed to
-         * continue processing even if maintenance mode should be active.
-         *
-         * @param bool $enable_checks Whether to enable maintenance mode. Default true.
-         * @param int  $upgrading     The timestamp set in the .maintenance file.
-         *
-         * @since 4.6.0
-         *
-         */
         if(! apply_filters('enable_maintenance_mode', true, $upgrading))
         {
             return false;
@@ -458,31 +326,11 @@
         return true;
     }
 
-    /**
-     * Gets the time elapsed so far during this PHP script.
-     *
-     * Uses REQUEST_TIME_FLOAT that appeared in PHP 5.4.0.
-     *
-     * @return float Seconds since the PHP script started.
-     * @since 5.8.0
-     *
-     */
     function timer_float()
     {
         return microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
     }
 
-    /**
-     * Starts the WordPress micro-timer.
-     *
-     * @return bool Always returns true.
-     * @global float $timestart Unix timestamp set at the beginning of the page load.
-     * @see    timer_stop()
-     *
-     * @since  0.71
-     * @access private
-     *
-     */
     function timer_start()
     {
         global $timestart;
@@ -492,22 +340,6 @@
         return true;
     }
 
-    /**
-     * Retrieves or displays the time from the page start to when function is called.
-     *
-     * @param int|bool $display   Whether to echo or return the results. Accepts 0|false for return,
-     *                            1|true for echo. Default 0|false.
-     * @param int      $precision The number of digits from the right of the decimal to display.
-     *                            Default 3.
-     *
-     * @return string The "second.microsecond" finished time calculation. The number is formatted
-     *                for human consumption, both localized and rounded.
-     * @since 0.71
-     *
-     * @global float   $timestart Seconds from when timer_start() is called.
-     * @global float   $timeend   Seconds from when function is called.
-     *
-     */
     function timer_stop($display = 0, $precision = 3)
     {
         global $timestart, $timeend;
@@ -532,71 +364,8 @@
         return $r;
     }
 
-    /**
-     * Sets PHP error reporting based on WordPress debug settings.
-     *
-     * Uses three constants: `WP_DEBUG`, `WP_DEBUG_DISPLAY`, and `WP_DEBUG_LOG`.
-     * All three can be defined in wp-config.php. By default, `WP_DEBUG` and
-     * `WP_DEBUG_LOG` are set to false, and `WP_DEBUG_DISPLAY` is set to true.
-     *
-     * When `WP_DEBUG` is true, all PHP notices are reported. WordPress will also
-     * display internal notices: when a deprecated WordPress function, function
-     * argument, or file is used. Deprecated code may be removed from a later
-     * version.
-     *
-     * It is strongly recommended that plugin and theme developers use `WP_DEBUG`
-     * in their development environments.
-     *
-     * `WP_DEBUG_DISPLAY` and `WP_DEBUG_LOG` perform no function unless `WP_DEBUG`
-     * is true.
-     *
-     * When `WP_DEBUG_DISPLAY` is true, WordPress will force errors to be displayed.
-     * `WP_DEBUG_DISPLAY` defaults to true. Defining it as null prevents WordPress
-     * from changing the global configuration setting. Defining `WP_DEBUG_DISPLAY`
-     * as false will force errors to be hidden.
-     *
-     * When `WP_DEBUG_LOG` is true, errors will be logged to `wp-content/debug.log`.
-     * When `WP_DEBUG_LOG` is a valid path, errors will be logged to the specified file.
-     *
-     * Errors are never displayed for XML-RPC, REST, `ms-files.php`, and Ajax requests.
-     *
-     * @since  3.0.0
-     * @since  5.1.0 `WP_DEBUG_LOG` can be a file path.
-     * @access private
-     */
     function wp_debug_mode()
     {
-        /**
-         * Filters whether to allow the debug mode check to occur.
-         *
-         * This filter runs before it can be used by plugins. It is designed for
-         * non-web runtimes. Returning false causes the `WP_DEBUG` and related
-         * constants to not be checked and the default PHP values for errors
-         * will be used unless you take care to update them yourself.
-         *
-         * To use this filter you must define a `$wp_filter` global before
-         * WordPress loads, usually in `wp-config.php`.
-         *
-         * Example:
-         *
-         *     $GLOBALS['wp_filter'] = array(
-         *         'enable_wp_debug_mode_checks' => array(
-         *             10 => array(
-         *                 array(
-         *                     'accepted_args' => 0,
-         *                     'function'      => function() {
-         *                         return false;
-         *                     },
-         *                 ),
-         *             ),
-         *         ),
-         *     );
-         *
-         * @param bool $enable_debug_mode Whether to enable debug mode checks to occur. Default true.
-         *
-         * @since 4.6.0
-         *
-         */
         if(! apply_filters('enable_wp_debug_mode_checks', true))
         {
             return;
@@ -645,32 +414,12 @@
         }
     }
 
-    /**
-     * Sets the location of the language directory.
-     *
-     * To set directory manually, define the `WP_LANG_DIR` constant
-     * in wp-config.php.
-     *
-     * If the language directory exists within `WP_CONTENT_DIR`, it
-     * is used. Otherwise the language directory is assumed to live
-     * in `WPINC`.
-     *
-     * @since  3.0.0
-     * @access private
-     */
     function wp_set_lang_dir()
     {
         if(! defined('WP_LANG_DIR'))
         {
             if(file_exists(WP_CONTENT_DIR.'/languages') && @is_dir(WP_CONTENT_DIR.'/languages') || ! @is_dir(ABSPATH.WPINC.'/languages'))
             {
-                /**
-                 * Server path of the language directory.
-                 *
-                 * No leading slash, no trailing slash, full path, not relative to ABSPATH
-                 *
-                 * @since 2.1.0
-                 */
                 define('WP_LANG_DIR', WP_CONTENT_DIR.'/languages');
 
                 if(! defined('LANGDIR'))
@@ -681,13 +430,6 @@
             }
             else
             {
-                /**
-                 * Server path of the language directory.
-                 *
-                 * No leading slash, no trailing slash, full path, not relative to `ABSPATH`.
-                 *
-                 * @since 2.1.0
-                 */
                 define('WP_LANG_DIR', ABSPATH.WPINC.'/languages');
 
                 if(! defined('LANGDIR'))
@@ -699,13 +441,6 @@
         }
     }
 
-    /**
-     * Loads the database class file and instantiates the `$wpdb` global.
-     *
-     * @since 2.5.0
-     *
-     * @global wpdb $wpdb WordPress database abstraction object.
-     */
     function require_wp_db()
     {
         global $wpdb;
@@ -730,18 +465,6 @@
         $wpdb = new wpdb($dbuser, $dbpassword, $dbname, $dbhost);
     }
 
-    /**
-     * Sets the database table prefix and the format specifiers for database
-     * table columns.
-     *
-     * Columns not listed here default to `%s`.
-     *
-     * @since  3.0.0
-     * @access private
-     *
-     * @global wpdb   $wpdb         WordPress database abstraction object.
-     * @global string $table_prefix The database table prefix.
-     */
     function wp_set_wpdb_vars()
     {
         global $wpdb, $table_prefix;
@@ -798,18 +521,6 @@
         }
     }
 
-    /**
-     * Toggles `$_wp_using_ext_object_cache` on and off without directly
-     * touching global.
-     *
-     * @param bool  $using Whether external object cache is being used.
-     *
-     * @return bool The current 'using' setting.
-     * @since 3.7.0
-     *
-     * @global bool $_wp_using_ext_object_cache
-     *
-     */
     function wp_using_ext_object_cache($using = null)
     {
         global $_wp_using_ext_object_cache;
@@ -824,17 +535,6 @@
         return $current_using;
     }
 
-    /**
-     * Starts the WordPress object cache.
-     *
-     * If an object-cache.php file exists in the wp-content directory,
-     * it uses that drop-in as an external object cache.
-     *
-     * @since  3.0.0
-     * @access private
-     *
-     * @global array $wp_filter Stores all of the filters.
-     */
     function wp_start_object_cache()
     {
         global $wp_filter;
@@ -842,18 +542,6 @@
 
         // Only perform the following checks once.
 
-        /**
-         * Filters whether to enable loading of the object-cache.php drop-in.
-         *
-         * This filter runs before it can be used by plugins. It is designed for non-web
-         * runtimes. If false is returned, object-cache.php will never be loaded.
-         *
-         * @param bool $enable_object_cache Whether to enable loading object-cache.php (if present).
-         *                                  Default true.
-         *
-         * @since 5.8.0
-         *
-         */
         if($first_init && apply_filters('enable_loading_object_cache_dropin', true))
         {
             if(! function_exists('wp_cache_init'))
@@ -945,14 +633,6 @@
         $first_init = false;
     }
 
-    /**
-     * Redirects to the installer if WordPress is not installed.
-     *
-     * Dies with an error message when Multisite is enabled.
-     *
-     * @since  3.0.0
-     * @access private
-     */
     function wp_not_installed()
     {
         if(is_blog_installed() || wp_installing())
@@ -976,18 +656,6 @@
         die();
     }
 
-    /**
-     * Retrieves an array of must-use plugin files.
-     *
-     * The default directory is wp-content/mu-plugins. To change the default
-     * directory manually, define `WPMU_PLUGIN_DIR` and `WPMU_PLUGIN_URL`
-     * in wp-config.php.
-     *
-     * @return string[] Array of absolute paths of files to include.
-     * @since  3.0.0
-     * @access private
-     *
-     */
     function wp_get_mu_plugins()
     {
         $mu_plugins = [];
@@ -1018,20 +686,6 @@
         return $mu_plugins;
     }
 
-    /**
-     * Retrieves an array of active and valid plugin files.
-     *
-     * While upgrading or installing WordPress, no plugins are returned.
-     *
-     * The default directory is `wp-content/plugins`. To change the default
-     * directory manually, define `WP_PLUGIN_DIR` and `WP_PLUGIN_URL`
-     * in `wp-config.php`.
-     *
-     * @return string[] Array of paths to plugin files relative to the plugins directory.
-     * @since  3.0.0
-     * @access private
-     *
-     */
     function wp_get_active_and_valid_plugins()
     {
         $plugins = [];
@@ -1077,15 +731,6 @@
         return $plugins;
     }
 
-    /**
-     * Filters a given list of plugins, removing any paused plugins from it.
-     *
-     * @param string[] $plugins Array of absolute plugin main file paths.
-     *
-     * @return string[] Filtered array of plugins, without any paused plugins.
-     * @since 5.2.0
-     *
-     */
     function wp_skip_paused_plugins(array $plugins)
     {
         $paused_plugins = wp_paused_plugins()->get_all();
@@ -1111,18 +756,6 @@
         return $plugins;
     }
 
-    /**
-     * Retrieves an array of active and valid themes.
-     *
-     * While upgrading or installing WordPress, no themes are returned.
-     *
-     * @return string[] Array of absolute paths to theme directories.
-     * @global string $pagenow The filename of the current screen.
-     *
-     * @since  5.1.0
-     * @access private
-     *
-     */
     function wp_get_active_and_valid_themes()
     {
         global $pagenow;
@@ -1159,15 +792,6 @@
         return $themes;
     }
 
-    /**
-     * Filters a given list of themes, removing any paused themes from it.
-     *
-     * @param string[] $themes Array of absolute theme directory paths.
-     *
-     * @return string[] Filtered array of absolute paths to themes, without any paused themes.
-     * @since 5.2.0
-     *
-     */
     function wp_skip_paused_themes(array $themes)
     {
         $paused_themes = wp_paused_themes()->get_all();
@@ -1193,29 +817,11 @@
         return $themes;
     }
 
-    /**
-     * Determines whether WordPress is in Recovery Mode.
-     *
-     * In this mode, plugins or themes that cause WSODs will be paused.
-     *
-     * @return bool
-     * @since 5.2.0
-     *
-     */
     function wp_is_recovery_mode()
     {
         return wp_recovery_mode()->is_active();
     }
 
-    /**
-     * Determines whether we are currently on an endpoint that should be protected against WSODs.
-     *
-     * @return bool True if the current endpoint should be protected.
-     * @global string $pagenow The filename of the current screen.
-     *
-     * @since 5.2.0
-     *
-     */
     function is_protected_endpoint()
     {
         // Protect login pages.
@@ -1236,29 +842,9 @@
             return true;
         }
 
-        /**
-         * Filters whether the current request is against a protected endpoint.
-         *
-         * This filter is only fired when an endpoint is requested which is not already protected by
-         * WordPress core. As such, it exclusively allows providing further protected endpoints in
-         * addition to the admin backend, login pages and protected Ajax actions.
-         *
-         * @param bool $is_protected_endpoint Whether the currently requested endpoint is protected.
-         *                                    Default false.
-         *
-         * @since 5.2.0
-         *
-         */
         return (bool) apply_filters('is_protected_endpoint', false);
     }
 
-    /**
-     * Determines whether we are currently handling an Ajax action that should be protected against WSODs.
-     *
-     * @return bool True if the current Ajax action should be protected.
-     * @since 5.2.0
-     *
-     */
     function is_protected_ajax_action()
     {
         if(! wp_doing_ajax())
@@ -1282,16 +868,6 @@
             'update-theme',           // Update an existing theme.
         ];
 
-        /**
-         * Filters the array of protected Ajax actions.
-         *
-         * This filter is only fired when doing Ajax and the Ajax request has an 'action' property.
-         *
-         * @param string[] $actions_to_protect Array of strings with Ajax actions to protect.
-         *
-         * @since 5.2.0
-         *
-         */
         $actions_to_protect = (array) apply_filters('wp_protected_ajax_actions', $actions_to_protect);
 
         if(! in_array($_REQUEST['action'], $actions_to_protect, true))
@@ -1302,15 +878,6 @@
         return true;
     }
 
-    /**
-     * Sets internal encoding.
-     *
-     * In most cases the default internal encoding is latin1, which is
-     * of no use, since we want to use the `mb_` functions for `utf-8` strings.
-     *
-     * @since  3.0.0
-     * @access private
-     */
     function wp_set_internal_encoding()
     {
         if(function_exists('mb_internal_encoding'))
@@ -1324,15 +891,6 @@
         }
     }
 
-    /**
-     * Adds magic quotes to `$_GET`, `$_POST`, `$_COOKIE`, and `$_SERVER`.
-     *
-     * Also forces `$_REQUEST` to be `$_GET + $_POST`. If `$_SERVER`,
-     * `$_COOKIE`, or `$_ENV` are needed, use those superglobals directly.
-     *
-     * @since  3.0.0
-     * @access private
-     */
     function wp_magic_quotes()
     {
         // Escape with wpdb.
@@ -1345,70 +903,24 @@
         $_REQUEST = array_merge($_GET, $_POST);
     }
 
-    /**
-     * Runs just before PHP shuts down execution.
-     *
-     * @since  1.2.0
-     * @access private
-     */
     function shutdown_action_hook()
     {
-        /**
-         * Fires just before PHP shuts down execution.
-         *
-         * @since 1.2.0
-         */
         do_action('shutdown');
 
         wp_cache_close();
     }
 
-    /**
-     * Clones an object.
-     *
-     * @param object $input_object The object to clone.
-     *
-     * @return object The cloned object.
-     * @since      2.7.0
-     * @deprecated 3.2.0
-     *
-     */
     function wp_clone($input_object)
     {
         // Use parens for clone to accommodate PHP 4. See #17880.
         return clone($input_object);
     }
 
-    /**
-     * Determines whether the current request is for the login screen.
-     *
-     * @return bool True if inside WordPress login screen, false otherwise.
-     * @see   wp_login_url()
-     *
-     * @since 6.1.0
-     *
-     */
     function is_login()
     {
         return false !== stripos(wp_login_url(), $_SERVER['SCRIPT_NAME']);
     }
 
-    /**
-     * Determines whether the current request is for an administrative interface page.
-     *
-     * Does not check if the user is an administrator; use current_user_can()
-     * for checking roles and capabilities.
-     *
-     * For more information on this and similar theme functions, check out
-     * the {@link https://developer.wordpress.org/themes/basics/conditional-tags/
-     * Conditional Tags} article in the Theme Developer Handbook.
-     *
-     * @return bool True if inside WordPress administration interface, false otherwise.
-     * @global WP_Screen $current_screen WordPress current screen object.
-     *
-     * @since 1.5.1
-     *
-     */
     function is_admin()
     {
         if(isset($GLOBALS['current_screen']))
@@ -1423,20 +935,6 @@
         return false;
     }
 
-    /**
-     * Determines whether the current request is for a site's administrative interface.
-     *
-     * e.g. `/wp-admin/`
-     *
-     * Does not check if the user is an administrator; use current_user_can()
-     * for checking roles and capabilities.
-     *
-     * @return bool True if inside WordPress site administration pages.
-     * @global WP_Screen $current_screen WordPress current screen object.
-     *
-     * @since 3.1.0
-     *
-     */
     function is_blog_admin()
     {
         if(isset($GLOBALS['current_screen']))
@@ -1451,23 +949,6 @@
         return false;
     }
 
-    /**
-     * Determines whether the current request is for the network administrative interface.
-     *
-     * e.g. `/wp-admin/network/`
-     *
-     * Does not check if the user is an administrator; use current_user_can()
-     * for checking roles and capabilities.
-     *
-     * Does not check if the site is a Multisite network; use is_multisite()
-     * for checking if Multisite is enabled.
-     *
-     * @return bool True if inside WordPress network administration pages.
-     * @global WP_Screen $current_screen WordPress current screen object.
-     *
-     * @since 3.1.0
-     *
-     */
     function is_network_admin()
     {
         if(isset($GLOBALS['current_screen']))
@@ -1482,20 +963,6 @@
         return false;
     }
 
-    /**
-     * Determines whether the current request is for a user admin screen.
-     *
-     * e.g. `/wp-admin/user/`
-     *
-     * Does not check if the user is an administrator; use current_user_can()
-     * for checking roles and capabilities.
-     *
-     * @return bool True if inside WordPress user administration pages.
-     * @global WP_Screen $current_screen WordPress current screen object.
-     *
-     * @since 3.1.0
-     *
-     */
     function is_user_admin()
     {
         if(isset($GLOBALS['current_screen']))
@@ -1510,13 +977,6 @@
         return false;
     }
 
-    /**
-     * Determines whether Multisite is enabled.
-     *
-     * @return bool True if Multisite is enabled, false otherwise.
-     * @since 3.0.0
-     *
-     */
     function is_multisite()
     {
         if(defined('MULTISITE'))
@@ -1532,15 +992,6 @@
         return false;
     }
 
-    /**
-     * Retrieves the current site ID.
-     *
-     * @return int Site ID.
-     * @global int $blog_id
-     *
-     * @since 3.1.0
-     *
-     */
     function get_current_blog_id()
     {
         global $blog_id;
@@ -1548,13 +999,6 @@
         return absint($blog_id);
     }
 
-    /**
-     * Retrieves the current network ID.
-     *
-     * @return int The ID of the current network.
-     * @since 4.6.0
-     *
-     */
     function get_current_network_id()
     {
         if(! is_multisite())
@@ -1572,22 +1016,6 @@
         return absint($current_network->id);
     }
 
-    /**
-     * Attempts an early load of translations.
-     *
-     * Used for errors encountered during the initial loading process, before
-     * the locale has been properly detected and loaded.
-     *
-     * Designed for unusual load sequences (like setup-config.php) or for when
-     * the script will then terminate with an error, otherwise there is a risk
-     * that a file can be double-included.
-     *
-     * @since  3.4.0
-     * @access private
-     *
-     * @global WP_Textdomain_Registry $wp_textdomain_registry WordPress Textdomain Registry.
-     * @global WP_Locale              $wp_locale              WordPress date and time locale object.
-     */
     function wp_load_translations_early()
     {
         global $wp_textdomain_registry, $wp_locale;
@@ -1698,19 +1126,6 @@
         $wp_locale = new WP_Locale();
     }
 
-    /**
-     * Checks or sets whether WordPress is in "installation" mode.
-     *
-     * If the `WP_INSTALLING` constant is defined during the bootstrap, `wp_installing()` will default to `true`.
-     *
-     * @param bool $is_installing Optional. True to set WP into Installing mode, false to turn Installing mode off.
-     *                            Omit this parameter if you only want to fetch the current status.
-     *
-     * @return bool True if WP is installing, otherwise false. When a `$is_installing` is passed, the function will
-     *              report whether WP was in installing mode prior to the change to `$is_installing`.
-     * @since 4.4.0
-     *
-     */
     function wp_installing($is_installing = null)
     {
         static $installing = null;
@@ -1732,14 +1147,6 @@
         return (bool) $installing;
     }
 
-    /**
-     * Determines if SSL is used.
-     *
-     * @return bool True if SSL, otherwise false.
-     * @since 4.6.0 Moved from functions.php to load.php.
-     *
-     * @since 2.6.0
-     */
     function is_ssl()
     {
         if(isset($_SERVER['HTTPS']))
@@ -1762,19 +1169,6 @@
         return false;
     }
 
-    /**
-     * Converts a shorthand byte value to an integer byte value.
-     *
-     * @param string $value A (PHP ini) byte value, either shorthand or ordinary.
-     *
-     * @return int An integer byte value.
-     * @link  https://www.php.net/manual/en/function.ini-get.php
-     * @link  https://www.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
-     *
-     * @since 2.3.0
-     * @since 4.6.0 Moved from media.php to load.php.
-     *
-     */
     function wp_convert_hr_to_bytes($value)
     {
         $value = strtolower(trim($value));
@@ -1797,17 +1191,6 @@
         return min($bytes, PHP_INT_MAX);
     }
 
-    /**
-     * Determines whether a PHP ini value is changeable at runtime.
-     *
-     * @param string $setting The name of the ini setting to check.
-     *
-     * @return bool True if the value is changeable at runtime. False otherwise.
-     * @since 4.6.0
-     *
-     * @link  https://www.php.net/manual/en/function.ini-get-all.php
-     *
-     */
     function wp_is_ini_value_changeable($setting)
     {
         static $ini_all;
@@ -1837,125 +1220,38 @@
         return false;
     }
 
-    /**
-     * Determines whether the current request is a WordPress Ajax request.
-     *
-     * @return bool True if it's a WordPress Ajax request, false otherwise.
-     * @since 4.7.0
-     *
-     */
     function wp_doing_ajax()
     {
-        /**
-         * Filters whether the current request is a WordPress Ajax request.
-         *
-         * @param bool $wp_doing_ajax Whether the current request is a WordPress Ajax request.
-         *
-         * @since 4.7.0
-         *
-         */
         return apply_filters('wp_doing_ajax', defined('DOING_AJAX') && DOING_AJAX);
     }
 
-    /**
-     * Determines whether the current request should use themes.
-     *
-     * @return bool True if themes should be used, false otherwise.
-     * @since 5.1.0
-     *
-     */
     function wp_using_themes()
     {
-        /**
-         * Filters whether the current request should use themes.
-         *
-         * @param bool $wp_using_themes Whether the current request should use themes.
-         *
-         * @since 5.1.0
-         *
-         */
         return apply_filters('wp_using_themes', defined('WP_USE_THEMES') && WP_USE_THEMES);
     }
 
-    /**
-     * Determines whether the current request is a WordPress cron request.
-     *
-     * @return bool True if it's a WordPress cron request, false otherwise.
-     * @since 4.8.0
-     *
-     */
     function wp_doing_cron()
     {
-        /**
-         * Filters whether the current request is a WordPress cron request.
-         *
-         * @param bool $wp_doing_cron Whether the current request is a WordPress cron request.
-         *
-         * @since 4.8.0
-         *
-         */
         return apply_filters('wp_doing_cron', defined('DOING_CRON') && DOING_CRON);
     }
 
-    /**
-     * Checks whether the given variable is a WordPress Error.
-     *
-     * Returns whether `$thing` is an instance of the `WP_Error` class.
-     *
-     * @param mixed $thing The variable to check.
-     *
-     * @return bool Whether the variable is an instance of WP_Error.
-     * @since 2.1.0
-     *
-     */
     function is_wp_error($thing)
     {
         $is_wp_error = ($thing instanceof WP_Error);
 
         if($is_wp_error)
         {
-            /**
-             * Fires when `is_wp_error()` is called and its parameter is an instance of `WP_Error`.
-             *
-             * @param WP_Error $thing The error object passed to `is_wp_error()`.
-             *
-             * @since 5.6.0
-             *
-             */
             do_action('is_wp_error_instance', $thing);
         }
 
         return $is_wp_error;
     }
 
-    /**
-     * Determines whether file modifications are allowed.
-     *
-     * @param string $context The usage context.
-     *
-     * @return bool True if file modification is allowed, false otherwise.
-     * @since 4.8.0
-     *
-     */
     function wp_is_file_mod_allowed($context)
     {
-        /**
-         * Filters whether file modifications are allowed.
-         *
-         * @param bool   $file_mod_allowed Whether file modifications are allowed.
-         * @param string $context          The usage context.
-         *
-         * @since 4.8.0
-         *
-         */
         return apply_filters('file_mod_allowed', ! defined('DISALLOW_FILE_MODS') || ! DISALLOW_FILE_MODS, $context);
     }
 
-    /**
-     * Starts scraping edited file errors.
-     *
-     * @since 4.9.0
-     */
     function wp_start_scraping_edited_file_errors()
     {
         if(! isset($_REQUEST['wp_scrape_key']) || ! isset($_REQUEST['wp_scrape_nonce']))
@@ -1985,14 +1281,6 @@
         register_shutdown_function('wp_finalize_scraping_edited_file_errors', $key);
     }
 
-    /**
-     * Finalizes scraping for edited file errors.
-     *
-     * @param string $scrape_key Scrape key.
-     *
-     * @since 4.9.0
-     *
-     */
     function wp_finalize_scraping_edited_file_errors($scrape_key)
     {
         $error = error_get_last();
@@ -2021,14 +1309,6 @@
         echo "\n###### wp_scraping_result_end:$scrape_key ######\n";
     }
 
-    /**
-     * Checks whether current request is a JSON request, or is expecting a JSON response.
-     *
-     * @return bool True if `Accepts` or `Content-Type` headers contain `application/json`.
-     *              False otherwise.
-     * @since 5.0.0
-     *
-     */
     function wp_is_json_request()
     {
         if(isset($_SERVER['HTTP_ACCEPT']) && wp_is_json_media_type($_SERVER['HTTP_ACCEPT']))
@@ -2044,13 +1324,6 @@
         return false;
     }
 
-    /**
-     * Checks whether current request is a JSONP request, or is expecting a JSONP response.
-     *
-     * @return bool True if JSONP request, false otherwise.
-     * @since 5.2.0
-     *
-     */
     function wp_is_jsonp_request()
     {
         if(! isset($_GET['_jsonp']))
@@ -2069,21 +1342,11 @@
             return false;
         }
 
-        /** This filter is documented in wp-includes/rest-api/class-wp-rest-server.php */
         $jsonp_enabled = apply_filters('rest_jsonp_enabled', true);
 
         return $jsonp_enabled;
     }
 
-    /**
-     * Checks whether a string is a valid JSON Media Type.
-     *
-     * @param string $media_type A Media Type string to check.
-     *
-     * @return bool True if string is a valid JSON Media Type.
-     * @since 5.6.0
-     *
-     */
     function wp_is_json_media_type($media_type)
     {
         static $cache = [];
@@ -2096,14 +1359,6 @@
         return $cache[$media_type];
     }
 
-    /**
-     * Checks whether current request is an XML request, or is expecting an XML response.
-     *
-     * @return bool True if `Accepts` or `Content-Type` headers contain `text/xml`
-     *              or one of the related MIME types. False otherwise.
-     * @since 5.2.0
-     *
-     */
     function wp_is_xml_request()
     {
         $accepted = [
@@ -2134,25 +1389,6 @@
         return false;
     }
 
-    /**
-     * Checks if this site is protected by HTTP Basic Auth.
-     *
-     * At the moment, this merely checks for the present of Basic Auth credentials. Therefore, calling
-     * this function with a context different from the current context may give inaccurate results.
-     * In a future release, this evaluation may be made more robust.
-     *
-     * Currently, this is only used by Application Passwords to prevent a conflict since it also utilizes
-     * Basic Auth.
-     *
-     * @param string  $context The context to check for protection. Accepts 'login', 'admin', and 'front'.
-     *                         Defaults to the current context.
-     *
-     * @return bool Whether the site is protected by Basic Auth.
-     * @since 5.6.1
-     *
-     * @global string $pagenow The filename of the current screen.
-     *
-     */
     function wp_is_site_protected_by_basic_auth($context = '')
     {
         global $pagenow;
@@ -2175,14 +1411,5 @@
 
         $is_protected = ! empty($_SERVER['PHP_AUTH_USER']) || ! empty($_SERVER['PHP_AUTH_PW']);
 
-        /**
-         * Filters whether a site is protected by HTTP Basic Auth.
-         *
-         * @param bool   $is_protected Whether the site is protected by Basic Auth.
-         * @param string $context      The context to check for protection. One of 'login', 'admin', or 'front'.
-         *
-         * @since 5.6.1
-         *
-         */
         return apply_filters('wp_is_site_protected_by_basic_auth', $is_protected, $context);
     }

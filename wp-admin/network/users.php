@@ -1,13 +1,5 @@
 <?php
-    /**
-     * Multisite users administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_network_users'))
@@ -17,7 +9,6 @@
 
     if(isset($_GET['action']))
     {
-        /** This action is documented in wp-admin/network/edit.php */
         do_action('wpmuadminedit');
 
         switch($_GET['action'])
@@ -140,7 +131,6 @@
                         $sendback = wp_get_referer();
                         $user_ids = (array) $_POST['allusers'];
 
-                        /** This action is documented in wp-admin/network/site-themes.php */
                         $sendback = apply_filters('handle_network_bulk_actions-'.get_current_screen()->id, $sendback, $doaction, $user_ids); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
                         wp_safe_redirect($sendback);

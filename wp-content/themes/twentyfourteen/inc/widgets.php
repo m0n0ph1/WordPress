@@ -1,34 +1,9 @@
 <?php
-    /**
-     * Custom Widget for displaying specific post formats
-     *
-     * Displays posts from Aside, Quote, Video, Audio, Image, Gallery, and Link formats.
-     *
-     * @link       https://developer.wordpress.org/themes/functionality/widgets/#developing-widgets
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Fourteen
-     * @since      Twenty Fourteen 1.0
-     */
 
     class Twenty_Fourteen_Ephemera_Widget extends WP_Widget
     {
-        /**
-         * The supported post formats.
-         *
-         * @since Twenty Fourteen 1.0
-         *
-         * @var array
-         */
         private $formats = ['aside', 'image', 'video', 'audio', 'quote', 'link', 'gallery'];
 
-        /**
-         * Constructor.
-         *
-         * @return Twenty_Fourteen_Ephemera_Widget
-         * @since Twenty Fourteen 1.0
-         *
-         */
         public function __construct()
         {
             parent::__construct('widget_twentyfourteen_ephemera', __('Twenty Fourteen Ephemera', 'twentyfourteen'), [
@@ -43,16 +18,10 @@
             }
         }
 
-        /**
-         * Enqueue scripts.
-         *
-         * @since Twenty Fourteen 1.7
-         */
         public function enqueue_scripts()
         {
-            /** This filter is documented in wp-includes/media.php */
             $audio_library = apply_filters('wp_audio_shortcode_library', 'mediaelement');
-            /** This filter is documented in wp-includes/media.php */
+
             $video_library = apply_filters('wp_video_shortcode_library', 'mediaelement');
             if(in_array('mediaelement', [$video_library, $audio_library], true))
             {
@@ -62,15 +31,6 @@
             }
         }
 
-        /**
-         * Output the HTML for this widget.
-         *
-         * @param array $args     An array of standard parameters for widgets in this theme.
-         * @param array $instance An array of settings for this widget instance.
-         *
-         * @since Twenty Fourteen 1.0
-         *
-         */
         public function widget($args, $instance)
         {
             $format = isset($instance['format']) ? $instance['format'] : '';
@@ -246,20 +206,6 @@
             endif; // End check for ephemeral posts.
         }
 
-        /**
-         * Deal with the settings when they are saved by the admin.
-         *
-         * Here is where any validation should happen.
-         *
-         * @param array $new_instance New widget instance.
-         * @param array $old_instance Original widget instance.
-         *
-         * @return array Updated widget instance.
-         * @since Twenty Fourteen 3.3 Renamed `$instance` to `$old_instance` to match
-         *                            parent class for PHP 8 named parameter support.
-         *
-         * @since Twenty Fourteen 1.0
-         */
         public function update($new_instance, $old_instance)
         {
             $old_instance['title'] = strip_tags($new_instance['title']);
@@ -273,14 +219,6 @@
             return $old_instance;
         }
 
-        /**
-         * Display the form for this widget on the Widgets page of the Admin area.
-         *
-         * @param array $instance
-         *
-         * @since Twenty Fourteen 1.0
-         *
-         */
         public function form($instance)
         {
             $title = ! empty($instance['title']) ? esc_attr($instance['title']) : '';

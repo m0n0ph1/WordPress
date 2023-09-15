@@ -1,10 +1,4 @@
 <?php
-    /**
-     * WordPress Installer
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     // Sanity check.
     if(false)
@@ -27,38 +21,20 @@
         <?php
     }
 
-    /**
-     * We are installing WordPress.
-     *
-     * @since 1.5.1
-     * @var bool
-     */
     define('WP_INSTALLING', true);
 
-    /** Load WordPress Bootstrap */
     require_once dirname(__DIR__).'/wp-load.php';
 
-    /** Load WordPress Administration Upgrade API */
     require_once ABSPATH.'wp-admin/includes/upgrade.php';
 
-    /** Load WordPress Translation Install API */
     require_once ABSPATH.'wp-admin/includes/translation-install.php';
 
-    /** Load wpdb */
     require_once ABSPATH.WPINC.'/class-wpdb.php';
 
     nocache_headers();
 
     $step = isset($_GET['step']) ? (int) $_GET['step'] : 0;
 
-    /**
-     * Display installation header.
-     *
-     * @param string $body_classes
-     *
-     * @since 2.5.0
-     *
-     */
     function display_header($body_classes = '')
     {
     header('Content-Type: text/html; charset=utf-8');
@@ -86,16 +62,6 @@
 <?php
     } // End display_header().
 
-    /**
-     * Displays installer setup form.
-     *
-     * @param string|null $error
-     *
-     * @global wpdb       $wpdb WordPress database abstraction object.
-     *
-     * @since 2.8.0
-     *
-     */
     function display_setup_form($error = null)
     {
         global $wpdb;
@@ -252,7 +218,7 @@
                                     <p id="public-desc"
                                        class="description"><?php _e('Note: Discouraging search engines does not block access to your site &mdash; it is up to search engines to honor your request.'); ?></p>
                                     <?php
-                                    /** This action is documented in wp-admin/options-reading.php */
+
                                     do_action('blog_privacy_selector');
                                 }
                                 else
@@ -286,12 +252,6 @@
         die('<h1>'.__('Already Installed').'</h1>'.'<p>'.__('You appear to have already installed WordPress. To reinstall please clear your old database tables first.').'</p>'.'<p class="step"><a href="'.esc_url(wp_login_url()).'">'.__('Log In').'</a></p>'.'</body></html>');
     }
 
-    /**
-     * @global string $wp_version             The WordPress version string.
-     * @global string $required_php_version   The required PHP version string.
-     * @global string $required_mysql_version The required MySQL version string.
-     * @global wpdb   $wpdb                   WordPress database abstraction object.
-     */
     global $wp_version, $required_php_version, $required_mysql_version, $wpdb;
 
     $php_version = PHP_VERSION;
@@ -342,10 +302,6 @@
         die('<h1>'.__('Configuration Error').'</h1>'.'<p>'.sprintf(/* translators: %s: DO_NOT_UPGRADE_GLOBAL_TABLES */ __('The constant %s cannot be defined when installing WordPress.'), '<code>DO_NOT_UPGRADE_GLOBAL_TABLES</code>').'</p></body></html>');
     }
 
-    /**
-     * @global string    $wp_local_package Locale code of the package.
-     * @global WP_Locale $wp_locale        WordPress date and time locale object.
-     */
     $language = '';
     if(! empty($_REQUEST['language']))
     {

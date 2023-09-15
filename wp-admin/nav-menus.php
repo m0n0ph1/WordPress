@@ -1,15 +1,5 @@
 <?php
-    /**
-     * WordPress Administration for Navigation Menus
-     * Interface functions
-     *
-     * @version    2.0.0
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     // Load all the nav menu interface functions.
@@ -688,13 +678,6 @@
         $edit_markup = wp_get_nav_menu_to_edit($nav_menu_selected_id);
     }
 
-    /**
-     * @param string $classes
-     *
-     * @return string
-     * @global int   $_wp_nav_menu_max_depth
-     *
-     */
     function wp_nav_menu_max_depth($classes)
     {
         global $_wp_nav_menu_max_depth;
@@ -924,11 +907,7 @@
                 </form>
             </div><!-- #menu-locations-wrap -->
             <?php
-            /**
-             * Fires after the menu locations table is displayed.
-             *
-             * @since 3.6.0
-             */
+
             do_action('after_menu_locations_table');
             ?>
         <?php else : ?>
@@ -947,11 +926,11 @@
                     <span class="add-edit-menu-action">
 			<?php
                 printf(/* translators: %s: URL to create a new menu. */ __('Edit your menu below, or <a href="%s">create a new menu</a>. Do not forget to save your changes!'), esc_url(
-                    add_query_arg([
-                                      'action' => 'edit',
-                                      'menu' => 0,
-                                  ], admin_url('nav-menus.php'))
-                )
+                                                                                                                                                                                  add_query_arg([
+                                                                                                                                                                                                    'action' => 'edit',
+                                                                                                                                                                                                    'menu' => 0,
+                                                                                                                                                                                                ], admin_url('nav-menus.php'))
+                                                                                                                                                                              )
                 );
             ?>
 			<span class="screen-reader-text">
@@ -987,14 +966,6 @@
                                                 }
                                             }
 
-                                            /**
-                                             * Filters the number of locations listed per menu in the drop-down select.
-                                             *
-                                             * @param int $locations Number of menu locations to list. Default 3.
-                                             *
-                                             * @since 3.6.0
-                                             *
-                                             */
                                             $locations_listed_per_menu = absint(apply_filters('wp_nav_locations_listed_per_menu', 3));
 
                                             $assigned_locations = array_slice($locations_assigned_to_this_menu, 0, $locations_listed_per_menu);
@@ -1015,11 +986,11 @@
                         <span class="add-new-menu-action">
 				<?php
                     printf(/* translators: %s: URL to create a new menu. */ __('or <a href="%s">create a new menu</a>. Do not forget to save your changes!'), esc_url(
-                        add_query_arg([
-                                          'action' => 'edit',
-                                          'menu' => 0,
-                                      ], admin_url('nav-menus.php'))
-                    )
+                                                                                                                                                                add_query_arg([
+                                                                                                                                                                                  'action' => 'edit',
+                                                                                                                                                                                  'menu' => 0,
+                                                                                                                                                                              ], admin_url('nav-menus.php'))
+                                                                                                                                                            )
                     );
                 ?>
 				<span class="screen-reader-text">

@@ -1,37 +1,13 @@
 <?php
-    /**
-     * REST API: WP_REST_Application_Passwords_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.6.0
-     */
 
-    /**
-     * Core class to access a user's application passwords via the REST API.
-     *
-     * @since 5.6.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Application_Passwords_Controller extends WP_REST_Controller
     {
-        /**
-         * Application Passwords controller constructor.
-         *
-         * @since 5.6.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'users/(?P<user_id>(?:[\d]+|me))/application-passwords';
         }
 
-        /**
-         * Registers the REST API routes for the application passwords controller.
-         *
-         * @since 5.6.0
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -91,13 +67,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for the collections.
-         *
-         * @return array Query parameters for the collection.
-         * @since 5.6.0
-         *
-         */
         public function get_collection_params()
         {
             return [
@@ -105,15 +74,6 @@
             ];
         }
 
-        /**
-         * Checks if a given request has access to get application passwords.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.6.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             $user = $this->get_user($request);
@@ -131,15 +91,6 @@
             return true;
         }
 
-        /**
-         * Gets the requested user.
-         *
-         * @param WP_REST_Request $request The request object.
-         *
-         * @return WP_User|WP_Error The WordPress user associated with the request, or a WP_Error if none found.
-         * @since 5.6.0
-         *
-         */
         protected function get_user($request)
         {
             if(! wp_is_application_passwords_available())
@@ -190,15 +141,6 @@
             return $user;
         }
 
-        /**
-         * Retrieves a collection of application passwords.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.6.0
-         *
-         */
         public function get_items($request)
         {
             $user = $this->get_user($request);
@@ -219,16 +161,6 @@
             return new WP_REST_Response($response);
         }
 
-        /**
-         * Prepares the application password for the REST response.
-         *
-         * @param array           $item    WordPress representation of the item.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.6.0
-         *
-         */
         public function prepare_item_for_response($item, $request)
         {
             $user = $this->get_user($request);
@@ -264,29 +196,9 @@
                 $response->add_links($this->prepare_links($user, $item));
             }
 
-            /**
-             * Filters the REST API response for an application password.
-             *
-             * @param WP_REST_Response $response The response object.
-             * @param array            $item     The application password array.
-             * @param WP_REST_Request  $request  The request object.
-             *
-             * @since 5.6.0
-             *
-             */
             return apply_filters('rest_prepare_application_password', $response, $item, $request);
         }
 
-        /**
-         * Prepares links for the request.
-         *
-         * @param WP_User $user The requested user.
-         * @param array   $item The application password.
-         *
-         * @return array The list of links.
-         * @since 5.6.0
-         *
-         */
         protected function prepare_links(WP_User $user, $item)
         {
             return [
@@ -296,15 +208,6 @@
             ];
         }
 
-        /**
-         * Checks if a given request has access to get a specific application password.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
-         * @since 5.6.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $user = $this->get_user($request);
@@ -322,15 +225,6 @@
             return true;
         }
 
-        /**
-         * Retrieves one application password from the collection.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.6.0
-         *
-         */
         public function get_item($request)
         {
             $password = $this->get_application_password($request);
@@ -343,15 +237,6 @@
             return $this->prepare_item_for_response($password, $request);
         }
 
-        /**
-         * Gets the requested application password for a user.
-         *
-         * @param WP_REST_Request $request The request object.
-         *
-         * @return array|WP_Error The application password details if found, a WP_Error otherwise.
-         * @since 5.6.0
-         *
-         */
         protected function get_application_password($request)
         {
             $user = $this->get_user($request);
@@ -371,15 +256,6 @@
             return $password;
         }
 
-        /**
-         * Checks if a given request has access to create application passwords.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to create items, WP_Error object otherwise.
-         * @since 5.6.0
-         *
-         */
         public function create_item_permissions_check($request)
         {
             $user = $this->get_user($request);
@@ -397,15 +273,6 @@
             return true;
         }
 
-        /**
-         * Creates an application password.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.6.0
-         *
-         */
         public function create_item($request)
         {
             $user = $this->get_user($request);
@@ -440,16 +307,6 @@
                 return $fields_update;
             }
 
-            /**
-             * Fires after a single application password is completely created or updated via the REST API.
-             *
-             * @param array           $item     Inserted or updated password item.
-             * @param WP_REST_Request $request  Request object.
-             * @param bool            $creating True when creating an application password, false when updating.
-             *
-             * @since 5.6.0
-             *
-             */
             do_action('rest_after_insert_application_password', $item, $request, true);
 
             $request->set_param('context', 'edit');
@@ -461,15 +318,6 @@
             return $response;
         }
 
-        /**
-         * Prepares an application password for a create or update operation.
-         *
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return object|WP_Error The prepared item, or WP_Error object on failure.
-         * @since 5.6.0
-         *
-         */
         protected function prepare_item_for_database($request)
         {
             $prepared = (object) [
@@ -481,27 +329,9 @@
                 $prepared->app_id = $request['app_id'];
             }
 
-            /**
-             * Filters an application password before it is inserted via the REST API.
-             *
-             * @param stdClass        $prepared An object representing a single application password prepared for inserting or updating the database.
-             * @param WP_REST_Request $request  Request object.
-             *
-             * @since 5.6.0
-             *
-             */
             return apply_filters('rest_pre_insert_application_password', $prepared, $request);
         }
 
-        /**
-         * Checks if a given request has access to update application passwords.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to create items, WP_Error object otherwise.
-         * @since 5.6.0
-         *
-         */
         public function update_item_permissions_check($request)
         {
             $user = $this->get_user($request);
@@ -519,15 +349,6 @@
             return true;
         }
 
-        /**
-         * Updates an application password.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.6.0
-         *
-         */
         public function update_item($request)
         {
             $user = $this->get_user($request);
@@ -567,7 +388,6 @@
 
             $item = WP_Application_Passwords::get_user_application_password($user->ID, $item['uuid']);
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-application-passwords-controller.php */
             do_action('rest_after_insert_application_password', $item, $request, false);
 
             $request->set_param('context', 'edit');
@@ -575,15 +395,6 @@
             return $this->prepare_item_for_response($item, $request);
         }
 
-        /**
-         * Checks if a given request has access to delete all application passwords for a user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to delete the item, WP_Error object otherwise.
-         * @since 5.6.0
-         *
-         */
         public function delete_items_permissions_check($request)
         {
             $user = $this->get_user($request);
@@ -601,15 +412,6 @@
             return true;
         }
 
-        /**
-         * Deletes all application passwords for a user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.6.0
-         *
-         */
         public function delete_items($request)
         {
             $user = $this->get_user($request);
@@ -632,15 +434,6 @@
                                         ]);
         }
 
-        /**
-         * Checks if a given request has access to delete a specific application password for a user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to delete the item, WP_Error object otherwise.
-         * @since 5.6.0
-         *
-         */
         public function delete_item_permissions_check($request)
         {
             $user = $this->get_user($request);
@@ -658,15 +451,6 @@
             return true;
         }
 
-        /**
-         * Deletes an application password for a user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.6.0
-         *
-         */
         public function delete_item($request)
         {
             $user = $this->get_user($request);
@@ -698,15 +482,6 @@
                                         ]);
         }
 
-        /**
-         * Checks if a given request has access to get the currently used application password for a user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
-         * @since 5.7.0
-         *
-         */
         public function get_current_item_permissions_check($request)
         {
             $user = $this->get_user($request);
@@ -724,15 +499,6 @@
             return true;
         }
 
-        /**
-         * Retrieves the application password being currently used for authentication of a user.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.7.0
-         *
-         */
         public function get_current_item($request)
         {
             $user = $this->get_user($request);
@@ -759,13 +525,6 @@
             return $this->prepare_item_for_response($password, $request);
         }
 
-        /**
-         * Retrieves the application password's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.6.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -832,16 +591,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Performs a permissions check for the request.
-         *
-         * @param WP_REST_Request $request
-         *
-         * @return true|WP_Error
-         * @since      5.6.0
-         * @deprecated 5.7.0 Use `edit_user` directly or one of the specific meta capabilities introduced in 5.7.0.
-         *
-         */
         protected function do_permissions_check($request)
         {
             _deprecated_function(__METHOD__, '5.7.0');

@@ -1,15 +1,7 @@
 <?php
-    /**
-     * General settings administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
-    /** WordPress Translation Installation API */
     require_once ABSPATH.'wp-admin/includes/translation-install.php';
 
     if(! current_user_can('manage_options'))
@@ -340,15 +332,7 @@
         ?>
 	</span></legend>
                         <?php
-                            /**
-                             * Filters the default date formats.
-                             *
-                             * @param string[] $default_date_formats Array of default date formats.
-                             *
-                             * @since 4.0.0 Added ISO date standard YYYY-MM-DD format.
-                             *
-                             * @since 2.7.0
-                             */
+
                             $date_formats = array_unique(
                                 apply_filters('date_formats', [
                                     __('F j, Y'),
@@ -391,14 +375,7 @@
         ?>
 	</span></legend>
                         <?php
-                            /**
-                             * Filters the default time formats.
-                             *
-                             * @param string[] $default_time_formats Array of default time formats.
-                             *
-                             * @since 2.7.0
-                             *
-                             */
+
                             $time_formats = array_unique(apply_filters('time_formats', [__('g:i a'), 'g:i A', 'H:i']));
 
                             $custom = true;
@@ -429,9 +406,7 @@
                 <th scope="row"><label for="start_of_week"><?php _e('Week Starts On'); ?></label></th>
                 <td><select name="start_of_week" id="start_of_week">
                         <?php
-                            /**
-                             * @global WP_Locale $wp_locale WordPress date and time locale object.
-                             */
+
                             global $wp_locale;
 
                             for($day_index = 0; $day_index <= 6; $day_index++) :

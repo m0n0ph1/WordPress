@@ -1,18 +1,7 @@
 <?php
-    /**
-     * Network installation administration panel.
-     *
-     * A multi-step process allowing the user to enable a network of WordPress sites.
-     *
-     * @since      3.0.0
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     define('WP_INSTALLING_NETWORK', true);
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('setup_network'))

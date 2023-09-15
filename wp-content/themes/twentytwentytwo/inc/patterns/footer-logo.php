@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Default footer with logo
-     */
+
     return [
         'title' => __('Footer with logo and citation', 'twentytwentytwo'),
         'categories' => ['footer'],

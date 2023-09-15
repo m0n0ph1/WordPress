@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/read-more` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/read-more` block on the server.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string  Returns the post link.
-     */
     function render_block_core_read_more($attributes, $content, $block)
     {
         if(! isset($block->context['postId']))
@@ -35,9 +21,6 @@
         return sprintf('<a %1s href="%2s" target="%3s">%4s<span class="screen-reader-text">%5s</span></a>', $wrapper_attributes, get_the_permalink($post_ID), esc_attr($attributes['linkTarget']), $more_text, $screen_reader_text);
     }
 
-    /**
-     * Registers the `core/read-more` block on the server.
-     */
     function register_block_core_read_more()
     {
         register_block_type_from_metadata(__DIR__.'/read-more', [

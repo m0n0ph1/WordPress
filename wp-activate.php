@@ -1,14 +1,7 @@
 <?php
-    /**
-     * Confirms that the activation key that is sent in an email after a user signs
-     * up for a new site matches the key for that user and then displays confirmation.
-     *
-     * @package WordPress
-     */
 
     define('WP_INSTALLING', true);
 
-    /** Sets up the WordPress Environment. */
     require __DIR__.'/wp-load.php';
 
     require __DIR__.'/wp-blog-header.php';
@@ -87,39 +80,15 @@
 // Fix for page title.
     $wp_query->is_404 = false;
 
-    /**
-     * Fires before the Site Activation page is loaded.
-     *
-     * @since 3.0.0
-     */
     do_action('activate_header');
 
-    /**
-     * Adds an action hook specific to this page.
-     *
-     * Fires on {@see 'wp_head'}.
-     *
-     * @since MU (3.0.0)
-     */
     function do_activate_header()
     {
-        /**
-         * Fires within the `<head>` section of the Site Activation page.
-         *
-         * Fires on the {@see 'wp_head'} action.
-         *
-         * @since 3.0.0
-         */
         do_action('activate_wp_head');
     }
 
     add_action('wp_head', 'do_activate_header');
 
-    /**
-     * Loads styles specific to this page.
-     *
-     * @since MU (3.0.0)
-     */
     function wpmu_activate_stylesheet()
     {
         ?>

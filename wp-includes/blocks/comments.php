@@ -1,27 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/comments` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/comments` block on the server.
-     *
-     * This render callback is mainly for rendering a dynamic, legacy version of
-     * this block (the old `core/post-comments`). It uses the `comments_template()`
-     * function to generate the output, in the same way as classic PHP themes.
-     *
-     * As this callback will always run during SSR, first we need to check whether
-     * the block is in legacy mode. If not, the HTML generated in the editor is
-     * returned instead.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string Returns the filtered post comments for the current post wrapped inside "p" tags.
-     */
     function render_block_core_comments($attributes, $content, $block)
     {
         global $post;
@@ -86,9 +64,6 @@
         return sprintf('<div %1$s>%2$s</div>', $wrapper_attributes, $output);
     }
 
-    /**
-     * Registers the `core/comments` block on the server.
-     */
     function register_block_core_comments()
     {
         register_block_type_from_metadata(__DIR__.'/comments', [
@@ -99,13 +74,6 @@
 
     add_action('init', 'register_block_core_comments');
 
-    /**
-     * Use the button block classes for the form-submit button.
-     *
-     * @param array $fields The default comment form arguments.
-     *
-     * @return array Returns the modified fields.
-     */
     function comments_block_form_defaults($fields)
     {
         if(wp_is_block_theme())
@@ -119,12 +87,6 @@
 
     add_filter('comment_form_defaults', 'comments_block_form_defaults');
 
-    /**
-     * Enqueues styles from the legacy `core/post-comments` block. These styles are
-     * required only by the block's fallback.
-     *
-     * @param string $block_name Name of the new block type.
-     */
     function enqueue_legacy_post_comments_block_styles($block_name)
     {
         static $are_styles_enqueued = false;
@@ -144,16 +106,6 @@
         }
     }
 
-    /**
-     * Ensures backwards compatibility for any users running the Gutenberg plugin
-     * who have used Post Comments before it was merged into Comments Query Loop.
-     *
-     * The same approach was followed when core/query-loop was renamed to
-     * core/post-template.
-     *
-     * @see https://github.com/WordPress/gutenberg/pull/41807
-     * @see https://github.com/WordPress/gutenberg/pull/32514
-     */
     function register_legacy_post_comments_block()
     {
         $registry = WP_Block_Type_Registry::get_instance();
@@ -219,7 +171,7 @@
          * like `_wp_multiple_block_styles`, which is required in this case because
          * the block has multiple styles.
          */
-        /** This filter is documented in wp-includes/blocks.php */
+
         $metadata = apply_filters('block_type_metadata', $metadata);
 
         register_block_type('core/post-comments', $metadata);

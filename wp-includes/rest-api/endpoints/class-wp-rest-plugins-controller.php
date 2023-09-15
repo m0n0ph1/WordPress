@@ -1,39 +1,15 @@
 <?php
-    /**
-     * REST API: WP_REST_Plugins_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.5.0
-     */
 
-    /**
-     * Core class to access plugins via the REST API.
-     *
-     * @since 5.5.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Plugins_Controller extends WP_REST_Controller
     {
         const PATTERN = '[^.\/]+(?:\/[^.\/]+)?';
 
-        /**
-         * Plugins controller constructor.
-         *
-         * @since 5.5.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'plugins';
         }
 
-        /**
-         * Registers the routes for the plugins controller.
-         *
-         * @since 5.5.0
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -98,13 +74,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for the collections.
-         *
-         * @return array Query parameters for the collection.
-         * @since 5.5.0
-         *
-         */
         public function get_collection_params()
         {
             $query_params = parent::get_collection_params();
@@ -125,15 +94,6 @@
             return $query_params;
         }
 
-        /**
-         * Checks if a given request has access to get plugins.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.5.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             if(! current_user_can('activate_plugins'))
@@ -144,15 +104,6 @@
             return true;
         }
 
-        /**
-         * Retrieves a collection of plugins.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.5.0
-         *
-         */
         public function get_items($request)
         {
             require_once ABSPATH.'wp-admin/includes/plugin.php';
@@ -179,18 +130,6 @@
             return new WP_REST_Response($plugins);
         }
 
-        /**
-         * Checks if the given plugin can be viewed by the current user.
-         *
-         * On multisite, this hides non-active network only plugins if the user does not have permission
-         * to manage network plugins.
-         *
-         * @param string $plugin The plugin file to check.
-         *
-         * @return true|WP_Error True if can read, a WP_Error instance otherwise.
-         * @since 5.5.0
-         *
-         */
         protected function check_read_permission($plugin)
         {
             require_once ABSPATH.'wp-admin/includes/plugin.php';
@@ -213,30 +152,11 @@
             return new WP_Error('rest_cannot_view_plugin', __('Sorry, you are not allowed to manage this plugin.'), ['status' => rest_authorization_required_code()]);
         }
 
-        /**
-         * Checks if the plugin is installed.
-         *
-         * @param string $plugin The plugin file.
-         *
-         * @return bool
-         * @since 5.5.0
-         *
-         */
         protected function is_plugin_installed($plugin)
         {
             return file_exists(WP_PLUGIN_DIR.'/'.$plugin);
         }
 
-        /**
-         * Checks if the plugin matches the requested parameters.
-         *
-         * @param WP_REST_Request $request The request to require the plugin matches against.
-         * @param array           $item    The plugin item.
-         *
-         * @return bool
-         * @since 5.5.0
-         *
-         */
         protected function does_plugin_match_request($request, $item)
         {
             $search = $request['search'];
@@ -270,15 +190,6 @@
             return true;
         }
 
-        /**
-         * Get's the activation status for a plugin.
-         *
-         * @param string $plugin The plugin file to check.
-         *
-         * @return string Either 'network-active', 'active' or 'inactive'.
-         * @since 5.5.0
-         *
-         */
         protected function get_plugin_status($plugin)
         {
             if(is_plugin_active_for_network($plugin))
@@ -294,16 +205,6 @@
             return 'inactive';
         }
 
-        /**
-         * Prepares the plugin for the REST response.
-         *
-         * @param array           $item    Unmarked up and untranslated plugin data from {@see get_plugin_data()}.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.5.0
-         *
-         */
         public function prepare_item_for_response($item, $request)
         {
             $fields = $this->get_fields_for_response($request);
@@ -338,28 +239,9 @@
                 $response->add_links($this->prepare_links($item));
             }
 
-            /**
-             * Filters plugin data for a REST API response.
-             *
-             * @param WP_REST_Response $response The response object.
-             * @param array            $item     The plugin item from {@see get_plugin_data()}.
-             * @param WP_REST_Request  $request  The request object.
-             *
-             * @since 5.5.0
-             *
-             */
             return apply_filters('rest_prepare_plugin', $response, $item, $request);
         }
 
-        /**
-         * Prepares links for the request.
-         *
-         * @param array $item The plugin item.
-         *
-         * @return array[]
-         * @since 5.5.0
-         *
-         */
         protected function prepare_links($item)
         {
             return [
@@ -369,15 +251,6 @@
             ];
         }
 
-        /**
-         * Checks if a given request has access to get a specific plugin.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
-         * @since 5.5.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             if(! current_user_can('activate_plugins'))
@@ -395,15 +268,6 @@
             return true;
         }
 
-        /**
-         * Retrieves one plugin from the site.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.5.0
-         *
-         */
         public function get_item($request)
         {
             require_once ABSPATH.'wp-admin/includes/plugin.php';
@@ -418,15 +282,6 @@
             return $this->prepare_item_for_response($data, $request);
         }
 
-        /**
-         * Gets the plugin header data for a plugin.
-         *
-         * @param string $plugin The plugin file to get data for.
-         *
-         * @return array|WP_Error The plugin data, or a WP_Error if the plugin is not installed.
-         * @since 5.5.0
-         *
-         */
         protected function get_plugin_data($plugin)
         {
             $plugins = get_plugins();
@@ -442,15 +297,6 @@
             return $data;
         }
 
-        /**
-         * Checks if a given request has access to upload plugins.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to create items, WP_Error object otherwise.
-         * @since 5.5.0
-         *
-         */
         public function create_item_permissions_check($request)
         {
             if(! current_user_can('install_plugins'))
@@ -468,17 +314,6 @@
             return true;
         }
 
-        /**
-         * Uploads a plugin and optionally activates it.
-         *
-         * @param WP_REST_Request     $request       Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.5.0
-         *
-         * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-         *
-         */
         public function create_item($request)
         {
             global $wp_filesystem;
@@ -584,7 +419,7 @@
 
             // Install translations.
             $installed_locales = array_values(get_available_languages());
-            /** This filter is documented in wp-includes/update.php */
+
             $installed_locales = apply_filters('plugins_update_check_locales', $installed_locales);
 
             $language_packs = array_map(static function($item)
@@ -616,15 +451,6 @@
             return $response;
         }
 
-        /**
-         * Determine if the endpoints are available.
-         *
-         * Only the 'Direct' filesystem transport, and SSH/FTP when credentials are stored are supported at present.
-         *
-         * @return true|WP_Error True if filesystem is available, WP_Error otherwise.
-         * @since 5.5.0
-         *
-         */
         protected function is_filesystem_available()
         {
             $filesystem_method = get_filesystem_method();
@@ -646,17 +472,6 @@
             return new WP_Error('fs_unavailable', __('The filesystem is currently unavailable for managing plugins.'), ['status' => 500]);
         }
 
-        /**
-         * Handle updating a plugin's status.
-         *
-         * @param string $plugin         The plugin file to update.
-         * @param string $new_status     The plugin's new status.
-         * @param string $current_status The plugin's current status.
-         *
-         * @return true|WP_Error
-         * @since 5.5.0
-         *
-         */
         protected function plugin_status_permission_check($plugin, $new_status, $current_status)
         {
             if(is_multisite() && ('network-active' === $current_status || 'network-active' === $new_status) && ! current_user_can('manage_network_plugins'))
@@ -677,17 +492,6 @@
             return true;
         }
 
-        /**
-         * Handle updating a plugin's status.
-         *
-         * @param string $plugin         The plugin file to update.
-         * @param string $new_status     The plugin's new status.
-         * @param string $current_status The plugin's current status.
-         *
-         * @return true|WP_Error
-         * @since 5.5.0
-         *
-         */
         protected function handle_plugin_status($plugin, $new_status, $current_status)
         {
             if('inactive' === $new_status)
@@ -721,15 +525,6 @@
             return true;
         }
 
-        /**
-         * Checks if a given request has access to update a specific plugin.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to update the item, WP_Error object otherwise.
-         * @since 5.5.0
-         *
-         */
         public function update_item_permissions_check($request)
         {
             require_once ABSPATH.'wp-admin/includes/plugin.php';
@@ -761,15 +556,6 @@
             return true;
         }
 
-        /**
-         * Updates one plugin.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.5.0
-         *
-         */
         public function update_item($request)
         {
             require_once ABSPATH.'wp-admin/includes/plugin.php';
@@ -800,15 +586,6 @@
             return $this->prepare_item_for_response($data, $request);
         }
 
-        /**
-         * Checks if a given request has access to delete a specific plugin.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to delete the item, WP_Error object otherwise.
-         * @since 5.5.0
-         *
-         */
         public function delete_item_permissions_check($request)
         {
             if(! current_user_can('activate_plugins'))
@@ -831,15 +608,6 @@
             return true;
         }
 
-        /**
-         * Deletes one plugin from the site.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.5.0
-         *
-         */
         public function delete_item($request)
         {
             require_once ABSPATH.'wp-admin/includes/file.php';
@@ -879,15 +647,6 @@
                                         ]);
         }
 
-        /**
-         * Checks that the "plugin" parameter is a valid path.
-         *
-         * @param string $file The plugin file parameter.
-         *
-         * @return bool
-         * @since 5.5.0
-         *
-         */
         public function validate_plugin_param($file)
         {
             if(! is_string($file) || ! preg_match('/'.self::PATTERN.'/u', $file))
@@ -900,27 +659,11 @@
             return 0 === $validated;
         }
 
-        /**
-         * Sanitizes the "plugin" parameter to be a proper plugin file with ".php" appended.
-         *
-         * @param string $file The plugin file parameter.
-         *
-         * @return string
-         * @since 5.5.0
-         *
-         */
         public function sanitize_plugin_param($file)
         {
             return plugin_basename(sanitize_text_field($file.'.php'));
         }
 
-        /**
-         * Retrieves the plugin's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.5.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)

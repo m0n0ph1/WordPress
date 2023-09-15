@@ -1,20 +1,7 @@
 <?php
-    /**
-     * Upgrade WordPress Page.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * We are upgrading WordPress.
-     *
-     * @since 1.5.1
-     * @var bool
-     */
     define('WP_INSTALLING', true);
 
-    /** Load WordPress Bootstrap */
     require dirname(__DIR__).'/wp-load.php';
 
     nocache_headers();
@@ -39,12 +26,6 @@
         die('0');
     }
 
-    /**
-     * @global string $wp_version             The WordPress version string.
-     * @global string $required_php_version   The required PHP version string.
-     * @global string $required_mysql_version The required MySQL version string.
-     * @global wpdb   $wpdb                   WordPress database abstraction object.
-     */
     global $wp_version, $required_php_version, $required_mysql_version, $wpdb;
 
     $step = (int) $step;

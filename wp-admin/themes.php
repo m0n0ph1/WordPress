@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Themes administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('switch_themes') && ! current_user_can('edit_theme_options'))
@@ -707,13 +700,6 @@
 
 <?php
 
-    /**
-     * Returns the JavaScript template used to display the auto-update setting for a theme.
-     *
-     * @return string The template for displaying the auto-update setting link.
-     * @since 5.5.0
-     *
-     */
     function wp_theme_auto_update_setting_template()
     {
         $notice = wp_get_admin_notice('', [
@@ -749,16 +735,6 @@
 		</div>
 	';
 
-        /**
-         * Filters the JavaScript template used to display the auto-update setting for a theme (in the overlay).
-         *
-         * See {@see wp_prepare_themes_for_js()} for the properties of the `data` object.
-         *
-         * @param string $template The template for displaying the auto-update setting link.
-         *
-         * @since 5.5.0
-         *
-         */
         return apply_filters('theme_auto_update_setting_template', $template);
     }
 

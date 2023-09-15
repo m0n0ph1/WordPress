@@ -1,39 +1,13 @@
 <?php
-    /**
-     * Block Renderer REST API: WP_REST_Block_Renderer_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.0.0
-     */
 
-    /**
-     * Controller which provides REST endpoint for rendering a block.
-     *
-     * @since 5.0.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Block_Renderer_Controller extends WP_REST_Controller
     {
-        /**
-         * Constructs the controller.
-         *
-         * @since 5.0.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'block-renderer';
         }
 
-        /**
-         * Registers the necessary REST API routes, one for each dynamic block.
-         *
-         * @since 5.0.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base.'/(?P<name>[a-z0-9-]+/[a-z0-9-]+)', [
@@ -100,17 +74,6 @@
             ]);
         }
 
-        /**
-         * Checks if a given request has access to read blocks.
-         *
-         * @param WP_REST_Request $request Request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.0.0
-         *
-         * @global WP_Post        $post    Global post object.
-         *
-         */
         public function get_item_permissions_check($request)
         {
             global $post;
@@ -141,17 +104,6 @@
             return true;
         }
 
-        /**
-         * Returns block output from block's registered render_callback.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.0.0
-         *
-         * @global WP_Post        $post    Global post object.
-         *
-         */
         public function get_item($request)
         {
             global $post;
@@ -194,13 +146,6 @@
             return rest_ensure_response($data);
         }
 
-        /**
-         * Retrieves block's output schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.0.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)

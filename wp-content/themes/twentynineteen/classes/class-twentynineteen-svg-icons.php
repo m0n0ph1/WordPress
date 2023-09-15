@@ -1,31 +1,7 @@
 <?php
-    /**
-     * SVG Icons class
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Nineteen
-     * @since      Twenty Nineteen 1.0
-     */
 
-    /**
-     * This class is in charge of displaying SVG icons across the site.
-     *
-     * Place each <svg> source on its own array key, without adding the
-     * both `width` and `height` attributes, since these are added dynamically,
-     * before rendering the SVG code.
-     *
-     * All icons are assumed to have equal width and height, hence the option
-     * to only specify a `$size` parameter in the svg methods.
-     *
-     * @since Twenty Nineteen 1.0
-     */
     class TwentyNineteen_SVG_Icons
     {
-        /**
-         * User Interface icons – svg sources.
-         *
-         * @var array
-         */
         public static $ui_icons = [
             'link' => /* material-design – link */
                 '
@@ -141,14 +117,6 @@
 
         ];
 
-        /**
-         * Social Icons – domain mappings.
-         *
-         * By default, each Icon ID is matched against a .com TLD. To override this behavior,
-         * specify all the domains it covers (including the .com TLD too, if applicable).
-         *
-         * @var array
-         */
         public static $social_icons_map = [
             'amazon' => [
                 'amazon.com',
@@ -203,11 +171,6 @@
             ],
         ];
 
-        /**
-         * Social Icons – svg sources.
-         *
-         * @var array
-         */
         public static $social_icons = [
             '500px' => '
 <svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -426,9 +389,6 @@
 
         ];
 
-        /**
-         * Detects the social network from a URL and returns the SVG code for its icon.
-         */
         public static function get_social_link_svg($uri, $size)
         {
             static $regex_map; // Only compute regex map once, for performance.
@@ -455,9 +415,6 @@
             return null;
         }
 
-        /**
-         * Gets the SVG code for a given icon.
-         */
         public static function get_svg($group, $icon, $size)
         {
             if('ui' === $group)

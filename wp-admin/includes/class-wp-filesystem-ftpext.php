@@ -1,34 +1,9 @@
 <?php
-    /**
-     * WordPress FTP Filesystem.
-     *
-     * @package    WordPress
-     * @subpackage Filesystem
-     */
 
-    /**
-     * WordPress Filesystem Class for implementing FTP.
-     *
-     * @since 2.5.0
-     *
-     * @see   WP_Filesystem_Base
-     */
     class WP_Filesystem_FTPext extends WP_Filesystem_Base
     {
-        /**
-         * @since 2.5.0
-         * @var resource
-         */
         public $link;
 
-        /**
-         * Constructor.
-         *
-         * @param array $opt
-         *
-         * @since 2.5.0
-         *
-         */
         public function __construct($opt = '')
         {
             $this->method = 'ftpext';
@@ -93,13 +68,6 @@
             }
         }
 
-        /**
-         * Connects filesystem.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function connect()
         {
             if(isset($this->options['ssl']) && $this->options['ssl'] && function_exists('ftp_ssl_connect'))
@@ -136,30 +104,11 @@
             return true;
         }
 
-        /**
-         * Reads entire file into an array.
-         *
-         * @param string $file Path to the file.
-         *
-         * @return array|false File contents in an array on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function get_contents_array($file)
         {
             return explode("\n", $this->get_contents($file));
         }
 
-        /**
-         * Reads entire file into a string.
-         *
-         * @param string $file Name of the file to read.
-         *
-         * @return string|false Read data on success, false if no temporary file could be opened,
-         *                      or if the file couldn't be retrieved.
-         * @since 2.5.0
-         *
-         */
         public function get_contents($file)
         {
             $tempfile = wp_tempnam($file);
@@ -194,29 +143,11 @@
             return $contents;
         }
 
-        /**
-         * Changes current directory.
-         *
-         * @param string $dir The new current directory.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function chdir($dir)
         {
             return @ftp_chdir($this->link, $dir);
         }
 
-        /**
-         * Gets the file owner.
-         *
-         * @param string $file Path to the file.
-         *
-         * @return string|false Username of the owner on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function owner($file)
         {
             $dir = $this->dirlist($file);
@@ -224,42 +155,6 @@
             return $dir[$file]['owner'];
         }
 
-        /**
-         * Gets details for files in a directory or a specific file.
-         *
-         * @param string          $path                Path to directory or file.
-         * @param bool            $include_hidden      Optional. Whether to include details of hidden ("." prefixed) files.
-         *                                             Default true.
-         * @param bool            $recursive           Optional. Whether to recursively include file details in nested directories.
-         *                                             Default false.
-         *
-         * @return array|false {
-         *     Array of arrays containing file information. False if unable to list directory contents.
-         *
-         * @type array $0... {
-         *                                             Array of file information. Note that some elements may not be available on all filesystems.
-         *
-         * @type string           $name                Name of the file or directory.
-         * @type string           $perms               *nix representation of permissions.
-         * @type string           $permsn              Octal representation of permissions.
-         * @type int|string|false $number              File number. May be a numeric string. False if not available.
-         * @type string|false     $owner               Owner name or ID, or false if not available.
-         * @type string|false     $group               File permissions group, or false if not available.
-         * @type int|string|false $size                Size of file in bytes. May be a numeric string.
-         *                                             False if not available.
-         * @type int|string|false $lastmodunix         Last modified unix timestamp. May be a numeric string.
-         *                                             False if not available.
-         * @type string|false     $lastmod             Last modified month (3 letters) and day (without leading 0), or
-         *                                             false if not available.
-         * @type string|false     $time                Last modified time, or false if not available.
-         * @type string           $type                Type of resource. 'f' for file, 'd' for directory, 'l' for link.
-         * @type array|false      $files               If a directory and `$recursive` is true, contains another array of
-         *                                             files. False if unable to list directory contents.
-         *                                             }
-         *                                             }
-         * @since 2.5.0
-         *
-         */
         public function dirlist($path = '.', $include_hidden = true, $recursive = false)
         {
             if($this->is_file($path))
@@ -340,30 +235,11 @@
             return $ret;
         }
 
-        /**
-         * Checks if resource is a file.
-         *
-         * @param string $file File path.
-         *
-         * @return bool Whether $file is a file.
-         * @since 2.5.0
-         *
-         */
         public function is_file($file)
         {
             return $this->exists($file) && ! $this->is_dir($file);
         }
 
-        /**
-         * Checks if a file or directory exists.
-         *
-         * @param string $path Path to file or directory.
-         *
-         * @return bool Whether $path exists or not.
-         * @since 2.5.0
-         * @since 6.3.0 Returns false for an empty path.
-         *
-         */
         public function exists($path)
         {
             /*
@@ -387,15 +263,6 @@
             return ! empty($list); // Empty list = no file, so invert.
         }
 
-        /**
-         * Checks if resource is a directory.
-         *
-         * @param string $path Directory path.
-         *
-         * @return bool Whether $path is a directory.
-         * @since 2.5.0
-         *
-         */
         public function is_dir($path)
         {
             $cwd = $this->cwd();
@@ -411,13 +278,6 @@
             return false;
         }
 
-        /**
-         * Gets the current working directory.
-         *
-         * @return string|false The current working directory on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function cwd()
         {
             $cwd = ftp_pwd($this->link);
@@ -430,28 +290,6 @@
             return $cwd;
         }
 
-        /**
-         * @param string      $line
-         *
-         * @return array {
-         *     Array of file information.
-         *
-         * @type string       $name            Name of the file or directory.
-         * @type string       $perms           *nix representation of permissions.
-         * @type string       $permsn          Octal representation of permissions.
-         * @type string|false $number          File number as a string, or false if not available.
-         * @type string|false $owner           Owner name or ID, or false if not available.
-         * @type string|false $group           File permissions group, or false if not available.
-         * @type string|false $size            Size of file in bytes as a string, or false if not available.
-         * @type string|false $lastmodunix     Last modified unix timestamp as a string, or false if not available.
-         * @type string|false $lastmod         Last modified month (3 letters) and day (without leading 0), or
-         *                                     false if not available.
-         * @type string|false $time            Last modified time, or false if not available.
-         * @type string       $type            Type of resource. 'f' for file, 'd' for directory, 'l' for link.
-         * @type array|false  $files           If a directory and `$recursive` is true, contains another array of files.
-         *                                     False if unable to list directory contents.
-         *                                     }
-         */
         public function parselisting($line)
         {
             static $is_windows = null;
@@ -574,15 +412,6 @@
             return $b;
         }
 
-        /**
-         * Gets the permissions of the specified file or filepath in their octal format.
-         *
-         * @param string $file Path to the file.
-         *
-         * @return string Mode of the file (the last 3 digits).
-         * @since 2.5.0
-         *
-         */
         public function getchmod($file)
         {
             $dir = $this->dirlist($file);
@@ -590,15 +419,6 @@
             return $dir[$file]['permsn'];
         }
 
-        /**
-         * Gets the file's group.
-         *
-         * @param string $file Path to the file.
-         *
-         * @return string|false The group on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function group($file)
         {
             $dir = $this->dirlist($file);
@@ -606,20 +426,6 @@
             return $dir[$file]['group'];
         }
 
-        /**
-         * Copies a file.
-         *
-         * @param string    $source      Path to the source file.
-         * @param string    $destination Path to the destination file.
-         * @param bool      $overwrite   Optional. Whether to overwrite the destination file if it exists.
-         *                               Default false.
-         * @param int|false $mode        Optional. The permissions as octal number, usually 0644 for files,
-         *                               0755 for dirs. Default false.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function copy($source, $destination, $overwrite = false, $mode = false)
         {
             if(! $overwrite && $this->exists($destination))
@@ -637,18 +443,6 @@
             return $this->put_contents($destination, $content, $mode);
         }
 
-        /**
-         * Writes a string to a file.
-         *
-         * @param string    $file     Remote path to the file where to write the data.
-         * @param string    $contents The data to write.
-         * @param int|false $mode     Optional. The file permissions as octal number, usually 0644.
-         *                            Default false.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function put_contents($file, $contents, $mode = false)
         {
             $tempfile = wp_tempnam($file);
@@ -688,19 +482,6 @@
             return $ret;
         }
 
-        /**
-         * Changes filesystem permissions.
-         *
-         * @param string    $file      Path to the file.
-         * @param int|false $mode      Optional. The permissions as octal number, usually 0644 for files,
-         *                             0755 for directories. Default false.
-         * @param bool      $recursive Optional. If set to true, changes file permissions recursively.
-         *                             Default false.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function chmod($file, $mode = false, $recursive = false)
         {
             if(! $mode)
@@ -739,95 +520,31 @@
             return (bool) ftp_chmod($this->link, $mode, $file);
         }
 
-        /**
-         * Moves a file or directory.
-         *
-         * After moving files or directories, OPcache will need to be invalidated.
-         *
-         * If moving a directory fails, `copy_dir()` can be used for a recursive copy.
-         *
-         * Use `move_dir()` for moving directories with OPcache invalidation and a
-         * fallback to `copy_dir()`.
-         *
-         * @param string $source      Path to the source file or directory.
-         * @param string $destination Path to the destination file or directory.
-         * @param bool   $overwrite   Optional. Whether to overwrite the destination if it exists.
-         *                            Default false.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function move($source, $destination, $overwrite = false)
         {
             return ftp_rename($this->link, $source, $destination);
         }
 
-        /**
-         * Checks if a file is readable.
-         *
-         * @param string $file Path to file.
-         *
-         * @return bool Whether $file is readable.
-         * @since 2.5.0
-         *
-         */
         public function is_readable($file)
         {
             return true;
         }
 
-        /**
-         * Checks if a file or directory is writable.
-         *
-         * @param string $path Path to file or directory.
-         *
-         * @return bool Whether $path is writable.
-         * @since 2.5.0
-         *
-         */
         public function is_writable($path)
         {
             return true;
         }
 
-        /**
-         * Gets the file's last access time.
-         *
-         * @param string $file Path to file.
-         *
-         * @return int|false Unix timestamp representing last access time, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function atime($file)
         {
             return false;
         }
 
-        /**
-         * Gets the file modification time.
-         *
-         * @param string $file Path to file.
-         *
-         * @return int|false Unix timestamp representing modification time, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function mtime($file)
         {
             return ftp_mdtm($this->link, $file);
         }
 
-        /**
-         * Gets the file size (in bytes).
-         *
-         * @param string $file Path to file.
-         *
-         * @return int|false Size of the file in bytes on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function size($file)
         {
             $size = ftp_size($this->link, $file);
@@ -835,41 +552,11 @@
             return ($size > -1) ? $size : false;
         }
 
-        /**
-         * Sets the access and modification times of a file.
-         *
-         * Note: If $file doesn't exist, it will be created.
-         *
-         * @param string $file  Path to file.
-         * @param int    $time  Optional. Modified time to set for file.
-         *                      Default 0.
-         * @param int    $atime Optional. Access time to set for file.
-         *                      Default 0.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function touch($file, $time = 0, $atime = 0)
         {
             return false;
         }
 
-        /**
-         * Creates a directory.
-         *
-         * @param string           $path  Path for new directory.
-         * @param int|false        $chmod Optional. The permissions as octal number (or false to skip chmod).
-         *                                Default false.
-         * @param string|int|false $chown Optional. A user name or number (or false to skip chown).
-         *                                Default false.
-         * @param string|int|false $chgrp Optional. A group name or number (or false to skip chgrp).
-         *                                Default false.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function mkdir($path, $chmod = false, $chown = false, $chgrp = false)
         {
             $path = untrailingslashit($path);
@@ -889,35 +576,11 @@
             return true;
         }
 
-        /**
-         * Deletes a directory.
-         *
-         * @param string $path      Path to directory.
-         * @param bool   $recursive Optional. Whether to recursively remove files/directories.
-         *                          Default false.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function rmdir($path, $recursive = false)
         {
             return $this->delete($path, $recursive);
         }
 
-        /**
-         * Deletes a file or directory.
-         *
-         * @param string       $file      Path to the file or directory.
-         * @param bool         $recursive Optional. If set to true, deletes files and folders recursively.
-         *                                Default false.
-         * @param string|false $type      Type of resource. 'f' for file, 'd' for directory.
-         *                                Default false.
-         *
-         * @return bool True on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function delete($file, $recursive = false, $type = false)
         {
             if(empty($file))
@@ -948,11 +611,6 @@
             return ftp_rmdir($this->link, $file);
         }
 
-        /**
-         * Destructor.
-         *
-         * @since 2.5.0
-         */
         public function __destruct()
         {
             if($this->link)

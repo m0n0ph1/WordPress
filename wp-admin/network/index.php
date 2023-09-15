@@ -1,16 +1,7 @@
 <?php
-    /**
-     * Multisite administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
-    /** Load WordPress dashboard API */
     require_once ABSPATH.'wp-admin/includes/dashboard.php';
 
     if(! current_user_can('manage_network'))

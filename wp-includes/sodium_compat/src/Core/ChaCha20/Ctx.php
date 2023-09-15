@@ -5,29 +5,10 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_Sodium_Core_ChaCha20_Ctx
-     */
     class ParagonIE_Sodium_Core_ChaCha20_Ctx extends ParagonIE_Sodium_Core_Util implements ArrayAccess
     {
-        /**
-         * @var SplFixedArray internally, <int, int>
-         */
         protected $container;
 
-        /**
-         * ParagonIE_Sodium_Core_ChaCha20_Ctx constructor.
-         *
-         * @param string $key     ChaCha20 key.
-         * @param string $iv      Initialization Vector (a.k.a. nonce).
-         * @param string $counter The initial counter value.
-         *                        Defaults to 8 0x00 bytes.
-         *
-         * @throws InvalidArgumentException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public function __construct($key = '', $iv = '', $counter = '')
         {
             if(self::strlen($key) !== 32)
@@ -68,15 +49,6 @@
             $this->container[15] = self::load_4(self::substr($iv, 4, 4));
         }
 
-        /**
-         * @param int $offset
-         * @param int $value
-         *
-         * @return void
-         * @psalm-suppress MixedArrayOffset
-         * @internal       You should not use this directly from another application
-         *
-         */
         #[ReturnTypeWillChange]
         public function offsetSet($offset, $value)
         {
@@ -91,41 +63,18 @@
             $this->container[$offset] = $value;
         }
 
-        /**
-         * @param int $offset
-         *
-         * @return bool
-         * @internal You should not use this directly from another application
-         *
-         */
         #[ReturnTypeWillChange]
         public function offsetExists($offset)
         {
             return isset($this->container[$offset]);
         }
 
-        /**
-         * @param int $offset
-         *
-         * @return void
-         * @psalm-suppress MixedArrayOffset
-         * @internal       You should not use this directly from another application
-         *
-         */
         #[ReturnTypeWillChange]
         public function offsetUnset($offset)
         {
             unset($this->container[$offset]);
         }
 
-        /**
-         * @param int $offset
-         *
-         * @return mixed|null
-         * @psalm-suppress MixedArrayOffset
-         * @internal       You should not use this directly from another application
-         *
-         */
         #[ReturnTypeWillChange]
         public function offsetGet($offset)
         {

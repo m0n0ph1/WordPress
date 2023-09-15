@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Tools Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     wp_reset_vars(['action']);
@@ -18,17 +11,6 @@
         'debug' => _x('Info', 'Site Health'),
     ];
 
-    /**
-     * Filters the extra tabs for the Site Health navigation bar.
-     *
-     * Add a custom page to the Site Health screen, based on a tab slug and label.
-     * The label you provide will also be used as part of the site title.
-     *
-     * @param string[] $tabs An associative array of tab labels keyed by their slug.
-     *
-     * @since 5.8.0
-     *
-     */
     $tabs = apply_filters('site_health_navigation_tabs', $tabs);
 
     $wrapper_classes = [
@@ -210,17 +192,6 @@
 <?php
     if(isset($_GET['tab']) && ! empty($_GET['tab']))
     {
-        /**
-         * Fires when outputting the content of a custom Site Health tab.
-         *
-         * This action fires right after the Site Health header, and users are still subject to
-         * the capability checks for the Site Health page to view any custom tabs and their contents.
-         *
-         * @param string $tab The slug of the tab that was requested.
-         *
-         * @since 5.8.0
-         *
-         */
         do_action('site_health_tab_content', $_GET['tab']);
 
         require_once ABSPATH.'wp-admin/admin-footer.php';

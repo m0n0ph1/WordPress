@@ -1,36 +1,14 @@
 <?php
-    /**
-     * Twenty Seventeen: Color Patterns
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Seventeen
-     * @since      Twenty Seventeen 1.0
-     */
 
-    /**
-     * Generate the CSS for the current custom color scheme.
-     */
     function twentyseventeen_custom_colors_css()
     {
         $hue = absint(get_theme_mod('colorscheme_hue', 250));
 
-        /**
-         * Filters Twenty Seventeen default saturation level.
-         *
-         * @param int $saturation Color saturation level.
-         *
-         * @since Twenty Seventeen 1.0
-         *
-         */
         $saturation = absint(apply_filters('twentyseventeen_custom_colors_saturation', 50));
         $reduced_saturation = (.8 * $saturation).'%';
         $saturation = $saturation.'%';
         $css = '
-/**
- * Twenty Seventeen: Color Patterns
- *
- * Colors are ordered from dark to light.
- */
+
 
 .colors-custom a:hover,
 .colors-custom a:active,
@@ -569,15 +547,5 @@ body.colors-custom,
 	}
 }';
 
-        /**
-         * Filters Twenty Seventeen custom colors CSS.
-         *
-         * @param string $css        Base theme colors CSS.
-         * @param int    $hue        The user's selected color hue.
-         * @param string $saturation Filtered theme color saturation level.
-         *
-         * @since Twenty Seventeen 1.0
-         *
-         */
         return apply_filters('twentyseventeen_custom_colors_css', $css, $hue, $saturation);
     }

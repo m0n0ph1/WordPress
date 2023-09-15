@@ -1,13 +1,5 @@
 <?php
-    /**
-     * Edit Term Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      4.5.0
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(empty($_REQUEST['tag_ID']))

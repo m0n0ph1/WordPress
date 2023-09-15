@@ -1,28 +1,16 @@
 <?php
 
-    /**
-     * IXR_IntrospectionServer
-     *
-     * @package IXR
-     * @since   1.5.0
-     */
     class IXR_IntrospectionServer extends IXR_Server
     {
         var $signatures;
 
         var $help;
 
-        /**
-         * PHP4 constructor.
-         */
         public function IXR_IntrospectionServer()
         {
             self::__construct();
         }
 
-        /**
-         * PHP5 constructor.
-         */
         function __construct()
         {
             $this->setCallbacks();

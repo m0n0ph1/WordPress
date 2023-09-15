@@ -1,92 +1,24 @@
 <?php
-    /**
-     * Site API: WP_Site_Query class
-     *
-     * @package    WordPress
-     * @subpackage Sites
-     * @since      4.6.0
-     */
 
-    /**
-     * Core class used for querying sites.
-     *
-     * @since 4.6.0
-     *
-     * @see   WP_Site_Query::__construct() for accepted arguments.
-     */
     #[AllowDynamicProperties]
     class WP_Site_Query
     {
-        /**
-         * SQL for database query.
-         *
-         * @since 4.6.0
-         * @var string
-         */
         public $request;
 
-        /**
-         * Metadata query container.
-         *
-         * @since 5.1.0
-         * @var WP_Meta_Query
-         */
         public $meta_query = false;
 
-        /**
-         * Date query container.
-         *
-         * @since 4.6.0
-         * @var WP_Date_Query A date query instance.
-         */
         public $date_query = false;
 
-        /**
-         * Query vars set by the user.
-         *
-         * @since 4.6.0
-         * @var array
-         */
         public $query_vars;
 
-        /**
-         * Default values for query vars.
-         *
-         * @since 4.6.0
-         * @var array
-         */
         public $query_var_defaults;
 
-        /**
-         * List of sites located by the query.
-         *
-         * @since 4.6.0
-         * @var array
-         */
         public $sites;
 
-        /**
-         * The amount of found sites for the current query.
-         *
-         * @since 4.6.0
-         * @var int
-         */
         public $found_sites = 0;
 
-        /**
-         * The number of pages.
-         *
-         * @since 4.6.0
-         * @var int
-         */
         public $max_num_pages = 0;
 
-        /**
-         * SQL query clauses.
-         *
-         * @since 4.6.0
-         * @var array
-         */
         protected $sql_clauses = [
             'select' => '',
             'from' => '',
@@ -96,100 +28,8 @@
             'limits' => '',
         ];
 
-        /**
-         * Metadata query clauses.
-         *
-         * @since 5.1.0
-         * @var array
-         */
         protected $meta_query_clauses;
 
-        /**
-         * Sets up the site query, based on the query vars passed.
-         *
-         * @param string|array   $query                      {
-         *                                                   Optional. Array or query string of site query parameters. Default empty.
-         *
-         * @type int[]           $site__in                   Array of site IDs to include. Default empty.
-         * @type int[]           $site__not_in               Array of site IDs to exclude. Default empty.
-         * @type bool            $count                      Whether to return a site count (true) or array of site objects.
-         *                                                   Default false.
-         * @type array           $date_query                 Date query clauses to limit sites by. See WP_Date_Query.
-         *                                                   Default null.
-         * @type string          $fields                     Site fields to return. Accepts 'ids' (returns an array of site IDs)
-         *                                                   or empty (returns an array of complete site objects).
-         *                                                   Default empty.
-         * @type int             $ID                         A site ID to only return that site. Default empty.
-         * @type int             $number                     Maximum number of sites to retrieve. Default 100.
-         * @type int             $offset                     Number of sites to offset the query. Used to build LIMIT clause.
-         *                                                   Default 0.
-         * @type bool            $no_found_rows              Whether to disable the `SQL_CALC_FOUND_ROWS` query. Default true.
-         * @type string|array    $orderby                    Site status or array of statuses. Accepts:
-         *                                                   - 'id'
-         *                                                   - 'domain'
-         *                                                   - 'path'
-         *                                                   - 'network_id'
-         *                                                   - 'last_updated'
-         *                                                   - 'registered'
-         *                                                   - 'domain_length'
-         *                                                   - 'path_length'
-         *                                                   - 'site__in'
-         *                                                   - 'network__in'
-         *                                                   - 'deleted'
-         *                                                   - 'mature'
-         *                                                   - 'spam'
-         *                                                   - 'archived'
-         *                                                   - 'public'
-         *                                                   - false, an empty array, or 'none' to disable `ORDER BY`
-         *                                                   clause. Default 'id'.
-         * @type string          $order                      How to order retrieved sites. Accepts 'ASC', 'DESC'. Default 'ASC'.
-         * @type int             $network_id                 Limit results to those affiliated with a given network ID. If 0,
-         *                                                   include all networks. Default 0.
-         * @type int[]           $network__in                Array of network IDs to include affiliated sites for. Default empty.
-         * @type int[]           $network__not_in            Array of network IDs to exclude affiliated sites for. Default empty.
-         * @type string          $domain                     Limit results to those affiliated with a given domain. Default empty.
-         * @type string[]        $domain__in                 Array of domains to include affiliated sites for. Default empty.
-         * @type string[]        $domain__not_in             Array of domains to exclude affiliated sites for. Default empty.
-         * @type string          $path                       Limit results to those affiliated with a given path. Default empty.
-         * @type string[]        $path__in                   Array of paths to include affiliated sites for. Default empty.
-         * @type string[]        $path__not_in               Array of paths to exclude affiliated sites for. Default empty.
-         * @type int             $public                     Limit results to public sites. Accepts '1' or '0'. Default empty.
-         * @type int             $archived                   Limit results to archived sites. Accepts '1' or '0'. Default empty.
-         * @type int             $mature                     Limit results to mature sites. Accepts '1' or '0'. Default empty.
-         * @type int             $spam                       Limit results to spam sites. Accepts '1' or '0'. Default empty.
-         * @type int             $deleted                    Limit results to deleted sites. Accepts '1' or '0'. Default empty.
-         * @type int             $lang_id                    Limit results to a language ID. Default empty.
-         * @type string[]        $lang__in                   Array of language IDs to include affiliated sites for. Default empty.
-         * @type string[]        $lang__not_in               Array of language IDs to exclude affiliated sites for. Default empty.
-         * @type string          $search                     Search term(s) to retrieve matching sites for. Default empty.
-         * @type string[]        $search_columns             Array of column names to be searched. Accepts 'domain' and 'path'.
-         *                                                   Default empty array.
-         * @type bool            $update_site_cache          Whether to prime the cache for found sites. Default true.
-         * @type bool            $update_site_meta_cache     Whether to prime the metadata cache for found sites. Default true.
-         * @type string|string[] $meta_key                   Meta key or keys to filter by.
-         * @type string|string[] $meta_value                 Meta value or values to filter by.
-         * @type string          $meta_compare               MySQL operator used for comparing the meta value.
-         *                                                   See WP_Meta_Query::__construct() for accepted values and
-         *                                                   default value.
-         * @type string          $meta_compare_key           MySQL operator used for comparing the meta key.
-         *                                                   See WP_Meta_Query::__construct() for accepted values and
-         *                                                   default value.
-         * @type string          $meta_type                  MySQL data type that the meta_value column will be CAST to for comparisons.
-         *                                                   See WP_Meta_Query::__construct() for accepted values and
-         *                                                   default value.
-         * @type string          $meta_type_key              MySQL data type that the meta_key column will be CAST to for comparisons.
-         *                                                   See WP_Meta_Query::__construct() for accepted values and
-         *                                                   default value.
-         * @type array           $meta_query                 An associative array of WP_Meta_Query arguments.
-         *                                                   See WP_Meta_Query::__construct() for accepted values.
-         *                                                   }
-         * @since 4.8.0 Introduced the 'lang_id', 'lang__in', and 'lang__not_in' parameters.
-         * @since 5.1.0 Introduced the 'update_site_meta_cache', 'meta_query', 'meta_key',
-         *                                                   'meta_compare_key', 'meta_value', 'meta_type', and 'meta_compare' parameters.
-         * @since 5.3.0 Introduced the 'meta_type_key' parameter.
-         *
-         * @since 4.6.0
-         */
         public function __construct($query = '')
         {
             $this->query_var_defaults = [
@@ -238,16 +78,6 @@
             }
         }
 
-        /**
-         * Sets up the WordPress query for retrieving sites.
-         *
-         * @param string|array $query Array or URL query string of parameters.
-         *
-         * @return array|int List of WP_Site objects, a list of site IDs when 'fields' is set to 'ids',
-         *                   or the number of sites when 'count' is passed as a query var.
-         * @since 4.6.0
-         *
-         */
         public function query($query)
         {
             $this->query_vars = wp_parse_args($query);
@@ -255,16 +85,6 @@
             return $this->get_sites();
         }
 
-        /**
-         * Retrieves a list of sites matching the query vars.
-         *
-         * @return array|int List of WP_Site objects, a list of site IDs when 'fields' is set to 'ids',
-         *                   or the number of sites when 'count' is passed as a query var.
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         * @since 4.6.0
-         *
-         */
         public function get_sites()
         {
             global $wpdb;
@@ -275,14 +95,6 @@
             $this->meta_query = new WP_Meta_Query();
             $this->meta_query->parse_query_vars($this->query_vars);
 
-            /**
-             * Fires before sites are retrieved.
-             *
-             * @param WP_Site_Query $query Current instance of WP_Site_Query (passed by reference).
-             *
-             * @since 4.6.0
-             *
-             */
             do_action_ref_array('pre_get_sites', [&$this]);
 
             // Reparse query vars, in case they were modified in a 'pre_get_sites' callback.
@@ -294,37 +106,6 @@
 
             $site_data = null;
 
-            /**
-             * Filters the site data before the get_sites query takes place.
-             *
-             * Return a non-null value to bypass WordPress' default site queries.
-             *
-             * The expected return type from this filter depends on the value passed
-             * in the request query vars:
-             * - When `$this->query_vars['count']` is set, the filter should return
-             *   the site count as an integer.
-             * - When `'ids' === $this->query_vars['fields']`, the filter should return
-             *   an array of site IDs.
-             * - Otherwise the filter should return an array of WP_Site objects.
-             *
-             * Note that if the filter returns an array of site data, it will be assigned
-             * to the `sites` property of the current WP_Site_Query instance.
-             *
-             * Filtering functions that require pagination information are encouraged to set
-             * the `found_sites` and `max_num_pages` properties of the WP_Site_Query object,
-             * passed to the filter by reference. If WP_Site_Query does not perform a database
-             * query, it will not have enough information to generate these values itself.
-             *
-             * @param array|int|null $site_data Return an array of site data to short-circuit WP's site query,
-             *                                  the site count as an integer if `$this->query_vars['count']` is set,
-             *                                  or null to run the normal queries.
-             * @param WP_Site_Query  $query     The WP_Site_Query instance, passed by reference.
-             *
-             * @since 5.2.0
-             * @since 5.6.0 The returned array of site data is assigned to the `sites` property
-             *              of the current WP_Site_Query instance.
-             *
-             */
             $site_data = apply_filters_ref_array('sites_pre_query', [$site_data, &$this]);
 
             if(null !== $site_data)
@@ -412,15 +193,6 @@
                 }
             }
 
-            /**
-             * Filters the site query results.
-             *
-             * @param WP_Site[]     $_sites An array of WP_Site objects.
-             * @param WP_Site_Query $query  Current instance of WP_Site_Query (passed by reference).
-             *
-             * @since 4.6.0
-             *
-             */
             $_sites = apply_filters_ref_array('the_sites', [$_sites, &$this]);
 
             // Convert to WP_Site instances.
@@ -429,16 +201,6 @@
             return $this->sites;
         }
 
-        /**
-         * Parses arguments passed to the site query with default query parameters.
-         *
-         * @param string|array $query Array or string of WP_Site_Query arguments. See WP_Site_Query::__construct().
-         *
-         * @see   WP_Site_Query::__construct()
-         *
-         * @since 4.6.0
-         *
-         */
         public function parse_query($query = '')
         {
             if(empty($query))
@@ -448,26 +210,9 @@
 
             $this->query_vars = wp_parse_args($query, $this->query_var_defaults);
 
-            /**
-             * Fires after the site query vars have been parsed.
-             *
-             * @param WP_Site_Query $query The WP_Site_Query instance (passed by reference).
-             *
-             * @since 4.6.0
-             *
-             */
             do_action_ref_array('parse_site_query', [&$this]);
         }
 
-        /**
-         * Used internally to get a list of site IDs matching the query vars.
-         *
-         * @return int|array A single count of site IDs if a count query. An array of site IDs if a full query.
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         * @since 4.6.0
-         *
-         */
         protected function get_site_ids()
         {
             global $wpdb;
@@ -685,18 +430,6 @@
                     $search_columns = ['domain', 'path'];
                 }
 
-                /**
-                 * Filters the columns to search in a WP_Site_Query search.
-                 *
-                 * The default columns include 'domain' and 'path.
-                 *
-                 * @param string[]      $search_columns Array of column names to be searched.
-                 * @param string        $search         Text being searched.
-                 * @param WP_Site_Query $query          The current WP_Site_Query instance.
-                 *
-                 * @since 4.6.0
-                 *
-                 */
                 $search_columns = apply_filters('site_search_columns', $search_columns, $this->query_vars['search'], $this);
 
                 $this->sql_clauses['where']['search'] = $this->get_search_sql($this->query_vars['search'], $search_columns);
@@ -731,15 +464,6 @@
 
             $pieces = ['fields', 'join', 'where', 'orderby', 'limits', 'groupby'];
 
-            /**
-             * Filters the site query clauses.
-             *
-             * @param string[]      $clauses An associative array of site query clauses.
-             * @param WP_Site_Query $query   Current instance of WP_Site_Query (passed by reference).
-             *
-             * @since 4.6.0
-             *
-             */
             $clauses = apply_filters_ref_array('sites_clauses', [compact($pieces), &$this]);
 
             $fields = isset($clauses['fields']) ? $clauses['fields'] : '';
@@ -795,15 +519,6 @@
             return array_map('intval', $site_ids);
         }
 
-        /**
-         * Parses an 'order' query variable and cast it to 'ASC' or 'DESC' as necessary.
-         *
-         * @param string $order The 'order' query variable.
-         *
-         * @return string The sanitized 'order' query variable.
-         * @since 4.6.0
-         *
-         */
         protected function parse_order($order)
         {
             if(! is_string($order) || empty($order))
@@ -821,17 +536,6 @@
             }
         }
 
-        /**
-         * Parses and sanitizes 'orderby' keys passed to the site query.
-         *
-         * @param string $orderby Alias for the field to order by.
-         *
-         * @return string|false Value to used in the ORDER clause. False otherwise.
-         * @since 4.6.0
-         *
-         * @global wpdb  $wpdb    WordPress database abstraction object.
-         *
-         */
         protected function parse_orderby($orderby)
         {
             global $wpdb;
@@ -916,18 +620,6 @@
             return $parsed;
         }
 
-        /**
-         * Used internally to generate an SQL string for searching across multiple columns.
-         *
-         * @param string   $search  Search string.
-         * @param string[] $columns Array of columns to search.
-         *
-         * @return string Search SQL.
-         * @global wpdb    $wpdb    WordPress database abstraction object.
-         *
-         * @since 4.6.0
-         *
-         */
         protected function get_search_sql($search, $columns)
         {
             global $wpdb;
@@ -950,29 +642,12 @@
             return '('.implode(' OR ', $searches).')';
         }
 
-        /**
-         * Populates found_sites and max_num_pages properties for the current query
-         * if the limit clause was used.
-         *
-         * @since 4.6.0
-         *
-         * @global wpdb $wpdb WordPress database abstraction object.
-         */
         private function set_found_sites()
         {
             global $wpdb;
 
             if($this->query_vars['number'] && ! $this->query_vars['no_found_rows'])
             {
-                /**
-                 * Filters the query used to retrieve found site count.
-                 *
-                 * @param string        $found_sites_query SQL query. Default 'SELECT FOUND_ROWS()'.
-                 * @param WP_Site_Query $site_query        The `WP_Site_Query` instance.
-                 *
-                 * @since 4.6.0
-                 *
-                 */
                 $found_sites_query = apply_filters('found_sites_query', 'SELECT FOUND_ROWS()', $this);
 
                 $this->found_sites = (int) $wpdb->get_var($found_sites_query);

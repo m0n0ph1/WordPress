@@ -1,13 +1,4 @@
 <?php
-    /**
-     * The template for displaying image attachments
-     *
-     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twelve
-     * @since      Twenty Twelve 1.0
-     */
 
     get_header(); ?>
 
@@ -82,17 +73,7 @@
                                    title="<?php the_title_attribute(); ?>"
                                    rel="attachment">
                                     <?php
-                                        /**
-                                         * Filters the image attachment size to use.
-                                         *
-                                         * @param array $size {
-                                         *
-                                         * @type int The attachment height in pixels.
-                                         * @type int The attachment width in pixels.
-                                         *                    }
-                                         * @since Twenty Twelve 1.0
-                                         *
-                                         */
+
                                         $attachment_size = apply_filters('twentytwelve_attachment_size', [960, 960]);
                                         echo wp_get_attachment_image($post->ID, $attachment_size);
                                     ?>

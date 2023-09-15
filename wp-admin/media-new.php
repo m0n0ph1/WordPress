@@ -1,15 +1,5 @@
 <?php
-    /**
-     * Manage media uploaded file.
-     *
-     * There are many filters in here for media. Plugins can extend functionality
-     * by hooking into the filters.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('upload_files'))

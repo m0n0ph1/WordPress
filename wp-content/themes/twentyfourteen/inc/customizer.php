@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Twenty Fourteen Customizer support
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Fourteen
-     * @since      Twenty Fourteen 1.0
-     */
 
-    /**
-     * Implement Customizer additions and adjustments.
-     *
-     * @param WP_Customize_Manager $wp_customize Customizer object.
-     *
-     * @since Twenty Fourteen 1.0
-     *
-     */
     function twentyfourteen_customize_register($wp_customize)
     {
         // Add postMessage support for site title and description.
@@ -81,43 +66,16 @@
 
     add_action('customize_register', 'twentyfourteen_customize_register');
 
-    /**
-     * Render the site title for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentyfourteen_customize_register()
-     *
-     * @since Twenty Fourteen 1.7
-     *
-     */
     function twentyfourteen_customize_partial_blogname()
     {
         bloginfo('name');
     }
 
-    /**
-     * Render the site tagline for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentyfourteen_customize_register()
-     *
-     * @since Twenty Fourteen 1.7
-     *
-     */
     function twentyfourteen_customize_partial_blogdescription()
     {
         bloginfo('description');
     }
 
-    /**
-     * Sanitize the Featured Content layout value.
-     *
-     * @param string $layout Layout type.
-     *
-     * @return string Filtered layout type (grid|slider).
-     * @since Twenty Fourteen 1.0
-     *
-     */
     function twentyfourteen_sanitize_layout($layout)
     {
         if(! in_array($layout, ['grid', 'slider'], true))
@@ -128,11 +86,6 @@
         return $layout;
     }
 
-    /**
-     * Bind JS handlers to make Customizer preview reload changes asynchronously.
-     *
-     * @since Twenty Fourteen 1.0
-     */
     function twentyfourteen_customize_preview_js()
     {
         wp_enqueue_script('twentyfourteen_customizer', get_template_directory_uri().'/js/customizer.js', ['customize-preview'], '20141015', ['in_footer' => true]);
@@ -140,11 +93,6 @@
 
     add_action('customize_preview_init', 'twentyfourteen_customize_preview_js');
 
-    /**
-     * Add contextual help to the Themes and Post edit screens.
-     *
-     * @since Twenty Fourteen 1.0
-     */
     function twentyfourteen_contextual_help()
     {
         if('admin_head-edit.php' === current_filter() && 'post' !== $GLOBALS['typenow'])

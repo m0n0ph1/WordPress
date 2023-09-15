@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Footer with title, tagline, and social links on a dark background
-     */
+
     return [
         'title' => __('Footer with title, tagline, and social links on a dark background', 'twentytwentytwo'),
         'categories' => ['footer'],

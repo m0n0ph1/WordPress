@@ -1,42 +1,12 @@
 <?php
-    /**
-     * REST API: WP_REST_Post_Format_Search_Handler class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.6.0
-     */
 
-    /**
-     * Core class representing a search handler for post formats in the REST API.
-     *
-     * @since 5.6.0
-     *
-     * @see   WP_REST_Search_Handler
-     */
     class WP_REST_Post_Format_Search_Handler extends WP_REST_Search_Handler
     {
-        /**
-         * Constructor.
-         *
-         * @since 5.6.0
-         */
         public function __construct()
         {
             $this->type = 'post-format';
         }
 
-        /**
-         * Searches the object type content for a given search request.
-         *
-         * @param WP_REST_Request $request Full REST request.
-         *
-         * @return array Associative array containing an `WP_REST_Search_Handler::RESULT_IDS` containing
-         *               an array of found IDs and `WP_REST_Search_Handler::RESULT_TOTAL` containing the
-         *               total count for the matching search results.
-         * @since 5.6.0
-         *
-         */
         public function search_items(WP_REST_Request $request)
         {
             $format_strings = get_post_format_strings();
@@ -49,17 +19,6 @@
                 $query_args['search'] = $request['search'];
             }
 
-            /**
-             * Filters the query arguments for a REST API search request.
-             *
-             * Enables adding extra arguments or setting defaults for a post format search request.
-             *
-             * @param array           $query_args Key value array of query var to query value.
-             * @param WP_REST_Request $request    The request used.
-             *
-             * @since 5.6.0
-             *
-             */
             $query_args = apply_filters('rest_post_format_search_query', $query_args, $request);
 
             $found_ids = [];
@@ -92,16 +51,6 @@
             ];
         }
 
-        /**
-         * Prepares the search result for a given ID.
-         *
-         * @param string $id     Item ID, the post format slug.
-         * @param array  $fields Fields to include for the item.
-         *
-         * @return array Associative array containing all fields for the item.
-         * @since 5.6.0
-         *
-         */
         public function prepare_item($id, array $fields)
         {
             $data = [];
@@ -129,15 +78,6 @@
             return $data;
         }
 
-        /**
-         * Prepares links for the search result.
-         *
-         * @param string $id Item ID, the post format slug.
-         *
-         * @return array Links for the given item.
-         * @since 5.6.0
-         *
-         */
         public function prepare_item_links($id)
         {
             return [];

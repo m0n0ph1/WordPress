@@ -1,25 +1,5 @@
 <?php
-    /**
-     * Toolbar API: Top-level Toolbar functionality
-     *
-     * @package    WordPress
-     * @subpackage Toolbar
-     * @since      3.1.0
-     */
 
-    /**
-     * Instantiates the admin bar object and set it up as a global for access elsewhere.
-     *
-     * UNHOOKING THIS FUNCTION WILL NOT PROPERLY REMOVE THE ADMIN BAR.
-     * For that, use show_admin_bar(false) or the {@see 'show_admin_bar'} filter.
-     *
-     * @return bool Whether the admin bar was successfully initialized.
-     * @global WP_Admin_Bar $wp_admin_bar
-     *
-     * @since  3.1.0
-     * @access private
-     *
-     */
     function _wp_admin_bar_init()
     {
         global $wp_admin_bar;
@@ -34,14 +14,6 @@
 
         /* Instantiate the admin bar */
 
-        /**
-         * Filters the admin bar class to instantiate.
-         *
-         * @param string $wp_admin_bar_class Admin bar class to use. Default 'WP_Admin_Bar'.
-         *
-         * @since 3.1.0
-         *
-         */
         $admin_bar_class = apply_filters('wp_admin_bar_class', 'WP_Admin_Bar');
         if(class_exists($admin_bar_class))
         {
@@ -58,25 +30,6 @@
         return true;
     }
 
-    /**
-     * Renders the admin bar to the page based on the $wp_admin_bar->menu member var.
-     *
-     * This is called very early on the {@see 'wp_body_open'} action so that it will render
-     * before anything else being added to the page body.
-     *
-     * For backward compatibility with themes not using the 'wp_body_open' action,
-     * the function is also called late on {@see 'wp_footer'}.
-     *
-     * It includes the {@see 'admin_bar_menu'} action which should be used to hook in and
-     * add new menus to the admin bar. That way you can be sure that you are adding at most
-     * optimal point, right before the admin bar is rendered. This also gives you access to
-     * the `$post` global, among others.
-     *
-     * @since 3.1.0
-     * @since 5.4.0 Called on 'wp_body_open' action first, with 'wp_footer' as a fallback.
-     *
-     * @global WP_Admin_Bar $wp_admin_bar
-     */
     function wp_admin_bar_render()
     {
         global $wp_admin_bar;
@@ -92,45 +45,17 @@
             return;
         }
 
-        /**
-         * Loads all necessary admin bar items.
-         *
-         * This is the hook used to add, remove, or manipulate admin bar items.
-         *
-         * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance, passed by reference.
-         *
-         * @since 3.1.0
-         *
-         */
         do_action_ref_array('admin_bar_menu', [&$wp_admin_bar]);
 
-        /**
-         * Fires before the admin bar is rendered.
-         *
-         * @since 3.1.0
-         */
         do_action('wp_before_admin_bar_render');
 
         $wp_admin_bar->render();
 
-        /**
-         * Fires after the admin bar is rendered.
-         *
-         * @since 3.1.0
-         */
         do_action('wp_after_admin_bar_render');
 
         $rendered = true;
     }
 
-    /**
-     * Adds the WordPress logo menu.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.3.0
-     *
-     */
     function wp_admin_bar_wp_menu($wp_admin_bar)
     {
         if(current_user_can('read'))
@@ -221,14 +146,6 @@
                                 ]);
     }
 
-    /**
-     * Adds the sidebar toggle button.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.8.0
-     *
-     */
     function wp_admin_bar_sidebar_toggle($wp_admin_bar)
     {
         if(is_admin())
@@ -241,14 +158,6 @@
         }
     }
 
-    /**
-     * Adds the "My Account" item.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.3.0
-     *
-     */
     function wp_admin_bar_my_account_item($wp_admin_bar)
     {
         $user_id = get_current_user_id();
@@ -288,14 +197,6 @@
                                 ]);
     }
 
-    /**
-     * Adds the "My Account" submenu items.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.1.0
-     *
-     */
     function wp_admin_bar_my_account_menu($wp_admin_bar)
     {
         $user_id = get_current_user_id();
@@ -360,14 +261,6 @@
                                 ]);
     }
 
-    /**
-     * Adds the "Site Name" menu.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.3.0
-     *
-     */
     function wp_admin_bar_site_menu($wp_admin_bar)
     {
         // Don't show for logged out users.
@@ -445,17 +338,6 @@
         }
     }
 
-    /**
-     * Adds the "Edit site" link to the Toolbar.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @global string      $_wp_current_template_id
-     * @since 6.3.0 Added `$_wp_current_template_id` global for editing of current template directly from the admin bar.
-     *
-     * @since 5.9.0
-     *
-     */
     function wp_admin_bar_edit_site_menu($wp_admin_bar)
     {
         global $_wp_current_template_id;
@@ -482,15 +364,6 @@
                                 ]);
     }
 
-    /**
-     * Adds the "Customize" link to the Toolbar.
-     *
-     * @param WP_Admin_Bar          $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 4.3.0
-     *
-     * @global WP_Customize_Manager $wp_customize
-     */
     function wp_admin_bar_customize_menu($wp_admin_bar)
     {
         global $wp_customize;
@@ -536,14 +409,6 @@
         add_action('wp_before_admin_bar_render', 'wp_customize_support_script');
     }
 
-    /**
-     * Adds the "My Sites/[Site Name]" menu and all submenus.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.1.0
-     *
-     */
     function wp_admin_bar_my_sites_menu($wp_admin_bar)
     {
         // Don't show for logged out users or single site mode.
@@ -654,17 +519,6 @@
                                      ],
                                  ]);
 
-        /**
-         * Filters whether to show the site icons in toolbar.
-         *
-         * Returning false to this hook is the recommended way to hide site icons in the toolbar.
-         * A truthy return may have negative performance impact on large multisites.
-         *
-         * @param bool $show_site_icons Whether site icons should be shown in the toolbar. Default true.
-         *
-         * @since 6.0.0
-         *
-         */
         $show_site_icons = apply_filters('wp_admin_bar_show_site_icons', true);
 
         foreach((array) $wp_admin_bar->user->blogs as $blog)
@@ -746,14 +600,6 @@
         }
     }
 
-    /**
-     * Provides a shortlink.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.1.0
-     *
-     */
     function wp_admin_bar_shortlink_menu($wp_admin_bar)
     {
         $short = wp_get_shortlink(0, 'query');
@@ -774,21 +620,6 @@
                                 ]);
     }
 
-    /**
-     * Provides an edit link for posts and terms.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 5.5.0 Added a "View Post" link on Comments screen for a single post.
-     *
-     * @global WP_Term     $tag
-     * @global WP_Query    $wp_the_query WordPress Query object.
-     * @global int         $user_id      The ID of the user being edited. Not to be confused with the
-     *                                   global $user_ID, which contains the ID of the current user.
-     * @global int         $post_id      The ID of the post when editing comments for a single post.
-     *
-     * @since 3.1.0
-     */
     function wp_admin_bar_edit_menu($wp_admin_bar)
     {
         global $tag, $wp_the_query, $user_id, $post_id;
@@ -921,14 +752,6 @@
         }
     }
 
-    /**
-     * Adds "Add New" menu.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.1.0
-     *
-     */
     function wp_admin_bar_new_content_menu($wp_admin_bar)
     {
         $actions = [];
@@ -1005,14 +828,6 @@
         }
     }
 
-    /**
-     * Adds edit comments link with awaiting moderation count bubble.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.1.0
-     *
-     */
     function wp_admin_bar_comments_menu($wp_admin_bar)
     {
         if(! current_user_can('edit_posts'))
@@ -1035,14 +850,6 @@
                                 ]);
     }
 
-    /**
-     * Adds appearance submenu items to the "Site Name" menu.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.1.0
-     *
-     */
     function wp_admin_bar_appearance_menu($wp_admin_bar)
     {
         $wp_admin_bar->add_group([
@@ -1112,14 +919,6 @@
         }
     }
 
-    /**
-     * Provides an update link if theme/plugin/core updates are available.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.1.0
-     *
-     */
     function wp_admin_bar_updates_menu($wp_admin_bar)
     {
         $update_data = wp_get_update_data();
@@ -1142,14 +941,6 @@
                                 ]);
     }
 
-    /**
-     * Adds search form.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.3.0
-     *
-     */
     function wp_admin_bar_search_menu($wp_admin_bar)
     {
         if(is_admin())
@@ -1175,14 +966,6 @@
                                 ]);
     }
 
-    /**
-     * Adds a link to exit recovery mode when Recovery Mode is active.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 5.2.0
-     *
-     */
     function wp_admin_bar_recovery_mode_menu($wp_admin_bar)
     {
         if(! wp_is_recovery_mode())
@@ -1202,14 +985,6 @@
                                 ]);
     }
 
-    /**
-     * Adds secondary menus.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
-     *
-     * @since 3.3.0
-     *
-     */
     function wp_admin_bar_add_secondary_groups($wp_admin_bar)
     {
         $wp_admin_bar->add_group([
@@ -1228,11 +1003,6 @@
                                  ]);
     }
 
-    /**
-     * Prints style and scripts for the admin bar.
-     *
-     * @since 3.1.0
-     */
     function wp_admin_bar_header()
     {
         $type_attr = current_theme_supports('html5', 'style') ? '' : ' type="text/css"';
@@ -1243,11 +1013,6 @@
         <?php
     }
 
-    /**
-     * Prints default admin bar callback.
-     *
-     * @since 3.1.0
-     */
     function _admin_bar_bump_cb()
     {
         $type_attr = current_theme_supports('html5', 'style') ? '' : ' type="text/css"';
@@ -1266,39 +1031,12 @@
         <?php
     }
 
-    /**
-     * Sets the display status of the admin bar.
-     *
-     * This can be called immediately upon plugin load. It does not need to be called
-     * from a function hooked to the {@see 'init'} action.
-     *
-     * @param bool  $show Whether to allow the admin bar to show.
-     *
-     * @global bool $show_admin_bar
-     *
-     * @since 3.1.0
-     *
-     */
     function show_admin_bar($show)
     {
         global $show_admin_bar;
         $show_admin_bar = (bool) $show;
     }
 
-    /**
-     * Determines whether the admin bar should be showing.
-     *
-     * For more information on this and similar theme functions, check out
-     * the {@link https://developer.wordpress.org/themes/basics/conditional-tags/
-     * Conditional Tags} article in the Theme Developer Handbook.
-     *
-     * @return bool Whether the admin bar should be showing.
-     * @global bool   $show_admin_bar
-     * @global string $pagenow The filename of the current screen.
-     *
-     * @since 3.1.0
-     *
-     */
     function is_admin_bar_showing()
     {
         global $show_admin_bar, $pagenow;
@@ -1332,34 +1070,11 @@
             }
         }
 
-        /**
-         * Filters whether to show the admin bar.
-         *
-         * Returning false to this hook is the recommended way to hide the admin bar.
-         * The user's display preference is used for logged in users.
-         *
-         * @param bool $show_admin_bar Whether the admin bar should be shown. Default false.
-         *
-         * @since 3.1.0
-         *
-         */
         $show_admin_bar = apply_filters('show_admin_bar', $show_admin_bar);
 
         return $show_admin_bar;
     }
 
-    /**
-     * Retrieves the admin bar display preference of a user.
-     *
-     * @param string $context Context of this preference check. Defaults to 'front'. The 'admin'
-     *                        preference is no longer used.
-     * @param int    $user    Optional. ID of the user to check, defaults to 0 for current user.
-     *
-     * @return bool Whether the admin bar should be showing for this user.
-     * @since  3.1.0
-     * @access private
-     *
-     */
     function _get_admin_bar_pref($context = 'front', $user = 0)
     {
         $pref = get_user_option("show_admin_bar_{$context}", $user);

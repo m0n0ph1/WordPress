@@ -1,27 +1,8 @@
 <?php
-    /**
-     * Sitemaps: WP_Sitemaps_Stylesheet class
-     *
-     * This class provides the XSL stylesheets to style all sitemaps.
-     *
-     * @package    WordPress
-     * @subpackage Sitemaps
-     * @since      5.5.0
-     */
 
-    /**
-     * Stylesheet provider class.
-     *
-     * @since 5.5.0
-     */
     #[AllowDynamicProperties]
     class WP_Sitemaps_Stylesheet
     {
-        /**
-         * Renders the XSL stylesheet depending on whether it's the sitemap index or not.
-         *
-         * @param string $type Stylesheet type. Either 'sitemap' or 'index'.
-         */
         public function render_stylesheet($type)
         {
             header('Content-Type: application/xml; charset=UTF-8');
@@ -41,11 +22,6 @@
             exit;
         }
 
-        /**
-         * Returns the escaped XSL for all sitemaps, except index.
-         *
-         * @since 5.5.0
-         */
         public function get_sitemap_stylesheet()
         {
             $css = $this->get_stylesheet_css();
@@ -138,24 +114,9 @@
 
 XSL;
 
-            /**
-             * Filters the content of the sitemap stylesheet.
-             *
-             * @param string $xsl_content Full content for the XML stylesheet.
-             *
-             * @since 5.5.0
-             *
-             */
             return apply_filters('wp_sitemaps_stylesheet_content', $xsl_content);
         }
 
-        /**
-         * Gets the CSS to be included in sitemap XSL stylesheets.
-         *
-         * @return string The CSS.
-         * @since 5.5.0
-         *
-         */
         public function get_stylesheet_css()
         {
             $text_align = is_rtl() ? 'right' : 'left';
@@ -206,22 +167,9 @@ XSL;
 
 EOF;
 
-            /**
-             * Filters the CSS only for the sitemap stylesheet.
-             *
-             * @param string $css CSS to be applied to default XSL file.
-             *
-             * @since 5.5.0
-             *
-             */
             return apply_filters('wp_sitemaps_stylesheet_css', $css);
         }
 
-        /**
-         * Returns the escaped XSL for the index sitemaps.
-         *
-         * @since 5.5.0
-         */
         public function get_sitemap_index_stylesheet()
         {
             $css = $this->get_stylesheet_css();
@@ -298,14 +246,6 @@ EOF;
 
 XSL;
 
-            /**
-             * Filters the content of the sitemap index stylesheet.
-             *
-             * @param string $xsl_content Full content for the XML stylesheet.
-             *
-             * @since 5.5.0
-             *
-             */
             return apply_filters('wp_sitemaps_stylesheet_index_content', $xsl_content);
         }
     }

@@ -1,57 +1,17 @@
 <?php
-    /**
-     * Error Protection API: WP_Recovery_Mode_Email_Link class
-     *
-     * @package WordPress
-     * @since   5.2.0
-     */
 
-    /**
-     * Core class used to send an email with a link to begin Recovery Mode.
-     *
-     * @since 5.2.0
-     */
     #[AllowDynamicProperties]
     final class WP_Recovery_Mode_Email_Service
     {
         const RATE_LIMIT_OPTION = 'recovery_mode_email_last_sent';
 
-        /**
-         * Service to generate recovery mode URLs.
-         *
-         * @since 5.2.0
-         * @var WP_Recovery_Mode_Link_Service
-         */
         private $link_service;
 
-        /**
-         * WP_Recovery_Mode_Email_Service constructor.
-         *
-         * @param WP_Recovery_Mode_Link_Service $link_service
-         *
-         * @since 5.2.0
-         *
-         */
         public function __construct(WP_Recovery_Mode_Link_Service $link_service)
         {
             $this->link_service = $link_service;
         }
 
-        /**
-         * Sends the recovery mode email if the rate limit has not been sent.
-         *
-         * @param int   $rate_limit Number of seconds before another email can be sent.
-         * @param array $error      Error details from `error_get_last()`.
-         * @param array $extension  {
-         *                          The extension that caused the error.
-         *
-         * @type string $slug       The extension slug. The plugin or theme's directory.
-         * @type string $type       The extension type. Either 'plugin' or 'theme'.
-         *                          }
-         * @return true|WP_Error True if email sent, WP_Error otherwise.
-         * @since 5.2.0
-         *
-         */
         public function maybe_send_recovery_mode_email($rate_limit, $error, $extension)
         {
             $last_sent = get_option(self::RATE_LIMIT_OPTION);
@@ -78,21 +38,6 @@
             return new WP_Error('email_sent_already', $err_message);
         }
 
-        /**
-         * Sends the Recovery Mode email to the site admin email address.
-         *
-         * @param int   $rate_limit Number of seconds before another email can be sent.
-         * @param array $error      Error details from `error_get_last()`.
-         * @param array $extension  {
-         *                          The extension that caused the error.
-         *
-         * @type string $slug       The extension slug. The directory of the plugin or theme.
-         * @type string $type       The extension type. Either 'plugin' or 'theme'.
-         *                          }
-         * @return bool Whether the email was sent successfully.
-         * @since 5.2.0
-         *
-         */
         private function send_recovery_mode_email($rate_limit, $error, $extension)
         {
             $url = $this->link_service->generate_url();
@@ -117,24 +62,8 @@
                 $details = '';
             }
 
-            /**
-             * Filters the support message sent with the the fatal error protection email.
-             *
-             * @param string $message The Message to include in the email.
-             *
-             * @since 5.2.0
-             *
-             */
             $support = apply_filters('recovery_email_support_info', __('Please contact your host for assistance with investigating this issue further.'));
 
-            /**
-             * Filters the debug information included in the fatal error protection email.
-             *
-             * @param array $message An associative array of debug information.
-             *
-             * @since 5.3.0
-             *
-             */
             $debug = apply_filters('recovery_email_debug_info', $this->get_debug($extension));
 
             /* translators: Do not translate LINK, EXPIRES, CAUSE, DETAILS, SITEURL, PAGEURL, SUPPORT. DEBUG: those are placeholders. */
@@ -187,25 +116,6 @@ When seeking help with this issue, you may be asked for some of the following in
                 'attachments' => '',
             ];
 
-            /**
-             * Filters the contents of the Recovery Mode email.
-             *
-             * @param array       $email       {
-             *                                 Used to build a call to wp_mail().
-             *
-             * @type string|array $to          Array or comma-separated list of email addresses to send message.
-             * @type string       $subject     Email subject
-             * @type string       $message     Message contents
-             * @type string|array $headers     Optional. Additional headers.
-             * @type string|array $attachments Optional. Files to attach.
-             *                                 }
-             *
-             * @param string      $url         URL to enter recovery mode.
-             *
-             * @since 5.2.0
-             * @since 5.6.0 The `$email` argument includes the `attachments` key.
-             *
-             */
             $email = apply_filters('recovery_mode_email', $email, $url);
 
             $sent = wp_mail($email['to'], wp_specialchars_decode(sprintf($email['subject'], $blogname)), $email['message'], $email['headers'], $email['attachments']);
@@ -218,19 +128,6 @@ When seeking help with this issue, you may be asked for some of the following in
             return $sent;
         }
 
-        /**
-         * Gets the description indicating the possible cause for the error.
-         *
-         * @param array $extension {
-         *                         The extension that caused the error.
-         *
-         * @type string $slug      The extension slug. The directory of the plugin or theme.
-         * @type string $type      The extension type. Either 'plugin' or 'theme'.
-         *                         }
-         * @return string Message about which extension caused the error.
-         * @since 5.2.0
-         *
-         */
         private function get_cause($extension)
         {
             if('plugin' === $extension['type'])
@@ -261,19 +158,6 @@ When seeking help with this issue, you may be asked for some of the following in
             return $cause;
         }
 
-        /**
-         * Return the details for a single plugin based on the extension data from an error.
-         *
-         * @param array $extension {
-         *                         The extension that caused the error.
-         *
-         * @type string $slug      The extension slug. The directory of the plugin or theme.
-         * @type string $type      The extension type. Either 'plugin' or 'theme'.
-         *                         }
-         * @return array|false A plugin array {@see get_plugins()} or `false` if no plugin was found.
-         * @since 5.3.0
-         *
-         */
         private function get_plugin($extension)
         {
             if(! function_exists('get_plugins'))
@@ -302,19 +186,6 @@ When seeking help with this issue, you may be asked for some of the following in
             return false;
         }
 
-        /**
-         * Return debug information in an easy to manipulate format.
-         *
-         * @param array $extension {
-         *                         The extension that caused the error.
-         *
-         * @type string $slug      The extension slug. The directory of the plugin or theme.
-         * @type string $type      The extension type. Either 'plugin' or 'theme'.
-         *                         }
-         * @return array An associative array of debug information.
-         * @since 5.3.0
-         *
-         */
         private function get_debug($extension)
         {
             $theme = wp_get_theme();
@@ -344,13 +215,6 @@ When seeking help with this issue, you may be asked for some of the following in
             return $debug;
         }
 
-        /**
-         * Gets the email address to send the recovery mode link to.
-         *
-         * @return string Email address to send recovery mode link to.
-         * @since 5.2.0
-         *
-         */
         private function get_recovery_mode_email_address()
         {
             if(defined('RECOVERY_MODE_EMAIL') && is_email(RECOVERY_MODE_EMAIL))
@@ -361,13 +225,6 @@ When seeking help with this issue, you may be asked for some of the following in
             return get_option('admin_email');
         }
 
-        /**
-         * Clears the rate limit, allowing a new recovery mode email to be sent immediately.
-         *
-         * @return bool True on success, false on failure.
-         * @since 5.2.0
-         *
-         */
         public function clear_rate_limit()
         {
             return delete_option(self::RATE_LIMIT_OPTION);

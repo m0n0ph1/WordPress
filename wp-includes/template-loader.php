@@ -1,30 +1,10 @@
 <?php
-    /**
-     * Loads the correct template based on the visitor's url
-     *
-     * @package WordPress
-     */
+
     if(wp_using_themes())
     {
-        /**
-         * Fires before determining which template to load.
-         *
-         * @since 1.5.0
-         */
         do_action('template_redirect');
     }
 
-    /**
-     * Filters whether to allow 'HEAD' requests to generate content.
-     *
-     * Provides a significant performance bump by exiting before the page
-     * content loads for 'HEAD' requests. See #14348.
-     *
-     * @param bool $exit Whether to exit without generating any content for 'HEAD' requests. Default true.
-     *
-     * @since 3.5.0
-     *
-     */
     if('HEAD' === $_SERVER['REQUEST_METHOD'] && apply_filters('exit_on_http_head', true))
     {
         exit;
@@ -33,22 +13,12 @@
 // Process feeds and trackbacks even if not using themes.
     if(is_robots())
     {
-        /**
-         * Fired when the template loader determines a robots.txt request.
-         *
-         * @since 2.1.0
-         */
         do_action('do_robots');
 
         return;
     }
     elseif(is_favicon())
     {
-        /**
-         * Fired when the template loader determines a favicon.ico request.
-         *
-         * @since 5.4.0
-         */
         do_action('do_favicon');
 
         return;
@@ -113,14 +83,6 @@
             $template = get_index_template();
         }
 
-        /**
-         * Filters the path of the current template before including it.
-         *
-         * @param string $template The path of the template to include.
-         *
-         * @since 3.0.0
-         *
-         */
         $template = apply_filters('template_include', $template);
         if($template)
         {

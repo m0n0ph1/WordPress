@@ -1,15 +1,7 @@
 <?php
-    /**
-     * Edit user administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
-    /** WordPress Translation Installation API */
     require_once ABSPATH.'wp-admin/includes/translation-install.php';
 
     wp_reset_vars(['action', 'user_id', 'wp_http_referer']);
@@ -86,20 +78,6 @@
 
     $user_can_edit = current_user_can('edit_posts') || current_user_can('edit_pages');
 
-    /**
-     * Filters whether to allow administrators on Multisite to edit every user.
-     *
-     * Enabling the user editing form via this filter also hinges on the user holding
-     * the 'manage_network_users' cap, and the logged-in user not matching the user
-     * profile open for editing.
-     *
-     * The filter was introduced to replace the EDIT_ANY_USER constant.
-     *
-     * @param bool $allow Whether to allow editing of any user. Default true.
-     *
-     * @since 3.0.0
-     *
-     */
     if(is_multisite() && ! current_user_can('manage_network_users') && $user_id !== $current_user->ID && ! apply_filters('enable_edit_any_user_configuration', true))
     {
         wp_die(__('Sorry, you are not allowed to edit this user.'));
@@ -148,28 +126,10 @@
 
             if(IS_PROFILE_PAGE)
             {
-                /**
-                 * Fires before the page loads on the 'Profile' editing screen.
-                 *
-                 * The action only fires if the current user is editing their own profile.
-                 *
-                 * @param int $user_id The user ID.
-                 *
-                 * @since 2.0.0
-                 *
-                 */
                 do_action('personal_options_update', $user_id);
             }
             else
             {
-                /**
-                 * Fires before the page loads on the 'Edit User' screen.
-                 *
-                 * @param int $user_id The user ID.
-                 *
-                 * @since 2.7.0
-                 *
-                 */
                 do_action('edit_user_profile_update', $user_id);
             }
 
@@ -284,11 +244,7 @@
                       method="post"
                       novalidate="novalidate"
                     <?php
-                        /**
-                         * Fires inside the your-profile form tag on the user editing screen.
-                         *
-                         * @since 3.0.0
-                         */
+
                         do_action('user_edit_form_tag');
                     ?>
                 >
@@ -344,18 +300,7 @@
                                 <th scope="row"><?php _e('Admin Color Scheme'); ?></th>
                                 <td>
                                     <?php
-                                        /**
-                                         * Fires in the 'Admin Color Scheme' section of the user editing screen.
-                                         *
-                                         * The section is only enabled if a callback is hooked to the action,
-                                         * and if there is more than one defined color scheme for the admin.
-                                         *
-                                         * @param int $user_id The user ID.
-                                         *
-                                         * @since 3.8.1 Added `$user_id` parameter.
-                                         *
-                                         * @since 3.0.0
-                                         */
+
                                         do_action('admin_color_scheme_picker', $user_id);
                                     ?>
                                 </td>
@@ -430,14 +375,7 @@
                         <?php endif; ?>
 
                         <?php
-                            /**
-                             * Fires at the end of the 'Personal Options' settings table on the user editing screen.
-                             *
-                             * @param WP_User $profile_user The current WP_User object.
-                             *
-                             * @since 2.7.0
-                             *
-                             */
+
                             do_action('personal_options', $profile_user);
                         ?>
 
@@ -445,16 +383,6 @@
                     <?php
                         if(IS_PROFILE_PAGE)
                         {
-                            /**
-                             * Fires after the 'Personal Options' settings table on the 'Profile' editing screen.
-                             *
-                             * The action only fires if the current user is editing their own profile.
-                             *
-                             * @param WP_User $profile_user The current WP_User object.
-                             *
-                             * @since 2.0.0
-                             *
-                             */
                             do_action('profile_personal_options', $profile_user);
                         }
                     ?>
@@ -637,17 +565,7 @@
                                 <th>
                                     <label for="<?php echo $name; ?>">
                                         <?php
-                                            /**
-                                             * Filters a user contactmethod label.
-                                             *
-                                             * The dynamic portion of the hook name, `$name`, refers to
-                                             * each of the keys in the contact methods array.
-                                             *
-                                             * @param string $desc The translatable label for the contact method.
-                                             *
-                                             * @since 2.9.0
-                                             *
-                                             */
+
                                             echo apply_filters("user_{$name}_label", $desc);
                                         ?>
                                     </label>
@@ -693,16 +611,6 @@
                                                 $description = '';
                                             }
 
-                                            /**
-                                             * Filters the user profile picture description displayed under the Gravatar.
-                                             *
-                                             * @param string  $description  The description that will be printed.
-                                             * @param WP_User $profile_user The current WP_User object.
-                                             *
-                                             * @since 4.4.0
-                                             * @since 4.7.0 Added the `$profile_user` parameter.
-                                             *
-                                             */
                                             echo apply_filters('user_profile_picture_description', $description, $profile_user);
                                         ?>
                                     </p>
@@ -710,17 +618,7 @@
                             </tr>
                         <?php endif; ?>
                         <?php
-                            /**
-                             * Filters the display of the password fields.
-                             *
-                             * @param bool    $show         Whether to show the password fields. Default true.
-                             * @param WP_User $profile_user User object for the current user to edit.
-                             *
-                             * @since 4.4.0 Now evaluated only in user-edit.php.
-                             *
-                             * @since 1.5.1
-                             * @since 2.8.0 Added the `$profile_user` parameter.
-                             */
+
                             $show_password_fields = apply_filters('show_password_fields', true, $profile_user);
                         ?>
                         <?php if($show_password_fields) : ?>
@@ -914,14 +812,7 @@
                                         </div>
 
                                         <?php
-                                            /**
-                                             * Fires in the create Application Passwords form.
-                                             *
-                                             * @param WP_User $profile_user The current WP_User object.
-                                             *
-                                             * @since 5.6.0
-                                             *
-                                             */
+
                                             do_action('wp_create_application_password_form', $profile_user);
                                         ?>
 
@@ -961,46 +852,16 @@
                     <?php
                         if(IS_PROFILE_PAGE)
                         {
-                            /**
-                             * Fires after the 'About Yourself' settings table on the 'Profile' editing screen.
-                             *
-                             * The action only fires if the current user is editing their own profile.
-                             *
-                             * @param WP_User $profile_user The current WP_User object.
-                             *
-                             * @since 2.0.0
-                             *
-                             */
                             do_action('show_user_profile', $profile_user);
                         }
                         else
                         {
-                            /**
-                             * Fires after the 'About the User' settings table on the 'Edit User' screen.
-                             *
-                             * @param WP_User $profile_user The current WP_User object.
-                             *
-                             * @since 2.0.0
-                             *
-                             */
                             do_action('edit_user_profile', $profile_user);
                         }
                     ?>
 
                     <?php
-                        /**
-                         * Filters whether to display additional capabilities for the user.
-                         *
-                         * The 'Additional Capabilities' section will only be enabled if
-                         * the number of the user's capabilities exceeds their number of
-                         * roles.
-                         *
-                         * @param bool    $enable       Whether to display the capabilities. Default true.
-                         * @param WP_User $profile_user The current WP_User object.
-                         *
-                         * @since 2.8.0
-                         *
-                         */
+
                         $display_additional_caps = apply_filters('additional_capabilities_display', true, $profile_user);
                     ?>
 

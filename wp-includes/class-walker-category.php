@@ -1,58 +1,14 @@
 <?php
-    /**
-     * Taxonomy API: Walker_Category class
-     *
-     * @package    WordPress
-     * @subpackage Template
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used to create an HTML list of categories.
-     *
-     * @since 2.1.0
-     *
-     * @see   Walker
-     */
     class Walker_Category extends Walker
     {
-        /**
-         * What the class handles.
-         *
-         * @since 2.1.0
-         * @var string
-         *
-         * @see   Walker::$tree_type
-         */
         public $tree_type = 'category';
 
-        /**
-         * Database fields to use.
-         *
-         * @since 2.1.0
-         * @var string[]
-         *
-         * @see   Walker::$db_fields
-         * @todo  Decouple this
-         */
         public $db_fields = [
             'parent' => 'parent',
             'id' => 'term_id',
         ];
 
-        /**
-         * Starts the list before the elements are added.
-         *
-         * @param string $output Used to append additional content. Passed by reference.
-         * @param int    $depth  Optional. Depth of category. Used for tab indentation. Default 0.
-         * @param array  $args   Optional. An array of arguments. Will only append content if style argument
-         *                       value is 'list'. See wp_list_categories(). Default empty array.
-         *
-         * @see   Walker::start_lvl()
-         *
-         * @since 2.1.0
-         *
-         */
         public function start_lvl(&$output, $depth = 0, $args = [])
         {
             if('list' !== $args['style'])
@@ -64,19 +20,6 @@
             $output .= "$indent<ul class='children'>\n";
         }
 
-        /**
-         * Ends the list of after the elements are added.
-         *
-         * @param string $output Used to append additional content. Passed by reference.
-         * @param int    $depth  Optional. Depth of category. Used for tab indentation. Default 0.
-         * @param array  $args   Optional. An array of arguments. Will only append content if style argument
-         *                       value is 'list'. See wp_list_categories(). Default empty array.
-         *
-         * @see   Walker::end_lvl()
-         *
-         * @since 2.1.0
-         *
-         */
         public function end_lvl(&$output, $depth = 0, $args = [])
         {
             if('list' !== $args['style'])
@@ -88,29 +31,11 @@
             $output .= "$indent</ul>\n";
         }
 
-        /**
-         * Starts the element output.
-         *
-         * @param string  $output            Used to append additional content (passed by reference).
-         * @param WP_Term $data_object       Category data object.
-         * @param int     $depth             Optional. Depth of category in reference to parents. Default 0.
-         * @param array   $args              Optional. An array of arguments. See wp_list_categories().
-         *                                   Default empty array.
-         * @param int     $current_object_id Optional. ID of the current category. Default 0.
-         *
-         * @see   Walker::start_el()
-         *
-         * @since 2.1.0
-         * @since 5.9.0 Renamed `$category` to `$data_object` and `$id` to `$current_object_id`
-         *              to match parent class for PHP 8 named parameter support.
-         *
-         */
         public function start_el(&$output, $data_object, $depth = 0, $args = [], $current_object_id = 0)
         {
             // Restores the more descriptive, specific name for use within this method.
             $category = $data_object;
 
-            /** This filter is documented in wp-includes/category-template.php */
             $cat_name = apply_filters('list_cats', esc_attr($category->name), $category);
 
             // Don't generate an element if the category name is empty.
@@ -124,36 +49,9 @@
 
             if($args['use_desc_for_title'] && ! empty($category->description))
             {
-                /**
-                 * Filters the category description for display.
-                 *
-                 * @param string  $description Category description.
-                 * @param WP_Term $category    Category object.
-                 *
-                 * @since 1.2.0
-                 *
-                 */
                 $atts['title'] = strip_tags(apply_filters('category_description', $category->description, $category));
             }
 
-            /**
-             * Filters the HTML attributes applied to a category list item's anchor element.
-             *
-             * @param array   $atts              {
-             *                                   The HTML attributes applied to the list item's `<a>` element, empty strings are ignored.
-             *
-             * @type string   $href              The href attribute.
-             * @type string   $title             The title attribute.
-             *                                   }
-             *
-             * @param WP_Term $category          Term data object.
-             * @param int     $depth             Depth of category, used for padding.
-             * @param array   $args              An array of arguments.
-             * @param int     $current_object_id ID of the current category.
-             *
-             * @since 5.2.0
-             *
-             */
             $atts = apply_filters('category_list_link_attributes', $atts, $category, $depth, $args, $current_object_id);
 
             $attributes = '';
@@ -257,19 +155,6 @@
                     }
                 }
 
-                /**
-                 * Filters the list of CSS classes to include with each category in the list.
-                 *
-                 * @param string[] $css_classes An array of CSS classes to be applied to each list item.
-                 * @param WP_Term  $category    Category data object.
-                 * @param int      $depth       Depth of page, used for padding.
-                 * @param array    $args        An array of wp_list_categories() arguments.
-                 *
-                 * @since 4.2.0
-                 *
-                 * @see   wp_list_categories()
-                 *
-                 */
                 $css_classes = implode(' ', apply_filters('category_css_class', $css_classes, $category, $depth, $args));
                 $css_classes = $css_classes ? ' class="'.esc_attr($css_classes).'"' : '';
 
@@ -286,21 +171,6 @@
             }
         }
 
-        /**
-         * Ends the element output, if needed.
-         *
-         * @param string $output      Used to append additional content (passed by reference).
-         * @param object $data_object Category data object. Not used.
-         * @param int    $depth       Optional. Depth of category. Not used.
-         * @param array  $args        Optional. An array of arguments. Only uses 'list' for whether should
-         *                            append to output. See wp_list_categories(). Default empty array.
-         *
-         * @since 5.9.0 Renamed `$page` to `$data_object` to match parent class for PHP 8 named parameter support.
-         *
-         * @see   Walker::end_el()
-         *
-         * @since 2.1.0
-         */
         public function end_el(&$output, $data_object, $depth = 0, $args = [])
         {
             if('list' !== $args['style'])

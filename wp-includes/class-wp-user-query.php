@@ -1,44 +1,12 @@
 <?php
-    /**
-     * User API: WP_User_Query class
-     *
-     * @package    WordPress
-     * @subpackage Users
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used for querying users.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_User_Query::prepare_query() for information on accepted arguments.
-     */
     #[AllowDynamicProperties]
     class WP_User_Query
     {
-        /**
-         * Query vars, after parsing
-         *
-         * @since 3.5.0
-         * @var array
-         */
         public $query_vars = [];
 
-        /**
-         * Metadata query container.
-         *
-         * @since 4.2.0
-         * @var WP_Meta_Query
-         */
         public $meta_query = false;
 
-        /**
-         * The SQL query used to fetch matching users.
-         *
-         * @since 4.4.0
-         * @var string
-         */
         public $request;
 
         public $query_fields;
@@ -52,33 +20,12 @@
 
         public $query_limit;
 
-        /**
-         * List of found user IDs.
-         *
-         * @since 3.1.0
-         * @var array
-         */
         private $results;
 
-        /**
-         * Total number of found users for the current query
-         *
-         * @since 3.1.0
-         * @var int
-         */
         private $total_users = 0;
 
         private $compat_fields = ['results', 'total_users'];
 
-        /**
-         * Constructor.
-         *
-         * @param null|string|array $query Optional. The query variables.
-         *                                 See WP_User_Query::prepare_query() for information on accepted arguments.
-         *
-         * @since 3.1.0
-         *
-         */
         public function __construct($query = null)
         {
             if(! empty($query))
@@ -88,144 +35,6 @@
             }
         }
 
-        /**
-         * Prepares the query variables.
-         *
-         * @param string|array   $query                   {
-         *                                                Optional. Array or string of query parameters.
-         *
-         * @type int             $blog_id                 The site ID. Default is the current site.
-         * @type string|string[] $role                    An array or a comma-separated list of role names that users must match
-         *                                                to be included in results. Note that this is an inclusive
-         *                                                list: users must match *each* role. Default empty.
-         * @type string[]        $role__in                An array of role names. Matched users must have at least one of these
-         *                                                roles. Default empty array.
-         * @type string[]        $role__not_in            An array of role names to exclude. Users matching one or more of these
-         *                                                roles will not be included in results. Default empty array.
-         * @type string|string[] $meta_key                Meta key or keys to filter by.
-         * @type string|string[] $meta_value              Meta value or values to filter by.
-         * @type string          $meta_compare            MySQL operator used for comparing the meta value.
-         *                                                See WP_Meta_Query::__construct() for accepted values and
-         *                                                default value.
-         * @type string          $meta_compare_key        MySQL operator used for comparing the meta key.
-         *                                                See WP_Meta_Query::__construct() for accepted values and
-         *                                                default value.
-         * @type string          $meta_type               MySQL data type that the meta_value column will be CAST to for comparisons.
-         *                                                See WP_Meta_Query::__construct() for accepted values and
-         *                                                default value.
-         * @type string          $meta_type_key           MySQL data type that the meta_key column will be CAST to for comparisons.
-         *                                                See WP_Meta_Query::__construct() for accepted values and
-         *                                                default value.
-         * @type array           $meta_query              An associative array of WP_Meta_Query arguments.
-         *                                                See WP_Meta_Query::__construct() for accepted values.
-         * @type string|string[] $capability              An array or a comma-separated list of capability names that users must
-         *                                                match to be included in results. Note that this is an inclusive list: users must match *each*
-         *                                                capability. Does NOT work for capabilities not in the database or filtered via {@see 'map_meta_cap'}.
-         *                                                Default empty.
-         * @type string[]        $capability__in          An array of capability names. Matched users must have at least one of these
-         *                                                capabilities.
-         *                                                Does NOT work for capabilities not in the database or
-         *                                                filtered via {@see 'map_meta_cap'}. Default empty array.
-         * @type string[]        $capability__not_in      An array of capability names to exclude. Users matching one or more of
-         *                                                these capabilities will not be included in results. Does NOT work for capabilities not in the database
-         *                                                or filtered via {@see 'map_meta_cap'}. Default empty array.
-         * @type int[]           $include                 An array of user IDs to include. Default empty array.
-         * @type int[]           $exclude                 An array of user IDs to exclude. Default empty array.
-         * @type string          $search                  Search keyword. Searches for possible string matches on columns.
-         *                                                When `$search_columns` is left empty, it tries to determine
-         *                                                which column to search in based on search string. Default empty.
-         * @type string[]        $search_columns          Array of column names to be searched. Accepts 'ID', 'user_login',
-         *                                                'user_email', 'user_url', 'user_nicename', 'display_name'.
-         *                                                Default empty array.
-         * @type string|array    $orderby                 Field(s) to sort the retrieved users by. May be a single value,
-         *                                                an array of values, or a multi-dimensional array with fields
-         *                                                as keys and orders ('ASC' or 'DESC') as values. Accepted values are:
-         *                                                - 'ID'
-         *                                                - 'display_name' (or 'name')
-         *                                                - 'include'
-         *                                                - 'user_login' (or 'login')
-         *                                                - 'login__in'
-         *                                                - 'user_nicename' (or 'nicename'),
-         *                                                - 'nicename__in'
-         *                                                - 'user_email (or 'email')
-         *                                                - 'user_url' (or 'url'),
-         *                                                - 'user_registered' (or 'registered')
-         *                                                - 'post_count'
-         *                                                - 'meta_value',
-         *                                                - 'meta_value_num'
-         *                                                - The value of `$meta_key`
-         *                                                - An array key of `$meta_query`
-         *                                                To use 'meta_value' or 'meta_value_num', `$meta_key`
-         *                                                must be also be defined. Default 'user_login'.
-         * @type string          $order                   Designates ascending or descending order of users. Order values
-         *                                                passed as part of an `$orderby` array take precedence over
-         *                                                this parameter. Accepts 'ASC', 'DESC'. Default 'ASC'.
-         * @type int             $offset                  Number of users to offset in retrieved results. Can be used in
-         *                                                conjunction with pagination. Default 0.
-         * @type int             $number                  Number of users to limit the query for. Can be used in
-         *                                                conjunction with pagination. Value -1 (all) is supported, but
-         *                                                should be used with caution on larger sites.
-         *                                                Default -1 (all users).
-         * @type int             $paged                   When used with number, defines the page of results to return.
-         *                                                Default 1.
-         * @type bool            $count_total             Whether to count the total number of users found. If pagination
-         *                                                is not needed, setting this to false can improve performance.
-         *                                                Default true.
-         * @type string|string[] $fields                  Which fields to return. Single or all fields (string), or array
-         *                                                of fields. Accepts:
-         *                                                - 'ID'
-         *                                                - 'display_name'
-         *                                                - 'user_login'
-         *                                                - 'user_nicename'
-         *                                                - 'user_email'
-         *                                                - 'user_url'
-         *                                                - 'user_registered'
-         *                                                - 'user_pass'
-         *                                                - 'user_activation_key'
-         *                                                - 'user_status'
-         *                                                - 'spam' (only available on multisite installs)
-         *                                                - 'deleted' (only available on multisite installs)
-         *                                                - 'all' for all fields and loads user meta.
-         *                                                - 'all_with_meta' Deprecated. Use 'all'.
-         *                                                Default 'all'.
-         * @type string          $who                     Type of users to query. Accepts 'authors'.
-         *                                                Default empty (all users).
-         * @type bool|string[]   $has_published_posts     Pass an array of post types to filter results to users who have
-         *                                                published posts in those post types. `true` is an alias for
-         *                                                all public post types.
-         * @type string          $nicename                The user nicename. Default empty.
-         * @type string[]        $nicename__in            An array of nicenames to include. Users matching one of these
-         *                                                nicenames will be included in results. Default empty array.
-         * @type string[]        $nicename__not_in        An array of nicenames to exclude. Users matching one of these
-         *                                                nicenames will not be included in results. Default empty
-         *                                                array.
-         * @type string          $login                   The user login. Default empty.
-         * @type string[]        $login__in               An array of logins to include. Users matching one of these
-         *                                                logins will be included in results. Default empty array.
-         * @type string[]        $login__not_in           An array of logins to exclude. Users matching one of these
-         *                                                logins will not be included in results. Default empty array.
-         * @type bool            $cache_results           Whether to cache user information. Default true.
-         *                                                }
-         * @since 3.1.0
-         * @since 4.1.0 Added the ability to order by the `include` value.
-         * @since 4.2.0 Added 'meta_value_num' support for `$orderby` parameter. Added multi-dimensional array syntax
-         *                                                for `$orderby` parameter.
-         * @since 4.3.0 Added 'has_published_posts' parameter.
-         * @since 4.4.0 Added 'paged', 'role__in', and 'role__not_in' parameters. The 'role' parameter was updated to
-         *                                                permit an array or comma-separated list of values. The 'number' parameter was updated to
-         *                                                support
-         *                                                querying for all users with using -1.
-         * @since 4.7.0 Added 'nicename', 'nicename__in', 'nicename__not_in', 'login', 'login__in',
-         *                                                and 'login__not_in' parameters.
-         * @since 5.1.0 Introduced the 'meta_compare_key' parameter.
-         * @since 5.3.0 Introduced the 'meta_type_key' parameter.
-         * @since 5.9.0 Added 'capability', 'capability__in', and 'capability__not_in' parameters.
-         * @since 6.3.0 Added 'cache_results' parameter.
-         *
-         * @global wpdb          $wpdb                    WordPress database abstraction object.
-         * @global WP_Roles      $wp_roles                WordPress role management object.
-         *
-         */
         public function prepare_query($query = [])
         {
             global $wpdb, $wp_roles;
@@ -236,17 +45,6 @@
                 $this->query_vars = $this->fill_query_vars($query);
             }
 
-            /**
-             * Fires before the WP_User_Query has been parsed.
-             *
-             * The passed WP_User_Query object contains the query variables,
-             * not yet passed into SQL.
-             *
-             * @param WP_User_Query $query Current instance of WP_User_Query (passed by reference).
-             *
-             * @since 4.0.0
-             *
-             */
             do_action_ref_array('pre_get_users', [&$this]);
 
             // Ensure that query vars are filled after 'pre_get_users'.
@@ -797,19 +595,6 @@
                     }
                 }
 
-                /**
-                 * Filters the columns to search in a WP_User_Query search.
-                 *
-                 * The default columns depend on the search term, and include 'ID', 'user_login',
-                 * 'user_email', 'user_url', 'user_nicename', and 'display_name'.
-                 *
-                 * @param string[]      $search_columns Array of column names to be searched.
-                 * @param string        $search         Text being searched.
-                 * @param WP_User_Query $query          The current WP_User_Query instance.
-                 *
-                 * @since 3.6.0
-                 *
-                 */
                 $search_columns = apply_filters('user_search_columns', $search_columns, $search, $this);
 
                 $this->query_where .= $this->get_search_sql($search, $search_columns, $wild);
@@ -834,30 +619,9 @@
                 $this->query_where .= $date_query->get_sql();
             }
 
-            /**
-             * Fires after the WP_User_Query has been parsed, and before
-             * the query is executed.
-             *
-             * The passed WP_User_Query object contains SQL parts formed
-             * from parsing the given query.
-             *
-             * @param WP_User_Query $query Current instance of WP_User_Query (passed by reference).
-             *
-             * @since 3.1.0
-             *
-             */
             do_action_ref_array('pre_user_query', [&$this]);
         }
 
-        /**
-         * Fills in missing query variables with default values.
-         *
-         * @param string|array $args Query vars, as passed to `WP_User_Query`.
-         *
-         * @return array Complete query variables with undefined ones filled in with defaults.
-         * @since 4.4.0
-         *
-         */
         public static function fill_query_vars($args)
         {
             $defaults = [
@@ -896,15 +660,6 @@
             return wp_parse_args($args, $defaults);
         }
 
-        /**
-         * Parses an 'order' query variable and casts it to ASC or DESC as necessary.
-         *
-         * @param string $order The 'order' query variable.
-         *
-         * @return string The sanitized 'order' query variable.
-         * @since 4.2.0
-         *
-         */
         protected function parse_order($order)
         {
             if(! is_string($order) || empty($order))
@@ -922,17 +677,6 @@
             }
         }
 
-        /**
-         * Parses and sanitizes 'orderby' keys passed to the user query.
-         *
-         * @param string $orderby Alias for the field to order by.
-         *
-         * @return string Value to used in the ORDER clause, if `$orderby` is valid.
-         * @since 4.2.0
-         *
-         * @global wpdb  $wpdb    WordPress database abstraction object.
-         *
-         */
         protected function parse_orderby($orderby)
         {
             global $wpdb;
@@ -1011,15 +755,6 @@
             return $_orderby;
         }
 
-        /**
-         * Retrieves query variable.
-         *
-         * @param string $query_var Query variable key.
-         *
-         * @return mixed
-         * @since 3.5.0
-         *
-         */
         public function get($query_var)
         {
             if(isset($this->query_vars[$query_var]))
@@ -1030,20 +765,6 @@
             return null;
         }
 
-        /**
-         * Used internally to generate an SQL string for searching across multiple columns.
-         *
-         * @param string   $search  Search string.
-         * @param string[] $columns Array of columns to search.
-         * @param bool     $wild    Whether to allow wildcard searches. Default is false for Network Admin, true for single
-         *                          site. Single site allows leading and trailing wildcards, Network Admin only trailing.
-         *
-         * @return string
-         * @since 3.1.0
-         *
-         * @global wpdb    $wpdb    WordPress database abstraction object.
-         *
-         */
         protected function get_search_sql($search, $columns, $wild = false)
         {
             global $wpdb;
@@ -1068,13 +789,6 @@
             return ' AND ('.implode(' OR ', $searches).')';
         }
 
-        /**
-         * Executes the query, with the current variables.
-         *
-         * @since 3.1.0
-         *
-         * @global wpdb $wpdb WordPress database abstraction object.
-         */
         public function query()
         {
             global $wpdb;
@@ -1092,23 +806,6 @@
                 $qv['cache_results'] = false;
             }
 
-            /**
-             * Filters the users array before the query takes place.
-             *
-             * Return a non-null value to bypass WordPress' default user queries.
-             *
-             * Filtering functions that require pagination information are encouraged to set
-             * the `total_users` property of the WP_User_Query object, passed to the filter
-             * by reference. If WP_User_Query does not perform a database query, it will not
-             * have enough information to generate these values itself.
-             *
-             * @param array|null    $results Return an array of user data to short-circuit WP's user query
-             *                               or null to allow WP to run its normal queries.
-             * @param WP_User_Query $query   The WP_User_Query instance (passed by reference).
-             *
-             * @since 5.1.0
-             *
-             */
             $this->results = apply_filters_ref_array('users_pre_query', [null, &$this]);
 
             if(null === $this->results)
@@ -1145,18 +842,6 @@
 
                     if(isset($qv['count_total']) && $qv['count_total'])
                     {
-                        /**
-                         * Filters SELECT FOUND_ROWS() query for the current WP_User_Query instance.
-                         *
-                         * @param string        $sql   The SELECT FOUND_ROWS() query for the current WP_User_Query.
-                         * @param WP_User_Query $query The current WP_User_Query instance.
-                         *
-                         * @global wpdb         $wpdb  WordPress database abstraction object.
-                         *
-                         * @since 3.2.0
-                         * @since 5.1.0 Added the `$this` parameter.
-                         *
-                         */
                         $found_users_query = apply_filters('found_users_query', 'SELECT FOUND_ROWS()', $this);
 
                         $this->total_users = (int) $wpdb->get_var($found_users_query);
@@ -1208,18 +893,6 @@
             }
         }
 
-        /**
-         * Generate cache key.
-         *
-         * @param array  $args Query arguments.
-         * @param string $sql  SQL statement.
-         *
-         * @return string Cache key.
-         * @global wpdb  $wpdb WordPress database abstraction object.
-         *
-         * @since 6.3.0
-         *
-         */
         protected function generate_cache_key(array $args, $sql)
         {
             global $wpdb;
@@ -1270,54 +943,21 @@
             return "get_users:$key:$last_changed";
         }
 
-        /**
-         * Returns the list of users.
-         *
-         * @return array Array of results.
-         * @since 3.1.0
-         *
-         */
         public function get_results()
         {
             return $this->results;
         }
 
-        /**
-         * Sets query variable.
-         *
-         * @param string $query_var Query variable key.
-         * @param mixed  $value     Query variable value.
-         *
-         * @since 3.5.0
-         *
-         */
         public function set($query_var, $value)
         {
             $this->query_vars[$query_var] = $value;
         }
 
-        /**
-         * Returns the total number of users for the current query.
-         *
-         * @return int Number of total users.
-         * @since 3.1.0
-         *
-         */
         public function get_total()
         {
             return $this->total_users;
         }
 
-        /**
-         * Makes private properties readable for backward compatibility.
-         *
-         * @param string $name Property to get.
-         *
-         * @return mixed Property.
-         * @since 4.0.0
-         * @since 6.4.0 Getting a dynamic property is deprecated.
-         *
-         */
         public function __get($name)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -1330,16 +970,6 @@
             return null;
         }
 
-        /**
-         * Makes private properties settable for backward compatibility.
-         *
-         * @param string $name  Property to check if set.
-         * @param mixed  $value Property value.
-         *
-         * @since 4.0.0
-         * @since 6.4.0 Setting a dynamic property is deprecated.
-         *
-         */
         public function __set($name, $value)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -1352,16 +982,6 @@
             wp_trigger_error(__METHOD__, "The property `{$name}` is not declared. Setting a dynamic property is ".'deprecated since version 6.4.0! Instead, declare the property on the class.', E_USER_DEPRECATED);
         }
 
-        /**
-         * Makes private properties checkable for backward compatibility.
-         *
-         * @param string $name Property to check if set.
-         *
-         * @return bool Whether the property is set.
-         * @since 4.0.0
-         * @since 6.4.0 Checking a dynamic property is deprecated.
-         *
-         */
         public function __isset($name)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -1374,15 +994,6 @@
             return false;
         }
 
-        /**
-         * Makes private properties un-settable for backward compatibility.
-         *
-         * @param string $name Property to unset.
-         *
-         * @since 6.4.0 Unsetting a dynamic property is deprecated.
-         *
-         * @since 4.0.0
-         */
         public function __unset($name)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -1395,16 +1006,6 @@
             wp_trigger_error(__METHOD__, "A property `{$name}` is not declared. Unsetting a dynamic property is ".'deprecated since version 6.4.0! Instead, declare the property on the class.', E_USER_DEPRECATED);
         }
 
-        /**
-         * Makes private/protected methods readable for backward compatibility.
-         *
-         * @param string $name      Method to call.
-         * @param array  $arguments Arguments to pass when calling.
-         *
-         * @return mixed Return value of the callback, false otherwise.
-         * @since 4.0.0
-         *
-         */
         public function __call($name, $arguments)
         {
             if('get_search_sql' === $name)

@@ -1,38 +1,10 @@
 <?php
-    /**
-     * WP_oEmbed_Controller class, used to provide an oEmbed endpoint.
-     *
-     * @package    WordPress
-     * @subpackage Embeds
-     * @since      4.4.0
-     */
 
-    /**
-     * oEmbed API endpoint controller.
-     *
-     * Registers the REST API route and delivers the response data.
-     * The output format (XML or JSON) is handled by the REST API.
-     *
-     * @since 4.4.0
-     */
     #[AllowDynamicProperties]
     final class WP_oEmbed_Controller
     {
-        /**
-         * Register the oEmbed REST API route.
-         *
-         * @since 4.4.0
-         */
         public function register_routes()
         {
-            /**
-             * Filters the maxwidth oEmbed parameter.
-             *
-             * @param int $maxwidth Maximum allowed width. Default 600.
-             *
-             * @since 4.4.0
-             *
-             */
             $maxwidth = apply_filters('oembed_default_width', 600);
 
             register_rest_route('oembed/1.0', '/embed', [
@@ -101,30 +73,10 @@
             ]);
         }
 
-        /**
-         * Callback for the embed API endpoint.
-         *
-         * Returns the JSON object for the post.
-         *
-         * @param WP_REST_Request $request Full data about the request.
-         *
-         * @return array|WP_Error oEmbed response data or WP_Error on failure.
-         * @since 4.4.0
-         *
-         */
         public function get_item($request)
         {
             $post_id = url_to_postid($request['url']);
 
-            /**
-             * Filters the determined post ID.
-             *
-             * @param int    $post_id The post ID.
-             * @param string $url     The requested URL.
-             *
-             * @since 4.4.0
-             *
-             */
             $post_id = apply_filters('oembed_request_post_id', $post_id, $request['url']);
 
             $data = get_oembed_response_data($post_id, $request['maxwidth']);
@@ -137,13 +89,6 @@
             return $data;
         }
 
-        /**
-         * Checks if current user can make a proxy oEmbed request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 4.8.0
-         *
-         */
         public function get_proxy_item_permissions_check()
         {
             if(! current_user_can('edit_posts'))
@@ -154,21 +99,6 @@
             return true;
         }
 
-        /**
-         * Callback for the proxy API endpoint.
-         *
-         * Returns the JSON object for the proxied item.
-         *
-         * @param WP_REST_Request $request Full data about the request.
-         *
-         * @return object|WP_Error oEmbed response data or WP_Error on failure.
-         * @global WP_Embed       $wp_embed
-         * @global WP_Scripts     $wp_scripts
-         *
-         * @since 4.8.0
-         *
-         * @see   WP_oEmbed::get_html()
-         */
         public function get_proxy_item($request)
         {
             global $wp_embed, $wp_scripts;
@@ -233,22 +163,8 @@
                 return new WP_Error('oembed_invalid_url', get_status_header_desc(404), ['status' => 404]);
             }
 
-            /** This filter is documented in wp-includes/class-wp-oembed.php */
             $data->html = apply_filters('oembed_result', _wp_oembed_get_object()->data2html((object) $data, $url), $url, $args);
 
-            /**
-             * Filters the oEmbed TTL value (time to live).
-             *
-             * Similar to the {@see 'oembed_ttl'} filter, but for the REST API
-             * oEmbed proxy endpoint.
-             *
-             * @param int    $time Time to live (in seconds).
-             * @param string $url  The attempted embed URL.
-             * @param array  $args An array of embed request arguments.
-             *
-             * @since 4.8.0
-             *
-             */
             $ttl = apply_filters('rest_oembed_ttl', DAY_IN_SECONDS, $url, $args);
 
             set_transient($cache_key, $data, $ttl);

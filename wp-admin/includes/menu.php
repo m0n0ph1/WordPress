@@ -1,45 +1,15 @@
 <?php
-    /**
-     * Build Administration Menu.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     if(is_network_admin())
     {
-        /**
-         * Fires before the administration menu loads in the Network Admin.
-         *
-         * The hook fires before menus and sub-menus are removed based on user privileges.
-         *
-         * @private
-         * @since 3.1.0
-         */
         do_action('_network_admin_menu');
     }
     elseif(is_user_admin())
     {
-        /**
-         * Fires before the administration menu loads in the User Admin.
-         *
-         * The hook fires before menus and sub-menus are removed based on user privileges.
-         *
-         * @private
-         * @since 3.1.0
-         */
         do_action('_user_admin_menu');
     }
     else
     {
-        /**
-         * Fires before the administration menu loads in the admin.
-         *
-         * The hook fires before menus and sub-menus are removed based on user privileges.
-         *
-         * @private
-         * @since 2.2.0
-         */
         do_action('_admin_menu');
     }
 
@@ -152,38 +122,14 @@
 
     if(is_network_admin())
     {
-        /**
-         * Fires before the administration menu loads in the Network Admin.
-         *
-         * @param string $context Empty context.
-         *
-         * @since 3.1.0
-         *
-         */
         do_action('network_admin_menu', '');
     }
     elseif(is_user_admin())
     {
-        /**
-         * Fires before the administration menu loads in the User Admin.
-         *
-         * @param string $context Empty context.
-         *
-         * @since 3.1.0
-         *
-         */
         do_action('user_admin_menu', '');
     }
     else
     {
-        /**
-         * Fires before the administration menu loads in the admin.
-         *
-         * @param string $context Empty context.
-         *
-         * @since 1.5.0
-         *
-         */
         do_action('admin_menu', '');
     }
 
@@ -225,16 +171,6 @@
     }
     unset($id, $data, $subs, $first_sub);
 
-    /**
-     * Adds a CSS class to a string.
-     *
-     * @param string $class_to_add The CSS class to add.
-     * @param string $classes      The string to add the CSS class to.
-     *
-     * @return string The string with the CSS class added.
-     * @since 2.7.0
-     *
-     */
     function add_cssclass($class_to_add, $classes)
     {
         if(empty($classes))
@@ -245,17 +181,6 @@
         return $classes.' '.$class_to_add;
     }
 
-    /**
-     * Adds CSS classes for top-level administration menu items.
-     *
-     * The list of added classes includes `.menu-top-first` and `.menu-top-last`.
-     *
-     * @param array $menu The array of administration menu items.
-     *
-     * @return array The array of administration menu items with the CSS classes added.
-     * @since 2.7.0
-     *
-     */
     function add_menu_classes($menu)
     {
         $first_item = false;
@@ -302,29 +227,11 @@
             $last_order = $order;
         }
 
-        /**
-         * Filters administration menu array with classes added for top-level items.
-         *
-         * @param array $menu Associative array of administration menu items.
-         *
-         * @since 2.7.0
-         *
-         */
         return apply_filters('add_menu_classes', $menu);
     }
 
     uksort($menu, 'strnatcasecmp'); // Make it all pretty.
 
-    /**
-     * Filters whether to enable custom ordering of the administration menu.
-     *
-     * See the {@see 'menu_order'} filter for reordering menu items.
-     *
-     * @param bool $custom Whether custom ordering is enabled. Default false.
-     *
-     * @since 2.8.0
-     *
-     */
     if(apply_filters('custom_menu_order', false))
     {
         $menu_order = [];
@@ -337,33 +244,11 @@
 
         $default_menu_order = $menu_order;
 
-        /**
-         * Filters the order of administration menu items.
-         *
-         * A truthy value must first be passed to the {@see 'custom_menu_order'} filter
-         * for this filter to work. Use the following to enable custom menu ordering:
-         *
-         *     add_filter( 'custom_menu_order', '__return_true' );
-         *
-         * @param array $menu_order An ordered array of menu items.
-         *
-         * @since 2.8.0
-         *
-         */
         $menu_order = apply_filters('menu_order', $menu_order);
         $menu_order = array_flip($menu_order);
 
         $default_menu_order = array_flip($default_menu_order);
 
-        /**
-         * @param array  $a
-         * @param array  $b
-         *
-         * @return int
-         * @global array $default_menu_order
-         *
-         * @global array $menu_order
-         */
         function sort_menu($a, $b)
         {
             global $menu_order, $default_menu_order;
@@ -432,11 +317,6 @@
 
     if(! user_can_access_admin_page())
     {
-        /**
-         * Fires when access to an admin page is denied.
-         *
-         * @since 2.5.0
-         */
         do_action('admin_page_access_denied');
 
         wp_die(__('Sorry, you are not allowed to access this page.'), 403);

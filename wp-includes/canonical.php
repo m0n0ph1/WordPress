@@ -1,45 +1,5 @@
 <?php
-    /**
-     * Canonical API to handle WordPress Redirecting
-     *
-     * Based on "Permalink Redirect" from Scott Yang and "Enforce www. Preference"
-     * by Mark Jaquith
-     *
-     * @package WordPress
-     * @since   2.3.0
-     */
 
-    /**
-     * Redirects incoming links to the proper URL based on the site url.
-     *
-     * Search engines consider www.somedomain.com and somedomain.com to be two
-     * different URLs when they both go to the same location. This SEO enhancement
-     * prevents penalty for duplicate content by redirecting all incoming links to
-     * one or the other.
-     *
-     * Prevents redirection for feeds, trackbacks, searches, and
-     * admin URLs. Does not redirect on non-pretty-permalink-supporting IIS 7+,
-     * page/post previews, WP admin, Trackbacks, robots.txt, favicon.ico, searches,
-     * or on POST requests.
-     *
-     * Will also attempt to find the correct link when a user enters a URL that does
-     * not exist based on exact WordPress query. Will instead try to parse the URL
-     * or query in an attempt to figure the correct page to go to.
-     *
-     * @param string      $requested_url Optional. The URL that was requested, used to
-     *                                   figure if redirect is needed.
-     * @param bool        $do_redirect   Optional. Redirect to the new URL.
-     *
-     * @return string|void The string of the URL, if redirect needed.
-     * @global WP_Query   $wp_query      WordPress Query object.
-     * @global wpdb       $wpdb          WordPress database abstraction object.
-     * @global WP         $wp            Current WordPress environment instance.
-     *
-     * @since 2.3.0
-     *
-     * @global WP_Rewrite $wp_rewrite    WordPress rewrite component.
-     * @global bool       $is_IIS
-     */
     function redirect_canonical($requested_url = null, $do_redirect = true)
     {
         global $wp_rewrite, $is_IIS, $wp_query, $wpdb, $wp;
@@ -654,7 +614,6 @@
             {
                 if(is_multisite())
                 {
-                    /** This filter is documented in wp-login.php */
                     $redirect_url = apply_filters('wp_signup_location', network_site_url('wp-signup.php'));
                 }
                 else
@@ -723,31 +682,31 @@
 
         $punctuation_pattern = implode(
             '|', array_map('preg_quote', [
-            ' ',
-            '%20',  // Space.
-            '!',
-            '%21',  // Exclamation mark.
-            '"',
-            '%22',  // Double quote.
-            "'",
-            '%27',  // Single quote.
-            '(',
-            '%28',  // Opening bracket.
-            ')',
-            '%29',  // Closing bracket.
-            ',',
-            '%2C',  // Comma.
-            '.',
-            '%2E',  // Period.
-            ';',
-            '%3B',  // Semicolon.
-            '{',
-            '%7B',  // Opening curly bracket.
-            '}',
-            '%7D',  // Closing curly bracket.
-            '%E2%80%9C', // Opening curly quote.
-            '%E2%80%9D', // Closing curly quote.
-        ])
+                   ' ',
+                   '%20',  // Space.
+                   '!',
+                   '%21',  // Exclamation mark.
+                   '"',
+                   '%22',  // Double quote.
+                   "'",
+                   '%27',  // Single quote.
+                   '(',
+                   '%28',  // Opening bracket.
+                   ')',
+                   '%29',  // Closing bracket.
+                   ',',
+                   '%2C',  // Comma.
+                   '.',
+                   '%2E',  // Period.
+                   ';',
+                   '%3B',  // Semicolon.
+                   '{',
+                   '%7B',  // Opening curly bracket.
+                   '}',
+                   '%7D',  // Closing curly bracket.
+                   '%E2%80%9C', // Opening curly quote.
+                   '%E2%80%9D', // Closing curly quote.
+               ])
         );
 
         // Remove trailing spaces and end punctuation from the path.
@@ -884,16 +843,6 @@
         {
             if(! function_exists('lowercase_octets'))
             {
-                /**
-                 * Converts the first hex-encoded octet match to lowercase.
-                 *
-                 * @param array $matches Hex-encoded octet matches for the requested URL.
-                 *
-                 * @return string Lowercased version of the first match.
-                 * @since 3.1.0
-                 * @ignore
-                 *
-                 */
                 function lowercase_octets($matches)
                 {
                     return strtolower($matches[0]);
@@ -922,17 +871,6 @@
             }
         }
 
-        /**
-         * Filters the canonical redirect URL.
-         *
-         * Returning false to this filter will cancel the redirect.
-         *
-         * @param string $redirect_url  The redirect URL.
-         * @param string $requested_url The requested URL.
-         *
-         * @since 2.3.0
-         *
-         */
         $redirect_url = apply_filters('redirect_canonical', $redirect_url, $requested_url);
 
         // Yes, again -- in case the filter aborted the request.
@@ -962,19 +900,6 @@
         }
     }
 
-    /**
-     * Removes arguments from a query string if they are not present in a URL
-     * DO NOT use this in plugin code.
-     *
-     * @param string $query_string
-     * @param array  $args_to_check
-     * @param string $url
-     *
-     * @return string The altered query string
-     * @since  3.4.0
-     * @access private
-     *
-     */
     function _remove_qs_args_if_not_in_url($query_string, array $args_to_check, $url)
     {
         $parsed_url = parse_url($url);
@@ -999,15 +924,6 @@
         return $query_string;
     }
 
-    /**
-     * Strips the #fragment from a URL, if one is present.
-     *
-     * @param string $url The URL to strip.
-     *
-     * @return string The altered URL.
-     * @since 4.4.0
-     *
-     */
     function strip_fragment_from_url($url)
     {
         $parsed_url = wp_parse_url($url);
@@ -1042,48 +958,15 @@
         return $url;
     }
 
-    /**
-     * Attempts to guess the correct URL for a 404 request based on query vars.
-     *
-     * @return string|false The correct URL if one is found. False on failure.
-     * @global wpdb $wpdb WordPress database abstraction object.
-     *
-     * @since 2.3.0
-     *
-     */
     function redirect_guess_404_permalink()
     {
         global $wpdb;
 
-        /**
-         * Filters whether to attempt to guess a redirect URL for a 404 request.
-         *
-         * Returning a false value from the filter will disable the URL guessing
-         * and return early without performing a redirect.
-         *
-         * @param bool $do_redirect_guess Whether to attempt to guess a redirect URL
-         *                                for a 404 request. Default true.
-         *
-         * @since 5.5.0
-         *
-         */
         if(false === apply_filters('do_redirect_guess_404_permalink', true))
         {
             return false;
         }
 
-        /**
-         * Short-circuits the redirect URL guessing for 404 requests.
-         *
-         * Returning a non-null value from the filter will effectively short-circuit
-         * the URL guessing, returning the passed value instead.
-         *
-         * @param null|string|false $pre Whether to short-circuit guessing the redirect for a 404.
-         *                               Default null to continue with the URL guessing.
-         *
-         * @since 5.5.0
-         *
-         */
         $pre = apply_filters('pre_redirect_guess_404_permalink', null);
         if(null !== $pre)
         {
@@ -1092,16 +975,6 @@
 
         if(get_query_var('name'))
         {
-            /**
-             * Filters whether to perform a strict guess for a 404 redirect.
-             *
-             * Returning a truthy value from the filter will redirect only exact post_name matches.
-             *
-             * @param bool $strict_guess Whether to perform a strict guess. Default false (loose guess).
-             *
-             * @since 5.5.0
-             *
-             */
             $strict_guess = apply_filters('strict_redirect_guess_404_permalink', false);
 
             if($strict_guess)
@@ -1170,16 +1043,6 @@
         return false;
     }
 
-    /**
-     * Redirects a variety of shorthand URLs to the admin.
-     *
-     * If a user visits example.com/admin, they'll be redirected to /wp-admin.
-     * Visiting /login redirects to /wp-login.php, and so on.
-     *
-     * @since 3.4.0
-     *
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     */
     function wp_redirect_admin_locations()
     {
         global $wp_rewrite;

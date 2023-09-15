@@ -1,39 +1,13 @@
 <?php
-    /**
-     * REST API: WP_REST_Post_Types_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      4.7.0
-     */
 
-    /**
-     * Core class to access post types via the REST API.
-     *
-     * @since 4.7.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Post_Types_Controller extends WP_REST_Controller
     {
-        /**
-         * Constructor.
-         *
-         * @since 4.7.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'types';
         }
 
-        /**
-         * Registers the routes for post types.
-         *
-         * @since 4.7.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -65,13 +39,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for collections.
-         *
-         * @return array Collection parameters.
-         * @since 4.7.0
-         *
-         */
         public function get_collection_params()
         {
             return [
@@ -79,15 +46,6 @@
             ];
         }
 
-        /**
-         * Checks whether a given request has permission to read types.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             if('edit' === $request['context'])
@@ -108,15 +66,6 @@
             return true;
         }
 
-        /**
-         * Retrieves all public post types.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_items($request)
         {
             $data = [];
@@ -136,17 +85,6 @@
             return rest_ensure_response($data);
         }
 
-        /**
-         * Prepares a post type object for serialization.
-         *
-         * @param WP_Post_Type    $item    Post type object.
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response Response object.
-         * @since 5.9.0 Renamed `$post_type` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.7.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -246,30 +184,9 @@
                 $response->add_links($this->prepare_links($post_type));
             }
 
-            /**
-             * Filters a post type returned from the REST API.
-             *
-             * Allows modification of the post type data right before it is returned.
-             *
-             * @param WP_REST_Response $response  The response object.
-             * @param WP_Post_Type     $post_type The original post type object.
-             * @param WP_REST_Request  $request   Request used to generate the response.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters('rest_prepare_post_type', $response, $post_type, $request);
         }
 
-        /**
-         * Prepares links for the request.
-         *
-         * @param WP_Post_Type $post_type The post type.
-         *
-         * @return array Links for the given post type.
-         * @since 6.1.0
-         *
-         */
         protected function prepare_links($post_type)
         {
             return [
@@ -282,15 +199,6 @@
             ];
         }
 
-        /**
-         * Retrieves a specific post type.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_item($request)
         {
             $obj = get_post_type_object($request['type']);
@@ -315,16 +223,6 @@
             return rest_ensure_response($data);
         }
 
-        /**
-         * Retrieves the post type's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 4.8.0 The `supports` property was added.
-         * @since 5.9.0 The `visibility` and `rest_namespace` properties were added.
-         * @since 6.1.0 The `icon` property was added.
-         *
-         * @since 4.7.0
-         */
         public function get_item_schema()
         {
             if($this->schema)

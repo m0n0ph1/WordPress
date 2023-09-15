@@ -1,16 +1,5 @@
 <?php
-    /**
-     * Error Protection API: Functions
-     *
-     * @package WordPress
-     * @since   5.2.0
-     */
 
-    /**
-     * Get the instance for storing paused plugins.
-     *
-     * @return WP_Paused_Extensions_Storage
-     */
     function wp_paused_plugins()
     {
         static $storage = null;
@@ -23,11 +12,6 @@
         return $storage;
     }
 
-    /**
-     * Get the instance for storing paused extensions.
-     *
-     * @return WP_Paused_Extensions_Storage
-     */
     function wp_paused_themes()
     {
         static $storage = null;
@@ -40,15 +24,6 @@
         return $storage;
     }
 
-    /**
-     * Get a human readable description of an extension's error.
-     *
-     * @param array $error Error details from `error_get_last()`.
-     *
-     * @return string Formatted error description.
-     * @since 5.2.0
-     *
-     */
     function wp_get_extension_error_description($error)
     {
         $constants = get_defined_constants(true);
@@ -74,13 +49,6 @@
         return sprintf($error_message, "<code>{$error['type']}</code>", "<code>{$error['line']}</code>", "<code>{$error['file']}</code>", "<code>{$error['message']}</code>");
     }
 
-    /**
-     * Registers the shutdown handler for fatal errors.
-     *
-     * The handler will only be registered if {@see wp_is_fatal_error_handler_enabled()} returns true.
-     *
-     * @since 5.2.0
-     */
     function wp_register_fatal_error_handler()
     {
         if(! wp_is_fatal_error_handler_enabled())
@@ -102,59 +70,13 @@
         register_shutdown_function([$handler, 'handle']);
     }
 
-    /**
-     * Checks whether the fatal error handler is enabled.
-     *
-     * A constant `WP_DISABLE_FATAL_ERROR_HANDLER` can be set in `wp-config.php` to disable it, or alternatively the
-     * {@see 'wp_fatal_error_handler_enabled'} filter can be used to modify the return value.
-     *
-     * @return bool True if the fatal error handler is enabled, false otherwise.
-     * @since 5.2.0
-     *
-     */
     function wp_is_fatal_error_handler_enabled()
     {
         $enabled = ! defined('WP_DISABLE_FATAL_ERROR_HANDLER') || ! WP_DISABLE_FATAL_ERROR_HANDLER;
 
-        /**
-         * Filters whether the fatal error handler is enabled.
-         *
-         * **Important:** This filter runs before it can be used by plugins. It cannot
-         * be used by plugins, mu-plugins, or themes. To use this filter you must define
-         * a `$wp_filter` global before WordPress loads, usually in `wp-config.php`.
-         *
-         * Example:
-         *
-         *     $GLOBALS['wp_filter'] = array(
-         *         'wp_fatal_error_handler_enabled' => array(
-         *             10 => array(
-         *                 array(
-         *                     'accepted_args' => 0,
-         *                     'function'      => function() {
-         *                         return false;
-         *                     },
-         *                 ),
-         *             ),
-         *         ),
-         *     );
-         *
-         * Alternatively you can use the `WP_DISABLE_FATAL_ERROR_HANDLER` constant.
-         *
-         * @param bool $enabled True if the fatal error handler is enabled, false otherwise.
-         *
-         * @since 5.2.0
-         *
-         */
         return apply_filters('wp_fatal_error_handler_enabled', $enabled);
     }
 
-    /**
-     * Access the WordPress Recovery Mode instance.
-     *
-     * @return WP_Recovery_Mode
-     * @since 5.2.0
-     *
-     */
     function wp_recovery_mode()
     {
         static $wp_recovery_mode;

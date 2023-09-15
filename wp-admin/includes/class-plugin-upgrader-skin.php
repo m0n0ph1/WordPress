@@ -1,60 +1,13 @@
 <?php
-    /**
-     * Upgrader API: Plugin_Upgrader_Skin class
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      4.6.0
-     */
 
-    /**
-     * Plugin Upgrader Skin for WordPress Plugin Upgrades.
-     *
-     * @since 2.8.0
-     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader-skins.php.
-     *
-     * @see   WP_Upgrader_Skin
-     */
     class Plugin_Upgrader_Skin extends WP_Upgrader_Skin
     {
-        /**
-         * Holds the plugin slug in the Plugin Directory.
-         *
-         * @since 2.8.0
-         *
-         * @var string
-         */
         public $plugin = '';
 
-        /**
-         * Whether the plugin is active.
-         *
-         * @since 2.8.0
-         *
-         * @var bool
-         */
         public $plugin_active = false;
 
-        /**
-         * Whether the plugin is active for the entire network.
-         *
-         * @since 2.8.0
-         *
-         * @var bool
-         */
         public $plugin_network_active = false;
 
-        /**
-         * Constructor.
-         *
-         * Sets up the plugin upgrader skin.
-         *
-         * @param array $args Optional. The plugin upgrader skin arguments to
-         *                    override default options. Default empty array.
-         *
-         * @since 2.8.0
-         *
-         */
         public function __construct($args = [])
         {
             $defaults = [
@@ -73,11 +26,6 @@
             parent::__construct($args);
         }
 
-        /**
-         * Performs an action following a single plugin update.
-         *
-         * @since 2.8.0
-         */
         public function after()
         {
             $this->plugin = $this->upgrader->plugin_info();
@@ -99,15 +47,6 @@
                 unset($update_actions['activate_plugin']);
             }
 
-            /**
-             * Filters the list of action links available following a single plugin update.
-             *
-             * @param string[] $update_actions Array of plugin action links.
-             * @param string   $plugin         Path to the plugin file relative to the plugins directory.
-             *
-             * @since 2.7.0
-             *
-             */
             $update_actions = apply_filters('update_plugin_complete_actions', $update_actions, $this->plugin);
 
             if(! empty($update_actions))

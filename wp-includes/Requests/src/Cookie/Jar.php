@@ -1,9 +1,4 @@
 <?php
-    /**
-     * Cookie holder object
-     *
-     * @package Requests\Cookies
-     */
 
     namespace WpOrg\Requests\Cookie;
 
@@ -18,27 +13,10 @@
     use WpOrg\Requests\Iri;
     use WpOrg\Requests\Response;
 
-    /**
-     * Cookie holder object
-     *
-     * @package Requests\Cookies
-     */
     class Jar implements ArrayAccess, IteratorAggregate
     {
-        /**
-         * Actual item data
-         *
-         * @var array
-         */
         protected $cookies = [];
 
-        /**
-         * Create a new jar
-         *
-         * @param array $cookies Existing cookie values
-         *
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed argument is not an array.
-         */
         public function __construct($cookies = [])
         {
             if(is_array($cookies) === false)
@@ -49,26 +27,12 @@
             $this->cookies = $cookies;
         }
 
-        /**
-         * Check if the given item exists
-         *
-         * @param string $offset Item key
-         *
-         * @return boolean Does the item exist?
-         */
         #[ReturnTypeWillChange]
         public function offsetExists($offset)
         {
             return isset($this->cookies[$offset]);
         }
 
-        /**
-         * Get the value for the item
-         *
-         * @param string $offset Item key
-         *
-         * @return string|null Item value (null if offsetExists is false)
-         */
         #[ReturnTypeWillChange]
         public function offsetGet($offset)
         {
@@ -80,14 +44,6 @@
             return $this->cookies[$offset];
         }
 
-        /**
-         * Set the given item
-         *
-         * @param string $offset Item name
-         * @param string $value  Item value
-         *
-         * @throws \WpOrg\Requests\Exception On attempting to use dictionary as list (`invalidset`)
-         */
         #[ReturnTypeWillChange]
         public function offsetSet($offset, $value)
         {
@@ -99,50 +55,24 @@
             $this->cookies[$offset] = $value;
         }
 
-        /**
-         * Unset the given header
-         *
-         * @param string $offset The key for the item to unset.
-         */
         #[ReturnTypeWillChange]
         public function offsetUnset($offset)
         {
             unset($this->cookies[$offset]);
         }
 
-        /**
-         * Get an iterator for the data
-         *
-         * @return \ArrayIterator
-         */
         #[ReturnTypeWillChange]
         public function getIterator()
         {
             return new ArrayIterator($this->cookies);
         }
 
-        /**
-         * Register the cookie handler with the request's hooking system
-         *
-         * @param \WpOrg\Requests\HookManager $hooks Hooking system
-         */
         public function register(HookManager $hooks)
         {
             $hooks->register('requests.before_request', [$this, 'before_request']);
             $hooks->register('requests.before_redirect_check', [$this, 'before_redirect_check']);
         }
 
-        /**
-         * Add Cookie header to a request if we have any
-         *
-         * As per RFC 6265, cookies are separated by '; '
-         *
-         * @param string $url
-         * @param array  $headers
-         * @param array  $data
-         * @param string $type
-         * @param array  $options
-         */
         public function before_request($url, &$headers, &$data, &$type, &$options)
         {
             if(! $url instanceof Iri)
@@ -173,14 +103,6 @@
             }
         }
 
-        /**
-         * Normalise cookie data into a \WpOrg\Requests\Cookie
-         *
-         * @param string|\WpOrg\Requests\Cookie $cookie Cookie header value, possibly pre-parsed (object).
-         * @param string                        $key    Optional. The name for this cookie.
-         *
-         * @return \WpOrg\Requests\Cookie
-         */
         public function normalize_cookie($cookie, $key = '')
         {
             if($cookie instanceof Cookie)
@@ -191,11 +113,6 @@
             return Cookie::parse($cookie, $key);
         }
 
-        /**
-         * Parse all cookies from a response and attach them to the response
-         *
-         * @param \WpOrg\Requests\Response $response Response as received.
-         */
         public function before_redirect_check(Response $response)
         {
             $url = $response->url;

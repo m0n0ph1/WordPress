@@ -1,16 +1,4 @@
 <?php
-    /**
-     * Outputs the OPML XML format for getting the links defined in the link
-     * administration. This can be used to export links from one blog over to
-     * another. Links aren't exported by the WordPress export, so this file handles
-     * that.
-     *
-     * This file is not added by default to WordPress theme pages when outputting
-     * feed links. It will have to be added manually for browsers and users to pick
-     * up that this file exists.
-     *
-     * @package WordPress
-     */
 
     require_once __DIR__.'/wp-load.php';
 
@@ -37,11 +25,7 @@
         </title>
         <dateCreated><?php echo gmdate('D, d M Y H:i:s'); ?> GMT</dateCreated>
         <?php
-            /**
-             * Fires in the OPML header.
-             *
-             * @since 3.0.0
-             */
+
             do_action('opml_head');
         ?>
     </head>
@@ -64,7 +48,7 @@
         }
 
         foreach((array) $cats as $cat) :
-            /** This filter is documented in wp-includes/bookmark-template.php */
+
             $catname = apply_filters('link_category', $cat->name);
 
             ?>
@@ -72,14 +56,7 @@
                 <?php
                     $bookmarks = get_bookmarks(['category' => $cat->term_id]);
                     foreach((array) $bookmarks as $bookmark) :
-                        /**
-                         * Filters the OPML outline link title text.
-                         *
-                         * @param string $title The OPML outline title text.
-                         *
-                         * @since 2.2.0
-                         *
-                         */
+
                         $title = apply_filters('link_title', $bookmark->link_name);
                         ?>
                         <outline text="<?php echo esc_attr($title); ?>"

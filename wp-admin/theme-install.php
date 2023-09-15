@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Install theme administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
     require ABSPATH.'wp-admin/includes/theme-install.php';
 
@@ -82,25 +75,6 @@
 
     if($tab)
     {
-        /**
-         * Fires before each of the tabs are rendered on the Install Themes page.
-         *
-         * The dynamic portion of the hook name, `$tab`, refers to the current
-         * theme installation tab.
-         *
-         * Possible hook names include:
-         *
-         *  - `install_themes_pre_block-themes`
-         *  - `install_themes_pre_dashboard`
-         *  - `install_themes_pre_featured`
-         *  - `install_themes_pre_new`
-         *  - `install_themes_pre_search`
-         *  - `install_themes_pre_updated`
-         *  - `install_themes_pre_upload`
-         *
-         * @since 2.8.0
-         * @since 6.1.0 Added the `install_themes_pre_block-themes` hook name.
-         */
         do_action("install_themes_pre_{$tab}");
     }
 
@@ -139,16 +113,6 @@
 
         <?php
 
-            /**
-             * Filters the tabs shown on the Add Themes screen.
-             *
-             * This filter is for backward compatibility only, for the suppression of the upload tab.
-             *
-             * @param string[] $tabs Associative array of the tabs shown on the Add Themes screen. Default is 'upload'.
-             *
-             * @since 2.8.0
-             *
-             */
             $tabs = apply_filters('install_themes_tabs', ['upload' => __('Upload Theme')]);
             if(! empty($tabs['upload']) && current_user_can('upload_themes'))
             {
@@ -276,28 +240,6 @@
         <?php
             if($tab)
             {
-                /**
-                 * Fires at the top of each of the tabs on the Install Themes page.
-                 *
-                 * The dynamic portion of the hook name, `$tab`, refers to the current
-                 * theme installation tab.
-                 *
-                 * Possible hook names include:
-                 *
-                 *  - `install_themes_block-themes`
-                 *  - `install_themes_dashboard`
-                 *  - `install_themes_featured`
-                 *  - `install_themes_new`
-                 *  - `install_themes_search`
-                 *  - `install_themes_updated`
-                 *  - `install_themes_upload`
-                 *
-                 * @param int $paged Number of the current page of results being viewed.
-                 *
-                 * @since 6.1.0 Added the `install_themes_block-themes` hook name.
-                 *
-                 * @since 2.8.0
-                 */
                 do_action("install_themes_{$tab}", $paged);
             }
         ?>

@@ -1,42 +1,11 @@
 <?php
-    /**
-     * List Table API: WP_Privacy_Requests_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      4.9.6
-     */
 
     abstract class WP_Privacy_Requests_Table extends WP_List_Table
     {
-        /**
-         * Action name for the requests this table will work with. Classes
-         * which inherit from WP_Privacy_Requests_Table should define this.
-         *
-         * Example: 'export_personal_data'.
-         *
-         * @since 4.9.6
-         *
-         * @var string $request_type Name of action.
-         */
         protected $request_type = 'INVALID';
 
-        /**
-         * Post type to be used.
-         *
-         * @since 4.9.6
-         *
-         * @var string $post_type The post type.
-         */
         protected $post_type = 'INVALID';
 
-        /**
-         * Gets columns to show in the list table.
-         *
-         * @return string[] Array of column titles keyed by their column name.
-         * @since 4.9.6
-         *
-         */
         public function get_columns()
         {
             $columns = [
@@ -50,12 +19,6 @@
             return $columns;
         }
 
-        /**
-         * Process bulk actions.
-         *
-         * @since 4.9.6
-         * @since 5.6.0 Added support for the `complete` action.
-         */
         public function process_bulk_action()
         {
             $action = $this->current_action();
@@ -141,12 +104,6 @@
             }
         }
 
-        /**
-         * Prepares items to output.
-         *
-         * @since 4.9.6
-         * @since 5.1.0 Added support for column sorting.
-         */
         public function prepare_items()
         {
             $this->items = [];
@@ -197,29 +154,11 @@
                                        ]);
         }
 
-        /**
-         * Returns the markup for the Checkbox column.
-         *
-         * @param WP_User_Request $item Item being shown.
-         *
-         * @return string Checkbox column markup.
-         * @since 4.9.6
-         *
-         */
         public function column_cb($item)
         {
             return sprintf('<label class="label-covers-full-cell" for="requester_%1$s"><span class="screen-reader-text">%2$s</span></label>'.'<input type="checkbox" name="request_id[]" id="requester_%1$s" value="%1$s" /><span class="spinner"></span>', esc_attr($item->ID), /* translators: Hidden accessibility text. %s: Email address. */ sprintf(__('Select %s'), $item->email));
         }
 
-        /**
-         * Status column.
-         *
-         * @param WP_User_Request $item Item being shown.
-         *
-         * @return string Status column markup.
-         * @since 4.9.6
-         *
-         */
         public function column_status($item)
         {
             $status = get_post_status($item->ID);
@@ -253,15 +192,6 @@
             echo '</span>';
         }
 
-        /**
-         * Converts a timestamp for display.
-         *
-         * @param int $timestamp Event timestamp.
-         *
-         * @return string Human readable date.
-         * @since 4.9.6
-         *
-         */
         protected function get_timestamp_as_date($timestamp)
         {
             if(empty($timestamp))
@@ -280,79 +210,23 @@
             return date_i18n(get_option('date_format'), $timestamp);
         }
 
-        /**
-         * Handles the default column.
-         *
-         * @param WP_User_Request $item        Item being shown.
-         * @param string          $column_name Name of column being shown.
-         *
-         * @since 4.9.6
-         * @since 5.7.0 Added `manage_{$this->screen->id}_custom_column` action.
-         *
-         */
         public function column_default($item, $column_name)
         {
-            /**
-             * Fires for each custom column of a specific request type in the Requests list table.
-             *
-             * Custom columns are registered using the {@see 'manage_export-personal-data_columns'}
-             * and the {@see 'manage_erase-personal-data_columns'} filters.
-             *
-             * @param string          $column_name The name of the column to display.
-             * @param WP_User_Request $item        The item being shown.
-             *
-             * @since 5.7.0
-             *
-             */
             do_action("manage_{$this->screen->id}_custom_column", $column_name, $item);
         }
 
-        /**
-         * Returns the markup for the Created timestamp column. Overridden by children.
-         *
-         * @param WP_User_Request $item Item being shown.
-         *
-         * @return string Human readable date.
-         * @since 5.7.0
-         *
-         */
         public function column_created_timestamp($item)
         {
             return $this->get_timestamp_as_date($item->created_timestamp);
         }
 
-        /**
-         * Actions column. Overridden by children.
-         *
-         * @param WP_User_Request $item Item being shown.
-         *
-         * @return string Email column markup.
-         * @since 4.9.6
-         *
-         */
         public function column_email($item)
         {
             return sprintf('<a href="%1$s">%2$s</a> %3$s', esc_url('mailto:'.$item->email), $item->email, $this->row_actions([]));
         }
 
-        /**
-         * Returns the markup for the next steps column. Overridden by children.
-         *
-         * @param WP_User_Request $item Item being shown.
-         *
-         * @since 4.9.6
-         *
-         */
         public function column_next_steps($item) {}
 
-        /**
-         * Generates content for a single row of the table,
-         *
-         * @param WP_User_Request $item The current item.
-         *
-         * @since 4.9.6
-         *
-         */
         public function single_row($item)
         {
             $status = $item->status;
@@ -362,20 +236,8 @@
             echo '</tr>';
         }
 
-        /**
-         * Embeds scripts used to perform actions. Overridden by children.
-         *
-         * @since 4.9.6
-         */
         public function embed_scripts() {}
 
-        /**
-         * Gets a list of sortable columns.
-         *
-         * @return array Default sortable columns.
-         * @since 4.9.6
-         *
-         */
         protected function get_sortable_columns()
         {
             /*
@@ -391,25 +253,11 @@
             ];
         }
 
-        /**
-         * Returns the default primary column.
-         *
-         * @return string Default primary column name.
-         * @since 4.9.6
-         *
-         */
         protected function get_default_primary_column_name()
         {
             return 'email';
         }
 
-        /**
-         * Gets an associative array ( id => link ) with the list of views available on this table.
-         *
-         * @return string[] An array of HTML links keyed by their view.
-         * @since 4.9.6
-         *
-         */
         protected function get_views()
         {
             $current_status = isset($_REQUEST['filter-status']) ? sanitize_text_field($_REQUEST['filter-status']) : '';
@@ -458,15 +306,6 @@
             return $this->get_views_links($views);
         }
 
-        /**
-         * Counts the number of requests for each status.
-         *
-         * @return object Number of posts for each status.
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         * @since 4.9.6
-         *
-         */
         protected function get_request_counts()
         {
             global $wpdb;
@@ -500,13 +339,6 @@
             return $counts;
         }
 
-        /**
-         * Normalizes the admin URL to the current page (by request_type).
-         *
-         * @return string URL to the current admin page.
-         * @since 5.3.0
-         *
-         */
         protected function get_admin_url()
         {
             $pagenow = str_replace('_', '-', $this->request_type);
@@ -519,13 +351,6 @@
             return admin_url($pagenow.'.php');
         }
 
-        /**
-         * Gets bulk actions.
-         *
-         * @return array Array of bulk action labels keyed by their action.
-         * @since 4.9.6
-         *
-         */
         protected function get_bulk_actions()
         {
             return [

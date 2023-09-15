@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Default footer
-     */
+
     return [
         'title' => __('Default footer', 'twentytwentytwo'),
         'categories' => ['footer'],

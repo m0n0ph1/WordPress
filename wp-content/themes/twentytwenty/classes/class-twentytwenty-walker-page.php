@@ -1,38 +1,9 @@
 <?php
-    /**
-     * Custom page walker for this theme.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty
-     * @since      Twenty Twenty 1.0
-     */
 
     if(! class_exists('TwentyTwenty_Walker_Page'))
     {
-        /**
-         * CUSTOM PAGE WALKER
-         * A custom walker for pages.
-         *
-         * @since Twenty Twenty 1.0
-         */
         class TwentyTwenty_Walker_Page extends Walker_Page
         {
-            /**
-             * Outputs the beginning of the current element in the tree.
-             *
-             * @param string  $output            Used to append additional content. Passed by reference.
-             * @param WP_Post $data_object       Page data object.
-             * @param int     $depth             Optional. Depth of page. Used for padding. Default 0.
-             * @param array   $args              Optional. Array of arguments. Default empty array.
-             * @param int     $current_object_id Optional. ID of the current page. Default 0.
-             *
-             * @see   Walker::start_el()
-             *
-             * @since Twenty Twenty 1.0
-             * @since Twenty Twenty 1.9 Renamed `$page` to `$data_object` and `$current_page` to `$current_object_id`
-             *                          to match parent class for PHP 8 named parameter support.
-             *
-             */
             public function start_el(&$output, $data_object, $depth = 0, $args = [], $current_object_id = 0)
             {
                 // Restores the more descriptive, specific name for use within this method.
@@ -84,7 +55,6 @@
                     $css_class[] = 'current_page_parent';
                 }
 
-                /** This filter is documented in wp-includes/class-walker-page.php */
                 $css_classes = implode(' ', apply_filters('page_css_class', $css_class, $page, $depth, $args, $current_page_id));
                 $css_classes = $css_classes ? ' class="'.esc_attr($css_classes).'"' : '';
 
@@ -101,7 +71,6 @@
                 $atts['href'] = get_permalink($page->ID);
                 $atts['aria-current'] = ($page->ID === $current_page_id) ? 'page' : '';
 
-                /** This filter is documented in wp-includes/class-walker-page.php */
                 $atts = apply_filters('page_menu_link_attributes', $atts, $page, $depth, $args, $current_page_id);
 
                 $attributes = '';
@@ -148,7 +117,7 @@
                     }
                 }
 
-                $output .= $indent.sprintf('<li%s>%s<a%s>%s%s%s</a>%s', $css_classes, $args['list_item_before'], $attributes, $args['link_before'], /** This filter is documented in wp-includes/post-template.php */ apply_filters('the_title', $page->post_title, $page->ID), $args['link_after'], $args['list_item_after']);
+                $output .= $indent.sprintf('<li%s>%s<a%s>%s%s%s</a>%s', $css_classes, $args['list_item_before'], $attributes, $args['link_before'], apply_filters('the_title', $page->post_title, $page->ID), $args['link_after'], $args['list_item_after']);
 
                 if(! empty($args['show_date']))
                 {

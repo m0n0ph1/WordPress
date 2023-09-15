@@ -1,22 +1,7 @@
 <?php
-    /**
-     * Dark Mode Class
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty_One
-     * @since      Twenty Twenty-One 1.0
-     */
 
-    /**
-     * This class is in charge of Dark Mode.
-     */
     class Twenty_Twenty_One_Dark_Mode
     {
-        /**
-         * Instantiates the object.
-         *
-         * @since Twenty Twenty-One 1.0
-         */
         public function __construct()
         {
             // Enqueue assets for the block-editor.
@@ -44,13 +29,6 @@
             add_action('admin_init', [$this, 'add_privacy_policy_content']);
         }
 
-        /**
-         * Enqueues editor custom color variables & scripts.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function editor_custom_color_variables()
         {
             if(! $this->switch_should_render())
@@ -69,15 +47,6 @@
             wp_enqueue_script('twentytwentyone-editor-dark-mode-support', get_template_directory_uri().'/assets/js/editor-dark-mode-support.js', ['twentytwentyone-dark-mode-support-toggle'], '1.0.0', ['in_footer' => true]);
         }
 
-        /**
-         * Determines if we want to print the dark-mode switch or not.
-         *
-         * @return bool
-         * @global bool $is_IE
-         *
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function switch_should_render()
         {
             global $is_IE;
@@ -85,13 +54,6 @@
             return (get_theme_mod('respect_user_color_preference', false) && ! $is_IE && 127 <= Twenty_Twenty_One_Custom_Colors::get_relative_luminance_from_hex(get_theme_mod('background_color', 'D1E4DD')));
         }
 
-        /**
-         * Enqueues scripts and styles.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function enqueue_scripts()
         {
             if(! $this->switch_should_render())
@@ -106,13 +68,6 @@
             wp_enqueue_style('tt1-dark-mode', $url, ['twenty-twenty-one-style'], wp_get_theme()->get('Version')); // @phpstan-ignore-line. Version is always a string.
         }
 
-        /**
-         * Enqueues scripts for the customizer.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function customize_controls_enqueue_scripts()
         {
             if(! $this->switch_should_render())
@@ -128,15 +83,6 @@
             ],                '1.0.0', ['in_footer' => true]);
         }
 
-        /**
-         * Registers customizer options.
-         *
-         * @param WP_Customize_Manager $wp_customize Theme Customizer object.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function customizer_controls($wp_customize)
         {
             $colors_section = $wp_customize->get_section('colors');
@@ -203,17 +149,6 @@
             ]);
         }
 
-        /**
-         * Prints the dark-mode switch HTML.
-         *
-         * Inspired from https://codepen.io/aaroniker/pen/KGpXZo (MIT-licensed)
-         *
-         * @param array $attrs The attributes to add to our <button> element.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function the_html($attrs = [])
         {
             $attrs = wp_parse_args($attrs, [
@@ -265,15 +200,6 @@
             <?php
         }
 
-        /**
-         * Calculates classes for the main <html> element.
-         *
-         * @param string $classes The classes for <html> element.
-         *
-         * @return string
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function html_classes($classes)
         {
             if(! $this->switch_should_render())
@@ -291,17 +217,6 @@
             return $classes;
         }
 
-        /**
-         * Adds a class to the <body> element in the editor to accommodate dark-mode.
-         *
-         * @param string     $classes        The admin body-classes.
-         *
-         * @return string
-         * @since Twenty Twenty-One 1.0
-         *
-         * @global WP_Screen $current_screen WordPress current screen object.
-         *
-         */
         public function admin_body_classes($classes)
         {
             if(! $this->switch_should_render())
@@ -329,13 +244,6 @@
             return $classes;
         }
 
-        /**
-         * Adds night/day switch.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function the_switch()
         {
             if(! $this->switch_should_render())
@@ -346,13 +254,6 @@
             $this->the_script();
         }
 
-        /**
-         * Prints the dark-mode switch script.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function the_script()
         {
             echo '<script>';
@@ -360,13 +261,6 @@
             echo '</script>';
         }
 
-        /**
-         * Adds information to the privacy policy.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         public function add_privacy_policy_content()
         {
             if(! function_exists('wp_add_privacy_policy_content'))

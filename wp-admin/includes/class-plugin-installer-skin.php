@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Upgrader API: Plugin_Installer_Skin class
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      4.6.0
-     */
 
-    /**
-     * Plugin Installer Skin for WordPress Plugin Installer.
-     *
-     * @since 2.8.0
-     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader-skins.php.
-     *
-     * @see   WP_Upgrader_Skin
-     */
     class Plugin_Installer_Skin extends WP_Upgrader_Skin
     {
         public $api;
@@ -27,9 +12,6 @@
 
         private $is_downgrading = false;
 
-        /**
-         * @param array $args
-         */
         public function __construct($args = [])
         {
             $defaults = [
@@ -50,11 +32,6 @@
             parent::__construct($args);
         }
 
-        /**
-         * Performs an action before installing a plugin.
-         *
-         * @since 2.8.0
-         */
         public function before()
         {
             if(! empty($this->api))
@@ -63,15 +40,6 @@
             }
         }
 
-        /**
-         * Hides the `process_failed` error when updating a plugin by uploading a zip file.
-         *
-         * @param WP_Error $wp_error WP_Error object.
-         *
-         * @return bool True if the error should be hidden, false otherwise.
-         * @since 5.5.0
-         *
-         */
         public function hide_process_failed($wp_error)
         {
             if('upload' === $this->type && '' === $this->overwrite && $wp_error->get_error_code() === 'folder_exists')
@@ -82,11 +50,6 @@
             return false;
         }
 
-        /**
-         * Performs an action following a plugin install.
-         *
-         * @since 2.8.0
-         */
         public function after()
         {
             // Check if the plugin can be overwritten and output the HTML.
@@ -146,18 +109,6 @@
                 unset($install_actions['activate_plugin']);
             }
 
-            /**
-             * Filters the list of action links available following a single plugin installation.
-             *
-             * @param string[] $install_actions Array of plugin action links.
-             * @param object   $api             Object containing WordPress.org API plugin data. Empty
-             *                                  for non-API installs, such as when a plugin is installed
-             *                                  via upload.
-             * @param string   $plugin_file     Path to the plugin file relative to the plugins directory.
-             *
-             * @since 2.7.0
-             *
-             */
             $install_actions = apply_filters('install_plugin_complete_actions', $install_actions, $this->api, $plugin_file);
 
             if(! empty($install_actions))
@@ -166,13 +117,6 @@
             }
         }
 
-        /**
-         * Checks if the plugin can be overwritten and outputs the HTML for overwriting a plugin on upload.
-         *
-         * @return bool Whether the plugin can be overwritten and HTML was outputted.
-         * @since 5.5.0
-         *
-         */
         private function do_overwrite()
         {
             if('upload' !== $this->type || ! is_wp_error($this->result) || 'folder_exists' !== $this->result->get_error_code())
@@ -238,16 +182,6 @@
 
             $table .= '</tbody></table>';
 
-            /**
-             * Filters the compare table output for overwriting a plugin package on upload.
-             *
-             * @param string $table               The output table with Name, Version, Author, RequiresWP, and RequiresPHP info.
-             * @param array  $current_plugin_data Array with current plugin data.
-             * @param array  $new_plugin_data     Array with uploaded plugin data.
-             *
-             * @since 5.5.0
-             *
-             */
             echo apply_filters('install_plugin_overwrite_comparison', $table, $current_plugin_data, $new_plugin_data);
 
             $install_actions = [];
@@ -303,17 +237,6 @@
 
             $install_actions['plugins_page'] = sprintf('<a class="button" href="%s">%s</a>', wp_nonce_url($cancel_url, 'plugin-upload-cancel-overwrite'), __('Cancel and go back'));
 
-            /**
-             * Filters the list of action links available following a single plugin installation failure
-             * when overwriting is allowed.
-             *
-             * @param string[] $install_actions Array of plugin action links.
-             * @param object   $api             Object containing WordPress.org API plugin data.
-             * @param array    $new_plugin_data Array with uploaded plugin data.
-             *
-             * @since 5.5.0
-             *
-             */
             $install_actions = apply_filters('install_plugin_overwrite_actions', $install_actions, $this->api, $new_plugin_data);
 
             if(! empty($install_actions))

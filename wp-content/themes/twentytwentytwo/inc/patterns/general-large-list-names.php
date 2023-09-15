@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Large list of names block pattern
-     */
+
     return [
         'title' => __('Large list of names', 'twentytwentytwo'),
         'categories' => ['featured', 'text'],

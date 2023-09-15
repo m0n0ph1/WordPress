@@ -1,10 +1,4 @@
 <?php
-    /**
-     * The classic widget administration screen, for use in widgets.php.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
 // Don't load directly.
     if(! defined('ABSPATH'))
@@ -35,12 +29,6 @@
         }
     }
 
-    /**
-     * Fires early before the Widgets administration screen loads,
-     * after scripts are enqueued.
-     *
-     * @since 2.2.0
-     */
     do_action('sidebar_admin_setup');
 
     get_current_screen()->add_help_tab([
@@ -157,16 +145,6 @@
                 'delete_widget' => '1',
             ];
 
-            /**
-             * Fires immediately after a widget has been marked for deletion.
-             *
-             * @param string $widget_id  ID of the widget marked for deletion.
-             * @param string $sidebar_id ID of the sidebar the widget was deleted from.
-             * @param string $id_base    ID base for the widget.
-             *
-             * @since 4.4.0
-             *
-             */
             do_action('delete_widget', $widget_id, $sidebar_id, $id_base);
         }
 
@@ -475,11 +453,6 @@
                 ]);
             }
 
-            /**
-             * Fires before the Widgets administration page content loads.
-             *
-             * @since 3.0.0
-             */
             do_action('widgets_admin_page');
         ?>
 
@@ -644,10 +617,5 @@
 
 <?php
 
-    /**
-     * Fires after the available widgets and sidebars have loaded, before the admin footer.
-     *
-     * @since 2.2.0
-     */
     do_action('sidebar_admin_page');
     require_once ABSPATH.'wp-admin/admin-footer.php';

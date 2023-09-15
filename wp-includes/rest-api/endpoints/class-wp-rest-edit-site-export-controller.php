@@ -1,37 +1,13 @@
 <?php
-    /**
-     * REST API: WP_REST_Edit_Site_Export_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     */
 
-    /**
-     * Controller which provides REST endpoint for exporting current templates
-     * and template parts.
-     *
-     * @since 5.9.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Edit_Site_Export_Controller extends WP_REST_Controller
     {
-        /**
-         * Constructor.
-         *
-         * @since 5.9.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp-block-editor/v1';
             $this->rest_base = 'export';
         }
 
-        /**
-         * Registers the site export route.
-         *
-         * @since 5.9.0
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -43,13 +19,6 @@
             ]);
         }
 
-        /**
-         * Checks whether a given request has permission to export.
-         *
-         * @return WP_Error|true True if the request has access, or WP_Error object.
-         * @since 5.9.0
-         *
-         */
         public function permissions_check()
         {
             if(current_user_can('edit_theme_options'))
@@ -60,14 +29,6 @@
             return new WP_Error('rest_cannot_export_templates', __('Sorry, you are not allowed to export templates and template parts.'), ['status' => rest_authorization_required_code()]);
         }
 
-        /**
-         * Output a ZIP file with an export of the current templates
-         * and template parts from the site editor, and close the connection.
-         *
-         * @return WP_Error|void
-         * @since 5.9.0
-         *
-         */
         public function export()
         {
             // Generate the export file.

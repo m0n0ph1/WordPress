@@ -1,56 +1,14 @@
 <?php
-    /**
-     * WordPress Customize Nav Menus classes
-     *
-     * @package    WordPress
-     * @subpackage Customize
-     * @since      4.3.0
-     */
 
-    /**
-     * Customize Nav Menus class.
-     *
-     * Implements menu management in the Customizer.
-     *
-     * @since 4.3.0
-     *
-     * @see   WP_Customize_Manager
-     */
     #[AllowDynamicProperties]
     final class WP_Customize_Nav_Menus
     {
-        /**
-         * WP_Customize_Manager instance.
-         *
-         * @since 4.3.0
-         * @var WP_Customize_Manager
-         */
         public $manager;
 
-        /**
-         * Nav menu args used for each instance, keyed by the args HMAC.
-         *
-         * @since 4.3.0
-         * @var array
-         */
         public $preview_nav_menu_instance_args = [];
 
-        /**
-         * Original nav menu locations before the theme was switched.
-         *
-         * @since 4.9.0
-         * @var array
-         */
         protected $original_nav_menu_locations;
 
-        /**
-         * Constructor.
-         *
-         * @param WP_Customize_Manager $manager Customizer bootstrap instance.
-         *
-         * @since 4.3.0
-         *
-         */
         public function __construct($manager)
         {
             $this->manager = $manager;
@@ -82,15 +40,6 @@
             add_filter('customize_dynamic_partial_args', [$this, 'customize_dynamic_partial_args'], 10, 2);
         }
 
-        /**
-         * Adds a nonce for customizing menus.
-         *
-         * @param string[] $nonces Array of nonces.
-         *
-         * @return string[] Modified array of nonces.
-         * @since 4.5.0
-         *
-         */
         public function filter_nonces($nonces)
         {
             $nonces['customize-menus'] = wp_create_nonce('customize-menus');
@@ -98,11 +47,6 @@
             return $nonces;
         }
 
-        /**
-         * Ajax handler for loading available menu items.
-         *
-         * @since 4.3.0
-         */
         public function ajax_load_available_items()
         {
             check_ajax_referer('customize-menus', 'customize-menus-nonce');
@@ -151,18 +95,6 @@
             wp_send_json_success(['items' => $all_items]);
         }
 
-        /**
-         * Performs the post_type and taxonomy queries for loading available menu items.
-         *
-         * @param string $object_type Optional. Accepts any custom object type and has built-in support for
-         *                            'post_type' and 'taxonomy'. Default is 'post_type'.
-         * @param string $object_name Optional. Accepts any registered taxonomy or post type name. Default is 'page'.
-         * @param int    $page        Optional. The page number used to generate the query offset. Default is '0'.
-         *
-         * @return array|WP_Error An array of menu items on success, a WP_Error object on failure.
-         * @since 4.3.0
-         *
-         */
         public function load_available_items_query($object_type = 'post_type', $object_name = 'page', $page = 0)
         {
             $items = [];
@@ -330,27 +262,11 @@
                 }
             }
 
-            /**
-             * Filters the available menu items.
-             *
-             * @param array  $items       The array of menu items.
-             * @param string $object_type The object type.
-             * @param string $object_name The object name.
-             * @param int    $page        The current page number.
-             *
-             * @since 4.3.0
-             *
-             */
             $items = apply_filters('customize_nav_menu_available_items', $items, $object_type, $object_name, $page);
 
             return $items;
         }
 
-        /**
-         * Ajax handler for searching available menu items.
-         *
-         * @since 4.3.0
-         */
         public function ajax_search_available_items()
         {
             check_ajax_referer('customize-menus', 'customize-menus-nonce');
@@ -387,17 +303,6 @@
             }
         }
 
-        /**
-         * Performs post queries for available-item searching.
-         *
-         * Based on WP_Editor::wp_link_query().
-         *
-         * @param array $args Optional. Accepts 'pagenum' and 's' (search) arguments.
-         *
-         * @return array Menu items.
-         * @since 4.3.0
-         *
-         */
         public function search_available_items_query($args = [])
         {
             $items = [];
@@ -518,25 +423,11 @@
                 }
             }
 
-            /**
-             * Filters the available menu items during a search request.
-             *
-             * @param array $items The array of menu items.
-             * @param array $args  Includes 'pagenum' and 's' (search) arguments.
-             *
-             * @since 4.5.0
-             *
-             */
             $items = apply_filters('customize_nav_menu_searched_items', $items, $args);
 
             return $items;
         }
 
-        /**
-         * Enqueues scripts and styles for Customizer pane.
-         *
-         * @since 4.3.0
-         */
         public function enqueue_scripts()
         {
             wp_enqueue_style('customize-nav-menus');
@@ -630,14 +521,6 @@
             wp_localize_script('nav-menu', 'menus', $nav_menus_l10n);
         }
 
-        /**
-         * Returns an array of all the available item types.
-         *
-         * @return array The available menu item types.
-         * @since 4.7.0  Each array item now includes a `$type_label` in addition to `$title`, `$type`, and `$object`.
-         *
-         * @since 4.3.0
-         */
         public function available_item_types()
         {
             $item_types = [];
@@ -674,34 +557,11 @@
                 }
             }
 
-            /**
-             * Filters the available menu item types.
-             *
-             * @param array $item_types Navigation menu item types.
-             *
-             * @since 4.7.0  Each array item now includes a `$type_label` in addition to `$title`, `$type`, and `$object`.
-             *
-             * @since 4.3.0
-             */
             $item_types = apply_filters('customize_nav_menu_available_item_types', $item_types);
 
             return $item_types;
         }
 
-        /**
-         * Filters a dynamic setting's constructor args.
-         *
-         * For a dynamic setting to be registered, this filter must be employed
-         * to override the default false value with an array of args to pass to
-         * the WP_Customize_Setting constructor.
-         *
-         * @param false|array $setting_args The arguments to the WP_Customize_Setting constructor.
-         * @param string      $setting_id   ID for dynamic setting, usually coming from `$_POST['customized']`.
-         *
-         * @return array|false
-         * @since 4.3.0
-         *
-         */
         public function filter_dynamic_setting_args($setting_args, $setting_id)
         {
             if(preg_match(WP_Customize_Nav_Menu_Setting::ID_PATTERN, $setting_id))
@@ -722,17 +582,6 @@
             return $setting_args;
         }
 
-        /**
-         * Allows non-statically created settings to be constructed with custom WP_Customize_Setting subclass.
-         *
-         * @param string $setting_class WP_Customize_Setting or a subclass.
-         * @param string $setting_id    ID for dynamic setting, usually coming from `$_POST['customized']`.
-         * @param array  $setting_args  WP_Customize_Setting or a subclass.
-         *
-         * @return string
-         * @since 4.3.0
-         *
-         */
         public function filter_dynamic_setting_class($setting_class, $setting_id, $setting_args)
         {
             unset($setting_id);
@@ -749,11 +598,6 @@
             return $setting_class;
         }
 
-        /**
-         * Adds the customizer settings and controls.
-         *
-         * @since 4.3.0
-         */
         public function customize_register()
         {
             $changeset = $this->manager->unsanitized_post_values();
@@ -974,28 +818,11 @@
             );
         }
 
-        /**
-         * Gets the base10 intval.
-         *
-         * This is used as a setting's sanitize_callback; we can't use just plain
-         * intval because the second argument is not what intval() expects.
-         *
-         * @param mixed $value Number to convert.
-         *
-         * @return int Integer.
-         * @since 4.3.0
-         *
-         */
         public function intval_base10($value)
         {
             return intval($value, 10);
         }
 
-        /**
-         * Ajax handler for adding a new auto-draft post.
-         *
-         * @since 4.7.0
-         */
         public function ajax_insert_auto_draft_post()
         {
             if(! check_ajax_referer('customize-menus', 'customize-menus-nonce', false))
@@ -1075,21 +902,6 @@
             }
         }
 
-        /**
-         * Adds a new `auto-draft` post.
-         *
-         * @param array $postarr      {
-         *                            Post array. Note that post_status is overridden to be `auto-draft`.
-         *
-         * @return WP_Post|WP_Error Inserted auto-draft post object or error.
-         * @var string  $post_title   Post title. Required.
-         * @var string  $post_type    Post type. Required.
-         * @var string  $post_name    Post name.
-         * @var string  $post_content Post content.
-         *                            }
-         * @since 4.7.0
-         *
-         */
         public function insert_auto_draft_post($postarr)
         {
             if(! isset($postarr['post_type']))
@@ -1138,13 +950,6 @@
             }
         }
 
-        /**
-         * Prints the JavaScript templates used to render Menu Customizer components.
-         *
-         * Templates are imported into the JS use wp.template.
-         *
-         * @since 4.3.0
-         */
         public function print_templates()
         {
             ?>
@@ -1215,11 +1020,6 @@
             <?php
         }
 
-        /**
-         * Prints the HTML template used to render the add-menu-item frame.
-         *
-         * @since 4.3.0
-         */
         public function available_items_template()
         {
             ?>
@@ -1301,11 +1101,6 @@
             <?php
         }
 
-        /**
-         * Prints the markup for available menu item custom links.
-         *
-         * @since 4.7.0
-         */
         protected function print_custom_links_available_menu_item()
         {
             ?>
@@ -1361,16 +1156,6 @@
         // Start functionality specific to partial-refresh of menu changes in Customizer preview.
         //
 
-        /**
-         * Prints the markup for new menu items.
-         *
-         * To be used in the template #available-menu-items.
-         *
-         * @param array $available_item_type Menu item data to output, including title, type, and label.
-         *
-         * @since 4.7.0
-         *
-         */
         protected function print_post_type_container($available_item_type)
         {
             $id = sprintf('available-menu-items-%s-%s', $available_item_type['type'], $available_item_type['object']);
@@ -1414,16 +1199,6 @@
             <?php
         }
 
-        /**
-         * Filters arguments for dynamic nav_menu selective refresh partials.
-         *
-         * @param array|false $partial_args Partial args.
-         * @param string      $partial_id   Partial ID.
-         *
-         * @return array Partial args.
-         * @since 4.5.0
-         *
-         */
         public function customize_dynamic_partial_args($partial_args, $partial_id)
         {
             if(preg_match('/^nav_menu_instance\[[0-9a-f]{32}\]$/', $partial_id))
@@ -1444,11 +1219,6 @@
             return $partial_args;
         }
 
-        /**
-         * Adds hooks for the Customizer preview.
-         *
-         * @since 4.3.0
-         */
         public function customize_preview_init()
         {
             add_action('wp_enqueue_scripts', [$this, 'customize_preview_enqueue_deps']);
@@ -1458,28 +1228,12 @@
             add_filter('customize_render_partials_response', [$this, 'export_partial_rendered_nav_menu_instances']);
         }
 
-        /**
-         * Makes the auto-draft status protected so that it can be queried.
-         *
-         * @since 4.7.0
-         *
-         * @global stdClass[] $wp_post_statuses List of post statuses.
-         */
         public function make_auto_draft_status_previewable()
         {
             global $wp_post_statuses;
             $wp_post_statuses['auto-draft']->protected = true;
         }
 
-        /**
-         * Sanitizes post IDs for posts created for nav menu items to be published.
-         *
-         * @param array $value Post IDs.
-         *
-         * @return array Post IDs.
-         * @since 4.7.0
-         *
-         */
         public function sanitize_nav_menus_created_posts($value)
         {
             $post_ids = [];
@@ -1509,19 +1263,6 @@
             return $post_ids;
         }
 
-        /**
-         * Publishes the auto-draft posts that were created for nav menu items.
-         *
-         * The post IDs will have been sanitized by already by
-         * `WP_Customize_Nav_Menu_Items::sanitize_nav_menus_created_posts()` to
-         * remove any post IDs for which the user cannot publish or for which the
-         * post is not an auto-draft.
-         *
-         * @param WP_Customize_Setting $setting Customizer setting object.
-         *
-         * @since 4.7.0
-         *
-         */
         public function save_nav_menus_created_posts($setting)
         {
             $post_ids = $setting->post_value();
@@ -1555,18 +1296,6 @@
             }
         }
 
-        /**
-         * Keeps track of the arguments that are being passed to wp_nav_menu().
-         *
-         * @param array $args An array containing wp_nav_menu() arguments.
-         *
-         * @return array Arguments.
-         * @see   WP_Customize_Widgets::filter_dynamic_sidebar_params()
-         *
-         * @since 4.3.0
-         *
-         * @see   wp_nav_menu()
-         */
         public function filter_wp_nav_menu_args($args)
         {
             /*
@@ -1609,37 +1338,11 @@
             return $args;
         }
 
-        /**
-         * Hashes (hmac) the nav menu arguments to ensure they are not tampered with when
-         * submitted in the Ajax request.
-         *
-         * Note that the array is expected to be pre-sorted.
-         *
-         * @param array $args The arguments to hash.
-         *
-         * @return string Hashed nav menu arguments.
-         * @since 4.3.0
-         *
-         */
         public function hash_nav_menu_args($args)
         {
             return wp_hash(serialize($args));
         }
 
-        /**
-         * Prepares wp_nav_menu() calls for partial refresh.
-         *
-         * Injects attributes into container element.
-         *
-         * @param string $nav_menu_content The HTML content for the navigation menu.
-         * @param object $args             An object containing wp_nav_menu() arguments.
-         *
-         * @return string Nav menu HTML with selective refresh attributes added if partial can be refreshed.
-         * @see   wp_nav_menu()
-         *
-         * @since 4.3.0
-         *
-         */
         public function filter_wp_nav_menu($nav_menu_content, $args)
         {
             if(isset($args->customize_preview_nav_menus_args['can_partial_refresh']) && $args->customize_preview_nav_menus_args['can_partial_refresh'])
@@ -1653,21 +1356,11 @@
             return $nav_menu_content;
         }
 
-        /**
-         * Enqueues scripts for the Customizer preview.
-         *
-         * @since 4.3.0
-         */
         public function customize_preview_enqueue_deps()
         {
             wp_enqueue_script('customize-preview-nav-menus'); // Note that we have overridden this.
         }
 
-        /**
-         * Exports data from PHP to JS.
-         *
-         * @since 4.3.0
-         */
         public function export_preview_data()
         {
             // Why not wp_localize_script? Because we're not localizing, and it forces values into strings.
@@ -1677,15 +1370,6 @@
             printf('<script>var _wpCustomizePreviewNavMenusExports = %s;</script>', wp_json_encode($exports));
         }
 
-        /**
-         * Exports any wp_nav_menu() calls during the rendering of any partials.
-         *
-         * @param array $response Response.
-         *
-         * @return array Response.
-         * @since 4.5.0
-         *
-         */
         public function export_partial_rendered_nav_menu_instances($response)
         {
             $response['nav_menu_instance_args'] = $this->preview_nav_menu_instance_args;
@@ -1693,18 +1377,6 @@
             return $response;
         }
 
-        /**
-         * Renders a specific menu via wp_nav_menu() using the supplied arguments.
-         *
-         * @param WP_Customize_Partial $partial       Partial.
-         * @param array                $nav_menu_args Nav menu args supplied as container context.
-         *
-         * @return string|false
-         * @see   wp_nav_menu()
-         *
-         * @since 4.3.0
-         *
-         */
         public function render_nav_menu_partial($partial, $nav_menu_args)
         {
             unset($partial);

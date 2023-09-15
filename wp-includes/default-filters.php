@@ -1,21 +1,4 @@
 <?php
-    /**
-     * Sets up the default filters and actions for most
-     * of the WordPress hooks.
-     *
-     * If you need to remove a default hook, this file will
-     * give you the priority to use for removing the hook.
-     *
-     * Not all of the default hooks are found in this file.
-     * For instance, administration-related hooks are located in
-     * wp-admin/includes/admin-filters.php.
-     *
-     * If a hook should only be called from a specific context
-     * (admin area, multisite environment…), please move it
-     * to a more appropriate file instead.
-     *
-     * @package WordPress
-     */
 
 // Strip, trim, kses, special chars for string saves.
     foreach(
@@ -599,9 +582,6 @@
 // Sitemaps actions.
     add_action('init', 'wp_sitemaps_get_server');
 
-    /**
-     * Filters formerly mixed into wp-includes.
-     */
 // Theme.
     add_action('setup_theme', 'create_initial_theme_features', 0);
     add_action('setup_theme', '_add_default_theme_supports', 1);

@@ -1,10 +1,5 @@
 <?php
-    /**
-     * Bird image
-     *
-     * This pattern is used only to reference a dynamic image URL.
-     * It does not appear in the inserter.
-     */
+
     return [
         'title' => __('Heading and bird image', 'twentytwentytwo'),
         'inserter' => false,

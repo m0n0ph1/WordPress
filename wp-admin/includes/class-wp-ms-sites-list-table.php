@@ -1,39 +1,9 @@
 <?php
-    /**
-     * List Table API: WP_MS_Sites_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying sites in a list table for the network admin.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_MS_Sites_List_Table extends WP_List_Table
     {
-        /**
-         * Site status list.
-         *
-         * @since 4.3.0
-         * @var array
-         */
         public $status_list;
 
-        /**
-         * Constructor.
-         *
-         * @param array $args An associative array of arguments.
-         *
-         * @see   WP_List_Table::__construct() for more information on default arguments.
-         *
-         * @since 3.1.0
-         *
-         */
         public function __construct($args = [])
         {
             $this->status_list = [
@@ -49,23 +19,11 @@
                                 ]);
         }
 
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             return current_user_can('manage_sites');
         }
 
-        /**
-         * Prepares the list of sites for display.
-         *
-         * @since 3.1.0
-         *
-         * @global string $mode List table view mode.
-         * @global string $s
-         * @global wpdb   $wpdb WordPress database abstraction object.
-         */
         public function prepare_items()
         {
             global $mode, $s, $wpdb;
@@ -198,14 +156,6 @@
                 $args[$status] = 1;
             }
 
-            /**
-             * Filters the arguments for the site query in the sites list table.
-             *
-             * @param array $args An array of get_sites() arguments.
-             *
-             * @since 4.6.0
-             *
-             */
             $args = apply_filters('ms_sites_list_table_query_args', $args);
 
             $_sites = get_sites($args);
@@ -230,16 +180,11 @@
                                        ]);
         }
 
-        /**
-         */
         public function no_items()
         {
             _e('No sites found.');
         }
 
-        /**
-         * @return string[] Array of column titles keyed by their column name.
-         */
         public function get_columns()
         {
             $sites_columns = [
@@ -255,27 +200,9 @@
                 $sites_columns['plugins'] = __('Actions');
             }
 
-            /**
-             * Filters the displayed site columns in Sites list table.
-             *
-             * @param string[] $sites_columns An array of displayed site columns. Default 'cb',
-             *                                'blogname', 'lastupdated', 'registered', 'users'.
-             *
-             * @since MU (3.0.0)
-             *
-             */
             return apply_filters('wpmu_blogs_columns', $sites_columns);
         }
 
-        /**
-         * Handles the checkbox column output.
-         *
-         * @param array $item Current site.
-         *
-         * @since 5.9.0 Renamed `$blog` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.3.0
-         */
         public function column_cb($item)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -298,29 +225,11 @@
             endif;
         }
 
-        /**
-         * Handles the ID column output.
-         *
-         * @param array $blog Current site.
-         *
-         * @since 4.4.0
-         *
-         */
         public function column_id($blog)
         {
             echo $blog['blog_id'];
         }
 
-        /**
-         * Handles the site name column output.
-         *
-         * @param array   $blog Current site.
-         *
-         * @global string $mode List table view mode.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_blogname($blog)
         {
             global $mode;
@@ -346,14 +255,6 @@
             }
         }
 
-        /**
-         * Determines whether to output comma-separated site states.
-         *
-         * @param array $site
-         *
-         * @since 5.3.0
-         *
-         */
         protected function site_states($site)
         {
             $site_states = [];
@@ -377,16 +278,6 @@
                 }
             }
 
-            /**
-             * Filters the default site display states for items in the Sites list table.
-             *
-             * @param string[] $site_states An array of site states. Default 'Main',
-             *                              'Archived', 'Mature', 'Spam', 'Deleted'.
-             * @param WP_Site  $site        The current site object.
-             *
-             * @since 5.3.0
-             *
-             */
             $site_states = apply_filters('display_site_states', $site_states, $_site);
 
             if(! empty($site_states))
@@ -408,16 +299,6 @@
             }
         }
 
-        /**
-         * Handles the lastupdated column output.
-         *
-         * @param array   $blog Current site.
-         *
-         * @global string $mode List table view mode.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_lastupdated($blog)
         {
             global $mode;
@@ -441,16 +322,6 @@
             }
         }
 
-        /**
-         * Handles the registered column output.
-         *
-         * @param array   $blog Current site.
-         *
-         * @global string $mode List table view mode.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_registered($blog)
         {
             global $mode;
@@ -474,14 +345,6 @@
             }
         }
 
-        /**
-         * Handles the users column output.
-         *
-         * @param array $blog Current site.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_users($blog)
         {
             $user_count = wp_cache_get($blog['blog_id'].'_user_count', 'blog-details');
@@ -500,62 +363,22 @@
             printf('<a href="%1$s">%2$s</a>', esc_url(network_admin_url('site-users.php?id='.$blog['blog_id'])), number_format_i18n($user_count));
         }
 
-        /**
-         * Handles the plugins column output.
-         *
-         * @param array $blog Current site.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_plugins($blog)
         {
             if(has_filter('wpmublogsaction'))
             {
-                /**
-                 * Fires inside the auxiliary 'Actions' column of the Sites list table.
-                 *
-                 * By default this column is hidden unless something is hooked to the action.
-                 *
-                 * @param int $blog_id The site ID.
-                 *
-                 * @since MU (3.0.0)
-                 *
-                 */
                 do_action('wpmublogsaction', $blog['blog_id']);
             }
         }
 
-        /**
-         * Handles output for the default column.
-         *
-         * @param array  $item        Current site.
-         * @param string $column_name Current column name.
-         *
-         * @since 4.3.0
-         * @since 5.9.0 Renamed `$blog` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         public function column_default($item, $column_name)
         {
             // Restores the more descriptive, specific name for use within this method.
             $blog = $item;
 
-            /**
-             * Fires for each registered custom column in the Sites list table.
-             *
-             * @param string $column_name The name of the column to display.
-             * @param int    $blog_id     The site ID.
-             *
-             * @since 3.1.0
-             *
-             */
             do_action('manage_sites_custom_column', $column_name, $blog['blog_id']);
         }
 
-        /**
-         * @global string $mode List table view mode.
-         */
         public function display_rows()
         {
             foreach($this->items as $blog)
@@ -580,13 +403,6 @@
             }
         }
 
-        /**
-         * Gets links to filter sites by status.
-         *
-         * @return array
-         * @since 5.3.0
-         *
-         */
         protected function get_views()
         {
             $counts = wp_count_sites();
@@ -634,9 +450,6 @@
             return $this->get_views_links($view_links);
         }
 
-        /**
-         * @return array
-         */
         protected function get_bulk_actions()
         {
             $actions = [];
@@ -650,12 +463,6 @@
             return $actions;
         }
 
-        /**
-         * @param string  $which The location of the pagination nav markup: 'top' or 'bottom'.
-         *
-         * @global string $mode  List table view mode.
-         *
-         */
         protected function pagination($which)
         {
             global $mode;
@@ -668,14 +475,6 @@
             }
         }
 
-        /**
-         * Displays extra controls between bulk actions and pagination.
-         *
-         * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-         *
-         * @since 5.3.0
-         *
-         */
         protected function extra_tablenav($which)
         {
             ?>
@@ -685,14 +484,6 @@
                     {
                         ob_start();
 
-                        /**
-                         * Fires before the Filter button on the MS sites list table.
-                         *
-                         * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-                         *
-                         * @since 5.3.0
-                         *
-                         */
                         do_action('restrict_manage_sites', $which);
 
                         $output = ob_get_clean();
@@ -706,21 +497,10 @@
                 ?>
             </div>
             <?php
-            /**
-             * Fires immediately following the closing "actions" div in the tablenav for the
-             * MS sites list table.
-             *
-             * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-             *
-             * @since 5.3.0
-             *
-             */
+
             do_action('manage_sites_extra_tablenav', $which);
         }
 
-        /**
-         * @return array
-         */
         protected function get_sortable_columns()
         {
             if(is_subdomain_install())
@@ -747,31 +527,11 @@
             ];
         }
 
-        /**
-         * Gets the name of the default primary column.
-         *
-         * @return string Name of the default primary column, in this case, 'blogname'.
-         * @since 4.3.0
-         *
-         */
         protected function get_default_primary_column_name()
         {
             return 'blogname';
         }
 
-        /**
-         * Generates and displays row action links.
-         *
-         * @param array  $item        Site being acted upon.
-         * @param string $column_name Current column name.
-         * @param string $primary     Primary column name.
-         *
-         * @return string Row actions output for sites in Multisite, or an empty string
-         *                if the current column is not the primary column.
-         * @since 4.3.0
-         * @since 5.9.0 Renamed `$blog` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         protected function handle_row_actions($item, $column_name, $primary)
         {
             if($primary !== $column_name)
@@ -839,22 +599,6 @@
 
             $actions['visit'] = sprintf('<a href="%1$s" rel="bookmark">%2$s</a>', esc_url(get_home_url($blog['blog_id'], '/')), __('Visit'));
 
-            /**
-             * Filters the action links displayed for each site in the Sites list table.
-             *
-             * The 'Edit', 'Dashboard', 'Delete', and 'Visit' links are displayed by
-             * default for each site. The site's status determines whether to show the
-             * 'Activate' or 'Deactivate' link, 'Unarchive' or 'Archive' links, and
-             * 'Not Spam' or 'Spam' link for each site.
-             *
-             * @param string[] $actions  An array of action links to be displayed.
-             * @param int      $blog_id  The site ID.
-             * @param string   $blogname Site path, formatted depending on whether it is a sub-domain
-             *                           or subdirectory multisite installation.
-             *
-             * @since 3.1.0
-             *
-             */
             $actions = apply_filters('manage_sites_action_links', array_filter($actions), $blog['blog_id'], $blogname);
 
             return $this->row_actions($actions);

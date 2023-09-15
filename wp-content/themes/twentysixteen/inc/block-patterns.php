@@ -1,23 +1,10 @@
 <?php
-    /**
-     * Twenty Sixteen Theme: Block Patterns
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Sixteen
-     * @since      Twenty Sixteen 2.3
-     */
 
-    /**
-     * Register Block Pattern Category.
-     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentysixteen', ['label' => __('Twenty Sixteen', 'twentysixteen')]);
     }
 
-    /**
-     * Register Block Patterns.
-     */
     if(function_exists('register_block_pattern'))
     {
         register_block_pattern('twentysixteen/large-heading-short-description', [

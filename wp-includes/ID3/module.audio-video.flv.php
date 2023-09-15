@@ -83,17 +83,8 @@
     {
         const magic = 'FLV';
 
-        /**
-         * Break out of the loop if too many frames have been scanned; only scan this
-         * many if meta frame does not contain useful duration.
-         *
-         * @var int
-         */
         public $max_frames = 100000;
 
-        /**
-         * @return bool
-         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
@@ -381,11 +372,6 @@
             return true;
         }
 
-        /**
-         * @param int $id
-         *
-         * @return string|false
-         */
         public static function audioFormatLookup($id)
         {
             static $lookup = [
@@ -410,11 +396,6 @@
             return (isset($lookup[$id]) ? $lookup[$id] : false);
         }
 
-        /**
-         * @param int $id
-         *
-         * @return int|false
-         */
         public static function audioRateLookup($id)
         {
             static $lookup = [
@@ -427,11 +408,6 @@
             return (isset($lookup[$id]) ? $lookup[$id] : false);
         }
 
-        /**
-         * @param int $id
-         *
-         * @return int|false
-         */
         public static function audioBitDepthLookup($id)
         {
             static $lookup = [
@@ -442,11 +418,6 @@
             return (isset($lookup[$id]) ? $lookup[$id] : false);
         }
 
-        /**
-         * @param int $id
-         *
-         * @return string|false
-         */
         public static function videoCodecLookup($id)
         {
             static $lookup = [
@@ -464,28 +435,16 @@
 
     class AMFStream
     {
-        /**
-         * @var string
-         */
         public $bytes;
 
-        /**
-         * @var int
-         */
         public $pos;
 
-        /**
-         * @param string $bytes
-         */
         public function __construct(&$bytes)
         {
             $this->bytes =& $bytes;
             $this->pos = 0;
         }
 
-        /**
-         * @return int
-         */
         public function peekByte()
         {
             $pos = $this->pos;
@@ -495,17 +454,11 @@
             return $val;
         }
 
-        /**
-         * @return int
-         */
         public function readByte()
         { //  8-bit
             return ord(substr($this->bytes, $this->pos++, 1));
         }
 
-        /**
-         * @return int
-         */
         public function peekInt()
         {
             $pos = $this->pos;
@@ -515,17 +468,11 @@
             return $val;
         }
 
-        /**
-         * @return int
-         */
         public function readInt()
         { // 16-bit
             return ($this->readByte() << 8) + $this->readByte();
         }
 
-        /**
-         * @return int
-         */
         public function peekLong()
         {
             $pos = $this->pos;
@@ -535,17 +482,11 @@
             return $val;
         }
 
-        /**
-         * @return int
-         */
         public function readLong()
         { // 32-bit
             return ($this->readByte() << 24) + ($this->readByte() << 16) + ($this->readByte() << 8) + $this->readByte();
         }
 
-        /**
-         * @return float|false
-         */
         public function peekDouble()
         {
             $pos = $this->pos;
@@ -555,19 +496,11 @@
             return $val;
         }
 
-        /**
-         * @return float|false
-         */
         public function readDouble()
         {
             return getid3_lib::BigEndian2Float($this->read(8));
         }
 
-        /**
-         * @param int $length
-         *
-         * @return string
-         */
         public function read($length)
         {
             $val = substr($this->bytes, $this->pos, $length);
@@ -576,9 +509,6 @@
             return $val;
         }
 
-        /**
-         * @return string
-         */
         public function peekUTF()
         {
             $pos = $this->pos;
@@ -588,9 +518,6 @@
             return $val;
         }
 
-        /**
-         * @return string
-         */
         public function readUTF()
         {
             $length = $this->readInt();
@@ -598,9 +525,6 @@
             return $this->read($length);
         }
 
-        /**
-         * @return string
-         */
         public function peekLongUTF()
         {
             $pos = $this->pos;
@@ -610,9 +534,6 @@
             return $val;
         }
 
-        /**
-         * @return string
-         */
         public function readLongUTF()
         {
             $length = $this->readLong();
@@ -623,22 +544,13 @@
 
     class AMFReader
     {
-        /**
-         * @var AMFStream
-         */
         public $stream;
 
-        /**
-         * @param AMFStream $stream
-         */
         public function __construct(AMFStream $stream)
         {
             $this->stream = $stream;
         }
 
-        /**
-         * @return mixed
-         */
         public function readData()
         {
             $value = null;
@@ -709,33 +621,21 @@
             return $value;
         }
 
-        /**
-         * @return float|false
-         */
         public function readDouble()
         {
             return $this->stream->readDouble();
         }
 
-        /**
-         * @return bool
-         */
         public function readBoolean()
         {
             return $this->stream->readByte() == 1;
         }
 
-        /**
-         * @return string
-         */
         public function readString()
         {
             return $this->stream->readUTF();
         }
 
-        /**
-         * @return array
-         */
         public function readObject()
         {
             // Get highest numerical index - ignored
@@ -758,9 +658,6 @@
             return $data;
         }
 
-        /**
-         * @return array
-         */
         public function readMixedArray()
         {
             // Get highest numerical index - ignored
@@ -787,9 +684,6 @@
             return $data;
         }
 
-        /**
-         * @return array
-         */
         public function readArray()
         {
             $length = $this->stream->readLong();
@@ -803,9 +697,6 @@
             return $data;
         }
 
-        /**
-         * @return float|false
-         */
         public function readDate()
         {
             $timestamp = $this->stream->readDouble();
@@ -814,25 +705,16 @@
             return $timestamp;
         }
 
-        /**
-         * @return string
-         */
         public function readLongString()
         {
             return $this->stream->readLongUTF();
         }
 
-        /**
-         * @return string
-         */
         public function readXML()
         {
             return $this->stream->readLongUTF();
         }
 
-        /**
-         * @return array
-         */
         public function readTypedObject()
         {
             $className = $this->stream->readUTF();
@@ -843,9 +725,6 @@
 
     class AVCSequenceParameterSetReader
     {
-        /**
-         * @var string
-         */
         public $sps;
 
         public $start = 0;
@@ -854,19 +733,10 @@
 
         public $currentBits = 0;
 
-        /**
-         * @var int
-         */
         public $width;
 
-        /**
-         * @var int
-         */
         public $height;
 
-        /**
-         * @param string $sps
-         */
         public function __construct($sps)
         {
             $this->sps = $sps;
@@ -932,9 +802,6 @@
             }
         }
 
-        /**
-         * @param int $bits
-         */
         public function skipBits($bits)
         {
             $newBits = $this->currentBits + $bits;
@@ -942,11 +809,6 @@
             $this->currentBits = $newBits % 8;
         }
 
-        /**
-         * @param int $bits
-         *
-         * @return int
-         */
         public function getBits($bits)
         {
             $result = 0;
@@ -958,9 +820,6 @@
             return $result;
         }
 
-        /**
-         * @return int
-         */
         public function getBit()
         {
             $result = (getid3_lib::BigEndian2Int(substr($this->sps, $this->currentBytes, 1)) >> (7 - $this->currentBits)) & 0x01;
@@ -969,9 +828,6 @@
             return $result;
         }
 
-        /**
-         * @return int
-         */
         public function expGolombUe()
         {
             $significantBits = 0;
@@ -991,9 +847,6 @@
             return (1 << $significantBits) + $this->getBits($significantBits) - 1;
         }
 
-        /**
-         * @return int
-         */
         public function expGolombSe()
         {
             $result = $this->expGolombUe();
@@ -1007,17 +860,11 @@
             }
         }
 
-        /**
-         * @return int
-         */
         public function getWidth()
         {
             return $this->width;
         }
 
-        /**
-         * @return int
-         */
         public function getHeight()
         {
             return $this->height;

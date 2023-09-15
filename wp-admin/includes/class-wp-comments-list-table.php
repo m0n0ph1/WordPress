@@ -1,19 +1,5 @@
 <?php
-    /**
-     * List Table API: WP_Comments_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying comments in a list table.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_Comments_List_Table extends WP_List_Table
     {
         public $checkbox = true;
@@ -24,18 +10,6 @@
 
         private $user_can;
 
-        /**
-         * Constructor.
-         *
-         * @param array $args An associative array of arguments.
-         *
-         * @see   WP_List_Table::__construct() for more information on default arguments.
-         *
-         * @global int  $post_id
-         *
-         * @since 3.1.0
-         *
-         */
         public function __construct($args = [])
         {
             global $post_id;
@@ -55,16 +29,6 @@
                                 ]);
         }
 
-        /**
-         * Adds avatars to comment author names.
-         *
-         * @param string $name       Comment author name.
-         * @param int    $comment_id Comment ID.
-         *
-         * @return string Avatar with the user name.
-         * @since 3.1.0
-         *
-         */
         public function floated_admin_avatar($name, $comment_id)
         {
             $comment = get_comment($comment_id);
@@ -73,21 +37,11 @@
             return "$avatar $name";
         }
 
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             return current_user_can('edit_posts');
         }
 
-        /**
-         * @global string $mode List table view mode.
-         * @global int    $post_id
-         * @global string $comment_status
-         * @global string $comment_type
-         * @global string $search
-         */
         public function prepare_items()
         {
             global $mode, $post_id, $comment_status, $comment_type, $search;
@@ -170,14 +124,6 @@
                 'update_comment_post_cache' => true,
             ];
 
-            /**
-             * Filters the arguments for the comment query in the comments list table.
-             *
-             * @param array $args An array of get_comments() arguments.
-             *
-             * @since 5.1.0
-             *
-             */
             $args = apply_filters('comments_list_table_query_args', $args);
 
             $_comments = get_comments($args);
@@ -206,30 +152,13 @@
                                        ]);
         }
 
-        /**
-         * @param string $comment_status
-         *
-         * @return int
-         */
         public function get_per_page($comment_status = 'all')
         {
             $comments_per_page = $this->get_items_per_page('edit_comments_per_page');
 
-            /**
-             * Filters the number of comments listed per page in the comments list table.
-             *
-             * @param int    $comments_per_page The number of comments to list per page.
-             * @param string $comment_status    The comment status name. Default 'All'.
-             *
-             * @since 2.6.0
-             *
-             */
             return apply_filters('comments_per_page', $comments_per_page, $comment_status);
         }
 
-        /**
-         * @global string $comment_status
-         */
         public function no_items()
         {
             global $comment_status;
@@ -248,9 +177,6 @@
             }
         }
 
-        /**
-         * @return string|false
-         */
         public function current_action()
         {
             if(isset($_REQUEST['delete_all']) || isset($_REQUEST['delete_all2']))
@@ -261,11 +187,6 @@
             return parent::current_action();
         }
 
-        /**
-         * @return string[] Array of column titles keyed by their column name.
-         * @global int $post_id
-         *
-         */
         public function get_columns()
         {
             global $post_id;
@@ -291,13 +212,6 @@
             return $columns;
         }
 
-        /**
-         * Displays the comments table.
-         *
-         * Overrides the parent display() method to render extra comments.
-         *
-         * @since 3.1.0
-         */
         public function display()
         {
             wp_nonce_field('fetch-list-'.get_class($this), '_ajax_fetch_list_nonce');
@@ -363,13 +277,6 @@
             $this->display_tablenav('bottom');
         }
 
-        /**
-         * @param WP_Comment  $item
-         *
-         * @global WP_Comment $comment Global comment object.
-         *
-         * @global WP_Post    $post    Global post object.
-         */
         public function single_row($item)
         {
             global $post, $comment;
@@ -399,12 +306,6 @@
             unset($GLOBALS['post'], $GLOBALS['comment']);
         }
 
-        /**
-         * @param WP_Comment $item The comment object.
-         *
-         * @since 5.9.0 Renamed `$comment` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         public function column_cb($item)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -429,9 +330,6 @@
             }
         }
 
-        /**
-         * @param WP_Comment $comment The comment object.
-         */
         public function column_comment($comment)
         {
             echo '<div class="comment-author">';
@@ -454,7 +352,6 @@
 
             if($this->user_can)
             {
-                /** This filter is documented in wp-admin/includes/comment.php */
                 $comment_content = apply_filters('comment_edit_pre', $comment->comment_content);
                 ?>
                 <div id="inline-<?php echo $comment->comment_ID; ?>" class="hidden">
@@ -468,12 +365,6 @@
             }
         }
 
-        /**
-         * @param WP_Comment $comment The comment object.
-         *
-         * @global string    $comment_status
-         *
-         */
         public function column_author($comment)
         {
             global $comment_status;
@@ -501,7 +392,6 @@
             {
                 if(! empty($comment->comment_author_email))
                 {
-                    /** This filter is documented in wp-includes/comment-template.php */
                     $email = apply_filters('comment_email', $comment->comment_author_email, $comment);
 
                     if(! empty($email) && '@' !== $email)
@@ -529,9 +419,6 @@
             }
         }
 
-        /**
-         * @param WP_Comment $comment The comment object.
-         */
         public function column_date($comment)
         {
             $submitted = sprintf(/* translators: 1: Comment date, 2: Comment time. */ __('%1$s at %2$s'), /* translators: Comment date format. See https://www.php.net/manual/datetime.format.php */ get_comment_date(__('Y/m/d'), $comment), /* translators: Comment time format. See https://www.php.net/manual/datetime.format.php */ get_comment_date(__('g:i a'), $comment));
@@ -550,9 +437,6 @@
             echo '</div>';
         }
 
-        /**
-         * @param WP_Comment $comment The comment object.
-         */
         public function column_response($comment)
         {
             $post = get_post();
@@ -606,35 +490,14 @@
             echo '</div>';
         }
 
-        /**
-         * @param WP_Comment $item        The comment object.
-         * @param string     $column_name The custom column's name.
-         *
-         * @since 5.9.0 Renamed `$comment` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         public function column_default($item, $column_name)
         {
             // Restores the more descriptive, specific name for use within this method.
             $comment = $item;
 
-            /**
-             * Fires when the default column output is displayed for a single row.
-             *
-             * @param string $column_name The custom column's name.
-             * @param string $comment_id  The comment ID as a numeric string.
-             *
-             * @since 2.8.0
-             *
-             */
             do_action('manage_comments_custom_column', $column_name, $comment->comment_ID);
         }
 
-        /**
-         * @global int    $post_id
-         * @global string $comment_status
-         * @global string $comment_type
-         */
         protected function get_views()
         {
             global $post_id, $comment_status, $comment_type;
@@ -717,24 +580,9 @@
                 ];
             }
 
-            /**
-             * Filters the comment status links.
-             *
-             * @param string[] $status_links An associative array of fully-formed comment status links. Includes 'All', 'Mine',
-             *                               'Pending', 'Approved', 'Spam', and 'Trash'.
-             *
-             * @since 5.1.0 The 'Mine' link was added.
-             *
-             * @since 2.5.0
-             */
             return apply_filters('comment_status_links', $this->get_views_links($status_links));
         }
 
-        /**
-         * @return array
-         * @global string $comment_status
-         *
-         */
         protected function get_bulk_actions()
         {
             global $comment_status;
@@ -777,13 +625,6 @@
             return $actions;
         }
 
-        /**
-         * @param string  $which
-         *
-         * @global string $comment_type
-         *
-         * @global string $comment_status
-         */
         protected function extra_tablenav($which)
         {
             global $comment_status, $comment_type;
@@ -802,11 +643,6 @@
 
                 $this->comment_type_dropdown($comment_type);
 
-                /**
-                 * Fires just before the Filter submit button for comment types.
-                 *
-                 * @since 3.5.0
-                 */
                 do_action('restrict_manage_comments');
 
                 $output = ob_get_clean();
@@ -825,40 +661,13 @@
                 submit_button($title, 'apply', 'delete_all', false);
             }
 
-            /**
-             * Fires after the Filter submit button for comment types.
-             *
-             * @param string $comment_status The comment status name. Default 'All'.
-             * @param string $which          The location of the extra table nav markup: 'top' or 'bottom'.
-             *
-             * @since 2.5.0
-             * @since 5.6.0 The `$which` parameter was added.
-             *
-             */
             do_action('manage_comments_nav', $comment_status, $which);
 
             echo '</div>';
         }
 
-        /**
-         * Displays a comment type drop-down for filtering on the Comments list table.
-         *
-         * @param string $comment_type The current comment type slug.
-         *
-         * @since 5.6.0 Renamed from `comment_status_dropdown()` to `comment_type_dropdown()`.
-         *
-         * @since 5.5.0
-         */
         protected function comment_type_dropdown($comment_type)
         {
-            /**
-             * Filters the comment types shown in the drop-down menu on the Comments list table.
-             *
-             * @param string[] $comment_types Array of comment type labels keyed by their name.
-             *
-             * @since 2.7.0
-             *
-             */
             $comment_types = apply_filters('admin_comment_types_dropdown', [
                 'comment' => __('Comments'),
                 'pings' => __('Pings'),
@@ -889,9 +698,6 @@
             }
         }
 
-        /**
-         * @return array
-         */
         protected function get_sortable_columns()
         {
             return [
@@ -906,34 +712,11 @@
             ];
         }
 
-        /**
-         * Gets the name of the default primary column.
-         *
-         * @return string Name of the default primary column, in this case, 'comment'.
-         * @since 4.3.0
-         *
-         */
         protected function get_default_primary_column_name()
         {
             return 'comment';
         }
 
-        /**
-         * Generates and displays row actions links.
-         *
-         * @param WP_Comment $item           The comment object.
-         * @param string     $column_name    Current column name.
-         * @param string     $primary        Primary column name.
-         *
-         * @return string Row actions output for comments. An empty string
-         *                if the current column is not the primary column,
-         *                or if the current user cannot edit the comment.
-         * @since 5.9.0 Renamed `$comment` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @global string    $comment_status Status for the current listed comments.
-         *
-         * @since 4.3.0
-         */
         protected function handle_row_actions($item, $column_name, $primary)
         {
             global $comment_status;
@@ -1035,7 +818,6 @@
                 $actions['reply'] = sprintf($format, $comment->comment_ID, $comment->comment_post_ID, 'replyto', 'vim-r comment-inline', esc_attr__('Reply to this comment'), __('Reply'));
             }
 
-            /** This filter is documented in wp-admin/includes/dashboard.php */
             $actions = apply_filters('comment_row_actions', array_filter($actions), $comment);
 
             $always_visible = false;

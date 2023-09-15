@@ -1,17 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/calendar` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/calendar` block on server.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string Returns the block content.
-     */
     function render_block_core_calendar($attributes)
     {
         global $monthnum, $year;
@@ -78,9 +66,6 @@
         return $output;
     }
 
-    /**
-     * Registers the `core/calendar` block on server.
-     */
     function register_block_core_calendar()
     {
         register_block_type_from_metadata(__DIR__.'/calendar', [
@@ -90,14 +75,6 @@
 
     add_action('init', 'register_block_core_calendar');
 
-    /**
-     * Returns whether or not there are any published posts.
-     *
-     * Used to hide the calendar block when there are no published posts.
-     * This compensates for a known Core bug: https://core.trac.wordpress.org/ticket/12016
-     *
-     * @return bool Has any published posts or not.
-     */
     function block_core_calendar_has_published_posts()
     {
         // Multisite already has an option that stores the count of the published posts.
@@ -118,12 +95,6 @@
         return block_core_calendar_update_has_published_posts();
     }
 
-    /**
-     * Queries the database for any published post and saves
-     * a flag whether any published post exists or not.
-     *
-     * @return bool Has any published posts or not.
-     */
     function block_core_calendar_update_has_published_posts()
     {
         global $wpdb;
@@ -137,11 +108,6 @@
 // we are on single sites. On multi sites we use `post_count` option.
     if(! is_multisite())
     {
-        /**
-         * Handler for updating the has published posts flag when a post is deleted.
-         *
-         * @param int $post_id Deleted post ID.
-         */
         function block_core_calendar_update_has_published_post_on_delete($post_id)
         {
             $post = get_post($post_id);
@@ -154,13 +120,6 @@
             block_core_calendar_update_has_published_posts();
         }
 
-        /**
-         * Handler for updating the has published posts flag when a post status changes.
-         *
-         * @param string  $new_status The status the post is changing to.
-         * @param string  $old_status The status the post is changing from.
-         * @param WP_Post $post       Post object.
-         */
         function block_core_calendar_update_has_published_post_on_transition_post_status(
             $new_status, $old_status, $post
         ) {

@@ -1,23 +1,5 @@
 <?php
-    /**
-     * HTTPS migration functions.
-     *
-     * @package WordPress
-     * @since   5.7.0
-     */
 
-    /**
-     * Checks whether WordPress should replace old HTTP URLs to the site with their HTTPS counterpart.
-     *
-     * If a WordPress site had its URL changed from HTTP to HTTPS, by default this will return `true`, causing
-     * WordPress to add frontend filters to replace insecure site URLs that may be present in older database content.
-     * The
-     * {@see 'wp_should_replace_insecure_home_url'} filter can be used to modify that behavior.
-     *
-     * @return bool True if insecure URLs should replaced, false otherwise.
-     * @since 5.7.0
-     *
-     */
     function wp_should_replace_insecure_home_url()
     {
         $should_replace_insecure_home_url = wp_is_using_https() && get_option('https_migration_required')
@@ -25,32 +7,9 @@
             // the same domain.
             && wp_parse_url(home_url(), PHP_URL_HOST) === wp_parse_url(site_url(), PHP_URL_HOST);
 
-        /**
-         * Filters whether WordPress should replace old HTTP URLs to the site with their HTTPS counterpart.
-         *
-         * If a WordPress site had its URL changed from HTTP to HTTPS, by default this will return `true`. This filter can
-         * be used to disable that behavior, e.g. after having replaced URLs manually in the database.
-         *
-         * @param bool $should_replace_insecure_home_url Whether insecure HTTP URLs to the site should be replaced.
-         *
-         * @since 5.7.0
-         *
-         */
         return apply_filters('wp_should_replace_insecure_home_url', $should_replace_insecure_home_url);
     }
 
-    /**
-     * Replaces insecure HTTP URLs to the site in the given content, if configured to do so.
-     *
-     * This function replaces all occurrences of the HTTP version of the site's URL with its HTTPS counterpart, if
-     * determined via {@see wp_should_replace_insecure_home_url()}.
-     *
-     * @param string $content Content to replace URLs in.
-     *
-     * @return string Filtered content.
-     * @since 5.7.0
-     *
-     */
     function wp_replace_insecure_home_url($content)
     {
         if(! wp_should_replace_insecure_home_url())
@@ -74,16 +33,6 @@
                            ], $content);
     }
 
-    /**
-     * Update the 'home' and 'siteurl' option to use the HTTPS variant of their URL.
-     *
-     * If this update does not result in WordPress recognizing that the site is now using HTTPS (e.g. due to constants
-     * overriding the URLs used), the changes will be reverted. In such a case the function will return false.
-     *
-     * @return bool True on success, false on failure.
-     * @since 5.7.0
-     *
-     */
     function wp_update_urls_to_https()
     {
         // Get current URL options.
@@ -114,20 +63,6 @@
         return true;
     }
 
-    /**
-     * Updates the 'https_migration_required' option if needed when the given URL has been updated from HTTP to HTTPS.
-     *
-     * If this is a fresh site, a migration will not be required, so the option will be set as `false`.
-     *
-     * This is hooked into the {@see 'update_option_home'} action.
-     *
-     * @param mixed $old_url Previous value of the URL option.
-     * @param mixed $new_url New value of the URL option.
-     *
-     * @since  5.7.0
-     * @access private
-     *
-     */
     function wp_update_https_migration_required($old_url, $new_url)
     {
         // Do nothing if WordPress is being installed.

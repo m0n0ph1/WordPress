@@ -1,30 +1,7 @@
 <?php
-    /**
-     * WP_Font_Face_Resolver class.
-     *
-     * @package    WordPress
-     * @subpackage Fonts
-     * @since      6.4.0
-     */
 
-    /**
-     * The Font Face Resolver abstracts the processing of different data sources
-     * (such as theme.json) for processing within the Font Face.
-     *
-     * This class is for internal core usage and is not supposed to be used by
-     * extenders (plugins and/or themes).
-     *
-     * @access private
-     */
     class WP_Font_Face_Resolver
     {
-        /**
-         * Gets fonts defined in theme.json.
-         *
-         * @return array Returns the font-families, each with their font-face variations.
-         * @since 6.4.0
-         *
-         */
         public static function get_fonts_from_theme_json()
         {
             $settings = wp_get_global_settings();
@@ -38,15 +15,6 @@
             return static::parse_settings($settings);
         }
 
-        /**
-         * Parse theme.json settings to extract font definitions with variations grouped by font-family.
-         *
-         * @param array $settings Font settings to parse.
-         *
-         * @return array Returns an array of fonts, grouped by font-family.
-         * @since 6.4.0
-         *
-         */
         private static function parse_settings(array $settings)
         {
             $fonts = [];
@@ -82,16 +50,6 @@
             return $fonts;
         }
 
-        /**
-         * Converts font-face properties from theme.json format.
-         *
-         * @param array  $font_face_definition The font-face definitions to convert.
-         * @param string $font_family_property The value to store in the font-face font-family property.
-         *
-         * @return array Converted font-face properties.
-         * @since 6.4.0
-         *
-         */
         private static function convert_font_face_properties(array $font_face_definition, $font_family_property)
         {
             $converted_font_faces = [];
@@ -116,19 +74,6 @@
             return $converted_font_faces;
         }
 
-        /**
-         * Converts each 'file:./' placeholder into a URI to the font file in the theme.
-         *
-         * The 'file:./' is specified in the theme's `theme.json` as a placeholder to be
-         * replaced with the URI to the font file's location in the theme. When a "src"
-         * beings with this placeholder, it is replaced, converting the src into a URI.
-         *
-         * @param array $src An array of font file sources to process.
-         *
-         * @return array An array of font file src URI(s).
-         * @since 6.4.0
-         *
-         */
         private static function to_theme_file_uri(array $src)
         {
             $placeholder = 'file:./';
@@ -148,15 +93,6 @@
             return $src;
         }
 
-        /**
-         * Converts all first dimension keys into kebab-case.
-         *
-         * @param array $data The array to process.
-         *
-         * @return array Data with first dimension keys converted into kebab-case.
-         * @since 6.4.0
-         *
-         */
         private static function to_kebab_case(array $data)
         {
             foreach($data as $key => $value)

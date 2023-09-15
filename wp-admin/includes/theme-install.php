@@ -1,10 +1,4 @@
 <?php
-    /**
-     * WordPress Theme Installation Administration API
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     $themes_allowedtags = [
         'a' => [
@@ -50,15 +44,6 @@
         'num_ratings' => true,
     ];
 
-    /**
-     * Retrieves the list of WordPress theme features (aka theme tags).
-     *
-     * @return array
-     * @deprecated 3.1.0 Use get_theme_feature_list() instead.
-     *
-     * @since      2.8.0
-     *
-     */
     function install_themes_feature_list()
     {
         _deprecated_function(__FUNCTION__, '3.1.0', 'get_theme_feature_list()');
@@ -85,14 +70,6 @@
         return $feature_list;
     }
 
-    /**
-     * Displays search form for searching themes.
-     *
-     * @param bool $type_selector
-     *
-     * @since 2.8.0
-     *
-     */
     function install_theme_search_form($type_selector = true)
     {
         $type = isset($_REQUEST['type']) ? wp_unslash($_REQUEST['type']) : 'term';
@@ -151,11 +128,6 @@
         <?php
     }
 
-    /**
-     * Displays tags filter for themes.
-     *
-     * @since 2.8.0
-     */
     function install_themes_dashboard()
     {
         install_theme_search_form(false);
@@ -203,11 +175,6 @@
         <?php
     }
 
-    /**
-     * Displays a form to upload themes from zip files.
-     *
-     * @since 2.8.0
-     */
     function install_themes_upload()
     {
         ?>
@@ -229,16 +196,6 @@
         <?php
     }
 
-    /**
-     * Prints a theme on the Install Themes pages.
-     *
-     * @param object                       $theme
-     *
-     * @global WP_Theme_Install_List_Table $wp_list_table
-     *
-     * @deprecated 3.4.0
-     *
-     */
     function display_theme($theme)
     {
         _deprecated_function(__FUNCTION__, '3.4.0');
@@ -251,13 +208,6 @@
         $wp_list_table->single_row($theme);
     }
 
-    /**
-     * Displays theme content based on theme list.
-     *
-     * @since 2.8.0
-     *
-     * @global WP_Theme_Install_List_Table $wp_list_table
-     */
     function display_themes()
     {
         global $wp_list_table;
@@ -270,13 +220,6 @@
         $wp_list_table->display();
     }
 
-    /**
-     * Displays theme information in dialog box form.
-     *
-     * @since 2.8.0
-     *
-     * @global WP_Theme_Install_List_Table $wp_list_table
-     */
     function install_theme_information()
     {
         global $wp_list_table;

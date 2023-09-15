@@ -1,15 +1,5 @@
 <?php
-    /**
-     * XML-RPC protocol support for WordPress
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Whether this is an XML-RPC Request.
-     *
-     * @var bool
-     */
     define('XMLRPC_REQUEST', true);
 
 // Discard unneeded cookies sent by some browser-embedded clients.
@@ -29,7 +19,6 @@
     }
 // phpcs:enable
 
-    /** Include the bootstrap for setting up WordPress environment */
     require_once __DIR__.'/wp-load.php';
 
     if(isset($_GET['rsd']))
@@ -60,13 +49,7 @@
                          preferred="false"
                          apiLink="<?php echo site_url('xmlrpc.php', 'rpc'); ?>"/>
                     <?php
-                        /**
-                         * Fires when adding APIs to the Really Simple Discovery (RSD) endpoint.
-                         *
-                         * @link  https://cyber.harvard.edu/blogs/gems/tech/rsd.html
-                         *
-                         * @since 3.5.0
-                         */
+
                         do_action('xmlrpc_rsd_apis');
                     ?>
                 </apis>
@@ -80,22 +63,8 @@
     require_once ABSPATH.WPINC.'/class-IXR.php';
     require_once ABSPATH.WPINC.'/class-wp-xmlrpc-server.php';
 
-    /**
-     * Posts submitted via the XML-RPC interface get that title
-     *
-     * @name post_default_title
-     * @var string
-     */
     $post_default_title = '';
 
-    /**
-     * Filters the class used for handling XML-RPC requests.
-     *
-     * @param string $class The name of the XML-RPC server class.
-     *
-     * @since 3.1.0
-     *
-     */
     $wp_xmlrpc_server_class = apply_filters('wp_xmlrpc_server_class', 'wp_xmlrpc_server');
     $wp_xmlrpc_server = new $wp_xmlrpc_server_class();
 
@@ -104,16 +73,6 @@
 
     exit;
 
-    /**
-     * logIO() - Writes logging info to a file.
-     *
-     * @param string $io  Whether input or output
-     * @param string $msg Information describing logging reason.
-     *
-     * @deprecated 3.4.0 Use error_log()
-     * @see        error_log()
-     *
-     */
     function logIO($io, $msg)
     { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
         _deprecated_function(__FUNCTION__, '3.4.0', 'error_log()');

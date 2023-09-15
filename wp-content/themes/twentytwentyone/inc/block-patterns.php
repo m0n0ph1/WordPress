@@ -1,24 +1,7 @@
 <?php
-    /**
-     * Block Patterns
-     *
-     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern/
-     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern_category/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty_One
-     * @since      Twenty Twenty-One 1.0
-     */
 
     if(function_exists('register_block_pattern_category'))
     {
-        /**
-         * Register Block Pattern Category.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         function twenty_twenty_one_register_block_pattern_category()
         {
             register_block_pattern_category('twentytwentyone', ['label' => esc_html__('Twenty Twenty-One', 'twentytwentyone')]);
@@ -27,18 +10,8 @@
         add_action('init', 'twenty_twenty_one_register_block_pattern_category');
     }
 
-    /**
-     * Register Block Patterns.
-     */
     if(function_exists('register_block_pattern'))
     {
-        /**
-         * Register Block Pattern.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         function twenty_twenty_one_register_block_pattern()
         {
             // Large Text.

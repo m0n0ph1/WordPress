@@ -1,43 +1,9 @@
 <?php
-    /**
-     * List Table API: WP_Plugins_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying installed plugins in a list table.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_Plugins_List_Table extends WP_List_Table
     {
-        /**
-         * Whether to show the auto-updates UI.
-         *
-         * @since 5.5.0
-         *
-         * @var bool True if auto-updates UI is to be shown, false otherwise.
-         */
         protected $show_autoupdates = true;
 
-        /**
-         * Constructor.
-         *
-         * @param array   $args An associative array of arguments.
-         *
-         * @see   WP_List_Table::__construct() for more information on default arguments.
-         *
-         * @global string $status
-         * @global int    $page
-         *
-         * @since 3.1.0
-         *
-         */
         public function __construct($args = [])
         {
             global $status, $page;
@@ -76,39 +42,17 @@
             $this->show_autoupdates = wp_is_auto_update_enabled_for_type('plugin') && current_user_can('update_plugins') && (! is_multisite() || $this->screen->in_admin('network'));
         }
 
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             return current_user_can('activate_plugins');
         }
 
-        /**
-         * @global string $status
-         * @global array  $plugins
-         * @global array  $totals
-         * @global int    $page
-         * @global string $orderby
-         * @global string $order
-         * @global string $s
-         */
         public function prepare_items()
         {
             global $status, $plugins, $totals, $page, $orderby, $order, $s;
 
             wp_reset_vars(['orderby', 'order']);
 
-            /**
-             * Filters the full array of plugins to list in the Plugins list table.
-             *
-             * @param array $all_plugins An array of plugins to display in the list table.
-             *
-             * @see   get_plugins()
-             *
-             * @since 3.0.0
-             *
-             */
             $all_plugins = apply_filters('all_plugins', get_plugins());
 
             $plugins = [
@@ -134,28 +78,11 @@
 
             if(! is_multisite() || ($screen->in_admin('network') && current_user_can('manage_network_plugins')))
             {
-                /**
-                 * Filters whether to display the advanced plugins list table.
-                 *
-                 * There are two types of advanced plugins - must-use and drop-ins -
-                 * which can be used in a single site or Multisite network.
-                 *
-                 * The $type parameter allows you to differentiate between the type of advanced
-                 * plugins to filter the display of. Contexts include 'mustuse' and 'dropins'.
-                 *
-                 * @param bool   $show Whether to show the advanced plugins for the specified
-                 *                     plugin type. Default true.
-                 * @param string $type The plugin type. Accepts 'mustuse', 'dropins'.
-                 *
-                 * @since 3.0.0
-                 *
-                 */
                 if(apply_filters('show_advanced_plugins', true, 'mustuse'))
                 {
                     $plugins['mustuse'] = get_mu_plugins();
                 }
 
-                /** This action is documented in wp-admin/includes/class-wp-plugins-list-table.php */
                 if(apply_filters('show_advanced_plugins', true, 'dropins'))
                 {
                     $plugins['dropins'] = get_dropins();
@@ -178,20 +105,7 @@
             if(! $screen->in_admin('network'))
             {
                 $show = current_user_can('manage_network_plugins');
-                /**
-                 * Filters whether to display network-active plugins alongside plugins active for the current site.
-                 *
-                 * This also controls the display of inactive network-only plugins (plugins with
-                 * "Network: true" in the plugin header).
-                 *
-                 * Plugins cannot be network-activated or network-deactivated from this screen.
-                 *
-                 * @param bool $show Whether to show network-active plugins. Default is whether the current
-                 *                   user can manage network plugins (ie. a Super Admin).
-                 *
-                 * @since 4.4.0
-                 *
-                 */
+
                 $show_network_active = apply_filters('show_network_active_plugins', $show);
             }
 
@@ -351,14 +265,6 @@
                 $plugins['search'] = array_filter($plugins['all'], [$this, '_search_callback']);
             }
 
-            /**
-             * Filters the array of plugins for the list table.
-             *
-             * @param array[] $plugins An array of arrays of plugin data, keyed by context.
-             *
-             * @since 6.3.0
-             *
-             */
             $plugins = apply_filters('plugins_list', $plugins);
 
             $totals = [];
@@ -420,13 +326,6 @@
                                        ]);
         }
 
-        /**
-         * @param array   $plugin
-         *
-         * @return bool
-         * @global string $s URL encoded search term.
-         *
-         */
         public function _search_callback($plugin)
         {
             global $s;
@@ -442,14 +341,6 @@
             return false;
         }
 
-        /**
-         * @param array   $plugin_a
-         * @param array   $plugin_b
-         *
-         * @return int
-         * @global string $order
-         * @global string $orderby
-         */
         public function _order_callback($plugin_a, $plugin_b)
         {
             global $orderby, $order;
@@ -472,9 +363,6 @@
             }
         }
 
-        /**
-         * @global array $plugins
-         */
         public function no_items()
         {
             global $plugins;
@@ -502,15 +390,6 @@
             }
         }
 
-        /**
-         * Displays the search box.
-         *
-         * @param string $text     The 'submit' button label.
-         * @param string $input_id ID attribute value for the search input field.
-         *
-         * @since 4.6.0
-         *
-         */
         public function search_box($text, $input_id)
         {
             if(empty($_REQUEST['s']) && ! $this->has_items())
@@ -542,11 +421,6 @@
             <?php
         }
 
-        /**
-         * @return string[] Array of column titles keyed by their column name.
-         * @global string $status
-         *
-         */
         public function get_columns()
         {
             global $status;
@@ -565,11 +439,6 @@
             return $columns;
         }
 
-        /**
-         * @param string  $which
-         *
-         * @global string $status
-         */
         public function bulk_actions($which = '')
         {
             global $status;
@@ -582,9 +451,6 @@
             parent::bulk_actions($which);
         }
 
-        /**
-         * @return string
-         */
         public function current_action()
         {
             if(isset($_POST['clear-recent-list']))
@@ -595,9 +461,6 @@
             return parent::current_action();
         }
 
-        /**
-         * @global string $status
-         */
         public function display_rows()
         {
             global $status;
@@ -618,15 +481,6 @@
             }
         }
 
-        /**
-         * @param array   $item
-         *
-         * @global int    $page
-         * @global string $s
-         * @global array  $totals
-         *
-         * @global string $status
-         */
         public function single_row($item)
         {
             global $status, $page, $s, $totals;
@@ -797,89 +651,14 @@
 
             if($screen->in_admin('network'))
             {
-                /**
-                 * Filters the action links displayed for each plugin in the Network Admin Plugins list table.
-                 *
-                 * @param string[] $actions     An array of plugin action links. By default this can include
-                 *                              'activate', 'deactivate', and 'delete'.
-                 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
-                 * @param array    $plugin_data An array of plugin data. See get_plugin_data()
-                 *                              and the {@see 'plugin_row_meta'} filter for the list
-                 *                              of possible values.
-                 * @param string   $context     The plugin context. By default this can include 'all',
-                 *                              'active', 'inactive', 'recently_activated', 'upgrade',
-                 *                              'mustuse', 'dropins', and 'search'.
-                 *
-                 * @since 3.1.0
-                 *
-                 */
                 $actions = apply_filters('network_admin_plugin_action_links', $actions, $plugin_file, $plugin_data, $context);
 
-                /**
-                 * Filters the list of action links displayed for a specific plugin in the Network Admin Plugins list table.
-                 *
-                 * The dynamic portion of the hook name, `$plugin_file`, refers to the path
-                 * to the plugin file, relative to the plugins directory.
-                 *
-                 * @param string[] $actions     An array of plugin action links. By default this can include
-                 *                              'activate', 'deactivate', and 'delete'.
-                 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
-                 * @param array    $plugin_data An array of plugin data. See get_plugin_data()
-                 *                              and the {@see 'plugin_row_meta'} filter for the list
-                 *                              of possible values.
-                 * @param string   $context     The plugin context. By default this can include 'all',
-                 *                              'active', 'inactive', 'recently_activated', 'upgrade',
-                 *                              'mustuse', 'dropins', and 'search'.
-                 *
-                 * @since 3.1.0
-                 *
-                 */
                 $actions = apply_filters("network_admin_plugin_action_links_{$plugin_file}", $actions, $plugin_file, $plugin_data, $context);
             }
             else
             {
-                /**
-                 * Filters the action links displayed for each plugin in the Plugins list table.
-                 *
-                 * @param string[] $actions     An array of plugin action links. By default this can include
-                 *                              'activate', 'deactivate', and 'delete'. With Multisite active
-                 *                              this can also include 'network_active' and 'network_only' items.
-                 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
-                 * @param array    $plugin_data An array of plugin data. See get_plugin_data()
-                 *                              and the {@see 'plugin_row_meta'} filter for the list
-                 *                              of possible values.
-                 * @param string   $context     The plugin context. By default this can include 'all',
-                 *                              'active', 'inactive', 'recently_activated', 'upgrade',
-                 *                              'mustuse', 'dropins', and 'search'.
-                 *
-                 * @since 2.6.0 The `$context` parameter was added.
-                 * @since 4.9.0 The 'Edit' link was removed from the list of action links.
-                 *
-                 * @since 2.5.0
-                 */
                 $actions = apply_filters('plugin_action_links', $actions, $plugin_file, $plugin_data, $context);
 
-                /**
-                 * Filters the list of action links displayed for a specific plugin in the Plugins list table.
-                 *
-                 * The dynamic portion of the hook name, `$plugin_file`, refers to the path
-                 * to the plugin file, relative to the plugins directory.
-                 *
-                 * @param string[] $actions     An array of plugin action links. By default this can include
-                 *                              'activate', 'deactivate', and 'delete'. With Multisite active
-                 *                              this can also include 'network_active' and 'network_only' items.
-                 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
-                 * @param array    $plugin_data An array of plugin data. See get_plugin_data()
-                 *                              and the {@see 'plugin_row_meta'} filter for the list
-                 *                              of possible values.
-                 * @param string   $context     The plugin context. By default this can include 'all',
-                 *                              'active', 'inactive', 'recently_activated', 'upgrade',
-                 *                              'mustuse', 'dropins', and 'search'.
-                 *
-                 * @since 2.7.0
-                 * @since 4.9.0 The 'Edit' link was removed from the list of action links.
-                 *
-                 */
                 $actions = apply_filters("plugin_action_links_{$plugin_file}", $actions, $plugin_file, $plugin_data, $context);
             }
 
@@ -984,54 +763,6 @@
                             $plugin_meta[] = sprintf('<a href="%s" aria-label="%s">%s</a>', esc_url($plugin_data['PluginURI']), esc_attr($aria_label), __('Visit plugin site'));
                         }
 
-                        /**
-                         * Filters the array of row meta for each plugin in the Plugins list table.
-                         *
-                         * @param string[] $plugin_meta    An array of the plugin's metadata, including
-                         *                                 the version, author, author URI, and plugin URI.
-                         * @param string   $plugin_file    Path to the plugin file relative to the plugins directory.
-                         * @param array    $plugin_data    {
-                         *                                 An array of plugin data.
-                         *
-                         * @type string    $id             Plugin ID, e.g. `w.org/plugins/[plugin-name]`.
-                         * @type string    $slug           Plugin slug.
-                         * @type string    $plugin         Plugin basename.
-                         * @type string    $new_version    New plugin version.
-                         * @type string    $url            Plugin URL.
-                         * @type string    $package        Plugin update package URL.
-                         * @type string[]  $icons          An array of plugin icon URLs.
-                         * @type string[]  $banners        An array of plugin banner URLs.
-                         * @type string[]  $banners_rtl    An array of plugin RTL banner URLs.
-                         * @type string    $requires       The version of WordPress which the plugin requires.
-                         * @type string    $tested         The version of WordPress the plugin is tested against.
-                         * @type string    $requires_php   The version of PHP which the plugin requires.
-                         * @type string    $upgrade_notice The upgrade notice for the new plugin version.
-                         * @type bool      $update         -supported Whether the plugin supports updates.
-                         * @type string    $Name           The human-readable name of the plugin.
-                         * @type string    $PluginURI      Plugin URI.
-                         * @type string    $Version        Plugin version.
-                         * @type string    $Description    Plugin description.
-                         * @type string    $Author         Plugin author.
-                         * @type string    $AuthorURI      Plugin author URI.
-                         * @type string    $TextDomain     Plugin textdomain.
-                         * @type string    $DomainPath     Relative path to the plugin's .mo file(s).
-                         * @type bool      $Network        Whether the plugin can only be activated network-wide.
-                         * @type string    $RequiresWP     The version of WordPress which the plugin requires.
-                         * @type string    $RequiresPHP    The version of PHP which the plugin requires.
-                         * @type string    $UpdateURI      ID of the plugin for update purposes, should be a URI.
-                         * @type string    $Title          The human-readable title of the plugin.
-                         * @type string    $AuthorName     Plugin author's name.
-                         * @type bool      $update         Whether there's an available update. Default null.
-                         *                                 }
-                         *
-                         * @param string   $status         Status filter currently applied to the plugin list. Possible
-                         *                                 values are: 'all', 'active', 'inactive', 'recently_activated',
-                         *                                 'upgrade', 'mustuse', 'dropins', 'search', 'paused',
-                         *                                 'auto-update-enabled', 'auto-update-disabled'.
-                         *
-                         * @since 2.8.0
-                         *
-                         */
                         $plugin_meta = apply_filters('plugin_row_meta', $plugin_meta, $plugin_file, $plugin_data, $status);
 
                         echo implode(' | ', $plugin_meta);
@@ -1126,20 +857,6 @@
 
                         $html = implode('', $html);
 
-                        /**
-                         * Filters the HTML of the auto-updates setting for each plugin in the Plugins list table.
-                         *
-                         * @param string $html        The HTML of the plugin's auto-update column content,
-                         *                            including toggle auto-update action links and
-                         *                            time to next update.
-                         * @param string $plugin_file Path to the plugin file relative to the plugins directory.
-                         * @param array  $plugin_data An array of plugin data. See get_plugin_data()
-                         *                            and the {@see 'plugin_row_meta'} filter for the list
-                         *                            of possible values.
-                         *
-                         * @since 5.5.0
-                         *
-                         */
                         echo apply_filters('plugin_auto_update_setting_html', $html, $plugin_file, $plugin_data);
 
                         wp_admin_notice('', [
@@ -1155,18 +872,6 @@
 
                         echo "<td class='$classes{$extra_classes}'>";
 
-                        /**
-                         * Fires inside each custom column of the Plugins list table.
-                         *
-                         * @param string $column_name Name of the column.
-                         * @param string $plugin_file Path to the plugin file relative to the plugins directory.
-                         * @param array  $plugin_data An array of plugin data. See get_plugin_data()
-                         *                            and the {@see 'plugin_row_meta'} filter for the list
-                         *                            of possible values.
-                         *
-                         * @since 3.1.0
-                         *
-                         */
                         do_action('manage_plugins_custom_column', $column_name, $plugin_file, $plugin_data);
 
                         echo '</td>';
@@ -1218,69 +923,21 @@
                 echo '</p></div></td></tr>';
             }
 
-            /**
-             * Fires after each row in the Plugins list table.
-             *
-             * @param string $plugin_file Path to the plugin file relative to the plugins directory.
-             * @param array  $plugin_data An array of plugin data. See get_plugin_data()
-             *                            and the {@see 'plugin_row_meta'} filter for the list
-             *                            of possible values.
-             * @param string $status      Status filter currently applied to the plugin list.
-             *                            Possible values are: 'all', 'active', 'inactive',
-             *                            'recently_activated', 'upgrade', 'mustuse', 'dropins',
-             *                            'search', 'paused', 'auto-update-enabled', 'auto-update-disabled'.
-             *
-             * @since 5.5.0 Added 'auto-update-enabled' and 'auto-update-disabled'
-             *              to possible values for `$status`.
-             *
-             * @since 2.3.0
-             */
             do_action('after_plugin_row', $plugin_file, $plugin_data, $status);
 
-            /**
-             * Fires after each specific row in the Plugins list table.
-             *
-             * The dynamic portion of the hook name, `$plugin_file`, refers to the path
-             * to the plugin file, relative to the plugins directory.
-             *
-             * @param string $plugin_file Path to the plugin file relative to the plugins directory.
-             * @param array  $plugin_data An array of plugin data. See get_plugin_data()
-             *                            and the {@see 'plugin_row_meta'} filter for the list
-             *                            of possible values.
-             * @param string $status      Status filter currently applied to the plugin list.
-             *                            Possible values are: 'all', 'active', 'inactive',
-             *                            'recently_activated', 'upgrade', 'mustuse', 'dropins',
-             *                            'search', 'paused', 'auto-update-enabled', 'auto-update-disabled'.
-             *
-             * @since 5.5.0 Added 'auto-update-enabled' and 'auto-update-disabled'
-             *              to possible values for `$status`.
-             *
-             * @since 2.7.0
-             */
             do_action("after_plugin_row_{$plugin_file}", $plugin_file, $plugin_data, $status);
         }
 
-        /**
-         * @return array
-         */
         protected function get_table_classes()
         {
             return ['widefat', $this->_args['plural']];
         }
 
-        /**
-         * @return array
-         */
         protected function get_sortable_columns()
         {
             return [];
         }
 
-        /**
-         * @return array
-         * @global string $status
-         * @global array  $totals
-         */
         protected function get_views()
         {
             global $totals, $status;
@@ -1340,10 +997,6 @@
             return $this->get_views_links($status_links);
         }
 
-        /**
-         * @return array
-         * @global string $status
-         */
         protected function get_bulk_actions()
         {
             global $status;
@@ -1388,11 +1041,6 @@
             return $actions;
         }
 
-        /**
-         * @param string  $which
-         *
-         * @global string $status
-         */
         protected function extra_tablenav($which)
         {
             global $status;
@@ -1419,13 +1067,6 @@
             echo '</div>';
         }
 
-        /**
-         * Gets the name of the primary column for this specific list table.
-         *
-         * @return string Unalterable name for the primary column, in this case, 'name'.
-         * @since 4.3.0
-         *
-         */
         protected function get_primary_column_name()
         {
             return 'name';

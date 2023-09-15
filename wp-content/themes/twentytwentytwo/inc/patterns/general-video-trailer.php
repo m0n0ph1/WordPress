@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Video trailer block pattern
-     */
+
     return [
         'title' => __('Video trailer', 'twentytwentytwo'),
         'categories' => ['featured', 'columns'],

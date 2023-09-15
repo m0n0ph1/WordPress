@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Logo and navigation header with gray background
-     */
+
     return [
         'title' => __('Logo and navigation header with background', 'twentytwentytwo'),
         'categories' => ['header'],

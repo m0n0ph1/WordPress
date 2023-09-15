@@ -1,20 +1,5 @@
 <?php
-    /**
-     * These functions are needed to load Multisite.
-     *
-     * @since      3.0.0
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     */
 
-    /**
-     * Whether a subdomain configuration is enabled.
-     *
-     * @return bool True if subdomain configuration is enabled, false otherwise.
-     * @since 3.0.0
-     *
-     */
     function is_subdomain_install()
     {
         if(defined('SUBDOMAIN_INSTALL'))
@@ -25,17 +10,6 @@
         return (defined('VHOST') && 'yes' === VHOST);
     }
 
-    /**
-     * Returns array of network plugin files to be included in global scope.
-     *
-     * The default directory is wp-content/plugins. To change the default directory
-     * manually, define `WP_PLUGIN_DIR` and `WP_PLUGIN_URL` in `wp-config.php`.
-     *
-     * @access private
-     * @return string[] Array of absolute paths to files to include.
-     * @since  3.1.0
-     *
-     */
     function wp_get_active_network_plugins()
     {
         $active_plugins = (array) get_site_option('active_sitewide_plugins', []);
@@ -63,31 +37,8 @@
         return $plugins;
     }
 
-    /**
-     * Checks status of current blog.
-     *
-     * Checks if the blog is deleted, inactive, archived, or spammed.
-     *
-     * Dies with a default message if the blog does not pass the check.
-     *
-     * To change the default message when a blog does not pass the check,
-     * use the wp-content/blog-deleted.php, blog-inactive.php and
-     * blog-suspended.php drop-ins.
-     *
-     * @return true|string Returns true on success, or drop-in file to include.
-     * @since 3.0.0
-     *
-     */
     function ms_site_check()
     {
-        /**
-         * Filters checking the status of the current blog.
-         *
-         * @param bool|null $check Whether to skip the blog status check. Default null.
-         *
-         * @since 3.0.0
-         *
-         */
         $check = apply_filters('ms_site_check', null);
         if(null !== $check)
         {
@@ -142,59 +93,15 @@
         return true;
     }
 
-    /**
-     * Retrieves the closest matching network for a domain and path.
-     *
-     * @param string   $domain   Domain to check.
-     * @param string   $path     Path to check.
-     * @param int|null $segments Path segments to use. Defaults to null, or the full path.
-     *
-     * @return WP_Network|false Network object if successful. False when no network is found.
-     * @since    3.9.0
-     *
-     * @internal In 4.4.0, converted to a wrapper for WP_Network::get_by_path()
-     *
-     */
     function get_network_by_path($domain, $path, $segments = null)
     {
         return WP_Network::get_by_path($domain, $path, $segments);
     }
 
-    /**
-     * Retrieves the closest matching site object by its domain and path.
-     *
-     * This will not necessarily return an exact match for a domain and path. Instead, it
-     * breaks the domain and path into pieces that are then used to match the closest
-     * possibility from a query.
-     *
-     * The intent of this method is to match a site object during bootstrap for a
-     * requested site address
-     *
-     * @param string   $domain   Domain to check.
-     * @param string   $path     Path to check.
-     * @param int|null $segments Path segments to use. Defaults to null, or the full path.
-     *
-     * @return WP_Site|false Site object if successful. False when no site is found.
-     * @since 3.9.0
-     * @since 4.7.0 Updated to always return a `WP_Site` object.
-     *
-     */
     function get_site_by_path($domain, $path, $segments = null)
     {
         $path_segments = array_filter(explode('/', trim($path, '/')));
 
-        /**
-         * Filters the number of path segments to consider when searching for a site.
-         *
-         * @param int|null $segments The number of path segments to consider. WordPress by default looks at
-         *                           one path segment following the network path. The function default of
-         *                           null only makes sense when you know the requested path should match a site.
-         * @param string   $domain   The requested domain.
-         * @param string   $path     The requested path, in full.
-         *
-         * @since 3.9.0
-         *
-         */
         $segments = apply_filters('site_by_path_segments_count', $segments, $domain, $path);
 
         if(null !== $segments && count($path_segments) > $segments)
@@ -212,27 +119,6 @@
 
         $paths[] = '/';
 
-        /**
-         * Determines a site by its domain and path.
-         *
-         * This allows one to short-circuit the default logic, perhaps by
-         * replacing it with a routine that is more optimal for your setup.
-         *
-         * Return null to avoid the short-circuit. Return false if no site
-         * can be found at the requested domain and path. Otherwise, return
-         * a site object.
-         *
-         * @param null|false|WP_Site $site     Site value to return by path. Default null
-         *                                     to continue retrieving the site.
-         * @param string             $domain   The requested domain.
-         * @param string             $path     The requested path, in full.
-         * @param int|null           $segments The suggested number of paths to consult.
-         *                                     Default null, meaning the entire path was to be consulted.
-         * @param string[]           $paths    The paths to search for, based on $path and $segments.
-         *
-         * @since 3.9.0
-         *
-         */
         $pre = apply_filters('pre_get_site_by_path', null, $domain, $path, $segments, $paths);
         if(null !== $pre)
         {
@@ -299,37 +185,6 @@
         return false;
     }
 
-    /**
-     * Identifies the network and site of a requested domain and path and populates the
-     * corresponding network and site global objects as part of the multisite bootstrap process.
-     *
-     * Prior to 4.6.0, this was a procedural block in `ms-settings.php`. It was wrapped into
-     * a function to facilitate unit tests. It should not be used outside of core.
-     *
-     * Usually, it's easier to query the site first, which then declares its network.
-     * In limited situations, we either can or must find the network first.
-     *
-     * If a network and site are found, a `true` response will be returned so that the
-     * request can continue.
-     *
-     * If neither a network or site is found, `false` or a URL string will be returned
-     * so that either an error can be shown or a redirect can occur.
-     *
-     * @param string      $domain       The requested domain.
-     * @param string      $path         The requested path.
-     * @param bool        $subdomain    Optional. Whether a subdomain (true) or subdirectory (false) configuration.
-     *                                  Default false.
-     *
-     * @return bool|string True if bootstrap successfully populated `$current_blog` and `$current_site`.
-     *                     False if bootstrap could not be properly completed.
-     *                     Redirect URL if parts exist, but the request as a whole can not be fulfilled.
-     * @global WP_Network $current_site The current network.
-     * @global WP_Site    $current_blog The current site.
-     *
-     * @since  4.6.0
-     * @access private
-     *
-     */
     function ms_load_current_site_and_network($domain, $path, $subdomain = false)
     {
         global $current_site, $current_blog;
@@ -399,18 +254,6 @@
 
             if(empty($current_site))
             {
-                /**
-                 * Fires when a network cannot be found based on the requested domain and path.
-                 *
-                 * At the time of this action, the only recourse is to redirect somewhere
-                 * and exit. If you want to declare a particular network, do so earlier.
-                 *
-                 * @param string $domain The domain used to search for a network.
-                 * @param string $path   The path used to search for a path.
-                 *
-                 * @since 4.4.0
-                 *
-                 */
                 do_action('ms_network_not_found', $domain, $path);
 
                 return false;
@@ -449,7 +292,6 @@
         // No network has been found, bail.
         if(empty($current_site))
         {
-            /** This action is documented in wp-includes/ms-settings.php */
             do_action('ms_network_not_found', $domain, $path);
 
             return false;
@@ -471,19 +313,6 @@
             $scheme = is_ssl() ? 'https' : 'http';
             $destination = "$scheme://{$current_site->domain}{$current_site->path}";
 
-            /**
-             * Fires when a network can be determined but a site cannot.
-             *
-             * At the time of this action, the only recourse is to redirect somewhere
-             * and exit. If you want to declare a particular site, do so earlier.
-             *
-             * @param WP_Network $current_site The network that had been determined.
-             * @param string     $domain       The domain used to search for a site.
-             * @param string     $path         The path used to search for a site.
-             *
-             * @since 3.9.0
-             *
-             */
             do_action('ms_site_not_found', $current_site, $domain, $path);
 
             if($subdomain && ! defined('NOBLOGREDIRECT'))
@@ -525,22 +354,6 @@
         return true;
     }
 
-    /**
-     * Displays a failure message.
-     *
-     * Used when a blog's tables do not exist. Checks for a missing $wpdb->site table as well.
-     *
-     * @access private
-     *
-     * @param string $domain The requested domain for the error to reference.
-     * @param string $path   The requested path for the error to reference.
-     *
-     * @global wpdb  $wpdb   WordPress database abstraction object.
-     *
-     * @since  3.0.0
-     * @since  4.4.0 The `$domain` and `$path` parameters were added.
-     *
-     */
     function ms_not_installed($domain, $path)
     {
         global $wpdb;
@@ -582,21 +395,6 @@
         wp_die($msg, $title, ['response' => 500]);
     }
 
-    /**
-     * This deprecated function formerly set the site_name property of the $current_site object.
-     *
-     * This function simply returns the object, as before.
-     * The bootstrap takes care of setting site_name.
-     *
-     * @access     private
-     *
-     * @param WP_Network $current_site
-     *
-     * @return WP_Network
-     * @since      3.0.0
-     * @deprecated 3.9.0 Use get_current_site() instead.
-     *
-     */
     function get_current_site_name($current_site)
     {
         _deprecated_function(__FUNCTION__, '3.9.0', 'get_current_site()');
@@ -604,20 +402,6 @@
         return $current_site;
     }
 
-    /**
-     * This deprecated function managed much of the site and network loading in multisite.
-     *
-     * The current bootstrap code is now responsible for parsing the site and network load as
-     * well as setting the global $current_site object.
-     *
-     * @access     private
-     * @return WP_Network
-     * @deprecated 3.9.0
-     *
-     * @global WP_Network $current_site
-     *
-     * @since      3.0.0
-     */
     function wpmu_current_site()
     {
         global $current_site;
@@ -626,19 +410,6 @@
         return $current_site;
     }
 
-    /**
-     * Retrieves an object containing information about the requested network.
-     *
-     * @param object|int $network The network's database row or ID.
-     *
-     * @return WP_Network|false Object containing network information if found, false if not.
-     * @see        get_network()
-     *
-     * @internal   In 4.6.0, converted to use get_network()
-     *
-     * @since      3.9.0
-     * @deprecated 4.7.0 Use get_network()
-     */
     function wp_get_network($network)
     {
         _deprecated_function(__FUNCTION__, '4.7.0', 'get_network()');

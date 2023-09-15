@@ -1,40 +1,11 @@
 <?php
-    /**
-     * List Table API: WP_Terms_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying terms in a list table.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_Terms_List_Table extends WP_List_Table
     {
         public $callback_args;
 
         private $level;
 
-        /**
-         * Constructor.
-         *
-         * @param array   $args An associative array of arguments.
-         *
-         * @see   WP_List_Table::__construct() for more information on default arguments.
-         *
-         * @global string $post_type
-         * @global string $taxonomy
-         * @global string $action
-         * @global object $tax
-         *
-         * @since 3.1.0
-         *
-         */
         public function __construct($args = [])
         {
             global $post_type, $taxonomy, $action, $tax;
@@ -68,16 +39,11 @@
             }
         }
 
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             return current_user_can(get_taxonomy($this->screen->taxonomy)->cap->manage_terms);
         }
 
-        /**
-         */
         public function prepare_items()
         {
             $taxonomy = $this->screen->taxonomy;
@@ -86,37 +52,12 @@
 
             if('post_tag' === $taxonomy)
             {
-                /**
-                 * Filters the number of terms displayed per page for the Tags list table.
-                 *
-                 * @param int $tags_per_page Number of tags to be displayed. Default 20.
-                 *
-                 * @since 2.8.0
-                 *
-                 */
                 $tags_per_page = apply_filters('edit_tags_per_page', $tags_per_page);
 
-                /**
-                 * Filters the number of terms displayed per page for the Tags list table.
-                 *
-                 * @param int $tags_per_page Number of tags to be displayed. Default 20.
-                 *
-                 * @deprecated 2.8.0 Use {@see 'edit_tags_per_page'} instead.
-                 *
-                 * @since      2.7.0
-                 */
                 $tags_per_page = apply_filters_deprecated('tagsperpage', [$tags_per_page], '2.8.0', 'edit_tags_per_page');
             }
             elseif('category' === $taxonomy)
             {
-                /**
-                 * Filters the number of terms displayed per page for the Categories list table.
-                 *
-                 * @param int $tags_per_page Number of categories to be displayed. Default 20.
-                 *
-                 * @since 2.8.0
-                 *
-                 */
                 $tags_per_page = apply_filters('edit_categories_per_page', $tags_per_page);
             }
 
@@ -163,9 +104,6 @@
                                        ]);
         }
 
-        /**
-         * @return string
-         */
         public function current_action()
         {
             if(isset($_REQUEST['action']) && isset($_REQUEST['delete_tags']) && 'delete' === $_REQUEST['action'])
@@ -176,9 +114,6 @@
             return parent::current_action();
         }
 
-        /**
-         * @return string[] Array of column titles keyed by their column name.
-         */
         public function get_columns()
         {
             $columns = [
@@ -200,8 +135,6 @@
             return $columns;
         }
 
-        /**
-         */
         public function display_rows_or_placeholder()
         {
             $taxonomy = $this->screen->taxonomy;
@@ -247,23 +180,11 @@
             }
         }
 
-        /**
-         */
         public function no_items()
         {
             echo get_taxonomy($this->screen->taxonomy)->labels->not_found;
         }
 
-        /**
-         * @param string $taxonomy
-         * @param array  $terms
-         * @param array  $children
-         * @param int    $start
-         * @param int    $per_page
-         * @param int    $count
-         * @param int    $parent_term
-         * @param int    $level
-         */
         private function _rows($taxonomy, $terms, &$children, $start, $per_page, &$count, $parent_term = 0, $level = 0)
         {
             $end = $start + $per_page;
@@ -330,12 +251,6 @@
             }
         }
 
-        /**
-         * @param WP_Term $tag Term object.
-         * @param int     $level
-         *
-         * @global string $taxonomy
-         */
         public function single_row($tag, $level = 0)
         {
             global $taxonomy;
@@ -358,13 +273,6 @@
             echo '</tr>';
         }
 
-        /**
-         * @param WP_Term $item Term object.
-         *
-         * @return string
-         * @since 5.9.0 Renamed `$tag` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         public function column_cb($item)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -378,31 +286,12 @@
             return '&nbsp;';
         }
 
-        /**
-         * @param WP_Term $tag Term object.
-         *
-         * @return string
-         */
         public function column_name($tag)
         {
             $taxonomy = $this->screen->taxonomy;
 
             $pad = str_repeat('&#8212; ', max(0, $this->level));
 
-            /**
-             * Filters display of the term name in the terms list table.
-             *
-             * The default output may include padding due to the term's
-             * current level in the term hierarchy.
-             *
-             * @param string  $pad_tag_name The term name, padded if not top-level.
-             * @param WP_Term $tag          Term object.
-             *
-             * @since 2.5.0
-             *
-             * @see   WP_Terms_List_Table::column_name()
-             *
-             */
             $name = apply_filters('term_name', $pad.' '.$tag->name, $tag);
 
             $qe_data = get_term($tag->term_id, $taxonomy, OBJECT, 'edit');
@@ -422,18 +311,12 @@
             $output .= '<div class="hidden" id="inline_'.$qe_data->term_id.'">';
             $output .= '<div class="name">'.$qe_data->name.'</div>';
 
-            /** This filter is documented in wp-admin/edit-tag-form.php */
             $output .= '<div class="slug">'.apply_filters('editable_slug', $qe_data->slug, $qe_data).'</div>';
             $output .= '<div class="parent">'.$qe_data->parent.'</div></div>';
 
             return $output;
         }
 
-        /**
-         * @param WP_Term $tag Term object.
-         *
-         * @return string
-         */
         public function column_description($tag)
         {
             if($tag->description)
@@ -446,22 +329,11 @@
             }
         }
 
-        /**
-         * @param WP_Term $tag Term object.
-         *
-         * @return string
-         */
         public function column_slug($tag)
         {
-            /** This filter is documented in wp-admin/edit-tag-form.php */
             return apply_filters('editable_slug', $tag->slug, $tag);
         }
 
-        /**
-         * @param WP_Term $tag Term object.
-         *
-         * @return string
-         */
         public function column_posts($tag)
         {
             $count = number_format_i18n($tag->count);
@@ -499,11 +371,6 @@
             return "<a href='".esc_url(add_query_arg($args, 'edit.php'))."'>$count</a>";
         }
 
-        /**
-         * @param WP_Term $tag Term object.
-         *
-         * @return string
-         */
         public function column_links($tag)
         {
             $count = number_format_i18n($tag->count);
@@ -516,45 +383,14 @@
             return $count;
         }
 
-        /**
-         * @param WP_Term $item        Term object.
-         * @param string  $column_name Name of the column.
-         *
-         * @return string
-         * @since 5.9.0 Renamed `$tag` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         public function column_default($item, $column_name)
         {
             // Restores the more descriptive, specific name for use within this method.
             $tag = $item;
 
-            /**
-             * Filters the displayed columns in the terms list table.
-             *
-             * The dynamic portion of the hook name, `$this->screen->taxonomy`,
-             * refers to the slug of the current taxonomy.
-             *
-             * Possible hook names include:
-             *
-             *  - `manage_category_custom_column`
-             *  - `manage_post_tag_custom_column`
-             *
-             * @param string $string      Custom column output. Default empty.
-             * @param string $column_name Name of the column.
-             * @param int    $term_id     Term ID.
-             *
-             * @since 2.8.0
-             *
-             */
             return apply_filters("manage_{$this->screen->taxonomy}_custom_column", '', $column_name, $tag->term_id);
         }
 
-        /**
-         * Outputs the hidden row displayed when inline editing
-         *
-         * @since 3.1.0
-         */
         public function inline_edit()
         {
             $tax = get_taxonomy($this->screen->taxonomy);
@@ -612,7 +448,6 @@
                                             continue;
                                         }
 
-                                        /** This action is documented in wp-admin/includes/class-wp-posts-list-table.php */
                                         do_action('quick_edit_custom_box', $column_name, 'edit-tags', $this->screen->taxonomy);
                                     }
                                 ?>
@@ -650,9 +485,6 @@
             <?php
         }
 
-        /**
-         * @return array
-         */
         protected function get_bulk_actions()
         {
             $actions = [];
@@ -665,9 +497,6 @@
             return $actions;
         }
 
-        /**
-         * @return array
-         */
         protected function get_sortable_columns()
         {
             $taxonomy = $this->screen->taxonomy;
@@ -690,31 +519,11 @@
             ];
         }
 
-        /**
-         * Gets the name of the default primary column.
-         *
-         * @return string Name of the default primary column, in this case, 'name'.
-         * @since 4.3.0
-         *
-         */
         protected function get_default_primary_column_name()
         {
             return 'name';
         }
 
-        /**
-         * Generates and displays row action links.
-         *
-         * @param WP_Term $item        Tag being acted upon.
-         * @param string  $column_name Current column name.
-         * @param string  $primary     Primary column name.
-         *
-         * @return string Row actions output for terms, or an empty string
-         *                if the current column is not the primary column.
-         * @since 4.3.0
-         * @since 5.9.0 Renamed `$tag` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         protected function handle_row_actions($item, $column_name, $primary)
         {
             if($primary !== $column_name)
@@ -748,37 +557,8 @@
                 $actions['view'] = sprintf('<a href="%s" aria-label="%s">%s</a>', get_term_link($tag), /* translators: %s: Taxonomy term name. */ esc_attr(sprintf(__('View &#8220;%s&#8221; archive'), $tag->name)), __('View'));
             }
 
-            /**
-             * Filters the action links displayed for each term in the Tags list table.
-             *
-             * @param string[] $actions An array of action links to be displayed. Default
-             *                          'Edit', 'Quick Edit', 'Delete', and 'View'.
-             * @param WP_Term  $tag     Term object.
-             *
-             * @since 5.4.2 Restored (un-deprecated).
-             *
-             * @since 2.8.0
-             * @since 3.0.0 Deprecated in favor of {@see '{$taxonomy}_row_actions'} filter.
-             */
             $actions = apply_filters('tag_row_actions', $actions, $tag);
 
-            /**
-             * Filters the action links displayed for each term in the terms list table.
-             *
-             * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `category_row_actions`
-             *  - `post_tag_row_actions`
-             *
-             * @param string[] $actions An array of action links to be displayed. Default
-             *                          'Edit', 'Quick Edit', 'Delete', and 'View'.
-             * @param WP_Term  $tag     Term object.
-             *
-             * @since 3.0.0
-             *
-             */
             $actions = apply_filters("{$taxonomy}_row_actions", $actions, $tag);
 
             return $this->row_actions($actions);

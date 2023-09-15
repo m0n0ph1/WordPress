@@ -1,28 +1,4 @@
 <?php
-    /**
-     * Twenty Twelve functions and definitions
-     *
-     * Sets up the theme and provides some helper functions, which are used
-     * in the theme as custom template tags. Others are attached to action and
-     * filter hooks in WordPress to change core functionality.
-     *
-     * When using a child theme you can override certain functions (those wrapped
-     * in a function_exists() call) by defining them first in your child theme's
-     * functions.php file. The child theme's functions.php file is included before
-     * the parent theme's file, so the child theme functions would be used.
-     *
-     * @link       https://developer.wordpress.org/themes/basics/theme-functions/
-     * @link       https://developer.wordpress.org/themes/advanced-topics/child-themes/
-     *
-     * Functions that are not pluggable (not wrapped in function_exists()) are instead attached
-     * to a filter or action hook.
-     *
-     * For more information on hooks, actions, and filters, @link https://developer.wordpress.org/plugins/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twelve
-     * @since      Twenty Twelve 1.0
-     */
 
 // Set up the content width value based on the theme's design and stylesheet.
     if(! isset($content_width))
@@ -30,21 +6,6 @@
         $content_width = 625;
     }
 
-    /**
-     * Twenty Twelve setup.
-     *
-     * Sets up theme defaults and registers the various WordPress features that
-     * Twenty Twelve supports.
-     *
-     * @uses  load_theme_textdomain() For translation/localization support.
-     * @uses  add_editor_style() To add a Visual Editor stylesheet.
-     * @uses  add_theme_support() To add support for post thumbnails, automatic feed links,
-     *  custom background, and post formats.
-     * @uses  register_nav_menu() To add support for navigation menus.
-     * @uses  set_post_thumbnail_size() To set a custom post thumbnail size.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_setup()
     {
         /*
@@ -132,28 +93,12 @@
 
     add_action('after_setup_theme', 'twentytwelve_setup');
 
-    /**
-     * Add support for a custom header image.
-     */
     require get_template_directory().'/inc/custom-header.php';
 
-    /**
-     * Add block patterns.
-     */
     require get_template_directory().'/inc/block-patterns.php';
 
     if(! function_exists('twentytwelve_get_font_url')) :
-        /**
-         * Return the font stylesheet URL if available.
-         *
-         * The use of Open Sans by default is localized. For languages that use
-         * characters not supported by the font, the font can be disabled.
-         *
-         * @return string Font stylesheet or empty string if disabled.
-         * @since Twenty Twelve 3.9 Replaced Google URL with self-hosted font.
-         *
-         * @since Twenty Twelve 1.2
-         */
+
         function twentytwelve_get_font_url()
         {
             $font_url = '';
@@ -171,11 +116,6 @@
         }
     endif;
 
-    /**
-     * Enqueue scripts and styles for front end.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_scripts_styles()
     {
         global $wp_styles;
@@ -215,11 +155,6 @@
 
     add_action('wp_enqueue_scripts', 'twentytwelve_scripts_styles');
 
-    /**
-     * Enqueue styles for the block-based editor.
-     *
-     * @since Twenty Twelve 2.6
-     */
     function twentytwelve_block_editor_styles()
     {
         // Block styles.
@@ -231,17 +166,6 @@
 
     add_action('enqueue_block_editor_assets', 'twentytwelve_block_editor_styles');
 
-    /**
-     * Add preconnect for Google Fonts.
-     *
-     * @param array  $urls          URLs to print for resource hints.
-     * @param string $relation_type The relation type the URLs are printed.
-     *
-     * @return array URLs to print for resource hints.
-     * @deprecated Twenty Twelve 3.9 Disabled filter because, by default, fonts are self-hosted.
-     *
-     * @since      Twenty Twelve 2.2
-     */
     function twentytwelve_resource_hints($urls, $relation_type)
     {
         if(wp_style_is('twentytwelve-fonts', 'queue') && 'preconnect' === $relation_type)
@@ -264,19 +188,6 @@
 
 // add_filter( 'wp_resource_hints', 'twentytwelve_resource_hints', 10, 2 );
 
-    /**
-     * Filter TinyMCE CSS path to include hosted fonts.
-     *
-     * Adds additional stylesheets to the TinyMCE editor if needed.
-     *
-     * @param string $mce_css CSS path to load in TinyMCE.
-     *
-     * @return string Filtered CSS path.
-     * @uses  twentytwelve_get_font_url() To get the font stylesheet URL.
-     *
-     * @since Twenty Twelve 1.2
-     *
-     */
     function twentytwelve_mce_css($mce_css)
     {
         $font_url = twentytwelve_get_font_url();
@@ -298,19 +209,6 @@
 
     add_filter('mce_css', 'twentytwelve_mce_css');
 
-    /**
-     * Filter the page title.
-     *
-     * Creates a nicely formatted and more specific title element text
-     * for output in head of document, based on current view.
-     *
-     * @param string $title Default title text for current view.
-     * @param string $sep   Optional separator.
-     *
-     * @return string Filtered title.
-     * @since Twenty Twelve 1.0
-     *
-     */
     function twentytwelve_wp_title($title, $sep)
     {
         global $paged, $page;
@@ -342,13 +240,6 @@
 
     add_filter('wp_title', 'twentytwelve_wp_title', 10, 2);
 
-    /**
-     * Filter the page menu arguments.
-     *
-     * Makes our wp_nav_menu() fallback -- wp_page_menu() -- show a home link.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_page_menu_args($args)
     {
         if(! isset($args['show_home']))
@@ -361,13 +252,6 @@
 
     add_filter('wp_page_menu_args', 'twentytwelve_page_menu_args');
 
-    /**
-     * Register sidebars.
-     *
-     * Registers our main widget area and the front page widget areas.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_widgets_init()
     {
         register_sidebar([
@@ -404,13 +288,7 @@
     add_action('widgets_init', 'twentytwelve_widgets_init');
 
     if(! function_exists('wp_get_list_item_separator')) :
-        /**
-         * Retrieves the list item separator based on the locale.
-         *
-         * Added for backward compatibility to support pre-6.0.0 WordPress versions.
-         *
-         * @since 6.0.0
-         */
+
         function wp_get_list_item_separator()
         {
             /* translators: Used between list items, there is a space after the comma. */
@@ -419,11 +297,7 @@
     endif;
 
     if(! function_exists('twentytwelve_content_nav')) :
-        /**
-         * Displays navigation to next/previous pages when applicable.
-         *
-         * @since Twenty Twelve 1.0
-         */
+
         function twentytwelve_content_nav($html_id)
         {
             global $wp_query;
@@ -440,18 +314,7 @@
     endif;
 
     if(! function_exists('twentytwelve_comment')) :
-        /**
-         * Template for comments and pingbacks.
-         *
-         * To override this walker in a child theme without modifying the comments template
-         * simply create your own twentytwelve_comment(), and that function will be used instead.
-         *
-         * Used as a callback by wp_list_comments() for displaying the comments.
-         *
-         * @since Twenty Twelve 1.0
-         *
-         * @global WP_Post $post Global post object.
-         */
+
         function twentytwelve_comment($comment, $args, $depth)
         {
             $GLOBALS['comment'] = $comment;
@@ -522,15 +385,7 @@
     endif;
 
     if(! function_exists('twentytwelve_entry_meta')) :
-        /**
-         * Set up post entry meta.
-         *
-         * Prints HTML with meta information for current post: categories, tags, permalink, author, and date.
-         *
-         * Create your own twentytwelve_entry_meta() to override in a child theme.
-         *
-         * @since Twenty Twelve 1.0
-         */
+
         function twentytwelve_entry_meta()
         {
             $categories_list = get_the_category_list(wp_get_list_item_separator());
@@ -561,24 +416,6 @@
         }
     endif;
 
-    /**
-     * Extend the default WordPress body classes.
-     *
-     * Extends the default WordPress body class to denote:
-     * 1. Using a full-width layout, when no active widgets in the sidebar
-     *    or full-width template.
-     * 2. Front Page template: thumbnail in use and number of sidebars for
-     *    widget areas.
-     * 3. White or empty background color to change the layout and spacing.
-     * 4. Custom fonts enabled.
-     * 5. Single or multiple authors.
-     *
-     * @param array $classes Existing class values.
-     *
-     * @return array Filtered class values.
-     * @since Twenty Twelve 1.0
-     *
-     */
     function twentytwelve_body_class($classes)
     {
         $background_color = get_background_color();
@@ -630,14 +467,6 @@
 
     add_filter('body_class', 'twentytwelve_body_class');
 
-    /**
-     * Adjust content width in certain contexts.
-     *
-     * Adjusts content_width value for full-width and single image attachment
-     * templates, and when there are no active widgets in the sidebar.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_content_width()
     {
         if(is_page_template('page-templates/full-width.php') || is_attachment() || ! is_active_sidebar('sidebar-1'))
@@ -649,16 +478,6 @@
 
     add_action('template_redirect', 'twentytwelve_content_width');
 
-    /**
-     * Register postMessage support.
-     *
-     * Add postMessage support for site title and description for the Customizer.
-     *
-     * @param WP_Customize_Manager $wp_customize Customizer object.
-     *
-     * @since Twenty Twelve 1.0
-     *
-     */
     function twentytwelve_customize_register($wp_customize)
     {
         $wp_customize->get_setting('blogname')->transport = 'postMessage';
@@ -682,41 +501,16 @@
 
     add_action('customize_register', 'twentytwelve_customize_register');
 
-    /**
-     * Render the site title for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentytwelve_customize_register()
-     *
-     * @since Twenty Twelve 2.0
-     *
-     */
     function twentytwelve_customize_partial_blogname()
     {
         bloginfo('name');
     }
 
-    /**
-     * Render the site tagline for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentytwelve_customize_register()
-     *
-     * @since Twenty Twelve 2.0
-     *
-     */
     function twentytwelve_customize_partial_blogdescription()
     {
         bloginfo('description');
     }
 
-    /**
-     * Enqueue JavaScript postMessage handlers for the Customizer.
-     *
-     * Binds JS handlers to make the Customizer preview reload changes asynchronously.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_customize_preview_js()
     {
         wp_enqueue_script('twentytwelve-customizer', get_template_directory_uri().'/js/theme-customizer.js', ['customize-preview'], '20200516', ['in_footer' => true]);
@@ -724,16 +518,6 @@
 
     add_action('customize_preview_init', 'twentytwelve_customize_preview_js');
 
-    /**
-     * Modifies tag cloud widget arguments to display all tags in the same font size
-     * and use list format for better accessibility.
-     *
-     * @param array $args Arguments for tag cloud widget.
-     *
-     * @return array The filtered arguments for tag cloud widget.
-     * @since Twenty Twelve 2.4
-     *
-     */
     function twentytwelve_widget_tag_cloud_args($args)
     {
         $args['largest'] = 22;
@@ -747,20 +531,9 @@
     add_filter('widget_tag_cloud_args', 'twentytwelve_widget_tag_cloud_args');
 
     if(! function_exists('wp_body_open')) :
-        /**
-         * Fire the wp_body_open action.
-         *
-         * Added for backward compatibility to support pre-5.2.0 WordPress versions.
-         *
-         * @since Twenty Twelve 3.0
-         */
+
         function wp_body_open()
         {
-            /**
-             * Triggered after the opening <body> tag.
-             *
-             * @since Twenty Twelve 3.0
-             */
             do_action('wp_body_open');
         }
     endif;

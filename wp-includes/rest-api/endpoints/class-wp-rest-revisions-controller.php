@@ -1,53 +1,13 @@
 <?php
-    /**
-     * REST API: WP_REST_Revisions_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      4.7.0
-     */
 
-    /**
-     * Core class used to access revisions via the REST API.
-     *
-     * @since 4.7.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Revisions_Controller extends WP_REST_Controller
     {
-        /**
-         * Parent post type.
-         *
-         * @since 4.7.0
-         * @var string
-         */
         private $parent_post_type;
 
-        /**
-         * Parent controller.
-         *
-         * @since 4.7.0
-         * @var WP_REST_Controller
-         */
         private $parent_controller;
 
-        /**
-         * The base of the parent controller's route.
-         *
-         * @since 4.7.0
-         * @var string
-         */
         private $parent_base;
 
-        /**
-         * Constructor.
-         *
-         * @param string $parent_post_type Post type of the parent.
-         *
-         * @since 4.7.0
-         *
-         */
         public function __construct($parent_post_type)
         {
             $this->parent_post_type = $parent_post_type;
@@ -65,13 +25,6 @@
             $this->namespace = ! empty($post_type_object->rest_namespace) ? $post_type_object->rest_namespace : 'wp/v2';
         }
 
-        /**
-         * Registers the routes for revisions based on post types supporting revisions.
-         *
-         * @since 4.7.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->parent_base.'/(?P<parent>[\d]+)/'.$this->rest_base, [
@@ -125,13 +78,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for collections.
-         *
-         * @return array Collection parameters.
-         * @since 4.7.0
-         *
-         */
         public function get_collection_params()
         {
             $query_params = parent::get_collection_params();
@@ -188,15 +134,6 @@
             return $query_params;
         }
 
-        /**
-         * Gets a collection of revisions.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_items($request)
         {
             $parent = $this->get_parent($request['parent']);
@@ -255,7 +192,6 @@
                     $args['orderby'] = 'date ID';
                 }
 
-                /** This filter is documented in wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php */
                 $args = apply_filters('rest_revision_query', $args, $request);
                 $query_args = $this->prepare_items_query($args, $request);
 
@@ -345,15 +281,6 @@
             return $response;
         }
 
-        /**
-         * Get the parent post, if the ID is valid.
-         *
-         * @param int $parent_post_id Supplied ID.
-         *
-         * @return WP_Post|WP_Error Post object if ID is valid, WP_Error otherwise.
-         * @since 4.7.2
-         *
-         */
         protected function get_parent($parent_post_id)
         {
             $error = new WP_Error('rest_post_invalid_parent', __('Invalid post parent ID.'), ['status' => 404]);
@@ -373,24 +300,12 @@
             return $parent_post;
         }
 
-        /**
-         * Determines the allowed query_vars for a get_items() response and prepares
-         * them for WP_Query.
-         *
-         * @param array           $prepared_args Optional. Prepared WP_Query arguments. Default empty array.
-         * @param WP_REST_Request $request       Optional. Full details about the request.
-         *
-         * @return array Items query arguments.
-         * @since 5.0.0
-         *
-         */
         protected function prepare_items_query($prepared_args = [], $request = null)
         {
             $query_args = [];
 
             foreach($prepared_args as $key => $value)
             {
-                /** This filter is documented in wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php */
                 $query_args[$key] = apply_filters("rest_query_var-{$key}", $value); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
             }
 
@@ -413,17 +328,6 @@
             return $query_args;
         }
 
-        /**
-         * Prepares the revision for the REST response.
-         *
-         * @param WP_Post         $item    Post revision object.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response Response object.
-         * @since 5.9.0 Renamed `$post` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.7.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -479,7 +383,7 @@
             if(in_array('guid', $fields, true))
             {
                 $data['guid'] = [
-                    /** This filter is documented in wp-includes/post-template.php */
+
                     'rendered' => apply_filters('get_the_guid', $post->guid, $post->ID),
                     'raw' => $post->guid,
                 ];
@@ -497,7 +401,7 @@
             {
                 $data['content'] = [
                     'raw' => $post->post_content,
-                    /** This filter is documented in wp-includes/post-template.php */
+
                     'rendered' => apply_filters('the_content', $post->post_content),
                 ];
             }
@@ -520,32 +424,9 @@
                 $response->add_link('parent', rest_url(rest_get_route_for_post($data['parent'])));
             }
 
-            /**
-             * Filters a revision returned from the REST API.
-             *
-             * Allows modification of the revision right before it is returned.
-             *
-             * @param WP_REST_Response $response The response object.
-             * @param WP_Post          $post     The original revision object.
-             * @param WP_REST_Request  $request  Request used to generate the response.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters('rest_prepare_revision', $response, $post, $request);
         }
 
-        /**
-         * Checks the post_date_gmt or modified_gmt and prepare any post or
-         * modified date for single post output.
-         *
-         * @param string      $date_gmt GMT publication time.
-         * @param string|null $date     Optional. Local publication time. Default null.
-         *
-         * @return string|null ISO8601/RFC3339 formatted datetime, otherwise null.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_date_response($date_gmt, $date = null)
         {
             if('0000-00-00 00:00:00' === $date_gmt)
@@ -561,19 +442,8 @@
             return mysql_to_rfc3339($date_gmt);
         }
 
-        /**
-         * Checks the post excerpt and prepare it for single post output.
-         *
-         * @param string  $excerpt The post excerpt.
-         * @param WP_Post $post    Post revision object.
-         *
-         * @return string Prepared excerpt or empty string.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_excerpt_response($excerpt, $post)
         {
-            /** This filter is documented in wp-includes/post-template.php */
             $excerpt = apply_filters('the_excerpt', $excerpt, $post);
 
             if(empty($excerpt))
@@ -584,29 +454,11 @@
             return $excerpt;
         }
 
-        /**
-         * Checks if a given request has access to get a specific revision.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             return $this->get_items_permissions_check($request);
         }
 
-        /**
-         * Checks if a given request has access to get revisions.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             $parent = $this->get_parent($request['parent']);
@@ -623,15 +475,6 @@
             return true;
         }
 
-        /**
-         * Retrieves one revision from the collection.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_item($request)
         {
             $parent = $this->get_parent($request['parent']);
@@ -651,15 +494,6 @@
             return rest_ensure_response($response);
         }
 
-        /**
-         * Get the revision, if the ID is valid.
-         *
-         * @param int $id Supplied ID.
-         *
-         * @return WP_Post|WP_Error Revision post object if ID is valid, WP_Error otherwise.
-         * @since 4.7.2
-         *
-         */
         protected function get_revision($id)
         {
             $error = new WP_Error('rest_post_invalid_id', __('Invalid revision ID.'), ['status' => 404]);
@@ -678,15 +512,6 @@
             return $revision;
         }
 
-        /**
-         * Checks if a given request has access to delete a revision.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to delete the item, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function delete_item_permissions_check($request)
         {
             $parent = $this->get_parent($request['parent']);
@@ -720,15 +545,6 @@
             return true;
         }
 
-        /**
-         * Deletes a single revision.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function delete_item($request)
         {
             $revision = $this->get_revision($request['id']);
@@ -749,17 +565,6 @@
 
             $result = wp_delete_post($request['id'], true);
 
-            /**
-             * Fires after a revision is deleted via the REST API.
-             *
-             * @param WP_Post|false|null $result  The revision object (if it was deleted or moved to the Trash successfully)
-             *                                    or false or null (failure). If the revision was moved to the Trash, $result represents
-             *                                    its new state; if it was deleted, $result represents its state before deletion.
-             * @param WP_REST_Request    $request The request sent to the API.
-             *
-             * @since 4.7.0
-             *
-             */
             do_action('rest_delete_revision', $result, $request);
 
             if(! $result)
@@ -776,13 +581,6 @@
             return $response;
         }
 
-        /**
-         * Retrieves the revision's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 4.7.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)

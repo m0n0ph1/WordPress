@@ -1,19 +1,11 @@
 <?php
-    /**
-     * Install plugin administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
+
 // TODO: Route this page via a specific iframe handler instead of the do_action below.
     if(! defined('IFRAME_REQUEST') && isset($_GET['tab']) && ('plugin-information' === $_GET['tab']))
     {
         define('IFRAME_REQUEST', true);
     }
 
-    /**
-     * WordPress Administration Bootstrap.
-     */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('install_plugins'))
@@ -67,25 +59,6 @@
 
     wp_enqueue_script('updates');
 
-    /**
-     * Fires before each tab on the Install Plugins screen is loaded.
-     *
-     * The dynamic portion of the hook name, `$tab`, allows for targeting
-     * individual tabs.
-     *
-     * Possible hook names include:
-     *
-     *  - `install_plugins_pre_beta`
-     *  - `install_plugins_pre_favorites`
-     *  - `install_plugins_pre_featured`
-     *  - `install_plugins_pre_plugin-information`
-     *  - `install_plugins_pre_popular`
-     *  - `install_plugins_pre_recommended`
-     *  - `install_plugins_pre_search`
-     *  - `install_plugins_pre_upload`
-     *
-     * @since 2.7.0
-     */
     do_action("install_plugins_pre_{$tab}");
 
     /*
@@ -94,7 +67,6 @@
      */
     if('upload' !== $tab)
     {
-        /** This action is documented in wp-admin/plugin-install.php */
         do_action('install_plugins_pre_upload');
     }
 
@@ -118,9 +90,6 @@
                                                         'heading_list' => __('Plugins list'),
                                                     ]);
 
-    /**
-     * WordPress Administration Template Header.
-     */
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
     <div class="wrap <?php echo esc_attr("plugin-install-tab-$tab"); ?>">
@@ -149,7 +118,7 @@
                 ?>
                 <div class="upload-plugin-wrap">
                     <?php
-                        /** This action is documented in wp-admin/plugin-install.php */
+
                         do_action('install_plugins_upload');
                     ?>
                 </div>
@@ -157,28 +126,6 @@
                 $wp_list_table->views();
             }
 
-            /**
-             * Fires after the plugins list table in each tab of the Install Plugins screen.
-             *
-             * The dynamic portion of the hook name, `$tab`, allows for targeting
-             * individual tabs.
-             *
-             * Possible hook names include:
-             *
-             *  - `install_plugins_beta`
-             *  - `install_plugins_favorites`
-             *  - `install_plugins_featured`
-             *  - `install_plugins_plugin-information`
-             *  - `install_plugins_popular`
-             *  - `install_plugins_recommended`
-             *  - `install_plugins_search`
-             *  - `install_plugins_upload`
-             *
-             * @param int $paged The current page number of the plugins list table.
-             *
-             * @since 2.7.0
-             *
-             */
             do_action("install_plugins_{$tab}", $paged);
         ?>
 
@@ -189,7 +136,4 @@
     wp_print_request_filesystem_credentials_modal();
     wp_print_admin_notice_templates();
 
-    /**
-     * WordPress Administration Template Footer.
-     */
     require_once ABSPATH.'wp-admin/admin-footer.php';

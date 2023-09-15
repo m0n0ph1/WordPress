@@ -1,16 +1,5 @@
 <?php
-    /**
-     * Base WordPress Image Editor
-     *
-     * @package    WordPress
-     * @subpackage Image_Editor
-     */
 
-    /**
-     * Base image editor class from which implementations extend
-     *
-     * @since 3.5.0
-     */
     #[AllowDynamicProperties]
     abstract class WP_Image_Editor
     {
@@ -29,146 +18,28 @@
         // Deprecated since 5.8.1. See get_default_quality() below.
         protected $default_quality = 82;
 
-        /**
-         * Each instance handles a single file.
-         *
-         * @param string $file Path to the file to load.
-         */
         public function __construct($file)
         {
             $this->file = $file;
         }
 
-        /**
-         * Checks to see if current environment supports the editor chosen.
-         * Must be overridden in a subclass.
-         *
-         * @param array $args
-         *
-         * @return bool
-         * @since 3.5.0
-         *
-         * @abstract
-         *
-         */
         public static function test($args = [])
         {
             return false;
         }
 
-        /**
-         * Loads image from $this->file into editor.
-         *
-         * @return true|WP_Error True if loaded; WP_Error on failure.
-         * @since 3.5.0
-         * @abstract
-         *
-         */
         abstract public function load();
 
-        /**
-         * Saves current image to file.
-         *
-         * @param string $destfilename Optional. Destination filename. Default null.
-         * @param string $mime_type    Optional. The mime-type. Default null.
-         *
-         * @return array|WP_Error {
-         *     Array on success or WP_Error if the file failed to save.
-         *
-         * @type string  $path         Path to the image file.
-         * @type string  $file         Name of the image file.
-         * @type int     $width        Image width.
-         * @type int     $height       Image height.
-         * @type string  $mime         -type The mime type of the image.
-         * @type int     $filesize     File size of the image.
-         *                             }
-         * @since 6.0.0 The `$filesize` value was added to the returned array.
-         * @abstract
-         *
-         * @since 3.5.0
-         */
         abstract public function save($destfilename = null, $mime_type = null);
 
-        /**
-         * Resizes current image.
-         *
-         * At minimum, either a height or width must be provided.
-         * If one of the two is set to null, the resize will
-         * maintain aspect ratio according to the provided dimension.
-         *
-         * @param int|null   $max_w Image width.
-         * @param int|null   $max_h Image height.
-         * @param bool|array $crop  {
-         *                          Optional. Image cropping behavior. If false, the image will be scaled (default).
-         *                          If true, image will be cropped to the specified dimensions using center positions.
-         *                          If an array, the image will be cropped using the array to specify the crop location:
-         *
-         * @type string $0 The x crop position. Accepts 'left' 'center', or 'right'.
-         * @type string $1 The y crop position. Accepts 'top', 'center', or 'bottom'.
-         *                          }
-         * @return true|WP_Error
-         * @since 3.5.0
-         * @abstract
-         *
-         */
         abstract public function resize($max_w, $max_h, $crop = false);
 
-        /**
-         * Resize multiple images from a single source.
-         *
-         * @param array     $sizes  {
-         *                          An array of image size arrays. Default sizes are 'small', 'medium', 'large'.
-         *
-         * @type array ...$0 {
-         * @type int        $width  Image width.
-         * @type int        $height Image height.
-         * @type bool|array $crop   Optional. Whether to crop the image. Default false.
-         *                          }
-         *                          }
-         * @return array An array of resized images metadata by size.
-         * @since 3.5.0
-         * @abstract
-         *
-         */
         abstract public function multi_resize($sizes);
 
-        /**
-         * Crops Image.
-         *
-         * @param int  $src_x   The start x position to crop from.
-         * @param int  $src_y   The start y position to crop from.
-         * @param int  $src_w   The width to crop.
-         * @param int  $src_h   The height to crop.
-         * @param int  $dst_w   Optional. The destination width.
-         * @param int  $dst_h   Optional. The destination height.
-         * @param bool $src_abs Optional. If the source crop points are absolute.
-         *
-         * @return true|WP_Error
-         * @since 3.5.0
-         * @abstract
-         *
-         */
         abstract public function crop($src_x, $src_y, $src_w, $src_h, $dst_w = null, $dst_h = null, $src_abs = false);
 
-        /**
-         * Streams current image to browser.
-         *
-         * @param string $mime_type The mime type of the image.
-         *
-         * @return true|WP_Error True on success, WP_Error object on failure.
-         * @since 3.5.0
-         * @abstract
-         *
-         */
         abstract public function stream($mime_type = null);
 
-        /**
-         * Gets the Image Compression quality on a 1-100% scale.
-         *
-         * @return int Compression Quality. Range: [1,100]
-         * @since 4.0.0
-         *
-         */
         public function get_quality()
         {
             if(! $this->quality)
@@ -179,15 +50,6 @@
             return $this->quality;
         }
 
-        /**
-         * Sets Image Compression quality on a 1-100% scale.
-         *
-         * @param int $quality Compression Quality. Range: [1,100]
-         *
-         * @return true|WP_Error True if set successfully; WP_Error on failure.
-         * @since 3.5.0
-         *
-         */
         public function set_quality($quality = null)
         {
             // Use the output mime type if present. If not, fall back to the input/initial mime type.
@@ -197,41 +59,10 @@
 
             if(null === $quality)
             {
-                /**
-                 * Filters the default image compression quality setting.
-                 *
-                 * Applies only during initial editor instantiation, or when set_quality() is run
-                 * manually without the `$quality` argument.
-                 *
-                 * The WP_Image_Editor::set_quality() method has priority over the filter.
-                 *
-                 * @param int    $quality   Quality level between 1 (low) and 100 (high).
-                 * @param string $mime_type Image mime type.
-                 *
-                 * @since 3.5.0
-                 *
-                 */
                 $quality = apply_filters('wp_editor_set_quality', $default_quality, $mime_type);
 
                 if('image/jpeg' === $mime_type)
                 {
-                    /**
-                     * Filters the JPEG compression quality for backward-compatibility.
-                     *
-                     * Applies only during initial editor instantiation, or when set_quality() is run
-                     * manually without the `$quality` argument.
-                     *
-                     * The WP_Image_Editor::set_quality() method has priority over the filter.
-                     *
-                     * The filter is evaluated under two contexts: 'image_resize', and 'edit_image',
-                     * (when a JPEG image is saved to file).
-                     *
-                     * @param int    $quality Quality level between 0 (low) and 100 (high) of the JPEG.
-                     * @param string $context Context of the filter.
-                     *
-                     * @since 2.5.0
-                     *
-                     */
                     $quality = apply_filters('jpeg_quality', $quality, 'image_resize');
                 }
 
@@ -259,17 +90,6 @@
             }
         }
 
-        /**
-         * Builds an output filename based on current file, and adding proper suffix
-         *
-         * @param string $suffix
-         * @param string $dest_path
-         * @param string $extension
-         *
-         * @return string filename
-         * @since 3.5.0
-         *
-         */
         public function generate_filename($suffix = null, $dest_path = null, $extension = null)
         {
             // $suffix will be appended to the destination filename, just before the extension.
@@ -303,13 +123,6 @@
             return trailingslashit($dir)."{$name}-{$suffix}.{$new_ext}";
         }
 
-        /**
-         * Builds and returns proper suffix for file based on height and width.
-         *
-         * @return string|false suffix
-         * @since 3.5.0
-         *
-         */
         public function get_suffix()
         {
             if(! $this->get_size())
@@ -320,31 +133,11 @@
             return "{$this->size['width']}x{$this->size['height']}";
         }
 
-        /**
-         * Gets dimensions of image.
-         *
-         * @return int[] {
-         *     Dimensions of the image.
-         *
-         * @type int $width  The image width.
-         * @type int $height The image height.
-         *                   }
-         * @since 3.5.0
-         *
-         */
         public function get_size()
         {
             return $this->size;
         }
 
-        /**
-         * Check if a JPEG image has EXIF Orientation tag and rotate it if needed.
-         *
-         * @return bool|WP_Error True if the image was rotated. False if not rotated (no EXIF data or the image doesn't
-         *     need to be rotated). WP_Error if error while rotating.
-         * @since 5.3.0
-         *
-         */
         public function maybe_exif_rotate()
         {
             $orientation = null;
@@ -359,15 +152,6 @@
                 }
             }
 
-            /**
-             * Filters the `$orientation` value to correct it before rotating or to prevent rotating the image.
-             *
-             * @param int    $orientation EXIF Orientation value as retrieved from the image file.
-             * @param string $file        Path to the image file.
-             *
-             * @since 5.3.0
-             *
-             */
             $orientation = apply_filters('wp_image_maybe_exif_rotate', $orientation, $this->file);
 
             if(! $orientation || 1 === $orientation)
@@ -424,41 +208,10 @@
             return $result;
         }
 
-        /**
-         * Flips current image.
-         *
-         * @param bool $horz Flip along Horizontal Axis
-         * @param bool $vert Flip along Vertical Axis
-         *
-         * @return true|WP_Error
-         * @since 3.5.0
-         * @abstract
-         *
-         */
         abstract public function flip($horz, $vert);
 
-        /**
-         * Rotates current image counter-clockwise by $angle.
-         *
-         * @param float $angle
-         *
-         * @return true|WP_Error
-         * @since 3.5.0
-         * @abstract
-         *
-         */
         abstract public function rotate($angle);
 
-        /**
-         * Sets current image size.
-         *
-         * @param int $width
-         * @param int $height
-         *
-         * @return true
-         * @since 3.5.0
-         *
-         */
         protected function update_size($width = null, $height = null)
         {
             $this->size = [
@@ -469,15 +222,6 @@
             return true;
         }
 
-        /**
-         * Returns the default compression quality setting for the mime type.
-         *
-         * @param string $mime_type
-         *
-         * @return int The default quality setting for the mime type.
-         * @since 5.8.1
-         *
-         */
         protected function get_default_quality($mime_type)
         {
             switch($mime_type)
@@ -493,21 +237,6 @@
             return $quality;
         }
 
-        /**
-         * Returns preferred mime-type and extension based on provided
-         * file's extension and mime, or current file's extension and mime.
-         *
-         * Will default to $this->default_mime_type if requested is not supported.
-         *
-         * Provides corrected filename only if filename is provided.
-         *
-         * @param string $filename
-         * @param string $mime_type
-         *
-         * @return array { filename|null, extension, mime-type }
-         * @since 3.5.0
-         *
-         */
         protected function get_output_format($filename = null, $mime_type = null)
         {
             $new_ext = null;
@@ -540,27 +269,6 @@
                 $new_ext = $file_ext;
             }
 
-            /**
-             * Filters the image editor output format mapping.
-             *
-             * Enables filtering the mime type used to save images. By default,
-             * the mapping array is empty, so the mime type matches the source image.
-             *
-             * @param string[] $output_format {
-             *                                An array of mime type mappings. Maps a source mime type to a new
-             *                                destination mime type. Default empty array.
-             *
-             * @type string ...$0 The new mime type.
-             *                                }
-             *
-             * @param string   $filename      Path to the image.
-             * @param string   $mime_type     The source image mime type.
-             *
-             * @since 5.8.0
-             *
-             * @see   WP_Image_Editor::get_output_format()
-             *
-             */
             $output_format = apply_filters('image_editor_output_format', [], $filename, $mime_type);
 
             if(isset($output_format[$mime_type]) && $this->supports_mime_type($output_format[$mime_type]))
@@ -575,16 +283,6 @@
              */
             if(! $this->supports_mime_type($mime_type))
             {
-                /**
-                 * Filters default mime type prior to getting the file extension.
-                 *
-                 * @param string $mime_type Mime type string.
-                 *
-                 * @since 3.5.0
-                 *
-                 * @see   wp_get_mime_types()
-                 *
-                 */
                 $mime_type = apply_filters('image_editor_default_mime_type', $this->default_mime_type);
                 $new_ext = $this->get_extension($mime_type);
             }
@@ -621,16 +319,6 @@
             return [$filename, $new_ext, $mime_type];
         }
 
-        /**
-         * Returns first matched extension from Mime-type,
-         * as mapped from wp_get_mime_types()
-         *
-         * @param string $mime_type
-         *
-         * @return string|false
-         * @since 3.5.0
-         *
-         */
         protected static function get_extension($mime_type = null)
         {
             if(empty($mime_type))
@@ -641,16 +329,6 @@
             return wp_get_default_extension_for_mime_type($mime_type);
         }
 
-        /**
-         * Returns first matched mime-type from extension,
-         * as mapped from wp_get_mime_types()
-         *
-         * @param string $extension
-         *
-         * @return string|false
-         * @since 3.5.0
-         *
-         */
         protected static function get_mime_type($extension = null)
         {
             if(! $extension)
@@ -672,34 +350,11 @@
             return false;
         }
 
-        /**
-         * Checks to see if editor supports the mime-type specified.
-         * Must be overridden in a subclass.
-         *
-         * @param string $mime_type
-         *
-         * @return bool
-         * @since 3.5.0
-         *
-         * @abstract
-         *
-         */
         public static function supports_mime_type($mime_type)
         {
             return false;
         }
 
-        /**
-         * Either calls editor's save function or handles file as a stream.
-         *
-         * @param string   $filename
-         * @param callable $callback
-         * @param array    $arguments
-         *
-         * @return bool
-         * @since 3.5.0
-         *
-         */
         protected function make_image($filename, $callback, $arguments)
         {
             $stream = wp_is_stream($filename);

@@ -1,123 +1,26 @@
 <?php
-    /**
-     * Blocks API: WP_Block class
-     *
-     * @package WordPress
-     * @since   5.5.0
-     */
 
-    /**
-     * Class representing a parsed instance of a block.
-     *
-     * @since 5.5.0
-     * @property array $attributes
-     */
     #[AllowDynamicProperties]
     class WP_Block
     {
-        /**
-         * Original parsed array representation of block.
-         *
-         * @since 5.5.0
-         * @var array
-         */
         public $parsed_block;
 
-        /**
-         * Name of block.
-         *
-         * @example "core/paragraph"
-         *
-         * @since   5.5.0
-         * @var string
-         */
         public $name;
 
-        /**
-         * Block type associated with the instance.
-         *
-         * @since 5.5.0
-         * @var WP_Block_Type
-         */
         public $block_type;
 
-        /**
-         * Block context values.
-         *
-         * @since 5.5.0
-         * @var array
-         */
         public $context = [];
 
-        /**
-         * List of inner blocks (of this same class)
-         *
-         * @since 5.5.0
-         * @var WP_Block_List
-         */
         public $inner_blocks = [];
 
-        /**
-         * Resultant HTML from inside block comment delimiters after removing inner
-         * blocks.
-         *
-         * @example "...Just <!-- wp:test /--> testing..." -> "Just testing..."
-         *
-         * @since   5.5.0
-         * @var string
-         */
         public $inner_html = '';
 
-        /**
-         * List of string fragments and null markers where inner blocks were found
-         *
-         * @example array(
-         *   'inner_html'    => 'BeforeInnerAfter',
-         *   'inner_blocks'  => array( block, block ),
-         *   'inner_content' => array( 'Before', null, 'Inner', null, 'After' ),
-         * )
-         *
-         * @since   5.5.0
-         * @var array
-         */
         public $inner_content = [];
 
-        /**
-         * All available context of the current hierarchy.
-         *
-         * @since  5.5.0
-         * @var array
-         * @access protected
-         */
         protected $available_context;
 
-        /**
-         * Block type registry.
-         *
-         * @since  5.9.0
-         * @var WP_Block_Type_Registry
-         * @access protected
-         */
         protected $registry;
 
-        /**
-         * Constructor.
-         *
-         * Populates object properties from the provided block instance argument.
-         *
-         * The given array of context values will not necessarily be available on
-         * the instance itself, but is treated as the full set of values provided by
-         * the block's ancestry. This is assigned to the private `available_context`
-         * property. Only values which are configured to consumed by the block via
-         * its registered type will be assigned to the block's `context` property.
-         *
-         * @param array                  $block             Array of parsed block properties.
-         * @param array                  $available_context Optional array of ancestry context values.
-         * @param WP_Block_Type_Registry $registry          Optional block type registry.
-         *
-         * @since 5.5.0
-         *
-         */
         public function __construct($block, $available_context = [], $registry = null)
         {
             $this->parsed_block = $block;
@@ -174,20 +77,6 @@
             }
         }
 
-        /**
-         * Returns a value from an inaccessible property.
-         *
-         * This is used to lazily initialize the `attributes` property of a block,
-         * such that it is only prepared with default attributes at the time that
-         * the property is accessed. For all other inaccessible properties, a `null`
-         * value is returned.
-         *
-         * @param string $name Property name.
-         *
-         * @return array|null Prepared attributes, or null.
-         * @since 5.5.0
-         *
-         */
         public function __get($name)
         {
             if('attributes' === $name)
@@ -205,20 +94,6 @@
             return null;
         }
 
-        /**
-         * Generates the render output for the block.
-         *
-         * @param array    $options {
-         *                          Optional options object.
-         *
-         * @type bool      $dynamic Defaults to 'true'. Optionally set to false to avoid using the block's render_callback.
-         *                          }
-         * @return string Rendered block output.
-         * @since 5.5.0
-         *
-         * @global WP_Post $post    Global post object.
-         *
-         */
         public function render($options = [])
         {
             global $post;
@@ -244,7 +119,6 @@
                         $inner_block = $this->inner_blocks[$index];
                         $parent_block = $this;
 
-                        /** This filter is documented in wp-includes/blocks.php */
                         $pre_render = apply_filters('pre_render_block', null, $inner_block->parsed_block, $parent_block);
 
                         if(! is_null($pre_render))
@@ -255,10 +129,8 @@
                         {
                             $source_block = $inner_block->parsed_block;
 
-                            /** This filter is documented in wp-includes/blocks.php */
                             $inner_block->parsed_block = apply_filters('render_block_data', $inner_block->parsed_block, $source_block, $parent_block);
 
-                            /** This filter is documented in wp-includes/blocks.php */
                             $inner_block->context = apply_filters('render_block_context', $inner_block->context, $inner_block->parsed_block, $parent_block);
 
                             $block_content .= $inner_block->render();
@@ -307,33 +179,8 @@
                 }
             }
 
-            /**
-             * Filters the content of a single block.
-             *
-             * @param string   $block_content The block content.
-             * @param array    $block         The full block, including name and attributes.
-             * @param WP_Block $instance      The block instance.
-             *
-             * @since 5.9.0 The `$instance` parameter was added.
-             *
-             * @since 5.0.0
-             */
             $block_content = apply_filters('render_block', $block_content, $this->parsed_block, $this);
 
-            /**
-             * Filters the content of a single block.
-             *
-             * The dynamic portion of the hook name, `$name`, refers to
-             * the block name, e.g. "core/paragraph".
-             *
-             * @param string   $block_content The block content.
-             * @param array    $block         The full block, including name and attributes.
-             * @param WP_Block $instance      The block instance.
-             *
-             * @since 5.9.0 The `$instance` parameter was added.
-             *
-             * @since 5.7.0
-             */
             $block_content = apply_filters("render_block_{$this->name}", $block_content, $this->parsed_block, $this);
 
             return $block_content;

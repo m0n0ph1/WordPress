@@ -1,24 +1,5 @@
 <?php
-    /**
-     * Dimensions block support flag.
-     *
-     * This does not include the `spacing` block support even though that visually
-     * appears under the "Dimensions" panel in the editor. It remains in its
-     * original `spacing.php` file for compatibility with core.
-     *
-     * @package WordPress
-     * @since   5.9.0
-     */
 
-    /**
-     * Registers the style block attribute for block types that support it.
-     *
-     * @param WP_Block_Type $block_type Block Type.
-     *
-     * @since  5.9.0
-     * @access private
-     *
-     */
     function wp_register_dimensions_support($block_type)
     {
         // Setup attributes and styles within that if needed.
@@ -43,19 +24,6 @@
         }
     }
 
-    /**
-     * Adds CSS classes for block dimensions to the incoming attributes array.
-     * This will be applied to the block markup in the front-end.
-     *
-     * @param WP_Block_Type $block_type       Block Type.
-     * @param array         $block_attributes Block attributes.
-     *
-     * @return array Block dimensions CSS classes and inline styles.
-     * @since  6.2.0 Added `minHeight` support.
-     * @access private
-     *
-     * @since  5.9.0
-     */
     function wp_apply_dimensions_support($block_type, $block_attributes)
     { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
         if(wp_should_skip_block_supports_serialization($block_type, 'dimensions'))

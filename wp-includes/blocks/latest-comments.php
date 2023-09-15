@@ -1,31 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/latest-comments` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Get the post title.
-     *
-     * The post title is fetched and if it is blank then a default string is
-     * returned.
-     *
-     * Copied from `wp-admin/includes/template.php`, but we can't include that
-     * file because:
-     *
-     * 1. It causes bugs with test fixture generation and strange Docker 255 error
-     *    codes.
-     * 2. It's in the admin; ideally we *shouldn't* be including files from the
-     *    admin for a block's output. It's a very small/simple function as well,
-     *    so duplicating it isn't too terrible.
-     *
-     * @param int|WP_Post $post Optional. Post ID or WP_Post object. Default is global $post.
-     *
-     * @return string The post title if set; "(no title)" if no title is set.
-     * @since 3.3.0
-     *
-     */
     function wp_latest_comments_draft_or_post_title($post = 0)
     {
         $title = get_the_title($post);
@@ -37,21 +11,14 @@
         return $title;
     }
 
-    /**
-     * Renders the `core/latest-comments` block on server.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string Returns the post content with latest comments added.
-     */
     function render_block_core_latest_comments($attributes = [])
     {
         $comments = get_comments(
-        /** This filter is documented in wp-includes/widgets/class-wp-widget-recent-comments.php */ apply_filters('widget_comments_args', [
-            'number' => $attributes['commentsToShow'],
-            'status' => 'approve',
-            'post_status' => 'publish',
-        ],                                                                                                        [])
+            apply_filters('widget_comments_args', [
+                'number' => $attributes['commentsToShow'],
+                'status' => 'approve',
+                'post_status' => 'publish',
+            ],            [])
         );
 
         $list_items_markup = '';
@@ -134,9 +101,6 @@
         return ! empty($comments) ? sprintf('<ol %1$s>%2$s</ol>', $wrapper_attributes, $list_items_markup) : sprintf('<div %1$s>%2$s</div>', $wrapper_attributes, __('No comments to show.'));
     }
 
-    /**
-     * Registers the `core/latest-comments` block.
-     */
     function register_block_core_latest_comments()
     {
         register_block_type_from_metadata(__DIR__.'/latest-comments', [

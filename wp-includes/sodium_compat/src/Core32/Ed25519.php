@@ -9,23 +9,12 @@
         require_once dirname(__FILE__).'/Curve25519.php';
     }
 
-    /**
-     * Class ParagonIE_Sodium_Core32_Ed25519
-     */
     abstract class ParagonIE_Sodium_Core32_Ed25519 extends ParagonIE_Sodium_Core32_Curve25519
     {
         const KEYPAIR_BYTES = 96;
 
         const SEED_BYTES = 32;
 
-        /**
-         * @return string (96 bytes)
-         * @throws Exception
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function keypair()
         {
             $seed = random_bytes(self::SEED_BYTES);
@@ -36,17 +25,6 @@
             return $sk.$pk;
         }
 
-        /**
-         * @param string $pk
-         * @param string $sk
-         * @param string $seed
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function seed_keypair(&$pk, &$sk, $seed)
         {
             if(self::strlen($seed) !== self::SEED_BYTES)
@@ -54,25 +32,14 @@
                 throw new RangeException('crypto_sign keypair seed must be 32 bytes long');
             }
 
-            /** @var string $pk */
             $pk = self::publickey_from_secretkey($seed);
             $sk = $seed.$pk;
 
             return $sk;
         }
 
-        /**
-         * @param string $sk
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function publickey_from_secretkey($sk)
         {
-            /** @var string $sk */
             $sk = hash('sha512', self::substr($sk, 0, 32), true);
             $sk[0] = self::intToChr(self::chrToInt($sk[0]) & 248);
             $sk[31] = self::intToChr((self::chrToInt($sk[31]) & 63) | 64);
@@ -80,28 +47,11 @@
             return self::sk_to_pk($sk);
         }
 
-        /**
-         * @param string $sk
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function sk_to_pk($sk)
         {
             return self::ge_p3_tobytes(self::ge_scalarmult_base(self::substr($sk, 0, 32)));
         }
 
-        /**
-         * @param string $keypair
-         *
-         * @return string
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function secretkey($keypair)
         {
             if(self::strlen($keypair) !== self::KEYPAIR_BYTES)
@@ -112,15 +62,6 @@
             return self::substr($keypair, 0, 64);
         }
 
-        /**
-         * @param string $keypair
-         *
-         * @return string
-         * @throws RangeException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function publickey($keypair)
         {
             if(self::strlen($keypair) !== self::KEYPAIR_BYTES)
@@ -131,13 +72,6 @@
             return self::substr($keypair, 64, 32);
         }
 
-        /**
-         * @param string $pk
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public static function pk_to_curve25519($pk)
         {
             if(self::small_order($pk))
@@ -165,13 +99,6 @@
             return self::fe_tobytes($x);
         }
 
-        /**
-         * @param string $R
-         *
-         * @return bool
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public static function small_order($R)
         {
             static $blocklist = [
@@ -584,7 +511,7 @@
                     0xff
                 ]
             ];
-            /** @var array<int, array<int, int>> $blocklist */
+
             $countBlocklist = count($blocklist);
 
             for($i = 0; $i < $countBlocklist; ++$i)
@@ -603,35 +530,13 @@
             return false;
         }
 
-        /**
-         * @param string $message
-         * @param string $sk
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function sign($message, $sk)
         {
-            /** @var string $signature */
             $signature = self::sign_detached($message, $sk);
 
             return $signature.$message;
         }
 
-        /**
-         * @param string $message
-         * @param string $sk
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress PossiblyInvalidArgument
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function sign_detached($message, $sk)
         {
             # crypto_hash_sha512(az, sk, 32);
@@ -689,22 +594,10 @@
             return $sig;
         }
 
-        /**
-         * @param string $message A signed message
-         * @param string $pk      Public key
-         *
-         * @return string         Message (without signature)
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function sign_open($message, $pk)
         {
-            /** @var string $signature */
             $signature = self::substr($message, 0, 64);
 
-            /** @var string $message */
             $message = self::substr($message, 64);
 
             if(self::verify_detached($signature, $message, $pk))
@@ -714,17 +607,6 @@
             throw new SodiumException('Invalid signature');
         }
 
-        /**
-         * @param string $sig
-         * @param string $message
-         * @param string $pk
-         *
-         * @return bool
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function verify_detached($sig, $message, $pk)
         {
             if(self::strlen($sig) < 64)
@@ -753,25 +635,19 @@
                 throw new SodiumException('All zero public key');
             }
 
-            /** @var bool The original value of ParagonIE_Sodium_Compat::$fastMult */
             $orig = ParagonIE_Sodium_Compat::$fastMult;
 
             // Set ParagonIE_Sodium_Compat::$fastMult to true to speed up verification.
             ParagonIE_Sodium_Compat::$fastMult = true;
 
-            /** @var ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $A */
             $A = self::ge_frombytes_negate_vartime($pk);
 
-            /** @var string $hDigest */
             $hDigest = hash('sha512', self::substr($sig, 0, 32).self::substr($pk, 0, 32).$message, true);
 
-            /** @var string $h */
             $h = self::sc_reduce($hDigest).self::substr($hDigest, 32);
 
-            /** @var ParagonIE_Sodium_Core32_Curve25519_Ge_P2 $R */
             $R = self::ge_double_scalarmult_vartime($h, $A, self::substr($sig, 32));
 
-            /** @var string $rcheck */
             $rcheck = self::ge_tobytes($R);
 
             // Reset ParagonIE_Sodium_Compat::$fastMult to what it was before.
@@ -780,15 +656,6 @@
             return self::verify_32($rcheck, self::substr($sig, 0, 32));
         }
 
-        /**
-         * @param string $S
-         *
-         * @return bool
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function check_S_lt_L($S)
         {
             if(self::strlen($S) < 32)
@@ -829,7 +696,7 @@
                 0x00,
                 0x10
             ];
-            /** @var array<int, int> $L */
+
             $c = 0;
             $n = 1;
             $i = 32;

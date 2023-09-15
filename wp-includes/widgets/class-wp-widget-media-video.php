@@ -1,27 +1,7 @@
 <?php
-    /**
-     * Widget API: WP_Widget_Media_Video class
-     *
-     * @package    WordPress
-     * @subpackage Widgets
-     * @since      4.8.0
-     */
 
-    /**
-     * Core class that implements a video widget.
-     *
-     * @since 4.8.0
-     *
-     * @see   WP_Widget_Media
-     * @see   WP_Widget
-     */
     class WP_Widget_Media_Video extends WP_Widget_Media
     {
-        /**
-         * Constructor.
-         *
-         * @since 4.8.0
-         */
         public function __construct()
         {
             parent::__construct('media_video', __('Video'), [
@@ -43,14 +23,6 @@
             ]);
         }
 
-        /**
-         * Render the media on the frontend.
-         *
-         * @param array $instance Widget instance props.
-         *
-         * @since 4.8.0
-         *
-         */
         public function render_media($instance)
         {
             $instance = array_merge(wp_list_pluck($this->get_instance_schema(), 'default'), $instance);
@@ -89,17 +61,6 @@
             }
         }
 
-        /**
-         * Get schema for properties of a widget instance (item).
-         *
-         * @return array Schema for properties.
-         * @see   WP_REST_Controller::get_item_schema()
-         * @see   WP_REST_Controller::get_additional_fields()
-         * @link  https://core.trac.wordpress.org/ticket/35574
-         *
-         * @since 4.8.0
-         *
-         */
         public function get_instance_schema()
         {
             $schema = [
@@ -139,15 +100,6 @@
             return array_merge($schema, parent::get_instance_schema());
         }
 
-        /**
-         * Inject max-width and remove height for videos too constrained to fit inside sidebars on frontend.
-         *
-         * @param string $html Video shortcode HTML output.
-         *
-         * @return string HTML Output.
-         * @since 4.8.0
-         *
-         */
         public function inject_video_max_width_style($html)
         {
             $html = preg_replace('/\sheight="\d+"/', '', $html);
@@ -157,19 +109,8 @@
             return $html;
         }
 
-        /**
-         * Enqueue preview scripts.
-         *
-         * These scripts normally are enqueued just-in-time when a video shortcode is used.
-         * In the customizer, however, widgets can be dynamically added and rendered via
-         * selective refresh, and so it is important to unconditionally enqueue them in
-         * case a widget does get added.
-         *
-         * @since 4.8.0
-         */
         public function enqueue_preview_scripts()
         {
-            /** This filter is documented in wp-includes/media.php */
             if('mediaelement' === apply_filters('wp_video_shortcode_library', 'mediaelement'))
             {
                 wp_enqueue_style('wp-mediaelement');
@@ -178,11 +119,6 @@
             }
         }
 
-        /**
-         * Loads the required scripts and styles for the widget control.
-         *
-         * @since 4.8.0
-         */
         public function enqueue_admin_scripts()
         {
             parent::enqueue_admin_scripts();
@@ -207,19 +143,14 @@
 
             wp_add_inline_script(
                 $handle, sprintf(
-                '
+                           '
 					wp.mediaWidgets.controlConstructors[ %1$s ].prototype.mime_type = %2$s;
 					wp.mediaWidgets.controlConstructors[ %1$s ].prototype.l10n = _.extend( {}, wp.mediaWidgets.controlConstructors[ %1$s ].prototype.l10n, %3$s );
 				', wp_json_encode($this->id_base), wp_json_encode($this->widget_options['mime_type']), wp_json_encode($this->l10n)
-            )
+                       )
             );
         }
 
-        /**
-         * Render form template scripts.
-         *
-         * @since 4.8.0
-         */
         public function render_control_template_scripts()
         {
             parent::render_control_template_scripts()

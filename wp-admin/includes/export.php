@@ -1,59 +1,7 @@
 <?php
-    /**
-     * WordPress Export Administration API
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Version number for the export format.
-     *
-     * Bump this when something changes that might affect compatibility.
-     *
-     * @since 2.5.0
-     */
     define('WXR_VERSION', '1.2');
 
-    /**
-     * Generates the WXR export file for download.
-     *
-     * Default behavior is to export all content, however, note that post content will only
-     * be exported for post types with the `can_export` argument enabled. Any posts with the
-     * 'auto-draft' status will be skipped.
-     *
-     * @param array    $args        {
-     *                              Optional. Arguments for generating the WXR export file for download. Default empty array.
-     *
-     * @type string    $content     Type of content to export. If set, only the post content of this post type
-     *                              will be exported. Accepts 'all', 'post', 'page', 'attachment', or a defined
-     *                              custom post. If an invalid custom post type is supplied, every post type for
-     *                              which `can_export` is enabled will be exported instead. If a valid custom post
-     *                              type is supplied but `can_export` is disabled, then 'posts' will be exported
-     *                              instead. When 'all' is supplied, only post types with `can_export` enabled will
-     *                              be exported. Default 'all'.
-     * @type string    $author      Author to export content for. Only used when `$content` is 'post', 'page', or
-     *                              'attachment'. Accepts false (all) or a specific author ID. Default false (all).
-     * @type string    $category    Category (slug) to export content for. Used only when `$content` is 'post'. If
-     *                              set, only post content assigned to `$category` will be exported. Accepts false
-     *                              or a specific category slug. Default is false (all categories).
-     * @type string    $start_date  Start date to export content from. Expected date format is 'Y-m-d'. Used only
-     *                              when `$content` is 'post', 'page' or 'attachment'. Default false (since the
-     *                              beginning of time).
-     * @type string    $end_date    End date to export content to. Expected date format is 'Y-m-d'. Used only when
-     *                              `$content` is 'post', 'page' or 'attachment'. Default false (latest publish date).
-     * @type string    $status      Post status to export posts for. Used only when `$content` is 'post' or 'page'.
-     *                              Accepts false (all statuses except 'auto-draft'), or a specific status, i.e.
-     *                              'publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit', or
-     *                              'trash'. Default false (all statuses except 'auto-draft').
-     *                              }
-     * @since 5.7.0 Added the `post_modified` and `post_modified_gmt` fields to the export file.
-     *
-     * @global wpdb    $wpdb        WordPress database abstraction object.
-     * @global WP_Post $post        Global post object.
-     *
-     * @since 2.1.0
-     */
     function export_wp($args = [])
     {
         global $wpdb, $post;
@@ -68,14 +16,6 @@
         ];
         $args = wp_parse_args($args, $defaults);
 
-        /**
-         * Fires at the beginning of an export, before any headers are sent.
-         *
-         * @param array $args An array of export arguments.
-         *
-         * @since 2.3.0
-         *
-         */
         do_action('export_wp', $args);
 
         $sitename = sanitize_key(get_bloginfo('name'));
@@ -85,16 +25,7 @@
         }
         $date = gmdate('Y-m-d');
         $wp_filename = $sitename.'WordPress.'.$date.'.xml';
-        /**
-         * Filters the export filename.
-         *
-         * @param string $wp_filename The name of the file for download.
-         * @param string $sitename    The site name.
-         * @param string $date        Today's date, formatted.
-         *
-         * @since 4.4.0
-         *
-         */
+
         $filename = apply_filters('export_wp_filename', $wp_filename, $sitename, $date);
 
         header('Content-Description: File Transfer');
@@ -214,15 +145,6 @@
             unset($categories, $custom_taxonomies, $custom_terms);
         }
 
-        /**
-         * Wraps given string in XML CDATA tag.
-         *
-         * @param string $str String to wrap in XML CDATA tag.
-         *
-         * @return string
-         * @since 2.1.0
-         *
-         */
         function wxr_cdata($str)
         {
             if(! seems_utf8($str))
@@ -235,13 +157,6 @@
             return $str;
         }
 
-        /**
-         * Returns the URL of the site.
-         *
-         * @return string Site URL.
-         * @since 2.5.0
-         *
-         */
         function wxr_site_url()
         {
             if(is_multisite())
@@ -256,14 +171,6 @@
             }
         }
 
-        /**
-         * Outputs a cat_name XML tag from a given category object.
-         *
-         * @param WP_Term $category Category Object.
-         *
-         * @since 2.1.0
-         *
-         */
         function wxr_cat_name($category)
         {
             if(empty($category->name))
@@ -274,14 +181,6 @@
             echo '<wp:cat_name>'.wxr_cdata($category->name)."</wp:cat_name>\n";
         }
 
-        /**
-         * Outputs a category_description XML tag from a given category object.
-         *
-         * @param WP_Term $category Category Object.
-         *
-         * @since 2.1.0
-         *
-         */
         function wxr_category_description($category)
         {
             if(empty($category->description))
@@ -292,14 +191,6 @@
             echo '<wp:category_description>'.wxr_cdata($category->description)."</wp:category_description>\n";
         }
 
-        /**
-         * Outputs a tag_name XML tag from a given tag object.
-         *
-         * @param WP_Term $tag Tag Object.
-         *
-         * @since 2.3.0
-         *
-         */
         function wxr_tag_name($tag)
         {
             if(empty($tag->name))
@@ -310,14 +201,6 @@
             echo '<wp:tag_name>'.wxr_cdata($tag->name)."</wp:tag_name>\n";
         }
 
-        /**
-         * Outputs a tag_description XML tag from a given tag object.
-         *
-         * @param WP_Term $tag Tag Object.
-         *
-         * @since 2.3.0
-         *
-         */
         function wxr_tag_description($tag)
         {
             if(empty($tag->description))
@@ -328,14 +211,6 @@
             echo '<wp:tag_description>'.wxr_cdata($tag->description)."</wp:tag_description>\n";
         }
 
-        /**
-         * Outputs a term_name XML tag from a given term object.
-         *
-         * @param WP_Term $term Term Object.
-         *
-         * @since 2.9.0
-         *
-         */
         function wxr_term_name($term)
         {
             if(empty($term->name))
@@ -346,14 +221,6 @@
             echo '<wp:term_name>'.wxr_cdata($term->name)."</wp:term_name>\n";
         }
 
-        /**
-         * Outputs a term_description XML tag from a given term object.
-         *
-         * @param WP_Term $term Term Object.
-         *
-         * @since 2.9.0
-         *
-         */
         function wxr_term_description($term)
         {
             if(empty($term->description))
@@ -364,16 +231,6 @@
             echo "\t\t<wp:term_description>".wxr_cdata($term->description)."</wp:term_description>\n";
         }
 
-        /**
-         * Outputs term meta XML tags for a given term object.
-         *
-         * @param WP_Term $term Term object.
-         *
-         * @global wpdb   $wpdb WordPress database abstraction object.
-         *
-         * @since 4.6.0
-         *
-         */
         function wxr_term_meta($term)
         {
             global $wpdb;
@@ -382,19 +239,6 @@
 
             foreach($termmeta as $meta)
             {
-                /**
-                 * Filters whether to selectively skip term meta used for WXR exports.
-                 *
-                 * Returning a truthy value from the filter will skip the current meta
-                 * object from being exported.
-                 *
-                 * @param bool   $skip     Whether to skip the current piece of term meta. Default false.
-                 * @param string $meta_key Current meta key.
-                 * @param object $meta     Current meta object.
-                 *
-                 * @since 4.6.0
-                 *
-                 */
                 if(! apply_filters('wxr_export_skip_termmeta', false, $meta->meta_key, $meta))
                 {
                     printf("\t\t<wp:termmeta>\n\t\t\t<wp:meta_key>%s</wp:meta_key>\n\t\t\t<wp:meta_value>%s</wp:meta_value>\n\t\t</wp:termmeta>\n", wxr_cdata($meta->meta_key), wxr_cdata($meta->meta_value));
@@ -402,16 +246,6 @@
             }
         }
 
-        /**
-         * Outputs list of authors with posts.
-         *
-         * @param int[] $post_ids Optional. Array of post IDs to filter the query by.
-         *
-         * @global wpdb $wpdb     WordPress database abstraction object.
-         *
-         * @since 3.1.0
-         *
-         */
         function wxr_authors_list(array $post_ids = null)
         {
             global $wpdb;
@@ -448,11 +282,6 @@
             }
         }
 
-        /**
-         * Outputs all navigation menu terms.
-         *
-         * @since 3.1.0
-         */
         function wxr_nav_menu_terms()
         {
             $nav_menus = wp_get_nav_menus();
@@ -472,11 +301,6 @@
             }
         }
 
-        /**
-         * Outputs list of taxonomy terms, in XML tag format, associated with a post.
-         *
-         * @since 2.3.0
-         */
         function wxr_post_taxonomy()
         {
             $post = get_post();
@@ -494,16 +318,6 @@
             }
         }
 
-        /**
-         * Determines whether to selectively skip post meta used for WXR exports.
-         *
-         * @param bool   $return_me Whether to skip the current post meta. Default false.
-         * @param string $meta_key  Meta key.
-         *
-         * @return bool
-         * @since 3.3.0
-         *
-         */
         function wxr_filter_postmeta($return_me, $meta_key)
         {
             if('_edit_lock' === $meta_key)
@@ -600,16 +414,14 @@
                 ?>
 
                 <?php
-                    /** This action is documented in wp-includes/feed-rss2.php */
+
                     do_action('rss2_head');
                 ?>
 
                 <?php
                     if($post_ids)
                     {
-                        /**
-                         * @global WP_Query $wp_query WordPress Query object.
-                         */ global $wp_query;
+                        global $wp_query;
 
                         // Fake being in the loop.
                         $wp_query->in_the_loop = true;
@@ -625,34 +437,10 @@
                             {
                                 setup_postdata($post);
 
-                                /**
-                                 * Filters the post title used for WXR exports.
-                                 *
-                                 * @param string $post_title Title of the current post.
-                                 *
-                                 * @since 5.7.0
-                                 *
-                                 */
                                 $title = wxr_cdata(apply_filters('the_title_export', $post->post_title));
 
-                                /**
-                                 * Filters the post content used for WXR exports.
-                                 *
-                                 * @param string $post_content Content of the current post.
-                                 *
-                                 * @since 2.5.0
-                                 *
-                                 */
                                 $content = wxr_cdata(apply_filters('the_content_export', $post->post_content));
 
-                                /**
-                                 * Filters the post excerpt used for WXR exports.
-                                 *
-                                 * @param string $post_excerpt Excerpt for the current post.
-                                 *
-                                 * @since 2.6.0
-                                 *
-                                 */
                                 $excerpt = wxr_cdata(apply_filters('the_excerpt_export', $post->post_excerpt));
 
                                 $is_sticky = is_sticky($post->ID) ? 1 : 0;
@@ -687,22 +475,10 @@
                                     <?php
                                         $postmeta = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->postmeta WHERE post_id = %d", $post->ID));
                                         foreach($postmeta as $meta) :
-                                            /**
-                                             * Filters whether to selectively skip post meta used for WXR exports.
-                                             *
-                                             * Returning a truthy value from the filter will skip the current meta
-                                             * object from being exported.
-                                             *
-                                             * @param bool   $skip     Whether to skip the current post meta. Default false.
-                                             * @param string $meta_key Current meta key.
-                                             * @param object $meta     Current meta object.
-                                             *
-                                             * @since 3.3.0
-                                             *
-                                             */ if(apply_filters('wxr_export_skip_postmeta', false, $meta->meta_key, $meta))
-                                        {
-                                            continue;
-                                        }
+                                            if(apply_filters('wxr_export_skip_postmeta', false, $meta->meta_key, $meta))
+                                            {
+                                                continue;
+                                            }
                                             ?>
                                             <wp:postmeta>
                                                 <wp:meta_key><?php echo wxr_cdata($meta->meta_key); ?></wp:meta_key>
@@ -731,22 +507,10 @@
                                                 <?php
                                                     $c_meta = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->commentmeta WHERE comment_id = %d", $c->comment_ID));
                                                     foreach($c_meta as $meta) :
-                                                        /**
-                                                         * Filters whether to selectively skip comment meta used for WXR exports.
-                                                         *
-                                                         * Returning a truthy value from the filter will skip the current meta
-                                                         * object from being exported.
-                                                         *
-                                                         * @param bool   $skip     Whether to skip the current comment meta. Default false.
-                                                         * @param string $meta_key Current meta key.
-                                                         * @param object $meta     Current meta object.
-                                                         *
-                                                         * @since 4.0.0
-                                                         *
-                                                         */ if(apply_filters('wxr_export_skip_commentmeta', false, $meta->meta_key, $meta))
-                                                    {
-                                                        continue;
-                                                    }
+                                                        if(apply_filters('wxr_export_skip_commentmeta', false, $meta->meta_key, $meta))
+                                                        {
+                                                            continue;
+                                                        }
                                                         ?>
                                                         <wp:commentmeta>
                                                             <wp:meta_key><?php echo wxr_cdata($meta->meta_key); ?></wp:meta_key>

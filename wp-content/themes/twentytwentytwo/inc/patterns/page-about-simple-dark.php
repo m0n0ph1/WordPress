@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Simple dark about page
-     */
+
     return [
         'title' => __('Simple dark about page', 'twentytwentytwo'),
         'categories' => ['pages'],

@@ -1,13 +1,5 @@
 <?php
-    /**
-     * Edit Site Settings Administration Screen
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.1.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_sites'))
@@ -56,15 +48,6 @@
             update_option($key, $val);
         }
 
-        /**
-         * Fires after the site options are updated.
-         *
-         * @param int $id The ID of the site being updated.
-         *
-         * @since 4.4.0 Added `$id` parameter.
-         *
-         * @since 3.0.0
-         */
         do_action('wpmu_update_blog_options', $id);
 
         restore_current_blog();
@@ -203,14 +186,6 @@
                         }
                     } // End foreach.
 
-                    /**
-                     * Fires at the end of the Edit Site form, before the submit button.
-                     *
-                     * @param int $id Site ID.
-                     *
-                     * @since 3.0.0
-                     *
-                     */
                     do_action('wpmueditblogaction', $id);
                 ?>
             </table>

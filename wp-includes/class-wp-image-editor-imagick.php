@@ -1,39 +1,9 @@
 <?php
-    /**
-     * WordPress Imagick Image Editor
-     *
-     * @package    WordPress
-     * @subpackage Image_Editor
-     */
 
-    /**
-     * WordPress Image Editor Class for Image Manipulation through Imagick PHP Module
-     *
-     * @since 3.5.0
-     *
-     * @see   WP_Image_Editor
-     */
     class WP_Image_Editor_Imagick extends WP_Image_Editor
     {
-        /**
-         * Imagick object.
-         *
-         * @var Imagick
-         */
         protected $image;
 
-        /**
-         * Checks to see if current environment supports Imagick.
-         *
-         * We require Imagick 2.2.0 or greater, based on whether the queryFormats()
-         * method can be called statically.
-         *
-         * @param array $args
-         *
-         * @return bool
-         * @since 3.5.0
-         *
-         */
         public static function test($args = [])
         {
             // First, test Imagick's extension and classes.
@@ -85,15 +55,6 @@
             return true;
         }
 
-        /**
-         * Checks to see if editor supports the mime-type specified.
-         *
-         * @param string $mime_type
-         *
-         * @return bool
-         * @since 3.5.0
-         *
-         */
         public static function supports_mime_type($mime_type)
         {
             $imagick_extension = strtoupper(self::get_extension($mime_type));
@@ -123,33 +84,6 @@
             }
         }
 
-        /**
-         * Sets Imagick time limit.
-         *
-         * Depending on configuration, Imagick processing may take time.
-         *
-         * Multiple problems exist if PHP times out before ImageMagick completed:
-         * 1. Temporary files aren't cleaned by ImageMagick garbage collection.
-         * 2. No clear error is provided.
-         * 3. The cause of such timeout can be hard to pinpoint.
-         *
-         * This function, which is expected to be run before heavy image routines, resolves
-         * point 1 above by aligning Imagick's timeout with PHP's timeout, assuming it is set.
-         *
-         * However seems it introduces more problems than it fixes,
-         * see https://core.trac.wordpress.org/ticket/58202.
-         *
-         * Note:
-         *  - Imagick resource exhaustion does not issue catchable exceptions (yet).
-         *    See https://github.com/Imagick/imagick/issues/333.
-         *  - The resource limit is not saved/restored. It applies to subsequent
-         *    image operations within the time of the HTTP request.
-         *
-         * @return int|null The new limit on success, null on failure.
-         * @since 6.3.0 This method was deprecated.
-         *
-         * @since 6.2.0
-         */
         public static function set_imagick_time_limit()
         {
             _deprecated_function(__METHOD__, '6.3.0');
@@ -186,13 +120,6 @@
             }
         }
 
-        /**
-         * Loads image from $this->file into new Imagick Object.
-         *
-         * @return true|WP_Error True if loaded; WP_Error on failure.
-         * @since 3.5.0
-         *
-         */
         public function load()
         {
             if($this->image instanceof Imagick)
@@ -271,16 +198,6 @@
             return $this->set_quality();
         }
 
-        /**
-         * Load the image produced by Ghostscript.
-         *
-         * Includes a workaround for a bug in Ghostscript 8.70 that prevents processing of some PDF files
-         * when `use-cropbox` is set.
-         *
-         * @return true|WP_Error
-         * @since 5.6.0
-         *
-         */
         protected function pdf_load_source()
         {
             $filename = $this->pdf_setup();
@@ -315,14 +232,6 @@
             return true;
         }
 
-        /**
-         * Sets up Imagick for PDF processing.
-         * Increases rendering DPI and only loads first page.
-         *
-         * @return string|WP_Error File to load or WP_Error on failure.
-         * @since 4.7.0
-         *
-         */
         protected function pdf_setup()
         {
             try
@@ -342,11 +251,6 @@
             }
         }
 
-        /**
-         * Removes PDF alpha after it's been read.
-         *
-         * @since 6.4.0
-         */
         protected function remove_pdf_alpha_channel()
         {
             $version = Imagick::getVersion();
@@ -365,16 +269,6 @@
             }
         }
 
-        /**
-         * Sets or updates current image size.
-         *
-         * @param int $width
-         * @param int $height
-         *
-         * @return true|WP_Error
-         * @since 3.5.0
-         *
-         */
         protected function update_size($width = null, $height = null)
         {
             $size = null;
@@ -403,15 +297,6 @@
             return parent::update_size($width, $height);
         }
 
-        /**
-         * Sets Image Compression quality on a 1-100% scale.
-         *
-         * @param int $quality Compression Quality. Range: [1,100]
-         *
-         * @return true|WP_Error True if set successfully; WP_Error on failure.
-         * @since 3.5.0
-         *
-         */
         public function set_quality($quality = null)
         {
             $quality_result = parent::set_quality($quality);
@@ -458,36 +343,6 @@
             return true;
         }
 
-        /**
-         * Create multiple smaller images from a single source.
-         *
-         * Attempts to create all sub-sizes and returns the meta data at the end. This
-         * may result in the server running out of resources. When it fails there may be few
-         * "orphaned" images left over as the meta data is never returned and saved.
-         *
-         * As of 5.3.0 the preferred way to do this is with `make_subsize()`. It creates
-         * the new images one at a time and allows for the meta data to be saved after
-         * each new image is created.
-         *
-         * @param array     $sizes  {
-         *                          An array of image size data arrays.
-         *
-         *     Either a height or width must be provided.
-         *     If one of the two is set to null, the resize will
-         *     maintain aspect ratio according to the provided dimension.
-         *
-         * @type array ...$0 {
-         *                          Array of height, width values, and whether to crop.
-         *
-         * @type int        $width  Image width. Optional if `$height` is specified.
-         * @type int        $height Image height. Optional if `$width` is specified.
-         * @type bool|array $crop   Optional. Whether to crop the image. Default false.
-         *                          }
-         *                          }
-         * @return array An array of resized images' metadata by size.
-         * @since 3.5.0
-         *
-         */
         public function multi_resize($sizes)
         {
             $metadata = [];
@@ -505,21 +360,6 @@
             return $metadata;
         }
 
-        /**
-         * Create an image sub-size and return the image meta data value for it.
-         *
-         * @param array     $size_data {
-         *                             Array of size data.
-         *
-         * @type int        $width     The maximum width in pixels.
-         * @type int        $height    The maximum height in pixels.
-         * @type bool|array $crop      Whether to crop the image to exact dimensions.
-         *                             }
-         * @return array|WP_Error The image data array for inclusion in the `sizes` array in the image meta,
-         *                             WP_Error object on error.
-         * @since 5.3.0
-         *
-         */
         public function make_subsize($size_data)
         {
             if(! isset($size_data['width']) && ! isset($size_data['height']))
@@ -576,27 +416,6 @@
             return $saved;
         }
 
-        /**
-         * Resizes current image.
-         *
-         * At minimum, either a height or width must be provided.
-         * If one of the two is set to null, the resize will
-         * maintain aspect ratio according to the provided dimension.
-         *
-         * @param int|null   $max_w Image width.
-         * @param int|null   $max_h Image height.
-         * @param bool|array $crop  {
-         *                          Optional. Image cropping behavior. If false, the image will be scaled (default).
-         *                          If true, image will be cropped to the specified dimensions using center positions.
-         *                          If an array, the image will be cropped using the array to specify the crop location:
-         *
-         * @type string $0 The x crop position. Accepts 'left' 'center', or 'right'.
-         * @type string $1 The y crop position. Accepts 'top', 'center', or 'bottom'.
-         *                          }
-         * @return true|WP_Error
-         * @since 3.5.0
-         *
-         */
         public function resize($max_w, $max_h, $crop = false)
         {
             if(($this->size['width'] == $max_w) && ($this->size['height'] == $max_h))
@@ -627,21 +446,6 @@
             return $this->update_size($dst_w, $dst_h);
         }
 
-        /**
-         * Crops Image.
-         *
-         * @param int  $src_x   The start x position to crop from.
-         * @param int  $src_y   The start y position to crop from.
-         * @param int  $src_w   The width to crop.
-         * @param int  $src_h   The height to crop.
-         * @param int  $dst_w   Optional. The destination width.
-         * @param int  $dst_h   Optional. The destination height.
-         * @param bool $src_abs Optional. If the source crop points are absolute.
-         *
-         * @return true|WP_Error
-         * @since 3.5.0
-         *
-         */
         public function crop($src_x, $src_y, $src_w, $src_h, $dst_w = null, $dst_h = null, $src_abs = false)
         {
             if($src_abs)
@@ -687,21 +491,6 @@
             return $this->update_size();
         }
 
-        /**
-         * Efficiently resize the current image
-         *
-         * This is a WordPress specific implementation of Imagick::thumbnailImage(),
-         * which resizes an image to given dimensions and removes any associated profiles.
-         *
-         * @param int    $dst_w       The destination width.
-         * @param int    $dst_h       The destination height.
-         * @param string $filter_name Optional. The Imagick filter to use when resizing. Default 'FILTER_TRIANGLE'.
-         * @param bool   $strip_meta  Optional. Strip all profiles, excluding color profiles, from the image. Default true.
-         *
-         * @return void|WP_Error
-         * @since 4.5.0
-         *
-         */
         protected function thumbnail_image($dst_w, $dst_h, $filter_name = 'FILTER_TRIANGLE', $strip_meta = true)
         {
             $allowed_filters = [
@@ -722,10 +511,6 @@
                 'FILTER_SINC',
             ];
 
-            /**
-             * Set the filter value if '$filter_name' name is in the allowed list and the related
-             * Imagick constant is defined or fall back to the default filter.
-             */
             if(in_array($filter_name, $allowed_filters, true) && defined('Imagick::'.$filter_name))
             {
                 $filter = constant('Imagick::'.$filter_name);
@@ -735,17 +520,6 @@
                 $filter = defined('Imagick::FILTER_TRIANGLE') ? Imagick::FILTER_TRIANGLE : false;
             }
 
-            /**
-             * Filters whether to strip metadata from images when they're resized.
-             *
-             * This filter only applies when resizing using the Imagick editor since GD
-             * always strips profiles by default.
-             *
-             * @param bool $strip_meta Whether to strip image metadata during resizing. Default true.
-             *
-             * @since 4.5.0
-             *
-             */
             if(apply_filters('image_strip_meta', $strip_meta))
             {
                 $this->strip_meta(); // Fail silently if not supported.
@@ -843,13 +617,6 @@
             }
         }
 
-        /**
-         * Strips all image meta except color profiles from an image.
-         *
-         * @return true|WP_Error True if stripping metadata was successful. WP_Error object on error.
-         * @since 4.5.0
-         *
-         */
         protected function strip_meta()
         {
             if(! is_callable([$this->image, 'getImageProfiles']))
@@ -898,25 +665,6 @@
             return true;
         }
 
-        /**
-         * @param Imagick $image
-         * @param string  $filename
-         * @param string  $mime_type
-         *
-         * @return array|WP_Error {
-         *     Array on success or WP_Error if the file failed to save.
-         *
-         * @type string   $path     Path to the image file.
-         * @type string   $file     Name of the image file.
-         * @type int      $width    Image width.
-         * @type int      $height   Image height.
-         * @type string   $mime     -type The mime type of the image.
-         * @type int      $filesize File size of the image.
-         *                          }
-         * @since 3.5.0
-         * @since 6.0.0 The `$filesize` value was added to the returned array.
-         *
-         */
         protected function _save($image, $filename = null, $mime_type = null)
         {
             [$filename, $extension, $mime_type] = $this->get_output_format($filename, $mime_type);
@@ -961,7 +709,7 @@
 
             return [
                 'path' => $filename,
-                /** This filter is documented in wp-includes/class-wp-image-editor-gd.php */
+
                 'file' => wp_basename(apply_filters('image_make_intermediate_size', $filename)),
                 'width' => $this->size['width'],
                 'height' => $this->size['height'],
@@ -970,16 +718,6 @@
             ];
         }
 
-        /**
-         * Writes an image to a file or stream.
-         *
-         * @param Imagick $image
-         * @param string  $filename The destination filename or stream URL.
-         *
-         * @return true|WP_Error
-         * @since 5.6.0
-         *
-         */
         private function write_image($image, $filename)
         {
             if(wp_is_stream($filename))
@@ -1017,21 +755,8 @@
             }
         }
 
-        /**
-         * Rotates current image counter-clockwise by $angle.
-         *
-         * @param float $angle
-         *
-         * @return true|WP_Error
-         * @since 3.5.0
-         *
-         */
         public function rotate($angle)
         {
-            /**
-             * $angle is 360-$angle because Imagick rotates clockwise
-             * (GD rotates counter-clockwise)
-             */
             try
             {
                 $this->image->rotateImage(new ImagickPixel('none'), 360 - $angle);
@@ -1059,16 +784,6 @@
             return true;
         }
 
-        /**
-         * Flips current image.
-         *
-         * @param bool $horz Flip along Horizontal Axis
-         * @param bool $vert Flip along Vertical Axis
-         *
-         * @return true|WP_Error
-         * @since 3.5.0
-         *
-         */
         public function flip($horz, $vert)
         {
             try
@@ -1097,17 +812,6 @@
             return true;
         }
 
-        /**
-         * Check if a JPEG image has EXIF Orientation tag and rotate it if needed.
-         *
-         * As ImageMagick copies the EXIF data to the flipped/rotated image, proceed only
-         * if EXIF Orientation can be reset afterwards.
-         *
-         * @return bool|WP_Error True if the image was rotated. False if no EXIF data or if the image doesn't need
-         *     rotation. WP_Error if error while rotating.
-         * @since 5.3.0
-         *
-         */
         public function maybe_exif_rotate()
         {
             if(is_callable([$this->image, 'setImageOrientation']) && defined('Imagick::ORIENTATION_TOPLEFT'))
@@ -1120,26 +824,6 @@
             }
         }
 
-        /**
-         * Saves current image to file.
-         *
-         * @param string $destfilename Optional. Destination filename. Default null.
-         * @param string $mime_type    Optional. The mime-type. Default null.
-         *
-         * @return array|WP_Error {
-         *     Array on success or WP_Error if the file failed to save.
-         *
-         * @type string  $path         Path to the image file.
-         * @type string  $file         Name of the image file.
-         * @type int     $width        Image width.
-         * @type int     $height       Image height.
-         * @type string  $mime         -type The mime type of the image.
-         * @type int     $filesize     File size of the image.
-         *                             }
-         * @since 6.0.0 The `$filesize` value was added to the returned array.
-         *
-         * @since 3.5.0
-         */
         public function save($destfilename = null, $mime_type = null)
         {
             $saved = $this->_save($this->image, $destfilename, $mime_type);
@@ -1162,15 +846,6 @@
             return $saved;
         }
 
-        /**
-         * Streams current image to browser.
-         *
-         * @param string $mime_type The mime type of the image.
-         *
-         * @return true|WP_Error True on success, WP_Error object on failure.
-         * @since 3.5.0
-         *
-         */
         public function stream($mime_type = null)
         {
             [$filename, $extension, $mime_type] = $this->get_output_format(null, $mime_type);

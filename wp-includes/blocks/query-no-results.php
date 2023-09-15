@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/query-no-results` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/query-no-results` block on the server.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string Returns the wrapper for the no results block.
-     */
     function render_block_core_query_no_results($attributes, $content, $block)
     {
         if(empty(trim($content)))
@@ -53,9 +39,6 @@
         return sprintf('<div %1$s>%2$s</div>', $wrapper_attributes, $content);
     }
 
-    /**
-     * Registers the `core/query-no-results` block on the server.
-     */
     function register_block_core_query_no_results()
     {
         register_block_type_from_metadata(__DIR__.'/query-no-results', [

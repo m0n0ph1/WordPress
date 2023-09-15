@@ -1,100 +1,26 @@
 <?php
-    /**
-     * Comment API: WP_Comment_Query class
-     *
-     * @package    WordPress
-     * @subpackage Comments
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used for querying comments.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_Comment_Query::__construct() for accepted arguments.
-     */
     #[AllowDynamicProperties]
     class WP_Comment_Query
     {
-        /**
-         * SQL for database query.
-         *
-         * @since 4.0.1
-         * @var string
-         */
         public $request;
 
-        /**
-         * Metadata query container
-         *
-         * @since 3.5.0
-         * @var WP_Meta_Query A meta query instance.
-         */
         public $meta_query = false;
 
-        /**
-         * Date query container
-         *
-         * @since 3.7.0
-         * @var WP_Date_Query A date query instance.
-         */
         public $date_query = false;
 
-        /**
-         * Query vars set by the user.
-         *
-         * @since 3.1.0
-         * @var array
-         */
         public $query_vars;
 
-        /**
-         * Default values for query vars.
-         *
-         * @since 4.2.0
-         * @var array
-         */
         public $query_var_defaults;
 
-        /**
-         * List of comments located by the query.
-         *
-         * @since 4.0.0
-         * @var int[]|WP_Comment[]
-         */
         public $comments;
 
-        /**
-         * The amount of found comments for the current query.
-         *
-         * @since 4.4.0
-         * @var int
-         */
         public $found_comments = 0;
 
-        /**
-         * The number of pages.
-         *
-         * @since 4.4.0
-         * @var int
-         */
         public $max_num_pages = 0;
 
-        /**
-         * Metadata query clauses.
-         *
-         * @since 4.4.0
-         * @var array
-         */
         protected $meta_query_clauses;
 
-        /**
-         * SQL query clauses.
-         *
-         * @since 4.4.0
-         * @var array
-         */
         protected $sql_clauses = [
             'select' => '',
             'from' => '',
@@ -104,163 +30,8 @@
             'limits' => '',
         ];
 
-        /**
-         * SQL WHERE clause.
-         *
-         * Stored after the {@see 'comments_clauses'} filter is run on the compiled WHERE sub-clauses.
-         *
-         * @since 4.4.2
-         * @var string
-         */
         protected $filtered_where_clause;
 
-        /**
-         * Constructor.
-         *
-         * Sets up the comment query, based on the query vars passed.
-         *
-         * @param string|array   $query                           {
-         *                                                        Optional. Array or query string of comment query parameters. Default empty.
-         *
-         * @type string          $author_email                    Comment author email address. Default empty.
-         * @type string          $author_url                      Comment author URL. Default empty.
-         * @type int[]           $author__in                      Array of author IDs to include comments for. Default empty.
-         * @type int[]           $author__not_in                  Array of author IDs to exclude comments for. Default empty.
-         * @type int[]           $comment__in                     Array of comment IDs to include. Default empty.
-         * @type int[]           $comment__not_in                 Array of comment IDs to exclude. Default empty.
-         * @type bool            $count                           Whether to return a comment count (true) or array of
-         *                                                        comment objects (false). Default false.
-         * @type array           $date_query                      Date query clauses to limit comments by. See WP_Date_Query.
-         *                                                        Default null.
-         * @type string          $fields                          Comment fields to return. Accepts 'ids' for comment IDs
-         *                                                        only or empty for all fields. Default empty.
-         * @type array           $include_unapproved              Array of IDs or email addresses of users whose unapproved
-         *                                                        comments will be returned by the query regardless of
-         *                                                        `$status`. Default empty.
-         * @type int             $karma                           Karma score to retrieve matching comments for.
-         *                                                        Default empty.
-         * @type string|string[] $meta_key                        Meta key or keys to filter by.
-         * @type string|string[] $meta_value                      Meta value or values to filter by.
-         * @type string          $meta_compare                    MySQL operator used for comparing the meta value.
-         *                                                        See WP_Meta_Query::__construct() for accepted values
-         *                                                        and default value.
-         * @type string          $meta_compare_key                MySQL operator used for comparing the meta key.
-         *                                                        See WP_Meta_Query::__construct() for accepted values
-         *                                                        and default value.
-         * @type string          $meta_type                       MySQL data type that the meta_value column will be CAST to for comparisons.
-         *                                                        See WP_Meta_Query::__construct() for accepted values
-         *                                                        and default value.
-         * @type string          $meta_type_key                   MySQL data type that the meta_key column will be CAST to for comparisons.
-         *                                                        See WP_Meta_Query::__construct() for accepted values
-         *                                                        and default value.
-         * @type array           $meta_query                      An associative array of WP_Meta_Query arguments.
-         *                                                        See WP_Meta_Query::__construct() for accepted values.
-         * @type int             $number                          Maximum number of comments to retrieve.
-         *                                                        Default empty (no limit).
-         * @type int             $paged                           When used with `$number`, defines the page of results to return.
-         *                                                        When used with `$offset`, `$offset` takes precedence.
-         *                                                        Default 1.
-         * @type int             $offset                          Number of comments to offset the query. Used to build
-         *                                                        LIMIT clause. Default 0.
-         * @type bool            $no_found_rows                   Whether to disable the `SQL_CALC_FOUND_ROWS` query.
-         *                                                        Default: true.
-         * @type string|array    $orderby                         Comment status or array of statuses. To use 'meta_value'
-         *                                                        or 'meta_value_num', `$meta_key` must also be defined.
-         *                                                        To sort by a specific `$meta_query` clause, use that
-         *                                                        clause's array key. Accepts:
-         *                                                        - 'comment_agent'
-         *                                                        - 'comment_approved'
-         *                                                        - 'comment_author'
-         *                                                        - 'comment_author_email'
-         *                                                        - 'comment_author_IP'
-         *                                                        - 'comment_author_url'
-         *                                                        - 'comment_content'
-         *                                                        - 'comment_date'
-         *                                                        - 'comment_date_gmt'
-         *                                                        - 'comment_ID'
-         *                                                        - 'comment_karma'
-         *                                                        - 'comment_parent'
-         *                                                        - 'comment_post_ID'
-         *                                                        - 'comment_type'
-         *                                                        - 'user_id'
-         *                                                        - 'comment__in'
-         *                                                        - 'meta_value'
-         *                                                        - 'meta_value_num'
-         *                                                        - The value of `$meta_key`
-         *                                                        - The array keys of `$meta_query`
-         *                                                        - false, an empty array, or 'none' to disable `ORDER
-         *                                                        BY` clause. Default: 'comment_date_gmt'.
-         * @type string          $order                           How to order retrieved comments. Accepts 'ASC', 'DESC'.
-         *                                                        Default: 'DESC'.
-         * @type int             $parent                          Parent ID of comment to retrieve children of.
-         *                                                        Default empty.
-         * @type int[]           $parent__in                      Array of parent IDs of comments to retrieve children for.
-         *                                                        Default empty.
-         * @type int[]           $parent__not_in                  Array of parent IDs of comments *not* to retrieve
-         *                                                        children for. Default empty.
-         * @type int[]           $post_author__in                 Array of author IDs to retrieve comments for.
-         *                                                        Default empty.
-         * @type int[]           $post_author__not_in             Array of author IDs *not* to retrieve comments for.
-         *                                                        Default empty.
-         * @type int             $post_id                         Limit results to those affiliated with a given post ID.
-         *                                                        Default 0.
-         * @type int[]           $post__in                        Array of post IDs to include affiliated comments for.
-         *                                                        Default empty.
-         * @type int[]           $post__not_in                    Array of post IDs to exclude affiliated comments for.
-         *                                                        Default empty.
-         * @type int             $post_author                     Post author ID to limit results by. Default empty.
-         * @type string|string[] $post_status                     Post status or array of post statuses to retrieve
-         *                                                        affiliated comments for. Pass 'any' to match any value.
-         *                                                        Default empty.
-         * @type string|string[] $post_type                       Post type or array of post types to retrieve affiliated
-         *                                                        comments for. Pass 'any' to match any value. Default
-         *                                                        empty.
-         * @type string          $post_name                       Post name to retrieve affiliated comments for.
-         *                                                        Default empty.
-         * @type int             $post_parent                     Post parent ID to retrieve affiliated comments for.
-         *                                                        Default empty.
-         * @type string          $search                          Search term(s) to retrieve matching comments for.
-         *                                                        Default empty.
-         * @type string|array    $status                          Comment statuses to limit results by. Accepts an array
-         *                                                        or space/comma-separated list of 'hold'
-         *                                                        (`comment_status=0`),
-         *                                                        'approve' (`comment_status=1`), 'all', or a custom
-         *                                                        comment status. Default 'all'.
-         * @type string|string[] $type                            Include comments of a given type, or array of types.
-         *                                                        Accepts 'comment', 'pings' (includes 'pingback' and
-         *                                                        'trackback'), or any custom type string. Default empty.
-         * @type string[]        $type__in                        Include comments from a given array of comment types.
-         *                                                        Default empty.
-         * @type string[]        $type__not_in                    Exclude comments from a given array of comment types.
-         *                                                        Default empty.
-         * @type int             $user_id                         Include comments for a specific user ID. Default empty.
-         * @type bool|string     $hierarchical                    Whether to include comment descendants in the results.
-         *                                                        - 'threaded' returns a tree, with each comment's
-         *                                                        children stored in a `children` property on the `WP_Comment` object.
-         *                                                        - 'flat' returns a flat array of found comments plus
-         *                                                        their children.
-         *                                                        - Boolean `false` leaves out descendants.
-         *                                                        The parameter is ignored (forced to `false`) when
-         *                                                        `$fields` is 'ids' or 'counts'. Accepts 'threaded',
-         *                                                        'flat', or false. Default: false.
-         * @type string          $cache_domain                    Unique cache key to be produced when this query is stored in
-         *                                                        an object cache. Default is 'core'.
-         * @type bool            $update_comment_meta_cache       Whether to prime the metadata cache for found comments.
-         *                                                        Default true.
-         * @type bool            $update_comment_post_cache       Whether to prime the cache for comment posts.
-         *                                                        Default false.
-         *                                                        }
-         * @since 4.4.0 `$parent__in` and `$parent__not_in` were added.
-         * @since 4.4.0 Order by `comment__in` was added. `$update_comment_meta_cache`, `$no_found_rows`,
-         *                                                        `$hierarchical`, and `$update_comment_post_cache` were added.
-         * @since 4.5.0 Introduced the `$author_url` argument.
-         * @since 4.6.0 Introduced the `$cache_domain` argument.
-         * @since 4.9.0 Introduced the `$paged` argument.
-         * @since 5.1.0 Introduced the `$meta_compare_key` argument.
-         * @since 5.3.0 Introduced the `$meta_type_key` argument.
-         *
-         * @since 4.2.0
-         */
         public function __construct($query = '')
         {
             $this->query_var_defaults = [
@@ -317,20 +88,6 @@
             }
         }
 
-        /**
-         * Sets up the WordPress query for retrieving comments.
-         *
-         * @param string|array $query Array or URL query string of parameters.
-         *
-         * @return array|int List of comments, or number of comments when 'count' is passed as a query var.
-         * @since 4.2.0 Moved parsing to WP_Comment_Query::parse_query().
-         *
-         * @since 3.1.0
-         * @since 4.1.0 Introduced 'comment__in', 'comment__not_in', 'post_author__in',
-         *              'post_author__not_in', 'author__in', 'author__not_in', 'post__in',
-         *              'post__not_in', 'include_unapproved', 'type__in', and 'type__not_in'
-         *              arguments to $query_vars.
-         */
         public function query($query)
         {
             $this->query_vars = wp_parse_args($query);
@@ -338,15 +95,6 @@
             return $this->get_comments();
         }
 
-        /**
-         * Get a list of comments matching the query vars.
-         *
-         * @return int|int[]|WP_Comment[] List of comments or number of found comments if `$count` argument is true.
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         * @since 4.2.0
-         *
-         */
         public function get_comments()
         {
             global $wpdb;
@@ -357,14 +105,6 @@
             $this->meta_query = new WP_Meta_Query();
             $this->meta_query->parse_query_vars($this->query_vars);
 
-            /**
-             * Fires before comments are retrieved.
-             *
-             * @param WP_Comment_Query $query Current instance of WP_Comment_Query (passed by reference).
-             *
-             * @since 3.1.0
-             *
-             */
             do_action_ref_array('pre_get_comments', [&$this]);
 
             // Reparse query vars, in case they were modified in a 'pre_get_comments' callback.
@@ -376,37 +116,6 @@
 
             $comment_data = null;
 
-            /**
-             * Filters the comments data before the query takes place.
-             *
-             * Return a non-null value to bypass WordPress' default comment queries.
-             *
-             * The expected return type from this filter depends on the value passed
-             * in the request query vars:
-             * - When `$this->query_vars['count']` is set, the filter should return
-             *   the comment count as an integer.
-             * - When `'ids' === $this->query_vars['fields']`, the filter should return
-             *   an array of comment IDs.
-             * - Otherwise the filter should return an array of WP_Comment objects.
-             *
-             * Note that if the filter returns an array of comment data, it will be assigned
-             * to the `comments` property of the current WP_Comment_Query instance.
-             *
-             * Filtering functions that require pagination information are encouraged to set
-             * the `found_comments` and `max_num_pages` properties of the WP_Comment_Query object,
-             * passed to the filter by reference. If WP_Comment_Query does not perform a database
-             * query, it will not have enough information to generate these values itself.
-             *
-             * @param array|int|null   $comment_data Return an array of comment data to short-circuit WP's comment query,
-             *                                       the comment count as an integer if `$this->query_vars['count']` is set,
-             *                                       or null to allow WP to run its normal queries.
-             * @param WP_Comment_Query $query        The WP_Comment_Query instance, passed by reference.
-             *
-             * @since 5.3.0
-             * @since 5.6.0 The returned array of comment data is assigned to the `comments` property
-             *              of the current WP_Comment_Query instance.
-             *
-             */
             $comment_data = apply_filters_ref_array('comments_pre_query', [$comment_data, &$this]);
 
             if(null !== $comment_data)
@@ -502,15 +211,6 @@
                 _prime_post_caches($comment_post_ids, false, false);
             }
 
-            /**
-             * Filters the comment query results.
-             *
-             * @param WP_Comment[]     $_comments An array of comments.
-             * @param WP_Comment_Query $query     Current instance of WP_Comment_Query (passed by reference).
-             *
-             * @since 3.1.0
-             *
-             */
             $_comments = apply_filters_ref_array('the_comments', [$_comments, &$this]);
 
             // Convert to WP_Comment instances.
@@ -526,14 +226,6 @@
             return $this->comments;
         }
 
-        /**
-         * Parse arguments passed to the comment query with default query parameters.
-         *
-         * @param string|array $query WP_Comment_Query arguments. See WP_Comment_Query::__construct()
-         *
-         * @since 4.2.0 Extracted from WP_Comment_Query::query().
-         *
-         */
         public function parse_query($query = '')
         {
             if(empty($query))
@@ -543,26 +235,9 @@
 
             $this->query_vars = wp_parse_args($query, $this->query_var_defaults);
 
-            /**
-             * Fires after the comment query vars have been parsed.
-             *
-             * @param WP_Comment_Query $query The WP_Comment_Query instance (passed by reference).
-             *
-             * @since 4.2.0
-             *
-             */
             do_action_ref_array('parse_comment_query', [&$this]);
         }
 
-        /**
-         * Used internally to get a list of comment IDs matching the query vars.
-         *
-         * @return int|array A single count of comment IDs if a count query. An array of comment IDs if a full query.
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         * @since 4.4.0
-         *
-         */
         protected function get_comment_ids()
         {
             global $wpdb;
@@ -1027,15 +702,6 @@
 
             $pieces = ['fields', 'join', 'where', 'orderby', 'limits', 'groupby'];
 
-            /**
-             * Filters the comment query clauses.
-             *
-             * @param string[]         $clauses An associative array of comment query clauses.
-             * @param WP_Comment_Query $query   Current instance of WP_Comment_Query (passed by reference).
-             *
-             * @since 3.1.0
-             *
-             */
             $clauses = apply_filters_ref_array('comments_clauses', [compact($pieces), &$this]);
 
             $fields = isset($clauses['fields']) ? $clauses['fields'] : '';
@@ -1095,17 +761,6 @@
             }
         }
 
-        /**
-         * Parse and sanitize 'orderby' keys passed to the comment query.
-         *
-         * @param string $orderby Alias for the field to order by.
-         *
-         * @return string|false Value to used in the ORDER clause. False otherwise.
-         * @since 4.2.0
-         *
-         * @global wpdb  $wpdb    WordPress database abstraction object.
-         *
-         */
         protected function parse_orderby($orderby)
         {
             global $wpdb;
@@ -1171,15 +826,6 @@
             return $parsed;
         }
 
-        /**
-         * Parse an 'order' query variable and cast it to ASC or DESC as necessary.
-         *
-         * @param string $order The 'order' query variable.
-         *
-         * @return string The sanitized 'order' query variable.
-         * @since 4.2.0
-         *
-         */
         protected function parse_order($order)
         {
             if(! is_string($order) || empty($order))
@@ -1197,18 +843,6 @@
             }
         }
 
-        /**
-         * Used internally to generate an SQL string for searching across multiple columns.
-         *
-         * @param string   $search  Search string.
-         * @param string[] $columns Array of columns to search.
-         *
-         * @return string Search SQL.
-         * @global wpdb    $wpdb    WordPress database abstraction object.
-         *
-         * @since 3.1.0
-         *
-         */
         protected function get_search_sql($search, $columns)
         {
             global $wpdb;
@@ -1224,47 +858,18 @@
             return ' AND ('.implode(' OR ', $searches).')';
         }
 
-        /**
-         * Populates found_comments and max_num_pages properties for the current
-         * query if the limit clause was used.
-         *
-         * @since 4.6.0
-         *
-         * @global wpdb $wpdb WordPress database abstraction object.
-         */
         private function set_found_comments()
         {
             global $wpdb;
 
             if($this->query_vars['number'] && ! $this->query_vars['no_found_rows'])
             {
-                /**
-                 * Filters the query used to retrieve found comment count.
-                 *
-                 * @param string           $found_comments_query SQL query. Default 'SELECT FOUND_ROWS()'.
-                 * @param WP_Comment_Query $comment_query        The `WP_Comment_Query` instance.
-                 *
-                 * @since 4.4.0
-                 *
-                 */
                 $found_comments_query = apply_filters('found_comments_query', 'SELECT FOUND_ROWS()', $this);
 
                 $this->found_comments = (int) $wpdb->get_var($found_comments_query);
             }
         }
 
-        /**
-         * Fetch descendants for located comments.
-         *
-         * Instead of calling `get_children()` separately on each child comment, we do a single set of queries to fetch
-         * the descendant trees for all matched top-level comments.
-         *
-         * @param WP_Comment[] $comments Array of top-level comments whose descendants should be filled in.
-         *
-         * @return array
-         * @since 4.4.0
-         *
-         */
         protected function fill_descendants($comments)
         {
             $levels = [
@@ -1398,16 +1003,6 @@
             return $comments;
         }
 
-        /**
-         * Make private/protected methods readable for backward compatibility.
-         *
-         * @param string $name      Method to call.
-         * @param array  $arguments Arguments to pass when calling.
-         *
-         * @return mixed|false Return value of the callback, false otherwise.
-         * @since 4.0.0
-         *
-         */
         public function __call($name, $arguments)
         {
             if('get_search_sql' === $name)

@@ -1,17 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/site-title` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/site-title` block on the server.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string The render.
-     */
     function render_block_core_site_title($attributes)
     {
         $site_title = get_bloginfo('name');
@@ -47,9 +35,6 @@
         );
     }
 
-    /**
-     * Registers the `core/site-title` block on the server.
-     */
     function register_block_core_site_title()
     {
         register_block_type_from_metadata(__DIR__.'/site-title', [

@@ -1,13 +1,5 @@
 <?php
-    /**
-     * Multisite themes administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.1.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_network_themes'))
@@ -219,13 +211,13 @@
                 {
                     $delete_result = delete_theme(
                         $theme, esc_url(
-                        add_query_arg([
-                                          'verify-delete' => 1,
-                                          'action' => 'delete-selected',
-                                          'checked' => $_REQUEST['checked'],
-                                          '_wpnonce' => $_REQUEST['_wpnonce'],
-                                      ], network_admin_url('themes.php'))
-                    )
+                                  add_query_arg([
+                                                    'verify-delete' => 1,
+                                                    'action' => 'delete-selected',
+                                                    'checked' => $_REQUEST['checked'],
+                                                    '_wpnonce' => $_REQUEST['_wpnonce'],
+                                                ], network_admin_url('themes.php'))
+                              )
                     );
                 }
 
@@ -312,7 +304,6 @@
                 }
                 check_admin_referer('bulk-themes');
 
-                /** This action is documented in wp-admin/network/site-themes.php */
                 $referer = apply_filters('handle_network_bulk_actions-'.get_current_screen()->id, $referer, $action, $themes); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
                 wp_safe_redirect($referer);

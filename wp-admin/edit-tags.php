@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Edit Tags Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! $taxnow)
@@ -31,11 +24,6 @@
         wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to manage terms in this taxonomy.').'</p>', 403);
     }
 
-    /**
-     * $post_type is set when the WP_Terms_List_Table instance is created
-     *
-     * @global string $post_type
-     */
     global $post_type;
 
     $wp_list_table = _get_list_table('WP_Terms_List_Table');
@@ -198,7 +186,6 @@
             $screen = get_current_screen()->id;
             $tags = (array) $_REQUEST['delete_tags'];
 
-            /** This action is documented in wp-admin/edit.php */
             $location = apply_filters("handle_bulk_actions-{$screen}", $location, $wp_list_table->current_action(), $tags); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
             break;
     }
@@ -215,15 +202,6 @@
             $location = add_query_arg('paged', $pagenum, $location); // $pagenum takes care of $total_pages.
         }
 
-        /**
-         * Filters the taxonomy redirect destination URL.
-         *
-         * @param string      $location The destination URL.
-         * @param WP_Taxonomy $tax      The taxonomy object.
-         *
-         * @since 4.6.0
-         *
-         */
         wp_redirect(apply_filters('redirect_term_location', $location, $tax));
         exit;
     }
@@ -387,59 +365,17 @@
                     <?php
                         if('category' === $taxonomy)
                         {
-                            /**
-                             * Fires before the Add Category form.
-                             *
-                             * @param object $arg Optional arguments cast to an object.
-                             *
-                             * @deprecated 3.0.0 Use {@see '{$taxonomy}_pre_add_form'} instead.
-                             *
-                             * @since      2.1.0
-                             */
                             do_action_deprecated('add_category_form_pre', [(object) ['parent' => 0]], '3.0.0', '{$taxonomy}_pre_add_form');
                         }
                         elseif('link_category' === $taxonomy)
                         {
-                            /**
-                             * Fires before the link category form.
-                             *
-                             * @param object $arg Optional arguments cast to an object.
-                             *
-                             * @deprecated 3.0.0 Use {@see '{$taxonomy}_pre_add_form'} instead.
-                             *
-                             * @since      2.3.0
-                             */
                             do_action_deprecated('add_link_category_form_pre', [(object) ['parent' => 0]], '3.0.0', '{$taxonomy}_pre_add_form');
                         }
                         else
                         {
-                            /**
-                             * Fires before the Add Tag form.
-                             *
-                             * @param string $taxonomy The taxonomy slug.
-                             *
-                             * @deprecated 3.0.0 Use {@see '{$taxonomy}_pre_add_form'} instead.
-                             *
-                             * @since      2.5.0
-                             */
                             do_action_deprecated('add_tag_form_pre', [$taxonomy], '3.0.0', '{$taxonomy}_pre_add_form');
                         }
 
-                        /**
-                         * Fires before the Add Term form for all taxonomies.
-                         *
-                         * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
-                         *
-                         * Possible hook names include:
-                         *
-                         *  - `category_pre_add_form`
-                         *  - `post_tag_pre_add_form`
-                         *
-                         * @param string $taxonomy The taxonomy slug.
-                         *
-                         * @since 3.0.0
-                         *
-                         */
                         do_action("{$taxonomy}_pre_add_form", $taxonomy);
                     ?>
 
@@ -447,18 +383,7 @@
                         <h2><?php echo $tax->labels->add_new_item; ?></h2>
                         <form id="addtag" method="post" action="edit-tags.php" class="validate"
                             <?php
-                                /**
-                                 * Fires inside the Add Tag form tag.
-                                 *
-                                 * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
-                                 *
-                                 * Possible hook names include:
-                                 *
-                                 *  - `category_term_new_form_tag`
-                                 *  - `post_tag_term_new_form_tag`
-                                 *
-                                 * @since 3.7.0
-                                 */
+
                                 do_action("{$taxonomy}_term_new_form_tag");
                             ?>
                         >
@@ -503,29 +428,6 @@
                                             'show_option_none' => __('None'),
                                         ];
 
-                                        /**
-                                         * Filters the taxonomy parent drop-down on the Edit Term page.
-                                         *
-                                         * @param array   $dropdown_args        {
-                                         *                                      An array of taxonomy parent drop-down arguments.
-                                         *
-                                         * @type int|bool $hide_empty           Whether to hide terms not attached to any posts. Default 0.
-                                         * @type bool     $hide_if_empty        Whether to hide the drop-down if no terms exist. Default false.
-                                         * @type string   $taxonomy             The taxonomy slug.
-                                         * @type string   $name                 Value of the name attribute to use for the drop-down select element.
-                                         *                                      Default 'parent'.
-                                         * @type string   $orderby              The field to order by. Default 'name'.
-                                         * @type bool     $hierarchical         Whether the taxonomy is hierarchical. Default true.
-                                         * @type string   $show_option_none     Label to display if there are no terms. Default 'None'.
-                                         *                                      }
-                                         *
-                                         * @param string  $taxonomy             The taxonomy slug.
-                                         * @param string  $context              Filter context. Accepts 'new' or 'edit'.
-                                         *
-                                         * @since 4.2.0 Added `$context` parameter.
-                                         *
-                                         * @since 3.7.0
-                                         */
                                         $dropdown_args = apply_filters('taxonomy_parent_dropdown_args', $dropdown_args, $taxonomy, 'new');
 
                                         $dropdown_args['aria_describedby'] = 'parent-description';
@@ -538,7 +440,8 @@
                                         <p id="parent-description"><?php echo $tax->labels->parent_field_description; ?></p>
                                     <?php endif; ?>
                                 </div>
-                            <?php endif; // is_taxonomy_hierarchical() ?>
+                            <?php endif; // is_taxonomy_hierarchical()
+                            ?>
                             <div class="form-field term-description-wrap">
                                 <label for="tag-description"><?php _e('Description'); ?></label>
                                 <textarea name="description"
@@ -552,32 +455,9 @@
                             <?php
                                 if(! is_taxonomy_hierarchical($taxonomy))
                                 {
-                                    /**
-                                     * Fires after the Add Tag form fields for non-hierarchical taxonomies.
-                                     *
-                                     * @param string $taxonomy The taxonomy slug.
-                                     *
-                                     * @since 3.0.0
-                                     *
-                                     */
                                     do_action('add_tag_form_fields', $taxonomy);
                                 }
 
-                                /**
-                                 * Fires after the Add Term form fields.
-                                 *
-                                 * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
-                                 *
-                                 * Possible hook names include:
-                                 *
-                                 *  - `category_add_form_fields`
-                                 *  - `post_tag_add_form_fields`
-                                 *
-                                 * @param string $taxonomy The taxonomy slug.
-                                 *
-                                 * @since 3.0.0
-                                 *
-                                 */
                                 do_action("{$taxonomy}_add_form_fields", $taxonomy);
                             ?>
                             <p class="submit">
@@ -587,59 +467,17 @@
                             <?php
                                 if('category' === $taxonomy)
                                 {
-                                    /**
-                                     * Fires at the end of the Edit Category form.
-                                     *
-                                     * @param object $arg Optional arguments cast to an object.
-                                     *
-                                     * @deprecated 3.0.0 Use {@see '{$taxonomy}_add_form'} instead.
-                                     *
-                                     * @since      2.1.0
-                                     */
                                     do_action_deprecated('edit_category_form', [(object) ['parent' => 0]], '3.0.0', '{$taxonomy}_add_form');
                                 }
                                 elseif('link_category' === $taxonomy)
                                 {
-                                    /**
-                                     * Fires at the end of the Edit Link form.
-                                     *
-                                     * @param object $arg Optional arguments cast to an object.
-                                     *
-                                     * @deprecated 3.0.0 Use {@see '{$taxonomy}_add_form'} instead.
-                                     *
-                                     * @since      2.3.0
-                                     */
                                     do_action_deprecated('edit_link_category_form', [(object) ['parent' => 0]], '3.0.0', '{$taxonomy}_add_form');
                                 }
                                 else
                                 {
-                                    /**
-                                     * Fires at the end of the Add Tag form.
-                                     *
-                                     * @param string $taxonomy The taxonomy slug.
-                                     *
-                                     * @deprecated 3.0.0 Use {@see '{$taxonomy}_add_form'} instead.
-                                     *
-                                     * @since      2.7.0
-                                     */
                                     do_action_deprecated('add_tag_form', [$taxonomy], '3.0.0', '{$taxonomy}_add_form');
                                 }
 
-                                /**
-                                 * Fires at the end of the Add Term form for all taxonomies.
-                                 *
-                                 * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
-                                 *
-                                 * Possible hook names include:
-                                 *
-                                 *  - `category_add_form`
-                                 *  - `post_tag_add_form`
-                                 *
-                                 * @param string $taxonomy The taxonomy slug.
-                                 *
-                                 * @since 3.0.0
-                                 *
-                                 */
                                 do_action("{$taxonomy}_add_form", $taxonomy);
                             ?>
                         </form>
@@ -665,7 +503,7 @@
                         <div class="form-wrap edit-term-notes">
                             <p>
                                 <?php
-                                    printf(/* translators: %s: Default category. */ __('Deleting a category does not delete the posts in that category. Instead, posts that were only assigned to the deleted category are set to the default category %s. The default category cannot be deleted.'), /** This filter is documented in wp-includes/category-template.php */ '<strong>'.apply_filters('the_category', get_cat_name(get_option('default_category')), '', '').'</strong>');
+                                    printf(/* translators: %s: Default category. */ __('Deleting a category does not delete the posts in that category. Instead, posts that were only assigned to the deleted category are set to the default category %s. The default category cannot be deleted.'), '<strong>'.apply_filters('the_category', get_cat_name(get_option('default_category')), '', '').'</strong>');
                                 ?>
                             </p>
                             <?php if(current_user_can('import')) : ?>
@@ -687,21 +525,6 @@
                     <?php
                     endif;
 
-                        /**
-                         * Fires after the taxonomy list table.
-                         *
-                         * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
-                         *
-                         * Possible hook names include:
-                         *
-                         *  - `after-category-table`
-                         *  - `after-post_tag-table`
-                         *
-                         * @param string $taxonomy The taxonomy name.
-                         *
-                         * @since 3.0.0
-                         *
-                         */
                         do_action("after-{$taxonomy}-table", $taxonomy);  // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
                         if($can_edit_terms)

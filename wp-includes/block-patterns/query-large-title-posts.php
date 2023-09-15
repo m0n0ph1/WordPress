@@ -1,9 +1,4 @@
 <?php
-    /**
-     * Query: Large title.
-     *
-     * @package WordPress
-     */
 
     return [
         'title' => _x('Large title', 'Block pattern title'),

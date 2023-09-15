@@ -1,10 +1,4 @@
 <?php
-    /**
-     * WordPress Administration Template Header
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     header('Content-Type: '.get_option('html_type').'; charset='.get_option('blog_charset'));
     if(! defined('WP_ADMIN'))
@@ -12,19 +6,6 @@
         require_once __DIR__.'/admin.php';
     }
 
-    /**
-     * In case admin-header.php is included in a function.
-     *
-     * @global string    $title
-     * @global string    $hook_suffix
-     * @global WP_Screen $current_screen WordPress current screen object.
-     * @global WP_Locale $wp_locale      WordPress date and time locale object.
-     * @global string    $pagenow        The filename of the current screen.
-     * @global string    $update_title
-     * @global int       $total_update_count
-     * @global string    $parent_file
-     * @global string    $typenow        The post type of the current screen.
-     */
     global $title, $hook_suffix, $current_screen, $wp_locale, $pagenow, $update_title, $total_update_count, $parent_file, $typenow;
 
 // Catch plugins that include admin-header.php before admin.php completes.
@@ -80,15 +61,6 @@
         $admin_title = sprintf(__('Recovery Mode &#8212; %s'), $admin_title);
     }
 
-    /**
-     * Filters the title tag content for an admin page.
-     *
-     * @param string $admin_title The page title, with extra context added.
-     * @param string $title       The original page title.
-     *
-     * @since 3.1.0
-     *
-     */
     $admin_title = apply_filters('admin_title', $admin_title, $title);
 
     wp_user_settings();
@@ -128,59 +100,18 @@
     </script>
 <?php
 
-    /**
-     * Fires when enqueuing scripts for all admin pages.
-     *
-     * @param string $hook_suffix The current admin page.
-     *
-     * @since 2.8.0
-     *
-     */
     do_action('admin_enqueue_scripts', $hook_suffix);
 
-    /**
-     * Fires when styles are printed for a specific admin page based on $hook_suffix.
-     *
-     * @since 2.6.0
-     */
     do_action("admin_print_styles-{$hook_suffix}"); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
-    /**
-     * Fires when styles are printed for all admin pages.
-     *
-     * @since 2.6.0
-     */
     do_action('admin_print_styles');
 
-    /**
-     * Fires when scripts are printed for a specific admin page based on $hook_suffix.
-     *
-     * @since 2.1.0
-     */
     do_action("admin_print_scripts-{$hook_suffix}"); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
-    /**
-     * Fires when scripts are printed for all admin pages.
-     *
-     * @since 2.1.0
-     */
     do_action('admin_print_scripts');
 
-    /**
-     * Fires in head section for a specific admin page.
-     *
-     * The dynamic portion of the hook name, `$hook_suffix`, refers to the hook suffix
-     * for the admin page.
-     *
-     * @since 2.1.0
-     */
     do_action("admin_head-{$hook_suffix}"); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
-    /**
-     * Fires in head section for all admin pages.
-     *
-     * @since 2.1.0
-     */
     do_action('admin_head');
 
     if('f' === get_user_setting('mfold'))
@@ -258,21 +189,7 @@
 ?>
     </head>
 <?php
-    /**
-     * Filters the CSS classes for the body tag in the admin.
-     *
-     * This filter differs from the {@see 'post_class'} and {@see 'body_class'} filters
-     * in two important ways:
-     *
-     * 1. `$classes` is a space-separated string of class names instead of an array.
-     * 2. Not all core admin classes are filterable, notably: wp-admin, wp-core-ui,
-     *    and no-js cannot be removed.
-     *
-     * @param string $classes Space-separated list of CSS classes.
-     *
-     * @since 2.3.0
-     *
-     */
+
     $admin_body_classes = apply_filters('admin_body_class', '');
     $admin_body_classes = ltrim($admin_body_classes.' '.$admin_body_class);
 ?>
@@ -294,11 +211,7 @@
         <div id="wpcontent">
 
             <?php
-                /**
-                 * Fires at the beginning of the content section in an admin page.
-                 *
-                 * @since 3.0.0
-                 */
+
                 do_action('in_admin_header');
             ?>
 
@@ -317,37 +230,17 @@
 
     if(is_network_admin())
     {
-        /**
-         * Prints network admin screen notices.
-         *
-         * @since 3.1.0
-         */
         do_action('network_admin_notices');
     }
     elseif(is_user_admin())
     {
-        /**
-         * Prints user admin screen notices.
-         *
-         * @since 3.1.0
-         */
         do_action('user_admin_notices');
     }
     else
     {
-        /**
-         * Prints admin screen notices.
-         *
-         * @since 3.1.0
-         */
         do_action('admin_notices');
     }
 
-    /**
-     * Prints generic admin screen notices.
-     *
-     * @since 3.1.0
-     */
     do_action('all_admin_notices');
 
     if('options-general.php' === $parent_file)

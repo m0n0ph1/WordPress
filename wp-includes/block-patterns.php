@@ -1,20 +1,7 @@
 <?php
-    /**
-     * Register the block patterns and block patterns categories
-     *
-     * @package WordPress
-     * @since   5.5.0
-     */
 
     add_theme_support('core-block-patterns');
 
-    /**
-     * Registers the core block patterns and categories.
-     *
-     * @since  5.5.0
-     * @since  6.3.0 Added source to core block patterns.
-     * @access private
-     */
     function _register_core_block_patterns_and_categories()
     {
         $should_register_core_patterns = get_theme_support('core-block-patterns');
@@ -110,18 +97,6 @@
         ]);
     }
 
-    /**
-     * Normalize the pattern properties to camelCase.
-     *
-     * The API's format is snake_case, `register_block_pattern()` expects camelCase.
-     *
-     * @param array $pattern Pattern as returned from the Pattern Directory API.
-     *
-     * @return array Normalized pattern.
-     * @since  6.2.0
-     * @access private
-     *
-     */
     function wp_normalize_remote_block_pattern($pattern)
     {
         if(isset($pattern['block_types']))
@@ -139,18 +114,6 @@
         return (array) $pattern;
     }
 
-    /**
-     * Register Core's official patterns from wordpress.org/patterns.
-     *
-     * @param WP_Screen $deprecated Unused. Formerly the screen that the current request was triggered from.
-     *
-     * @since 5.9.0 The $current_screen argument was removed.
-     * @since 6.2.0 Normalize the pattern from the API (snake_case) to the
-     *              format expected by `register_block_pattern` (camelCase).
-     * @since 6.3.0 Add 'pattern-directory/core' to the pattern's 'source'.
-     *
-     * @since 5.8.0
-     */
     function _load_remote_block_patterns($deprecated = null)
     {
         if(! empty($deprecated))
@@ -165,14 +128,6 @@
 
         $supports_core_patterns = get_theme_support('core-block-patterns');
 
-        /**
-         * Filter to disable remote block patterns.
-         *
-         * @param bool $should_load_remote
-         *
-         * @since 5.8.0
-         *
-         */
         $should_load_remote = apply_filters('should_load_remote_block_patterns', true);
 
         if($supports_core_patterns && $should_load_remote)
@@ -197,19 +152,10 @@
         }
     }
 
-    /**
-     * Register `Featured` (category) patterns from wordpress.org/patterns.
-     *
-     * @since 5.9.0
-     * @since 6.2.0 Normalized the pattern from the API (snake_case) to the
-     *              format expected by `register_block_pattern()` (camelCase).
-     * @since 6.3.0 Add 'pattern-directory/featured' to the pattern's 'source'.
-     */
     function _load_remote_featured_patterns()
     {
         $supports_core_patterns = get_theme_support('core-block-patterns');
 
-        /** This filter is documented in wp-includes/block-patterns.php */
         $should_load_remote = apply_filters('should_load_remote_block_patterns', true);
 
         if(! $should_load_remote || ! $supports_core_patterns)
@@ -241,19 +187,8 @@
         }
     }
 
-    /**
-     * Registers patterns from Pattern Directory provided by a theme's
-     * `theme.json` file.
-     *
-     * @since  6.0.0
-     * @since  6.2.0 Normalized the pattern from the API (snake_case) to the
-     *              format expected by `register_block_pattern()` (camelCase).
-     * @since  6.3.0 Add 'pattern-directory/theme' to the pattern's 'source'.
-     * @access private
-     */
     function _register_remote_theme_patterns()
     {
-        /** This filter is documented in wp-includes/block-patterns.php */
         if(! apply_filters('should_load_remote_block_patterns', true))
         {
             return;
@@ -293,38 +228,6 @@
         }
     }
 
-    /**
-     * Register any patterns that the active theme may provide under its
-     * `./patterns/` directory. Each pattern is defined as a PHP file and defines
-     * its metadata using plugin-style headers. The minimum required definition is:
-     *
-     *     /**
-     *      * Title: My Pattern
-     *      * Slug: my-theme/my-pattern
-     *      *
-     *
-     * The output of the PHP source corresponds to the content of the pattern, e.g.:
-     *
-     *     <main><p><?php echo "Hello"; ?></p></main>
-     *
-     * If applicable, this will collect from both parent and child theme.
-     *
-     * Other settable fields include:
-     *
-     *   - Description
-     *   - Viewport Width
-     *   - Inserter         (yes/no)
-     *   - Categories       (comma-separated values)
-     *   - Keywords         (comma-separated values)
-     *   - Block Types      (comma-separated values)
-     *   - Post Types       (comma-separated values)
-     *   - Template Types   (comma-separated values)
-     *
-     * @since  6.0.0
-     * @since  6.1.0 The `postTypes` property was added.
-     * @since  6.2.0 The `templateTypes` property was added.
-     * @access private
-     */
     function _register_theme_block_patterns()
     {
         $default_headers = [

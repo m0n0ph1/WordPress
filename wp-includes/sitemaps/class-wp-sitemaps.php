@@ -1,54 +1,14 @@
 <?php
-    /**
-     * Sitemaps: WP_Sitemaps class
-     *
-     * This is the main class integrating all other classes.
-     *
-     * @package    WordPress
-     * @subpackage Sitemaps
-     * @since      5.5.0
-     */
 
-    /**
-     * Class WP_Sitemaps.
-     *
-     * @since 5.5.0
-     */
     #[AllowDynamicProperties]
     class WP_Sitemaps
     {
-        /**
-         * The main index of supported sitemaps.
-         *
-         * @since 5.5.0
-         *
-         * @var WP_Sitemaps_Index
-         */
         public $index;
 
-        /**
-         * The main registry of supported sitemaps.
-         *
-         * @since 5.5.0
-         *
-         * @var WP_Sitemaps_Registry
-         */
         public $registry;
 
-        /**
-         * An instance of the renderer class.
-         *
-         * @since 5.5.0
-         *
-         * @var WP_Sitemaps_Renderer
-         */
         public $renderer;
 
-        /**
-         * WP_Sitemaps constructor.
-         *
-         * @since 5.5.0
-         */
         public function __construct()
         {
             $this->registry = new WP_Sitemaps_Registry();
@@ -56,14 +16,6 @@
             $this->index = new WP_Sitemaps_Index($this->registry);
         }
 
-        /**
-         * Initiates all sitemap functionality.
-         *
-         * If sitemaps are disabled, only the rewrite rules will be registered
-         * by this method, in order to properly send 404s.
-         *
-         * @since 5.5.0
-         */
         public function init()
         {
             // These will all fire on the init hook.
@@ -83,11 +35,6 @@
             add_filter('robots_txt', [$this, 'add_robots'], 0, 2);
         }
 
-        /**
-         * Registers sitemap rewrite tags and routing rules.
-         *
-         * @since 5.5.0
-         */
         public function register_rewrites()
         {
             // Add rewrite tags.
@@ -107,39 +54,13 @@
             add_rewrite_rule('^wp-sitemap-([a-z]+?)-(\d+?)\.xml$', 'index.php?sitemap=$matches[1]&paged=$matches[2]', 'top');
         }
 
-        /**
-         * Determines whether sitemaps are enabled or not.
-         *
-         * @return bool Whether sitemaps are enabled.
-         * @since 5.5.0
-         *
-         */
         public function sitemaps_enabled()
         {
             $is_enabled = (bool) get_option('blog_public');
 
-            /**
-             * Filters whether XML Sitemaps are enabled or not.
-             *
-             * When XML Sitemaps are disabled via this filter, rewrite rules are still
-             * in place to ensure a 404 is returned.
-             *
-             * @param bool $is_enabled Whether XML Sitemaps are enabled or not.
-             *                         Defaults to true for public sites.
-             *
-             * @since 5.5.0
-             *
-             * @see   WP_Sitemaps::register_rewrites()
-             *
-             */
             return (bool) apply_filters('wp_sitemaps_enabled', $is_enabled);
         }
 
-        /**
-         * Registers and sets up the functionality for all supported sitemaps.
-         *
-         * @since 5.5.0
-         */
         public function register_sitemaps()
         {
             $providers = [
@@ -155,13 +76,6 @@
             }
         }
 
-        /**
-         * Renders sitemap templates based on rewrite rules.
-         *
-         * @since 5.5.0
-         *
-         * @global WP_Query $wp_query WordPress Query object.
-         */
         public function render_sitemaps()
         {
             global $wp_query;
@@ -230,16 +144,6 @@
             exit;
         }
 
-        /**
-         * Redirects a URL to the wp-sitemap.xml
-         *
-         * @param bool     $bypass Pass-through of the pre_handle_404 filter value.
-         * @param WP_Query $query  The WP_Query object.
-         *
-         * @return bool Bypass value.
-         * @since 5.5.0
-         *
-         */
         public function redirect_sitemapxml($bypass, $query)
         {
             // If a plugin has already utilized the pre_handle_404 function, return without action to avoid conflicts.
@@ -258,16 +162,6 @@
             return $bypass;
         }
 
-        /**
-         * Adds the sitemap index to robots.txt.
-         *
-         * @param string $output    robots.txt output.
-         * @param bool   $is_public Whether the site is public.
-         *
-         * @return string The robots.txt output.
-         * @since 5.5.0
-         *
-         */
         public function add_robots($output, $is_public)
         {
             if($is_public)

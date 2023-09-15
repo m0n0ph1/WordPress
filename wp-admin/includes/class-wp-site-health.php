@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Class for looking up a site's health based on a user's WordPress environment.
-     *
-     * @package    WordPress
-     * @subpackage Site_Health
-     * @since      5.2.0
-     */
 
     #[AllowDynamicProperties]
     class WP_Site_Health
@@ -40,11 +33,6 @@
 
         private $timeout_late_cron = null;
 
-        /**
-         * WP_Site_Health constructor.
-         *
-         * @since 5.2.0
-         */
         public function __construct()
         {
             $this->maybe_create_scheduled_event();
@@ -69,11 +57,6 @@
             add_action('site_health_tab_content', [$this, 'show_site_health_tab']);
         }
 
-        /**
-         * Creates a weekly cron event, if one does not already exist.
-         *
-         * @since 5.4.0
-         */
         public function maybe_create_scheduled_event()
         {
             if(! wp_next_scheduled('wp_site_health_scheduled_check') && ! wp_installing())
@@ -82,14 +65,6 @@
             }
         }
 
-        /**
-         * Outputs the content of a tab in the Site Health screen.
-         *
-         * @param string $tab Slug of the current tab being displayed.
-         *
-         * @since 5.8.0
-         *
-         */
         public function show_site_health_tab($tab)
         {
             if('debug' === $tab)
@@ -98,11 +73,6 @@
             }
         }
 
-        /**
-         * Enqueues the site health scripts.
-         *
-         * @since 5.2.0
-         */
         public function enqueue_scripts()
         {
             $screen = get_current_screen();
@@ -186,18 +156,6 @@
             wp_localize_script('site-health', 'SiteHealth', $health_check_js_variables);
         }
 
-        /**
-         * Returns a set of tests that belong to the site status page.
-         *
-         * Each site status test is defined here, they may be `direct` tests, that run on page load, or `async` tests
-         * which will run later down the line via JavaScript calls to improve page performance and hopefully also user
-         * experiences.
-         *
-         * @return array The list of tests to run.
-         * @since 5.6.0 Added support for `has_rest` and `permissions`.
-         *
-         * @since 5.2.0
-         */
         public static function get_tests()
         {
             $tests = [
@@ -332,58 +290,6 @@
                 ];
             }
 
-            /**
-             * Filters which site status tests are run on a site.
-             *
-             * The site health is determined by a set of tests based on best practices from
-             * both the WordPress Hosting Team and web standards in general.
-             *
-             * Some sites may not have the same requirements, for example the automatic update
-             * checks may be handled by a host, and are therefore disabled in core.
-             * Or maybe you want to introduce a new test, is caching enabled/disabled/stale for example.
-             *
-             * Tests may be added either as direct, or asynchronous ones. Any test that may require some time
-             * to complete should run asynchronously, to avoid extended loading periods within wp-admin.
-             *
-             * @param array[] $tests                         {
-             *                                               An associative array of direct and asynchronous tests.
-             *
-             * @type array[]  $direct                        {
-             *                                               An array of direct tests.
-             *
-             * @type array    ...$identifier                 {
-             *                                               `$identifier` should be a unique identifier for the test. Plugins and themes are encouraged to
-             *                                               prefix test identifiers with their slug to avoid collisions between tests.
-             *
-             * @type string   $label                         The friendly label to identify the test.
-             * @type callable $test                          The callback function that runs the test and returns its result.
-             * @type bool     $skip_cron                     Whether to skip this test when running as cron.
-             *                                               }
-             *                                               }
-             * @type array[]  $async                         {
-             *                                               An array of asynchronous tests.
-             *
-             * @type array    ...$identifier                 {
-             *                                               `$identifier` should be a unique identifier for the test. Plugins and themes are encouraged to
-             *                                               prefix test identifiers with their slug to avoid collisions between tests.
-             *
-             * @type string   $label                         The friendly label to identify the test.
-             * @type string   $test                          An admin-ajax.php action to be called to perform the test, or
-             *                                               if `$has_rest` is true, a URL to a REST API endpoint to perform
-             *                                               the test.
-             * @type bool     $has_rest                      Whether the `$test` property points to a REST API endpoint.
-             * @type bool     $skip_cron                     Whether to skip this test when running as cron.
-             * @type callable $async_direct_test             A manner of directly calling the test marked as asynchronous,
-             *                                               as the scheduled event can not authenticate, and endpoints
-             *                                               may require authentication.
-             *                                               }
-             *                                               }
-             *                                               }
-             * @since 5.6.0 Added the `async_direct_test` array key for asynchronous tests.
-             *                                               Added the `skip_cron` array key for all tests.
-             *
-             * @since 5.2.0
-             */
             $tests = apply_filters('site_status_tests', $tests);
 
             // Ensure that the filtered tests contain the required array keys.
@@ -395,13 +301,6 @@
             return $tests;
         }
 
-        /**
-         * Returns an instance of the WP_Site_Health class, or create one if none exist yet.
-         *
-         * @return WP_Site_Health|null
-         * @since 5.4.0
-         *
-         */
         public static function get_instance()
         {
             if(null === self::$instance)
@@ -412,64 +311,16 @@
             return self::$instance;
         }
 
-        /**
-         * Checks if the current environment type is set to 'development' or 'local'.
-         *
-         * @return bool True if it is a development environment, false if not.
-         * @since 5.6.0
-         *
-         */
         public function is_development_environment()
         {
             return in_array(wp_get_environment_type(), ['development', 'local'], true);
         }
 
-        /**
-         * Runs a Site Health test directly.
-         *
-         * @param callable $callback
-         *
-         * @return mixed|void
-         * @since 5.4.0
-         *
-         */
         private function perform_test($callback)
         {
-            /**
-             * Filters the output of a finished Site Health test.
-             *
-             * @param array $test_result {
-             *                           An associative array of test result data.
-             *
-             * @type string $label       A label describing the test, and is used as a header in the output.
-             * @type string $status      The status of the test, which can be a value of `good`, `recommended` or `critical`.
-             * @type array  $badge       {
-             *                           Tests are put into categories which have an associated badge shown, these can be modified and assigned here.
-             *
-             * @type string $label       The test label, for example `Performance`.
-             * @type string $color       Default `blue`. A string representing a color to use for the label.
-             *                           }
-             * @type string $description A more descriptive explanation of what the test looks for, and why it is important for the end user.
-             * @type string $actions     An action to direct the user to where they can resolve the issue, if one exists.
-             * @type string $test        The name of the test being ran, used as a reference point.
-             *                           }
-             * @since 5.3.0
-             *
-             */
             return apply_filters('site_status_test_result', call_user_func($callback));
         }
 
-        /**
-         * Tests whether `wp_version_check` is blocked.
-         *
-         * It's possible to block updates with the `wp_version_check` filter, but this can't be checked
-         * during an Ajax call, as the filter is never introduced then.
-         *
-         * This filter overrides a standard page request if it's made by an admin through the Ajax call
-         * with the right query argument to check for this.
-         *
-         * @since 5.2.0
-         */
         public function check_wp_version_check_exists()
         {
             if(! is_admin() || ! is_user_logged_in() || ! current_user_can('update_core') || ! isset($_GET['health-check-test-wp_version_check']))
@@ -482,16 +333,6 @@
             die();
         }
 
-        /**
-         * Tests for WordPress version and outputs it.
-         *
-         * Gives various results depending on what kind of updates are available, if any, to encourage
-         * the user to install security updates as a priority.
-         *
-         * @return array The test result.
-         * @since 5.2.0
-         *
-         */
         public function get_test_wordpress_version()
         {
             $result = [
@@ -562,16 +403,6 @@
             return $result;
         }
 
-        /**
-         * Tests if plugins are outdated, or unnecessary.
-         *
-         * The test checks if your plugins are up to date, and encourages you to remove any
-         * that are not in use.
-         *
-         * @return array The test result.
-         * @since 5.2.0
-         *
-         */
         public function get_test_plugin_version()
         {
             $result = [
@@ -653,17 +484,6 @@
             return $result;
         }
 
-        /**
-         * Tests if themes are outdated, or unnecessary.
-         *
-         * Checks if your site has a default theme (to fall back on if there is a need),
-         * if your themes are up to date and, finally, encourages you to remove any themes
-         * that are not needed.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_theme_version()
         {
             $result = [
@@ -817,13 +637,6 @@
             return $result;
         }
 
-        /**
-         * Tests if the supplied PHP version is supported.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_php_version()
         {
             $response = wp_check_php_version();
@@ -899,16 +712,6 @@
             return $result;
         }
 
-        /**
-         * Tests if required PHP modules are installed on the host.
-         *
-         * This test builds on the recommendations made by the WordPress Hosting Team
-         * as seen at https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions
-         *
-         * @return array
-         * @since 5.2.0
-         *
-         */
         public function get_test_php_extensions()
         {
             $result = [
@@ -1020,28 +823,6 @@
                 ],
             ];
 
-            /**
-             * Filters the array representing all the modules we wish to test for.
-             *
-             * @param array $modules      {
-             *                            An associative array of modules to test for.
-             *
-             * @type array ...$0 {
-             *                            An associative array of module properties used during testing.
-             *                            One of either `$function` or `$extension` must be provided, or they will fail by default.
-             *
-             * @type string $function     Optional. A function name to test for the existence of.
-             * @type string $extension    Optional. An extension to check if is loaded in PHP.
-             * @type string $constant     Optional. A constant name to check for to verify an extension exists.
-             * @type string $class        Optional. A class name to check for to verify an extension exists.
-             * @type bool   $required     Is this a required feature or not.
-             * @type string $fallback_for Optional. The module this module replaces as a fallback.
-             *                            }
-             *                            }
-             * @since 5.3.0 The `$constant` and `$class` parameters were added.
-             *
-             * @since 5.2.0
-             */
             $modules = apply_filters('site_status_test_php_modules', $modules);
 
             $failures = [];
@@ -1127,21 +908,6 @@
             return $result;
         }
 
-        /**
-         * Checks if the passed extension or function are available.
-         *
-         * Make the check for available PHP modules into a simple boolean operator for a cleaner test runner.
-         *
-         * @param string $extension_name Optional. The extension name to test. Default null.
-         * @param string $function_name  Optional. The function name to test. Default null.
-         * @param string $constant_name  Optional. The constant name to test for. Default null.
-         * @param string $class_name     Optional. The class name to test for. Default null.
-         *
-         * @return bool Whether or not the extension and function are available.
-         * @since 5.3.0 The `$constant_name` and `$class_name` parameters were added.
-         *
-         * @since 5.2.0
-         */
         private function test_php_extension_availability(
             $extension_name = null, $function_name = null, $constant_name = null, $class_name = null
         ) {
@@ -1174,13 +940,6 @@
             return true;
         }
 
-        /**
-         * Tests if the PHP default timezone is set to UTC.
-         *
-         * @return array The test results.
-         * @since 5.3.1
-         *
-         */
         public function get_test_php_default_timezone()
         {
             $result = [
@@ -1207,13 +966,6 @@
             return $result;
         }
 
-        /**
-         * Tests if there's an active PHP session that can affect loopback requests.
-         *
-         * @return array The test results.
-         * @since 5.5.0
-         *
-         */
         public function get_test_php_sessions()
         {
             $result = [
@@ -1239,13 +991,6 @@
             return $result;
         }
 
-        /**
-         * Tests if the SQL server is up to date.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_sql_server()
         {
             if(! $this->mysql_server_version)
@@ -1290,24 +1035,14 @@
             {
                 $result['description'] .= sprintf(
                     '<p>%s</p>', wp_kses(sprintf(/* translators: 1: The name of the drop-in. 2: The name of the database engine. */ __('You are using a %1$s drop-in which might mean that a %2$s database is not being used.'), '<code>wp-content/db.php</code>', ($this->is_mariadb ? 'MariaDB' : 'MySQL')), [
-                    'code' => true,
-                ])
+                                   'code' => true,
+                               ])
                 );
             }
 
             return $result;
         }
 
-        /**
-         * Runs the SQL version checks.
-         *
-         * These values are used in later tests, but the part of preparing them is more easily managed
-         * early in the class for ease of access and discovery.
-         *
-         * @since 5.2.0
-         *
-         * @global wpdb $wpdb WordPress database abstraction object.
-         */
         private function prepare_sql_data()
         {
             global $wpdb;
@@ -1326,15 +1061,6 @@
             $this->is_recommended_mysql_version = version_compare($this->mysql_recommended_version, $this->mysql_server_version, '<=');
         }
 
-        /**
-         * Tests if the database server is capable of using utf8mb4.
-         *
-         * @return array The test results.
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         * @since 5.2.0
-         *
-         */
         public function get_test_utf8mb4_support()
         {
             global $wpdb;
@@ -1421,13 +1147,6 @@
             return $result;
         }
 
-        /**
-         * Tests if the site can communicate with WordPress.org.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_dotorg_communication()
         {
             $result = [
@@ -1463,19 +1182,6 @@
             return $result;
         }
 
-        /**
-         * Tests if debug information is enabled.
-         *
-         * When WP_DEBUG is enabled, errors and information may be disclosed to site visitors,
-         * or logged to a publicly accessible file.
-         *
-         * Debugging is also frequently left enabled after looking for errors on a site,
-         * as site owners do not understand the implications of this.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_is_in_debug_mode()
         {
             $result = [
@@ -1520,17 +1226,6 @@
             return $result;
         }
 
-        /**
-         * Tests if the site is serving content over HTTPS.
-         *
-         * Many sites have varying degrees of HTTPS support, the most common of which is sites that have it
-         * enabled, but only if you visit the right site address.
-         *
-         * @return array The test results.
-         * @since 5.7.0 Updated to rely on {@see wp_is_using_https()} and {@see wp_is_https_supported()}.
-         *
-         * @since 5.2.0
-         */
         public function get_test_https_status()
         {
             /*
@@ -1626,13 +1321,6 @@
             return $result;
         }
 
-        /**
-         * Checks if the HTTP API can handle SSL/TLS requests.
-         *
-         * @return array The test result.
-         * @since 5.2.0
-         *
-         */
         public function get_test_ssl_support()
         {
             $result = [
@@ -1667,16 +1355,6 @@
             return $result;
         }
 
-        /**
-         * Tests if scheduled events run as intended.
-         *
-         * If scheduled events are not running, this may indicate something with WP_Cron is not working
-         * as intended, or that there are orphaned events hanging around from older code.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_scheduled_events()
         {
             $result = [
@@ -1721,22 +1399,12 @@
             return $result;
         }
 
-        /**
-         * Initiates the WP_Cron schedule test cases.
-         *
-         * @since 5.2.0
-         */
         private function wp_schedule_test_init()
         {
             $this->schedules = wp_get_schedules();
             $this->get_cron_tasks();
         }
 
-        /**
-         * Populates the list of cron events and store them to a class-wide variable.
-         *
-         * @since 5.2.0
-         */
         private function get_cron_tasks()
         {
             $cron_tasks = _get_cron_array();
@@ -1769,17 +1437,6 @@
             }
         }
 
-        /**
-         * Checks if any scheduled tasks have been missed.
-         *
-         * Returns a boolean value of `true` if a scheduled task has been missed and ends processing.
-         *
-         * If the list of crons is an instance of WP_Error, returns the instance instead of a boolean value.
-         *
-         * @return bool|WP_Error True if a cron was missed, false if not. WP_Error if the cron is set to that.
-         * @since 5.2.0
-         *
-         */
         public function has_missed_cron()
         {
             if(is_wp_error($this->crons))
@@ -1800,17 +1457,6 @@
             return false;
         }
 
-        /**
-         * Checks if any scheduled tasks are late.
-         *
-         * Returns a boolean value of `true` if a scheduled task is late and ends processing.
-         *
-         * If the list of crons is an instance of WP_Error, returns the instance instead of a boolean value.
-         *
-         * @return bool|WP_Error True if a cron is late, false if not. WP_Error if the cron is set to that.
-         * @since 5.3.0
-         *
-         */
         public function has_late_cron()
         {
             if(is_wp_error($this->crons))
@@ -1832,17 +1478,6 @@
             return false;
         }
 
-        /**
-         * Tests if WordPress can run automated background updates.
-         *
-         * Background updates in WordPress are primarily used for minor releases and security updates.
-         * It's important to either have these working, or be aware that they are intentionally disabled
-         * for whatever reason.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_background_updates()
         {
             $result = [
@@ -1909,13 +1544,6 @@
             return $result;
         }
 
-        /**
-         * Tests if plugin and theme auto-updates appear to be configured correctly.
-         *
-         * @return array The test results.
-         * @since 5.5.0
-         *
-         */
         public function get_test_plugin_theme_auto_updates()
         {
             $result = [
@@ -1944,17 +1572,6 @@
             return $result;
         }
 
-        /**
-         * Checks for potential issues with plugin and theme auto-updates.
-         *
-         * Though there is no way to 100% determine if plugin and theme auto-updates are configured
-         * correctly, a few educated guesses could be made to flag any conditions that would
-         * potentially cause unexpected behaviors.
-         *
-         * @return object The test results.
-         * @since 5.5.0
-         *
-         */
         public function detect_plugin_theme_auto_update_issues()
         {
             $mock_plugin = (object) [
@@ -2031,13 +1648,6 @@
             ];
         }
 
-        /**
-         * Tests available disk space for updates.
-         *
-         * @return array The test results.
-         * @since 6.3.0
-         *
-         */
         public function get_test_available_updates_disk_space()
         {
             $available_space = function_exists('disk_free_space') ? @disk_free_space(WP_CONTENT_DIR.'/upgrade/') : false;
@@ -2073,15 +1683,6 @@
             return $result;
         }
 
-        /**
-         * Tests if plugin and theme temporary backup directories are writable or can be created.
-         *
-         * @return array The test results.
-         * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-         *
-         * @since 6.3.0
-         *
-         */
         public function get_test_update_temp_backup_writable()
         {
             global $wp_filesystem;
@@ -2194,17 +1795,6 @@
             return $result;
         }
 
-        /**
-         * Tests if loopbacks work as expected.
-         *
-         * A loopback is when WordPress queries itself, for example to start a new WP_Cron instance,
-         * or when editing a plugin or theme. This has shown itself to be a recurring issue,
-         * as code can very easily break this interaction.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_loopback_requests()
         {
             $result = [
@@ -2233,16 +1823,6 @@
             return $result;
         }
 
-        /**
-         * Runs a loopback test on the site.
-         *
-         * Loopbacks are what WordPress uses to communicate with itself to start up WP_Cron, scheduled posts,
-         * make sure plugin or theme edits don't cause site failures and similar.
-         *
-         * @return object The test results.
-         * @since 5.2.0
-         *
-         */
         public function can_perform_loopback()
         {
             $body = ['site-health' => 'loopback-test'];
@@ -2251,7 +1831,7 @@
             $headers = [
                 'Cache-Control' => 'no-cache',
             ];
-            /** This filter is documented in wp-includes/class-wp-http-streams.php */
+
             $sslverify = apply_filters('https_local_ssl_verify', false);
 
             // Include Basic auth in loopback requests.
@@ -2296,17 +1876,6 @@
             ];
         }
 
-        /**
-         * Tests if HTTP requests are blocked.
-         *
-         * It's possible to block all outgoing communication (with the possibility of allowing certain
-         * hosts) via the HTTP API. This may create problems for users as many features are running as
-         * services these days.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_http_requests()
         {
             $result = [
@@ -2355,16 +1924,6 @@
             return $result;
         }
 
-        /**
-         * Tests if the REST API is accessible.
-         *
-         * Various security measures may block the REST API from working, or it may have been disabled in general.
-         * This is required for the new block editor to work, so we explicitly test for this.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function get_test_rest_availability()
         {
             $result = [
@@ -2385,7 +1944,7 @@
                 'Cache-Control' => 'no-cache',
                 'X-WP-Nonce' => wp_create_nonce('wp_rest'),
             ];
-            /** This filter is documented in wp-includes/class-wp-http-streams.php */
+
             $sslverify = apply_filters('https_local_ssl_verify', false);
 
             // Include Basic auth in loopback requests.
@@ -2448,13 +2007,6 @@
             return $result;
         }
 
-        /**
-         * Tests if 'file_uploads' directive in PHP.ini is turned off.
-         *
-         * @return array The test results.
-         * @since 5.5.0
-         *
-         */
         public function get_test_file_uploads()
         {
             $result = [
@@ -2508,13 +2060,6 @@
             return $result;
         }
 
-        /**
-         * Tests if the Authorization header has the expected values.
-         *
-         * @return array
-         * @since 5.6.0
-         *
-         */
         public function get_test_authorization_header()
         {
             $result = [
@@ -2562,13 +2107,6 @@
             return $result;
         }
 
-        /**
-         * Tests if a full page cache is available.
-         *
-         * @return array The test result.
-         * @since 6.1.0
-         *
-         */
         public function get_test_page_cache()
         {
             $description = '<p>'.__('Page cache enhances the speed and performance of your site by saving and serving static pages instead of calling for a page every time a user visits.').'</p>';
@@ -2666,16 +2204,6 @@
             return $result;
         }
 
-        /**
-         * Returns a list of headers and its verification callback to verify if page cache is enabled or not.
-         *
-         * Note: key is header name and value could be callable function to verify header value.
-         * Empty value mean existence of header detect page cache is enabled.
-         *
-         * @return array List of client caching headers and their (optional) verification callbacks.
-         * @since 6.1.0
-         *
-         */
         public function get_page_cache_headers()
         {
             $cache_hit_callback = static function($header_value)
@@ -2710,31 +2238,9 @@
                 'x-srcache-fetch-status' => $cache_hit_callback,
             ];
 
-            /**
-             * Filters the list of cache headers supported by core.
-             *
-             * @param array $cache_headers Array of supported cache headers.
-             *
-             * @since 6.1.0
-             *
-             */
             return apply_filters('site_status_page_cache_supported_cache_headers', $cache_headers);
         }
 
-        /**
-         * Gets page cache details.
-         *
-         * @return WP_Error|array {
-         *    Page cache detail or else a WP_Error if unable to determine.
-         *
-         * @type string   $status                 Page cache status. Good, Recommended or Critical.
-         * @type bool     $advanced_cache_present Whether page cache plugin is available or not.
-         * @type string[] $headers                Client caching response headers detected.
-         * @type float    $response_time          Response time of site.
-         *                                        }
-         * @since 6.1.0
-         *
-         */
         private function get_page_cache_detail()
         {
             $page_cache_detail = $this->check_for_page_caching();
@@ -2776,22 +2282,8 @@
             ];
         }
 
-        /**
-         * Checks if site has page cache enabled or not.
-         *
-         * @return WP_Error|array {
-         *     Page cache detection details or else error information.
-         *
-         * @type bool    $advanced_cache_present        Whether a page cache plugin is present.
-         * @type array[] $page_caching_response_headers Sets of client caching headers for the responses.
-         * @type float[] $response_timing               Response timings.
-         *                                              }
-         * @since 6.1.0
-         *
-         */
         private function check_for_page_caching()
         {
-            /** This filter is documented in wp-includes/class-wp-http-streams.php */
             $sslverify = apply_filters('https_local_ssl_verify', false);
 
             $headers = [];
@@ -2846,50 +2338,19 @@
             }
 
             return [
-                'advanced_cache_present' => (file_exists(WP_CONTENT_DIR.'/advanced-cache.php') && (defined('WP_CACHE') && WP_CACHE) && /** This filter is documented in wp-settings.php */ apply_filters('enable_loading_advanced_cache_dropin', true)),
+                'advanced_cache_present' => (file_exists(WP_CONTENT_DIR.'/advanced-cache.php') && (defined('WP_CACHE') && WP_CACHE) && apply_filters('enable_loading_advanced_cache_dropin', true)),
                 'page_caching_response_headers' => $page_caching_response_headers,
                 'response_timing' => $response_timing,
             ];
         }
 
-        /**
-         * Gets the threshold below which a response time is considered good.
-         *
-         * @return int Threshold in milliseconds.
-         * @since 6.1.0
-         *
-         */
         private function get_good_response_time_threshold()
         {
-            /**
-             * Filters the threshold below which a response time is considered good.
-             *
-             * The default is based on https://web.dev/time-to-first-byte/.
-             *
-             * @param int $threshold Threshold in milliseconds. Default 600.
-             *
-             * @since 6.1.0
-             */
             return (int) apply_filters('site_status_good_response_time_threshold', 600);
         }
 
-        /**
-         * Tests if the site uses persistent object cache and recommends to use it if not.
-         *
-         * @return array The test result.
-         * @since 6.1.0
-         *
-         */
         public function get_test_persistent_object_cache()
         {
-            /**
-             * Filters the action URL for the persistent object cache health check.
-             *
-             * @param string $action_url Learn more link for persistent object cache health check.
-             *
-             * @since 6.1.0
-             *
-             */
             $action_url = apply_filters('site_status_persistent_object_cache_url', /* translators: Localized Support reference. */ __('https://wordpress.org/documentation/article/optimization/#persistent-object-cache'));
 
             $result = [
@@ -2925,60 +2386,26 @@
                 $notes .= ' '.sprintf(/* translators: Available object caching services. */ __('Your host appears to support the following object caching services: %s.'), implode(', ', $available_services));
             }
 
-            /**
-             * Filters the second paragraph of the health check's description
-             * when suggesting the use of a persistent object cache.
-             *
-             * Hosts may want to replace the notes to recommend their preferred object caching solution.
-             *
-             * Plugin authors may want to append notes (not replace) on why object caching is recommended for their plugin.
-             *
-             * @param string   $notes              The notes appended to the health check description.
-             * @param string[] $available_services The list of available persistent object cache services.
-             *
-             * @since 6.1.0
-             *
-             */
             $notes = apply_filters('site_status_persistent_object_cache_notes', $notes, $available_services);
 
             $result['status'] = 'recommended';
             $result['label'] = __('You should use a persistent object cache');
             $result['description'] .= sprintf(
                 '<p>%s</p>', wp_kses($notes, [
-                'a' => ['href' => true],
-                'code' => true,
-                'em' => true,
-                'strong' => true,
-            ])
+                               'a' => ['href' => true],
+                               'code' => true,
+                               'em' => true,
+                               'strong' => true,
+                           ])
             );
 
             return $result;
         }
 
-        /**
-         * Determines whether to suggest using a persistent object cache.
-         *
-         * @return bool Whether to suggest using a persistent object cache.
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         * @since 6.1.0
-         *
-         */
         public function should_suggest_persistent_object_cache()
         {
             global $wpdb;
 
-            /**
-             * Filters whether to suggest use of a persistent object cache and bypass default threshold checks.
-             *
-             * Using this filter allows to override the default logic, effectively short-circuiting the method.
-             *
-             * @param bool|null $suggest Boolean to short-circuit, for whether to suggest using a persistent object cache.
-             *                           Default null.
-             *
-             * @since 6.1.0
-             *
-             */
             $short_circuit = apply_filters('site_status_should_suggest_persistent_object_cache', null);
             if(is_bool($short_circuit))
             {
@@ -2990,14 +2417,6 @@
                 return true;
             }
 
-            /**
-             * Filters the thresholds used to determine whether to suggest the use of a persistent object cache.
-             *
-             * @param int[] $thresholds The list of threshold numbers keyed by threshold name.
-             *
-             * @since 6.1.0
-             *
-             */
             $thresholds = apply_filters('site_status_persistent_object_cache_thresholds', [
                 'alloptions_count' => 500,
                 'alloptions_bytes' => 100000,
@@ -3048,13 +2467,6 @@
             return false;
         }
 
-        /**
-         * Returns a list of available persistent object cache services.
-         *
-         * @return string[] The list of available persistent object cache services.
-         * @since 6.1.0
-         *
-         */
         private function available_object_cache_services()
         {
             $extensions = array_map('extension_loaded', [
@@ -3067,30 +2479,9 @@
 
             $services = array_keys(array_filter($extensions));
 
-            /**
-             * Filters the persistent object cache services available to the user.
-             *
-             * This can be useful to hide or add services not included in the defaults.
-             *
-             * @param string[] $services The list of available persistent object cache services.
-             *
-             * @since 6.1.0
-             *
-             */
             return apply_filters('site_status_available_object_cache_services', $services);
         }
 
-        /**
-         * Adds a class to the body HTML tag.
-         *
-         * Filters the body class string for admin pages and adds our own class for easier styling.
-         *
-         * @param string $body_class The body class string.
-         *
-         * @return string The modified body class string.
-         * @since 5.2.0
-         *
-         */
         public function admin_body_class($body_class)
         {
             $screen = get_current_screen();
@@ -3104,11 +2495,6 @@
             return $body_class;
         }
 
-        /**
-         * Runs the scheduled event to check and update the latest site health status for the website.
-         *
-         * @since 5.4.0
-         */
         public function wp_cron_scheduled_check()
         {
             // Bootstrap wp-admin, as WP_Cron doesn't do this for us.

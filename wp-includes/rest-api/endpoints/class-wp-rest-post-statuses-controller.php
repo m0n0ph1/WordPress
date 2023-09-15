@@ -1,39 +1,13 @@
 <?php
-    /**
-     * REST API: WP_REST_Post_Statuses_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      4.7.0
-     */
 
-    /**
-     * Core class used to access post statuses via the REST API.
-     *
-     * @since 4.7.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Post_Statuses_Controller extends WP_REST_Controller
     {
-        /**
-         * Constructor.
-         *
-         * @since 4.7.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'statuses';
         }
 
-        /**
-         * Registers the routes for post statuses.
-         *
-         * @since 4.7.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -65,13 +39,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for collections.
-         *
-         * @return array Collection parameters.
-         * @since 4.7.0
-         *
-         */
         public function get_collection_params()
         {
             return [
@@ -79,15 +46,6 @@
             ];
         }
 
-        /**
-         * Checks whether a given request has permission to read post statuses.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             if('edit' === $request['context'])
@@ -108,15 +66,6 @@
             return true;
         }
 
-        /**
-         * Retrieves all post statuses, depending on user context.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_items($request)
         {
             $data = [];
@@ -139,15 +88,6 @@
             return rest_ensure_response($data);
         }
 
-        /**
-         * Checks whether a given post status should be visible.
-         *
-         * @param object $status Post status.
-         *
-         * @return bool True if the post status is visible, otherwise false.
-         * @since 4.7.0
-         *
-         */
         protected function check_read_permission($status)
         {
             if(true === $status->public)
@@ -171,17 +111,6 @@
             return false;
         }
 
-        /**
-         * Prepares a post status object for serialization.
-         *
-         * @param stdClass        $item    Post status data.
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response Post status data.
-         * @since 5.9.0 Renamed `$status` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.7.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -246,30 +175,9 @@
                 $response->add_link('archives', add_query_arg('status', $status->name, $rest_url));
             }
 
-            /**
-             * Filters a post status returned from the REST API.
-             *
-             * Allows modification of the status data right before it is returned.
-             *
-             * @param WP_REST_Response $response The response object.
-             * @param object           $status   The original post status object.
-             * @param WP_REST_Request  $request  Request used to generate the response.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters('rest_prepare_status', $response, $status, $request);
         }
 
-        /**
-         * Checks if a given request has access to read a post status.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $status = get_post_status_object($request['status']);
@@ -289,15 +197,6 @@
             return true;
         }
 
-        /**
-         * Retrieves a specific post status.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_item($request)
         {
             $obj = get_post_status_object($request['status']);
@@ -312,13 +211,6 @@
             return rest_ensure_response($data);
         }
 
-        /**
-         * Retrieves the post status' schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 4.7.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)

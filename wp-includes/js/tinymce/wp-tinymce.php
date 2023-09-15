@@ -1,14 +1,5 @@
 <?php
-    /**
-     * Not used in core since 5.1.
-     * This is a back-compat for plugins that may be using this method of loading directly.
-     */
 
-    /**
-     * Disable error reporting
-     *
-     * Set this to error_reporting( -1 ) for debugging.
-     */
     error_reporting(0);
 
     $basepath = __DIR__;

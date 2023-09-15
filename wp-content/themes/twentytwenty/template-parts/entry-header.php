@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Displays the post header
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty
-     * @since      Twenty Twenty 1.0
-     */
 
     $entry_header_classes = '';
 
@@ -21,14 +14,7 @@
     <div class="entry-header-inner section-inner medium">
 
         <?php
-            /**
-             * Allow child themes and plugins to filter the display of the categories in the entry header.
-             *
-             * @param bool Whether to show the categories in header. Default true.
-             *
-             * @since Twenty Twenty 1.0
-             *
-             */
+
             $show_categories = apply_filters('twentytwenty_show_categories_in_entry_header', true);
 
             if(true === $show_categories && has_category())
@@ -74,7 +60,8 @@
             {
                 ?>
 
-                <div class="intro-text section-inner max-percentage<?php echo $intro_text_width; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output ?>">
+                <div class="intro-text section-inner max-percentage<?php echo $intro_text_width; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output
+                ?>">
                     <?php the_excerpt(); ?>
                 </div>
 

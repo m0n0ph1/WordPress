@@ -1,40 +1,9 @@
 <?php
-    /**
-     * WordPress Administration Scheme API
-     *
-     * Here we keep the DB structure and option values.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Declare these as global in case schema.php is included from a function.
-     *
-     * @global wpdb   $wpdb WordPress database abstraction object.
-     * @global array  $wp_queries
-     * @global string $charset_collate
-     */
     global $wpdb, $wp_queries, $charset_collate;
 
-    /**
-     * The database character collate.
-     */
     $charset_collate = $wpdb->get_charset_collate();
 
-    /**
-     * Retrieve the SQL for creating database tables.
-     *
-     * @param string $scope   Optional. The tables for which to retrieve SQL. Can be all, global, ms_global, or blog
-     *                        tables. Defaults to all.
-     * @param int    $blog_id Optional. The site ID for which to retrieve SQL. Default is the current site ID.
-     *
-     * @return string The SQL needed to create the requested tables.
-     * @global wpdb  $wpdb    WordPress database abstraction object.
-     *
-     * @since 3.3.0
-     *
-     */
     function wp_get_db_schema($scope = 'all', $blog_id = null)
     {
         global $wpdb;
@@ -357,29 +326,12 @@ CREATE TABLE $wpdb->signups (
 // Populate for back compat.
     $wp_queries = wp_get_db_schema('all');
 
-    /**
-     * Create WordPress options and set the default values.
-     *
-     * @param array $options               Optional. Custom option $key => $value pairs to use. Default empty array.
-     *
-     * @since 5.1.0 The $options parameter has been added.
-     *
-     * @global wpdb $wpdb                  WordPress database abstraction object.
-     * @global int  $wp_db_version         WordPress database version.
-     * @global int  $wp_current_db_version The old (current) database version.
-     *
-     * @since 1.5.0
-     */
     function populate_options(array $options = [])
     {
         global $wpdb, $wp_db_version, $wp_current_db_version;
 
         $guessurl = wp_guess_url();
-        /**
-         * Fires before creating WordPress options and populating their default values.
-         *
-         * @since 2.6.0
-         */
+
         do_action('populate_options');
 
         // If WP_DEFAULT_THEME doesn't exist, fall back to the latest core default theme.
@@ -735,11 +687,6 @@ CREATE TABLE $wpdb->signups (
         delete_expired_transients(true);
     }
 
-    /**
-     * Execute WordPress role creation for the various WordPress versions.
-     *
-     * @since 2.0.0
-     */
     function populate_roles()
     {
         populate_roles_160();
@@ -752,11 +699,6 @@ CREATE TABLE $wpdb->signups (
         populate_roles_300();
     }
 
-    /**
-     * Create the roles for WordPress 2.0
-     *
-     * @since 2.0.0
-     */
     function populate_roles_160()
     {
         // Add roles.
@@ -845,11 +787,6 @@ CREATE TABLE $wpdb->signups (
         $role->add_cap('level_0');
     }
 
-    /**
-     * Create and modify WordPress roles for WordPress 2.1.
-     *
-     * @since 2.1.0
-     */
     function populate_roles_210()
     {
         $roles = ['administrator', 'editor'];
@@ -899,11 +836,6 @@ CREATE TABLE $wpdb->signups (
         }
     }
 
-    /**
-     * Create and modify WordPress roles for WordPress 2.3.
-     *
-     * @since 2.3.0
-     */
     function populate_roles_230()
     {
         $role = get_role('administrator');
@@ -914,11 +846,6 @@ CREATE TABLE $wpdb->signups (
         }
     }
 
-    /**
-     * Create and modify WordPress roles for WordPress 2.5.
-     *
-     * @since 2.5.0
-     */
     function populate_roles_250()
     {
         $role = get_role('administrator');
@@ -929,11 +856,6 @@ CREATE TABLE $wpdb->signups (
         }
     }
 
-    /**
-     * Create and modify WordPress roles for WordPress 2.6.
-     *
-     * @since 2.6.0
-     */
     function populate_roles_260()
     {
         $role = get_role('administrator');
@@ -945,11 +867,6 @@ CREATE TABLE $wpdb->signups (
         }
     }
 
-    /**
-     * Create and modify WordPress roles for WordPress 2.7.
-     *
-     * @since 2.7.0
-     */
     function populate_roles_270()
     {
         $role = get_role('administrator');
@@ -961,11 +878,6 @@ CREATE TABLE $wpdb->signups (
         }
     }
 
-    /**
-     * Create and modify WordPress roles for WordPress 2.8.
-     *
-     * @since 2.8.0
-     */
     function populate_roles_280()
     {
         $role = get_role('administrator');
@@ -976,11 +888,6 @@ CREATE TABLE $wpdb->signups (
         }
     }
 
-    /**
-     * Create and modify WordPress roles for WordPress 3.0.
-     *
-     * @since 3.0.0
-     */
     function populate_roles_300()
     {
         $role = get_role('administrator');
@@ -998,11 +905,7 @@ CREATE TABLE $wpdb->signups (
     }
 
     if(! function_exists('install_network')) :
-        /**
-         * Install Network.
-         *
-         * @since 3.0.0
-         */
+
         function install_network()
         {
             if(! defined('WP_INSTALLING_NETWORK'))
@@ -1014,26 +917,6 @@ CREATE TABLE $wpdb->signups (
         }
     endif;
 
-    /**
-     * Populate network settings.
-     *
-     * @param int         $network_id        ID of network to populate.
-     * @param string      $domain            The domain name for the network. Example: "example.com".
-     * @param string      $email             Email address for the network administrator.
-     * @param string      $site_name         The name of the network.
-     * @param string      $path              Optional. The path to append to the network's domain name. Default '/'.
-     * @param bool        $subdomain_install Optional. Whether the network is a subdomain installation or a subdirectory
-     *                                       installation. Default false, meaning the network is a subdirectory installation.
-     *
-     * @return true|WP_Error True on success, or WP_Error on warning (with the installation otherwise successful,
-     *                       so the error code must be checked) or failure.
-     * @since 3.0.0
-     *
-     * @global wpdb       $wpdb              WordPress database abstraction object.
-     * @global object     $current_site
-     * @global WP_Rewrite $wp_rewrite        WordPress rewrite component.
-     *
-     */
     function populate_network(
         $network_id = 1, $domain = '', $email = '', $site_name = '', $path = '/', $subdomain_install = false
     ) {
@@ -1196,18 +1079,6 @@ CREATE TABLE $wpdb->signups (
         return true;
     }
 
-    /**
-     * Creates WordPress network meta and sets the default values.
-     *
-     * @param int   $network_id    Network ID to populate meta for.
-     * @param array $meta          Optional. Custom meta $key => $value pairs to use. Default empty array.
-     *
-     * @global int  $wp_db_version WordPress database version.
-     *
-     * @since 5.1.0
-     *
-     * @global wpdb $wpdb          WordPress database abstraction object.
-     */
     function populate_network_meta($network_id, array $meta = [])
     {
         global $wpdb, $wp_db_version;
@@ -1368,15 +1239,6 @@ We hope you enjoy your new site. Thanks!
 
         $sitemeta = wp_parse_args($meta, $sitemeta);
 
-        /**
-         * Filters meta for a network on creation.
-         *
-         * @param array $sitemeta   Associative array of network meta keys and values to be inserted.
-         * @param int   $network_id ID of network to populate.
-         *
-         * @since 3.7.0
-         *
-         */
         $sitemeta = apply_filters('populate_network_meta', $sitemeta, $network_id);
 
         $insert = '';
@@ -1395,17 +1257,6 @@ We hope you enjoy your new site. Thanks!
         $wpdb->query("INSERT INTO $wpdb->sitemeta ( site_id, meta_key, meta_value ) VALUES ".$insert); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
     }
 
-    /**
-     * Creates WordPress site meta and sets the default values.
-     *
-     * @param int   $site_id Site ID to populate meta for.
-     * @param array $meta    Optional. Custom meta $key => $value pairs to use. Default empty array.
-     *
-     * @since 5.1.0
-     *
-     * @global wpdb $wpdb    WordPress database abstraction object.
-     *
-     */
     function populate_site_meta($site_id, array $meta = [])
     {
         global $wpdb;
@@ -1422,15 +1273,6 @@ We hope you enjoy your new site. Thanks!
             return;
         }
 
-        /**
-         * Filters meta for a site on creation.
-         *
-         * @param array $meta    Associative array of site meta keys and values to be inserted.
-         * @param int   $site_id ID of site to populate.
-         *
-         * @since 5.2.0
-         *
-         */
         $site_meta = apply_filters('populate_site_meta', $meta, $site_id);
 
         $insert = '';

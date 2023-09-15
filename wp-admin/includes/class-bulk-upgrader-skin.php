@@ -1,32 +1,11 @@
 <?php
-    /**
-     * Upgrader API: Bulk_Upgrader_Skin class
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      4.6.0
-     */
 
-    /**
-     * Generic Bulk Upgrader Skin for WordPress Upgrades.
-     *
-     * @since 3.0.0
-     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader-skins.php.
-     *
-     * @see   WP_Upgrader_Skin
-     */
     class Bulk_Upgrader_Skin extends WP_Upgrader_Skin
     {
         public $in_loop = false;
 
-        /**
-         * @var string|false
-         */
         public $error = false;
 
-        /**
-         * @param array $args
-         */
         public function __construct($args = [])
         {
             $defaults = [
@@ -38,8 +17,6 @@
             parent::__construct($args);
         }
 
-        /**
-         */
         public function add_strings()
         {
             $this->upgrader->strings['skin_upgrade_start'] = __('The update process is starting. This process may take a while on some hosts, so please be patient.');
@@ -52,26 +29,16 @@
             $this->upgrader->strings['skin_upgrade_end'] = __('All updates have been completed.');
         }
 
-        /**
-         */
         public function header()
         {
             // Nothing. This will be displayed within an iframe.
         }
 
-        /**
-         */
         public function footer()
         {
             // Nothing. This will be displayed within an iframe.
         }
 
-        /**
-         * @param string|WP_Error $errors Errors.
-         *
-         * @since 5.9.0 Renamed `$error` to `$errors` for PHP 8 named parameter support.
-         *
-         */
         public function error($errors)
         {
             if(is_string($errors) && isset($this->upgrader->strings[$errors]))
@@ -98,20 +65,11 @@
             echo '<script type="text/javascript">jQuery(\'.waiting-'.esc_js($this->upgrader->update_current).'\').hide();</script>';
         }
 
-        /**
-         */
         public function bulk_header()
         {
             $this->feedback('skin_upgrade_start');
         }
 
-        /**
-         * @param string $feedback Message data.
-         * @param mixed  ...$args  Optional text replacements.
-         *
-         * @since 5.9.0 Renamed `$string` (a PHP reserved keyword) to `$feedback` for PHP 8 named parameter support.
-         *
-         */
         public function feedback($feedback, ...$args)
         {
             if(isset($this->upgrader->strings[$feedback]))
@@ -142,16 +100,11 @@
             }
         }
 
-        /**
-         */
         public function bulk_footer()
         {
             $this->feedback('skin_upgrade_end');
         }
 
-        /**
-         * @param string $title
-         */
         public function before($title = '')
         {
             $this->in_loop = true;
@@ -162,17 +115,12 @@
             $this->flush_output();
         }
 
-        /**
-         */
         public function flush_output()
         {
             wp_ob_end_flush_all();
             flush();
         }
 
-        /**
-         * @param string $title
-         */
         public function after($title = '')
         {
             echo '</p></div>';
@@ -203,8 +151,6 @@
             $this->flush_output();
         }
 
-        /**
-         */
         public function reset()
         {
             $this->in_loop = false;

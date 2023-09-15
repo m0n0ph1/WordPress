@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Media settings administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_options'))
@@ -149,9 +142,7 @@
         </table>
 
         <?php
-            /**
-             * @global array $wp_settings
-             */
+
             if(isset($GLOBALS['wp_settings']['media']['embeds'])) :
                 ?>
                 <h2 class="title"><?php _e('Embeds'); ?></h2>

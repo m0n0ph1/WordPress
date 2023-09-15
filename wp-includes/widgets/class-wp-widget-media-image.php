@@ -1,27 +1,7 @@
 <?php
-    /**
-     * Widget API: WP_Widget_Media_Image class
-     *
-     * @package    WordPress
-     * @subpackage Widgets
-     * @since      4.8.0
-     */
 
-    /**
-     * Core class that implements an image widget.
-     *
-     * @since 4.8.0
-     *
-     * @see   WP_Widget_Media
-     * @see   WP_Widget
-     */
     class WP_Widget_Media_Image extends WP_Widget_Media
     {
-        /**
-         * Constructor.
-         *
-         * @since 4.8.0
-         */
         public function __construct()
         {
             parent::__construct('media_image', __('Image'), [
@@ -41,14 +21,6 @@
             ]);
         }
 
-        /**
-         * Render the media on the frontend.
-         *
-         * @param array $instance Widget instance props.
-         *
-         * @since 4.8.0
-         *
-         */
         public function render_media($instance)
         {
             $instance = array_merge(wp_list_pluck($this->get_instance_schema(), 'default'), $instance);
@@ -196,17 +168,6 @@
             echo $image;
         }
 
-        /**
-         * Get schema for properties of a widget instance (item).
-         *
-         * @return array Schema for properties.
-         * @see   WP_REST_Controller::get_item_schema()
-         * @see   WP_REST_Controller::get_additional_fields()
-         * @link  https://core.trac.wordpress.org/ticket/35574
-         *
-         * @since 4.8.0
-         *
-         */
         public function get_instance_schema()
         {
             return array_merge([
@@ -310,11 +271,6 @@
                                ], parent::get_instance_schema());
         }
 
-        /**
-         * Loads the required media files for the media manager and scripts for media widgets.
-         *
-         * @since 4.8.0
-         */
         public function enqueue_admin_scripts()
         {
             parent::enqueue_admin_scripts();
@@ -339,19 +295,14 @@
 
             wp_add_inline_script(
                 $handle, sprintf(
-                '
+                           '
 					wp.mediaWidgets.controlConstructors[ %1$s ].prototype.mime_type = %2$s;
 					wp.mediaWidgets.controlConstructors[ %1$s ].prototype.l10n = _.extend( {}, wp.mediaWidgets.controlConstructors[ %1$s ].prototype.l10n, %3$s );
 				', wp_json_encode($this->id_base), wp_json_encode($this->widget_options['mime_type']), wp_json_encode($this->l10n)
-            )
+                       )
             );
         }
 
-        /**
-         * Render form template scripts.
-         *
-         * @since 4.8.0
-         */
         public function render_control_template_scripts()
         {
             parent::render_control_template_scripts();

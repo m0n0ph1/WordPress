@@ -1,20 +1,10 @@
 <?php
-    /**
-     * Comment Management Screen
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** Load WordPress Bootstrap */
     require_once __DIR__.'/admin.php';
 
     $parent_file = 'edit-comments.php';
     $submenu_file = 'edit-comments.php';
 
-    /**
-     * @global string $action
-     */
     global $action;
     wp_reset_vars(['action']);
 
@@ -389,15 +379,6 @@
 
             $location = (empty($_POST['referredby']) ? "edit-comments.php?p=$comment_post_id" : $_POST['referredby']).'#comment-'.$comment_id;
 
-            /**
-             * Filters the URI the user is redirected to after editing a comment in the admin.
-             *
-             * @param string $location   The URI the user will be redirected to.
-             * @param int    $comment_id The ID of the comment being edited.
-             *
-             * @since 2.1.0
-             *
-             */
             $location = apply_filters('comment_edit_redirect', $location, $comment_id);
 
             wp_redirect($location);

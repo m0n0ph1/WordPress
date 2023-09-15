@@ -1,13 +1,4 @@
 <?php
-    /**
-     * Requests for PHP
-     *
-     * Inspired by Requests for Python.
-     *
-     * Based on concepts from SimplePie_File, RequestCore and WP_Http.
-     *
-     * @package Requests
-     */
 
     namespace WpOrg\Requests;
 
@@ -19,91 +10,26 @@
     use WpOrg\Requests\Transport\Fsockopen;
     use WpOrg\Requests\Utility\InputValidator;
 
-    /**
-     * Requests for PHP
-     *
-     * Inspired by Requests for Python.
-     *
-     * Based on concepts from SimplePie_File, RequestCore and WP_Http.
-     *
-     * @package Requests
-     */
     class Requests
     {
-        /**
-         * POST method
-         *
-         * @var string
-         */
         const POST = 'POST';
 
-        /**
-         * PUT method
-         *
-         * @var string
-         */
         const PUT = 'PUT';
 
-        /**
-         * GET method
-         *
-         * @var string
-         */
         const GET = 'GET';
 
-        /**
-         * HEAD method
-         *
-         * @var string
-         */
         const HEAD = 'HEAD';
 
-        /**
-         * DELETE method
-         *
-         * @var string
-         */
         const DELETE = 'DELETE';
 
-        /**
-         * OPTIONS method
-         *
-         * @var string
-         */
         const OPTIONS = 'OPTIONS';
 
-        /**
-         * TRACE method
-         *
-         * @var string
-         */
         const TRACE = 'TRACE';
 
-        /**
-         * PATCH method
-         *
-         * @link https://tools.ietf.org/html/rfc5789
-         * @var string
-         */
         const PATCH = 'PATCH';
 
-        /**
-         * Default size of buffer size to read streams
-         *
-         * @var integer
-         */
         const BUFFER_SIZE = 1160;
 
-        /**
-         * Option defaults.
-         *
-         * @see   \WpOrg\Requests\Requests::get_default_options()
-         * @see   \WpOrg\Requests\Requests::request() for values returned by this method
-         *
-         * @since 2.0.0
-         *
-         * @var array
-         */
         const OPTION_DEFAULTS = [
             'timeout' => 10,
             'connect_timeout' => 10,
@@ -126,62 +52,19 @@
             'verifyname' => true,
         ];
 
-        /**
-         * Default supported Transport classes.
-         *
-         * @since 2.0.0
-         *
-         * @var array
-         */
         const DEFAULT_TRANSPORTS = [
             Curl::class => Curl::class,
             Fsockopen::class => Fsockopen::class,
         ];
 
-        /**
-         * Current version of Requests
-         *
-         * @var string
-         */
         const VERSION = '2.0.8';
 
-        /**
-         * Selected transport name
-         *
-         * Use {@see \WpOrg\Requests\Requests::get_transport()} instead
-         *
-         * @var array
-         */
         public static $transport = [];
 
-        /**
-         * Registered transport classes
-         *
-         * @var array
-         */
         protected static $transports = [];
 
-        /**
-         * Default certificate path.
-         *
-         * @see \WpOrg\Requests\Requests::get_certificate_path()
-         * @see \WpOrg\Requests\Requests::set_certificate_path()
-         *
-         * @var string
-         */
         protected static $certificate_path = __DIR__.'/../certificates/cacert.pem';
 
-        /**
-         * All (known) valid deflate, gzip header magic markers.
-         *
-         * These markers relate to different compression levels.
-         *
-         * @link  https://stackoverflow.com/a/43170354/482864 Marker source.
-         *
-         * @since 2.0.0
-         *
-         * @var array
-         */
         private static $magic_compression_headers = [
             "\x1f\x8b" => true, // Gzip marker.
             "\x78\x01" => true, // Zlib marker - level 1.
@@ -190,18 +73,8 @@
             "\x78\xda" => true, // Zlib marker - level 7 to 9.
         ];
 
-        /**
-         * This is a static class, do not instantiate it
-         *
-         * @codeCoverageIgnore
-         */
         private function __construct() {}
 
-        /**
-         * Register a transport
-         *
-         * @param string $transport Transport class to add, must support the \WpOrg\Requests\Transport interface
-         */
         public static function add_transport($transport)
         {
             if(empty(self::$transports))
@@ -212,34 +85,11 @@
             self::$transports[$transport] = $transport;
         }
 
-        /**
-         * Checks to see if we have a transport for the capabilities requested.
-         *
-         * Supported capabilities can be found in the {@see \WpOrg\Requests\Capability}
-         * interface as constants.
-         *
-         * Example usage:
-         * `Requests::has_capabilities([Capability::SSL => true])`.
-         *
-         * @param array<string, bool> $capabilities Optional. Associative array of capabilities to test against, i.e.
-         *                                          `['<capability>' => true]`.
-         *
-         * @return bool Whether the transport has the requested capabilities.
-         */
         public static function has_capabilities(array $capabilities = [])
         {
             return self::get_transport_class($capabilities) !== '';
         }
 
-        /**
-         * Get the fully qualified class name (FQCN) for a working transport.
-         *
-         * @param array<string, bool> $capabilities Optional. Associative array of capabilities to test against, i.e.
-         *                                          `['<capability>' => true]`.
-         *
-         * @return string FQCN of the transport to use, or an empty string if no transport was
-         *                found which provided the requested capabilities.
-         */
         protected static function get_transport_class(array $capabilities = [])
         {
             // Caching code, don't bother testing coverage.
@@ -282,89 +132,11 @@
             return self::$transport[$cap_string];
         }
 
-        /**
-         * Send a GET request
-         */
         public static function get($url, $headers = [], $options = [])
         {
             return self::request($url, $headers, null, self::GET, $options);
         }
 
-        /**#@+
-         * @param string $url
-         * @param array  $headers
-         * @param array  $options
-         *
-         * @return \WpOrg\Requests\Response
-         * @see \WpOrg\Requests\Requests::request()
-         */
-
-        /**
-         * Main interface for HTTP requests
-         *
-         * This method initiates a request and sends it via a transport before
-         * parsing.
-         *
-         * The `$options` parameter takes an associative array with the following
-         * options:
-         *
-         * - `timeout`: How long should we wait for a response?
-         *    Note: for cURL, a minimum of 1 second applies, as DNS resolution
-         *    operates at second-resolution only.
-         *    (float, seconds with a millisecond precision, default: 10, example: 0.01)
-         * - `connect_timeout`: How long should we wait while trying to connect?
-         *    (float, seconds with a millisecond precision, default: 10, example: 0.01)
-         * - `useragent`: Useragent to send to the server
-         *    (string, default: php-requests/$version)
-         * - `follow_redirects`: Should we follow 3xx redirects?
-         *    (boolean, default: true)
-         * - `redirects`: How many times should we redirect before erroring?
-         *    (integer, default: 10)
-         * - `blocking`: Should we block processing on this request?
-         *    (boolean, default: true)
-         * - `filename`: File to stream the body to instead.
-         *    (string|boolean, default: false)
-         * - `auth`: Authentication handler or array of user/password details to use
-         *    for Basic authentication
-         *    (\WpOrg\Requests\Auth|array|boolean, default: false)
-         * - `proxy`: Proxy details to use for proxy by-passing and authentication
-         *    (\WpOrg\Requests\Proxy|array|string|boolean, default: false)
-         * - `max_bytes`: Limit for the response body size.
-         *    (integer|boolean, default: false)
-         * - `idn`: Enable IDN parsing
-         *    (boolean, default: true)
-         * - `transport`: Custom transport. Either a class name, or a
-         *    transport object. Defaults to the first working transport from
-         *    {@see \WpOrg\Requests\Requests::getTransport()}
-         *    (string|\WpOrg\Requests\Transport, default: {@see \WpOrg\Requests\Requests::getTransport()})
-         * - `hooks`: Hooks handler.
-         *    (\WpOrg\Requests\HookManager, default: new WpOrg\Requests\Hooks())
-         * - `verify`: Should we verify SSL certificates? Allows passing in a custom
-         *    certificate file as a string. (Using true uses the system-wide root
-         *    certificate store instead, but this may have different behaviour
-         *    across transports.)
-         *    (string|boolean, default: certificates/cacert.pem)
-         * - `verifyname`: Should we verify the common name in the SSL certificate?
-         *    (boolean, default: true)
-         * - `data_format`: How should we send the `$data` parameter?
-         *    (string, one of 'query' or 'body', default: 'query' for
-         *    HEAD/GET/DELETE, 'body' for POST/PUT/OPTIONS/PATCH)
-         *
-         * @param string|Stringable $url     URL to request
-         * @param array             $headers Extra headers to send with the request
-         * @param array|null        $data    Data to send either as a query string for GET/HEAD requests, or in the body for POST
-         *                                   requests
-         * @param string            $type    HTTP request type (use Requests constants)
-         * @param array             $options Options for the request (see description for more information)
-         *
-         * @return \WpOrg\Requests\Response
-         *
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed $url argument is not a string or
-         *     Stringable.
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed $type argument is not a string.
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed $options argument is not an array.
-         * @throws \WpOrg\Requests\Exception On invalid URLs (`nonhttp`)
-         */
         public static function request($url, $headers = [], $data = [], $type = self::GET, $options = [])
         {
             if(InputValidator::is_string_or_stringable($url) === false)
@@ -416,14 +188,6 @@
             return self::parse_response($response, $url, $headers, $data, $options);
         }
 
-        /**
-         * Get the default options
-         *
-         * @param boolean $multirequest Is this a multirequest?
-         *
-         * @return array Default option values
-         * @see \WpOrg\Requests\Requests::request() for values returned by this method
-         */
         protected static function get_default_options($multirequest = false)
         {
             $defaults = static::OPTION_DEFAULTS;
@@ -437,22 +201,6 @@
             return $defaults;
         }
 
-        /**
-         * Set the default values
-         *
-         * The $options parameter is updated with the results.
-         *
-         * @param string     $url     URL to request
-         * @param array      $headers Extra headers to send with the request
-         * @param array|null $data    Data to send either as a query string for GET/HEAD requests, or in the body for POST
-         *                            requests
-         * @param string     $type    HTTP request type
-         * @param array      $options Options for the request
-         *
-         * @return void
-         *
-         * @throws \WpOrg\Requests\Exception When the $url is not an http(s) URL.
-         */
         protected static function set_defaults(&$url, &$headers, &$data, &$type, &$options)
         {
             if(! preg_match('/^http(s)?:\/\//i', $url, $matches))
@@ -522,15 +270,6 @@
             }
         }
 
-        /**
-         * Get a working transport.
-         *
-         * @param array<string, bool> $capabilities Optional. Associative array of capabilities to test against, i.e.
-         *                                          `['<capability>' => true]`.
-         *
-         * @return \WpOrg\Requests\Transport
-         * @throws \WpOrg\Requests\Exception If no valid transport is found (`notransport`).
-         */
         protected static function get_transport(array $capabilities = [])
         {
             $class = self::get_transport_class($capabilities);
@@ -542,35 +281,7 @@
 
             return new $class();
         }
-        /**#@-*/
 
-        /**#@+
-         * @param string $url
-         * @param array  $headers
-         * @param array  $data
-         * @param array  $options
-         *
-         * @return \WpOrg\Requests\Response
-         * @see \WpOrg\Requests\Requests::request()
-         */
-
-        /**
-         * HTTP response parser
-         *
-         * @param string $headers     Full response text including headers and body
-         * @param string $url         Original request URL
-         * @param array  $req_headers Original $headers array passed to {@link request()}, in case we need to follow
-         *                            redirects
-         * @param array  $req_data    Original $data array passed to {@link request()}, in case we need to follow redirects
-         * @param array  $options     Original $options array passed to {@link request()}, in case we need to follow
-         *                            redirects
-         *
-         * @return \WpOrg\Requests\Response
-         *
-         * @throws \WpOrg\Requests\Exception On missing head/body separator (`requests.no_crlf_separator`)
-         * @throws \WpOrg\Requests\Exception On missing head/body separator (`noversion`)
-         * @throws \WpOrg\Requests\Exception On missing head/body separator (`toomanyredirects`)
-         */
         protected static function parse_response($headers, $url, $req_headers, $req_data, $options)
         {
             $return = new Response();
@@ -695,15 +406,6 @@
             return $return;
         }
 
-        /**
-         * Decoded a chunked body as per RFC 2616
-         *
-         * @link https://tools.ietf.org/html/rfc2616#section-3.6.1
-         *
-         * @param string $data Chunked body
-         *
-         * @return string Decoded body
-         */
         protected static function decode_chunked($data)
         {
             if(! preg_match('/^([0-9a-f]+)(?:;(?:[\w-]*)(?:=(?:(?:[\w-]*)*|"(?:[^\r\n])*"))?)*\r\n/i', trim($data)))
@@ -744,18 +446,6 @@
             // @codeCoverageIgnoreStart
         }
 
-        /**
-         * Decompress an encoded body
-         *
-         * Implements gzip, compress and deflate. Guesses which it is by attempting
-         * to decode.
-         *
-         * @param string $data Compressed data in one of the above formats
-         *
-         * @return string Decompressed string
-         *
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed argument is not a string.
-         */
         public static function decompress($data)
         {
             if(is_string($data) === false)
@@ -812,29 +502,6 @@
             return $data;
         }
 
-        /**
-         * Decompression of deflated string while staying compatible with the majority of servers.
-         *
-         * Certain Servers will return deflated data with headers which PHP's gzinflate()
-         * function cannot handle out of the box. The following function has been created from
-         * various snippets on the gzinflate() PHP documentation.
-         *
-         * Warning: Magic numbers within. Due to the potential different formats that the compressed
-         * data may be returned in, some "magic offsets" are needed to ensure proper decompression
-         * takes place. For a simple progmatic way to determine the magic offset in use, see:
-         * https://core.trac.wordpress.org/ticket/18273
-         *
-         * @param string $gz_data String to decompress.
-         *
-         * @return string|bool False on failure.
-         *
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed argument is not a string.
-         * @link  https://www.php.net/gzinflate#77336
-         *
-         * @since 1.6.0
-         * @link  https://core.trac.wordpress.org/ticket/18273
-         * @link  https://www.php.net/gzinflate#70875
-         */
         public static function compatible_gzinflate($gz_data)
         {
             if(is_string($gz_data) === false)
@@ -964,115 +631,42 @@
 
             return false;
         }
-        /**#@-*/
 
-        /**
-         * Send a HEAD request
-         */
         public static function head($url, $headers = [], $options = [])
         {
             return self::request($url, $headers, null, self::HEAD, $options);
         }
 
-        /**
-         * Send a DELETE request
-         */
         public static function delete($url, $headers = [], $options = [])
         {
             return self::request($url, $headers, null, self::DELETE, $options);
         }
 
-        /**
-         * Send a TRACE request
-         */
         public static function trace($url, $headers = [], $options = [])
         {
             return self::request($url, $headers, null, self::TRACE, $options);
         }
 
-        /**
-         * Send a POST request
-         */
         public static function post($url, $headers = [], $data = [], $options = [])
         {
             return self::request($url, $headers, $data, self::POST, $options);
         }
 
-        /**
-         * Send a PUT request
-         */
         public static function put($url, $headers = [], $data = [], $options = [])
         {
             return self::request($url, $headers, $data, self::PUT, $options);
         }
 
-        /**
-         * Send an OPTIONS request
-         */
         public static function options($url, $headers = [], $data = [], $options = [])
         {
             return self::request($url, $headers, $data, self::OPTIONS, $options);
         }
 
-        /**
-         * Send a PATCH request
-         *
-         * Note: Unlike {@see \WpOrg\Requests\Requests::post()} and {@see \WpOrg\Requests\Requests::put()},
-         * `$headers` is required, as the specification recommends that should send an ETag
-         *
-         * @link https://tools.ietf.org/html/rfc5789
-         */
         public static function patch($url, $headers, $data = [], $options = [])
         {
             return self::request($url, $headers, $data, self::PATCH, $options);
         }
 
-        /**
-         * Send multiple HTTP requests simultaneously
-         *
-         * The `$requests` parameter takes an associative or indexed array of
-         * request fields. The key of each request can be used to match up the
-         * request with the returned data, or with the request passed into your
-         * `multiple.request.complete` callback.
-         *
-         * The request fields value is an associative array with the following keys:
-         *
-         * - `url`: Request URL Same as the `$url` parameter to
-         *    {@see \WpOrg\Requests\Requests::request()}
-         *    (string, required)
-         * - `headers`: Associative array of header fields. Same as the `$headers`
-         *    parameter to {@see \WpOrg\Requests\Requests::request()}
-         *    (array, default: `array()`)
-         * - `data`: Associative array of data fields or a string. Same as the
-         *    `$data` parameter to {@see \WpOrg\Requests\Requests::request()}
-         *    (array|string, default: `array()`)
-         * - `type`: HTTP request type (use \WpOrg\Requests\Requests constants). Same as the `$type`
-         *    parameter to {@see \WpOrg\Requests\Requests::request()}
-         *    (string, default: `\WpOrg\Requests\Requests::GET`)
-         * - `cookies`: Associative array of cookie name to value, or cookie jar.
-         *    (array|\WpOrg\Requests\Cookie\Jar)
-         *
-         * If the `$options` parameter is specified, individual requests will
-         * inherit options from it. This can be used to use a single hooking system,
-         * or set all the types to `\WpOrg\Requests\Requests::POST`, for example.
-         *
-         * In addition, the `$options` parameter takes the following global options:
-         *
-         * - `complete`: A callback for when a request is complete. Takes two
-         *    parameters, a \WpOrg\Requests\Response/\WpOrg\Requests\Exception reference, and the
-         *    ID from the request array (Note: this can also be overridden on a
-         *    per-request basis, although that's a little silly)
-         *    (callback)
-         *
-         * @param array $requests Requests data (see description for more information)
-         * @param array $options  Global and default options (see {@see \WpOrg\Requests\Requests::request()})
-         *
-         * @return array Responses (either \WpOrg\Requests\Response or a \WpOrg\Requests\Exception object)
-         *
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed $requests argument is not an array or
-         *     iterable object with array access.
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed $options argument is not an array.
-         */
         public static function request_multiple($requests, $options = [])
         {
             if(InputValidator::has_array_access($requests) === false || InputValidator::is_iterable($requests) === false)
@@ -1177,20 +771,6 @@
             return $responses;
         }
 
-        /**
-         * Callback for `transport.internal.parse_response`
-         *
-         * Internal use only. Converts a raw HTTP response to a \WpOrg\Requests\Response
-         * while still executing a multiple request.
-         *
-         * `$response` is either set to a \WpOrg\Requests\Response instance, or a \WpOrg\Requests\Exception object
-         *
-         * @param string $response Full response text including headers and body (will be overwritten with Response
-         *                         instance)
-         * @param array  $request  Request data as passed into {@see \WpOrg\Requests\Requests::request_multiple()}
-         *
-         * @return void
-         */
         public static function parse_multiple(&$response, $request)
         {
             try
@@ -1206,26 +786,14 @@
                 $response = $e;
             }
         }
+
         // @codeCoverageIgnoreEnd
 
-        /**
-         * Get default certificate path.
-         *
-         * @return string Default certificate path.
-         */
         public static function get_certificate_path()
         {
             return self::$certificate_path;
         }
 
-        /**
-         * Set default certificate path.
-         *
-         * @param string|Stringable|bool $path Certificate path, pointing to a PEM file.
-         *
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed $url argument is not a string, Stringable
-         *     or boolean.
-         */
         public static function set_certificate_path($path)
         {
             if(InputValidator::is_string_or_stringable($path) === false && is_bool($path) === false)
@@ -1236,15 +804,6 @@
             self::$certificate_path = $path;
         }
 
-        /**
-         * Convert a key => value array to a 'key: value' array for headers
-         *
-         * @param iterable $dictionary Dictionary of header values
-         *
-         * @return array List of headers
-         *
-         * @throws \WpOrg\Requests\Exception\InvalidArgument When the passed argument is not iterable.
-         */
         public static function flatten($dictionary)
         {
             if(InputValidator::is_iterable($dictionary) === false)

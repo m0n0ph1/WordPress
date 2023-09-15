@@ -1,35 +1,9 @@
 <?php
-    /**
-     * WP_REST_Navigation_Fallback_Controller class
-     *
-     * REST Controller to create/fetch a fallback Navigation Menu.
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      6.3.0
-     */
 
-    /**
-     * REST Controller to fetch a fallback Navigation Block Menu. If needed it creates one.
-     *
-     * @since 6.3.0
-     */
     class WP_REST_Navigation_Fallback_Controller extends WP_REST_Controller
     {
-        /**
-         * The Post Type for the Controller
-         *
-         * @since 6.3.0
-         *
-         * @var string
-         */
         private $post_type;
 
-        /**
-         * Constructs the controller.
-         *
-         * @since 6.3.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp-block-editor/v1';
@@ -37,13 +11,6 @@
             $this->post_type = 'wp_navigation';
         }
 
-        /**
-         * Registers the controllers routes.
-         *
-         * @return void
-         * @since 6.3.0
-         *
-         */
         public function register_routes()
         {
             // Lists a single nav item based on the given id or slug.
@@ -58,15 +25,6 @@
             ]);
         }
 
-        /**
-         * Checks if a given request has access to read fallbacks.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 6.3.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $post_type = get_post_type_object($this->post_type);
@@ -85,15 +43,6 @@
             return true;
         }
 
-        /**
-         * Gets the most appropriate fallback Navigation Menu.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 6.3.0
-         *
-         */
         public function get_item($request)
         {
             $post = WP_Navigation_Fallback::get_fallback();
@@ -108,16 +57,6 @@
             return $response;
         }
 
-        /**
-         * Matches the post data to the schema we want.
-         *
-         * @param WP_Post         $item    The wp_navigation Post object whose response is being prepared.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response $response The response data.
-         * @since 6.3.0
-         *
-         */
         public function prepare_item_for_response($item, $request)
         {
             $data = [];
@@ -144,15 +83,6 @@
             return $response;
         }
 
-        /**
-         * Prepares the links for the request.
-         *
-         * @param WP_Post $post the Navigation Menu post object.
-         *
-         * @return array Links for the given request.
-         * @since 6.3.0
-         *
-         */
         private function prepare_links($post)
         {
             return [
@@ -163,13 +93,6 @@
             ];
         }
 
-        /**
-         * Retrieves the fallbacks' schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 6.3.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)

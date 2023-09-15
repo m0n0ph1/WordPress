@@ -1,13 +1,4 @@
 <?php
-    /**
-     * Functions and definitions
-     *
-     * @link       https://developer.wordpress.org/themes/basics/theme-functions/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty_One
-     * @since      Twenty Twenty-One 1.0
-     */
 
 // This theme requires WordPress 5.3 or later.
     if(version_compare($GLOBALS['wp_version'], '5.3', '<'))
@@ -17,17 +8,6 @@
 
     if(! function_exists('twenty_twenty_one_setup'))
     {
-        /**
-         * Sets up theme defaults and registers support for various WordPress features.
-         *
-         * Note that this function is hooked into the after_setup_theme hook, which
-         * runs before the init hook. The init hook is too late for some features, such
-         * as indicating support for post thumbnails.
-         *
-         * @return void
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         function twenty_twenty_one_setup()
         {
             // Add default posts and comments RSS feed links to head.
@@ -40,9 +20,6 @@
              */
             add_theme_support('title-tag');
 
-            /**
-             * Add post-formats support.
-             */
             add_theme_support('post-formats', [
                 'link',
                 'aside',
@@ -320,15 +297,6 @@
     }
     add_action('after_setup_theme', 'twenty_twenty_one_setup');
 
-    /**
-     * Registers widget area.
-     *
-     * @return void
-     * @link  https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
-     *
-     * @since Twenty Twenty-One 1.0
-     *
-     */
     function twenty_twenty_one_widgets_init()
     {
         register_sidebar([
@@ -344,17 +312,6 @@
 
     add_action('widgets_init', 'twenty_twenty_one_widgets_init');
 
-    /**
-     * Sets the content width in pixels, based on the theme's design and stylesheet.
-     *
-     * Priority 0 to make it available to lower priority callbacks.
-     *
-     * @return void
-     * @global int $content_width Content width.
-     *
-     * @since Twenty Twenty-One 1.0
-     *
-     */
     function twenty_twenty_one_content_width()
     {
         // This variable is intended to be overruled from themes.
@@ -365,16 +322,6 @@
 
     add_action('after_setup_theme', 'twenty_twenty_one_content_width', 0);
 
-    /**
-     * Enqueues scripts and styles.
-     *
-     * @return void
-     * @global bool       $is_IE
-     * @global WP_Scripts $wp_scripts
-     *
-     * @since Twenty Twenty-One 1.0
-     *
-     */
     function twenty_twenty_one_scripts()
     {
         // Note, the is_IE global variable is defined by WordPress and is used
@@ -410,8 +357,8 @@
         wp_register_script('twenty-twenty-one-ie11-polyfills', null, [], wp_get_theme()->get('Version'), ['in_footer' => true]);
         wp_add_inline_script(
             'twenty-twenty-one-ie11-polyfills', wp_get_script_polyfill($wp_scripts, [
-            'Element.prototype.matches && Element.prototype.closest && window.NodeList && NodeList.prototype.forEach' => 'twenty-twenty-one-ie11-polyfills-asset',
-        ])
+                                                  'Element.prototype.matches && Element.prototype.closest && window.NodeList && NodeList.prototype.forEach' => 'twenty-twenty-one-ie11-polyfills-asset',
+                                              ])
         );
 
         // Main navigation scripts.
@@ -429,13 +376,6 @@
 
     add_action('wp_enqueue_scripts', 'twenty_twenty_one_scripts');
 
-    /**
-     * Enqueues block editor script.
-     *
-     * @return void
-     * @since Twenty Twenty-One 1.0
-     *
-     */
     function twentytwentyone_block_editor_script()
     {
         wp_enqueue_script('twentytwentyone-editor', get_theme_file_uri('/assets/js/editor.js'), [
@@ -446,17 +386,6 @@
 
     add_action('enqueue_block_editor_assets', 'twentytwentyone_block_editor_script');
 
-    /**
-     * Fixes skip link focus in IE11.
-     *
-     * This does not enqueue the script because it is tiny and because it is only for IE11,
-     * thus it does not warrant having an entire dedicated blocking script being loaded.
-     *
-     * @since      Twenty Twenty-One 1.0
-     * @deprecated Twenty Twenty-One 1.9 Removed from wp_print_footer_scripts action.
-     *
-     * @link       https://git.io/vWdr2
-     */
     function twenty_twenty_one_skip_link_focus_fix()
     {
         // If SCRIPT_DEBUG is defined and true, print the unminified file.
@@ -480,13 +409,6 @@
         }
     }
 
-    /**
-     * Enqueues non-latin language styles.
-     *
-     * @return void
-     * @since Twenty Twenty-One 1.0
-     *
-     */
     function twenty_twenty_one_non_latin_languages()
     {
         $custom_css = twenty_twenty_one_get_non_latin_css('front-end');
@@ -529,13 +451,6 @@
     require_once get_template_directory().'/classes/class-twenty-twenty-one-dark-mode.php';
     new Twenty_Twenty_One_Dark_Mode();
 
-    /**
-     * Enqueues scripts for the customizer preview.
-     *
-     * @return void
-     * @since Twenty Twenty-One 1.0
-     *
-     */
     function twentytwentyone_customize_preview_init()
     {
         wp_enqueue_script('twentytwentyone-customize-helpers', get_theme_file_uri('/assets/js/customize-helpers.js'), [], wp_get_theme()->get('Version'), ['in_footer' => true]);
@@ -550,13 +465,6 @@
 
     add_action('customize_preview_init', 'twentytwentyone_customize_preview_init');
 
-    /**
-     * Enqueues scripts for the customizer.
-     *
-     * @return void
-     * @since Twenty Twenty-One 1.0
-     *
-     */
     function twentytwentyone_customize_controls_enqueue_scripts()
     {
         wp_enqueue_script('twentytwentyone-customize-helpers', get_theme_file_uri('/assets/js/customize-helpers.js'), [], wp_get_theme()->get('Version'), ['in_footer' => true]);
@@ -564,23 +472,8 @@
 
     add_action('customize_controls_enqueue_scripts', 'twentytwentyone_customize_controls_enqueue_scripts');
 
-    /**
-     * Calculates classes for the main <html> element.
-     *
-     * @return void
-     * @since Twenty Twenty-One 1.0
-     *
-     */
     function twentytwentyone_the_html_classes()
     {
-        /**
-         * Filters the classes for the main <html> element.
-         *
-         * @param string The list of classes. Default empty string.
-         *
-         * @since Twenty Twenty-One 1.0
-         *
-         */
         $classes = apply_filters('twentytwentyone_html_classes', '');
         if(! $classes)
         {
@@ -589,13 +482,6 @@
         echo 'class="'.esc_attr($classes).'"';
     }
 
-    /**
-     * Adds "is-IE" class to body if the user is on Internet Explorer.
-     *
-     * @return void
-     * @since Twenty Twenty-One 1.0
-     *
-     */
     function twentytwentyone_add_ie_class()
     {
         ?>
@@ -610,13 +496,7 @@
     add_action('wp_footer', 'twentytwentyone_add_ie_class');
 
     if(! function_exists('wp_get_list_item_separator')) :
-        /**
-         * Retrieves the list item separator based on the locale.
-         *
-         * Added for backward compatibility to support pre-6.0.0 WordPress versions.
-         *
-         * @since 6.0.0
-         */
+
         function wp_get_list_item_separator()
         {
             /* translators: Used between list items, there is a space after the comma. */

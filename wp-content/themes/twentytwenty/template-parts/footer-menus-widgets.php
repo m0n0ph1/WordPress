@@ -1,12 +1,4 @@
 <?php
-    /**
-     * Displays the menus and widgets at the end of the main element.
-     * Visually, this output is presented as part of the footer element.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty
-     * @since      Twenty Twenty 1.0
-     */
 
     $has_footer_menu = has_nav_menu('footer');
     $has_social_menu = has_nav_menu('social');
@@ -33,7 +25,8 @@
                     if($has_footer_menu || $has_social_menu)
                     {
                         ?>
-                        <div class="footer-top<?php echo $footer_top_classes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output ?>">
+                        <div class="footer-top<?php echo $footer_top_classes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output
+                        ?>">
                             <?php if($has_footer_menu) { ?>
 
                                 <nav aria-label="<?php esc_attr_e('Footer', 'twentytwenty'); ?>"

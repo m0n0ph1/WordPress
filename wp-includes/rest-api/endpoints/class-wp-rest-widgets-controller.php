@@ -1,53 +1,17 @@
 <?php
-    /**
-     * REST API: WP_REST_Widgets_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.8.0
-     */
 
-    /**
-     * Core class to access widgets via the REST API.
-     *
-     * @since 5.8.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Widgets_Controller extends WP_REST_Controller
     {
-        /**
-         * Tracks whether {@see retrieve_widgets()} has been called in the current request.
-         *
-         * @since 5.9.0
-         * @var bool
-         */
         protected $widgets_retrieved = false;
 
-        /**
-         * Whether the controller supports batching.
-         *
-         * @since 5.9.0
-         * @var array
-         */
         protected $allow_batch = ['v1' => true];
 
-        /**
-         * Widgets controller constructor.
-         *
-         * @since 5.8.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'widgets';
         }
 
-        /**
-         * Registers the widget routes for the controller.
-         *
-         * @since 5.8.0
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, $this->rest_base, [
@@ -98,13 +62,6 @@
             ]);
         }
 
-        /**
-         * Gets the list of collection params.
-         *
-         * @return array[]
-         * @since 5.8.0
-         *
-         */
         public function get_collection_params()
         {
             return [
@@ -116,15 +73,6 @@
             ];
         }
 
-        /**
-         * Checks if a given request has access to get widgets.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.8.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             $this->retrieve_widgets();
@@ -144,13 +92,6 @@
             return $this->permissions_check($request);
         }
 
-        /**
-         * Looks for "lost" widgets once per request.
-         *
-         * @since 5.9.0
-         *
-         * @see   retrieve_widgets()
-         */
         protected function retrieve_widgets()
         {
             if(! $this->widgets_retrieved)
@@ -160,15 +101,6 @@
             }
         }
 
-        /**
-         * Checks if a sidebar can be read publicly.
-         *
-         * @param string $sidebar_id The sidebar ID.
-         *
-         * @return bool Whether the sidebar can be read.
-         * @since 5.9.0
-         *
-         */
         protected function check_read_sidebar_permission($sidebar_id)
         {
             $sidebar = wp_get_sidebar($sidebar_id);
@@ -176,15 +108,6 @@
             return ! empty($sidebar['show_in_rest']);
         }
 
-        /**
-         * Performs a permissions check for managing widgets.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error
-         * @since 5.8.0
-         *
-         */
         protected function permissions_check($request)
         {
             if(! current_user_can('edit_theme_options'))
@@ -197,15 +120,6 @@
             return true;
         }
 
-        /**
-         * Retrieves a collection of widgets.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.8.0
-         *
-         */
         public function get_items($request)
         {
             $this->retrieve_widgets();
@@ -239,19 +153,6 @@
             return new WP_REST_Response($prepared);
         }
 
-        /**
-         * Prepares the widget for the REST response.
-         *
-         * @param array              $item                  An array containing a widget_id and sidebar_id.
-         * @param WP_REST_Request    $request               Request object.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.8.0
-         *
-         * @global WP_Widget_Factory $wp_widget_factory
-         * @global array             $wp_registered_widgets The registered widgets.
-         *
-         */
         public function prepare_item_for_response($item, $request)
         {
             global $wp_widget_factory, $wp_registered_widgets;
@@ -321,28 +222,9 @@
                 $response->add_links($this->prepare_links($prepared));
             }
 
-            /**
-             * Filters the REST API response for a widget.
-             *
-             * @param WP_REST_Response|WP_Error $response The response object, or WP_Error object on failure.
-             * @param array                     $widget   The registered widget data.
-             * @param WP_REST_Request           $request  Request used to generate the response.
-             *
-             * @since 5.8.0
-             *
-             */
             return apply_filters('rest_prepare_widget', $response, $widget, $request);
         }
 
-        /**
-         * Prepares links for the widget.
-         *
-         * @param array $prepared Widget.
-         *
-         * @return array Links for the given widget.
-         * @since 5.8.0
-         *
-         */
         protected function prepare_links($prepared)
         {
             $id_base = ! empty($prepared['id_base']) ? $prepared['id_base'] : $prepared['id'];
@@ -364,15 +246,6 @@
             ];
         }
 
-        /**
-         * Checks if a given request has access to get a widget.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.8.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $this->retrieve_widgets();
@@ -388,15 +261,6 @@
             return $this->permissions_check($request);
         }
 
-        /**
-         * Gets an individual widget.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.8.0
-         *
-         */
         public function get_item($request)
         {
             $this->retrieve_widgets();
@@ -412,29 +276,11 @@
             return $this->prepare_item_for_response(compact('widget_id', 'sidebar_id'), $request);
         }
 
-        /**
-         * Checks if a given request has access to create widgets.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.8.0
-         *
-         */
         public function create_item_permissions_check($request)
         {
             return $this->permissions_check($request);
         }
 
-        /**
-         * Creates a widget.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.8.0
-         *
-         */
         public function create_item($request)
         {
             $sidebar_id = $request['sidebar'];
@@ -462,19 +308,6 @@
             return $response;
         }
 
-        /**
-         * Saves the widget in the request object.
-         *
-         * @param WP_REST_Request    $request                      Full details about the request.
-         * @param string             $sidebar_id                   ID of the sidebar the widget belongs to.
-         *
-         * @return string|WP_Error The saved widget ID.
-         * @since 5.8.0
-         *
-         * @global WP_Widget_Factory $wp_widget_factory
-         * @global array             $wp_registered_widget_updates The registered widget update functions.
-         *
-         */
         protected function save_widget($request, $sidebar_id)
         {
             global $wp_widget_factory, $wp_registered_widget_updates;
@@ -592,47 +425,16 @@
                 $widget_object->updated = false;
             }
 
-            /**
-             * Fires after a widget is created or updated via the REST API.
-             *
-             * @param string          $id         ID of the widget being saved.
-             * @param string          $sidebar_id ID of the sidebar containing the widget being saved.
-             * @param WP_REST_Request $request    Request object.
-             * @param bool            $creating   True when creating a widget, false when updating.
-             *
-             * @since 5.8.0
-             *
-             */
             do_action('rest_after_save_widget', $id, $sidebar_id, $request, $creating);
 
             return $id;
         }
 
-        /**
-         * Checks if a given request has access to update widgets.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.8.0
-         *
-         */
         public function update_item_permissions_check($request)
         {
             return $this->permissions_check($request);
         }
 
-        /**
-         * Updates an existing widget.
-         *
-         * @param WP_REST_Request    $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.8.0
-         *
-         * @global WP_Widget_Factory $wp_widget_factory
-         *
-         */
         public function update_item($request)
         {
             global $wp_widget_factory;
@@ -684,32 +486,11 @@
             return $this->prepare_item_for_response(compact('widget_id', 'sidebar_id'), $request);
         }
 
-        /**
-         * Checks if a given request has access to delete widgets.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.8.0
-         *
-         */
         public function delete_item_permissions_check($request)
         {
             return $this->permissions_check($request);
         }
 
-        /**
-         * Deletes a widget.
-         *
-         * @param WP_REST_Request    $request                      Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @global array             $wp_registered_widget_updates The registered widget update functions.
-         *
-         * @since 5.8.0
-         *
-         * @global WP_Widget_Factory $wp_widget_factory
-         */
         public function delete_item($request)
         {
             global $wp_widget_factory, $wp_registered_widget_updates;
@@ -755,7 +536,6 @@
                 ];
                 $_REQUEST = $_POST;
 
-                /** This action is documented in wp-admin/widgets-form.php */
                 do_action('delete_widget', $widget_id, $sidebar_id, $id_base);
 
                 $callback = $wp_registered_widget_updates[$id_base]['callback'];
@@ -800,29 +580,11 @@
                                                              ], $request);
             }
 
-            /**
-             * Fires after a widget is deleted via the REST API.
-             *
-             * @param string                    $widget_id  ID of the widget marked for deletion.
-             * @param string                    $sidebar_id ID of the sidebar the widget was deleted from.
-             * @param WP_REST_Response|WP_Error $response   The response data, or WP_Error object on failure.
-             * @param WP_REST_Request           $request    The request sent to the API.
-             *
-             * @since 5.8.0
-             *
-             */
             do_action('rest_delete_widget', $widget_id, $sidebar_id, $response, $request);
 
             return $response;
         }
 
-        /**
-         * Retrieves the widget's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.8.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)

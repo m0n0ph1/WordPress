@@ -1,23 +1,7 @@
 <?php
-    /**
-     * Twenty Twenty-Two functions and definitions
-     *
-     * @link       https://developer.wordpress.org/themes/basics/theme-functions/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty_Two
-     * @since      Twenty Twenty-Two 1.0
-     */
 
     if(! function_exists('twentytwentytwo_support')) :
 
-        /**
-         * Sets up theme defaults and registers support for various WordPress features.
-         *
-         * @return void
-         * @since Twenty Twenty-Two 1.0
-         *
-         */
         function twentytwentytwo_support()
         {
             // Add support for block styles.
@@ -33,13 +17,6 @@
 
     if(! function_exists('twentytwentytwo_styles')) :
 
-        /**
-         * Enqueue styles.
-         *
-         * @return void
-         * @since Twenty Twenty-Two 1.0
-         *
-         */
         function twentytwentytwo_styles()
         {
             // Register theme stylesheet.

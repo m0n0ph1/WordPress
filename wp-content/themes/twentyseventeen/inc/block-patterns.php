@@ -1,23 +1,10 @@
 <?php
-    /**
-     * Twenty Twenty Theme: Block Patterns
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Seventeen
-     * @since      Twenty Seventeen 2.5
-     */
 
-    /**
-     * Register Block Pattern Category.
-     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentyseventeen', ['label' => __('Twenty Seventeen', 'twentyseventeen')]);
     }
 
-    /**
-     * Register Block Patterns.
-     */
     if(function_exists('register_block_pattern'))
     {
         register_block_pattern('twentyseventeen/large-heading-with-button', [

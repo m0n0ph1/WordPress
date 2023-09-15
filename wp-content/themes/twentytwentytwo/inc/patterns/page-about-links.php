@@ -1,7 +1,5 @@
 <?php
-    /**
-     * About page links
-     */
+
     return [
         'title' => __('About page links', 'twentytwentytwo'),
         'categories' => ['pages', 'buttons'],

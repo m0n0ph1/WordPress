@@ -1,52 +1,11 @@
 <?php
-    /**
-     * Upgrade API: Language_Pack_Upgrader class
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      4.6.0
-     */
 
-    /**
-     * Core class used for updating/installing language packs (translations)
-     * for plugins, themes, and core.
-     *
-     * @since 3.7.0
-     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader.php.
-     *
-     * @see   WP_Upgrader
-     */
     class Language_Pack_Upgrader extends WP_Upgrader
     {
-        /**
-         * Result of the language pack upgrade.
-         *
-         * @since 3.7.0
-         * @var array|WP_Error $result
-         * @see   WP_Upgrader::$result
-         */
         public $result;
 
-        /**
-         * Whether a bulk upgrade/installation is being performed.
-         *
-         * @since 3.7.0
-         * @var bool $bulk
-         */
         public $bulk = true;
 
-        /**
-         * Asynchronously upgrades language packs after other upgrades have been made.
-         *
-         * Hooked to the {@see 'upgrader_process_complete'} action by default.
-         *
-         * @param false|WP_Upgrader $upgrader Optional. WP_Upgrader instance or false. If `$upgrader` is
-         *                                    a Language_Pack_Upgrader instance, the method will bail to
-         *                                    avoid recursion. Otherwise unused. Default false.
-         *
-         * @since 3.7.0
-         *
-         */
         public static function async_upgrade($upgrader = false)
         {
             // Avoid recursion.
@@ -76,15 +35,6 @@
             {
                 $update = ! empty($language_update->autoupdate);
 
-                /**
-                 * Filters whether to asynchronously update translation for core, a plugin, or a theme.
-                 *
-                 * @param bool   $update          Whether to update.
-                 * @param object $language_update The update offer.
-                 *
-                 * @since 4.0.0
-                 *
-                 */
                 $update = apply_filters('async_update_translation', $update, $language_update);
 
                 if(! $update)
@@ -114,24 +64,6 @@
             $lp_upgrader->bulk_upgrade($language_updates);
         }
 
-        /**
-         * Upgrades several language packs at once.
-         *
-         * @param object[]            $language_updates   Optional. Array of language packs to update. See
-         *                                                {@see wp_get_translation_updates()}. Default empty array.
-         * @param array               $args               {
-         *                                                Other arguments for upgrading multiple language packs. Default empty array.
-         *
-         * @type bool                 $clear_update_cache Whether to clear the update cache when done.
-         *                                                Default true.
-         *                                                }
-         * @return array|bool|WP_Error Will return an array of results, or true if there are no updates,
-         *                                                false or WP_Error for initial errors.
-         * @global WP_Filesystem_Base $wp_filesystem      WordPress filesystem subclass.
-         *
-         * @since 3.7.0
-         *
-         */
         public function bulk_upgrade($language_updates = [], $args = [])
         {
             global $wp_filesystem;
@@ -257,7 +189,6 @@
             remove_action('upgrader_process_complete', 'wp_update_plugins');
             remove_action('upgrader_process_complete', 'wp_update_themes');
 
-            /** This action is documented in wp-admin/includes/class-wp-upgrader.php */
             do_action('upgrader_process_complete', $this, [
                 'action' => 'update',
                 'type' => 'translation',
@@ -286,11 +217,6 @@
             return $results;
         }
 
-        /**
-         * Initializes the upgrade strings.
-         *
-         * @since 3.7.0
-         */
         public function upgrade_strings()
         {
             $this->strings['starting_upgrade'] = __('Some of your translations need updating. Sit tight for a few more seconds while they are updated as well.');
@@ -305,17 +231,6 @@
             $this->strings['remove_old_failed'] = __('Could not remove the old translation.');
         }
 
-        /**
-         * Upgrades a language pack.
-         *
-         * @param string|false $update Optional. Whether an update offer is available. Default false.
-         * @param array        $args   Optional. Other optional arguments, see
-         *                             Language_Pack_Upgrader::bulk_upgrade(). Default empty array.
-         *
-         * @return array|bool|WP_Error The result of the upgrade, or a WP_Error object instead.
-         * @since 3.7.0
-         *
-         */
         public function upgrade($update = false, $args = [])
         {
             if($update)
@@ -333,21 +248,6 @@
             return $results[0];
         }
 
-        /**
-         * Checks that the package source contains .mo and .po files.
-         *
-         * Hooked to the {@see 'upgrader_source_selection'} filter by
-         * Language_Pack_Upgrader::bulk_upgrade().
-         *
-         * @param string|WP_Error     $source        The path to the downloaded package source.
-         * @param string              $remote_source Remote file source location.
-         *
-         * @return string|WP_Error The source as passed, or a WP_Error object on failure.
-         * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-         *
-         * @since 3.7.0
-         *
-         */
         public function check_package($source, $remote_source)
         {
             global $wp_filesystem;
@@ -383,15 +283,6 @@
             return $source;
         }
 
-        /**
-         * Gets the name of an item being updated.
-         *
-         * @param object $update The data for an update.
-         *
-         * @return string The name of the item being updated.
-         * @since 3.7.0
-         *
-         */
         public function get_name_for_update($update)
         {
             switch($update->type)
@@ -419,17 +310,6 @@
             return '';
         }
 
-        /**
-         * Clears existing translations where this item is going to be installed into.
-         *
-         * @param string              $remote_destination The location on the remote filesystem to be cleared.
-         *
-         * @return bool|WP_Error True upon success, WP_Error on failure.
-         * @since 5.1.0
-         *
-         * @global WP_Filesystem_Base $wp_filesystem      WordPress filesystem subclass.
-         *
-         */
         public function clear_destination($remote_destination)
         {
             global $wp_filesystem;

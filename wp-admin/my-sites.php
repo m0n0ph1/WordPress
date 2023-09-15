@@ -1,11 +1,4 @@
 <?php
-    /**
-     * My Sites dashboard.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
     require_once __DIR__.'/admin.php';
 
@@ -74,7 +67,6 @@
         <?php
             if(in_array(get_site_option('registration'), ['all', 'blog'], true))
             {
-                /** This filter is documented in wp-login.php */
                 $sign_up_url = apply_filters('wp_signup_location', network_site_url('wp-signup.php'));
                 printf(' <a href="%s" class="page-title-action">%s</a>', esc_url($sign_up_url), esc_html__('Add New Site'));
             }
@@ -94,29 +86,13 @@
                 <form id="myblogs" method="post">
                     <?php
                         choose_primary_blog();
-                        /**
-                         * Fires before the sites list on the My Sites screen.
-                         *
-                         * @since 3.0.0
-                         */
+
                         do_action('myblogs_allblogs_options');
                     ?>
                     <br clear="all"/>
                     <ul class="my-sites striped">
                         <?php
-                            /**
-                             * Filters the settings HTML markup in the Global Settings section on the My Sites screen.
-                             *
-                             * By default, the Global Settings section is hidden. Passing a non-empty
-                             * string to this filter will enable the section, and allow new settings
-                             * to be added, either globally or for specific sites.
-                             *
-                             * @param string $settings_html The settings HTML markup. Default empty.
-                             * @param string $context       Context of the setting (global or site-specific). Default 'global'.
-                             *
-                             * @since MU (3.0.0)
-                             *
-                             */
+
                             $settings_html = apply_filters('myblogs_options', '', 'global');
 
                             if($settings_html)
@@ -141,20 +117,10 @@
                                     $actions .= " | <a href='".esc_url(admin_url())."'>".__('Dashboard').'</a>';
                                 }
 
-                                /**
-                                 * Filters the row links displayed for each site on the My Sites screen.
-                                 *
-                                 * @param string $actions   The HTML site link markup.
-                                 * @param object $user_blog An object containing the site data.
-                                 *
-                                 * @since MU (3.0.0)
-                                 *
-                                 */
                                 $actions = apply_filters('myblogs_blog_actions', $actions, $user_blog);
 
                                 echo "<p class='my-sites-actions'>".$actions.'</p>';
 
-                                /** This filter is documented in wp-admin/my-sites.php */
                                 echo apply_filters('myblogs_options', '', $user_blog);
 
                                 echo '</li>';

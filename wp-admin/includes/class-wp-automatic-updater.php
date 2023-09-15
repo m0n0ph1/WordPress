@@ -1,33 +1,10 @@
 <?php
-    /**
-     * Upgrade API: WP_Automatic_Updater class
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      4.6.0
-     */
 
-    /**
-     * Core class used for handling automatic background updates.
-     *
-     * @since 3.7.0
-     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader.php.
-     */
     #[AllowDynamicProperties]
     class WP_Automatic_Updater
     {
-        /**
-         * Tracks update results during processing.
-         *
-         * @var array
-         */
         protected $update_results = [];
 
-        /**
-         * Kicks off the background update process, looping through all pending updates.
-         *
-         * @since 3.7.0
-         */
         public function run()
         {
             if($this->is_disabled())
@@ -132,16 +109,6 @@
             {
                 $development_version = str_contains(get_bloginfo('version'), '-');
 
-                /**
-                 * Filters whether to send a debugging email for each automatic background update.
-                 *
-                 * @param bool $development_version By default, emails are sent if the
-                 *                                  install is a development version.
-                 *                                  Return false to avoid the email.
-                 *
-                 * @since 3.7.0
-                 *
-                 */
                 if(apply_filters('automatic_updates_send_debug_email', $development_version))
                 {
                     $this->send_debug_email();
@@ -156,27 +123,12 @@
                     $this->after_plugin_theme_update($this->update_results);
                 }
 
-                /**
-                 * Fires after all automatic updates have run.
-                 *
-                 * @param array $update_results The results of all attempted updates.
-                 *
-                 * @since 3.8.0
-                 *
-                 */
                 do_action('automatic_updates_complete', $this->update_results);
             }
 
             WP_Upgrader::release_lock('auto_updater');
         }
 
-        /**
-         * Determines whether the entire automatic updater is disabled.
-         *
-         * @return bool True if the automatic updater is disabled, false otherwise.
-         * @since 3.7.0
-         *
-         */
         public function is_disabled()
         {
             // Background updates are disabled if you don't want file changes.
@@ -193,32 +145,9 @@
             // More fine grained control can be done through the WP_AUTO_UPDATE_CORE constant and filters.
             $disabled = defined('AUTOMATIC_UPDATER_DISABLED') && AUTOMATIC_UPDATER_DISABLED;
 
-            /**
-             * Filters whether to entirely disable background updates.
-             *
-             * There are more fine-grained filters and controls for selective disabling.
-             * This filter parallels the AUTOMATIC_UPDATER_DISABLED constant in name.
-             *
-             * This also disables update notification emails. That may change in the future.
-             *
-             * @param bool $disabled Whether the updater should be disabled.
-             *
-             * @since 3.7.0
-             *
-             */
             return apply_filters('automatic_updater_disabled', $disabled);
         }
 
-        /**
-         * Updates an item, if appropriate.
-         *
-         * @param string $type The type of update being checked: 'core', 'theme', 'plugin', 'translation'.
-         * @param object $item The update offer.
-         *
-         * @return null|WP_Error
-         * @since 3.7.0
-         *
-         */
         public function update($type, $item)
         {
             $skin = new Automatic_Upgrader_Skin();
@@ -251,17 +180,6 @@
                 return false;
             }
 
-            /**
-             * Fires immediately prior to an auto-update.
-             *
-             * @param string $type    The type of update being checked: 'core', 'theme', 'plugin', or 'translation'.
-             * @param object $item    The update offer.
-             * @param string $context The filesystem context (a path) against which filesystem access and status
-             *                        should be checked.
-             *
-             * @since 4.4.0
-             *
-             */
             do_action('pre_auto_update', $type, $item, $context);
 
             $upgrader_item = $item;
@@ -363,21 +281,6 @@
             return $upgrade_result;
         }
 
-        /**
-         * Tests to see if we can and should update a specific item.
-         *
-         * @param string $type    The type of update being checked: 'core', 'theme',
-         *                        'plugin', 'translation'.
-         * @param object $item    The update offer.
-         * @param string $context The filesystem context (a path) against which filesystem
-         *                        access and status should be checked.
-         *
-         * @return bool True if the item should be updated, false otherwise.
-         * @since 3.7.0
-         *
-         * @global wpdb  $wpdb    WordPress database abstraction object.
-         *
-         */
         public function should_update($type, $item, $context)
         {
             // Used to see if WP_Filesystem is set up to allow unattended updates.
@@ -433,36 +336,6 @@
                 $update = $item->disable_autoupdate;
             }
 
-            /**
-             * Filters whether to automatically update core, a plugin, a theme, or a language.
-             *
-             * The dynamic portion of the hook name, `$type`, refers to the type of update
-             * being checked.
-             *
-             * Possible hook names include:
-             *
-             *  - `auto_update_core`
-             *  - `auto_update_plugin`
-             *  - `auto_update_theme`
-             *  - `auto_update_translation`
-             *
-             * Since WordPress 3.7, minor and development versions of core, and translations have
-             * been auto-updated by default. New installs on WordPress 5.6 or higher will also
-             * auto-update major versions by default. Starting in 5.6, older sites can opt-in to
-             * major version auto-updates, and auto-updates for plugins and themes.
-             *
-             * See the {@see 'allow_dev_auto_core_updates'}, {@see 'allow_minor_auto_core_updates'},
-             * and {@see 'allow_major_auto_core_updates'} filters for a more straightforward way to
-             * adjust core updates.
-             *
-             * @param bool|null $update Whether to update. The value of null is internally used
-             *                          to detect whether nothing has hooked into this filter.
-             * @param object    $item   The update offer.
-             *
-             * @since 3.7.0
-             * @since 5.5.0 The `$update` parameter accepts the value of null.
-             *
-             */
             $update = apply_filters("auto_update_{$type}", $update, $item);
 
             if(! $update)
@@ -508,25 +381,6 @@
             return true;
         }
 
-        /**
-         * Checks for version control checkouts.
-         *
-         * Checks for Subversion, Git, Mercurial, and Bazaar. It recursively looks up the
-         * filesystem to the top of the drive, erring on the side of detecting a VCS
-         * checkout somewhere.
-         *
-         * ABSPATH is always checked in addition to whatever `$context` is (which may be the
-         * wp-content directory, for example). The underlying assumption is that if you are
-         * using version control *anywhere*, then you should be making decisions for
-         * how things get updated.
-         *
-         * @param string $context The filesystem path to check, in addition to ABSPATH.
-         *
-         * @return bool True if a VCS checkout was discovered at `$context` or ABSPATH,
-         *              or anywhere higher. False otherwise.
-         * @since 3.7.0
-         *
-         */
         public function is_vcs_checkout($context)
         {
             $context_dirs = [untrailingslashit($context)];
@@ -576,34 +430,9 @@
                 }
             }
 
-            /**
-             * Filters whether the automatic updater should consider a filesystem
-             * location to be potentially managed by a version control system.
-             *
-             * @param bool   $checkout Whether a VCS checkout was discovered at `$context`
-             *                         or ABSPATH, or anywhere higher.
-             * @param string $context  The filesystem context (a path) against which
-             *                         filesystem status should be checked.
-             *
-             * @since 3.7.0
-             *
-             */
             return apply_filters('automatic_updates_is_vcs_checkout', $checkout, $context);
         }
 
-        /**
-         * Checks whether access to a given directory is allowed.
-         *
-         * This is used when detecting version control checkouts. Takes into account
-         * the PHP `open_basedir` restrictions, so that WordPress does not try to access
-         * directories it is not allowed to.
-         *
-         * @param string $dir The directory to check.
-         *
-         * @return bool True if access to the directory is allowed, false otherwise.
-         * @since 6.2.0
-         *
-         */
         public function is_allowed_dir($dir)
         {
             if(is_string($dir))
@@ -638,16 +467,6 @@
             return false;
         }
 
-        /**
-         * Notifies an administrator of a core update.
-         *
-         * @param object $item The update offer.
-         *
-         * @return bool True if the site administrator is notified of a core update,
-         *              false otherwise.
-         * @since 3.7.0
-         *
-         */
         protected function send_core_update_notification_email($item)
         {
             $notified = get_site_option('auto_core_update_notified');
@@ -661,26 +480,6 @@
             // See if we need to notify users of a core update.
             $notify = ! empty($item->notify_email);
 
-            /**
-             * Filters whether to notify the site administrator of a new core update.
-             *
-             * By default, administrators are notified when the update offer received
-             * from WordPress.org sets a particular flag. This allows some discretion
-             * in if and when to notify.
-             *
-             * This filter is only evaluated once per release. If the same email address
-             * was already notified of the same new version, WordPress won't repeatedly
-             * email the administrator.
-             *
-             * This filter is also used on about.php to check if a plugin has disabled
-             * these notifications.
-             *
-             * @param bool   $notify Whether the site administrator is notified.
-             * @param object $item   The update offer.
-             *
-             * @since 3.7.0
-             *
-             */
             if(! apply_filters('send_core_update_notification_email', $notify, $item))
             {
                 return false;
@@ -691,16 +490,6 @@
             return true;
         }
 
-        /**
-         * Sends an email upon the completion or failure of a background core update.
-         *
-         * @param string $type        The type of email to send. Can be one of 'success', 'fail', 'manual', 'critical'.
-         * @param object $core_update The update offer that was attempted.
-         * @param mixed  $result      Optional. The result for the core update. Can be WP_Error.
-         *
-         * @since 3.7.0
-         *
-         */
         protected function send_email($type, $core_update, $result = null)
         {
             update_site_option('auto_core_update_notified', [
@@ -727,18 +516,6 @@
                 $newer_version_available = false;
             }
 
-            /**
-             * Filters whether to send an email following an automatic background core update.
-             *
-             * @param bool   $send        Whether to send the email. Default true.
-             * @param string $type        The type of email to send. Can be one of
-             *                            'success', 'fail', 'critical'.
-             * @param object $core_update The update offer that was attempted.
-             * @param mixed  $result      The result for the core update. Can be WP_Error.
-             *
-             * @since 3.7.0
-             *
-             */
             if('manual' !== $type && ! apply_filters('auto_core_update_send_email', true, $type, $core_update, $result))
             {
                 return;
@@ -921,37 +698,11 @@
 
             $email = compact('to', 'subject', 'body', 'headers');
 
-            /**
-             * Filters the email sent following an automatic background core update.
-             *
-             * @param array  $email       {
-             *                            Array of email arguments that will be passed to wp_mail().
-             *
-             * @type string  $to          The email recipient. An array of emails
-             *                            can be returned, as handled by wp_mail().
-             * @type string  $subject     The email's subject.
-             * @type string  $body        The email message body.
-             * @type string  $headers     Any email headers, defaults to no headers.
-             *                            }
-             *
-             * @param string $type        The type of email being sent. Can be one of
-             *                            'success', 'fail', 'manual', 'critical'.
-             * @param object $core_update The update offer that was attempted.
-             * @param mixed  $result      The result for the core update. Can be WP_Error.
-             *
-             * @since 3.7.0
-             *
-             */
             $email = apply_filters('auto_core_update_email', $email, $type, $core_update, $result);
 
             wp_mail($email['to'], wp_specialchars_decode($email['subject']), $email['body'], $email['headers']);
         }
 
-        /**
-         * Prepares and sends an email of a full log of background update results, useful for debugging and geekery.
-         *
-         * @since 3.7.0
-         */
         protected function send_debug_email()
         {
             $update_count = 0;
@@ -1144,40 +895,11 @@ Thanks! -- The WordPress Team"
                 'headers' => '',
             ];
 
-            /**
-             * Filters the debug email that can be sent following an automatic
-             * background core update.
-             *
-             * @param array $email       {
-             *                           Array of email arguments that will be passed to wp_mail().
-             *
-             * @type string $to          The email recipient. An array of emails
-             *                           can be returned, as handled by wp_mail().
-             * @type string $subject     Email subject.
-             * @type string $body        Email message body.
-             * @type string $headers     Any email headers. Default empty.
-             *                           }
-             *
-             * @param int   $failures    The number of failures encountered while upgrading.
-             * @param mixed $results     The results of all attempted updates.
-             *
-             * @since 3.8.0
-             *
-             */
             $email = apply_filters('automatic_updates_debug_email', $email, $failures, $this->update_results);
 
             wp_mail($email['to'], wp_specialchars_decode($email['subject']), $email['body'], $email['headers']);
         }
 
-        /**
-         * Checks whether to send an email and avoid processing future updates after
-         * attempting a core update.
-         *
-         * @param object $update_result The result of the core update. Includes the update offer and result.
-         *
-         * @since 3.7.0
-         *
-         */
         protected function after_core_update($update_result)
         {
             $wp_version = get_bloginfo('version');
@@ -1277,14 +999,6 @@ Thanks! -- The WordPress Team"
             }
         }
 
-        /**
-         * Checks whether an email should be sent after attempting plugin or theme updates.
-         *
-         * @param array $update_results The results of update tasks.
-         *
-         * @since 5.5.0
-         *
-         */
         protected function after_plugin_theme_update($update_results)
         {
             $successful_updates = [];
@@ -1292,16 +1006,6 @@ Thanks! -- The WordPress Team"
 
             if(! empty($update_results['plugin']))
             {
-                /**
-                 * Filters whether to send an email following an automatic background plugin update.
-                 *
-                 * @param bool  $enabled        True if plugin update notifications are enabled, false otherwise.
-                 * @param array $update_results The results of plugins update tasks.
-                 *
-                 * @since 5.5.0
-                 * @since 5.5.1 Added the `$update_results` parameter.
-                 *
-                 */
                 $notifications_enabled = apply_filters('auto_plugin_update_send_email', true, $update_results['plugin']);
 
                 if($notifications_enabled)
@@ -1322,16 +1026,6 @@ Thanks! -- The WordPress Team"
 
             if(! empty($update_results['theme']))
             {
-                /**
-                 * Filters whether to send an email following an automatic background theme update.
-                 *
-                 * @param bool  $enabled        True if theme update notifications are enabled, false otherwise.
-                 * @param array $update_results The results of theme update tasks.
-                 *
-                 * @since 5.5.0
-                 * @since 5.5.1 Added the `$update_results` parameter.
-                 *
-                 */
                 $notifications_enabled = apply_filters('auto_theme_update_send_email', true, $update_results['theme']);
 
                 if($notifications_enabled)
@@ -1369,16 +1063,6 @@ Thanks! -- The WordPress Team"
             }
         }
 
-        /**
-         * Sends an email upon the completion or failure of a plugin or theme background update.
-         *
-         * @param string $type               The type of email to send. Can be one of 'success', 'fail', 'mixed'.
-         * @param array  $successful_updates A list of updates that succeeded.
-         * @param array  $failed_updates     A list of updates that failed.
-         *
-         * @since 5.5.0
-         *
-         */
         protected function send_plugin_theme_email($type, $successful_updates, $failed_updates)
         {
             // No updates were attempted.
@@ -1627,26 +1311,6 @@ Thanks! -- The WordPress Team"
 
             $email = compact('to', 'subject', 'body', 'headers');
 
-            /**
-             * Filters the email sent following an automatic background update for plugins and themes.
-             *
-             * @param array  $email              {
-             *                                   Array of email arguments that will be passed to wp_mail().
-             *
-             * @type string  $to                 The email recipient. An array of emails
-             *                                   can be returned, as handled by wp_mail().
-             * @type string  $subject            The email's subject.
-             * @type string  $body               The email message body.
-             * @type string  $headers            Any email headers, defaults to no headers.
-             *                                   }
-             *
-             * @param string $type               The type of email being sent. Can be one of 'success', 'fail', 'mixed'.
-             * @param array  $successful_updates A list of updates that succeeded.
-             * @param array  $failed_updates     A list of updates that failed.
-             *
-             * @since 5.5.0
-             *
-             */
             $email = apply_filters('auto_plugin_theme_update_email', $email, $type, $successful_updates, $failed_updates);
 
             $result = wp_mail($email['to'], wp_specialchars_decode($email['subject']), $email['body'], $email['headers']);

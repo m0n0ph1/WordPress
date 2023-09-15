@@ -1,12 +1,4 @@
 <?php
-    /**
-     * Facilitates adding of the WordPress editor as used on the Write and Edit screens.
-     *
-     * @package WordPress
-     * @since   3.3.0
-     *
-     * Private, not included by default. See wp_editor() in wp-includes/general-template.php.
-     */
 
     #[AllowDynamicProperties]
     final class _WP_Editors
@@ -49,17 +41,6 @@
 
         private function __construct() {}
 
-        /**
-         * Outputs the HTML for a single instance of the editor.
-         *
-         * @param string $content   Initial content for the editor.
-         * @param string $editor_id HTML ID for the textarea and TinyMCE and Quicktags instances.
-         *                          Should not contain square brackets.
-         * @param array  $settings  See _WP_Editors::parse_settings() for description.
-         *
-         * @since 3.3.0
-         *
-         */
         public static function editor($content, $editor_id, $settings = [])
         {
             $set = self::parse_settings($editor_id, $settings);
@@ -147,14 +128,6 @@
 
                     echo '<div id="wp-'.$editor_id_attr.'-media-buttons" class="wp-media-buttons">';
 
-                    /**
-                     * Fires after the default media button(s) are displayed.
-                     *
-                     * @param string $editor_id Unique editor identifier, e.g. 'content'.
-                     *
-                     * @since 2.5.0
-                     *
-                     */
                     do_action('media_buttons', $editor_id);
                     echo "</div>\n";
                 }
@@ -179,14 +152,6 @@
                 $quicktags_toolbar = '<div id="'.$toolbar_id.'" class="quicktags-toolbar hide-if-no-js"></div>';
             }
 
-            /**
-             * Filters the HTML markup output that displays the editor.
-             *
-             * @param string $output Editor's HTML markup.
-             *
-             * @since 2.1.0
-             *
-             */
             $the_editor = apply_filters('the_editor', '<div id="wp-'.$editor_id_attr.'-editor-container" class="wp-editor-container">'.$quicktags_toolbar.'<textarea'.$editor_class.$height.$tabindex.$autocomplete.' cols="40" name="'.esc_attr($set['textarea_name']).'" '.'id="'.$editor_id_attr.'">%s</textarea></div>');
 
             // Prepare the content for the Visual or Text editor, only when TinyMCE is used (back-compat).
@@ -195,16 +160,6 @@
                 add_filter('the_editor_content', 'format_for_editor', 10, 2);
             }
 
-            /**
-             * Filters the default editor content.
-             *
-             * @param string $content        Default editor content.
-             * @param string $default_editor The default editor for the current user.
-             *                               Either 'html' or 'tinymce'.
-             *
-             * @since 2.1.0
-             *
-             */
             $content = apply_filters('the_editor_content', $content, $default_editor);
 
             // Remove the filter as the next editor on the same page may not need it.
@@ -216,12 +171,10 @@
             // Back-compat for the `htmledit_pre` and `richedit_pre` filters.
             if('html' === $default_editor && has_filter('htmledit_pre'))
             {
-                /** This filter is documented in wp-includes/deprecated.php */
                 $content = apply_filters_deprecated('htmledit_pre', [$content], '4.3.0', 'format_for_editor');
             }
             elseif('tinymce' === $default_editor && has_filter('richedit_pre'))
             {
-                /** This filter is documented in wp-includes/deprecated.php */
                 $content = apply_filters_deprecated('richedit_pre', [$content], '4.3.0', 'format_for_editor');
             }
 
@@ -236,55 +189,8 @@
             self::editor_settings($editor_id, $set);
         }
 
-        /**
-         * Parse default arguments for the editor instance.
-         *
-         * @param string    $editor_id             HTML ID for the textarea and TinyMCE and Quicktags instances.
-         *                                         Should not contain square brackets.
-         * @param array     $settings              {
-         *                                         Array of editor arguments.
-         *
-         * @type bool       $wpautop               Whether to use wpautop(). Default true.
-         * @type bool       $media_buttons         Whether to show the Add Media/other media buttons.
-         * @type string     $default_editor        When both TinyMCE and Quicktags are used, set which
-         *                                         editor is shown on page load. Default empty.
-         * @type bool       $drag_drop_upload      Whether to enable drag & drop on the editor uploading. Default false.
-         *                                         Requires the media modal.
-         * @type string     $textarea_name         Give the textarea a unique name here. Square brackets
-         *                                         can be used here. Default $editor_id.
-         * @type int        $textarea_rows         Number rows in the editor textarea. Default 20.
-         * @type string|int $tabindex              Tabindex value to use. Default empty.
-         * @type string     $tabfocus_elements     The previous and next element ID to move the focus to
-         *                                         when pressing the Tab key in TinyMCE. Default ':prev,:next'.
-         * @type string     $editor_css            Intended for extra styles for both Visual and Text editors.
-         *                                         Should include `<style>` tags, and can use "scoped". Default empty.
-         * @type string     $editor_class          Extra classes to add to the editor textarea element. Default empty.
-         * @type bool       $teeny                 Whether to output the minimal editor config. Examples include
-         *                                         Press This and the Comment editor. Default false.
-         * @type bool       $dfw                   Deprecated in 4.1. Unused.
-         * @type bool|array $tinymce               Whether to load TinyMCE. Can be used to pass settings directly to
-         *                                         TinyMCE using an array. Default true.
-         * @type bool|array $quicktags             Whether to load Quicktags. Can be used to pass settings directly to
-         *                                         Quicktags using an array. Default true.
-         *                                         }
-         * @return array Parsed arguments array.
-         * @since 3.3.0
-         *
-         */
         public static function parse_settings($editor_id, $settings)
         {
-            /**
-             * Filters the wp_editor() settings.
-             *
-             * @param array  $settings  Array of editor arguments.
-             * @param string $editor_id Unique editor identifier, e.g. 'content'. Accepts 'classic-block'
-             *                          when called from block editor's Classic block.
-             *
-             * @since 4.0.0
-             *
-             * @see   _WP_Editors::parse_settings()
-             *
-             */
             $settings = apply_filters('wp_editor_settings', $settings, $editor_id);
 
             $set = wp_parse_args($settings, [
@@ -356,13 +262,6 @@
             return $set;
         }
 
-        /**
-         * @param string $editor_id Unique editor identifier, e.g. 'content'.
-         * @param array  $set       Array of editor arguments.
-         *
-         * @since 3.3.0
-         *
-         */
         public static function editor_settings($editor_id, $set)
         {
             if(empty(self::$first_init))
@@ -403,15 +302,6 @@
                     $qt_init['buttons'] .= ',dfw';
                 }
 
-                /**
-                 * Filters the Quicktags settings.
-                 *
-                 * @param array  $qt_init   Quicktags settings.
-                 * @param string $editor_id Unique editor identifier, e.g. 'content'.
-                 *
-                 * @since 3.3.0
-                 *
-                 */
                 $qt_init = apply_filters('quicktags_settings', $qt_init, $editor_id);
 
                 self::$qt_settings[$editor_id] = $qt_init;
@@ -429,16 +319,6 @@
 
                     if($set['teeny'])
                     {
-                        /**
-                         * Filters the list of teenyMCE plugins.
-                         *
-                         * @param array  $plugins   An array of teenyMCE plugins.
-                         * @param string $editor_id Unique editor identifier, e.g. 'content'.
-                         *
-                         * @since 2.7.0
-                         * @since 3.3.0 The `$editor_id` parameter was added.
-                         *
-                         */
                         $plugins = apply_filters('teeny_mce_plugins', [
                             'colorpicker',
                             'lists',
@@ -451,27 +331,6 @@
                     }
                     else
                     {
-                        /**
-                         * Filters the list of TinyMCE external plugins.
-                         *
-                         * The filter takes an associative array of external plugins for
-                         * TinyMCE in the form 'plugin_name' => 'url'.
-                         *
-                         * The url should be absolute, and should include the js filename
-                         * to be loaded. For example:
-                         * 'myplugin' => 'http://mysite.com/wp-content/plugins/myfolder/mce_plugin.js'.
-                         *
-                         * If the external plugin adds a button, it should be added with
-                         * one of the 'mce_buttons' filters.
-                         *
-                         * @param array  $external_plugins An array of external TinyMCE plugins.
-                         * @param string $editor_id        Unique editor identifier, e.g. 'content'. Accepts 'classic-block'
-                         *                                 when called from block editor's Classic block.
-                         *
-                         * @since 2.5.0
-                         * @since 5.3.0 The `$editor_id` parameter was added.
-                         *
-                         */
                         $mce_external_plugins = apply_filters('mce_external_plugins', [], $editor_id);
 
                         $plugins = [
@@ -500,20 +359,6 @@
                             $plugins[] = 'image';
                         }
 
-                        /**
-                         * Filters the list of default TinyMCE plugins.
-                         *
-                         * The filter specifies which of the default plugins included
-                         * in WordPress should be added to the TinyMCE instance.
-                         *
-                         * @param array  $plugins   An array of default TinyMCE plugins.
-                         * @param string $editor_id Unique editor identifier, e.g. 'content'. Accepts 'classic-block'
-                         *                          when called from block editor's Classic block.
-                         *
-                         * @since 3.3.0
-                         * @since 5.3.0 The `$editor_id` parameter was added.
-                         *
-                         */
                         $plugins = array_unique(apply_filters('tiny_mce_plugins', $plugins, $editor_id));
 
                         $key = array_search('spellchecker', $plugins, true);
@@ -528,22 +373,6 @@
 
                         if(! empty($mce_external_plugins))
                         {
-                            /**
-                             * Filters the translations loaded for external TinyMCE 3.x plugins.
-                             *
-                             * The filter takes an associative array ('plugin_name' => 'path')
-                             * where 'path' is the include path to the file.
-                             *
-                             * The language file should follow the same format as wp_mce_translation(),
-                             * and should define a variable ($strings) that holds all translated strings.
-                             *
-                             * @param array  $translations Translations for external TinyMCE plugins.
-                             * @param string $editor_id    Unique editor identifier, e.g. 'content'.
-                             *
-                             * @since 2.5.0
-                             * @since 5.3.0 The `$editor_id` parameter was added.
-                             *
-                             */
                             $mce_external_languages = apply_filters('mce_external_languages', [], $editor_id);
 
                             $loaded_langs = [];
@@ -635,7 +464,6 @@
                         $settings['external_plugins'] = wp_json_encode($mce_external_plugins);
                     }
 
-                    /** This filter is documented in wp-admin/includes/media.php */
                     if(apply_filters('disable_captions', ''))
                     {
                         $settings['wpeditimage_disable_captions'] = true;
@@ -667,14 +495,6 @@
                         }
                     }
 
-                    /**
-                     * Filters the comma-delimited list of stylesheets to load in TinyMCE.
-                     *
-                     * @param string $stylesheets Comma-delimited list of stylesheets.
-                     *
-                     * @since 2.1.0
-                     *
-                     */
                     $mce_css = trim(apply_filters('mce_css', $mce_css), ' ,');
 
                     if(! empty($mce_css))
@@ -708,16 +528,6 @@
                         'fullscreen',
                     ];
 
-                    /**
-                     * Filters the list of teenyMCE buttons (Text tab).
-                     *
-                     * @param array  $mce_buttons An array of teenyMCE buttons.
-                     * @param string $editor_id   Unique editor identifier, e.g. 'content'.
-                     *
-                     * @since 2.7.0
-                     * @since 3.3.0 The `$editor_id` parameter was added.
-                     *
-                     */
                     $mce_buttons = apply_filters('teeny_mce_buttons', $mce_buttons, $editor_id);
                     $mce_buttons_2 = [];
                     $mce_buttons_3 = [];
@@ -758,17 +568,6 @@
                         $mce_buttons[] = 'wp_adv';
                     }
 
-                    /**
-                     * Filters the first-row list of TinyMCE buttons (Visual tab).
-                     *
-                     * @param array  $mce_buttons First-row list of buttons.
-                     * @param string $editor_id   Unique editor identifier, e.g. 'content'. Accepts 'classic-block'
-                     *                            when called from block editor's Classic block.
-                     *
-                     * @since 2.0.0
-                     * @since 3.3.0 The `$editor_id` parameter was added.
-                     *
-                     */
                     $mce_buttons = apply_filters('mce_buttons', $mce_buttons, $editor_id);
 
                     $mce_buttons_2 = [
@@ -789,43 +588,10 @@
                         $mce_buttons_2[] = 'wp_help';
                     }
 
-                    /**
-                     * Filters the second-row list of TinyMCE buttons (Visual tab).
-                     *
-                     * @param array  $mce_buttons_2 Second-row list of buttons.
-                     * @param string $editor_id     Unique editor identifier, e.g. 'content'. Accepts 'classic-block'
-                     *                              when called from block editor's Classic block.
-                     *
-                     * @since 2.0.0
-                     * @since 3.3.0 The `$editor_id` parameter was added.
-                     *
-                     */
                     $mce_buttons_2 = apply_filters('mce_buttons_2', $mce_buttons_2, $editor_id);
 
-                    /**
-                     * Filters the third-row list of TinyMCE buttons (Visual tab).
-                     *
-                     * @param array  $mce_buttons_3 Third-row list of buttons.
-                     * @param string $editor_id     Unique editor identifier, e.g. 'content'. Accepts 'classic-block'
-                     *                              when called from block editor's Classic block.
-                     *
-                     * @since 2.0.0
-                     * @since 3.3.0 The `$editor_id` parameter was added.
-                     *
-                     */
                     $mce_buttons_3 = apply_filters('mce_buttons_3', [], $editor_id);
 
-                    /**
-                     * Filters the fourth-row list of TinyMCE buttons (Visual tab).
-                     *
-                     * @param array  $mce_buttons_4 Fourth-row list of buttons.
-                     * @param string $editor_id     Unique editor identifier, e.g. 'content'. Accepts 'classic-block'
-                     *                              when called from block editor's Classic block.
-                     *
-                     * @since 2.5.0
-                     * @since 3.3.0 The `$editor_id` parameter was added.
-                     *
-                     */
                     $mce_buttons_4 = apply_filters('mce_buttons_4', [], $editor_id);
                 }
 
@@ -896,31 +662,10 @@
 			 */
                 if($set['teeny'])
                 {
-                    /**
-                     * Filters the teenyMCE config before init.
-                     *
-                     * @param array  $mce_init  An array with teenyMCE config.
-                     * @param string $editor_id Unique editor identifier, e.g. 'content'.
-                     *
-                     * @since 2.7.0
-                     * @since 3.3.0 The `$editor_id` parameter was added.
-                     *
-                     */
                     $mce_init = apply_filters('teeny_mce_before_init', $mce_init, $editor_id);
                 }
                 else
                 {
-                    /**
-                     * Filters the TinyMCE config before init.
-                     *
-                     * @param array  $mce_init  An array with TinyMCE config.
-                     * @param string $editor_id Unique editor identifier, e.g. 'content'. Accepts 'classic-block'
-                     *                          when called from block editor's Classic block.
-                     *
-                     * @since 2.5.0
-                     * @since 3.3.0 The `$editor_id` parameter was added.
-                     *
-                     */
                     $mce_init = apply_filters('tiny_mce_before_init', $mce_init, $editor_id);
                 }
 
@@ -934,13 +679,6 @@
             } // End if self::$this_tinymce.
         }
 
-        /**
-         * Returns the TinyMCE base URL.
-         *
-         * @return string
-         * @since 4.8.0
-         *
-         */
         public static function get_baseurl()
         {
             if(empty(self::$baseurl))
@@ -951,13 +689,6 @@
             return self::$baseurl;
         }
 
-        /**
-         * Returns the TinyMCE locale.
-         *
-         * @return string
-         * @since 4.8.0
-         *
-         */
         public static function get_mce_locale()
         {
             if(empty(self::$mce_locale))
@@ -969,16 +700,6 @@
             return self::$mce_locale;
         }
 
-        /**
-         * Returns the default TinyMCE settings.
-         * Doesn't include plugins, buttons, editor selector.
-         *
-         * @return array
-         * @global string $tinymce_version
-         *
-         * @since 4.8.0
-         *
-         */
         private static function default_settings()
         {
             global $tinymce_version;
@@ -1030,11 +751,6 @@
             return $settings;
         }
 
-        /**
-         * @return array
-         * @since 4.7.0
-         *
-         */
         private static function get_translation()
         {
             if(empty(self::$translation))
@@ -1355,12 +1071,6 @@
             return self::$translation;
         }
 
-        /**
-         * Enqueue all editor scripts.
-         * For use when the editor is going to be initialized after page load.
-         *
-         * @since 4.8.0
-         */
         public static function enqueue_default_editor()
         {
             // We are past the point where scripts can be enqueued properly.
@@ -1386,12 +1096,6 @@
             }
         }
 
-        /**
-         * @param bool $default_scripts Optional. Whether default scripts should be enqueued. Default false.
-         *
-         * @since 3.3.0
-         *
-         */
         public static function enqueue_scripts($default_scripts = false)
         {
             if($default_scripts || self::$has_tinymce)
@@ -1422,27 +1126,12 @@
                 wp_enqueue_script('media-upload');
             }
 
-            /**
-             * Fires when scripts and styles are enqueued for the editor.
-             *
-             * @param array $to_load An array containing boolean values whether TinyMCE
-             *                       and Quicktags are being loaded.
-             *
-             * @since 3.9.0
-             *
-             */
             do_action('wp_enqueue_editor', [
                 'tinymce' => ($default_scripts || self::$has_tinymce),
                 'quicktags' => ($default_scripts || self::$has_quicktags),
             ]);
         }
 
-        /**
-         * Print (output) all editor scripts and default settings.
-         * For use when the editor is going to be initialized after page load.
-         *
-         * @since 4.8.0
-         */
         public static function print_default_editor_scripts()
         {
             $user_can_richedit = user_can_richedit();
@@ -1533,24 +1222,11 @@
                 self::print_tinymce_scripts();
             }
 
-            /**
-             * Fires when the editor scripts are loaded for later initialization,
-             * after all scripts and settings are printed.
-             *
-             * @since 4.8.0
-             */
             do_action('print_default_editor_scripts');
 
             self::wp_link_dialog();
         }
 
-        /**
-         * @param array $init
-         *
-         * @return string
-         * @since 3.3.0
-         *
-         */
         private static function _parse_init($init)
         {
             $options = '';
@@ -1574,13 +1250,6 @@
             return '{'.trim($options, ' ,').'}';
         }
 
-        /**
-         * Print (output) the main TinyMCE scripts.
-         *
-         * @since 4.8.0
-         *
-         * @global bool $concatenate_scripts
-         */
         public static function print_tinymce_scripts()
         {
             global $concatenate_scripts;
@@ -1602,18 +1271,6 @@
             echo "<script type='text/javascript'>\n".self::wp_mce_translation()."</script>\n";
         }
 
-        /**
-         * Translates the default TinyMCE strings and returns them as JSON encoded object ready to be loaded with
-         * tinymce.addI18n(), or as JS snippet that should run after tinymce.js is loaded.
-         *
-         * @param string $mce_locale The locale used for the editor.
-         * @param bool   $json_only  Optional. Whether to include the JavaScript calls to tinymce.addI18n() and
-         *                           tinymce.ScriptLoader.markDone(). Default false.
-         *
-         * @return string Translation object, JSON encoded.
-         * @since 3.9.0
-         *
-         */
         public static function wp_mce_translation($mce_locale = '', $json_only = false)
         {
             if(! $mce_locale)
@@ -1631,15 +1288,6 @@
                 }
             }
 
-            /**
-             * Filters translated strings prepared for TinyMCE.
-             *
-             * @param array  $mce_translation Key/value pairs of strings.
-             * @param string $mce_locale      Locale.
-             *
-             * @since 3.9.0
-             *
-             */
             $mce_translation = apply_filters('wp_mce_translation', $mce_translation, $mce_locale);
 
             foreach($mce_translation as $key => $value)
@@ -1673,11 +1321,6 @@
             return "tinymce.addI18n( '$mce_locale', ".wp_json_encode($mce_translation).");\n"."tinymce.ScriptLoader.markDone( '$baseurl/langs/$mce_locale.js' );\n";
         }
 
-        /**
-         * Dialog for internal linking.
-         *
-         * @since 3.1.0
-         */
         public static function wp_link_dialog()
         {
             // Run once.
@@ -1776,15 +1419,6 @@
             <?php
         }
 
-        /**
-         * Force uncompressed TinyMCE when a custom theme has been defined.
-         *
-         * The compressed TinyMCE file cannot deal with custom themes, so this makes
-         * sure that WordPress uses the uncompressed TinyMCE file if a theme is defined.
-         * Even if the website is running on a production environment.
-         *
-         * @since 5.0.0
-         */
         public static function force_uncompressed_tinymce()
         {
             $has_custom_theme = false;
@@ -1808,13 +1442,6 @@
             wp_register_tinymce_scripts($wp_scripts, true);
         }
 
-        /**
-         * Print (output) the TinyMCE configuration and initialization scripts.
-         *
-         * @since 3.3.0
-         *
-         * @global string $tinymce_version
-         */
         public static function editor_js()
         {
             global $tinymce_version;
@@ -1861,14 +1488,6 @@
             $baseurl = self::get_baseurl();
             $version = 'ver='.$tinymce_version;
 
-            /**
-             * Fires immediately before the TinyMCE settings are printed.
-             *
-             * @param array $mce_settings TinyMCE settings array.
-             *
-             * @since 3.2.0
-             *
-             */
             do_action('before_wp_tiny_mce', self::$mce_settings);
             ?>
 
@@ -1907,15 +1526,6 @@
                 }
             }
 
-            /**
-             * Fires after tinymce.js is loaded, but before any TinyMCE editor
-             * instances are created.
-             *
-             * @param array $mce_settings TinyMCE settings array.
-             *
-             * @since 3.9.0
-             *
-             */
             do_action('wp_tiny_mce_init', self::$mce_settings);
 
             ?>
@@ -1998,51 +1608,14 @@
                 self::wp_link_dialog();
             }
 
-            /**
-             * Fires after any core TinyMCE editor instances are created.
-             *
-             * @param array $mce_settings TinyMCE settings array.
-             *
-             * @since 3.2.0
-             *
-             */
             do_action('after_wp_tiny_mce', self::$mce_settings);
         }
 
-        /**
-         * Outputs the HTML for distraction-free writing mode.
-         *
-         * @since      3.2.0
-         * @deprecated 4.3.0
-         */
         public static function wp_fullscreen_html()
         {
             _deprecated_function(__FUNCTION__, '4.3.0');
         }
 
-        /**
-         * Performs post queries for internal linking.
-         *
-         * @param array $args              {
-         *                                 Optional. Array of link query arguments.
-         *
-         * @type int    $pagenum           Page number. Default 1.
-         * @type string $s                 Search keywords.
-         *                                 }
-         * @return array|false $results {
-         *                                 An array of associative arrays of query results, false if there are none.
-         *
-         * @type array ...$0 {
-         * @type int    $ID                Post ID.
-         * @type string $title             The trimmed, escaped post title.
-         * @type string $permalink         Post permalink.
-         * @type string $info              A 'Y/m/d'-formatted date for 'post' post type,
-         *                                 the 'singular_name' post type label otherwise.
-         *                                 }
-         *                                 }
-         * @since 3.1.0
-         *
-         */
         public static function wp_link_query($args = [])
         {
             $pts = get_post_types(['public' => true], 'objects');
@@ -2066,18 +1639,6 @@
 
             $query['offset'] = $args['pagenum'] > 1 ? $query['posts_per_page'] * ($args['pagenum'] - 1) : 0;
 
-            /**
-             * Filters the link query arguments.
-             *
-             * Allows modification of the link query arguments before querying.
-             *
-             * @param array $query An array of WP_Query arguments.
-             *
-             * @since 3.7.0
-             *
-             * @see   WP_Query for a full list of arguments
-             *
-             */
             $query = apply_filters('wp_link_query_args', $query);
 
             // Do main query.
@@ -2105,30 +1666,6 @@
                 ];
             }
 
-            /**
-             * Filters the link query results.
-             *
-             * Allows modification of the returned link query results.
-             *
-             * @param array $results           {
-             *                                 An array of associative arrays of query results.
-             *
-             * @type array ...$0 {
-             * @type int    $ID                Post ID.
-             * @type string $title             The trimmed, escaped post title.
-             * @type string $permalink         Post permalink.
-             * @type string $info              A 'Y/m/d'-formatted date for 'post' post type,
-             *                                 the 'singular_name' post type label otherwise.
-             *                                 }
-             *                                 }
-             *
-             * @param array $query             An array of WP_Query arguments.
-             *
-             * @since 3.7.0
-             *
-             * @see   'wp_link_query_args' filter
-             *
-             */
             $results = apply_filters('wp_link_query', $results, $query);
 
             return ! empty($results) ? $results : false;

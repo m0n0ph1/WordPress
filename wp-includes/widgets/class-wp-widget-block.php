@@ -1,36 +1,11 @@
 <?php
-    /**
-     * Widget API: WP_Widget_Block class
-     *
-     * @package    WordPress
-     * @subpackage Widgets
-     * @since      5.8.0
-     */
 
-    /**
-     * Core class used to implement a Block widget.
-     *
-     * @since 5.8.0
-     *
-     * @see   WP_Widget
-     */
     class WP_Widget_Block extends WP_Widget
     {
-        /**
-         * Default instance.
-         *
-         * @since 5.8.0
-         * @var array
-         */
         protected $default_instance = [
             'content' => '',
         ];
 
-        /**
-         * Sets up a new Block widget instance.
-         *
-         * @since 5.8.0
-         */
         public function __construct()
         {
             $widget_ops = [
@@ -48,54 +23,17 @@
             add_filter('is_wide_widget_in_customizer', [$this, 'set_is_wide_widget_in_customizer'], 10, 2);
         }
 
-        /**
-         * Outputs the content for the current Block widget instance.
-         *
-         * @param array $args     Display arguments including 'before_title', 'after_title',
-         *                        'before_widget', and 'after_widget'.
-         * @param array $instance Settings for the current Block widget instance.
-         *
-         * @since 5.8.0
-         *
-         */
         public function widget($args, $instance)
         {
             $instance = wp_parse_args($instance, $this->default_instance);
 
             echo str_replace('widget_block', $this->get_dynamic_classname($instance['content']), $args['before_widget']);
 
-            /**
-             * Filters the content of the Block widget before output.
-             *
-             * @param string          $content  The widget content.
-             * @param array           $instance Array of settings for the current widget.
-             * @param WP_Widget_Block $widget   Current Block widget instance.
-             *
-             * @since 5.8.0
-             *
-             */
             echo apply_filters('widget_block_content', $instance['content'], $instance, $this);
 
             echo $args['after_widget'];
         }
 
-        /**
-         * Calculates the classname to use in the block widget's container HTML.
-         *
-         * Usually this is set to `$this->widget_options['classname']` by
-         * dynamic_sidebar(). In this case, however, we want to set the classname
-         * dynamically depending on the block contained by this block widget.
-         *
-         * If a block widget contains a block that has an equivalent legacy widget,
-         * we display that legacy widget's class name. This helps with theme
-         * backwards compatibility.
-         *
-         * @param string $content The HTML content of the current block widget.
-         *
-         * @return string The classname to use in the block widget's container HTML.
-         * @since 5.8.0
-         *
-         */
         private function get_dynamic_classname($content)
         {
             $blocks = parse_blocks($content);
@@ -150,32 +88,9 @@
                     $classname = 'widget_block';
             }
 
-            /**
-             * The classname used in the block widget's container HTML.
-             *
-             * This can be set according to the name of the block contained by the block widget.
-             *
-             * @param string $classname  The classname to be used in the block widget's container HTML,
-             *                           e.g. 'widget_block widget_text'.
-             * @param string $block_name The name of the block contained by the block widget,
-             *                           e.g. 'core/paragraph'.
-             *
-             * @since 5.8.0
-             *
-             */
             return apply_filters('widget_block_dynamic_classname', $classname, $block_name);
         }
 
-        /**
-         * Handles updating settings for the current Block widget instance.
-         *
-         * @param array $new_instance New settings for this instance as input by the user via
-         *                            WP_Widget::form().
-         * @param array $old_instance Old settings for this instance.
-         *
-         * @return array Settings to save or bool false to cancel saving.
-         * @since 5.8.0
-         */
         public function update($new_instance, $old_instance)
         {
             $instance = array_merge($this->default_instance, $old_instance);
@@ -192,16 +107,6 @@
             return $instance;
         }
 
-        /**
-         * Outputs the Block widget settings form.
-         *
-         * @param array $instance Current instance.
-         *
-         * @see   WP_Widget_Custom_HTML::render_control_template_scripts()
-         *
-         * @since 5.8.0
-         *
-         */
         public function form($instance)
         {
             $instance = wp_parse_args((array) $instance, $this->default_instance);
@@ -222,16 +127,6 @@
             <?php
         }
 
-        /**
-         * Makes sure no block widget is considered to be wide.
-         *
-         * @param bool   $is_wide   Whether the widget is considered wide.
-         * @param string $widget_id Widget ID.
-         *
-         * @return bool Updated `is_wide` value.
-         * @since 5.8.0
-         *
-         */
         public function set_is_wide_widget_in_customizer($is_wide, $widget_id)
         {
             if(str_starts_with($widget_id, 'block-'))

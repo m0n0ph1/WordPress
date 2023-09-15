@@ -1,12 +1,4 @@
 <?php
-    /**
-     * The block editor page.
-     *
-     * @since      5.0.0
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     // Don't load directly.
     if(! defined('ABSPATH'))
@@ -14,13 +6,6 @@
         die('-1');
     }
 
-    /**
-     * @global string       $post_type
-     * @global WP_Post_Type $post_type_object
-     * @global WP_Post      $post Global post object.
-     * @global string       $title
-     * @global array        $wp_meta_boxes
-     */
     global $post_type, $post_type_object, $post, $title, $wp_meta_boxes;
 
     $block_editor_context = new WP_Block_Editor_Context(['post' => $post]);
@@ -121,7 +106,7 @@
      */
     $available_templates = wp_get_theme()->get_page_templates(get_post($post->ID));
     $available_templates = ! empty($available_templates) ? array_replace([
-                                                                             /** This filter is documented in wp-admin/includes/meta-boxes.php */
+
                                                                              '' => apply_filters('default_page_template_title', __('Default template'), 'rest-api'),
                                                                          ], $available_templates) : $available_templates;
 
@@ -131,7 +116,6 @@
     {
         $locked = false;
 
-        /** This filter is documented in wp-admin/includes/post.php */
         if(apply_filters('show_post_locked_dialog', true, $post, $user_id))
         {
             $locked = true;
@@ -167,22 +151,12 @@
         ];
     }
 
-    /**
-     * Filters the body placeholder text.
-     *
-     * @param string  $text Placeholder text. Default 'Type / to choose a block'.
-     * @param WP_Post $post Post object.
-     *
-     * @since 5.0.0
-     * @since 5.8.0 Changed the default placeholder text.
-     *
-     */
     $body_placeholder = apply_filters('write_your_story', __('Type / to choose a block'), $post);
 
     $editor_settings = [
         'availableTemplates' => $available_templates,
         'disablePostFormats' => ! current_theme_supports('post-formats'),
-        /** This filter is documented in wp-admin/edit-form-advanced.php */
+
         'titlePlaceholder' => apply_filters('enter_title_here', __('Add title'), $post),
         'bodyPlaceholder' => $body_placeholder,
         'autosaveInterval' => AUTOSAVE_INTERVAL,
@@ -241,30 +215,14 @@
         $editor_settings['defaultTemplatePartAreas'] = get_allowed_block_template_part_areas();
     }
 
-    /**
-     * Scripts
-     */
     wp_enqueue_media([
                          'post' => $post->ID,
                      ]);
     wp_tinymce_inline_scripts();
     wp_enqueue_editor();
 
-    /**
-     * Styles
-     */
     wp_enqueue_style('wp-edit-post');
 
-    /**
-     * Fires after block assets have been enqueued for the editing interface.
-     *
-     * Call `add_action` on any hook before 'admin_enqueue_scripts'.
-     *
-     * In the function call you supply, simply use `wp_enqueue_script` and
-     * `wp_enqueue_style` to add your functionality to the block editor.
-     *
-     * @since 5.0.0
-     */
     do_action('enqueue_block_editor_assets');
 
     // In order to duplicate classic meta box behavior, we need to run the classic meta box actions.
@@ -314,16 +272,6 @@ JS;
         <?php
             $message = sprintf(/* translators: %s: A link to install the Classic Editor plugin. */ __('The block editor requires JavaScript. Please enable JavaScript in your browser settings, or try the <a href="%s">Classic Editor plugin</a>.'), esc_url(wp_nonce_url(self_admin_url('plugin-install.php?tab=favorites&user=wordpressdotorg&save=0'), 'save_wporg_username_'.get_current_user_id())));
 
-            /**
-             * Filters the message displayed in the block editor interface when JavaScript is
-             * not enabled in the browser.
-             *
-             * @param string  $message The message being displayed.
-             * @param WP_Post $post    The post being edited.
-             *
-             * @since 5.0.3
-             *
-             */
             $message = apply_filters('block_editor_no_javascript_message', $message, $post);
             wp_admin_notice($message, [
                 'type' => 'error',

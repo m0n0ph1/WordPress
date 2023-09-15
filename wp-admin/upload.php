@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Media Library administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('upload_files'))
@@ -337,7 +330,6 @@
             default:
                 $screen = get_current_screen()->id;
 
-                /** This action is documented in wp-admin/edit.php */
                 $location = apply_filters("handle_bulk_actions-{$screen}", $location, $doaction, $post_ids); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
         }
 

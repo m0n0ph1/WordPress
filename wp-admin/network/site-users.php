@@ -1,13 +1,5 @@
 <?php
-    /**
-     * Edit Site Users Administration Screen
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.1.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_sites'))
@@ -91,14 +83,6 @@
                         {
                             $update = 'newuser';
 
-                            /**
-                             * Fires after a user has been created via the network site-users.php page.
-                             *
-                             * @param int $user_id ID of the newly created user.
-                             *
-                             * @since 4.4.0
-                             *
-                             */
                             do_action('network_site_users_created_user', $user_id);
                         }
                     }
@@ -209,7 +193,6 @@
                 check_admin_referer('bulk-users');
                 $userids = $_REQUEST['users'];
 
-                /** This action is documented in wp-admin/network/site-themes.php */
                 $referer = apply_filters('handle_network_bulk_actions-'.get_current_screen()->id, $referer, $action, $userids, $id); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
                 $update = $action;
@@ -237,14 +220,6 @@
     $parent_file = 'sites.php';
     $submenu_file = 'sites.php';
 
-    /**
-     * Filters whether to show the Add Existing User form on the Multisite Users screen.
-     *
-     * @param bool $bool Whether to show the Add Existing User form. Default true.
-     *
-     * @since 3.1.0
-     *
-     */
     if(! wp_is_large_network('users') && apply_filters('show_network_site_users_add_existing_form', true))
     {
         wp_enqueue_script('user-suggest');
@@ -337,14 +312,9 @@
         </form>
 
         <?php
-            /**
-             * Fires after the list table on the Users screen in the Multisite Network Admin.
-             *
-             * @since 3.1.0
-             */
+
             do_action('network_site_users_after_list_table');
 
-            /** This filter is documented in wp-admin/network/site-users.php */
             if(current_user_can('promote_users') && apply_filters('show_network_site_users_add_existing_form', true)) :
                 ?>
                 <h2 id="add-existing-user"><?php _e('Add Existing User'); ?></h2>
@@ -373,14 +343,7 @@
             <?php endif; ?>
 
         <?php
-            /**
-             * Filters whether to show the Add New User form on the Multisite Users screen.
-             *
-             * @param bool $bool Whether to show the Add New User form. Default true.
-             *
-             * @since 3.1.0
-             *
-             */
+
             if(current_user_can('create_users') && apply_filters('show_network_site_users_add_new_form', true)) :
                 ?>
                 <h2 id="add-new-user"><?php _e('Add New User'); ?></h2>

@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/post-excerpt` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/post-excerpt` block on the server.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string Returns the filtered post excerpt for the current post wrapped inside "p" tags.
-     */
     function render_block_core_post_excerpt($attributes, $content, $block)
     {
         if(! isset($block->context['postId']))
@@ -39,15 +25,7 @@
         {
             return empty($more_text) ? $more : '';
         };
-        /**
-         * Some themes might use `excerpt_more` filter to handle the
-         * `more` link displayed after a trimmed excerpt. Since the
-         * block has a `more text` attribute we have to check and
-         * override if needed the return value from this filter.
-         * So if the block's attribute is not empty override the
-         * `excerpt_more` filter and return nothing. This will
-         * result in showing only one `read more` link at a time.
-         */
+
         add_filter('excerpt_more', $filter_excerpt_more);
         $classes = [];
         if(isset($attributes['textAlign']))
@@ -75,9 +53,6 @@
         return sprintf('<div %1$s>%2$s</div>', $wrapper_attributes, $content);
     }
 
-    /**
-     * Registers the `core/post-excerpt` block on the server.
-     */
     function register_block_core_post_excerpt()
     {
         register_block_type_from_metadata(__DIR__.'/post-excerpt', [
@@ -87,12 +62,6 @@
 
     add_action('init', 'register_block_core_post_excerpt');
 
-    /**
-     * If themes or plugins filter the excerpt_length, we need to
-     * override the filter in the editor, otherwise
-     * the excerpt length block setting has no effect.
-     * Returns 100 because 100 is the max length in the setting.
-     */
     if(is_admin() || defined('REST_REQUEST') && REST_REQUEST)
     {
         add_filter('excerpt_length', static function()

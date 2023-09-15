@@ -1,30 +1,7 @@
 <?php
-    /**
-     * REST API: WP_REST_Menus_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.9.0
-     */
 
-    /**
-     * Core class used to managed menu terms associated via the REST API.
-     *
-     * @since 5.9.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Menus_Controller extends WP_REST_Terms_Controller
     {
-        /**
-         * Checks if a request has access to read menus.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return bool|WP_Error True if the request has read access, otherwise false or WP_Error object.
-         * @since 5.9.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             $has_permission = parent::get_items_permissions_check($request);
@@ -37,17 +14,6 @@
             return $this->check_has_read_only_access($request);
         }
 
-        /**
-         * Checks whether the current user has read permission for the endpoint.
-         *
-         * This allows for any user that can `edit_theme_options` or edit any REST API available post type.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the current user has permission, WP_Error object otherwise.
-         * @since 5.9.0
-         *
-         */
         protected function check_has_read_only_access($request)
         {
             if(current_user_can('edit_theme_options'))
@@ -71,15 +37,6 @@
             return new WP_Error('rest_cannot_view', __('Sorry, you are not allowed to view menus.'), ['status' => rest_authorization_required_code()]);
         }
 
-        /**
-         * Checks if a request has access to read or edit the specified menu.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, otherwise WP_Error object.
-         * @since 5.9.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $has_permission = parent::get_item_permissions_check($request);
@@ -92,15 +49,6 @@
             return $this->check_has_read_only_access($request);
         }
 
-        /**
-         * Creates a single term in a taxonomy.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.9.0
-         *
-         */
         public function create_item($request)
         {
             if(isset($request['parent']))
@@ -148,7 +96,6 @@
 
             $term = $this->get_term($term);
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php */
             do_action("rest_insert_{$this->taxonomy}", $term, $request, true);
 
             $schema = $this->get_item_schema();
@@ -180,7 +127,6 @@
 
             $request->set_param('context', 'view');
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php */
             do_action("rest_after_insert_{$this->taxonomy}", $term, $request, true);
 
             $response = $this->prepare_item_for_response($term, $request);
@@ -192,15 +138,6 @@
             return $response;
         }
 
-        /**
-         * Prepares a single term for create or update.
-         *
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return object Prepared term data.
-         * @since 5.9.0
-         *
-         */
         public function prepare_item_for_database($request)
         {
             $prepared_term = parent::prepare_item_for_database($request);
@@ -215,13 +152,6 @@
             return $prepared_term;
         }
 
-        /**
-         * Retrieves the term's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.9.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -277,15 +207,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Gets the term, if the ID is valid.
-         *
-         * @param int $id Supplied ID.
-         *
-         * @return WP_Term|WP_Error Term object if ID is valid, WP_Error otherwise.
-         * @since 5.9.0
-         *
-         */
         protected function get_term($id)
         {
             $term = parent::get_term($id);
@@ -301,15 +222,6 @@
             return $nav_term;
         }
 
-        /**
-         * Returns the value of a menu's auto_add setting.
-         *
-         * @param int $menu_id The menu id to query.
-         *
-         * @return bool The value of auto_add.
-         * @since 5.9.0
-         *
-         */
         protected function get_menu_auto_add($menu_id)
         {
             $nav_menu_option = (array) get_option('nav_menu_options', ['auto_add' => []]);
@@ -317,16 +229,6 @@
             return in_array($menu_id, $nav_menu_option['auto_add'], true);
         }
 
-        /**
-         * Updates the menu's locations from a REST request.
-         *
-         * @param int             $menu_id The menu id to update.
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True on success, a WP_Error on an error updating any of the locations.
-         * @since 5.9.0
-         *
-         */
         protected function handle_locations($menu_id, $request)
         {
             if(! isset($request['locations']))
@@ -362,16 +264,6 @@
             return true;
         }
 
-        /**
-         * Updates the menu's auto add from a REST request.
-         *
-         * @param int             $menu_id The menu id to update.
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return bool True if the auto add setting was successfully updated.
-         * @since 5.9.0
-         *
-         */
         protected function handle_auto_add($menu_id, $request)
         {
             if(! isset($request['auto_add']))
@@ -401,22 +293,11 @@
 
             $update = update_option('nav_menu_options', $nav_menu_option);
 
-            /** This action is documented in wp-includes/nav-menu.php */
             do_action('wp_update_nav_menu', $menu_id);
 
             return $update;
         }
 
-        /**
-         * Prepares a single term output for response.
-         *
-         * @param WP_Term         $term    Term object.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response Response object.
-         * @since 5.9.0
-         *
-         */
         public function prepare_item_for_response($term, $request)
         {
             $nav_menu = wp_get_nav_menu_object($term);
@@ -446,19 +327,9 @@
                 $response->add_links($this->prepare_links($term));
             }
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php */
             return apply_filters("rest_prepare_{$this->taxonomy}", $response, $term, $request);
         }
 
-        /**
-         * Returns the names of the locations assigned to the menu.
-         *
-         * @param int $menu_id The menu id.
-         *
-         * @return string[] The locations assigned to the menu.
-         * @since 5.9.0
-         *
-         */
         protected function get_menu_locations($menu_id)
         {
             $locations = get_nav_menu_locations();
@@ -475,15 +346,6 @@
             return $menu_locations;
         }
 
-        /**
-         * Prepares links for the request.
-         *
-         * @param WP_Term $term Term object.
-         *
-         * @return array Links for the given term.
-         * @since 5.9.0
-         *
-         */
         protected function prepare_links($term)
         {
             $links = parent::prepare_links($term);
@@ -502,15 +364,6 @@
             return $links;
         }
 
-        /**
-         * Updates a single term from a taxonomy.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.9.0
-         *
-         */
         public function update_item($request)
         {
             $term = $this->get_term($request['id']);
@@ -555,7 +408,6 @@
 
             $term = get_term($term->term_id, $this->taxonomy);
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php */
             do_action("rest_insert_{$this->taxonomy}", $term, $request, false);
 
             $schema = $this->get_item_schema();
@@ -587,7 +439,6 @@
 
             $request->set_param('context', 'view');
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php */
             do_action("rest_after_insert_{$this->taxonomy}", $term, $request, false);
 
             $response = $this->prepare_item_for_response($term, $request);
@@ -595,15 +446,6 @@
             return rest_ensure_response($response);
         }
 
-        /**
-         * Deletes a single term from a taxonomy.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.9.0
-         *
-         */
         public function delete_item($request)
         {
             $term = $this->get_term($request['id']);
@@ -636,7 +478,6 @@
                                     'previous' => $previous->get_data(),
                                 ]);
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php */
             do_action("rest_delete_{$this->taxonomy}", $term, $response, $request);
 
             return $response;

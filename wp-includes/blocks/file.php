@@ -1,19 +1,7 @@
 <?php
-    /**
-     * Server-side rendering of the `core/file` block.
-     *
-     * @package WordPress
-     */
 
     if(defined('IS_GUTENBERG_PLUGIN') && IS_GUTENBERG_PLUGIN)
     {
-        /**
-         * Replaces view script for the File block with version using Interactivity API.
-         *
-         * @param array $metadata Block metadata as read in via block.json.
-         *
-         * @return array Filtered block type metadata.
-         */
         function gutenberg_block_core_file_update_interactive_view_script($metadata)
         {
             if('core/file' === $metadata['name'])
@@ -27,15 +15,6 @@
         add_filter('block_type_metadata', 'gutenberg_block_core_file_update_interactive_view_script', 10, 1);
     }
 
-    /**
-     * When the `core/file` block is rendering, check if we need to enqueue the `'wp-block-file-view` script.
-     *
-     * @param array    $attributes The block attributes.
-     * @param string   $content    The block content.
-     * @param WP_Block $block      The parsed block.
-     *
-     * @return string Returns the block content.
-     */
     function render_block_core_file($attributes, $content, $block)
     {
         $should_load_view_script = ! empty($attributes['displayPreview']);
@@ -86,9 +65,6 @@
         return $content;
     }
 
-    /**
-     * Registers the `core/file` block on server.
-     */
     function register_block_core_file()
     {
         register_block_type_from_metadata(__DIR__.'/file', [

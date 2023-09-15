@@ -1,13 +1,4 @@
 <?php
-    /**
-     * A template partial to output pagination for the Twenty Twenty default theme.
-     *
-     * @link       https://developer.wordpress.org/themes/basics/template-files/#template-partials
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty
-     * @since      Twenty Twenty 1.0
-     */
 
     $prev_text = sprintf(
         '%s <span class="nav-prev-text">%s</span>', '<span aria-hidden="true">&larr;</span>', /*
@@ -47,7 +38,8 @@
 
             <hr class="styled-separator pagination-separator is-style-wide" aria-hidden="true"/>
 
-            <?php echo $posts_pagination; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already escaped during generation. ?>
+            <?php echo $posts_pagination; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already escaped during generation.
+            ?>
 
         </div><!-- .pagination-wrapper -->
 

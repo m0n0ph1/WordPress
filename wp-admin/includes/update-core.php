@@ -1,23 +1,5 @@
 <?php
-    /**
-     * WordPress core upgrade functionality.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      2.7.0
-     */
 
-    /**
-     * Stores files to be deleted.
-     *
-     * Bundled theme files should not be included in this list.
-     *
-     * @since 2.7.0
-     *
-     * @global array $_old_files
-     * @var array
-     * @name         $_old_files
-     */
     global $_old_files;
 
     $_old_files = [
@@ -869,20 +851,6 @@
         'wp-includes/random_compat',
     ];
 
-    /**
-     * Stores Requests files to be preloaded and deleted.
-     *
-     * For classes/interfaces, use the class/interface name
-     * as the array key.
-     *
-     * All other files/directories should not have a key.
-     *
-     * @since 6.2.0
-     *
-     * @global array $_old_requests_files
-     * @var array
-     * @name         $_old_requests_files
-     */
     global $_old_requests_files;
 
     $_old_requests_files = [
@@ -959,27 +927,6 @@
         'wp-includes/Requests/Utility/',
     ];
 
-    /**
-     * Stores new files in wp-content to copy
-     *
-     * The contents of this array indicate any new bundled plugins/themes which
-     * should be installed with the WordPress Upgrade. These items will not be
-     * re-installed in future upgrades, this behavior is controlled by the
-     * introduced version present here being older than the current installed version.
-     *
-     * The content of this array should follow the following format:
-     * Filename (relative to wp-content) => Introduced version
-     * Directories should be noted by suffixing it with a trailing slash (/)
-     *
-     * @since 3.2.0
-     * @since 4.7.0 New themes were not automatically installed for 4.4-4.6 on
-     *              upgrade. New themes are now installed again. To disable new
-     *              themes from being installed on upgrade, explicitly define
-     *              CORE_UPGRADE_SKIP_NEW_BUNDLED as true.
-     * @global array $_new_bundled_files
-     * @var array
-     * @name         $_new_bundled_files
-     */
     global $_new_bundled_files;
 
     $_new_bundled_files = [
@@ -999,62 +946,6 @@
         'themes/twentytwentythree/' => '6.1',
     ];
 
-    /**
-     * Upgrades the core of WordPress.
-     *
-     * This will create a .maintenance file at the base of the WordPress directory
-     * to ensure that people can not access the web site, when the files are being
-     * copied to their locations.
-     *
-     * The files in the `$_old_files` list will be removed and the new files
-     * copied from the zip file after the database is upgraded.
-     *
-     * The files in the `$_new_bundled_files` list will be added to the installation
-     * if the version is greater than or equal to the old version being upgraded.
-     *
-     * The steps for the upgrader for after the new release is downloaded and
-     * unzipped is:
-     *   1. Test unzipped location for select files to ensure that unzipped worked.
-     *   2. Create the .maintenance file in current WordPress base.
-     *   3. Copy new WordPress directory over old WordPress files.
-     *   4. Upgrade WordPress to new version.
-     *     4.1. Copy all files/folders other than wp-content
-     *     4.2. Copy any language files to WP_LANG_DIR (which may differ from WP_CONTENT_DIR
-     *     4.3. Copy any new bundled themes/plugins to their respective locations
-     *   5. Delete new WordPress directory path.
-     *   6. Delete .maintenance file.
-     *   7. Remove old files.
-     *   8. Delete 'update_core' option.
-     *
-     * There are several areas of failure. For instance if PHP times out before step
-     * 6, then you will not be able to access any portion of your site. Also, since
-     * the upgrade will not continue where it left off, you will not be able to
-     * automatically remove old files and remove the 'update_core' option. This
-     * isn't that bad.
-     *
-     * If the copy of the new WordPress over the old fails, then the worse is that
-     * the new WordPress directory will remain.
-     *
-     * If it is assumed that every file will be copied over, including plugins and
-     * themes, then if you edit the default theme, you should rename it, so that
-     * your changes remain.
-     *
-     * @param string              $from          New release unzipped path.
-     * @param string              $to            Path to old WordPress installation.
-     *
-     * @return string|WP_Error New WordPress version on success, WP_Error on failure.
-     * @since 2.7.0
-     *
-     * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-     * @global array              $_old_files
-     * @global array              $_old_requests_files
-     * @global array              $_new_bundled_files
-     * @global wpdb               $wpdb          WordPress database abstraction object.
-     * @global string             $wp_version
-     * @global string             $required_php_version
-     * @global string             $required_mysql_version
-     *
-     */
     function update_core($from, $to)
     {
         global $wp_filesystem, $_old_files, $_old_requests_files, $_new_bundled_files, $wpdb;
@@ -1072,24 +963,6 @@
         $_old_files = array_merge($_old_files, array_values($_old_requests_files));
         _preload_old_requests_classes_and_interfaces($to);
 
-        /**
-         * Filters feedback messages displayed during the core update process.
-         *
-         * The filter is first evaluated after the zip file for the latest version
-         * has been downloaded and unzipped. It is evaluated five more times during
-         * the process:
-         *
-         * 1. Before WordPress begins the core upgrade process.
-         * 2. Before Maintenance Mode is enabled.
-         * 3. Before WordPress begins copying over the necessary files.
-         * 4. Before Maintenance Mode is disabled.
-         * 5. Before the database is upgraded.
-         *
-         * @param string $feedback The core update feedback messages.
-         *
-         * @since 2.5.0
-         *
-         */
         apply_filters('update_feedback', __('Verifying the unpacked files&#8230;'));
 
         // Sanity check the unzipped distribution.
@@ -1202,7 +1075,6 @@
             return new WP_Error('php_not_compatible_json', sprintf(/* translators: 1: WordPress version number, 2: The PHP extension name needed. */ __('The update cannot be installed because WordPress %1$s requires the %2$s PHP extension.'), $wp_version, 'JSON'));
         }
 
-        /** This filter is documented in wp-admin/includes/update-core.php */
         apply_filters('update_feedback', __('Preparing to install the latest version&#8230;'));
 
         /*
@@ -1296,7 +1168,6 @@
             }
         }
 
-        /** This filter is documented in wp-admin/includes/update-core.php */
         apply_filters('update_feedback', __('Enabling Maintenance mode&#8230;'));
 
         // Create maintenance file to signal that we are upgrading.
@@ -1305,7 +1176,6 @@
         $wp_filesystem->delete($maintenance_file);
         $wp_filesystem->put_contents($maintenance_file, $maintenance_string, FS_CHMOD_FILE);
 
-        /** This filter is documented in wp-admin/includes/update-core.php */
         apply_filters('update_feedback', __('Copying the required files&#8230;'));
 
         // Copy new versions of WP files into place.
@@ -1454,7 +1324,6 @@
             }
         }
 
-        /** This filter is documented in wp-admin/includes/update-core.php */
         apply_filters('update_feedback', __('Disabling Maintenance mode&#8230;'));
 
         // Remove maintenance file, we're done with potential site-breaking changes.
@@ -1584,7 +1453,7 @@
         _upgrade_core_deactivate_incompatible_plugins();
 
         // Upgrade DB with separate request.
-        /** This filter is documented in wp-admin/includes/update-core.php */
+
         apply_filters('update_feedback', __('Upgrading database&#8230;'));
 
         $db_upgrade_url = admin_url('upgrade.php?step=upgrade_db');
@@ -1608,14 +1477,6 @@
             delete_option('update_core');
         }
 
-        /**
-         * Fires after WordPress core has been successfully updated.
-         *
-         * @param string $wp_version The current WordPress version.
-         *
-         * @since 3.3.0
-         *
-         */
         do_action('_core_updated_successfully', $wp_version);
 
         // Clear the option that blocks auto-updates after failures, now that we've been successful.
@@ -1627,27 +1488,6 @@
         return $wp_version;
     }
 
-    /**
-     * Preloads old Requests classes and interfaces.
-     *
-     * This function preloads the old Requests code into memory before the
-     * upgrade process deletes the files. Why? Requests code is loaded into
-     * memory via an autoloader, meaning when a class or interface is needed
-     * If a request is in process, Requests could attempt to access code. If
-     * the file is not there, a fatal error could occur. If the file was
-     * replaced, the new code is not compatible with the old, resulting in
-     * a fatal error. Preloading ensures the code is in memory before the
-     * code is updated.
-     *
-     * @param string              $to                  Path to old WordPress installation.
-     *
-     * @global array              $_old_requests_files Requests files to be preloaded.
-     * @global WP_Filesystem_Base $wp_filesystem       WordPress filesystem subclass.
-     * @global string             $wp_version          The WordPress version string.
-     *
-     * @since 6.2.0
-     *
-     */
     function _preload_old_requests_classes_and_interfaces($to)
     {
         global $_old_requests_files, $wp_filesystem, $wp_version;
@@ -1692,20 +1532,6 @@
         }
     }
 
-    /**
-     * Redirect to the About WordPress page after a successful upgrade.
-     *
-     * This function is only needed when the existing installation is older than 3.4.0.
-     *
-     * @param string  $new_version
-     *
-     * @global string $wp_version The WordPress version string.
-     * @global string $pagenow    The filename of the current screen.
-     * @global string $action
-     *
-     * @since 3.3.0
-     *
-     */
     function _redirect_to_about_wordpress($new_version)
     {
         global $wp_version, $pagenow, $action;
@@ -1747,14 +1573,6 @@
         exit;
     }
 
-    /**
-     * Cleans up Genericons example files.
-     *
-     * @since 4.2.2
-     *
-     * @global array              $wp_theme_directories
-     * @global WP_Filesystem_Base $wp_filesystem
-     */
     function _upgrade_422_remove_genericons()
     {
         global $wp_theme_directories, $wp_filesystem;
@@ -1797,16 +1615,6 @@
         }
     }
 
-    /**
-     * Recursively find Genericons example files in a given folder.
-     *
-     * @param string $directory Directory path. Expects trailingslashed.
-     *
-     * @return array
-     * @ignore
-     * @since 4.2.2
-     *
-     */
     function _upgrade_422_find_genericons_files_in_folder($directory)
     {
         $directory = trailingslashit($directory);
@@ -1847,10 +1655,6 @@
         return $files;
     }
 
-    /**
-     * @ignore
-     * @since 4.4.0
-     */
     function _upgrade_440_force_deactivate_incompatible_plugins()
     {
         if(defined('REST_API_VERSION') && version_compare(REST_API_VERSION, '2.0-beta4', '<='))
@@ -1859,13 +1663,6 @@
         }
     }
 
-    /**
-     * @access private
-     * @ignore
-     * @since  5.8.0
-     * @since  5.9.0 The minimum compatible version of Gutenberg is 11.9.
-     * @since  6.1.1 The minimum compatible version of Gutenberg is 14.1.
-     */
     function _upgrade_core_deactivate_incompatible_plugins()
     {
         if(defined('GUTENBERG_VERSION') && version_compare(GUTENBERG_VERSION, '14.1', '<'))

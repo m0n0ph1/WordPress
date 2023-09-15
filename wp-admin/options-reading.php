@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Reading settings administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_options'))
@@ -208,20 +201,7 @@
                                 <label for="blog-norobots"><?php _e('Discourage search engines from indexing this site'); ?></label>
                                 <p class="description"><?php _e('Note: Neither of these options blocks access to your site &mdash; it is up to search engines to honor your request.'); ?></p>
                                 <?php
-                                /**
-                                 * Enables the legacy 'Site visibility' privacy options.
-                                 *
-                                 * By default the privacy options form displays a single checkbox to 'discourage' search
-                                 * engines from indexing the site. Hooking to this action serves a dual purpose:
-                                 *
-                                 * 1. Disable the single checkbox in favor of a multiple-choice list of radio buttons.
-                                 * 2. Open the door to adding additional radio button choices to the list.
-                                 *
-                                 * Hooking to this action also converts the 'Search engine visibility' heading to the more
-                                 * open-ended 'Site visibility' heading.
-                                 *
-                                 * @since 2.1.0
-                                 */
+
                                 do_action('blog_privacy_selector');
                                 ?>
                             <?php else : ?>

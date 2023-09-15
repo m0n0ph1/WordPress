@@ -1,30 +1,7 @@
 <?php
-    /**
-     * WP_Classic_To_Block_Menu_Converter class
-     *
-     * @package WordPress
-     * @since   6.3.0
-     */
 
-    /**
-     * Converts a Classic Menu to Block Menu blocks.
-     *
-     * @since  6.3.0
-     * @access public
-     */
     class WP_Classic_To_Block_Menu_Converter
     {
-        /**
-         * Converts a Classic Menu to blocks.
-         *
-         * @param WP_Term $menu The Menu term object of the menu to convert.
-         *
-         * @return string|WP_Error The serialized and normalized parsed blocks on success,
-         *                         an empty string when there are no menus to convert,
-         *                         or WP_Error on invalid menu.
-         * @since 6.3.0
-         *
-         */
         public static function convert($menu)
         {
             if(! is_nav_menu($menu))
@@ -52,15 +29,6 @@
             return serialize_blocks($inner_blocks);
         }
 
-        /**
-         * Returns an array of menu items grouped by the id of the parent menu item.
-         *
-         * @param array $menu_items An array of menu items.
-         *
-         * @return array
-         * @since 6.3.0
-         *
-         */
         private static function group_by_parent_id($menu_items)
         {
             $menu_items_by_parent_id = [];
@@ -73,20 +41,6 @@
             return $menu_items_by_parent_id;
         }
 
-        /**
-         * Turns menu item data into a nested array of parsed blocks
-         *
-         * @param array $menu_items              An array of menu items that represent
-         *                                       an individual level of a menu.
-         * @param array $menu_items_by_parent_id An array keyed by the id of the
-         *                                       parent menu where each element is an
-         *                                       array of menu items that belong to
-         *                                       that parent.
-         *
-         * @return array An array of parsed block data.
-         * @since 6.3.0
-         *
-         */
         private static function to_blocks($menu_items, $menu_items_by_parent_id)
         {
             if(empty($menu_items))

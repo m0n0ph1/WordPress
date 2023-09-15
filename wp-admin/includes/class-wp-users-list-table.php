@@ -1,47 +1,11 @@
 <?php
-    /**
-     * List Table API: WP_Users_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying users in a list table.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_Users_List_Table extends WP_List_Table
     {
-        /**
-         * Site ID to generate the Users list table for.
-         *
-         * @since 3.1.0
-         * @var int
-         */
         public $site_id;
 
-        /**
-         * Whether or not the current Users list table is for Multisite.
-         *
-         * @since 3.1.0
-         * @var bool
-         */
         public $is_site_users;
 
-        /**
-         * Constructor.
-         *
-         * @param array $args An associative array of arguments.
-         *
-         * @see   WP_List_Table::__construct() for more information on default arguments.
-         *
-         * @since 3.1.0
-         *
-         */
         public function __construct($args = [])
         {
             parent::__construct([
@@ -58,13 +22,6 @@
             }
         }
 
-        /**
-         * Checks the current user's permissions.
-         *
-         * @return bool
-         * @since 3.1.0
-         *
-         */
         public function ajax_user_can()
         {
             if($this->is_site_users)
@@ -77,14 +34,6 @@
             }
         }
 
-        /**
-         * Prepares the users list for display.
-         *
-         * @since 3.1.0
-         *
-         * @global string $role
-         * @global string $usersearch
-         */
         public function prepare_items()
         {
             global $role, $usersearch;
@@ -139,15 +88,6 @@
                 $args['order'] = $_REQUEST['order'];
             }
 
-            /**
-             * Filters the query arguments used to retrieve users for the current users list table.
-             *
-             * @param array $args Arguments passed to WP_User_Query to retrieve items for the current
-             *                    users list table.
-             *
-             * @since 4.4.0
-             *
-             */
             $args = apply_filters('users_list_table_query_args', $args);
 
             // Query the user IDs for this page.
@@ -161,26 +101,11 @@
                                        ]);
         }
 
-        /**
-         * Outputs 'no users' message.
-         *
-         * @since 3.1.0
-         */
         public function no_items()
         {
             _e('No users found.');
         }
 
-        /**
-         * Captures the bulk action required, and return it.
-         *
-         * Overridden from the base class implementation to capture
-         * the role change drop-down.
-         *
-         * @return string The bulk action required.
-         * @since 3.1.0
-         *
-         */
         public function current_action()
         {
             if(isset($_REQUEST['changeit']))
@@ -191,13 +116,6 @@
             return parent::current_action();
         }
 
-        /**
-         * Gets a list of columns for the list table.
-         *
-         * @return string[] Array of column titles keyed by their column name.
-         * @since 3.1.0
-         *
-         */
         public function get_columns()
         {
             $columns = [
@@ -217,11 +135,6 @@
             return $columns;
         }
 
-        /**
-         * Generates the list table rows.
-         *
-         * @since 3.1.0
-         */
         public function display_rows()
         {
             // Query the post counts for this page.
@@ -236,21 +149,6 @@
             }
         }
 
-        /**
-         * Generates HTML for a single row on the users.php admin panel.
-         *
-         * @param WP_User $user_object The current user object.
-         * @param string  $style       Deprecated. Not used.
-         * @param string  $role        Deprecated. Not used.
-         * @param int     $numposts    Optional. Post count to display for this user. Defaults
-         *                             to zero, as in, a new user has made zero posts.
-         *
-         * @return string Output for a single row.
-         * @since 4.4.0 The `$role` parameter was deprecated.
-         *
-         * @since 3.1.0
-         * @since 4.2.0 The `$style` parameter was deprecated.
-         */
         public function single_row($user_object, $style = '', $role = '', $numposts = 0)
         {
             if(! ($user_object instanceof WP_User))
@@ -323,17 +221,6 @@
                     $actions['resetpassword'] = "<a class='resetpassword' href='".wp_nonce_url("users.php?action=resetpassword&amp;users=$user_object->ID", 'bulk-users')."'>".__('Send password reset').'</a>';
                 }
 
-                /**
-                 * Filters the action links displayed under each user in the Users list table.
-                 *
-                 * @param string[] $actions     An array of action links to be displayed.
-                 *                              Default 'Edit', 'Delete' for single site, and
-                 *                              'Edit', 'Remove' for Multisite.
-                 * @param WP_User  $user_object WP_User object for the currently listed user.
-                 *
-                 * @since 2.8.0
-                 *
-                 */
                 $actions = apply_filters('user_row_actions', $actions, $user_object);
 
                 // Role classes.
@@ -424,16 +311,7 @@
                             }
                             break;
                         default:
-                            /**
-                             * Filters the display output of custom columns in the Users list table.
-                             *
-                             * @param string $output      Custom column output. Default empty.
-                             * @param string $column_name Column name.
-                             * @param int    $user_id     ID of the currently-listed user.
-                             *
-                             * @since 2.8.0
-                             *
-                             */ $row .= apply_filters('manage_users_custom_column', '', $column_name, $user_object->ID);
+                            $row .= apply_filters('manage_users_custom_column', '', $column_name, $user_object->ID);
                     }
 
                     if($primary === $column_name)
@@ -448,15 +326,6 @@
             return $row;
         }
 
-        /**
-         * Returns an array of translated user role names for a given user object.
-         *
-         * @param WP_User $user_object The WP_User object.
-         *
-         * @return string[] An array of user role names keyed by role.
-         * @since 4.4.0
-         *
-         */
         protected function get_role_list($user_object)
         {
             $wp_roles = wp_roles();
@@ -476,31 +345,9 @@
                 $role_list['none'] = _x('None', 'no user roles');
             }
 
-            /**
-             * Filters the returned array of translated role names for a user.
-             *
-             * @param string[] $role_list   An array of translated user role names keyed by role.
-             * @param WP_User  $user_object A WP_User object.
-             *
-             * @since 4.4.0
-             *
-             */
             return apply_filters('get_role_list', $role_list, $user_object);
         }
 
-        /**
-         * Returns an associative array listing all the views that can be used
-         * with this table.
-         *
-         * Provides a list of roles and user count for that role for easy
-         * Filtersing of the user table.
-         *
-         * @return string[] An array of HTML links keyed by their view.
-         * @global string $role
-         *
-         * @since 3.1.0
-         *
-         */
         protected function get_views()
         {
             global $role;
@@ -583,13 +430,6 @@
             return $this->get_views_links($role_links);
         }
 
-        /**
-         * Retrieves an associative array of bulk actions available on this table.
-         *
-         * @return array Array of bulk action labels keyed by their action.
-         * @since 3.1.0
-         *
-         */
         protected function get_bulk_actions()
         {
             $actions = [];
@@ -618,15 +458,6 @@
             return $actions;
         }
 
-        /**
-         * Outputs the controls to allow user roles to be changed in bulk.
-         *
-         * @param string $which Whether this is being invoked above ("top")
-         *                      or below the table ("bottom").
-         *
-         * @since 3.1.0
-         *
-         */
         protected function extra_tablenav($which)
         {
             $id = 'bottom' === $which ? 'new_role2' : 'new_role';
@@ -649,39 +480,14 @@
                     submit_button(__('Change'), '', $button_id, false);
                 endif;
 
-                    /**
-                     * Fires just before the closing div containing the bulk role-change controls
-                     * in the Users list table.
-                     *
-                     * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-                     *
-                     * @since 4.6.0 The `$which` parameter was added.
-                     *
-                     * @since 3.5.0
-                     */
                     do_action('restrict_manage_users', $which);
                 ?>
             </div>
             <?php
-            /**
-             * Fires immediately following the closing "actions" div in the tablenav for the users
-             * list table.
-             *
-             * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-             *
-             * @since 4.9.0
-             *
-             */
+
             do_action('manage_users_extra_tablenav', $which);
         }
 
-        /**
-         * Gets a list of sortable columns for the list table.
-         *
-         * @return array Array of sortable columns.
-         * @since 3.1.0
-         *
-         */
         protected function get_sortable_columns()
         {
             $columns = [
@@ -692,13 +498,6 @@
             return $columns;
         }
 
-        /**
-         * Gets the name of the default primary column.
-         *
-         * @return string Name of the default primary column, in this case, 'username'.
-         * @since 4.3.0
-         *
-         */
         protected function get_default_primary_column_name()
         {
             return 'username';

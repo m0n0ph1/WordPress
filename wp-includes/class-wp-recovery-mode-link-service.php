@@ -1,16 +1,5 @@
 <?php
-    /**
-     * Error Protection API: WP_Recovery_Mode_Link_Handler class
-     *
-     * @package WordPress
-     * @since   5.2.0
-     */
 
-    /**
-     * Core class used to generate and handle recovery mode links.
-     *
-     * @since 5.2.0
-     */
     #[AllowDynamicProperties]
     class WP_Recovery_Mode_Link_Service
     {
@@ -18,31 +7,10 @@
 
         const LOGIN_ACTION_ENTERED = 'entered_recovery_mode';
 
-        /**
-         * Service to generate and validate recovery mode keys.
-         *
-         * @since 5.2.0
-         * @var WP_Recovery_Mode_Key_Service
-         */
         private $key_service;
 
-        /**
-         * Service to handle cookies.
-         *
-         * @since 5.2.0
-         * @var WP_Recovery_Mode_Cookie_Service
-         */
         private $cookie_service;
 
-        /**
-         * WP_Recovery_Mode_Link_Service constructor.
-         *
-         * @param WP_Recovery_Mode_Cookie_Service $cookie_service Service to handle setting the recovery mode cookie.
-         * @param WP_Recovery_Mode_Key_Service    $key_service    Service to handle generating recovery mode keys.
-         *
-         * @since 5.2.0
-         *
-         */
         public function __construct(
             WP_Recovery_Mode_Cookie_Service $cookie_service, WP_Recovery_Mode_Key_Service $key_service
         ) {
@@ -50,15 +18,6 @@
             $this->key_service = $key_service;
         }
 
-        /**
-         * Generates a URL to begin recovery mode.
-         *
-         * Only one recovery mode URL can may be valid at the same time.
-         *
-         * @return string Generated URL.
-         * @since 5.2.0
-         *
-         */
         public function generate_url()
         {
             $token = $this->key_service->generate_recovery_mode_token();
@@ -67,16 +26,6 @@
             return $this->get_recovery_mode_begin_url($token, $key);
         }
 
-        /**
-         * Gets a URL to begin recovery mode.
-         *
-         * @param string $token Recovery Mode token created by {@see generate_recovery_mode_token()}.
-         * @param string $key   Recovery Mode key created by {@see generate_and_store_recovery_mode_key()}.
-         *
-         * @return string Recovery mode begin URL.
-         * @since 5.2.0
-         *
-         */
         private function get_recovery_mode_begin_url($token, $key)
         {
             $url = add_query_arg([
@@ -85,29 +34,9 @@
                                      'rm_key' => $key,
                                  ], wp_login_url());
 
-            /**
-             * Filters the URL to begin recovery mode.
-             *
-             * @param string $url   The generated recovery mode begin URL.
-             * @param string $token The token used to identify the key.
-             * @param string $key   The recovery mode key.
-             *
-             * @since 5.2.0
-             *
-             */
             return apply_filters('recovery_mode_begin_url', $url, $token, $key);
         }
 
-        /**
-         * Enters recovery mode when the user hits wp-login.php with a valid recovery mode link.
-         *
-         * @param int     $ttl     Number of seconds the link should be valid for.
-         *
-         * @global string $pagenow The filename of the current screen.
-         *
-         * @since 5.2.0
-         *
-         */
         public function handle_begin_link($ttl)
         {
             if(! isset($GLOBALS['pagenow']) || 'wp-login.php' !== $GLOBALS['pagenow'])

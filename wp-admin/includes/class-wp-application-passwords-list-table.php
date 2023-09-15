@@ -1,28 +1,7 @@
 <?php
-    /**
-     * List Table API: WP_Application_Passwords_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      5.6.0
-     */
 
-    /**
-     * Class for displaying the list of application password items.
-     *
-     * @since 5.6.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_Application_Passwords_List_Table extends WP_List_Table
     {
-        /**
-         * Gets the list of columns.
-         *
-         * @return string[] Array of column titles keyed by their column name.
-         * @since 5.6.0
-         *
-         */
         public function get_columns()
         {
             return [
@@ -34,40 +13,17 @@
             ];
         }
 
-        /**
-         * Prepares the list of items for displaying.
-         *
-         * @since 5.6.0
-         *
-         * @global int $user_id User ID.
-         */
         public function prepare_items()
         {
             global $user_id;
             $this->items = array_reverse(WP_Application_Passwords::get_user_application_passwords($user_id));
         }
 
-        /**
-         * Handles the name column output.
-         *
-         * @param array $item The current application password item.
-         *
-         * @since 5.6.0
-         *
-         */
         public function column_name($item)
         {
             echo esc_html($item['name']);
         }
 
-        /**
-         * Handles the created column output.
-         *
-         * @param array $item The current application password item.
-         *
-         * @since 5.6.0
-         *
-         */
         public function column_created($item)
         {
             if(empty($item['created']))
@@ -80,14 +36,6 @@
             }
         }
 
-        /**
-         * Handles the last used column output.
-         *
-         * @param array $item The current application password item.
-         *
-         * @since 5.6.0
-         *
-         */
         public function column_last_used($item)
         {
             if(empty($item['last_used']))
@@ -100,14 +48,6 @@
             }
         }
 
-        /**
-         * Handles the last ip column output.
-         *
-         * @param array $item The current application password item.
-         *
-         * @since 5.6.0
-         *
-         */
         public function column_last_ip($item)
         {
             if(empty($item['last_ip']))
@@ -120,28 +60,12 @@
             }
         }
 
-        /**
-         * Handles the revoke column output.
-         *
-         * @param array $item The current application password item.
-         *
-         * @since 5.6.0
-         *
-         */
         public function column_revoke($item)
         {
             $name = 'revoke-application-password-'.$item['uuid'];
             printf('<button type="button" name="%1$s" id="%1$s" class="button delete" aria-label="%2$s">%3$s</button>', esc_attr($name), /* translators: %s: the application password's given name. */ esc_attr(sprintf(__('Revoke "%s"'), $item['name'])), __('Revoke'));
         }
 
-        /**
-         * Generates content for a single row of the table.
-         *
-         * @param array $item The current item.
-         *
-         * @since 5.6.0
-         *
-         */
         public function single_row($item)
         {
             echo '<tr data-uuid="'.esc_attr($item['uuid']).'">';
@@ -149,11 +73,6 @@
             echo '</tr>';
         }
 
-        /**
-         * Prints the JavaScript template for the new row item.
-         *
-         * @since 5.6.0
-         */
         public function print_js_template_row()
         {
             [$columns, $hidden, , $primary] = $this->get_column_info();
@@ -196,16 +115,7 @@
                         printf('<button type="button" class="button delete" aria-label="%1$s">%2$s</button>', /* translators: %s: the application password's given name. */ esc_attr(sprintf(__('Revoke "%s"'), '{{ data.name }}')), esc_html__('Revoke'));
                         break;
                     default:
-                        /**
-                         * Fires in the JavaScript row template for each custom column in the Application Passwords list table.
-                         *
-                         * Custom columns are registered using the {@see 'manage_application-passwords-user_columns'} filter.
-                         *
-                         * @param string $column_name Name of the custom column.
-                         *
-                         * @since 5.6.0
-                         *
-                         */ do_action("manage_{$this->screen->id}_custom_column_js_template", $column_name);
+                        do_action("manage_{$this->screen->id}_custom_column_js_template", $column_name);
                         break;
                 }
 
@@ -220,39 +130,11 @@
             echo '</tr>';
         }
 
-        /**
-         * Generates content for a single row of the table
-         *
-         * @param array  $item        The current item.
-         * @param string $column_name The current column name.
-         *
-         * @since 5.6.0
-         *
-         */
         protected function column_default($item, $column_name)
         {
-            /**
-             * Fires for each custom column in the Application Passwords list table.
-             *
-             * Custom columns are registered using the {@see 'manage_application-passwords-user_columns'} filter.
-             *
-             * @param string $column_name Name of the custom column.
-             * @param array  $item        The application password item.
-             *
-             * @since 5.6.0
-             *
-             */
             do_action("manage_{$this->screen->id}_custom_column", $column_name, $item);
         }
 
-        /**
-         * Generates custom table navigation to prevent conflicting nonces.
-         *
-         * @param string $which The location of the bulk actions: 'top' or 'bottom'.
-         *
-         * @since 5.6.0
-         *
-         */
         protected function display_tablenav($which)
         {
             ?>
@@ -277,13 +159,6 @@
             <?php
         }
 
-        /**
-         * Gets the name of the default primary column.
-         *
-         * @return string Name of the default primary column, in this case, 'name'.
-         * @since 5.6.0
-         *
-         */
         protected function get_default_primary_column_name()
         {
             return 'name';

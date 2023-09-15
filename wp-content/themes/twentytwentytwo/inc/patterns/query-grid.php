@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Grid of posts block pattern
-     */
+
     return [
         'title' => __('Grid of posts', 'twentytwentytwo'),
         'categories' => ['query'],

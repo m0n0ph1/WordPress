@@ -1,41 +1,8 @@
 <?php
-    /**
-     * Administration API: WP_Internal_Pointers class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used to implement an internal admin pointers API.
-     *
-     * @since 3.3.0
-     */
     #[AllowDynamicProperties]
     final class WP_Internal_Pointers
     {
-        /**
-         * Initializes the new feature pointers.
-         *
-         * @param string $hook_suffix The current admin page.
-         *
-         * @since 3.3.0
-         *
-         * All pointers can be disabled using the following:
-         *     remove_action( 'admin_enqueue_scripts', array( 'WP_Internal_Pointers', 'enqueue_scripts' ) );
-         *
-         * Individual pointers (e.g. wp390_widgets) can be disabled using the following:
-         *
-         *    function yourprefix_remove_pointers() {
-         *        remove_action(
-         *            'admin_print_footer_scripts',
-         *            array( 'WP_Internal_Pointers', 'pointer_wp390_widgets' )
-         *        );
-         *    }
-         *    add_action( 'admin_enqueue_scripts', 'yourprefix_remove_pointers', 11 );
-         *
-         */
         public static function enqueue_scripts($hook_suffix)
         {
             /*
@@ -132,29 +99,11 @@
 
         public static function pointer_wp496_privacy() {}
 
-        /**
-         * Prevents new users from seeing existing 'new feature' pointers.
-         *
-         * @param int $user_id User ID.
-         *
-         * @since 3.3.0
-         *
-         */
         public static function dismiss_pointers_for_new_users($user_id)
         {
             add_user_meta($user_id, 'dismissed_wp_pointers', '');
         }
 
-        /**
-         * Prints the pointer JavaScript data.
-         *
-         * @param string $pointer_id The pointer ID.
-         * @param string $selector   The HTML elements, on which the pointer should be attached.
-         * @param array  $args       Arguments to be passed to the pointer JS (see wp-pointer.js).
-         *
-         * @since 3.3.0
-         *
-         */
         private static function print_js($pointer_id, $selector, $args)
         {
             if(empty($pointer_id) || empty($selector) || empty($args) || empty($args['content']))

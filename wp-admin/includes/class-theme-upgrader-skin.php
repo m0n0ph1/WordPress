@@ -1,42 +1,9 @@
 <?php
-    /**
-     * Upgrader API: Theme_Upgrader_Skin class
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      4.6.0
-     */
 
-    /**
-     * Theme Upgrader Skin for WordPress Theme Upgrades.
-     *
-     * @since 2.8.0
-     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader-skins.php.
-     *
-     * @see   WP_Upgrader_Skin
-     */
     class Theme_Upgrader_Skin extends WP_Upgrader_Skin
     {
-        /**
-         * Holds the theme slug in the Theme Directory.
-         *
-         * @since 2.8.0
-         *
-         * @var string
-         */
         public $theme = '';
 
-        /**
-         * Constructor.
-         *
-         * Sets up the theme upgrader skin.
-         *
-         * @param array $args Optional. The theme upgrader skin arguments to
-         *                    override default options. Default empty array.
-         *
-         * @since 2.8.0
-         *
-         */
         public function __construct($args = [])
         {
             $defaults = [
@@ -52,11 +19,6 @@
             parent::__construct($args);
         }
 
-        /**
-         * Performs an action following a single theme update.
-         *
-         * @since 2.8.0
-         */
         public function after()
         {
             $this->decrement_update_count('theme');
@@ -106,15 +68,6 @@
 
             $update_actions['themes_page'] = sprintf('<a href="%s" target="_parent">%s</a>', self_admin_url('themes.php'), __('Go to Themes page'));
 
-            /**
-             * Filters the list of action links available following a single theme update.
-             *
-             * @param string[] $update_actions Array of theme action links.
-             * @param string   $theme          Theme directory name.
-             *
-             * @since 2.8.0
-             *
-             */
             $update_actions = apply_filters('update_theme_complete_actions', $update_actions, $this->theme);
 
             if(! empty($update_actions))

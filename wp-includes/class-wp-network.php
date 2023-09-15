@@ -1,98 +1,20 @@
 <?php
-    /**
-     * Network API: WP_Network class
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used for interacting with a multisite network.
-     *
-     * This class is used during load to populate the `$current_site` global and
-     * setup the current network.
-     *
-     * This class is most useful in WordPress multi-network installations where the
-     * ability to interact with any network of sites is required.
-     *
-     * @since 4.4.0
-     *
-     * @property int $id
-     * @property int $site_id
-     */
     #[AllowDynamicProperties]
     class WP_Network
     {
-        /**
-         * Domain of the network.
-         *
-         * @since 4.4.0
-         * @var string
-         */
         public $domain = '';
 
-        /**
-         * Path of the network.
-         *
-         * @since 4.4.0
-         * @var string
-         */
         public $path = '';
 
-        /**
-         * Domain used to set cookies for this network.
-         *
-         * @since 4.4.0
-         * @var string
-         */
         public $cookie_domain = '';
 
-        /**
-         * Name of this network.
-         *
-         * Named "site" vs. "network" for legacy reasons.
-         *
-         * @since 4.4.0
-         * @var string
-         */
         public $site_name = '';
 
-        /**
-         * Network ID.
-         *
-         * @since 4.4.0
-         * @since 4.6.0 Converted from public to private to explicitly enable more intuitive
-         *              access via magic methods. As part of the access change, the type was
-         *              also changed from `string` to `int`.
-         * @var int
-         */
         private $id;
 
-        /**
-         * The ID of the network's main site.
-         *
-         * Named "blog" vs. "site" for legacy reasons. A main site is mapped to
-         * the network when the network is created.
-         *
-         * A numeric string, for compatibility reasons.
-         *
-         * @since 4.4.0
-         * @var string
-         */
         private $blog_id = '0';
 
-        /**
-         * Creates a new WP_Network object.
-         *
-         * Will populate object properties from the object provided and assign other
-         * default properties based on that information.
-         *
-         * @param WP_Network|object $network A network object.
-         *
-         * @since 4.4.0
-         *
-         */
         public function __construct($network)
         {
             foreach(get_object_vars($network) as $key => $value)
@@ -104,11 +26,6 @@
             $this->_set_cookie_domain();
         }
 
-        /**
-         * Sets the site name assigned to the network if one has not been populated.
-         *
-         * @since 4.4.0
-         */
         private function _set_site_name()
         {
             if(! empty($this->site_name))
@@ -120,14 +37,6 @@
             $this->site_name = get_network_option($this->id, 'site_name', $default);
         }
 
-        /**
-         * Sets the cookie domain based on the network domain if one has
-         * not been populated.
-         *
-         * @todo  What if the domain of the network doesn't match the current site?
-         *
-         * @since 4.4.0
-         */
         private function _set_cookie_domain()
         {
             if(! empty($this->cookie_domain))
@@ -142,17 +51,6 @@
             }
         }
 
-        /**
-         * Retrieves a network from the database by its ID.
-         *
-         * @param int   $network_id The ID of the network to retrieve.
-         *
-         * @return WP_Network|false The network's object if found. False if not.
-         * @since 4.4.0
-         *
-         * @global wpdb $wpdb       WordPress database abstraction object.
-         *
-         */
         public static function get_instance($network_id)
         {
             global $wpdb;
@@ -185,24 +83,6 @@
             return new WP_Network($_network);
         }
 
-        /**
-         * Retrieves the closest matching network for a domain and path.
-         *
-         * This will not necessarily return an exact match for a domain and path. Instead, it
-         * breaks the domain and path into pieces that are then used to match the closest
-         * possibility from a query.
-         *
-         * The intent of this method is to match a network during bootstrap for a
-         * requested site address.
-         *
-         * @param string   $domain   Domain to check.
-         * @param string   $path     Path to check.
-         * @param int|null $segments Path segments to use. Defaults to null, or the full path.
-         *
-         * @return WP_Network|false Network object if successful. False when no network is found.
-         * @since 4.4.0
-         *
-         */
         public static function get_by_path($domain = '', $path = '', $segments = null)
         {
             $domains = [$domain];
@@ -244,18 +124,6 @@
             {
                 $path_segments = array_filter(explode('/', trim($path, '/')));
 
-                /**
-                 * Filters the number of path segments to consider when searching for a site.
-                 *
-                 * @param int|null $segments The number of path segments to consider. WordPress by default looks at
-                 *                           one path segment. The function default of null only makes sense when you
-                 *                           know the requested path should match a network.
-                 * @param string   $domain   The requested domain.
-                 * @param string   $path     The requested path, in full.
-                 *
-                 * @since 3.9.0
-                 *
-                 */
                 $segments = apply_filters('network_by_path_segments_count', $segments, $domain, $path);
 
                 if((null !== $segments) && count($path_segments) > $segments)
@@ -272,27 +140,6 @@
                 $paths[] = '/';
             }
 
-            /**
-             * Determines a network by its domain and path.
-             *
-             * This allows one to short-circuit the default logic, perhaps by
-             * replacing it with a routine that is more optimal for your setup.
-             *
-             * Return null to avoid the short-circuit. Return false if no network
-             * can be found at the requested domain and path. Otherwise, return
-             * an object from wp_get_network().
-             *
-             * @param null|false|WP_Network $network  Network value to return by path. Default null
-             *                                        to continue retrieving the network.
-             * @param string                $domain   The requested domain.
-             * @param string                $path     The requested path, in full.
-             * @param int|null              $segments The suggested number of paths to consult.
-             *                                        Default null, meaning the entire path was to be consulted.
-             * @param string[]              $paths    Array of paths to search for, based on `$path` and `$segments`.
-             *
-             * @since 3.9.0
-             *
-             */
             $pre = apply_filters('pre_get_network_by_path', null, $domain, $path, $segments, $paths);
             if(null !== $pre)
             {
@@ -357,17 +204,6 @@
             return false;
         }
 
-        /**
-         * Getter.
-         *
-         * Allows current multisite naming conventions when getting properties.
-         *
-         * @param string $key Property to get.
-         *
-         * @return mixed Value of the property. Null if not available.
-         * @since 4.6.0
-         *
-         */
         public function __get($key)
         {
             switch($key)
@@ -383,17 +219,6 @@
             return null;
         }
 
-        /**
-         * Setter.
-         *
-         * Allows current multisite naming conventions while setting properties.
-         *
-         * @param string $key   Property to set.
-         * @param mixed  $value Value to assign to the property.
-         *
-         * @since 4.6.0
-         *
-         */
         public function __set($key, $value)
         {
             switch($key)
@@ -410,29 +235,8 @@
             }
         }
 
-        /**
-         * Returns the main site ID for the network.
-         *
-         * Internal method used by the magic getter for the 'blog_id' and 'site_id'
-         * properties.
-         *
-         * @return int The ID of the main site.
-         * @since 4.9.0
-         *
-         */
         private function get_main_site_id()
         {
-            /**
-             * Filters the main site ID.
-             *
-             * Returning a positive integer will effectively short-circuit the function.
-             *
-             * @param int|null   $main_site_id If a positive integer is returned, it is interpreted as the main site ID.
-             * @param WP_Network $network      The network object for which the main site was detected.
-             *
-             * @since 4.9.0
-             *
-             */
             $main_site_id = (int) apply_filters('pre_get_main_site_id', null, $this);
 
             if(0 < $main_site_id)
@@ -490,17 +294,6 @@
             return (int) $this->blog_id;
         }
 
-        /**
-         * Isset-er.
-         *
-         * Allows current multisite naming conventions when checking for properties.
-         *
-         * @param string $key Property to check if set.
-         *
-         * @return bool Whether the property is set.
-         * @since 4.6.0
-         *
-         */
         public function __isset($key)
         {
             switch($key)

@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Authorize Application Screen
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     $error = null;
@@ -203,20 +196,6 @@
                     ];
                     wp_admin_notice($message, $args);
 
-                    /**
-                     * Fires in the Authorize Application Password new password section in the no-JS version.
-                     *
-                     * In most cases, this should be used in combination with the {@see 'wp_application_passwords_approve_app_request_success'}
-                     * action to ensure that both the JS and no-JS variants are handled.
-                     *
-                     * @param string  $new_password The newly generated application password.
-                     * @param array   $request      The array of request data. All arguments are optional and may be empty.
-                     * @param WP_User $user         The user authorizing the application.
-                     *
-                     * @since 5.6.1 Corrected action name and signature.
-                     *
-                     * @since 5.6.0
-                     */
                     do_action('wp_authorize_application_password_form_approved_no_js', $new_password, $request, $user);
                 else :
                     ?>
@@ -239,22 +218,7 @@
                         </div>
 
                         <?php
-                            /**
-                             * Fires in the Authorize Application Password form before the submit buttons.
-                             *
-                             * @param array   $request     {
-                             *                             The array of request data. All arguments are optional and may be empty.
-                             *
-                             * @type string   $app_name    The suggested name of the application.
-                             * @type string   $success_url The URL the user will be redirected to after approving the application.
-                             * @type string   $reject_url  The URL the user will be redirected to after rejecting the application.
-                             *                             }
-                             *
-                             * @param WP_User $user        The user authorizing the application.
-                             *
-                             * @since 5.6.0
-                             *
-                             */
+
                             do_action('wp_authorize_application_password_form', $request, $user);
                         ?>
 

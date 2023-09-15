@@ -1,17 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/legacy-widget` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the 'core/legacy-widget' block.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string Rendered block.
-     */
     function render_block_core_legacy_widget($attributes)
     {
         global $wp_widget_factory;
@@ -62,9 +50,6 @@
         return ob_get_clean();
     }
 
-    /**
-     * Registers the 'core/legacy-widget' block.
-     */
     function register_block_core_legacy_widget()
     {
         register_block_type_from_metadata(__DIR__.'/legacy-widget', [
@@ -74,11 +59,6 @@
 
     add_action('init', 'register_block_core_legacy_widget');
 
-    /**
-     * Intercepts any request with legacy-widget-preview in the query param and, if
-     * set, renders a page containing a preview of the requested Legacy Widget
-     * block.
-     */
     function handle_legacy_widget_preview_iframe()
     {
         if(empty($_GET['legacy-widget-preview']))

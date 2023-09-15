@@ -1,124 +1,29 @@
 <?php
-    /**
-     * SimplePie
-     *
-     * A PHP-Based RSS and Atom Feed Framework.
-     * Takes the hard work out of managing a complete RSS/Atom solution.
-     *
-     * Copyright (c) 2004-2016, Ryan Parman, Sam Sneddon, Ryan McCue, and contributors
-     * All rights reserved.
-     *
-     * Redistribution and use in source and binary forms, with or without modification, are
-     * permitted provided that the following conditions are met:
-     *
-     *    * Redistributions of source code must retain the above copyright notice, this list of
-     *      conditions and the following disclaimer.
-     *
-     *    * Redistributions in binary form must reproduce the above copyright notice, this list
-     *      of conditions and the following disclaimer in the documentation and/or other materials
-     *      provided with the distribution.
-     *
-     *    * Neither the name of the SimplePie Team nor the names of its contributors may be used
-     *      to endorse or promote products derived from this software without specific prior
-     *      written permission.
-     *
-     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-     * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-     * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS
-     * AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-     * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-     * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-     * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-     * POSSIBILITY OF SUCH DAMAGE.
-     *
-     * @package   SimplePie
-     * @copyright 2004-2016 Ryan Parman, Sam Sneddon, Ryan McCue
-     * @author    Ryan Parman
-     * @author    Sam Sneddon
-     * @author    Ryan McCue
-     * @link      http://simplepie.org/ SimplePie
-     * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
-     */
 
-    /**
-     * Manages all item-related data
-     *
-     * Used by {@see SimplePie::get_item()} and {@see SimplePie::get_items()}
-     *
-     * This class can be overloaded with {@see SimplePie::set_item_class()}
-     *
-     * @package    SimplePie
-     * @subpackage API
-     */
     class SimplePie_Item
     {
-        /**
-         * Parent feed
-         *
-         * @access private
-         * @var SimplePie
-         */
         var $feed;
 
-        /**
-         * Raw data
-         *
-         * @access private
-         * @var array
-         */
         var $data = [];
 
-        /**
-         * Registry object
-         *
-         * @see set_registry
-         * @var SimplePie_Registry
-         */
         protected $registry;
 
-        /**
-         * Create a new item object
-         *
-         * This is usually used by {@see SimplePie::get_items} and
-         * {@see SimplePie::get_item}. Avoid creating this manually.
-         *
-         * @param SimplePie $feed Parent feed
-         * @param array     $data Raw data
-         */
         public function __construct($feed, $data)
         {
             $this->feed = $feed;
             $this->data = $data;
         }
 
-        /**
-         * Set the registry handler
-         *
-         * This is usually used by {@see SimplePie_Registry::create}
-         *
-         * @param SimplePie_Registry $registry
-         *
-         * @since 1.3
-         */
         public function set_registry(SimplePie_Registry $registry)
         {
             $this->registry = $registry;
         }
 
-        /**
-         * Get a string representation of the item
-         *
-         * @return string
-         */
         public function __toString()
         {
             return md5(serialize($this->data));
         }
 
-        /**
-         * Remove items that link back to this before destroying this object
-         */
         public function __destruct()
         {
             if(! gc_enabled())
@@ -127,21 +32,6 @@
             }
         }
 
-        /**
-         * Get the unique identifier for the item
-         *
-         * This is usually used when writing code to check for new items in a feed.
-         *
-         * Uses `<atom:id>`, `<guid>`, `<dc:identifier>` or the `about` attribute
-         * for RDF. If none of these are supplied (or `$hash` is true), creates an
-         * MD5 hash based on the permalink, title and content.
-         *
-         * @param boolean      $hash Should we force using a hash instead of the supplied ID?
-         * @param string|false $fn   User-supplied function to generate an hash
-         *
-         * @return string|null
-         * @since Beta 2
-         */
         public function get_id($hash = false, $fn = 'md5')
         {
             if(! $hash)
@@ -184,21 +74,6 @@
             return call_user_func($fn, $this->get_permalink().$this->get_title().$this->get_content());
         }
 
-        /**
-         * Get data for an item-level element
-         *
-         * This method allows you to get access to ANY element/attribute that is a
-         * sub-element of the item/entry tag.
-         *
-         * See {@see SimplePie::get_feed_tags()} for a description of the return value
-         *
-         * @param string $namespace The URL of the XML namespace of the elements you're trying to access
-         * @param string $tag       Tag name
-         *
-         * @return array
-         * @see   http://simplepie.org/wiki/faq/supported_xml_namespaces
-         * @since 1.0
-         */
         public function get_item_tags($namespace, $tag)
         {
             if(isset($this->data['child'][$namespace][$tag]))
@@ -209,33 +84,11 @@
             return null;
         }
 
-        /**
-         * Sanitize feed data
-         *
-         * @access private
-         *
-         * @param string $data Data to sanitize
-         * @param int    $type One of the SIMPLEPIE_CONSTRUCT_* constants
-         * @param string $base Base URL to resolve URLs against
-         *
-         * @return string Sanitized data
-         * @see    SimplePie::sanitize()
-         */
         public function sanitize($data, $type, $base = '')
         {
             return $this->feed->sanitize($data, $type, $base);
         }
 
-        /**
-         * Get the permalink for the item
-         *
-         * Returns the first link available with a relationship of "alternate".
-         * Identical to {@see get_link()} with key 0
-         *
-         * @return string|null Permalink URL
-         * @since 0.8
-         * @see   get_link
-         */
         public function get_permalink()
         {
             $link = $this->get_link();
@@ -252,15 +105,6 @@
             return null;
         }
 
-        /**
-         * Get a single link for the item
-         *
-         * @param int    $key The link that you want to return.  Remember that arrays begin with 0, not 1
-         * @param string $rel The relationship of the link to return
-         *
-         * @return string|null Link URL
-         * @since Beta 3
-         */
         public function get_link($key = 0, $rel = 'alternate')
         {
             $links = $this->get_links($rel);
@@ -272,16 +116,6 @@
             return null;
         }
 
-        /**
-         * Get all links for the item
-         *
-         * Uses `<atom:link>`, `<link>` or `<guid>`
-         *
-         * @param string $rel The relationship of links to return
-         *
-         * @return array|null Links found for the item (strings)
-         * @since Beta 2
-         */
         public function get_links($rel = 'alternate')
         {
             if(! isset($this->data['links']))
@@ -353,31 +187,11 @@
             return null;
         }
 
-        /**
-         * Get the base URL value from the parent feed
-         *
-         * Uses `<xml:base>`
-         *
-         * @param array $element
-         *
-         * @return string
-         */
         public function get_base($element = [])
         {
             return $this->feed->get_base($element);
         }
 
-        /**
-         * Get an enclosure from the item
-         *
-         * Supports the <enclosure> RSS tag, as well as Media RSS and iTunes RSS.
-         *
-         * @param int $key The enclosure that you want to return.  Remember that arrays begin with 0, not 1
-         *
-         * @return SimplePie_Enclosure|null
-         * @since Beta 2
-         * @todo  Add ability to prefer one type of content over another (in a media group).
-         */
         public function get_enclosure($key = 0, $prefer = null)
         {
             $enclosures = $this->get_enclosures();
@@ -389,22 +203,6 @@
             return null;
         }
 
-        /**
-         * Get all available enclosures (podcasts, etc.)
-         *
-         * Supports the <enclosure> RSS tag, as well as Media RSS and iTunes RSS.
-         *
-         * At this point, we're pretty much assuming that all enclosures for an item
-         * are the same content.  Anything else is too complicated to
-         * properly support.
-         *
-         * @return SimplePie_Enclosure[]|null List of SimplePie_Enclosure items
-         * @todo  Add support for end-user defined sorting of enclosures by type/handler (so we can prefer the
-         *     faster-loading FLV over MP4).
-         * @todo  If an element exists at a level, but its value is empty, we should fall back to the value from the
-         *     parent (if it exists).
-         * @since Beta 2
-         */
         public function get_enclosures()
         {
             if(! isset($this->data['enclosures']))
@@ -2464,28 +2262,11 @@
             return null;
         }
 
-        /**
-         * Get the parent feed
-         *
-         * Note: this may not work as you think for multifeeds!
-         *
-         * @link  http://simplepie.org/faq/typical_multifeed_gotchas#missing_data_from_feed
-         * @since 1.0
-         * @return SimplePie
-         */
         public function get_feed()
         {
             return $this->feed;
         }
 
-        /**
-         * Get the title of the item
-         *
-         * Uses `<atom:title>`, `<title>` or `<dc:title>`
-         *
-         * @return string|null
-         * @since Beta 2 (previously called `get_item_title` since 0.8)
-         */
         public function get_title()
         {
             if(! isset($this->data['title']))
@@ -2527,21 +2308,6 @@
             return $this->data['title'];
         }
 
-        /**
-         * Get the content for the item
-         *
-         * Prefers full content over summaries, but will return a summary if full
-         * content does not exist.
-         *
-         * To prefer summaries instead, use {@see get_description}
-         *
-         * Uses `<atom:content>` or `<content:encoded>` (RSS 1.0 Content Module)
-         *
-         * @param boolean $content_only Should we avoid falling back to the description?
-         *
-         * @return string|null
-         * @since 1.0
-         */
         public function get_content($content_only = false)
         {
             if(($tags = $this->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'content')) && ($return = $this->sanitize($tags[0]['data'], $this->registry->call('Misc', 'atom_10_content_construct_type', [$tags[0]['attribs']]), $this->get_base($tags[0]))))
@@ -2564,22 +2330,6 @@
             return null;
         }
 
-        /**
-         * Get the content for the item
-         *
-         * Prefers summaries over full content , but will return full content if a
-         * summary does not exist.
-         *
-         * To prefer full content instead, use {@see get_content}
-         *
-         * Uses `<atom:summary>`, `<description>`, `<dc:description>` or
-         * `<itunes:subtitle>`
-         *
-         * @param boolean $description_only Should we avoid falling back to the content?
-         *
-         * @return string|null
-         * @since 0.8
-         */
         public function get_description($description_only = false)
         {
             if(($tags = $this->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'summary')) && ($return = $this->sanitize($tags[0]['data'], $this->registry->call('Misc', 'atom_10_construct_type', [$tags[0]['attribs']]), $this->get_base($tags[0]))))
@@ -2626,14 +2376,6 @@
             return null;
         }
 
-        /**
-         * Get the media:thumbnail of the item
-         *
-         * Uses `<media:thumbnail>`
-         *
-         *
-         * @return array|null
-         */
         public function get_thumbnail()
         {
             if(! isset($this->data['thumbnail']))
@@ -2651,14 +2393,6 @@
             return $this->data['thumbnail'];
         }
 
-        /**
-         * Get a category for the item
-         *
-         * @param int $key The category that you want to return.  Remember that arrays begin with 0, not 1
-         *
-         * @return SimplePie_Category|null
-         * @since Beta 3 (previously called `get_categories()` since Beta 2)
-         */
         public function get_category($key = 0)
         {
             $categories = $this->get_categories();
@@ -2670,14 +2404,6 @@
             return null;
         }
 
-        /**
-         * Get all categories for the item
-         *
-         * Uses `<atom:category>`, `<category>` or `<dc:subject>`
-         *
-         * @return SimplePie_Category[]|null List of {@see SimplePie_Category} objects
-         * @since Beta 3
-         */
         public function get_categories()
         {
             $categories = [];
@@ -2746,14 +2472,6 @@
             return null;
         }
 
-        /**
-         * Get an author for the item
-         *
-         * @param int $key The author that you want to return.  Remember that arrays begin with 0, not 1
-         *
-         * @return SimplePie_Author|null
-         * @since Beta 2
-         */
         public function get_author($key = 0)
         {
             $authors = $this->get_authors();
@@ -2765,14 +2483,6 @@
             return null;
         }
 
-        /**
-         * Get all authors for the item
-         *
-         * Uses `<atom:author>`, `<author>`, `<dc:creator>` or `<itunes:author>`
-         *
-         * @return SimplePie_Author[]|null List of {@see SimplePie_Author} objects
-         * @since Beta 2
-         */
         public function get_authors()
         {
             $authors = [];
@@ -2869,12 +2579,6 @@
             return null;
         }
 
-        /**
-         * Get the `<atom:source>` for the item
-         *
-         * @return SimplePie_Source|null
-         * @since 1.1
-         */
         public function get_source()
         {
             if($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'source'))
@@ -2885,14 +2589,6 @@
             return null;
         }
 
-        /**
-         * Get a contributor for the item
-         *
-         * @param int $key The contrbutor that you want to return.  Remember that arrays begin with 0, not 1
-         *
-         * @return SimplePie_Author|null
-         * @since 1.1
-         */
         public function get_contributor($key = 0)
         {
             $contributors = $this->get_contributors();
@@ -2904,14 +2600,6 @@
             return null;
         }
 
-        /**
-         * Get all contributors for the item
-         *
-         * Uses `<atom:contributor>`
-         *
-         * @return SimplePie_Author[]|null List of {@see SimplePie_Author} objects
-         * @since 1.1
-         */
         public function get_contributors()
         {
             $contributors = [];
@@ -2968,14 +2656,6 @@
             return null;
         }
 
-        /**
-         * Get the copyright info for the item
-         *
-         * Uses `<atom:rights>` or `<dc:rights>`
-         *
-         * @return string
-         * @since 1.1
-         */
         public function get_copyright()
         {
             if($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_ATOM_10, 'rights'))
@@ -2994,21 +2674,6 @@
             return null;
         }
 
-        /**
-         * Get the localized posting date/time for the item
-         *
-         * Returns the date formatted in the localized language. To display in
-         * languages other than the server's default, you need to change the locale
-         * with {@link http://php.net/setlocale setlocale()}. The available
-         * localizations depend on which ones are installed on your web server.
-         *
-         * @param string $date_format Supports any PHP date format from {@see http://php.net/strftime} (empty for the
-         *                            raw data)
-         *
-         * @return int|string|null
-         * @since 1.0
-         *
-         */
         public function get_local_date($date_format = '%c')
         {
             if(! $date_format)
@@ -3023,22 +2688,6 @@
             return null;
         }
 
-        /**
-         * Get the posting date/time for the item
-         *
-         * Uses `<atom:published>`, `<atom:updated>`, `<atom:issued>`,
-         * `<atom:modified>`, `<pubDate>` or `<dc:date>`
-         *
-         * Note: obeys PHP's timezone setting. To get a UTC date/time, use
-         * {@see get_gmdate}
-         *
-         * @param string $date_format Supports any PHP date format from {@see http://php.net/date} (empty for the raw
-         *                            data)
-         *
-         * @return int|string|null
-         * @since Beta 2 (previously called `get_item_date` since 0.8)
-         *
-         */
         public function get_date($date_format = 'j F Y, g:i a')
         {
             if(! isset($this->data['date']))
@@ -3105,14 +2754,6 @@
             return null;
         }
 
-        /**
-         * Get the posting date/time for the item (UTC time)
-         *
-         * @param string $date_format Supports any PHP date format from {@see http://php.net/date}
-         *
-         * @return int|string|null
-         * @see get_date
-         */
         public function get_gmdate($date_format = 'j F Y, g:i a')
         {
             $date = $this->get_date('U');
@@ -3124,14 +2765,6 @@
             return gmdate($date_format, $date);
         }
 
-        /**
-         * Get the update date/time for the item (UTC time)
-         *
-         * @param string $date_format Supports any PHP date format from {@see http://php.net/date}
-         *
-         * @return int|string|null
-         * @see get_updated_date
-         */
         public function get_updated_gmdate($date_format = 'j F Y, g:i a')
         {
             $date = $this->get_updated_date('U');
@@ -3143,19 +2776,6 @@
             return gmdate($date_format, $date);
         }
 
-        /**
-         * Get the update date/time for the item
-         *
-         * Uses `<atom:updated>`
-         *
-         * Note: obeys PHP's timezone setting. To get a UTC date/time, use
-         * {@see get_gmdate}
-         *
-         * @param string $date_format Supports any PHP date format from {@see http://php.net/date} (empty for the raw
-         *                            data)
-         *
-         * @return int|string|null
-         */
         public function get_updated_date($date_format = 'j F Y, g:i a')
         {
             if(! isset($this->data['updated']))
@@ -3194,18 +2814,6 @@
             return null;
         }
 
-        /**
-         * Get the latitude coordinates for the item
-         *
-         * Compatible with the W3C WGS84 Basic Geo and GeoRSS specifications
-         *
-         * Uses `<geo:lat>` or `<georss:point>`
-         *
-         * @return string|null
-         * @link  http://www.w3.org/2003/01/geo/ W3C WGS84 Basic Geo
-         * @link  http://www.georss.org/ GeoRSS
-         * @since 1.0
-         */
         public function get_latitude()
         {
             if($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'lat'))
@@ -3220,18 +2828,6 @@
             return null;
         }
 
-        /**
-         * Get the longitude coordinates for the item
-         *
-         * Compatible with the W3C WGS84 Basic Geo and GeoRSS specifications
-         *
-         * Uses `<geo:long>`, `<geo:lon>` or `<georss:point>`
-         *
-         * @return string|null
-         * @link  http://www.w3.org/2003/01/geo/ W3C WGS84 Basic Geo
-         * @link  http://www.georss.org/ GeoRSS
-         * @since 1.0
-         */
         public function get_longitude()
         {
             if($return = $this->get_item_tags(SIMPLEPIE_NAMESPACE_W3C_BASIC_GEO, 'long'))

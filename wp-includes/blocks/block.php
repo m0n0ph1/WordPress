@@ -1,17 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/block` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/block` block on server.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string Rendered HTML of the referenced block.
-     */
     function render_block_core_block($attributes)
     {
         static $seen_refs = [];
@@ -55,9 +43,6 @@
         return $content;
     }
 
-    /**
-     * Registers the `core/block` block.
-     */
     function register_block_core_block()
     {
         register_block_type_from_metadata(__DIR__.'/block', [

@@ -1,10 +1,4 @@
 <?php
-    /**
-     * Deprecated. Use rss.php instead.
-     *
-     * @package    WordPress
-     * @deprecated 2.1.0
-     */
 
     if(! defined('ABSPATH'))
     {

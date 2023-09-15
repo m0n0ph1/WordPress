@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Twenty Sixteen Customizer functionality
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Sixteen
-     * @since      Twenty Sixteen 1.0
-     */
 
-    /**
-     * Sets up the WordPress core custom header and custom background features.
-     *
-     * @since Twenty Sixteen 1.0
-     *
-     * @see   twentysixteen_header_style()
-     */
     function twentysixteen_custom_header_and_background()
     {
         $color_scheme = twentysixteen_get_color_scheme();
@@ -21,59 +7,26 @@
         $default_text_color = trim($color_scheme[3], '#');
 
         add_theme_support(
-            'custom-background', /**
-         * Filters the arguments used when adding 'custom-background' support in Twenty Sixteen.
-         *
-         * @param array $args    {
-         *                       An array of custom-background support arguments.
-         *
-         * @type string $default -color Default color of the background.
-         *                       }
-         * @since Twenty Sixteen 1.0
-         *
-         */ apply_filters('twentysixteen_custom_background_args', [
-            'default-color' => $default_background_color,
-        ])
+            'custom-background', apply_filters('twentysixteen_custom_background_args', [
+                                   'default-color' => $default_background_color,
+                               ])
         );
 
         add_theme_support(
-            'custom-header', /**
-         * Filters the arguments used when adding 'custom-header' support in Twenty Sixteen.
-         *
-         * @param array   $args                   {
-         *                                        An array of custom-header support arguments.
-         *
-         * @type string   $default                -text-color Default color of the header text.
-         * @type int      $width                  Width in pixels of the custom header image. Default 1200.
-         * @type int      $height                 Height in pixels of the custom header image. Default 280.
-         * @type bool     $flex                   -height        Whether to allow flexible-height header images. Default true.
-         * @type callable $wp                     -head-callback   Callback function used to style the header image and text
-         *                                        displayed on the blog.
-         *                                        }
-         * @since Twenty Sixteen 1.0
-         *
-         */ apply_filters('twentysixteen_custom_header_args', [
-            'default-text-color' => $default_text_color,
-            'width' => 1200,
-            'height' => 280,
-            'flex-height' => true,
-            'wp-head-callback' => 'twentysixteen_header_style',
-        ])
+            'custom-header', apply_filters('twentysixteen_custom_header_args', [
+                               'default-text-color' => $default_text_color,
+                               'width' => 1200,
+                               'height' => 280,
+                               'flex-height' => true,
+                               'wp-head-callback' => 'twentysixteen_header_style',
+                           ])
         );
     }
 
     add_action('after_setup_theme', 'twentysixteen_custom_header_and_background');
 
     if(! function_exists('twentysixteen_header_style')) :
-        /**
-         * Styles the header text displayed on the site.
-         *
-         * Create your own twentysixteen_header_style() function to override in a child theme.
-         *
-         * @since Twenty Sixteen 1.0
-         *
-         * @see   twentysixteen_custom_header_and_background().
-         */
+
         function twentysixteen_header_style()
         {
             // If the header text option is untouched, let's bail.
@@ -99,14 +52,6 @@
         }
     endif; // twentysixteen_header_style()
 
-    /**
-     * Adds postMessage support for site title and description for the Customizer.
-     *
-     * @param WP_Customize_Manager $wp_customize The Customizer object.
-     *
-     * @since Twenty Sixteen 1.0
-     *
-     */
     function twentysixteen_customize_register($wp_customize)
     {
         $color_scheme = twentysixteen_get_color_scheme();
@@ -205,72 +150,18 @@
 
     add_action('customize_register', 'twentysixteen_customize_register', 11);
 
-    /**
-     * Render the site title for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentysixteen_customize_register()
-     *
-     * @since Twenty Sixteen 1.2
-     *
-     */
     function twentysixteen_customize_partial_blogname()
     {
         bloginfo('name');
     }
 
-    /**
-     * Render the site tagline for the selective refresh partial.
-     *
-     * @return void
-     * @see   twentysixteen_customize_register()
-     *
-     * @since Twenty Sixteen 1.2
-     *
-     */
     function twentysixteen_customize_partial_blogdescription()
     {
         bloginfo('description');
     }
 
-    /**
-     * Registers color schemes for Twenty Sixteen.
-     *
-     * Can be filtered with {@see 'twentysixteen_color_schemes'}.
-     *
-     * The order of colors in a colors array:
-     * 1. Main Background Color.
-     * 2. Page Background Color.
-     * 3. Link Color.
-     * 4. Main Text Color.
-     * 5. Secondary Text Color.
-     *
-     * @return array An associative array of color scheme options.
-     * @since Twenty Sixteen 1.0
-     *
-     */
     function twentysixteen_get_color_schemes()
     {
-        /**
-         * Filters the color schemes registered for use with Twenty Sixteen.
-         *
-         * The default schemes include 'default', 'dark', 'gray', 'red', and 'yellow'.
-         *
-         * @param array $schemes        {
-         *                              Associative array of color schemes data.
-         *
-         * @type array  $slug           {
-         *                              Associative array of information for setting up the color scheme.
-         *
-         * @type string $label          Color scheme label.
-         * @type array  $colors         HEX codes for default colors prepended with a hash symbol ('#').
-         *                              Colors are defined in the following order: Main background, page
-         *                              background, link, main text, secondary text.
-         *                              }
-         *                              }
-         * @since Twenty Sixteen 1.0
-         *
-         */
         return apply_filters('twentysixteen_color_schemes', [
             'default' => [
                 'label' => __('Default', 'twentysixteen'),
@@ -326,15 +217,7 @@
     }
 
     if(! function_exists('twentysixteen_get_color_scheme')) :
-        /**
-         * Retrieves the current Twenty Sixteen color scheme.
-         *
-         * Create your own twentysixteen_get_color_scheme() function to override in a child theme.
-         *
-         * @return array An associative array of either the current or default color scheme HEX values.
-         * @since Twenty Sixteen 1.0
-         *
-         */
+
         function twentysixteen_get_color_scheme()
         {
             $color_scheme_option = get_theme_mod('color_scheme', 'default');
@@ -350,16 +233,7 @@
     endif; // twentysixteen_get_color_scheme()
 
     if(! function_exists('twentysixteen_get_color_scheme_choices')) :
-        /**
-         * Retrieves an array of color scheme choices registered for Twenty Sixteen.
-         *
-         * Create your own twentysixteen_get_color_scheme_choices() function to override
-         * in a child theme.
-         *
-         * @return array Array of color schemes.
-         * @since Twenty Sixteen 1.0
-         *
-         */
+
         function twentysixteen_get_color_scheme_choices()
         {
             $color_schemes = twentysixteen_get_color_schemes();
@@ -375,18 +249,7 @@
     endif; // twentysixteen_get_color_scheme_choices()
 
     if(! function_exists('twentysixteen_sanitize_color_scheme')) :
-        /**
-         * Handles sanitization for Twenty Sixteen color schemes.
-         *
-         * Create your own twentysixteen_sanitize_color_scheme() function to override
-         * in a child theme.
-         *
-         * @param string $value Color scheme name value.
-         *
-         * @return string Color scheme name.
-         * @since Twenty Sixteen 1.0
-         *
-         */
+
         function twentysixteen_sanitize_color_scheme($value)
         {
             $color_schemes = twentysixteen_get_color_scheme_choices();
@@ -400,13 +263,6 @@
         }
     endif; // twentysixteen_sanitize_color_scheme()
 
-    /**
-     * Enqueues front-end CSS for color scheme.
-     *
-     * @since Twenty Sixteen 1.0
-     *
-     * @see   wp_add_inline_style()
-     */
     function twentysixteen_color_scheme_css()
     {
         $color_scheme_option = get_theme_mod('color_scheme', 'default');
@@ -446,13 +302,6 @@
 
     add_action('wp_enqueue_scripts', 'twentysixteen_color_scheme_css');
 
-    /**
-     * Binds the JS listener to make Customizer color_scheme control.
-     *
-     * Passes color scheme data as colorScheme global.
-     *
-     * @since Twenty Sixteen 1.0
-     */
     function twentysixteen_customize_control_js()
     {
         wp_enqueue_script('color-scheme-control', get_template_directory_uri().'/js/color-scheme-control.js', [
@@ -466,11 +315,6 @@
 
     add_action('customize_controls_enqueue_scripts', 'twentysixteen_customize_control_js');
 
-    /**
-     * Binds JS handlers to make the Customizer preview reload changes asynchronously.
-     *
-     * @since Twenty Sixteen 1.0
-     */
     function twentysixteen_customize_preview_js()
     {
         wp_enqueue_script('twentysixteen-customize-preview', get_template_directory_uri().'/js/customize-preview.js', ['customize-preview'], '20170530', ['in_footer' => true]);
@@ -478,15 +322,6 @@
 
     add_action('customize_preview_init', 'twentysixteen_customize_preview_js');
 
-    /**
-     * Returns CSS for the color schemes.
-     *
-     * @param array $colors Color scheme colors.
-     *
-     * @return string Color scheme CSS.
-     * @since Twenty Sixteen 1.0
-     *
-     */
     function twentysixteen_get_color_scheme_css($colors)
     {
         $colors = wp_parse_args($colors, [
@@ -679,10 +514,7 @@
 
 	/* Secondary Text Color */
 
-	/**
-	 * IE8 and earlier will drop any block with CSS3 selectors.
-	 * Do not combine these styles with the next block.
-	 */
+	
 	body:not(.search-results) .entry-summary {
 		color: {$colors['secondary_text_color']};
 	}
@@ -806,14 +638,6 @@
 CSS;
     }
 
-    /**
-     * Outputs an Underscore template for generating CSS for the color scheme.
-     *
-     * The template generates the css dynamically for instant display in the
-     * Customizer preview.
-     *
-     * @since Twenty Sixteen 1.0
-     */
     function twentysixteen_color_scheme_css_template()
     {
         $colors = [
@@ -833,13 +657,6 @@ CSS;
 
     add_action('customize_controls_print_footer_scripts', 'twentysixteen_color_scheme_css_template');
 
-    /**
-     * Enqueues front-end CSS for the page background color.
-     *
-     * @since Twenty Sixteen 1.0
-     *
-     * @see   wp_add_inline_style()
-     */
     function twentysixteen_page_background_color_css()
     {
         $color_scheme = twentysixteen_get_color_scheme();
@@ -909,13 +726,6 @@ CSS;
 
     add_action('wp_enqueue_scripts', 'twentysixteen_page_background_color_css', 11);
 
-    /**
-     * Enqueues front-end CSS for the link color.
-     *
-     * @since Twenty Sixteen 1.0
-     *
-     * @see   wp_add_inline_style()
-     */
     function twentysixteen_link_color_css()
     {
         $color_scheme = twentysixteen_get_color_scheme();
@@ -1015,13 +825,6 @@ CSS;
 
     add_action('wp_enqueue_scripts', 'twentysixteen_link_color_css', 11);
 
-    /**
-     * Enqueues front-end CSS for the main text color.
-     *
-     * @since Twenty Sixteen 1.0
-     *
-     * @see   wp_add_inline_style()
-     */
     function twentysixteen_main_text_color_css()
     {
         $color_scheme = twentysixteen_get_color_scheme();
@@ -1173,13 +976,6 @@ CSS;
 
     add_action('wp_enqueue_scripts', 'twentysixteen_main_text_color_css', 11);
 
-    /**
-     * Enqueues front-end CSS for the secondary text color.
-     *
-     * @since Twenty Sixteen 1.0
-     *
-     * @see   wp_add_inline_style()
-     */
     function twentysixteen_secondary_text_color_css()
     {
         $color_scheme = twentysixteen_get_color_scheme();
@@ -1195,10 +991,7 @@ CSS;
         $css = '
 		/* Custom Secondary Text Color */
 
-		/**
-		 * IE8 and earlier will drop any block with CSS3 selectors.
-		 * Do not combine these styles with the next block.
-		 */
+		
 		body:not(.search-results) .entry-summary {
 			color: %1$s;
 		}

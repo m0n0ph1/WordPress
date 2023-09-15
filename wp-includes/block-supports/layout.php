@@ -1,23 +1,5 @@
 <?php
-    /**
-     * Layout block support flag.
-     *
-     * @package WordPress
-     * @since   5.8.0
-     */
 
-    /**
-     * Returns layout definitions, keyed by layout type.
-     *
-     * Provides a common definition of slugs, classnames, base styles, and spacing styles for each layout type.
-     * When making changes or additions to layout definitions, the corresponding JavaScript definitions should
-     * also be updated.
-     *
-     * @return array[] Layout definitions.
-     * @since  6.3.0
-     * @access private
-     *
-     */
     function wp_get_layout_definitions()
     {
         $layout_definitions = [
@@ -193,16 +175,6 @@
         return $layout_definitions;
     }
 
-    /**
-     * Registers the layout block attribute for block types that support it.
-     *
-     * @param WP_Block_Type $block_type Block Type.
-     *
-     * @since  6.3.0 Check for layout support via the `layout` key with fallback to `__experimentalLayout`.
-     * @access private
-     *
-     * @since  5.8.0
-     */
     function wp_register_layout_support($block_type)
     {
         $support_layout = block_has_support($block_type, 'layout', false) || block_has_support($block_type, '__experimentalLayout', false);
@@ -222,26 +194,6 @@
         }
     }
 
-    /**
-     * Generates the CSS corresponding to the provided layout.
-     *
-     * @param string               $selector                      CSS selector.
-     * @param array                $layout                        Layout object. The one that is passed has already checked
-     *                                                            the existence of default block layout.
-     * @param bool                 $has_block_gap_support         Optional. Whether the theme has support for the block gap. Default false.
-     * @param string|string[]|null $gap_value                     Optional. The block gap value to apply. Default null.
-     * @param bool                 $should_skip_gap_serialization Optional. Whether to skip applying the user-defined value set in the
-     *                                                            editor. Default false.
-     * @param string               $fallback_gap_value            Optional. The block gap value to apply. Default '0.5em'.
-     * @param array|null           $block_spacing                 Optional. Custom spacing set on the block. Default null.
-     *
-     * @return string CSS styles on success. Else, empty string.
-     * @since  5.9.0
-     * @since  6.1.0 Added `$block_spacing` param, use style engine to enqueue styles.
-     * @since  6.3.0 Added grid layout type.
-     * @access private
-     *
-     */
     function wp_get_layout_style(
         $selector, $layout, $has_block_gap_support = false, $gap_value = null, $should_skip_gap_serialization = false, $fallback_gap_value = '0.5em', $block_spacing = null
     ) {
@@ -572,19 +524,6 @@
         return '';
     }
 
-    /**
-     * Renders the layout config to the block wrapper.
-     *
-     * @param string $block_content Rendered block content.
-     * @param array  $block         Block object.
-     *
-     * @return string Filtered block content.
-     * @since  5.8.0
-     * @since  6.3.0 Adds compound class to layout wrapper for global spacing styles.
-     * @since  6.3.0 Check for layout support via the `layout` key with fallback to `__experimentalLayout`.
-     * @access private
-     *
-     */
     function wp_render_layout_support_flag($block_content, $block)
     {
         $block_type = WP_Block_Type_Registry::get_instance()->get_registered($block['blockName']);
@@ -774,10 +713,6 @@
             $content_with_outer_classnames = (string) $content_with_outer_classnames;
         }
 
-        /**
-         * The first chunk of innerContent contains the block markup up until the inner blocks start.
-         * This targets the opening tag of the inner blocks wrapper, which is the last tag in that chunk.
-         */
         $inner_content_classnames = '';
 
         if(isset($block['innerContent'][0]) && 'string' === gettype($block['innerContent'][0]) && count($block['innerContent']) > 1)
@@ -820,19 +755,6 @@
     ]);
     add_filter('render_block', 'wp_render_layout_support_flag', 10, 2);
 
-    /**
-     * For themes without theme.json file, make sure
-     * to restore the inner div for the group block
-     * to avoid breaking styles relying on that div.
-     *
-     * @param string $block_content Rendered block content.
-     * @param array  $block         Block object.
-     *
-     * @return string Filtered block content.
-     * @since  5.8.0
-     * @access private
-     *
-     */
     function wp_restore_group_inner_container($block_content, $block)
     {
         $tag_name = isset($block['attrs']['tagName']) ? $block['attrs']['tagName'] : 'div';
@@ -854,19 +776,6 @@
 
     add_filter('render_block_core/group', 'wp_restore_group_inner_container', 10, 2);
 
-    /**
-     * For themes without theme.json file, make sure
-     * to restore the outer div for the aligned image block
-     * to avoid breaking styles relying on that div.
-     *
-     * @param string $block_content Rendered block content.
-     * @param array  $block         Block object.
-     *
-     * @return string Filtered block content.
-     * @since  6.0.0
-     * @access private
-     *
-     */
     function wp_restore_image_outer_container($block_content, $block)
     {
         $image_with_align = "

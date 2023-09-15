@@ -1,13 +1,5 @@
 <?php
-    /**
-     * User administration panel
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      1.0.0
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('list_users'))
@@ -304,16 +296,6 @@
                 $user_ids = array_diff($user_ids, [$current_user->ID]);
             }
 
-            /**
-             * Filters whether the users being deleted have additional content
-             * associated with them outside of the `post_author` and `link_owner` relationships.
-             *
-             * @param bool  $users_have_additional_content Whether the users have additional content. Default false.
-             * @param int[] $user_ids                      Array of IDs for users being deleted.
-             *
-             * @since 5.2.0
-             *
-             */
             $users_have_content = (bool) apply_filters('users_have_additional_content', false, $user_ids);
 
             if($user_ids && ! $users_have_content)
@@ -438,16 +420,6 @@
                             <?php
                             endif;
 
-                            /**
-                             * Fires at the end of the delete users form prior to the confirm button.
-                             *
-                             * @param WP_User $current_user WP_User object for the current user.
-                             * @param int[]   $user_ids     Array of IDs for users being deleted.
-                             *
-                             * @since 4.0.0
-                             * @since 4.5.0 The `$user_ids` parameter was added.
-                             *
-                             */
                             do_action('delete_user_form', $current_user, $user_ids);
                             ?>
                             <input type="hidden" name="action" value="dodelete"/>
@@ -600,7 +572,6 @@
                 $sendback = wp_get_referer();
                 $user_ids = array_map('intval', (array) $_REQUEST['users']);
 
-                /** This action is documented in wp-admin/edit.php */
                 $sendback = apply_filters("handle_bulk_actions-{$screen}", $sendback, $wp_list_table->current_action(), $user_ids); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
                 wp_safe_redirect($sendback);

@@ -1,17 +1,5 @@
 <?php
-    /**
-     * Twenty Seventeen functions and definitions
-     *
-     * @link       https://developer.wordpress.org/themes/basics/theme-functions/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Seventeen
-     * @since      Twenty Seventeen 1.0
-     */
 
-    /**
-     * Twenty Seventeen only works in WordPress 4.7 or later.
-     */
     if(version_compare($GLOBALS['wp_version'], '4.7-alpha', '<'))
     {
         require get_template_directory().'/inc/back-compat.php';
@@ -19,13 +7,6 @@
         return;
     }
 
-    /**
-     * Sets up theme defaults and registers support for various WordPress features.
-     *
-     * Note that this function is hooked into the after_setup_theme hook, which
-     * runs before the init hook. The init hook is too late for some features, such
-     * as indicating support for post thumbnails.
-     */
     function twentyseventeen_setup()
     {
         // Add default posts and comments RSS feed links to head.
@@ -221,14 +202,6 @@
             ],
         ];
 
-        /**
-         * Filters Twenty Seventeen array of starter content.
-         *
-         * @param array $starter_content Array of starter content.
-         *
-         * @since Twenty Seventeen 1.1
-         *
-         */
         $starter_content = apply_filters('twentyseventeen_starter_content', $starter_content);
 
         add_theme_support('starter-content', $starter_content);
@@ -236,13 +209,6 @@
 
     add_action('after_setup_theme', 'twentyseventeen_setup');
 
-    /**
-     * Set the content width in pixels, based on the theme's design and stylesheet.
-     *
-     * Priority 0 to make it available to lower priority callbacks.
-     *
-     * @global int $content_width
-     */
     function twentyseventeen_content_width()
     {
         $content_width = $GLOBALS['content_width'];
@@ -269,28 +235,13 @@
             $content_width = 740;
         }
 
-        /**
-         * Filters Twenty Seventeen content width of the theme.
-         *
-         * @param int $content_width Content width in pixels.
-         *
-         * @since Twenty Seventeen 1.0
-         *
-         */
         $GLOBALS['content_width'] = apply_filters('twentyseventeen_content_width', $content_width);
     }
 
     add_action('template_redirect', 'twentyseventeen_content_width', 0);
 
     if(! function_exists('twentyseventeen_fonts_url')) :
-        /**
-         * Register custom fonts.
-         *
-         * @return string Fonts URL for the theme.
-         * @since Twenty Seventeen 3.2 Replaced Google URL with self-hosted fonts.
-         *
-         * @since Twenty Seventeen 1.0
-         */
+
         function twentyseventeen_fonts_url()
         {
             $fonts_url = '';
@@ -310,17 +261,6 @@
         }
     endif;
 
-    /**
-     * Add preconnect for Google Fonts.
-     *
-     * @param array  $urls          URLs to print for resource hints.
-     * @param string $relation_type The relation type the URLs are printed.
-     *
-     * @return array URLs to print for resource hints.
-     * @deprecated Twenty Seventeen 3.2 Disabled filter because, by default, fonts are self-hosted.
-     *
-     * @since      Twenty Seventeen 1.0
-     */
     function twentyseventeen_resource_hints($urls, $relation_type)
     {
         if(wp_style_is('twentyseventeen-fonts', 'queue') && 'preconnect' === $relation_type)
@@ -336,11 +276,6 @@
 
 // add_filter( 'wp_resource_hints', 'twentyseventeen_resource_hints', 10, 2 );
 
-    /**
-     * Register widget area.
-     *
-     * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
-     */
     function twentyseventeen_widgets_init()
     {
         register_sidebar([
@@ -376,16 +311,6 @@
 
     add_action('widgets_init', 'twentyseventeen_widgets_init');
 
-    /**
-     * Replaces "[...]" (appended to automatically generated excerpts) with ... and
-     * a 'Continue reading' link.
-     *
-     * @param string $link Link to single post/page.
-     *
-     * @return string 'Continue reading' link prepended with an ellipsis.
-     * @since Twenty Seventeen 1.0
-     *
-     */
     function twentyseventeen_excerpt_more($link)
     {
         if(is_admin())
@@ -400,13 +325,6 @@
 
     add_filter('excerpt_more', 'twentyseventeen_excerpt_more');
 
-    /**
-     * Handles JavaScript detection.
-     *
-     * Adds a `js` class to the root `<html>` element when JavaScript is detected.
-     *
-     * @since Twenty Seventeen 1.0
-     */
     function twentyseventeen_javascript_detection()
     {
         echo "<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>\n";
@@ -414,9 +332,6 @@
 
     add_action('wp_head', 'twentyseventeen_javascript_detection', 0);
 
-    /**
-     * Add a pingback url auto-discovery header for singularly identifiable articles.
-     */
     function twentyseventeen_pingback_header()
     {
         if(is_singular() && pings_open())
@@ -427,9 +342,6 @@
 
     add_action('wp_head', 'twentyseventeen_pingback_header');
 
-    /**
-     * Display custom color CSS.
-     */
     function twentyseventeen_colors_css_wrap()
     {
         if('custom' !== get_theme_mod('colorscheme') && ! is_customize_preview())
@@ -454,9 +366,6 @@
 
     add_action('wp_head', 'twentyseventeen_colors_css_wrap');
 
-    /**
-     * Enqueues scripts and styles.
-     */
     function twentyseventeen_scripts()
     {
         // Add custom fonts, used in the main stylesheet.
@@ -531,11 +440,6 @@
 
     add_action('wp_enqueue_scripts', 'twentyseventeen_scripts');
 
-    /**
-     * Enqueues styles for the block-based editor.
-     *
-     * @since Twenty Seventeen 1.8
-     */
     function twentyseventeen_block_editor_styles()
     {
         // Block styles.
@@ -547,18 +451,6 @@
 
     add_action('enqueue_block_editor_assets', 'twentyseventeen_block_editor_styles');
 
-    /**
-     * Add custom image sizes attribute to enhance responsive image functionality
-     * for content images.
-     *
-     * @param string $sizes A source size value for use in a 'sizes' attribute.
-     * @param array  $size  Image size. Accepts an array of width and height
-     *                      values in pixels (in that order).
-     *
-     * @return string A source size value for use in a content image 'sizes' attribute.
-     * @since Twenty Seventeen 1.0
-     *
-     */
     function twentyseventeen_content_image_sizes_attr($sizes, $size)
     {
         $width = $size[0];
@@ -581,17 +473,6 @@
 
     add_filter('wp_calculate_image_sizes', 'twentyseventeen_content_image_sizes_attr', 10, 2);
 
-    /**
-     * Filters the `sizes` value in the header image markup.
-     *
-     * @param string $html   The HTML image tag markup being filtered.
-     * @param object $header The custom header object returned by 'get_custom_header()'.
-     * @param array  $attr   Array of the attributes for the image tag.
-     *
-     * @return string The filtered header image HTML.
-     * @since Twenty Seventeen 1.0
-     *
-     */
     function twentyseventeen_header_image_tag($html, $header, $attr)
     {
         if(isset($attr['sizes']))
@@ -604,20 +485,6 @@
 
     add_filter('get_header_image_tag', 'twentyseventeen_header_image_tag', 10, 3);
 
-    /**
-     * Add custom image sizes attribute to enhance responsive image functionality
-     * for post thumbnails.
-     *
-     * @param string[]     $attr       Array of attribute values for the image markup, keyed by attribute name.
-     *                                 See wp_get_attachment_image().
-     * @param WP_Post      $attachment Image attachment post.
-     * @param string|int[] $size       Requested image size. Can be any registered image size name, or
-     *                                 an array of width and height values in pixels (in that order).
-     *
-     * @return string[] The filtered attributes for the image markup.
-     * @since Twenty Seventeen 1.0
-     *
-     */
     function twentyseventeen_post_thumbnail_sizes_attr($attr, $attachment, $size)
     {
         if(is_archive() || is_search() || is_home())
@@ -634,16 +501,6 @@
 
     add_filter('wp_get_attachment_image_attributes', 'twentyseventeen_post_thumbnail_sizes_attr', 10, 3);
 
-    /**
-     * Use front-page.php when Front page displays is set to a static page.
-     *
-     * @param string $template front-page.php.
-     *
-     * @return string The template to be used: blank if is_home() is true (defaults to index.php),
-     *                otherwise $template.
-     * @since Twenty Seventeen 1.0
-     *
-     */
     function twentyseventeen_front_page_template($template)
     {
         return is_home() ? '' : $template;
@@ -651,16 +508,6 @@
 
     add_filter('frontpage_template', 'twentyseventeen_front_page_template');
 
-    /**
-     * Modifies tag cloud widget arguments to display all tags in the same font size
-     * and use list format for better accessibility.
-     *
-     * @param array $args Arguments for tag cloud widget.
-     *
-     * @return array The filtered arguments for tag cloud widget.
-     * @since Twenty Seventeen 1.4
-     *
-     */
     function twentyseventeen_widget_tag_cloud_args($args)
     {
         $args['largest'] = 1;
@@ -673,22 +520,6 @@
 
     add_filter('widget_tag_cloud_args', 'twentyseventeen_widget_tag_cloud_args');
 
-    /**
-     * Gets unique ID.
-     *
-     * This is a PHP implementation of Underscore's uniqueId method. A static variable
-     * contains an integer that is incremented with each call. This number is returned
-     * with the optional prefix. As such the returned value is not universally unique,
-     * but it is unique across the life of the PHP process.
-     *
-     * @param string $prefix Prefix for the returned ID.
-     *
-     * @return string Unique ID.
-     * @since Twenty Seventeen 2.0
-     *
-     * @see   wp_unique_id() Themes requiring WordPress 5.0.3 and greater should use this instead.
-     *
-     */
     function twentyseventeen_unique_id($prefix = '')
     {
         static $id_counter = 0;
@@ -701,13 +532,7 @@
     }
 
     if(! function_exists('wp_get_list_item_separator')) :
-        /**
-         * Retrieves the list item separator based on the locale.
-         *
-         * Added for backward compatibility to support pre-6.0.0 WordPress versions.
-         *
-         * @since 6.0.0
-         */
+
         function wp_get_list_item_separator()
         {
             /* translators: Used between list items, there is a space after the comma. */
@@ -715,32 +540,14 @@
         }
     endif;
 
-    /**
-     * Implement the Custom Header feature.
-     */
     require get_parent_theme_file_path('/inc/custom-header.php');
 
-    /**
-     * Custom template tags for this theme.
-     */
     require get_parent_theme_file_path('/inc/template-tags.php');
 
-    /**
-     * Additional features to allow styling of the templates.
-     */
     require get_parent_theme_file_path('/inc/template-functions.php');
 
-    /**
-     * Customizer additions.
-     */
     require get_parent_theme_file_path('/inc/customizer.php');
 
-    /**
-     * SVG icons functions and filters.
-     */
     require get_parent_theme_file_path('/inc/icon-functions.php');
 
-    /**
-     * Block Patterns.
-     */
     require get_template_directory().'/inc/block-patterns.php';

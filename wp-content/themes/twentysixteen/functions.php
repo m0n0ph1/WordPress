@@ -1,50 +1,12 @@
 <?php
-    /**
-     * Twenty Sixteen functions and definitions
-     *
-     * Set up the theme and provides some helper functions, which are used in the
-     * theme as custom template tags. Others are attached to action and filter
-     * hooks in WordPress to change core functionality.
-     *
-     * When using a child theme you can override certain functions (those wrapped
-     * in a function_exists() call) by defining them first in your child theme's
-     * functions.php file. The child theme's functions.php file is included before
-     * the parent theme's file, so the child theme functions would be used.
-     *
-     * @link       https://developer.wordpress.org/themes/basics/theme-functions/
-     * @link       https://developer.wordpress.org/themes/advanced-topics/child-themes/
-     *
-     * Functions that are not pluggable (not wrapped in function_exists()) are
-     * instead attached to a filter or action hook.
-     *
-     * For more information on hooks, actions, and filters,
-     * {@link https://developer.wordpress.org/plugins/}
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Sixteen
-     * @since      Twenty Sixteen 1.0
-     */
 
-    /**
-     * Twenty Sixteen only works in WordPress 4.4 or later.
-     */
     if(version_compare($GLOBALS['wp_version'], '4.4-alpha', '<'))
     {
         require get_template_directory().'/inc/back-compat.php';
     }
 
     if(! function_exists('twentysixteen_setup')) :
-        /**
-         * Sets up theme defaults and registers support for various WordPress features.
-         *
-         * Note that this function is hooked into the after_setup_theme hook, which
-         * runs before the init hook. The init hook is too late for some features, such
-         * as indicating support for post thumbnails.
-         *
-         * Create your own twentysixteen_setup() function to override in a child theme.
-         *
-         * @since Twenty Sixteen 1.0
-         */
+
         function twentysixteen_setup()
         {
             /*
@@ -224,15 +186,6 @@
     endif; // twentysixteen_setup()
     add_action('after_setup_theme', 'twentysixteen_setup');
 
-    /**
-     * Sets the content width in pixels, based on the theme's design and stylesheet.
-     *
-     * Priority 0 to make it available to lower priority callbacks.
-     *
-     * @global int $content_width
-     *
-     * @since Twenty Sixteen 1.0
-     */
     function twentysixteen_content_width()
     {
         $GLOBALS['content_width'] = apply_filters('twentysixteen_content_width', 840);
@@ -240,17 +193,6 @@
 
     add_action('after_setup_theme', 'twentysixteen_content_width', 0);
 
-    /**
-     * Add preconnect for Google Fonts.
-     *
-     * @param array  $urls          URLs to print for resource hints.
-     * @param string $relation_type The relation type the URLs are printed.
-     *
-     * @return array URLs to print for resource hints.
-     * @deprecated Twenty Sixteen 2.9 Disabled filter because, by default, fonts are self-hosted.
-     *
-     * @since      Twenty Sixteen 1.6
-     */
     function twentysixteen_resource_hints($urls, $relation_type)
     {
         if(wp_style_is('twentysixteen-fonts', 'queue') && 'preconnect' === $relation_type)
@@ -266,13 +208,6 @@
 
 // add_filter( 'wp_resource_hints', 'twentysixteen_resource_hints', 10, 2 );
 
-    /**
-     * Registers a widget area.
-     *
-     * @link  https://developer.wordpress.org/reference/functions/register_sidebar/
-     *
-     * @since Twenty Sixteen 1.0
-     */
     function twentysixteen_widgets_init()
     {
         register_sidebar([
@@ -309,16 +244,7 @@
     add_action('widgets_init', 'twentysixteen_widgets_init');
 
     if(! function_exists('twentysixteen_fonts_url')) :
-        /**
-         * Register fonts for Twenty Sixteen.
-         *
-         * Create your own twentysixteen_fonts_url() function to override in a child theme.
-         *
-         * @return string Fonts URL for the theme.
-         * @since Twenty Sixteen 2.9 Replaced Google URL with self-hosted fonts.
-         *
-         * @since Twenty Sixteen 1.0
-         */
+
         function twentysixteen_fonts_url()
         {
             $fonts_url = '';
@@ -360,13 +286,6 @@
         }
     endif;
 
-    /**
-     * Handles JavaScript detection.
-     *
-     * Adds a `js` class to the root `<html>` element when JavaScript is detected.
-     *
-     * @since Twenty Sixteen 1.0
-     */
     function twentysixteen_javascript_detection()
     {
         echo "<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>\n";
@@ -374,11 +293,6 @@
 
     add_action('wp_head', 'twentysixteen_javascript_detection', 0);
 
-    /**
-     * Enqueues scripts and styles.
-     *
-     * @since Twenty Sixteen 1.0
-     */
     function twentysixteen_scripts()
     {
         // Add custom fonts, used in the main stylesheet.
@@ -436,11 +350,6 @@
 
     add_action('wp_enqueue_scripts', 'twentysixteen_scripts');
 
-    /**
-     * Enqueue styles for the block-based editor.
-     *
-     * @since Twenty Sixteen 1.6
-     */
     function twentysixteen_block_editor_styles()
     {
         // Block styles.
@@ -452,15 +361,6 @@
 
     add_action('enqueue_block_editor_assets', 'twentysixteen_block_editor_styles');
 
-    /**
-     * Adds custom classes to the array of body classes.
-     *
-     * @param array $classes Classes for the body element.
-     *
-     * @return array (Maybe) filtered body classes.
-     * @since Twenty Sixteen 1.0
-     *
-     */
     function twentysixteen_body_classes($classes)
     {
         // Adds a class of custom-background-image to sites with a custom background image.
@@ -492,16 +392,6 @@
 
     add_filter('body_class', 'twentysixteen_body_classes');
 
-    /**
-     * Converts a HEX value to RGB.
-     *
-     * @param string $color The original color, in 3- or 6-digit hexadecimal form.
-     *
-     * @return array Array containing RGB (red, green, and blue) values for the given
-     *               HEX code, empty array otherwise.
-     * @since Twenty Sixteen 1.0
-     *
-     */
     function twentysixteen_hex2rgb($color)
     {
         $color = trim($color, '#');
@@ -530,33 +420,12 @@
         ];
     }
 
-    /**
-     * Custom template tags for this theme.
-     */
     require get_template_directory().'/inc/template-tags.php';
 
-    /**
-     * Block Patterns.
-     */
     require get_template_directory().'/inc/block-patterns.php';
 
-    /**
-     * Customizer additions.
-     */
     require get_template_directory().'/inc/customizer.php';
 
-    /**
-     * Add custom image sizes attribute to enhance responsive image functionality
-     * for content images
-     *
-     * @param string $sizes A source size value for use in a 'sizes' attribute.
-     * @param array  $size  Image size. Accepts an array of width and height
-     *                      values in pixels (in that order).
-     *
-     * @return string A source size value for use in a content image 'sizes' attribute.
-     * @since Twenty Sixteen 1.0
-     *
-     */
     function twentysixteen_content_image_sizes_attr($sizes, $size)
     {
         $width = $size[0];
@@ -590,20 +459,6 @@
 
     add_filter('wp_calculate_image_sizes', 'twentysixteen_content_image_sizes_attr', 10, 2);
 
-    /**
-     * Add custom image sizes attribute to enhance responsive image functionality
-     * for post thumbnails
-     *
-     * @param string[]     $attr       Array of attribute values for the image markup, keyed by attribute name.
-     *                                 See wp_get_attachment_image().
-     * @param WP_Post      $attachment Image attachment post.
-     * @param string|int[] $size       Requested image size. Can be any registered image size name, or
-     *                                 an array of width and height values in pixels (in that order).
-     *
-     * @return string[] The filtered attributes for the image markup.
-     * @since Twenty Sixteen 1.0
-     *
-     */
     function twentysixteen_post_thumbnail_sizes_attr($attr, $attachment, $size)
     {
         if('post-thumbnail' === $size)
@@ -623,16 +478,6 @@
 
     add_filter('wp_get_attachment_image_attributes', 'twentysixteen_post_thumbnail_sizes_attr', 10, 3);
 
-    /**
-     * Modifies tag cloud widget arguments to display all tags in the same font size
-     * and use list format for better accessibility.
-     *
-     * @param array $args Arguments for tag cloud widget.
-     *
-     * @return array The filtered arguments for tag cloud widget.
-     * @since Twenty Sixteen 1.1
-     *
-     */
     function twentysixteen_widget_tag_cloud_args($args)
     {
         $args['largest'] = 1;

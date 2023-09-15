@@ -1,26 +1,5 @@
 <?php
-    /**
-     * Network API
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      5.1.0
-     */
 
-    /**
-     * Retrieves network data given a network ID or network object.
-     *
-     * Network data will be cached and returned after being passed through a filter.
-     * If the provided network is empty, the current network global will be used.
-     *
-     * @param WP_Network|int|null $network Optional. Network to retrieve. Default is the current network.
-     *
-     * @return WP_Network|null The network object or null if not found.
-     * @since 4.6.0
-     *
-     * @global WP_Network         $current_site
-     *
-     */
     function get_network($network = null)
     {
         global $current_site;
@@ -47,30 +26,11 @@
             return null;
         }
 
-        /**
-         * Fires after a network is retrieved.
-         *
-         * @param WP_Network $_network Network data.
-         *
-         * @since 4.6.0
-         *
-         */
         $_network = apply_filters('get_network', $_network);
 
         return $_network;
     }
 
-    /**
-     * Retrieves a list of networks.
-     *
-     * @param string|array $args Optional. Array or string of arguments. See WP_Network_Query::parse_query()
-     *                           for information on accepted arguments. Default empty array.
-     *
-     * @return array|int List of WP_Network objects, a list of network IDs when 'fields' is set to 'ids',
-     *                   or the number of networks when 'count' is passed as a query var.
-     * @since 4.6.0
-     *
-     */
     function get_networks($args = [])
     {
         $query = new WP_Network_Query();
@@ -78,16 +38,6 @@
         return $query->query($args);
     }
 
-    /**
-     * Removes a network from the object cache.
-     *
-     * @param int|array $ids Network ID or an array of network IDs to remove from cache.
-     *
-     * @global bool     $_wp_suspend_cache_invalidation
-     *
-     * @since 4.6.0
-     *
-     */
     function clean_network_cache($ids)
     {
         global $_wp_suspend_cache_invalidation;
@@ -102,32 +52,12 @@
 
         foreach($network_ids as $id)
         {
-            /**
-             * Fires immediately after a network has been removed from the object cache.
-             *
-             * @param int $id Network ID.
-             *
-             * @since 4.6.0
-             *
-             */
             do_action('clean_network_cache', $id);
         }
 
         wp_cache_set_last_changed('networks');
     }
 
-    /**
-     * Updates the network cache of given networks.
-     *
-     * Will add the networks in $networks to the cache. If network ID already exists
-     * in the network cache then it will not be updated. The network is added to the
-     * cache using the network group with the key using the ID of the networks.
-     *
-     * @param array $networks Array of network row objects.
-     *
-     * @since 4.6.0
-     *
-     */
     function update_network_cache($networks)
     {
         $data = [];
@@ -138,18 +68,6 @@
         wp_cache_add_multiple($data, 'networks');
     }
 
-    /**
-     * Adds any networks from the given IDs to the cache that do not already exist in cache.
-     *
-     * @param array $network_ids Array of network IDs.
-     *
-     * @since 6.1.0 This function is no longer marked as "private".
-     *
-     * @see   update_network_cache()
-     * @global wpdb $wpdb        WordPress database abstraction object.
-     *
-     * @since 4.6.0
-     */
     function _prime_network_caches($network_ids)
     {
         global $wpdb;

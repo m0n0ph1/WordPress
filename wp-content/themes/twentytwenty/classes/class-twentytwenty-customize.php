@@ -1,34 +1,11 @@
 <?php
-    /**
-     * Customizer settings for this theme.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty
-     * @since      Twenty Twenty 1.0
-     */
 
     if(! class_exists('TwentyTwenty_Customize'))
     {
-        /**
-         * CUSTOMIZER SETTINGS
-         *
-         * @since Twenty Twenty 1.0
-         */
         class TwentyTwenty_Customize
         {
-            /**
-             * Register customizer options.
-             *
-             * @param WP_Customize_Manager $wp_customize Theme Customizer object.
-             *
-             * @since Twenty Twenty 1.0
-             *
-             */
             public static function register($wp_customize)
             {
-                /**
-                 * Site Title & Description.
-                 * */
                 $wp_customize->get_setting('blogname')->transport = 'postMessage';
                 $wp_customize->get_setting('blogdescription')->transport = 'postMessage';
 
@@ -52,10 +29,6 @@
                     'selector' => '.header-titles [class*=site-]:not(.site-description)',
                     'render_callback' => 'twentytwenty_customize_partial_site_logo',
                 ]);
-
-                /**
-                 * Site Identity
-                 */
 
                 /* 2X Header Logo ---------------- */
                 $wp_customize->add_setting('retina_logo', [
@@ -104,15 +77,6 @@
                     ],
                 ]);
 
-                /**
-                 * Implementation for the accent color.
-                 * This is different to all other color options because of the accessibility enhancements.
-                 * The control is a hue-only colorpicker, and there is a separate setting that holds values
-                 * for other colors calculated based on the selected hue and various background-colors on the page.
-                 *
-                 * @since Twenty Twenty 1.0
-                 */
-
                 // Add the setting for the hue colorpicker.
                 $wp_customize->add_setting('accent_hue', [
                     'default' => 344,
@@ -158,10 +122,6 @@
 
                 // Update background color with postMessage, so inline CSS output is updated as well.
                 $wp_customize->get_setting('background_color')->transport = 'postMessage';
-
-                /**
-                 * Theme Options
-                 */
 
                 $wp_customize->add_section('options', [
                     'title' => __('Theme Options', 'twentytwenty'),
@@ -218,9 +178,6 @@
                     ],
                 ]);
 
-                /**
-                 * Template: Cover Template.
-                 */
                 $wp_customize->add_section('cover_template_options', [
                     'title' => __('Cover Template', 'twentytwenty'),
                     'capability' => 'edit_theme_options',
@@ -313,15 +270,6 @@
                 ]);
             }
 
-            /**
-             * Sanitization callback for the "accent_accessible_colors" setting.
-             *
-             * @param array $value The value we want to sanitize.
-             *
-             * @return array Returns sanitized value. Each item in the array gets sanitized separately.
-             * @since Twenty Twenty 1.0
-             *
-             */
             public static function sanitize_accent_accessible_colors($value)
             {
                 // Make sure the value is an array. Do not typecast, use empty array as fallback.
@@ -339,16 +287,6 @@
                 return $value;
             }
 
-            /**
-             * Sanitize select.
-             *
-             * @param string $input   The input from the setting.
-             * @param object $setting The selected setting.
-             *
-             * @return string The input from the setting or the default setting.
-             * @since Twenty Twenty 1.0
-             *
-             */
             public static function sanitize_select($input, $setting)
             {
                 $input = sanitize_key($input);
@@ -357,15 +295,6 @@
                 return (array_key_exists($input, $choices) ? $input : $setting->default);
             }
 
-            /**
-             * Sanitize boolean for checkbox.
-             *
-             * @param bool $checked Whether or not a box is checked.
-             *
-             * @return bool
-             * @since Twenty Twenty 1.0
-             *
-             */
             public static function sanitize_checkbox($checked)
             {
                 return ((isset($checked) && true === $checked) ? true : false);
@@ -376,16 +305,8 @@
         add_action('customize_register', ['TwentyTwenty_Customize', 'register']);
     }
 
-    /**
-     * PARTIAL REFRESH FUNCTIONS
-     * */
     if(! function_exists('twentytwenty_customize_partial_blogname'))
     {
-        /**
-         * Render the site title for the selective refresh partial.
-         *
-         * @since Twenty Twenty 1.0
-         */
         function twentytwenty_customize_partial_blogname()
         {
             bloginfo('name');
@@ -394,11 +315,6 @@
 
     if(! function_exists('twentytwenty_customize_partial_blogdescription'))
     {
-        /**
-         * Render the site description for the selective refresh partial.
-         *
-         * @since Twenty Twenty 1.0
-         */
         function twentytwenty_customize_partial_blogdescription()
         {
             bloginfo('description');
@@ -407,41 +323,14 @@
 
     if(! function_exists('twentytwenty_customize_partial_site_logo'))
     {
-        /**
-         * Render the site logo for the selective refresh partial.
-         *
-         * Doing it this way so we don't have issues with `render_callback`'s arguments.
-         *
-         * @since Twenty Twenty 1.0
-         */
         function twentytwenty_customize_partial_site_logo()
         {
             twentytwenty_site_logo();
         }
     }
 
-    /**
-     * Input attributes for cover overlay opacity option.
-     *
-     * @return array Array containing attribute names and their values.
-     * @since Twenty Twenty 1.0
-     *
-     */
     function twentytwenty_customize_opacity_range()
     {
-        /**
-         * Filters the input attributes for opacity.
-         *
-         * @param array $attrs {
-         *                     The attributes.
-         *
-         * @type int    $min   Minimum value.
-         * @type int    $max   Maximum value.
-         * @type int    $step  Interval between numbers.
-         *                     }
-         * @since Twenty Twenty 1.0
-         *
-         */
         return apply_filters('twentytwenty_customize_opacity_range', [
             'min' => 0,
             'max' => 90,

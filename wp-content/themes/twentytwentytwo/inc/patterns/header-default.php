@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Default header block pattern
-     */
+
     return [
         'title' => __('Default header', 'twentytwentytwo'),
         'categories' => ['header'],

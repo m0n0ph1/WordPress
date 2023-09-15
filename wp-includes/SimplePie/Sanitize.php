@@ -1,56 +1,5 @@
 <?php
-    /**
-     * SimplePie
-     *
-     * A PHP-Based RSS and Atom Feed Framework.
-     * Takes the hard work out of managing a complete RSS/Atom solution.
-     *
-     * Copyright (c) 2004-2016, Ryan Parman, Sam Sneddon, Ryan McCue, and contributors
-     * All rights reserved.
-     *
-     * Redistribution and use in source and binary forms, with or without modification, are
-     * permitted provided that the following conditions are met:
-     *
-     *    * Redistributions of source code must retain the above copyright notice, this list of
-     *      conditions and the following disclaimer.
-     *
-     *    * Redistributions in binary form must reproduce the above copyright notice, this list
-     *      of conditions and the following disclaimer in the documentation and/or other materials
-     *      provided with the distribution.
-     *
-     *    * Neither the name of the SimplePie Team nor the names of its contributors may be used
-     *      to endorse or promote products derived from this software without specific prior
-     *      written permission.
-     *
-     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-     * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-     * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS
-     * AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-     * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-     * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-     * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-     * POSSIBILITY OF SUCH DAMAGE.
-     *
-     * @package   SimplePie
-     * @copyright 2004-2016 Ryan Parman, Sam Sneddon, Ryan McCue
-     * @author    Ryan Parman
-     * @author    Sam Sneddon
-     * @author    Ryan McCue
-     * @link      http://simplepie.org/ SimplePie
-     * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
-     */
 
-    /**
-     * Used for data cleanup and post-processing
-     *
-     *
-     * This class can be overloaded with {@see SimplePie::set_sanitize_class()}
-     *
-     * @package SimplePie
-     * @todo    Move to using an actual HTML parser (this will allow tags to be properly stripped, and to switch between
-     *     HTML and XHTML), this will also make it easier to shorten a string while preserving HTML tags
-     */
     class SimplePie_Sanitize
     {
         // Private vars
@@ -127,13 +76,6 @@
 
         var $registry;
 
-        /**
-         * List of domains for which to force HTTPS.
-         *
-         * @see SimplePie_Sanitize::set_https_domains()
-         * Array is a tree split at DNS levels. Example:
-         * array('biz' => true, 'com' => array('example' => true), 'net' => array('example' => array('www' => true)))
-         */
         var $https_domains = [];
 
         public function __construct()
@@ -142,18 +84,6 @@
             $this->set_url_replacements(null);
         }
 
-        /**
-         * Set element/attribute key/value pairs of HTML attributes
-         * containing URLs that need to be resolved relative to the feed
-         *
-         * Defaults to |a|@href, |area|@href, |blockquote|@cite, |del|@cite,
-         * |form|@action, |img|@longdesc, |img|@src, |input|@src, |ins|@cite,
-         * |q|@cite
-         *
-         * @param array|null $element_attribute Element/attribute key/value pairs, null for default
-         *
-         * @since 1.0
-         */
         public function set_url_replacements($element_attribute = null)
         {
             if($element_attribute === null)
@@ -349,12 +279,6 @@
             $this->output_encoding = (string) $encoding;
         }
 
-        /**
-         * Set the list of domains for which to force HTTPS.
-         *
-         * @see SimplePie_Misc::https_url()
-         * Example array('biz', 'example.com', 'example.org', 'www.example.net');
-         */
         public function set_https_domains($domains)
         {
             $this->https_domains = [];
@@ -710,18 +634,12 @@
             }
         }
 
-        /**
-         * Force HTTPS for selected Web sites.
-         */
         public function https_url($url)
         {
             return (strtolower(substr($url, 0, 7)) === 'http://') && $this->is_https_domain(parse_url($url, PHP_URL_HOST)) ? substr_replace($url, 's', 4, 0) :    // Add the 's' to HTTPS
                 $url;
         }
 
-        /**
-         * Check if the domain is in the list of forced HTTPS.
-         */
         protected function is_https_domain($domain)
         {
             $domain = trim($domain, '. ');

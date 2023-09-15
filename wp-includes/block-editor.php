@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Block Editor API.
-     *
-     * @package    WordPress
-     * @subpackage Editor
-     * @since      5.8.0
-     */
 
-    /**
-     * Returns the list of default categories for block types.
-     *
-     * @return array[] Array of categories for block types.
-     * @since 6.3.0 Reusable Blocks renamed to Patterns.
-     *
-     * @since 5.8.0
-     */
     function get_default_block_categories()
     {
         return [
@@ -56,17 +41,6 @@
         ];
     }
 
-    /**
-     * Returns all the categories for block types that will be shown in the block editor.
-     *
-     * @param WP_Post|WP_Block_Editor_Context $post_or_block_editor_context The current post object or
-     *                                                                      the block editor context.
-     *
-     * @return array[] Array of categories for block types.
-     * @since 5.0.0
-     * @since 5.8.0 It is possible to pass the block editor context as param.
-     *
-     */
     function get_block_categories($post_or_block_editor_context)
     {
         $block_categories = get_default_block_categories();
@@ -74,31 +48,12 @@
                                                                                                                    'post' => $post_or_block_editor_context,
                                                                                                                ]) : $post_or_block_editor_context;
 
-        /**
-         * Filters the default array of categories for block types.
-         *
-         * @param array[]                 $block_categories     Array of categories for block types.
-         * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
-         *
-         * @since 5.8.0
-         *
-         */
         $block_categories = apply_filters('block_categories_all', $block_categories, $block_editor_context);
 
         if(! empty($block_editor_context->post))
         {
             $post = $block_editor_context->post;
 
-            /**
-             * Filters the default array of categories for block types.
-             *
-             * @param array[] $block_categories Array of categories for block types.
-             * @param WP_Post $post             Post being loaded.
-             *
-             * @since      5.0.0
-             * @deprecated 5.8.0 Use the {@see 'block_categories_all'} filter instead.
-             *
-             */
             $block_categories = apply_filters_deprecated('block_categories', [
                 $block_categories,
                 $post
@@ -108,46 +63,16 @@
         return $block_categories;
     }
 
-    /**
-     * Gets the list of allowed block types to use in the block editor.
-     *
-     * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
-     *
-     * @return bool|string[] Array of block type slugs, or boolean to enable/disable all.
-     * @since 5.8.0
-     *
-     */
     function get_allowed_block_types($block_editor_context)
     {
         $allowed_block_types = true;
 
-        /**
-         * Filters the allowed block types for all editor types.
-         *
-         * @param bool|string[]           $allowed_block_types  Array of block type slugs, or boolean to enable/disable all.
-         *                                                      Default true (all registered block types supported).
-         * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
-         *
-         * @since 5.8.0
-         *
-         */
         $allowed_block_types = apply_filters('allowed_block_types_all', $allowed_block_types, $block_editor_context);
 
         if(! empty($block_editor_context->post))
         {
             $post = $block_editor_context->post;
 
-            /**
-             * Filters the allowed block types for the editor.
-             *
-             * @param bool|string[] $allowed_block_types Array of block type slugs, or boolean to enable/disable all.
-             *                                           Default true (all registered block types supported)
-             * @param WP_Post       $post                The post resource data.
-             *
-             * @since      5.0.0
-             * @deprecated 5.8.0 Use the {@see 'allowed_block_types_all'} filter instead.
-             *
-             */
             $allowed_block_types = apply_filters_deprecated('allowed_block_types', [
                 $allowed_block_types,
                 $post
@@ -157,13 +82,6 @@
         return $allowed_block_types;
     }
 
-    /**
-     * Returns the default block editor settings.
-     *
-     * @return array The default block editor settings.
-     * @since 5.8.0
-     *
-     */
     function get_default_block_editor_settings()
     {
         // Media settings.
@@ -179,7 +97,6 @@
             }
         }
 
-        /** This filter is documented in wp-admin/includes/media.php */
         $image_size_names = apply_filters('image_size_names_choose', [
             'thumbnail' => __('Thumbnail'),
             'medium' => __('Medium'),
@@ -253,29 +170,10 @@
         return $editor_settings;
     }
 
-    /**
-     * Returns the block editor settings needed to use the Legacy Widget block which
-     * is not registered by default.
-     *
-     * @return array Settings to be used with get_block_editor_settings().
-     * @since 5.8.0
-     *
-     */
     function get_legacy_widget_block_editor_settings()
     {
         $editor_settings = [];
 
-        /**
-         * Filters the list of widget-type IDs that should **not** be offered by the
-         * Legacy Widget block.
-         *
-         * Returning an empty array will make all widgets available.
-         *
-         * @param string[] $widgets An array of excluded widget-type IDs.
-         *
-         * @since 5.8.0
-         *
-         */
         $editor_settings['widgetTypesToHideFromLegacyWidgetBlock'] = apply_filters('widget_types_to_hide_from_legacy_widget_block', [
             'pages',
             'calendar',
@@ -298,23 +196,6 @@
         return $editor_settings;
     }
 
-    /**
-     * Collect the block editor assets that need to be loaded into the editor's iframe.
-     *
-     * @return array {
-     *     The block editor assets.
-     *
-     * @type string|false $styles     String containing the HTML for styles.
-     * @type string|false $scripts    String containing the HTML for scripts.
-     *                                }
-     * @global string     $pagenow    The filename of the current screen.
-     * @global WP_Styles  $wp_styles  The WP_Styles current instance.
-     * @global WP_Scripts $wp_scripts The WP_Scripts current instance.
-     *
-     * @since  6.0.0
-     * @access private
-     *
-     */
     function _wp_get_iframed_editor_assets()
     {
         global $wp_styles, $wp_scripts, $pagenow;
@@ -401,16 +282,6 @@
         ];
     }
 
-    /**
-     * Finds the first occurrence of a specific block in an array of blocks.
-     *
-     * @param array  $blocks     Array of blocks.
-     * @param string $block_name Name of the block to find.
-     *
-     * @return array Found block, or empty array if none found.
-     * @since 6.3.0
-     *
-     */
     function wp_get_first_block($blocks, $block_name)
     {
         foreach($blocks as $block)
@@ -433,16 +304,6 @@
         return [];
     }
 
-    /**
-     * Retrieves Post Content block attributes from the current post template.
-     *
-     * @return array Post Content block attributes or empty array if they don't exist.
-     * @global int $post_ID
-     *
-     * @since  6.3.0
-     * @access private
-     *
-     */
     function wp_get_post_content_block_attributes()
     {
         global $post_ID;
@@ -502,16 +363,6 @@
         return [];
     }
 
-    /**
-     * Returns the contextualized block editor settings for a selected editor context.
-     *
-     * @param array                   $custom_settings      Custom settings to use with the given editor type.
-     * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
-     *
-     * @return array The contextualized block editor settings.
-     * @since 5.8.0
-     *
-     */
     function get_block_editor_settings(array $custom_settings, $block_editor_context)
     {
         $editor_settings = array_merge(get_default_block_editor_settings(), [
@@ -669,31 +520,12 @@
             $editor_settings['postContentAttributes'] = $post_content_block_attributes;
         }
 
-        /**
-         * Filters the settings to pass to the block editor for all editor type.
-         *
-         * @param array                   $editor_settings      Default editor settings.
-         * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
-         *
-         * @since 5.8.0
-         *
-         */
         $editor_settings = apply_filters('block_editor_settings_all', $editor_settings, $block_editor_context);
 
         if(! empty($block_editor_context->post))
         {
             $post = $block_editor_context->post;
 
-            /**
-             * Filters the settings to pass to the block editor.
-             *
-             * @param array   $editor_settings Default editor settings.
-             * @param WP_Post $post            Post being edited.
-             *
-             * @since      5.0.0
-             * @deprecated 5.8.0 Use the {@see 'block_editor_settings_all'} filter instead.
-             *
-             */
             $editor_settings = apply_filters_deprecated('block_editor_settings', [
                 $editor_settings,
                 $post
@@ -703,51 +535,16 @@
         return $editor_settings;
     }
 
-    /**
-     * Preloads common data used with the block editor by specifying an array of
-     * REST API paths that will be preloaded for a given block editor context.
-     *
-     * @param (string|string[])[]     $preload_paths        List of paths to preload.
-     * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
-     *
-     * @global WP_Scripts             $wp_scripts           The WP_Scripts object for printing scripts.
-     * @global WP_Styles              $wp_styles            The WP_Styles object for printing styles.
-     *
-     * @since 5.8.0
-     *
-     * @global WP_Post                $post                 Global post object.
-     */
     function block_editor_rest_api_preload(array $preload_paths, $block_editor_context)
     {
         global $post, $wp_scripts, $wp_styles;
 
-        /**
-         * Filters the array of REST API paths that will be used to preloaded common data for the block editor.
-         *
-         * @param (string|string[])[]     $preload_paths        Array of paths to preload.
-         * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
-         *
-         * @since 5.8.0
-         *
-         */
         $preload_paths = apply_filters('block_editor_rest_api_preload_paths', $preload_paths, $block_editor_context);
 
         if(! empty($block_editor_context->post))
         {
             $selected_post = $block_editor_context->post;
 
-            /**
-             * Filters the array of paths that will be preloaded.
-             *
-             * Preload common data by specifying an array of REST API paths that will be preloaded.
-             *
-             * @param (string|string[])[] $preload_paths Array of paths to preload.
-             * @param WP_Post             $selected_post Post being edited.
-             *
-             * @since      5.0.0
-             * @deprecated 5.8.0 Use the {@see 'block_editor_rest_api_preload_paths'} filter instead.
-             *
-             */
             $preload_paths = apply_filters_deprecated('block_editor_preload_paths', [
                 $preload_paths,
                 $selected_post
@@ -796,15 +593,6 @@
         wp_add_inline_script('wp-api-fetch', sprintf('wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );', wp_json_encode($preload_data)), 'after');
     }
 
-    /**
-     * Creates an array of theme styles to load into the block editor.
-     *
-     * @return array An array of theme styles for the block editor.
-     * @global array $editor_styles
-     *
-     * @since 5.8.0
-     *
-     */
     function get_block_editor_theme_styles()
     {
         global $editor_styles;
@@ -846,13 +634,6 @@
         return $styles;
     }
 
-    /**
-     * Returns the classic theme supports settings for block editor.
-     *
-     * @return array The classic theme supports settings.
-     * @since 6.2.0
-     *
-     */
     function get_classic_theme_supports_block_editor_settings()
     {
         $theme_settings = [

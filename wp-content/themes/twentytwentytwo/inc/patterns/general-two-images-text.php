@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Two images with text block pattern
-     */
+
     return [
         'title' => __('Two images with text', 'twentytwentytwo'),
         'categories' => ['featured', 'columns', 'gallery'],

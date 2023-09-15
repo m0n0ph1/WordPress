@@ -20,16 +20,10 @@
     }
     getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.audio.ogg.php', __FILE__, true);
 
-    /**
-     * @tutorial http://flac.sourceforge.net/format.html
-     */
     class getid3_flac extends getid3_handler
     {
         const syncword = 'fLaC';
 
-        /**
-         * @return bool
-         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
@@ -49,9 +43,6 @@
             return $this->parseMETAdata();
         }
 
-        /**
-         * @return bool
-         */
         public function parseMETAdata()
         {
             $info = &$this->getid3->info;
@@ -252,11 +243,6 @@
             return true;
         }
 
-        /**
-         * @param int $blocktype
-         *
-         * @return string
-         */
         public static function metaBlockTypeLookup($blocktype)
         {
             static $lookup = [
@@ -272,11 +258,6 @@
             return (isset($lookup[$blocktype]) ? $lookup[$blocktype] : 'reserved');
         }
 
-        /**
-         * @param string $BlockData
-         *
-         * @return bool
-         */
         private function parseSTREAMINFO($BlockData)
         {
             $info = &$this->getid3->info;
@@ -310,11 +291,6 @@
             return true;
         }
 
-        /**
-         * @param string $BlockData
-         *
-         * @return array
-         */
         public static function parseSTREAMINFOdata($BlockData)
         {
             $streaminfo = [];
@@ -334,11 +310,6 @@
             return $streaminfo;
         }
 
-        /**
-         * @param string $BlockData
-         *
-         * @return bool
-         */
         private function parseAPPLICATION($BlockData)
         {
             $info = &$this->getid3->info;
@@ -350,11 +321,6 @@
             return true;
         }
 
-        /**
-         * @param int $applicationid
-         *
-         * @return string
-         */
         public static function applicationIDLookup($applicationid)
         {
             // http://flac.sourceforge.net/id.html
@@ -410,11 +376,6 @@
             return (isset($lookup[$applicationid]) ? $lookup[$applicationid] : 'reserved');
         }
 
-        /**
-         * @param string $BlockData
-         *
-         * @return bool
-         */
         private function parseSEEKTABLE($BlockData)
         {
             $info = &$this->getid3->info;
@@ -445,11 +406,6 @@
             return true;
         }
 
-        /**
-         * @param string $BlockData
-         *
-         * @return bool
-         */
         private function parseVORBIS_COMMENT($BlockData)
         {
             $info = &$this->getid3->info;
@@ -472,11 +428,6 @@
             return true;
         }
 
-        /**
-         * @param string $BlockData
-         *
-         * @return bool
-         */
         private function parseCUESHEET($BlockData)
         {
             $info = &$this->getid3->info;
@@ -531,12 +482,6 @@
             return true;
         }
 
-        /**
-         * Parse METADATA_BLOCK_PICTURE flac structure and extract attachment
-         * External usage: audio.ogg
-         *
-         * @return bool
-         */
         public function parsePICTURE()
         {
             $info = &$this->getid3->info;
@@ -570,11 +515,6 @@
             return true;
         }
 
-        /**
-         * @param int $type_id
-         *
-         * @return string
-         */
         public static function pictureTypeLookup($type_id)
         {
             static $lookup = [

@@ -5,19 +5,8 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_Sodium_Core_HChaCha20
-     */
     class ParagonIE_Sodium_Core_HChaCha20 extends ParagonIE_Sodium_Core_ChaCha20
     {
-        /**
-         * @param string      $in
-         * @param string      $key
-         * @param string|null $c
-         *
-         * @return string
-         * @throws TypeError
-         */
         public static function hChaCha20($in = '', $key = '', $c = null)
         {
             $ctx = [];
@@ -52,12 +41,6 @@
             return self::hChaCha20Bytes($ctx);
         }
 
-        /**
-         * @param array $ctx
-         *
-         * @return string
-         * @throws TypeError
-         */
         protected static function hChaCha20Bytes(array $ctx)
         {
             $x0 = (int) $ctx[0];

@@ -1,41 +1,10 @@
 <?php
-    /**
-     * Block level presets support.
-     *
-     * @package WordPress
-     * @since   6.2.0
-     */
 
-    /**
-     * Get the class name used on block level presets.
-     *
-     * @param array $block Block object.
-     *
-     * @return string      The unique class name.
-     * @internal
-     *
-     * @since  6.2.0
-     * @access private
-     *
-     */
     function _wp_get_presets_class_name($block)
     {
         return 'wp-settings-'.md5(serialize($block));
     }
 
-    /**
-     * Update the block content with block level presets class name.
-     *
-     * @param string $block_content Rendered block content.
-     * @param array  $block         Block object.
-     *
-     * @return string                Filtered block content.
-     * @since  6.2.0
-     * @access private
-     *
-     * @internal
-     *
-     */
     function _wp_add_block_level_presets_class($block_content, $block)
     {
         if(! $block_content)
@@ -68,20 +37,6 @@
         return $tags->get_updated_html();
     }
 
-    /**
-     * Render the block level presets stylesheet.
-     *
-     * @param string|null $pre_render The pre-rendered content. Default null.
-     * @param array       $block      The block being rendered.
-     *
-     * @return null
-     * @internal
-     *
-     * @since  6.2.0
-     * @since  6.3.0 Updated preset styles to use Selectors API.
-     * @access private
-     *
-     */
     function _wp_add_block_level_preset_styles($pre_render, $block)
     {
         // Return early if the block has not support for descendent block styles.

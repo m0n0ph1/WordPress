@@ -1,34 +1,12 @@
 <?php
-    /**
-     * List Table API: WP_MS_Users_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying users in a list table for the network admin.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_MS_Users_List_Table extends WP_List_Table
     {
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             return current_user_can('manage_network_users');
         }
 
-        /**
-         * @global string $mode List table view mode.
-         * @global string $usersearch
-         * @global string $role
-         */
         public function prepare_items()
         {
             global $mode, $usersearch, $role;
@@ -104,7 +82,6 @@
                 $args['order'] = $_REQUEST['order'];
             }
 
-            /** This filter is documented in wp-admin/includes/class-wp-users-list-table.php */
             $args = apply_filters('users_list_table_query_args', $args);
 
             // Query the user IDs for this page.
@@ -118,16 +95,11 @@
                                        ]);
         }
 
-        /**
-         */
         public function no_items()
         {
             _e('No users found.');
         }
 
-        /**
-         * @return string[] Array of column titles keyed by their column name.
-         */
         public function get_columns()
         {
             $users_columns = [
@@ -139,27 +111,9 @@
                 'blogs' => __('Sites'),
             ];
 
-            /**
-             * Filters the columns displayed in the Network Admin Users list table.
-             *
-             * @param string[] $users_columns An array of user columns. Default 'cb', 'username',
-             *                                'name', 'email', 'registered', 'blogs'.
-             *
-             * @since MU (3.0.0)
-             *
-             */
             return apply_filters('wpmu_users_columns', $users_columns);
         }
 
-        /**
-         * Handles the checkbox column output.
-         *
-         * @param WP_User $item The current WP_User object.
-         *
-         * @since 5.9.0 Renamed `$user` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.3.0
-         */
         public function column_cb($item)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -185,27 +139,11 @@
             <?php
         }
 
-        /**
-         * Handles the ID column output.
-         *
-         * @param WP_User $user The current WP_User object.
-         *
-         * @since 4.4.0
-         *
-         */
         public function column_id($user)
         {
             echo $user->ID;
         }
 
-        /**
-         * Handles the username column output.
-         *
-         * @param WP_User $user The current WP_User object.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_username($user)
         {
             $super_admins = get_super_admins();
@@ -237,14 +175,6 @@
             <?php
         }
 
-        /**
-         * Handles the name column output.
-         *
-         * @param WP_User $user The current WP_User object.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_name($user)
         {
             if($user->first_name && $user->last_name)
@@ -265,29 +195,11 @@
             }
         }
 
-        /**
-         * Handles the email column output.
-         *
-         * @param WP_User $user The current WP_User object.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_email($user)
         {
             echo "<a href='".esc_url("mailto:$user->user_email")."'>$user->user_email</a>";
         }
 
-        /**
-         * Handles the registered date column output.
-         *
-         * @param WP_User $user The current WP_User object.
-         *
-         * @global string $mode List table view mode.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_registered($user)
         {
             global $mode;
@@ -302,22 +214,11 @@
             echo mysql2date($date, $user->user_registered);
         }
 
-        /**
-         * Handles the default column output.
-         *
-         * @param WP_User $item        The current WP_User object.
-         * @param string  $column_name The current column name.
-         *
-         * @since 4.3.0
-         * @since 5.9.0 Renamed `$user` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         public function column_default($item, $column_name)
         {
             // Restores the more descriptive, specific name for use within this method.
             $user = $item;
 
-            /** This filter is documented in wp-admin/includes/class-wp-users-list-table.php */
             echo apply_filters('manage_users_custom_column', '', $column_name, $user->ID);
         }
 
@@ -348,9 +249,6 @@
             }
         }
 
-        /**
-         * @return array
-         */
         protected function get_bulk_actions()
         {
             $actions = [];
@@ -364,10 +262,6 @@
             return $actions;
         }
 
-        /**
-         * @return array
-         * @global string $role
-         */
         protected function get_views()
         {
             global $role;
@@ -392,12 +286,6 @@
             return $this->get_views_links($role_links);
         }
 
-        /**
-         * @param string  $which
-         *
-         * @global string $mode List table view mode.
-         *
-         */
         protected function pagination($which)
         {
             global $mode;
@@ -410,9 +298,6 @@
             }
         }
 
-        /**
-         * @return array
-         */
         protected function get_sortable_columns()
         {
             return [
@@ -423,15 +308,6 @@
             ];
         }
 
-        /**
-         * @param WP_User $user
-         * @param string  $classes
-         * @param string  $data
-         * @param string  $primary
-         *
-         * @since 4.3.0
-         *
-         */
         protected function _column_blogs($user, $classes, $data, $primary)
         {
             echo '<td class="', $classes, ' has-row-actions" ', $data, '>';
@@ -440,14 +316,6 @@
             echo '</td>';
         }
 
-        /**
-         * Handles the sites column output.
-         *
-         * @param WP_User $user The current WP_User object.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_blogs($user)
         {
             $blogs = get_blogs_of_user($user->ID, true);
@@ -465,17 +333,7 @@
 
                 $path = ('/' === $site->path) ? '' : $site->path;
                 $site_classes = ['site-'.$site->site_id];
-                /**
-                 * Filters the span class for a site listing on the mulisite user list table.
-                 *
-                 * @param string[] $site_classes Array of class names used within the span tag. Default "site-#" with the site's network ID.
-                 * @param int      $site_id      Site ID.
-                 * @param int      $network_id   Network ID.
-                 * @param WP_User  $user         WP_User object.
-                 *
-                 * @since 5.2.0
-                 *
-                 */
+
                 $site_classes = apply_filters('ms_user_list_site_class', $site_classes, $site->userblog_id, $site->site_id, $user);
                 if(is_array($site_classes) && ! empty($site_classes))
                 {
@@ -511,16 +369,6 @@
 
                 $actions['view'] = '<a class="'.$class.'" href="'.esc_url(get_home_url($site->userblog_id)).'">'.__('View').'</a>';
 
-                /**
-                 * Filters the action links displayed next the sites a user belongs to
-                 * in the Network Admin Users list table.
-                 *
-                 * @param string[] $actions     An array of action links to be displayed. Default 'Edit', 'View'.
-                 * @param int      $userblog_id The site ID.
-                 *
-                 * @since 3.1.0
-                 *
-                 */
                 $actions = apply_filters('ms_user_list_site_actions', $actions, $site->userblog_id);
 
                 $action_count = count($actions);
@@ -540,19 +388,6 @@
             }
         }
 
-        /**
-         * Generates and displays row action links.
-         *
-         * @param WP_User $item        User being acted upon.
-         * @param string  $column_name Current column name.
-         * @param string  $primary     Primary column name.
-         *
-         * @return string Row actions output for users in Multisite, or an empty string
-         *                if the current column is not the primary column.
-         * @since 4.3.0
-         * @since 5.9.0 Renamed `$user` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         protected function handle_row_actions($item, $column_name, $primary)
         {
             if($primary !== $column_name)
@@ -577,27 +412,11 @@
                 $actions['delete'] = '<a href="'.esc_url(network_admin_url(add_query_arg('_wp_http_referer', urlencode(wp_unslash($_SERVER['REQUEST_URI'])), wp_nonce_url('users.php', 'deleteuser').'&amp;action=deleteuser&amp;id='.$user->ID))).'" class="delete">'.__('Delete').'</a>';
             }
 
-            /**
-             * Filters the action links displayed under each user in the Network Admin Users list table.
-             *
-             * @param string[] $actions An array of action links to be displayed. Default 'Edit', 'Delete'.
-             * @param WP_User  $user    WP_User object.
-             *
-             * @since 3.2.0
-             *
-             */
             $actions = apply_filters('ms_user_row_actions', $actions, $user);
 
             return $this->row_actions($actions);
         }
 
-        /**
-         * Gets the name of the default primary column.
-         *
-         * @return string Name of the default primary column, in this case, 'username'.
-         * @since 4.3.0
-         *
-         */
         protected function get_default_primary_column_name()
         {
             return 'username';

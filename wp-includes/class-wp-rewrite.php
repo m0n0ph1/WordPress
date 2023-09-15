@@ -1,284 +1,60 @@
 <?php
-    /**
-     * Rewrite API: WP_Rewrite class
-     *
-     * @package    WordPress
-     * @subpackage Rewrite
-     * @since      1.5.0
-     */
 
-    /**
-     * Core class used to implement a rewrite component API.
-     *
-     * The WordPress Rewrite class writes the rewrite module rules to the .htaccess
-     * file. It also handles parsing the request to get the correct setup for the
-     * WordPress Query class.
-     *
-     * The Rewrite along with WP class function as a front controller for WordPress.
-     * You can add rules to trigger your page view and processing using this
-     * component. The full functionality of a front controller does not exist,
-     * meaning you can't define how the template files load based on the rewrite
-     * rules.
-     *
-     * @since 1.5.0
-     */
     #[AllowDynamicProperties]
     class WP_Rewrite
     {
-        /**
-         * Permalink structure for posts.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $permalink_structure;
 
-        /**
-         * Whether to add trailing slashes.
-         *
-         * @since 2.2.0
-         * @var bool
-         */
         public $use_trailing_slashes;
 
-        /**
-         * Base for the author permalink structure (example.com/$author_base/authorname).
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $author_base = 'author';
 
-        /**
-         * Permalink structure for author archives.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $author_structure;
 
-        /**
-         * Permalink structure for date archives.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $date_structure;
 
-        /**
-         * Permalink structure for pages.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $page_structure;
 
-        /**
-         * Base of the search permalink structure (example.com/$search_base/query).
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $search_base = 'search';
 
-        /**
-         * Permalink structure for searches.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $search_structure;
 
-        /**
-         * Comments permalink base.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $comments_base = 'comments';
 
-        /**
-         * Pagination permalink base.
-         *
-         * @since 3.1.0
-         * @var string
-         */
         public $pagination_base = 'page';
 
-        /**
-         * Comments pagination permalink base.
-         *
-         * @since 4.2.0
-         * @var string
-         */
         public $comments_pagination_base = 'comment-page';
 
-        /**
-         * Feed permalink base.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $feed_base = 'feed';
 
-        /**
-         * Comments feed permalink structure.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $comment_feed_structure;
 
-        /**
-         * Feed request permalink structure.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $feed_structure;
 
-        /**
-         * The static portion of the post permalink structure.
-         *
-         * If the permalink structure is "/archive/%post_id%" then the front
-         * is "/archive/". If the permalink structure is "/%year%/%postname%/"
-         * then the front is "/".
-         *
-         * @since 1.5.0
-         * @var string
-         *
-         * @see   WP_Rewrite::init()
-         */
         public $front;
 
-        /**
-         * The prefix for all permalink structures.
-         *
-         * If PATHINFO/index permalinks are in use then the root is the value of
-         * `WP_Rewrite::$index` with a trailing slash appended. Otherwise the root
-         * will be empty.
-         *
-         * @since 1.5.0
-         * @var string
-         *
-         * @see   WP_Rewrite::init()
-         * @see   WP_Rewrite::using_index_permalinks()
-         */
         public $root = '';
 
-        /**
-         * The name of the index file which is the entry point to all requests.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $index = 'index.php';
 
-        /**
-         * Variable name to use for regex matches in the rewritten query.
-         *
-         * @since 1.5.0
-         * @var string
-         */
         public $matches = '';
 
-        /**
-         * Rewrite rules to match against the request to find the redirect or query.
-         *
-         * @since 1.5.0
-         * @var string[]
-         */
         public $rules;
 
-        /**
-         * Additional rules added external to the rewrite class.
-         *
-         * Those not generated by the class, see add_rewrite_rule().
-         *
-         * @since 2.1.0
-         * @var string[]
-         */
         public $extra_rules = [];
 
-        /**
-         * Additional rules that belong at the beginning to match first.
-         *
-         * Those not generated by the class, see add_rewrite_rule().
-         *
-         * @since 2.3.0
-         * @var string[]
-         */
         public $extra_rules_top = [];
 
-        /**
-         * Rules that don't redirect to WordPress' index.php.
-         *
-         * These rules are written to the mod_rewrite portion of the .htaccess,
-         * and are added by add_external_rule().
-         *
-         * @since 2.1.0
-         * @var string[]
-         */
         public $non_wp_rules = [];
 
-        /**
-         * Extra permalink structures, e.g. categories, added by add_permastruct().
-         *
-         * @since 2.1.0
-         * @var array[]
-         */
         public $extra_permastructs = [];
 
-        /**
-         * Endpoints (like /trackback/) added by add_rewrite_endpoint().
-         *
-         * @since 2.1.0
-         * @var array[]
-         */
         public $endpoints;
 
-        /**
-         * Whether to write every mod_rewrite rule for WordPress into the .htaccess file.
-         *
-         * This is off by default, turning it on might print a lot of rewrite rules
-         * to the .htaccess file.
-         *
-         * @since 2.0.0
-         * @var bool
-         *
-         * @see   WP_Rewrite::mod_rewrite_rules()
-         */
         public $use_verbose_rules = false;
 
-        /**
-         * Could post permalinks be confused with those of pages?
-         *
-         * If the first rewrite tag in the post permalink structure is one that could
-         * also match a page name (e.g. %postname% or %author%) then this flag is
-         * set to true. Prior to WordPress 3.3 this flag indicated that every page
-         * would have a set of rules added to the top of the rewrite rules array.
-         * Now it tells WP::parse_request() to check if a URL matching the page
-         * permastruct is actually a page before accepting it.
-         *
-         * @since 2.5.0
-         * @var bool
-         *
-         * @see   WP_Rewrite::init()
-         */
         public $use_verbose_page_rules = true;
 
-        /**
-         * Rewrite tags that can be used in permalink structures.
-         *
-         * These are translated into the regular expressions stored in
-         * `WP_Rewrite::$rewritereplace` and are rewritten to the query
-         * variables listed in WP_Rewrite::$queryreplace.
-         *
-         * Additional tags can be added with add_rewrite_tag().
-         *
-         * @since 1.5.0
-         * @var string[]
-         */
         public $rewritecode = [
             '%year%',
             '%monthnum%',
@@ -293,13 +69,6 @@
             '%search%',
         ];
 
-        /**
-         * Regular expressions to be substituted into rewrite rules in place
-         * of rewrite tags, see WP_Rewrite::$rewritecode.
-         *
-         * @since 1.5.0
-         * @var string[]
-         */
         public $rewritereplace = [
             '([0-9]{4})',
             '([0-9]{1,2})',
@@ -314,12 +83,6 @@
             '(.+)',
         ];
 
-        /**
-         * Query variables that rewrite tags map to, see WP_Rewrite::$rewritecode.
-         *
-         * @since 1.5.0
-         * @var string[]
-         */
         public $queryreplace = [
             'year=',
             'monthnum=',
@@ -334,33 +97,13 @@
             's=',
         ];
 
-        /**
-         * Supported default feeds.
-         *
-         * @since 1.5.0
-         * @var string[]
-         */
         public $feeds = ['feed', 'rdf', 'rss', 'rss2', 'atom'];
 
-        /**
-         * Constructor - Calls init(), which runs setup.
-         *
-         * @since 1.5.0
-         */
         public function __construct()
         {
             $this->init();
         }
 
-        /**
-         * Sets up the object's properties.
-         *
-         * The 'use_verbose_page_rules' object property will be set to true if the
-         * permalink structure begins with one of the following: '%postname%', '%category%',
-         * '%tag%', or '%author%'.
-         *
-         * @since 1.5.0
-         */
         public function init()
         {
             $this->extra_rules = [];
@@ -395,15 +138,6 @@
             }
         }
 
-        /**
-         * Determines whether permalinks are being used and rewrite module is not enabled.
-         *
-         * Means that permalink links are enabled and index.php is in the URL.
-         *
-         * @return bool Whether permalink links are enabled and index.php is in the URL.
-         * @since 1.5.0
-         *
-         */
         public function using_index_permalinks()
         {
             if(empty($this->permalink_structure))
@@ -415,46 +149,16 @@
             return preg_match('#^/*'.$this->index.'#', $this->permalink_structure);
         }
 
-        /**
-         * Determines whether permalinks are being used and rewrite module is enabled.
-         *
-         * Using permalinks and index.php is not in the URL.
-         *
-         * @return bool Whether permalink links are enabled and index.php is NOT in the URL.
-         * @since 1.5.0
-         *
-         */
         public function using_mod_rewrite_permalinks()
         {
             return $this->using_permalinks() && ! $this->using_index_permalinks();
         }
 
-        /**
-         * Determines whether permalinks are being used.
-         *
-         * This can be either rewrite module or permalink in the HTTP query string.
-         *
-         * @return bool True, if permalinks are enabled.
-         * @since 1.5.0
-         *
-         */
         public function using_permalinks()
         {
             return ! empty($this->permalink_structure);
         }
 
-        /**
-         * Retrieves all pages and attachments for pages URIs.
-         *
-         * The attachments are for those that have pages as parents and will be
-         * retrieved.
-         *
-         * @return array Array of page URIs as first element and attachment URIs as second element.
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         * @since 2.5.0
-         *
-         */
         public function page_uri_index()
         {
             global $wpdb;
@@ -495,16 +199,6 @@
             return [$page_uris, $page_attachment_uris];
         }
 
-        /**
-         * Retrieves the year permalink structure without month and day.
-         *
-         * Gets the date permalink structure and strips out the month and day
-         * permalink structures.
-         *
-         * @return string|false Year permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_year_permastruct()
         {
             $structure = $this->get_date_permastruct();
@@ -521,25 +215,6 @@
             return $structure;
         }
 
-        /**
-         * Retrieves date permalink structure, with year, month, and day.
-         *
-         * The permalink structure for the date, if not set already depends on the
-         * permalink structure. It can be one of three formats. The first is year,
-         * month, day; the second is day, month, year; and the last format is month,
-         * day, year. These are matched against the permalink structure for which
-         * one is used. If none matches, then the default will be used, which is
-         * year, month, day.
-         *
-         * Prevents post ID and date permalinks from overlapping. In the case of
-         * post_id, the date permalink will be prepended with front permalink with
-         * 'date/' before the actual permalink to form the complete date permalink
-         * structure.
-         *
-         * @return string|false Date permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_date_permastruct()
         {
             if(isset($this->date_structure))
@@ -596,16 +271,6 @@
             return $this->date_structure;
         }
 
-        /**
-         * Retrieves the month permalink structure without day and with year.
-         *
-         * Gets the date permalink structure and strips out the day permalink
-         * structures. Keeps the year permalink structure.
-         *
-         * @return string|false Year/Month permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_month_permastruct()
         {
             $structure = $this->get_date_permastruct();
@@ -621,46 +286,16 @@
             return $structure;
         }
 
-        /**
-         * Retrieves the day permalink structure with month and year.
-         *
-         * Keeps date permalink structure with all year, month, and day.
-         *
-         * @return string|false Year/Month/Day permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_day_permastruct()
         {
             return $this->get_date_permastruct();
         }
 
-        /**
-         * Retrieves the permalink structure for categories.
-         *
-         * If the category_base property has no value, then the category structure
-         * will have the front property value, followed by 'category', and finally
-         * '%category%'. If it does, then the root property will be used, along with
-         * the category_base property value.
-         *
-         * @return string|false Category permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_category_permastruct()
         {
             return $this->get_extra_permastruct('category');
         }
 
-        /**
-         * Retrieves an extra permalink structure by name.
-         *
-         * @param string $name Permalink structure name.
-         *
-         * @return string|false Permalink structure string on success, false on failure.
-         * @since 2.5.0
-         *
-         */
         public function get_extra_permastruct($name)
         {
             if(empty($this->permalink_structure))
@@ -676,34 +311,11 @@
             return false;
         }
 
-        /**
-         * Retrieves the permalink structure for tags.
-         *
-         * If the tag_base property has no value, then the tag structure will have
-         * the front property value, followed by 'tag', and finally '%tag%'. If it
-         * does, then the root property will be used, along with the tag_base
-         * property value.
-         *
-         * @return string|false Tag permalink structure on success, false on failure.
-         * @since 2.3.0
-         *
-         */
         public function get_tag_permastruct()
         {
             return $this->get_extra_permastruct('post_tag');
         }
 
-        /**
-         * Retrieves the feed permalink structure.
-         *
-         * The permalink structure is root property, feed base, and finally
-         * '/%feed%'. Will set the feed_structure property and then return it
-         * without attempting to set the value again.
-         *
-         * @return string|false Feed permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_feed_permastruct()
         {
             if(isset($this->feed_structure))
@@ -723,17 +335,6 @@
             return $this->feed_structure;
         }
 
-        /**
-         * Retrieves the comment feed permalink structure.
-         *
-         * The permalink structure is root property, comment base property, feed
-         * base and finally '/%feed%'. Will set the comment_feed_structure property
-         * and then return it without attempting to set the value again.
-         *
-         * @return string|false Comment feed permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_comment_feed_permastruct()
         {
             if(isset($this->comment_feed_structure))
@@ -753,18 +354,6 @@
             return $this->comment_feed_structure;
         }
 
-        /**
-         * Removes an existing rewrite tag.
-         *
-         * @param string $tag Name of the rewrite tag to remove.
-         *
-         * @see   WP_Rewrite::$rewritecode
-         * @see   WP_Rewrite::$rewritereplace
-         * @see   WP_Rewrite::$queryreplace
-         *
-         * @since 4.5.0
-         *
-         */
         public function remove_rewrite_tag($tag)
         {
             $position = array_search($tag, $this->rewritecode, true);
@@ -776,70 +365,11 @@
             }
         }
 
-        /**
-         * Generates rewrite rules with permalink structure and walking directory only.
-         *
-         * Shorten version of WP_Rewrite::generate_rewrite_rules() that allows for shorter
-         * list of parameters. See the method for longer description of what generating
-         * rewrite rules does.
-         *
-         * @param string $permalink_structure The permalink structure to generate rules.
-         * @param bool   $walk_dirs           Optional. Whether to create list of directories to walk over.
-         *                                    Default false.
-         *
-         * @return array An array of rewrite rules keyed by their regex pattern.
-         * @see   WP_Rewrite::generate_rewrite_rules() See for long description and rest of parameters.
-         *
-         * @since 1.5.0
-         *
-         */
         public function generate_rewrite_rule($permalink_structure, $walk_dirs = false)
         {
             return $this->generate_rewrite_rules($permalink_structure, EP_NONE, false, false, false, $walk_dirs);
         }
 
-        /**
-         * Generates rewrite rules from a permalink structure.
-         *
-         * The main WP_Rewrite function for building the rewrite rule list. The
-         * contents of the function is a mix of black magic and regular expressions,
-         * so best just ignore the contents and move to the parameters.
-         *
-         * @param string $permalink_structure The permalink structure.
-         * @param int    $ep_mask             Optional. Endpoint mask defining what endpoints are added to the structure.
-         *                                    Accepts a mask of:
-         *                                    - `EP_ALL`
-         *                                    - `EP_NONE`
-         *                                    - `EP_ALL_ARCHIVES`
-         *                                    - `EP_ATTACHMENT`
-         *                                    - `EP_AUTHORS`
-         *                                    - `EP_CATEGORIES`
-         *                                    - `EP_COMMENTS`
-         *                                    - `EP_DATE`
-         *                                    - `EP_DAY`
-         *                                    - `EP_MONTH`
-         *                                    - `EP_PAGES`
-         *                                    - `EP_PERMALINK`
-         *                                    - `EP_ROOT`
-         *                                    - `EP_SEARCH`
-         *                                    - `EP_TAGS`
-         *                                    - `EP_YEAR`
-         *                                    Default `EP_NONE`.
-         * @param bool   $paged               Optional. Whether archive pagination rules should be added for the structure.
-         *                                    Default true.
-         * @param bool   $feed                Optional. Whether feed rewrite rules should be added for the structure.
-         *                                    Default true.
-         * @param bool   $forcomments         Optional. Whether the feed rules should be a query for a comments feed.
-         *                                    Default false.
-         * @param bool   $walk_dirs           Optional. Whether the 'directories' making up the structure should be walked
-         *                                    over and rewrite rules built for each in-turn. Default true.
-         * @param bool   $endpoints           Optional. Whether endpoints should be applied to the generated rewrite rules.
-         *                                    Default true.
-         *
-         * @return string[] Array of rewrite rules keyed by their regex pattern.
-         * @since 1.5.0
-         *
-         */
         public function generate_rewrite_rules(
             $permalink_structure, $ep_mask = EP_NONE, $paged = true, $feed = true, $forcomments = false, $walk_dirs = true, $endpoints = true
         ) {
@@ -1225,22 +755,6 @@
             return $post_rewrite;
         }
 
-        /**
-         * Indexes for matches for usage in preg_*() functions.
-         *
-         * The format of the string is, with empty matches property value, '$NUM'.
-         * The 'NUM' will be replaced with the value in the $number parameter. With
-         * the matches property not empty, the value of the returned string will
-         * contain that value of the matches property. The format then will be
-         * '$MATCHES[NUM]', with MATCHES as the value in the property and NUM the
-         * value of the $number parameter.
-         *
-         * @param int $number Index number.
-         *
-         * @return string
-         * @since 1.5.0
-         *
-         */
         public function preg_index($number)
         {
             $match_prefix = '$';
@@ -1255,18 +769,6 @@
             return "$match_prefix$number$match_suffix";
         }
 
-        /**
-         * Retrieves the rewrite rules.
-         *
-         * The difference between this method and WP_Rewrite::rewrite_rules() is that
-         * this method stores the rewrite rules in the 'rewrite_rules' option and retrieves
-         * it. This prevents having to process all of the permalinks to get the rewrite rules
-         * in the form of caching.
-         *
-         * @return string[] Array of rewrite rules keyed by their regex pattern.
-         * @since 1.5.0
-         *
-         */
         public function wp_rewrite_rules()
         {
             $this->rules = get_option('rewrite_rules');
@@ -1278,12 +780,6 @@
             return $this->rules;
         }
 
-        /**
-         * Refreshes the rewrite rules, saving the fresh value to the database.
-         * If the `wp_loaded` action has not occurred yet, will postpone saving to the database.
-         *
-         * @since 6.4.0
-         */
         private function refresh_rewrite_rules()
         {
             $this->rules = '';
@@ -1305,23 +801,6 @@
             }
         }
 
-        /**
-         * Constructs rewrite matches and queries from permalink structure.
-         *
-         * Runs the action {@see 'generate_rewrite_rules'} with the parameter that is an
-         * reference to the current WP_Rewrite instance to further manipulate the
-         * permalink structures and rewrite rules. Runs the {@see 'rewrite_rules_array'}
-         * filter on the full rewrite rule array.
-         *
-         * There are two ways to manipulate the rewrite rules, one by hooking into
-         * the {@see 'generate_rewrite_rules'} action and gaining full control of the
-         * object or just manipulating the rewrite rule array before it is passed
-         * from the function.
-         *
-         * @return string[] An associative array of matches and queries.
-         * @since 1.5.0
-         *
-         */
         public function rewrite_rules()
         {
             $rewrite = [];
@@ -1358,106 +837,37 @@
             // Post rewrite rules.
             $post_rewrite = $this->generate_rewrite_rules($this->permalink_structure, EP_PERMALINK);
 
-            /**
-             * Filters rewrite rules used for "post" archives.
-             *
-             * @param string[] $post_rewrite Array of rewrite rules for posts, keyed by their regex pattern.
-             *
-             * @since 1.5.0
-             *
-             */
             $post_rewrite = apply_filters('post_rewrite_rules', $post_rewrite);
 
             // Date rewrite rules.
             $date_rewrite = $this->generate_rewrite_rules($this->get_date_permastruct(), EP_DATE);
 
-            /**
-             * Filters rewrite rules used for date archives.
-             *
-             * Likely date archives would include `/yyyy/`, `/yyyy/mm/`, and `/yyyy/mm/dd/`.
-             *
-             * @param string[] $date_rewrite Array of rewrite rules for date archives, keyed by their regex pattern.
-             *
-             * @since 1.5.0
-             *
-             */
             $date_rewrite = apply_filters('date_rewrite_rules', $date_rewrite);
 
             // Root-level rewrite rules.
             $root_rewrite = $this->generate_rewrite_rules($this->root.'/', EP_ROOT);
 
-            /**
-             * Filters rewrite rules used for root-level archives.
-             *
-             * Likely root-level archives would include pagination rules for the homepage
-             * as well as site-wide post feeds (e.g. `/feed/`, and `/feed/atom/`).
-             *
-             * @param string[] $root_rewrite Array of root-level rewrite rules, keyed by their regex pattern.
-             *
-             * @since 1.5.0
-             *
-             */
             $root_rewrite = apply_filters('root_rewrite_rules', $root_rewrite);
 
             // Comments rewrite rules.
             $comments_rewrite = $this->generate_rewrite_rules($this->root.$this->comments_base, EP_COMMENTS, false, true, true, false);
 
-            /**
-             * Filters rewrite rules used for comment feed archives.
-             *
-             * Likely comments feed archives include `/comments/feed/` and `/comments/feed/atom/`.
-             *
-             * @param string[] $comments_rewrite Array of rewrite rules for the site-wide comments feeds, keyed by their regex pattern.
-             *
-             * @since 1.5.0
-             *
-             */
             $comments_rewrite = apply_filters('comments_rewrite_rules', $comments_rewrite);
 
             // Search rewrite rules.
             $search_structure = $this->get_search_permastruct();
             $search_rewrite = $this->generate_rewrite_rules($search_structure, EP_SEARCH);
 
-            /**
-             * Filters rewrite rules used for search archives.
-             *
-             * Likely search-related archives include `/search/search+query/` as well as
-             * pagination and feed paths for a search.
-             *
-             * @param string[] $search_rewrite Array of rewrite rules for search queries, keyed by their regex pattern.
-             *
-             * @since 1.5.0
-             *
-             */
             $search_rewrite = apply_filters('search_rewrite_rules', $search_rewrite);
 
             // Author rewrite rules.
             $author_rewrite = $this->generate_rewrite_rules($this->get_author_permastruct(), EP_AUTHORS);
 
-            /**
-             * Filters rewrite rules used for author archives.
-             *
-             * Likely author archives would include `/author/author-name/`, as well as
-             * pagination and feed paths for author archives.
-             *
-             * @param string[] $author_rewrite Array of rewrite rules for author archives, keyed by their regex pattern.
-             *
-             * @since 1.5.0
-             *
-             */
             $author_rewrite = apply_filters('author_rewrite_rules', $author_rewrite);
 
             // Pages rewrite rules.
             $page_rewrite = $this->page_rewrite_rules();
 
-            /**
-             * Filters rewrite rules used for "page" post type archives.
-             *
-             * @param string[] $page_rewrite Array of rewrite rules for the "page" post type, keyed by their regex pattern.
-             *
-             * @since 1.5.0
-             *
-             */
             $page_rewrite = apply_filters('page_rewrite_rules', $page_rewrite);
 
             // Extra permastructs.
@@ -1479,36 +889,10 @@
                     $rules = $this->generate_rewrite_rules($struct);
                 }
 
-                /**
-                 * Filters rewrite rules used for individual permastructs.
-                 *
-                 * The dynamic portion of the hook name, `$permastructname`, refers
-                 * to the name of the registered permastruct.
-                 *
-                 * Possible hook names include:
-                 *
-                 *  - `category_rewrite_rules`
-                 *  - `post_format_rewrite_rules`
-                 *  - `post_tag_rewrite_rules`
-                 *
-                 * @param string[] $rules Array of rewrite rules generated for the current permastruct, keyed by their regex pattern.
-                 *
-                 * @since 3.1.0
-                 *
-                 */
                 $rules = apply_filters("{$permastructname}_rewrite_rules", $rules);
 
                 if('post_tag' === $permastructname)
                 {
-                    /**
-                     * Filters rewrite rules used specifically for Tags.
-                     *
-                     * @param string[] $rules Array of rewrite rules generated for tags, keyed by their regex pattern.
-                     *
-                     * @deprecated 3.1.0 Use {@see 'post_tag_rewrite_rules'} instead.
-                     *
-                     * @since      2.3.0
-                     */
                     $rules = apply_filters_deprecated('tag_rewrite_rules', [$rules], '3.1.0', 'post_tag_rewrite_rules');
                 }
 
@@ -1525,40 +909,13 @@
                 $this->rules = array_merge($this->extra_rules_top, $robots_rewrite, $favicon_rewrite, $deprecated_files, $registration_pages, $root_rewrite, $comments_rewrite, $search_rewrite, $author_rewrite, $date_rewrite, $post_rewrite, $page_rewrite, $this->extra_rules);
             }
 
-            /**
-             * Fires after the rewrite rules are generated.
-             *
-             * @param WP_Rewrite $wp_rewrite Current WP_Rewrite instance (passed by reference).
-             *
-             * @since 1.5.0
-             *
-             */
             do_action_ref_array('generate_rewrite_rules', [&$this]);
 
-            /**
-             * Filters the full set of generated rewrite rules.
-             *
-             * @param string[] $rules The compiled array of rewrite rules, keyed by their regex pattern.
-             *
-             * @since 1.5.0
-             *
-             */
             $this->rules = apply_filters('rewrite_rules_array', $this->rules);
 
             return $this->rules;
         }
 
-        /**
-         * Retrieves the search permalink structure.
-         *
-         * The permalink structure is root property, search base, and finally
-         * '/%search%'. Will set the search_structure property and then return it
-         * without attempting to set the value again.
-         *
-         * @return string|false Search permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_search_permastruct()
         {
             if(isset($this->search_structure))
@@ -1578,17 +935,6 @@
             return $this->search_structure;
         }
 
-        /**
-         * Retrieves the author permalink structure.
-         *
-         * The permalink structure is front property, author base, and finally
-         * '/%author%'. Will set the author_structure property and then return it
-         * without attempting to set the value again.
-         *
-         * @return string|false Author permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_author_permastruct()
         {
             if(isset($this->author_structure))
@@ -1608,13 +954,6 @@
             return $this->author_structure;
         }
 
-        /**
-         * Retrieves all of the rewrite rules for pages.
-         *
-         * @return string[] Page rewrite rules.
-         * @since 1.5.0
-         *
-         */
         public function page_rewrite_rules()
         {
             // The extra .? at the beginning prevents clashes with other regular expressions in the rules array.
@@ -1623,23 +962,6 @@
             return $this->generate_rewrite_rules($this->get_page_permastruct(), EP_PAGES, true, true, false, false);
         }
 
-        /**
-         * Adds or updates existing rewrite tags (e.g. %postname%).
-         *
-         * If the tag already exists, replace the existing pattern and query for
-         * that tag, otherwise add the new tag.
-         *
-         * @param string $tag   Name of the rewrite tag to add or update.
-         * @param string $regex Regular expression to substitute the tag for in rewrite rules.
-         * @param string $query String to append to the rewritten query. Must end in '='.
-         *
-         * @see   WP_Rewrite::$queryreplace
-         *
-         * @since 1.5.0
-         *
-         * @see   WP_Rewrite::$rewritecode
-         * @see   WP_Rewrite::$rewritereplace
-         */
         public function add_rewrite_tag($tag, $regex, $query)
         {
             $position = array_search($tag, $this->rewritecode, true);
@@ -1656,17 +978,6 @@
             }
         }
 
-        /**
-         * Retrieves the page permalink structure.
-         *
-         * The permalink structure is root property, and '%pagename%'. Will set the
-         * page_structure property and then return it without attempting to set the
-         * value again.
-         *
-         * @return string|false Page permalink structure on success, false on failure.
-         * @since 1.5.0
-         *
-         */
         public function get_page_permastruct()
         {
             if(isset($this->page_structure))
@@ -1686,19 +997,6 @@
             return $this->page_structure;
         }
 
-        /**
-         * Retrieves mod_rewrite-formatted rewrite rules to write to .htaccess.
-         *
-         * Does not actually write to the .htaccess file, but creates the rules for
-         * the process that will.
-         *
-         * Will add the non_wp_rules property rules to the .htaccess file before
-         * the WordPress rewrite rules one.
-         *
-         * @return string
-         * @since 1.5.0
-         *
-         */
         public function mod_rewrite_rules()
         {
             if(! $this->using_permalinks())
@@ -1768,41 +1066,11 @@
 
             $rules .= "</IfModule>\n";
 
-            /**
-             * Filters the list of rewrite rules formatted for output to an .htaccess file.
-             *
-             * @param string $rules mod_rewrite Rewrite rules formatted for .htaccess.
-             *
-             * @since 1.5.0
-             *
-             */
             $rules = apply_filters('mod_rewrite_rules', $rules);
 
-            /**
-             * Filters the list of rewrite rules formatted for output to an .htaccess file.
-             *
-             * @param string $rules mod_rewrite Rewrite rules formatted for .htaccess.
-             *
-             * @deprecated 1.5.0 Use the {@see 'mod_rewrite_rules'} filter instead.
-             *
-             * @since      1.5.0
-             */
             return apply_filters_deprecated('rewrite_rules', [$rules], '1.5.0', 'mod_rewrite_rules');
         }
 
-        /**
-         * Retrieves IIS7 URL Rewrite formatted rewrite rules to write to web.config file.
-         *
-         * Does not actually write to the web.config file, but creates the rules for
-         * the process that will.
-         *
-         * @param bool $add_parent_tags Optional. Whether to add parent tags to the rewrite rule sets.
-         *                              Default false.
-         *
-         * @return string IIS7 URL rewrite rule sets.
-         * @since 2.8.0
-         *
-         */
         public function iis7_url_rewrite_rules($add_parent_tags = false)
         {
             if(! $this->using_permalinks())
@@ -1837,32 +1105,9 @@
 </configuration>';
             }
 
-            /**
-             * Filters the list of rewrite rules formatted for output to a web.config.
-             *
-             * @param string $rules Rewrite rules formatted for IIS web.config.
-             *
-             * @since 2.8.0
-             *
-             */
             return apply_filters('iis7_url_rewrite_rules', $rules);
         }
 
-        /**
-         * Adds a rewrite rule that transforms a URL structure to a set of query vars.
-         *
-         * Any value in the $after parameter that isn't 'bottom' will result in the rule
-         * being placed at the top of the rewrite rules.
-         *
-         * @param string       $regex Regular expression to match request against.
-         * @param string|array $query The corresponding query vars for this rewrite rule.
-         * @param string       $after Optional. Priority of the new rule. Accepts 'top'
-         *                            or 'bottom'. Default 'bottom'.
-         *
-         * @since 4.4.0 Array support was added to the `$query` parameter.
-         *
-         * @since 2.1.0
-         */
         public function add_rule($regex, $query, $after = 'bottom')
         {
             if(is_array($query))
@@ -1896,54 +1141,11 @@
             }
         }
 
-        /**
-         * Adds a rewrite rule that doesn't correspond to index.php.
-         *
-         * @param string $regex Regular expression to match request against.
-         * @param string $query The corresponding query vars for this rewrite rule.
-         *
-         * @since 2.1.0
-         *
-         */
         public function add_external_rule($regex, $query)
         {
             $this->non_wp_rules[$regex] = $query;
         }
 
-        /**
-         * Adds an endpoint, like /trackback/.
-         *
-         * @param string      $name      Name of the endpoint.
-         * @param int         $places    Endpoint mask describing the places the endpoint should be added.
-         *                               Accepts a mask of:
-         *                               - `EP_ALL`
-         *                               - `EP_NONE`
-         *                               - `EP_ALL_ARCHIVES`
-         *                               - `EP_ATTACHMENT`
-         *                               - `EP_AUTHORS`
-         *                               - `EP_CATEGORIES`
-         *                               - `EP_COMMENTS`
-         *                               - `EP_DATE`
-         *                               - `EP_DAY`
-         *                               - `EP_MONTH`
-         *                               - `EP_PAGES`
-         *                               - `EP_PERMALINK`
-         *                               - `EP_ROOT`
-         *                               - `EP_SEARCH`
-         *                               - `EP_TAGS`
-         *                               - `EP_YEAR`
-         * @param string|bool $query_var Optional. Name of the corresponding query variable. Pass `false` to
-         *                               skip registering a query_var for this endpoint. Defaults to the
-         *                               value of `$name`.
-         *
-         * @see   add_rewrite_endpoint() for full documentation.
-         * @global WP         $wp        Current WordPress environment instance.
-         *
-         * @since 2.1.0
-         * @since 3.9.0 $query_var parameter added.
-         * @since 4.3.0 Added support for skipping query var registration by passing `false` to `$query_var`.
-         *
-         */
         public function add_endpoint($name, $places, $query_var = true)
         {
             global $wp;
@@ -1961,58 +1163,6 @@
             }
         }
 
-        /**
-         * Adds a new permalink structure.
-         *
-         * A permalink structure (permastruct) is an abstract definition of a set of rewrite rules;
-         * it is an easy way of expressing a set of regular expressions that rewrite to a set of
-         * query strings. The new permastruct is added to the WP_Rewrite::$extra_permastructs array.
-         *
-         * When the rewrite rules are built by WP_Rewrite::rewrite_rules(), all of these extra
-         * permastructs are passed to WP_Rewrite::generate_rewrite_rules() which transforms them
-         * into the regular expressions that many love to hate.
-         *
-         * The `$args` parameter gives you control over how WP_Rewrite::generate_rewrite_rules()
-         * works on the new permastruct.
-         *
-         * @param string $name         Name for permalink structure.
-         * @param string $struct       Permalink structure (e.g. category/%category%)
-         * @param array  $args         {
-         *                             Optional. Arguments for building rewrite rules based on the permalink structure.
-         *                             Default empty array.
-         *
-         * @type bool    $with_front   Whether the structure should be prepended with `WP_Rewrite::$front`.
-         *                             Default true.
-         * @type int     $ep_mask      The endpoint mask defining which endpoints are added to the structure.
-         *                             Accepts a mask of:
-         *                             - `EP_ALL`
-         *                             - `EP_NONE`
-         *                             - `EP_ALL_ARCHIVES`
-         *                             - `EP_ATTACHMENT`
-         *                             - `EP_AUTHORS`
-         *                             - `EP_CATEGORIES`
-         *                             - `EP_COMMENTS`
-         *                             - `EP_DATE`
-         *                             - `EP_DAY`
-         *                             - `EP_MONTH`
-         *                             - `EP_PAGES`
-         *                             - `EP_PERMALINK`
-         *                             - `EP_ROOT`
-         *                             - `EP_SEARCH`
-         *                             - `EP_TAGS`
-         *                             - `EP_YEAR`
-         *                             Default `EP_NONE`.
-         * @type bool    $paged        Whether archive pagination rules should be added for the structure.
-         *                             Default true.
-         * @type bool    $feed         Whether feed rewrite rules should be added for the structure. Default true.
-         * @type bool    $forcomments  Whether the feed rules should be a query for a comments feed. Default false.
-         * @type bool    $walk_dirs    Whether the 'directories' making up the structure should be walked over
-         *                             and rewrite rules built for each in-turn. Default true.
-         * @type bool    $endpoints    Whether endpoints should be applied to the generated rules. Default true.
-         *                             }
-         * @since 2.5.0
-         *
-         */
         public function add_permastruct($name, $struct, $args = [])
         {
             // Back-compat for the old parameters: $with_front and $ep_mask.
@@ -2053,31 +1203,11 @@
             $this->extra_permastructs[$name] = $args;
         }
 
-        /**
-         * Removes a permalink structure.
-         *
-         * @param string $name Name for permalink structure.
-         *
-         * @since 4.5.0
-         *
-         */
         public function remove_permastruct($name)
         {
             unset($this->extra_permastructs[$name]);
         }
 
-        /**
-         * Removes rewrite rules and then recreate rewrite rules.
-         *
-         * Calls WP_Rewrite::wp_rewrite_rules() after removing the 'rewrite_rules' option.
-         * If the function named 'save_mod_rewrite_rules' exists, it will be called.
-         *
-         * @param bool $hard Whether to update .htaccess (hard flush) or just update rewrite_rules option (soft flush).
-         *                   Default is true (hard).
-         *
-         * @since 2.0.1
-         *
-         */
         public function flush_rules($hard = true)
         {
             static $do_hard_later = null;
@@ -2099,16 +1229,6 @@
 
             $this->refresh_rewrite_rules();
 
-            /**
-             * Filters whether a "hard" rewrite rule flush should be performed when requested.
-             *
-             * A "hard" flush updates .htaccess (Apache) or web.config (IIS).
-             *
-             * @param bool $hard Whether to flush rewrite rules "hard". Default true.
-             *
-             * @since 3.7.0
-             *
-             */
             if(! $hard || ! apply_filters('flush_rewrite_rules_hard', true))
             {
                 return;
@@ -2123,21 +1243,6 @@
             }
         }
 
-        /**
-         * Sets the main permalink structure for the site.
-         *
-         * Will update the 'permalink_structure' option, if there is a difference
-         * between the current permalink structure and the parameter value. Calls
-         * WP_Rewrite::init() after the option is updated.
-         *
-         * Fires the {@see 'permalink_structure_changed'} action once the init call has
-         * processed passing the old and new values
-         *
-         * @param string $permalink_structure Permalink structure.
-         *
-         * @since 1.5.0
-         *
-         */
         public function set_permalink_structure($permalink_structure)
         {
             if($this->permalink_structure !== $permalink_structure)
@@ -2147,31 +1252,10 @@
 
                 $this->init();
 
-                /**
-                 * Fires after the permalink structure is updated.
-                 *
-                 * @param string $old_permalink_structure The previous permalink structure.
-                 * @param string $permalink_structure     The new permalink structure.
-                 *
-                 * @since 2.8.0
-                 *
-                 */
                 do_action('permalink_structure_changed', $old_permalink_structure, $permalink_structure);
             }
         }
 
-        /**
-         * Sets the category base for the category permalink.
-         *
-         * Will update the 'category_base' option, if there is a difference between
-         * the current category base and the parameter value. Calls WP_Rewrite::init()
-         * after the option is updated.
-         *
-         * @param string $category_base Category permalink structure base.
-         *
-         * @since 1.5.0
-         *
-         */
         public function set_category_base($category_base)
         {
             if(get_option('category_base') !== $category_base)
@@ -2181,18 +1265,6 @@
             }
         }
 
-        /**
-         * Sets the tag base for the tag permalink.
-         *
-         * Will update the 'tag_base' option, if there is a difference between the
-         * current tag base and the parameter value. Calls WP_Rewrite::init() after
-         * the option is updated.
-         *
-         * @param string $tag_base Tag permalink structure base.
-         *
-         * @since 2.3.0
-         *
-         */
         public function set_tag_base($tag_base)
         {
             if(get_option('tag_base') !== $tag_base)

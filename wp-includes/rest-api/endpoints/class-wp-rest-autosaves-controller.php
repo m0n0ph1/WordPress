@@ -1,62 +1,15 @@
 <?php
-    /**
-     * REST API: WP_REST_Autosaves_Controller class.
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.0.0
-     */
 
-    /**
-     * Core class used to access autosaves via the REST API.
-     *
-     * @since 5.0.0
-     *
-     * @see   WP_REST_Revisions_Controller
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller
     {
-        /**
-         * Parent post type.
-         *
-         * @since 5.0.0
-         * @var string
-         */
         private $parent_post_type;
 
-        /**
-         * Parent post controller.
-         *
-         * @since 5.0.0
-         * @var WP_REST_Controller
-         */
         private $parent_controller;
 
-        /**
-         * Revision controller.
-         *
-         * @since 5.0.0
-         * @var WP_REST_Revisions_Controller
-         */
         private $revisions_controller;
 
-        /**
-         * The base of the parent controller's route.
-         *
-         * @since 5.0.0
-         * @var string
-         */
         private $parent_base;
 
-        /**
-         * Constructor.
-         *
-         * @param string $parent_post_type Post type of the parent.
-         *
-         * @since 5.0.0
-         *
-         */
         public function __construct($parent_post_type)
         {
             $this->parent_post_type = $parent_post_type;
@@ -75,13 +28,6 @@
             $this->namespace = ! empty($post_type_object->rest_namespace) ? $post_type_object->rest_namespace : 'wp/v2';
         }
 
-        /**
-         * Registers the routes for autosaves.
-         *
-         * @since 5.0.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->parent_base.'/(?P<id>[\d]+)/'.$this->rest_base, [
@@ -129,13 +75,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for the autosaves collection.
-         *
-         * @return array Collection parameters.
-         * @since 5.0.0
-         *
-         */
         public function get_collection_params()
         {
             return [
@@ -143,15 +82,6 @@
             ];
         }
 
-        /**
-         * Checks if a given request has access to get autosaves.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.0.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             $parent = $this->get_parent($request['id']);
@@ -168,32 +98,11 @@
             return true;
         }
 
-        /**
-         * Get the parent post.
-         *
-         * @param int $parent_id Supplied ID.
-         *
-         * @return WP_Post|WP_Error Post object if ID is valid, WP_Error otherwise.
-         * @since 5.0.0
-         *
-         */
         protected function get_parent($parent_id)
         {
             return $this->revisions_controller->get_parent($parent_id);
         }
 
-        /**
-         * Checks if a given request has access to create an autosave revision.
-         *
-         * Autosave revisions inherit permissions from the parent post,
-         * check if the current user has permission to edit the post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to create the item, WP_Error object otherwise.
-         * @since 5.0.0
-         *
-         */
         public function create_item_permissions_check($request)
         {
             $id = $request->get_param('id');
@@ -206,15 +115,6 @@
             return $this->parent_controller->update_item_permissions_check($request);
         }
 
-        /**
-         * Creates, updates or deletes an autosave revision.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.0.0
-         *
-         */
         public function create_item($request)
         {
             if(! defined('DOING_AUTOSAVE'))
@@ -270,17 +170,6 @@
             return $response;
         }
 
-        /**
-         * Creates autosave for the specified post.
-         *
-         * From wp-admin/post.php.
-         *
-         * @param array $post_data Associative array containing the post data.
-         *
-         * @return mixed The autosave revision ID or WP_Error.
-         * @since 5.0.0
-         *
-         */
         public function create_post_autosave($post_data)
         {
             $post_id = (int) $post_data['ID'];
@@ -320,7 +209,6 @@
                 $new_autosave['ID'] = $old_autosave->ID;
                 $new_autosave['post_author'] = $user_id;
 
-                /** This filter is documented in wp-admin/post.php */
                 do_action('wp_creating_autosave', $new_autosave);
 
                 // wp_update_post() expects escaped array.
@@ -331,17 +219,6 @@
             return _wp_put_post_revision($post_data, true);
         }
 
-        /**
-         * Prepares the revision for the REST response.
-         *
-         * @param WP_Post         $item    Post revision object.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response Response object.
-         * @since 5.9.0 Renamed `$post` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 5.0.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -369,30 +246,9 @@
             $response->data = $this->add_additional_fields_to_object($response->data, $request);
             $response->data = $this->filter_response_by_context($response->data, $context);
 
-            /**
-             * Filters a revision returned from the REST API.
-             *
-             * Allows modification of the revision right before it is returned.
-             *
-             * @param WP_REST_Response $response The response object.
-             * @param WP_Post          $post     The original revision object.
-             * @param WP_REST_Request  $request  Request used to generate the response.
-             *
-             * @since 5.0.0
-             *
-             */
             return apply_filters('rest_prepare_autosave', $response, $post, $request);
         }
 
-        /**
-         * Get the autosave, if the ID is valid.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_Post|WP_Error Revision post object if ID is valid, WP_Error otherwise.
-         * @since 5.0.0
-         *
-         */
         public function get_item($request)
         {
             $parent_id = (int) $request->get_param('parent');
@@ -414,17 +270,6 @@
             return $response;
         }
 
-        /**
-         * Gets a collection of autosaves using wp_get_post_autosave.
-         *
-         * Contains the user's autosave, for empty if it doesn't exist.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.0.0
-         *
-         */
         public function get_items($request)
         {
             $parent = $this->get_parent($request['id']);
@@ -449,13 +294,6 @@
             return rest_ensure_response($response);
         }
 
-        /**
-         * Retrieves the autosave's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.0.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)

@@ -1,87 +1,24 @@
 <?php
-    /**
-     * Diff API: WP_Text_Diff_Renderer_Table class
-     *
-     * @package    WordPress
-     * @subpackage Diff
-     * @since      4.7.0
-     */
 
-    /**
-     * Table renderer to display the diff lines.
-     *
-     * @since 2.6.0
-     * @uses  Text_Diff_Renderer Extends
-     */
     #[AllowDynamicProperties]
     class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer
     {
-        /**
-         * @see   Text_Diff_Renderer::_leading_context_lines
-         * @var int
-         * @since 2.6.0
-         */
         public $_leading_context_lines = 10000;
 
-        /**
-         * @see   Text_Diff_Renderer::_trailing_context_lines
-         * @var int
-         * @since 2.6.0
-         */
         public $_trailing_context_lines = 10000;
 
-        /**
-         * Threshold for when a diff should be saved or omitted.
-         *
-         * @var float
-         * @since 2.6.0
-         */
         protected $_diff_threshold = 0.6;
 
-        /**
-         * Inline display helper object name.
-         *
-         * @var string
-         * @since 2.6.0
-         */
         protected $inline_diff_renderer = 'WP_Text_Diff_Renderer_inline';
 
-        /**
-         * Should we show the split view or not
-         *
-         * @var string
-         * @since 3.6.0
-         */
         protected $_show_split_view = true;
 
         protected $compat_fields = ['_show_split_view', 'inline_diff_renderer', '_diff_threshold'];
 
-        /**
-         * Caches the output of count_chars() in compute_string_distance()
-         *
-         * @var array
-         * @since 5.0.0
-         */
         protected $count_cache = [];
 
-        /**
-         * Caches the difference calculation in compute_string_distance()
-         *
-         * @var array
-         * @since 5.0.0
-         */
         protected $difference_cache = [];
 
-        /**
-         * Constructor - Call parent constructor with params array.
-         *
-         * This will set class properties based on the key value pairs in the array.
-         *
-         * @param array $params
-         *
-         * @since 2.6.0
-         *
-         */
         public function __construct($params = [])
         {
             parent::__construct($params);
@@ -91,35 +28,13 @@
             }
         }
 
-        /**
-         * @param string $header
-         *
-         * @return string
-         * @ignore
-         *
-         */
         public function _startBlock($header)
         {
             return '';
         }
 
-        /**
-         * @param array  $lines
-         * @param string $prefix
-         *
-         * @ignore
-         *
-         */
         public function _lines($lines, $prefix = ' ') {}
 
-        /**
-         * @param array $lines
-         * @param bool  $encode
-         *
-         * @return string
-         * @ignore
-         *
-         */
         public function _context($lines, $encode = true)
         {
             $r = '';
@@ -129,7 +44,6 @@
                 {
                     $processed_line = htmlspecialchars($line);
 
-                    /** This filter is documented in wp-includes/wp-diff.php */
                     $line = apply_filters('process_text_diff_html', $processed_line, $line, 'unchanged');
                 }
                 if($this->_show_split_view)
@@ -145,31 +59,11 @@
             return $r;
         }
 
-        /**
-         * @param string $line HTML-escape the value.
-         *
-         * @return string
-         * @ignore
-         *
-         */
         public function contextLine($line)
         {
             return "<td class='diff-context'><span class='screen-reader-text'>"./* translators: Hidden accessibility text. */ __('Unchanged:')." </span>{$line}</td>";
         }
 
-        /**
-         * Process changed lines to do word-by-word diffs for extra highlighting.
-         *
-         * (TRAC style) sometimes these lines can actually be deleted or added rows.
-         * We do additional processing to figure that out
-         *
-         * @param array $orig
-         * @param array $final
-         *
-         * @return string
-         * @since 2.6.0
-         *
-         */
         public function _changed($orig, $final)
         { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.finalFound
             $r = '';
@@ -280,35 +174,6 @@
             return $r;
         }
 
-        /**
-         * Takes changed blocks and matches which rows in orig turned into which rows in final.
-         *
-         * @param array $orig             Lines of the original version of the text.
-         * @param array $final            Lines of the final version of the text.
-         *
-         * @return array {
-         *     Array containing results of comparing the original text to the final text.
-         *
-         * @type array  $orig_matches     Associative array of original matches. Index == row
-         *                                number of `$orig`, value == corresponding row number
-         *                                of that same line in `$final` or 'x' if there is no
-         *                                corresponding row (indicating it is a deleted line).
-         * @type array  $final_matches    Associative array of final matches. Index == row
-         *                                number of `$final`, value == corresponding row number
-         *                                of that same line in `$orig` or 'x' if there is no
-         *                                corresponding row (indicating it is a new line).
-         * @type array  $orig_rows        Associative array of interleaved rows of `$orig` with
-         *                                blanks to keep matches aligned with side-by-side diff
-         *                                of `$final`. A value >= 0 corresponds to index of `$orig`.
-         *                                Value < 0 indicates a blank row.
-         * @type array  $final_rows       Associative array of interleaved rows of `$final` with
-         *                                blanks to keep matches aligned with side-by-side diff
-         *                                of `$orig`. A value >= 0 corresponds to index of `$final`.
-         *                                Value < 0 indicates a blank row.
-         *                                }
-         * @since 2.6.0
-         *
-         */
         public function interleave_changed_lines($orig, $final)
         { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.finalFound
 
@@ -413,16 +278,6 @@
             return [$orig_matches, $final_matches, $orig_rows, $final_rows];
         }
 
-        /**
-         * Computes a number that is intended to reflect the "distance" between two strings.
-         *
-         * @param string $string1
-         * @param string $string2
-         *
-         * @return int
-         * @since 2.6.0
-         *
-         */
         public function compute_string_distance($string1, $string2)
         {
             // Use an md5 hash of the strings for a count cache, as it's fast to generate, and collisions aren't a concern.
@@ -466,14 +321,6 @@
             return $difference / strlen($string1);
         }
 
-        /**
-         * @param array $lines
-         * @param bool  $encode
-         *
-         * @return string
-         * @ignore
-         *
-         */
         public function _added($lines, $encode = true)
         {
             $r = '';
@@ -483,20 +330,6 @@
                 {
                     $processed_line = htmlspecialchars($line);
 
-                    /**
-                     * Contextually filters a diffed line.
-                     *
-                     * Filters TextDiff processing of diffed line. By default, diffs are processed with
-                     * htmlspecialchars. Use this filter to remove or change the processing. Passes a context
-                     * indicating if the line is added, deleted or unchanged.
-                     *
-                     * @param string $processed_line The processed diffed line.
-                     * @param string $line           The unprocessed diffed line.
-                     * @param string $context        The line context. Values are 'added', 'deleted' or 'unchanged'.
-                     *
-                     * @since 4.1.0
-                     *
-                     */
                     $line = apply_filters('process_text_diff_html', $processed_line, $line, 'added');
                 }
 
@@ -513,36 +346,16 @@
             return $r;
         }
 
-        /**
-         * @return string
-         * @ignore
-         *
-         */
         public function emptyLine()
         {
             return '<td>&nbsp;</td>';
         }
 
-        /**
-         * @param string $line HTML-escape the value.
-         *
-         * @return string
-         * @ignore
-         *
-         */
         public function addedLine($line)
         {
             return "<td class='diff-addedline'><span aria-hidden='true' class='dashicons dashicons-plus'></span><span class='screen-reader-text'>"./* translators: Hidden accessibility text. */ __('Added:')." </span>{$line}</td>";
         }
 
-        /**
-         * @param array $lines
-         * @param bool  $encode
-         *
-         * @return string
-         * @ignore
-         *
-         */
         public function _deleted($lines, $encode = true)
         {
             $r = '';
@@ -552,7 +365,6 @@
                 {
                     $processed_line = htmlspecialchars($line);
 
-                    /** This filter is documented in wp-includes/wp-diff.php */
                     $line = apply_filters('process_text_diff_html', $processed_line, $line, 'deleted');
                 }
                 if($this->_show_split_view)
@@ -568,42 +380,16 @@
             return $r;
         }
 
-        /**
-         * @param string $line HTML-escape the value.
-         *
-         * @return string
-         * @ignore
-         *
-         */
         public function deletedLine($line)
         {
             return "<td class='diff-deletedline'><span aria-hidden='true' class='dashicons dashicons-minus'></span><span class='screen-reader-text'>"./* translators: Hidden accessibility text. */ __('Deleted:')." </span>{$line}</td>";
         }
 
-        /**
-         * @param int $a
-         * @param int $b
-         *
-         * @return int
-         * @since 2.6.0
-         *
-         * @ignore
-         */
         public function difference($a, $b)
         {
             return abs($a - $b);
         }
 
-        /**
-         * Make private properties readable for backward compatibility.
-         *
-         * @param string $name Property to get.
-         *
-         * @return mixed A declared property's value, else null.
-         * @since 4.0.0
-         * @since 6.4.0 Getting a dynamic property is deprecated.
-         *
-         */
         public function __get($name)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -616,16 +402,6 @@
             return null;
         }
 
-        /**
-         * Make private properties settable for backward compatibility.
-         *
-         * @param string $name  Property to check if set.
-         * @param mixed  $value Property value.
-         *
-         * @since 4.0.0
-         * @since 6.4.0 Setting a dynamic property is deprecated.
-         *
-         */
         public function __set($name, $value)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -638,16 +414,6 @@
             wp_trigger_error(__METHOD__, "The property `{$name}` is not declared. Setting a dynamic property is ".'deprecated since version 6.4.0! Instead, declare the property on the class.', E_USER_DEPRECATED);
         }
 
-        /**
-         * Make private properties checkable for backward compatibility.
-         *
-         * @param string $name Property to check if set.
-         *
-         * @return bool Whether the property is set.
-         * @since 4.0.0
-         * @since 6.4.0 Checking a dynamic property is deprecated.
-         *
-         */
         public function __isset($name)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -660,15 +426,6 @@
             return false;
         }
 
-        /**
-         * Make private properties un-settable for backward compatibility.
-         *
-         * @param string $name Property to unset.
-         *
-         * @since 6.4.0 Unsetting a dynamic property is deprecated.
-         *
-         * @since 4.0.0
-         */
         public function __unset($name)
         {
             if(in_array($name, $this->compat_fields, true))

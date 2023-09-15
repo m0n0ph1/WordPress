@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Permalink Settings Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_options'))
@@ -289,14 +282,6 @@
                 'author' => __('%s (A sanitized version of the author name.)'),
             ];
 
-            /**
-             * Filters the list of available permalink structure tags on the Permalinks settings page.
-             *
-             * @param string[] $available_tags An array of key => value pairs of available permalink structure tags.
-             *
-             * @since 4.9.0
-             *
-             */
             $available_tags = apply_filters('available_permalink_structure_tags', $available_tags);
 
             /* translators: %s: Permalink structure tag. */

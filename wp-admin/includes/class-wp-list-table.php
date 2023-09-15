@@ -1,80 +1,22 @@
 <?php
-    /**
-     * Administration API: WP_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage List_Table
-     * @since      3.1.0
-     */
 
-    /**
-     * Base class for displaying a list of items in an ajaxified HTML table.
-     *
-     * @since 3.1.0
-     */
     #[AllowDynamicProperties]
     class WP_List_Table
     {
-        /**
-         * The current list of items.
-         *
-         * @since 3.1.0
-         * @var array
-         */
         public $items;
 
-        /**
-         * Various information about the current table.
-         *
-         * @since 3.1.0
-         * @var array
-         */
         protected $_args;
 
-        /**
-         * Various information needed for displaying the pagination.
-         *
-         * @since 3.1.0
-         * @var array
-         */
         protected $_pagination_args = [];
 
-        /**
-         * The current screen.
-         *
-         * @since 3.1.0
-         * @var WP_Screen
-         */
         protected $screen;
 
-        /**
-         * The view switcher modes.
-         *
-         * @since 4.1.0
-         * @var array
-         */
         protected $modes = [];
 
-        /**
-         * Stores the value returned by ->get_column_info().
-         *
-         * @since 4.1.0
-         * @var array
-         */
         protected $_column_headers;
 
-        /**
-         * {@internal Missing Summary}
-         *
-         * @var array
-         */
         protected $compat_fields = ['_args', '_pagination_args', 'screen', '_actions', '_pagination'];
 
-        /**
-         * {@internal Missing Summary}
-         *
-         * @var array
-         */
         protected $compat_methods = [
             'set_pagination_args',
             'get_views',
@@ -94,47 +36,10 @@
             'single_row_columns',
         ];
 
-        /**
-         * Cached bulk actions.
-         *
-         * @since 3.1.0
-         * @var array
-         */
         private $_actions;
 
-        /**
-         * Cached pagination output.
-         *
-         * @since 3.1.0
-         * @var string
-         */
         private $_pagination;
 
-        /**
-         * Constructor.
-         *
-         * The child class should call this constructor from its own constructor to override
-         * the default $args.
-         *
-         * @param array|string $args     {
-         *                               Array or string of arguments.
-         *
-         * @type string        $plural   Plural value used for labels and the objects being listed.
-         *                               This affects things such as CSS class-names and nonces used
-         *                               in the list table, e.g. 'posts'. Default empty.
-         * @type string        $singular Singular label for an object being listed, e.g. 'post'.
-         *                               Default empty
-         * @type bool          $ajax     Whether the list table supports Ajax. This includes loading
-         *                               and sorting data, for example. If true, the class will call
-         *                               the _js_vars() method in the footer to provide variables
-         *                               to any scripts handling Ajax events. Default false.
-         * @type string        $screen   String containing the hook name used to determine the current
-         *                               screen. If left null, the current screen will be automatically set.
-         *                               Default null.
-         *                               }
-         * @since 3.1.0
-         *
-         */
         public function __construct($args = [])
         {
             $args = wp_parse_args($args, [
@@ -173,16 +78,6 @@
             }
         }
 
-        /**
-         * Makes private properties readable for backward compatibility.
-         *
-         * @param string $name Property to get.
-         *
-         * @return mixed Property.
-         * @since 4.0.0
-         * @since 6.4.0 Getting a dynamic property is deprecated.
-         *
-         */
         public function __get($name)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -195,16 +90,6 @@
             return null;
         }
 
-        /**
-         * Makes private properties settable for backward compatibility.
-         *
-         * @param string $name  Property to check if set.
-         * @param mixed  $value Property value.
-         *
-         * @since 4.0.0
-         * @since 6.4.0 Setting a dynamic property is deprecated.
-         *
-         */
         public function __set($name, $value)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -217,16 +102,6 @@
             wp_trigger_error(__METHOD__, "The property `{$name}` is not declared. Setting a dynamic property is ".'deprecated since version 6.4.0! Instead, declare the property on the class.', E_USER_DEPRECATED);
         }
 
-        /**
-         * Makes private properties checkable for backward compatibility.
-         *
-         * @param string $name Property to check if set.
-         *
-         * @return bool Whether the property is a back-compat property and it is set.
-         * @since 4.0.0
-         * @since 6.4.0 Checking a dynamic property is deprecated.
-         *
-         */
         public function __isset($name)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -239,15 +114,6 @@
             return false;
         }
 
-        /**
-         * Makes private properties un-settable for backward compatibility.
-         *
-         * @param string $name Property to unset.
-         *
-         * @since 6.4.0 Unsetting a dynamic property is deprecated.
-         *
-         * @since 4.0.0
-         */
         public function __unset($name)
         {
             if(in_array($name, $this->compat_fields, true))
@@ -260,16 +126,6 @@
             wp_trigger_error(__METHOD__, "A property `{$name}` is not declared. Unsetting a dynamic property is ".'deprecated since version 6.4.0! Instead, declare the property on the class.', E_USER_DEPRECATED);
         }
 
-        /**
-         * Makes private/protected methods readable for backward compatibility.
-         *
-         * @param string $name      Method to call.
-         * @param array  $arguments Arguments to pass when calling.
-         *
-         * @return mixed|bool Return value of the callback, false otherwise.
-         * @since 4.0.0
-         *
-         */
         public function __call($name, $arguments)
         {
             if(in_array($name, $this->compat_methods, true))
@@ -280,27 +136,11 @@
             return false;
         }
 
-        /**
-         * Checks the current user's permissions
-         *
-         * @since 3.1.0
-         * @abstract
-         */
         public function ajax_user_can()
         {
             die('function WP_List_Table::ajax_user_can() must be overridden in a subclass.');
         }
 
-        /**
-         * Access the pagination args.
-         *
-         * @param string $key Pagination argument to retrieve. Common values include 'total_items',
-         *                    'total_pages', 'per_page', or 'infinite_scroll'.
-         *
-         * @return int Number of items that correspond to the given pagination argument.
-         * @since 3.1.0
-         *
-         */
         public function get_pagination_arg($key)
         {
             if('page' === $key)
@@ -316,13 +156,6 @@
             return 0;
         }
 
-        /**
-         * Gets the current page number.
-         *
-         * @return int
-         * @since 3.1.0
-         *
-         */
         public function get_pagenum()
         {
             $pagenum = isset($_REQUEST['paged']) ? absint($_REQUEST['paged']) : 0;
@@ -335,15 +168,6 @@
             return max(1, $pagenum);
         }
 
-        /**
-         * Displays the search box.
-         *
-         * @param string $text     The 'submit' button label.
-         * @param string $input_id ID attribute value for the search input field.
-         *
-         * @since 3.1.0
-         *
-         */
         public function search_box($text, $input_id)
         {
             if(empty($_REQUEST['s']) && ! $this->has_items())
@@ -381,37 +205,15 @@
             <?php
         }
 
-        /**
-         * Determines whether the table has items to display or not
-         *
-         * @return bool
-         * @since 3.1.0
-         *
-         */
         public function has_items()
         {
             return ! empty($this->items);
         }
 
-        /**
-         * Displays the list of views available on this table.
-         *
-         * @since 3.1.0
-         */
         public function views()
         {
             $views = $this->get_views();
-            /**
-             * Filters the list of available list table views.
-             *
-             * The dynamic portion of the hook name, `$this->screen->id`, refers
-             * to the ID of the current screen.
-             *
-             * @param string[] $views An array of available list table views.
-             *
-             * @since 3.1.0
-             *
-             */
+
             $views = apply_filters("views_{$this->screen->id}", $views);
 
             if(empty($views))
@@ -430,28 +232,11 @@
             echo '</ul>';
         }
 
-        /**
-         * Gets the list of views available on this table.
-         *
-         * The format is an associative array:
-         * - `'id' => 'link'`
-         *
-         * @return array
-         * @since 3.1.0
-         *
-         */
         protected function get_views()
         {
             return [];
         }
 
-        /**
-         * Gets the current action selected from the bulk actions dropdown.
-         *
-         * @return string|false The action name. False if no action was selected.
-         * @since 3.1.0
-         *
-         */
         public function current_action()
         {
             if(isset($_REQUEST['filter_action']) && ! empty($_REQUEST['filter_action']))
@@ -467,27 +252,11 @@
             return false;
         }
 
-        /**
-         * Gets the name of the primary column.
-         *
-         * Public wrapper for WP_List_Table::get_default_primary_column_name().
-         *
-         * @return string Name of the default primary column.
-         * @since 4.4.0
-         *
-         */
         public function get_primary_column()
         {
             return $this->get_primary_column_name();
         }
 
-        /**
-         * Gets the name of the primary column.
-         *
-         * @return string The name of the primary column.
-         * @since 4.3.0
-         *
-         */
         protected function get_primary_column_name()
         {
             $columns = get_column_headers($this->screen);
@@ -502,15 +271,6 @@
                 $default = self::get_default_primary_column_name();
             }
 
-            /**
-             * Filters the name of the primary column for the current list table.
-             *
-             * @param string $default Column name default for the specific list table, e.g. 'name'.
-             * @param string $context Screen ID for specific list table, e.g. 'plugins'.
-             *
-             * @since 4.3.0
-             *
-             */
             $column = apply_filters('list_table_primary_column', $default, $this->screen->id);
 
             if(empty($column) || ! isset($columns[$column]))
@@ -521,13 +281,6 @@
             return $column;
         }
 
-        /**
-         * Gets the name of the default primary column.
-         *
-         * @return string Name of the default primary column, in this case, an empty string.
-         * @since 4.3.0
-         *
-         */
         protected function get_default_primary_column_name()
         {
             $columns = $this->get_columns();
@@ -556,27 +309,11 @@
             return $column;
         }
 
-        /**
-         * Gets a list of columns.
-         *
-         * The format is:
-         * - `'internal-name' => 'Title'`
-         *
-         * @return array
-         * @since 3.1.0
-         * @abstract
-         *
-         */
         public function get_columns()
         {
             die('function WP_List_Table::get_columns() must be overridden in a subclass.');
         }
 
-        /**
-         * Displays the table.
-         *
-         * @since 3.1.0
-         */
         public function display()
         {
             $singular = $this->_args['singular'];
@@ -615,13 +352,6 @@
             $this->display_tablenav('bottom');
         }
 
-        /**
-         * Generates the table navigation above or below the table
-         *
-         * @param string $which
-         *
-         * @since 3.1.0
-         */
         protected function display_tablenav($which)
         {
             if('top' === $which)
@@ -646,33 +376,12 @@
             <?php
         }
 
-        /**
-         * Displays the bulk actions dropdown.
-         *
-         * @param string $which The location of the bulk actions: 'top' or 'bottom'.
-         *                      This is designated as optional for backward compatibility.
-         *
-         * @since 3.1.0
-         *
-         */
         protected function bulk_actions($which = '')
         {
             if(is_null($this->_actions))
             {
                 $this->_actions = $this->get_bulk_actions();
 
-                /**
-                 * Filters the items in the bulk actions menu of the list table.
-                 *
-                 * The dynamic portion of the hook name, `$this->screen->id`, refers
-                 * to the ID of the current screen.
-                 *
-                 * @param array $actions An array of the available bulk actions.
-                 *
-                 * @since 5.6.0 A bulk action can now contain an array of options in order to create an optgroup.
-                 *
-                 * @since 3.1.0
-                 */
                 $this->_actions = apply_filters("bulk_actions-{$this->screen->id}", $this->_actions); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
                 $two = '';
@@ -719,57 +428,13 @@
             echo "\n";
         }
 
-        /**
-         * Retrieves the list of bulk actions available for this table.
-         *
-         * The format is an associative array where each element represents either a top level option value and label,
-         * or an array representing an optgroup and its options.
-         *
-         * For a standard option, the array element key is the field value and the array element value is the field
-         * label.
-         *
-         * For an optgroup, the array element key is the label and the array element value is an associative array of
-         * options as above.
-         *
-         * Example:
-         *
-         *     [
-         *         'edit'         => 'Edit',
-         *         'delete'       => 'Delete',
-         *         'Change State' => [
-         *             'feature' => 'Featured',
-         *             'sale'    => 'On Sale',
-         *         ]
-         *     ]
-         *
-         * @return array
-         * @since 5.6.0 A bulk action can now contain an array of options in order to create an optgroup.
-         *
-         * @since 3.1.0
-         */
         protected function get_bulk_actions()
         {
             return [];
         }
 
-        /**
-         * Displays extra controls between bulk actions and pagination.
-         *
-         * @param string $which
-         *
-         * @since 3.1.0
-         *
-         */
         protected function extra_tablenav($which) {}
 
-        /**
-         * Displays the pagination.
-         *
-         * @param string $which
-         *
-         * @since 3.1.0
-         *
-         */
         protected function pagination($which)
         {
             if(empty($this->_pagination_args))
@@ -893,13 +558,6 @@
             echo $this->_pagination;
         }
 
-        /**
-         * Gets a list of CSS classes for the WP_List_Table table tag.
-         *
-         * @return string[] Array of CSS classes for the table tag.
-         * @since 3.1.0
-         *
-         */
         protected function get_table_classes()
         {
             $mode = get_user_setting('posts_list_mode', 'list');
@@ -909,15 +567,6 @@
             return ['widefat', 'fixed', 'striped', $mode_class, $this->_args['plural']];
         }
 
-        /**
-         * Print a table description with information about current sorting and order.
-         *
-         * For the table initial view, information about initial orderby and order
-         * should be provided via get_sortable_columns().
-         *
-         * @since  6.3.0
-         * @access public
-         */
         public function print_table_description()
         {
             [$columns, $hidden, $sortable] = $this->get_column_info();
@@ -994,13 +643,6 @@
             }
         }
 
-        /**
-         * Gets a list of all, hidden, and sortable columns, with filter applied.
-         *
-         * @return array
-         * @since 3.1.0
-         *
-         */
         protected function get_column_info()
         {
             // $_column_headers is already set / cached.
@@ -1033,17 +675,7 @@
             $hidden = get_hidden_columns($this->screen);
 
             $sortable_columns = $this->get_sortable_columns();
-            /**
-             * Filters the list table sortable columns for a specific screen.
-             *
-             * The dynamic portion of the hook name, `$this->screen->id`, refers
-             * to the ID of the current screen.
-             *
-             * @param array $sortable_columns An array of sortable columns.
-             *
-             * @since 3.1.0
-             *
-             */
+
             $_sortable = apply_filters("manage_{$this->screen->id}_sortable_columns", $sortable_columns);
 
             $sortable = [];
@@ -1085,38 +717,11 @@
             return $this->_column_headers;
         }
 
-        /**
-         * Gets a list of sortable columns.
-         *
-         * The format is:
-         * - `'internal-name' => 'orderby'`
-         * - `'internal-name' => array( 'orderby', bool, 'abbr', 'orderby-text', 'initially-sorted-column-order' )` -
-         * - `'internal-name' => array( 'orderby', 'asc' )` - The second element sets the initial sorting order.
-         * - `'internal-name' => array( 'orderby', true )`  - The second element makes the initial order descending.
-         *
-         * In the second format, passing true as second parameter will make the initial
-         * sorting order be descending. Following parameters add a short column name to
-         * be used as 'abbr' attribute, a translatable string for the current sorting,
-         * and the initial order for the initial sorted column, 'asc' or 'desc' (default: false).
-         *
-         * @return array
-         * @since 6.3.0 Added 'abbr', 'orderby-text' and 'initially-sorted-column-order'.
-         *
-         * @since 3.1.0
-         */
         protected function get_sortable_columns()
         {
             return [];
         }
 
-        /**
-         * Prints column headers, accounting for hidden and sortable columns.
-         *
-         * @param bool $with_id Whether to set the ID attribute or not
-         *
-         * @since 3.1.0
-         *
-         */
         public function print_column_headers($with_id = true)
         {
             [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
@@ -1265,11 +870,6 @@
             }
         }
 
-        /**
-         * Generates the tbody element for the list table.
-         *
-         * @since 3.1.0
-         */
         public function display_rows_or_placeholder()
         {
             if($this->has_items())
@@ -1284,11 +884,6 @@
             }
         }
 
-        /**
-         * Generates the table rows.
-         *
-         * @since 3.1.0
-         */
         public function display_rows()
         {
             foreach($this->items as $item)
@@ -1297,14 +892,6 @@
             }
         }
 
-        /**
-         * Generates content for a single row of the table.
-         *
-         * @param object|array $item The current item
-         *
-         * @since 3.1.0
-         *
-         */
         public function single_row($item)
         {
             echo '<tr>';
@@ -1312,14 +899,6 @@
             echo '</tr>';
         }
 
-        /**
-         * Generates the columns for a single row of the table.
-         *
-         * @param object|array $item The current item.
-         *
-         * @since 3.1.0
-         *
-         */
         protected function single_row_columns($item)
         {
             [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
@@ -1372,41 +951,15 @@
             }
         }
 
-        /**
-         * @param object|array $item
-         */
         protected function column_cb($item) {}
 
-        /**
-         * Generates and display row actions links for the list table.
-         *
-         * @param object|array $item        The item being acted upon.
-         * @param string       $column_name Current column name.
-         * @param string       $primary     Primary column name.
-         *
-         * @return string The row actions HTML, or an empty string
-         *                if the current column is not the primary column.
-         * @since 4.3.0
-         *
-         */
         protected function handle_row_actions($item, $column_name, $primary)
         {
             return $column_name === $primary ? '<button type="button" class="toggle-row"><span class="screen-reader-text">'./* translators: Hidden accessibility text. */ __('Show more details').'</span></button>' : '';
         }
 
-        /**
-         * @param object|array $item
-         * @param string       $column_name
-         */
         protected function column_default($item, $column_name) {}
 
-        /**
-         * Returns the number of visible columns.
-         *
-         * @return int
-         * @since 3.1.0
-         *
-         */
         public function get_column_count()
         {
             [$columns, $hidden] = $this->get_column_info();
@@ -1415,21 +968,11 @@
             return count($columns) - count($hidden);
         }
 
-        /**
-         * Message to be displayed when there are no items
-         *
-         * @since 3.1.0
-         */
         public function no_items()
         {
             _e('No items found.');
         }
 
-        /**
-         * Handles an incoming ajax request (called from admin-ajax.php)
-         *
-         * @since 3.1.0
-         */
         public function ajax_response()
         {
             $this->prepare_items();
@@ -1461,24 +1004,11 @@
             die(wp_json_encode($response));
         }
 
-        /**
-         * Prepares the list of items for displaying.
-         *
-         * @uses  WP_List_Table::set_pagination_args()
-         *
-         * @since 3.1.0
-         * @abstract
-         */
         public function prepare_items()
         {
             die('function WP_List_Table::prepare_items() must be overridden in a subclass.');
         }
 
-        /**
-         * Sends required variables to JavaScript land.
-         *
-         * @since 3.1.0
-         */
         public function _js_vars()
         {
             $args = [
@@ -1492,14 +1022,6 @@
             printf("<script type='text/javascript'>list_args = %s;</script>\n", wp_json_encode($args));
         }
 
-        /**
-         * Sets all the necessary pagination arguments.
-         *
-         * @param array|string $args Array or string of arguments with information about the pagination.
-         *
-         * @since 3.1.0
-         *
-         */
         protected function set_pagination_args($args)
         {
             $args = wp_parse_args($args, [
@@ -1523,20 +1045,6 @@
             $this->_pagination_args = $args;
         }
 
-        /**
-         * Generates views links.
-         *
-         * @param array $link_data {
-         *                         An array of link data.
-         *
-         * @type string $url       The link URL.
-         * @type string $label     The link label.
-         * @type bool   $current   Optional. Whether this is the currently selected view.
-         *                         }
-         * @return string[] An array of link markup. Keys match the `$link_data` input array.
-         * @since 6.1.0
-         *
-         */
         protected function get_views_links($link_data = [])
         {
             if(! is_array($link_data))
@@ -1570,16 +1078,6 @@
             return $views_links;
         }
 
-        /**
-         * Generates the required HTML for a list of row action links.
-         *
-         * @param string[] $actions        An array of action links.
-         * @param bool     $always_visible Whether the actions should be always visible.
-         *
-         * @return string The HTML for the row actions.
-         * @since 3.1.0
-         *
-         */
         protected function row_actions($actions, $always_visible = false)
         {
             $action_count = count($actions);
@@ -1617,44 +1115,15 @@
             return $output;
         }
 
-        /**
-         * Displays a dropdown for filtering items in the list table by month.
-         *
-         * @param string     $post_type The post type.
-         *
-         * @global wpdb      $wpdb      WordPress database abstraction object.
-         * @global WP_Locale $wp_locale WordPress date and time locale object.
-         *
-         * @since 3.1.0
-         *
-         */
         protected function months_dropdown($post_type)
         {
             global $wpdb, $wp_locale;
 
-            /**
-             * Filters whether to remove the 'Months' drop-down from the post list table.
-             *
-             * @param bool   $disable   Whether to disable the drop-down. Default false.
-             * @param string $post_type The post type.
-             *
-             * @since 4.2.0
-             *
-             */
             if(apply_filters('disable_months_dropdown', false, $post_type))
             {
                 return;
             }
 
-            /**
-             * Filters whether to short-circuit performing the months dropdown query.
-             *
-             * @param object[]|false $months    'Months' drop-down results. Default false.
-             * @param string         $post_type The post type.
-             *
-             * @since 5.7.0
-             *
-             */
             $months = apply_filters('pre_months_dropdown_query', false, $post_type);
 
             if(! is_array($months))
@@ -1680,15 +1149,6 @@
                 );
             }
 
-            /**
-             * Filters the 'Months' drop-down results.
-             *
-             * @param object[] $months    Array of the months drop-down query results.
-             * @param string   $post_type The post type.
-             *
-             * @since 3.7.0
-             *
-             */
             $months = apply_filters('months_dropdown_results', $months, $post_type);
 
             $month_count = count($months);
@@ -1722,14 +1182,6 @@
             <?php
         }
 
-        /**
-         * Displays a view switcher.
-         *
-         * @param string $current_mode
-         *
-         * @since 3.1.0
-         *
-         */
         protected function view_switcher($current_mode)
         {
             ?>
@@ -1754,15 +1206,6 @@
             <?php
         }
 
-        /**
-         * Displays a comment count bubble.
-         *
-         * @param int $post_id          The post ID.
-         * @param int $pending_comments Number of pending comments.
-         *
-         * @since 3.1.0
-         *
-         */
         protected function comments_bubble($post_id, $pending_comments)
         {
             $approved_comments = get_comments_number();
@@ -1821,16 +1264,6 @@
             }
         }
 
-        /**
-         * Gets the number of items to display on a single page.
-         *
-         * @param string $option        User option name.
-         * @param int    $default_value Optional. The number of items to display. Default 20.
-         *
-         * @return int
-         * @since 3.1.0
-         *
-         */
         protected function get_items_per_page($option, $default_value = 20)
         {
             $per_page = (int) get_user_option($option);
@@ -1839,31 +1272,6 @@
                 $per_page = $default_value;
             }
 
-            /**
-             * Filters the number of items to be displayed on each page of the list table.
-             *
-             * The dynamic hook name, `$option`, refers to the `per_page` option depending
-             * on the type of list table in use. Possible filter names include:
-             *
-             *  - `edit_comments_per_page`
-             *  - `sites_network_per_page`
-             *  - `site_themes_network_per_page`
-             *  - `themes_network_per_page'`
-             *  - `users_network_per_page`
-             *  - `edit_post_per_page`
-             *  - `edit_page_per_page'`
-             *  - `edit_{$post_type}_per_page`
-             *  - `edit_post_tag_per_page`
-             *  - `edit_category_per_page`
-             *  - `edit_{$taxonomy}_per_page`
-             *  - `site_users_network_per_page`
-             *  - `users_per_page`
-             *
-             * @param int $per_page Number of items to be displayed. Default 20.
-             *
-             * @since 2.9.0
-             *
-             */
             return (int) apply_filters("{$option}", $per_page);
         }
     }

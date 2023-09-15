@@ -1,22 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/search` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Dynamically renders the `core/search` block.
-     *
-     * @param array    $attributes The block attributes.
-     * @param string   $content    The saved content.
-     * @param WP_Block $block      The parsed block.
-     *
-     * @return string The search block markup.
-     * @since 6.3.0 Using block.json `viewScript` to register script, and update `view_script_handles()` only when
-     *     needed.
-     *
-     */
     function render_block_core_search($attributes, $content, $block)
     {
         // Older versions of the Search block defaulted the label and buttonText
@@ -174,9 +157,6 @@
         return sprintf('<form role="search" method="get" action="%s" %s>%s</form>', esc_url(home_url('/')), $wrapper_attributes, $label.$field_markup);
     }
 
-    /**
-     * Registers the `core/search` block on the server.
-     */
     function register_block_core_search()
     {
         register_block_type_from_metadata(__DIR__.'/search', [
@@ -186,13 +166,6 @@
 
     add_action('init', 'register_block_core_search');
 
-    /**
-     * Builds the correct top level classnames for the 'core/search' block.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string The classnames used in the block.
-     */
     function classnames_for_block_core_search($attributes)
     {
         $classnames = [];
@@ -242,21 +215,6 @@
         return implode(' ', $classnames);
     }
 
-    /**
-     * This generates a CSS rule for the given border property and side if provided.
-     * Based on whether the Search block is configured to display the button inside
-     * or not, the generated rule is injected into the appropriate collection of
-     * styles for later application in the block's markup.
-     *
-     * @param array  $attributes     The block attributes.
-     * @param string $property       Border property to generate rule for e.g. width or color.
-     * @param string $side           Optional side border. The dictates the value retrieved and final CSS property.
-     * @param array  $wrapper_styles Current collection of wrapper styles.
-     * @param array  $button_styles  Current collection of button styles.
-     * @param array  $input_styles   Current collection of input styles.
-     *
-     * @return void
-     */
     function apply_block_core_search_border_style(
         $attributes, $property, $side, &$wrapper_styles, &$button_styles, &$input_styles
     ) {
@@ -299,19 +257,6 @@
         }
     }
 
-    /**
-     * This adds CSS rules for a given border property e.g. width or color. It
-     * injects rules into the provided wrapper, button and input style arrays for
-     * uniform "flat" borders or those with individual sides configured.
-     *
-     * @param array  $attributes     The block attributes.
-     * @param string $property       Border property to generate rule for e.g. width or color.
-     * @param array  $wrapper_styles Current collection of wrapper styles.
-     * @param array  $button_styles  Current collection of button styles.
-     * @param array  $input_styles   Current collection of input styles.
-     *
-     * @return void
-     */
     function apply_block_core_search_border_styles(
         $attributes, $property, &$wrapper_styles, &$button_styles, &$input_styles
     ) {
@@ -322,17 +267,6 @@
         apply_block_core_search_border_style($attributes, $property, 'left', $wrapper_styles, $button_styles, $input_styles);
     }
 
-    /**
-     * Builds an array of inline styles for the search block.
-     *
-     * The result will contain one entry for shared styles such as those for the
-     * inner input or button and a second for the inner wrapper should the block
-     * be positioning the button "inside".
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return array Style HTML attribute.
-     */
     function styles_for_block_core_search($attributes)
     {
         $wrapper_styles = [];
@@ -452,13 +386,6 @@
         ];
     }
 
-    /**
-     * Returns typography classnames depending on whether there are named font sizes/families .
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string The typography color classnames to be applied to the block elements.
-     */
     function get_typography_classes_for_block_core_search($attributes)
     {
         $typography_classes = [];
@@ -478,14 +405,6 @@
         return implode(' ', $typography_classes);
     }
 
-    /**
-     * Returns typography styles to be included in an HTML style tag.
-     * This excludes text-decoration, which is applied only to the label and button elements of the search block.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string A string of typography CSS declarations.
-     */
     function get_typography_styles_for_block_core_search($attributes)
     {
         $typography_styles = [];
@@ -533,13 +452,6 @@
         return implode('', $typography_styles);
     }
 
-    /**
-     * Returns border color classnames depending on whether there are named or custom border colors.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string The border color classnames to be applied to the block elements.
-     */
     function get_border_color_classes_for_block_core_search($attributes)
     {
         $border_color_classes = [];
@@ -559,13 +471,6 @@
         return implode(' ', $border_color_classes);
     }
 
-    /**
-     * Returns color classnames depending on whether there are named or custom text and background colors.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return string The color classnames to be applied to the block elements.
-     */
     function get_color_classes_for_block_core_search($attributes)
     {
         $classnames = [];

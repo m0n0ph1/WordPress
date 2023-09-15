@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Upgrader API: Language_Pack_Upgrader_Skin class
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      4.6.0
-     */
 
-    /**
-     * Translation Upgrader Skin for WordPress Translation Upgrades.
-     *
-     * @since 3.7.0
-     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader-skins.php.
-     *
-     * @see   WP_Upgrader_Skin
-     */
     class Language_Pack_Upgrader_Skin extends WP_Upgrader_Skin
     {
         public $language_update = null;
@@ -25,9 +10,6 @@
 
         public $display_footer_actions = true;
 
-        /**
-         * @param array $args
-         */
         public function __construct($args = [])
         {
             $defaults = [
@@ -46,8 +28,6 @@
             parent::__construct($args);
         }
 
-        /**
-         */
         public function before()
         {
             $name = $this->upgrader->get_name_for_update($this->language_update);
@@ -58,12 +38,6 @@
             printf('<h2>'.__('Updating translations for %1$s (%2$s)&#8230;').'</h2>', $name, $this->language_update->language);
         }
 
-        /**
-         * @param string|WP_Error $errors Errors.
-         *
-         * @since 5.9.0 Renamed `$error` to `$errors` for PHP 8 named parameter support.
-         *
-         */
         public function error($errors)
         {
             echo '<div class="lp-error">';
@@ -71,15 +45,11 @@
             echo '</div>';
         }
 
-        /**
-         */
         public function after()
         {
             echo '</div>';
         }
 
-        /**
-         */
         public function bulk_footer()
         {
             $this->decrement_update_count('translation');
@@ -88,14 +58,6 @@
                 'updates_page' => sprintf('<a href="%s" target="_parent">%s</a>', self_admin_url('update-core.php'), __('Go to WordPress Updates page')),
             ];
 
-            /**
-             * Filters the list of action links available following a translations update.
-             *
-             * @param string[] $update_actions Array of translations update links.
-             *
-             * @since 3.7.0
-             *
-             */
             $update_actions = apply_filters('update_translations_complete_actions', $update_actions);
 
             if($update_actions && $this->display_footer_actions)

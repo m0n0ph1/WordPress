@@ -1,11 +1,5 @@
 <?php
 
-    /**
-     * IXR_Request
-     *
-     * @package IXR
-     * @since   1.5.0
-     */
     class IXR_Request
     {
         var $method;
@@ -14,17 +8,11 @@
 
         var $xml;
 
-        /**
-         * PHP4 constructor.
-         */
         public function IXR_Request($method, $args)
         {
             self::__construct($method, $args);
         }
 
-        /**
-         * PHP5 constructor.
-         */
         function __construct($method, $args)
         {
             $this->method = $method;

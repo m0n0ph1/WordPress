@@ -1,11 +1,4 @@
 <?php
-    /**
-     * The template for displaying image attachments
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty_One
-     * @since      Twenty Twenty-One 1.0
-     */
 
     get_header();
 
@@ -22,14 +15,7 @@
             <div class="entry-content">
                 <figure class="wp-block-image">
                     <?php
-                        /**
-                         * Filter the default image attachment size.
-                         *
-                         * @param string $image_size Image size. Default 'full'.
-                         *
-                         * @since Twenty Twenty-One 1.0
-                         *
-                         */
+
                         $image_size = apply_filters('twenty_twenty_one_attachment_size', 'full');
                         echo wp_get_attachment_image(get_the_ID(), $image_size);
                     ?>

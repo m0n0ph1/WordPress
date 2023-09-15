@@ -1,26 +1,7 @@
 <?php
-    /**
-     * REST API: WP_REST_Post_Search_Handler class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.0.0
-     */
 
-    /**
-     * Core class representing a search handler for posts in the REST API.
-     *
-     * @since 5.0.0
-     *
-     * @see   WP_REST_Search_Handler
-     */
     class WP_REST_Post_Search_Handler extends WP_REST_Search_Handler
     {
-        /**
-         * Constructor.
-         *
-         * @since 5.0.0
-         */
         public function __construct()
         {
             $this->type = 'post';
@@ -36,17 +17,6 @@
             );
         }
 
-        /**
-         * Searches the object type content for a given search request.
-         *
-         * @param WP_REST_Request $request Full REST request.
-         *
-         * @return array Associative array containing an `WP_REST_Search_Handler::RESULT_IDS` containing
-         *               an array of found IDs and `WP_REST_Search_Handler::RESULT_TOTAL` containing the
-         *               total count for the matching search results.
-         * @since 5.0.0
-         *
-         */
         public function search_items(WP_REST_Request $request)
         {
             // Get the post types to search for the current request.
@@ -79,17 +49,6 @@
                 $query_args['post__in'] = $request['include'];
             }
 
-            /**
-             * Filters the query arguments for a REST API search request.
-             *
-             * Enables adding extra arguments or setting defaults for a post search request.
-             *
-             * @param array           $query_args Key value array of query var to query value.
-             * @param WP_REST_Request $request    The request used.
-             *
-             * @since 5.1.0
-             *
-             */
             $query_args = apply_filters('rest_post_search_query', $query_args, $request);
 
             $query = new WP_Query();
@@ -104,16 +63,6 @@
             ];
         }
 
-        /**
-         * Prepares the search result for a given ID.
-         *
-         * @param int   $id     Item ID.
-         * @param array $fields Fields to include for the item.
-         *
-         * @return array Associative array containing all fields for the item.
-         * @since 5.0.0
-         *
-         */
         public function prepare_item($id, array $fields)
         {
             $post = get_post($id);
@@ -157,15 +106,6 @@
             return $data;
         }
 
-        /**
-         * Prepares links for the search result of a given ID.
-         *
-         * @param int $id Item ID.
-         *
-         * @return array Links for the given item.
-         * @since 5.0.0
-         *
-         */
         public function prepare_item_links($id)
         {
             $post = get_post($id);
@@ -188,33 +128,11 @@
             return $links;
         }
 
-        /**
-         * Overwrites the default protected title format.
-         *
-         * By default, WordPress will show password protected posts with a title of
-         * "Protected: %s". As the REST API communicates the protected status of a post
-         * in a machine readable format, we remove the "Protected: " prefix.
-         *
-         * @return string Protected title format.
-         * @since 5.0.0
-         *
-         */
         public function protected_title_format()
         {
             return '%s';
         }
 
-        /**
-         * Attempts to detect the route to access a single item.
-         *
-         * @param WP_Post $post Post object.
-         *
-         * @return string REST route relative to the REST base URI, or empty string if unknown.
-         * @see        rest_get_route_for_post()
-         *
-         * @since      5.0.0
-         * @deprecated 5.5.0 Use rest_get_route_for_post()
-         */
         protected function detect_rest_item_route($post)
         {
             _deprecated_function(__METHOD__, '5.5.0', 'rest_get_route_for_post()');

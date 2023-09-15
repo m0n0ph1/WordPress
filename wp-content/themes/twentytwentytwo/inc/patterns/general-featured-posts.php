@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Featured posts block pattern
-     */
+
     return [
         'title' => __('Featured posts', 'twentytwentytwo'),
         'categories' => ['featured', 'query'],

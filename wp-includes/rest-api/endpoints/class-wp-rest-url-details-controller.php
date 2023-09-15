@@ -1,38 +1,13 @@
 <?php
-    /**
-     * REST API: WP_REST_URL_Details_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.9.0
-     */
 
-    /**
-     * Controller which provides REST endpoint for retrieving information
-     * from a remote site's HTML response.
-     *
-     * @since 5.9.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_URL_Details_Controller extends WP_REST_Controller
     {
-        /**
-         * Constructs the controller.
-         *
-         * @since 5.9.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp-block-editor/v1';
             $this->rest_base = 'url-details';
         }
 
-        /**
-         * Registers the necessary REST API routes.
-         *
-         * @since 5.9.0
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -55,13 +30,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the item's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.9.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -106,15 +74,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Retrieves the contents of the title tag from the HTML response.
-         *
-         * @param WP_REST_REQUEST $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error The parsed details as a response object. WP_Error if there are errors.
-         * @since 5.9.0
-         *
-         */
         public function parse_url_details($request)
         {
             $url = untrailingslashit($request['url']);
@@ -161,58 +120,19 @@
             // Wrap the data in a response object.
             $response = rest_ensure_response($data);
 
-            /**
-             * Filters the URL data for the response.
-             *
-             * @param WP_REST_Response $response            The response object.
-             * @param string           $url                 The requested URL.
-             * @param WP_REST_Request  $request             Request object.
-             * @param string           $remote_url_response HTTP response body from the remote URL.
-             *
-             * @since 5.9.0
-             *
-             */
             return apply_filters('rest_prepare_url_details', $response, $url, $request, $remote_url_response);
         }
 
-        /**
-         * Utility function to build cache key for a given URL.
-         *
-         * @param string $url The URL for which to build a cache key.
-         *
-         * @return string The cache key.
-         * @since 5.9.0
-         *
-         */
         private function build_cache_key_for_url($url)
         {
             return 'g_url_details_response_'.md5($url);
         }
 
-        /**
-         * Utility function to retrieve a value from the cache at a given key.
-         *
-         * @param string $key The cache key.
-         *
-         * @return mixed The value from the cache.
-         * @since 5.9.0
-         *
-         */
         private function get_cache($key)
         {
             return get_site_transient($key);
         }
 
-        /**
-         * Retrieves the document title from a remote URL.
-         *
-         * @param string $url The website URL whose HTML to access.
-         *
-         * @return string|WP_Error The HTTP response from the remote URL on success.
-         *                         WP_Error if no response or no content.
-         * @since 5.9.0
-         *
-         */
         private function get_remote_url($url)
         {
             /*
@@ -231,17 +151,6 @@
                 'user-agent' => $modified_user_agent,
             ];
 
-            /**
-             * Filters the HTTP request args for URL data retrieval.
-             *
-             * Can be used to adjust response size limit and other WP_Http::request() args.
-             *
-             * @param array  $args Arguments used for the HTTP request.
-             * @param string $url  The attempted URL.
-             *
-             * @since 5.9.0
-             *
-             */
             $args = apply_filters('rest_url_details_http_request_args', $args, $url);
 
             $response = wp_safe_remote_get($url, $args);
@@ -262,45 +171,15 @@
             return $remote_body;
         }
 
-        /**
-         * Utility function to cache a given data set at a given cache key.
-         *
-         * @param string $key  The cache key under which to store the value.
-         * @param string $data The data to be stored at the given cache key.
-         *
-         * @return bool True when transient set. False if not set.
-         * @since 5.9.0
-         *
-         */
         private function set_cache($key, $data = '')
         {
             $ttl = HOUR_IN_SECONDS;
 
-            /**
-             * Filters the cache expiration.
-             *
-             * Can be used to adjust the time until expiration in seconds for the cache
-             * of the data retrieved for the given URL.
-             *
-             * @param int $ttl The time until cache expiration in seconds.
-             *
-             * @since 5.9.0
-             *
-             */
             $cache_expiration = apply_filters('rest_url_details_cache_expiration', $ttl);
 
             return set_site_transient($key, $data, $cache_expiration);
         }
 
-        /**
-         * Retrieves the head element section.
-         *
-         * @param string $html The string of HTML to parse.
-         *
-         * @return string The `<head>..</head>` section on success. Given `$html` if not found.
-         * @since 5.9.0
-         *
-         */
         private function get_document_head($html)
         {
             $head_html = $html;
@@ -334,21 +213,6 @@
             return $head_html;
         }
 
-        /**
-         * Gets all the meta tag elements that have a 'content' attribute.
-         *
-         * @param string $html The string of HTML to be parsed.
-         *
-         * @return array {
-         *     A multi-dimensional indexed array on success, else empty array.
-         *
-         * @type string[] $0 Meta elements with a content attribute.
-         * @type string[] $1 Content attribute's opening quotation mark.
-         * @type string[] $2 Content attribute's value for each meta element.
-         *                     }
-         * @since 5.9.0
-         *
-         */
         private function get_meta_with_content_elements($html)
         {
             /*
@@ -417,15 +281,6 @@
             return $elements;
         }
 
-        /**
-         * Parses the title tag contents from the provided HTML.
-         *
-         * @param string $html The HTML from the remote website at URL.
-         *
-         * @return string The title tag contents on success. Empty string if not found.
-         * @since 5.9.0
-         *
-         */
         private function get_title($html)
         {
             $pattern = '#<title[^>]*>(.*?)<\s*/\s*title>#is';
@@ -441,17 +296,6 @@
             return $this->prepare_metadata_for_output($title);
         }
 
-        /**
-         * Prepares the metadata by:
-         *    - stripping all HTML tags and tag entities.
-         *    - converting non-tag entities into characters.
-         *
-         * @param string $metadata The metadata content to prepare.
-         *
-         * @return string The prepared metadata.
-         * @since 5.9.0
-         *
-         */
         private function prepare_metadata_for_output($metadata)
         {
             $metadata = html_entity_decode($metadata, ENT_QUOTES, get_bloginfo('charset'));
@@ -460,16 +304,6 @@
             return $metadata;
         }
 
-        /**
-         * Parses the site icon from the provided HTML.
-         *
-         * @param string $html The HTML from the remote website at URL.
-         * @param string $url  The target website URL.
-         *
-         * @return string The icon URI on success. Empty string if not found.
-         * @since 5.9.0
-         *
-         */
         private function get_icon($html, $url)
         {
             // Grab the icon's link element.
@@ -512,20 +346,6 @@
             return $icon;
         }
 
-        /**
-         * Parses the meta description from the provided HTML.
-         *
-         * @param array $meta_elements {
-         *                             A multi-dimensional indexed array on success, else empty array.
-         *
-         * @type string[] $0 Meta elements with a content attribute.
-         * @type string[] $1 Content attribute's opening quotation mark.
-         * @type string[] $2 Content attribute's value for each meta element.
-         *                             }
-         * @return string The meta description contents on success. Empty string if not found.
-         * @since 5.9.0
-         *
-         */
         private function get_description($meta_elements)
         {
             // Bail out if there are no meta elements.
@@ -545,24 +365,6 @@
             return $this->prepare_metadata_for_output($description);
         }
 
-        /**
-         * Gets the metadata from a target meta element.
-         *
-         * @param array  $meta_elements {
-         *                              A multi-dimensional indexed array on success, else empty array.
-         *
-         * @type string[] $0 Meta elements with a content attribute.
-         * @type string[] $1 Content attribute's opening quotation mark.
-         * @type string[] $2 Content attribute's value for each meta element.
-         *                              }
-         *
-         * @param string $attr          Attribute that identifies the element with the target metadata.
-         * @param string $attr_value    The attribute's value that identifies the element with the target metadata.
-         *
-         * @return string The metadata on success. Empty string if not found.
-         * @since 5.9.0
-         *
-         */
         private function get_metadata_from_meta_element($meta_elements, $attr, $attr_value)
         {
             // Bail out if there are no meta elements.
@@ -618,25 +420,6 @@
             return $metadata;
         }
 
-        /**
-         * Parses the Open Graph (OG) Image from the provided HTML.
-         *
-         * See: https://ogp.me/.
-         *
-         * @param array  $meta_elements {
-         *                              A multi-dimensional indexed array on success, else empty array.
-         *
-         * @type string[] $0 Meta elements with a content attribute.
-         * @type string[] $1 Content attribute's opening quotation mark.
-         * @type string[] $2 Content attribute's value for each meta element.
-         *                              }
-         *
-         * @param string $url           The target website URL.
-         *
-         * @return string The OG image on success. Empty string if not found.
-         * @since 5.9.0
-         *
-         */
         private function get_image($meta_elements, $url)
         {
             $image = $this->get_metadata_from_meta_element($meta_elements, 'property', '(?:og:image|og:image:url)');
@@ -658,13 +441,6 @@
             return $image;
         }
 
-        /**
-         * Checks whether a given request has permission to read remote URLs.
-         *
-         * @return WP_Error|bool True if the request has permission, else WP_Error.
-         * @since 5.9.0
-         *
-         */
         public function permissions_check()
         {
             if(current_user_can('edit_posts'))

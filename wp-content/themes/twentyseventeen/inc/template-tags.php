@@ -1,18 +1,7 @@
 <?php
-    /**
-     * Custom template tags for this theme.
-     *
-     * Eventually, some of the functionality here could be replaced by core features.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Seventeen
-     * @since      Twenty Seventeen 1.0
-     */
 
     if(! function_exists('twentyseventeen_posted_on')) :
-        /**
-         * Prints HTML with meta information for the current post-date/time and author.
-         */
+
         function twentyseventeen_posted_on()
         {
             // Get the author name; wrap it in a link.
@@ -24,9 +13,7 @@
     endif;
 
     if(! function_exists('twentyseventeen_time_link')) :
-        /**
-         * Gets a nicely formatted string for the published date.
-         */
+
         function twentyseventeen_time_link()
         {
             $time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
@@ -43,9 +30,7 @@
     endif;
 
     if(! function_exists('twentyseventeen_entry_footer')) :
-        /**
-         * Prints HTML with meta information for the categories, tags and comments.
-         */
+
         function twentyseventeen_entry_footer()
         {
             $separate_meta = wp_get_list_item_separator();
@@ -90,30 +75,13 @@
     endif;
 
     if(! function_exists('twentyseventeen_edit_link')) :
-        /**
-         * Returns an accessibility-friendly link to edit a post or page.
-         *
-         * This also gives a little context about what exactly we're editing
-         * (post or page?) so that users understand a bit more where they are in terms
-         * of the template hierarchy and their content. Helpful when/if the single-page
-         * layout with multiple posts/pages shown gets confusing.
-         */
+
         function twentyseventeen_edit_link()
         {
             edit_post_link(sprintf(/* translators: %s: Post title. Only visible to screen readers. */ __('Edit<span class="screen-reader-text"> "%s"</span>', 'twentyseventeen'), get_the_title()), '<span class="edit-link">', '</span>');
         }
     endif;
 
-    /**
-     * Displays a front page section.
-     *
-     * @param WP_Customize_Partial $partial                Partial associated with a selective refresh request.
-     * @param int                  $id                     Front page section to display.
-     *
-     * @global int|string          $twentyseventeencounter Front page section counter.
-     * @global WP_Post             $post                   Global post object.
-     *
-     */
     function twentyseventeen_front_page_section($partial = null, $id = 0)
     {
         if($partial instanceof WP_Customize_Partial)
@@ -144,11 +112,6 @@
         }
     }
 
-    /**
-     * Returns true if a blog has more than 1 category.
-     *
-     * @return bool
-     */
     function twentyseventeen_categorized_blog()
     {
         $category_count = get_transient('twentyseventeen_categories');
@@ -178,9 +141,6 @@
         return $category_count > 1;
     }
 
-    /**
-     * Flushes out the transients used in twentyseventeen_categorized_blog.
-     */
     function twentyseventeen_category_transient_flusher()
     {
         if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
@@ -195,20 +155,9 @@
     add_action('save_post', 'twentyseventeen_category_transient_flusher');
 
     if(! function_exists('wp_body_open')) :
-        /**
-         * Fires the wp_body_open action.
-         *
-         * Added for backward compatibility to support pre-5.2.0 WordPress versions.
-         *
-         * @since Twenty Seventeen 2.2
-         */
+
         function wp_body_open()
         {
-            /**
-             * Fires after the opening <body> tag.
-             *
-             * @since Twenty Seventeen 2.2
-             */
             do_action('wp_body_open');
         }
     endif;

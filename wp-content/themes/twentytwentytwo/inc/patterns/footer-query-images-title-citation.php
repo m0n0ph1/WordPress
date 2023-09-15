@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Footer with query, featured images, title, and citation
-     */
+
     return [
         'title' => __('Footer with query, featured images, title, and citation', 'twentytwentytwo'),
         'categories' => ['footer'],

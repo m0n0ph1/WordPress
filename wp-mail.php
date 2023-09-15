@@ -1,16 +1,7 @@
 <?php
-    /**
-     * Gets the email message from the user's mailbox to add as
-     * a WordPress post. Mailbox connection information must be
-     * configured under Settings > Writing
-     *
-     * @package WordPress
-     */
 
-    /** Make sure that the WordPress bootstrap has run before continuing. */
     require __DIR__.'/wp-load.php';
 
-    /** This filter is documented in wp-admin/options.php */
     if(! apply_filters('enable_post_by_email_configuration', true))
     {
         wp_die(__('This action has been disabled by the administrator.'), 403);
@@ -23,17 +14,10 @@
         wp_die(__('This action has been disabled by the administrator.'), 403);
     }
 
-    /**
-     * Fires to allow a plugin to do a complete takeover of Post by Email.
-     *
-     * @since 2.9.0
-     */
     do_action('wp-mail.php'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
-    /** Get the POP3 class with which to access the mailbox. */
     require_once ABSPATH.WPINC.'/class-pop3.php';
 
-    /** Only check at this interval for new messages. */
     if(! defined('WP_MAIL_INTERVAL'))
     {
         define('WP_MAIL_INTERVAL', 5 * MINUTE_IN_SECONDS);
@@ -212,17 +196,6 @@
         }
         $content = trim($content);
 
-        /**
-         * Filters the original content of the email.
-         *
-         * Give Post-By-Email extending plugins full access to the content, either
-         * the raw content, or the content of the last quoted-printable section.
-         *
-         * @param string $content The original email content.
-         *
-         * @since 2.8.0
-         *
-         */
         $content = apply_filters('wp_mail_original_content', $content);
 
         if(false !== stripos($content_transfer_encoding, 'quoted-printable'))
@@ -241,14 +214,6 @@
 
         $content = trim($content);
 
-        /**
-         * Filters the content of the post submitted by email before saving.
-         *
-         * @param string $content The email content.
-         *
-         * @since 1.2.0
-         *
-         */
         $post_content = apply_filters('phone_content', $content);
 
         $post_title = xmlrpc_getposttitle($content);
@@ -275,14 +240,6 @@
             continue;
         }
 
-        /**
-         * Fires after a post submitted by email is published.
-         *
-         * @param int $post_ID The post ID.
-         *
-         * @since 1.2.0
-         *
-         */
         do_action('publish_phone', $post_ID);
 
         echo "\n<p><strong>".__('Author:').'</strong> '.esc_html($post_author).'</p>';

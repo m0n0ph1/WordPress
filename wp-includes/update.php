@@ -1,30 +1,5 @@
 <?php
-    /**
-     * A simple set of functions to check the WordPress.org Version Update service.
-     *
-     * @package WordPress
-     * @since   2.3.0
-     */
 
-    /**
-     * Checks WordPress version against the newest version.
-     *
-     * The WordPress version, PHP version, and locale is sent.
-     *
-     * Checks against the WordPress server at api.wordpress.org. Will only check
-     * if WordPress isn't installing.
-     *
-     * @param array   $extra_stats      Extra statistics to report to the WordPress.org API.
-     * @param bool    $force_check      Whether to bypass the transient cache and force a fresh update check.
-     *                                  Defaults to false, true if $extra_stats is set.
-     *
-     * @global wpdb   $wpdb             WordPress database abstraction object.
-     * @global string $wp_local_package Locale code of the package.
-     *
-     * @since 2.3.0
-     *
-     * @global string $wp_version       Used to check against the newest WordPress version.
-     */
     function wp_version_check($extra_stats = [], $force_check = false)
     {
         global $wpdb, $wp_local_package;
@@ -68,14 +43,6 @@
             return;
         }
 
-        /**
-         * Filters the locale requested for WordPress core translations.
-         *
-         * @param string $locale Current locale.
-         *
-         * @since 2.8.0
-         *
-         */
         $locale = apply_filters('core_version_check_locale', get_locale());
 
         // Update last_checked for current to prevent multiple blocking requests if request hangs.
@@ -154,28 +121,6 @@
             );
         }
 
-        /**
-         * Filters the query arguments sent as part of the core version check.
-         *
-         * WARNING: Changing this data may result in your site not receiving security updates.
-         * Please exercise extreme caution.
-         *
-         * @param array $query              {
-         *                                  Version check query arguments.
-         *
-         * @type string $version            WordPress version number.
-         * @type string $php                PHP version number.
-         * @type string $locale             The locale to retrieve updates for.
-         * @type string $mysql              MySQL version number.
-         * @type string $local_package      The value of the $wp_local_package global, when set.
-         * @type int    $blogs              Number of sites on this WordPress installation.
-         * @type int    $users              Number of users on this WordPress installation.
-         * @type int    $multisite_enabled  Whether this WordPress installation uses Multisite.
-         * @type int    $initial_db_version Database version of WordPress at time of installation.
-         *                                  }
-         * @since 4.9.0
-         *
-         */
         $query = apply_filters('core_version_check_query_args', $query);
 
         $post_body = [
@@ -314,32 +259,10 @@
         // Trigger background updates if running non-interactively, and we weren't called from the update handler.
         if($doing_cron && ! doing_action('wp_maybe_auto_update'))
         {
-            /**
-             * Fires during wp_cron, starting the auto-update process.
-             *
-             * @since 3.9.0
-             */
             do_action('wp_maybe_auto_update');
         }
     }
 
-    /**
-     * Checks for available updates to plugins based on the latest versions hosted on WordPress.org.
-     *
-     * Despite its name this function does not actually perform any updates, it only checks for available updates.
-     *
-     * A list of all plugins installed is sent to WP, along with the site locale.
-     *
-     * Checks against the WordPress server at api.wordpress.org. Will only check
-     * if WordPress isn't installing.
-     *
-     * @param array   $extra_stats Extra statistics to report to the WordPress.org API.
-     *
-     * @global string $wp_version  The WordPress version string.
-     *
-     * @since 2.3.0
-     *
-     */
     function wp_update_plugins($extra_stats = [])
     {
         if(wp_installing())
@@ -442,15 +365,6 @@
 
         $locales = array_values(get_available_languages());
 
-        /**
-         * Filters the locales requested for plugin translations.
-         *
-         * @param string[] $locales Plugin locales. Default is all available locales of the site.
-         *
-         * @since 4.5.0 The default value of the `$locales` parameter changed to include all locales.
-         *
-         * @since 3.7.0
-         */
         $locales = apply_filters('plugins_update_check_locales', $locales);
         $locales = array_unique($locales);
 
@@ -521,47 +435,6 @@
 
             $hostname = wp_parse_url(sanitize_url($plugin_data['UpdateURI']), PHP_URL_HOST);
 
-            /**
-             * Filters the update response for a given plugin hostname.
-             *
-             * The dynamic portion of the hook name, `$hostname`, refers to the hostname
-             * of the URI specified in the `Update URI` header field.
-             *
-             * @param array|false $update       {
-             *                                  The plugin update data with the latest details. Default false.
-             *
-             * @type string       $id           Optional. ID of the plugin for update purposes, should be a URI
-             *                                  specified in the `Update URI` header field.
-             * @type string       $slug         Slug of the plugin.
-             * @type string       $version      The version of the plugin.
-             * @type string       $url          The URL for details of the plugin.
-             * @type string       $package      Optional. The update ZIP for the plugin.
-             * @type string       $tested       Optional. The version of WordPress the plugin is tested against.
-             * @type string       $requires_php Optional. The version of PHP which the plugin requires.
-             * @type bool         $autoupdate   Optional. Whether the plugin should automatically update.
-             * @type array        $icons        Optional. Array of plugin icons.
-             * @type array        $banners      Optional. Array of plugin banners.
-             * @type array        $banners_rtl  Optional. Array of plugin RTL banners.
-             * @type array        $translations {
-             *                                  Optional. List of translation updates for the plugin.
-             *
-             * @type string       $language     The language the translation update is for.
-             * @type string       $version      The version of the plugin this translation is for.
-             *                                  This is not the version of the language file.
-             * @type string       $updated      The update timestamp of the translation file.
-             *                                  Should be a date in the `YYYY-MM-DD HH:MM:SS` format.
-             * @type string       $package      The ZIP location containing the translation update.
-             * @type string       $autoupdate   Whether the translation should be automatically installed.
-             *                                  }
-             *                                  }
-             *
-             * @param array       $plugin_data  Plugin headers.
-             * @param string      $plugin_file  Plugin filename.
-             * @param string[]    $locales      Installed locales to look up translations for.
-             *
-             * @since 5.8.0
-             *
-             */
             $update = apply_filters("update_plugins_{$hostname}", false, $plugin_data, $plugin_file, $locales);
 
             if(! $update)
@@ -629,23 +502,6 @@
         set_site_transient('update_plugins', $updates);
     }
 
-    /**
-     * Checks for available updates to themes based on the latest versions hosted on WordPress.org.
-     *
-     * Despite its name this function does not actually perform any updates, it only checks for available updates.
-     *
-     * A list of all themes installed is sent to WP, along with the site locale.
-     *
-     * Checks against the WordPress server at api.wordpress.org. Will only check
-     * if WordPress isn't installing.
-     *
-     * @param array   $extra_stats Extra statistics to report to the WordPress.org API.
-     *
-     * @global string $wp_version  The WordPress version string.
-     *
-     * @since 2.7.0
-     *
-     */
     function wp_update_themes($extra_stats = [])
     {
         if(wp_installing())
@@ -756,15 +612,6 @@
 
         $locales = array_values(get_available_languages());
 
-        /**
-         * Filters the locales requested for theme translations.
-         *
-         * @param string[] $locales Theme locales. Default is all available locales of the site.
-         *
-         * @since 4.5.0 The default value of the `$locales` parameter changed to include all locales.
-         *
-         * @since 3.7.0
-         */
         $locales = apply_filters('themes_update_check_locales', $locales);
         $locales = array_unique($locales);
 
@@ -838,44 +685,6 @@
 
             $hostname = wp_parse_url(sanitize_url($theme_data['UpdateURI']), PHP_URL_HOST);
 
-            /**
-             * Filters the update response for a given theme hostname.
-             *
-             * The dynamic portion of the hook name, `$hostname`, refers to the hostname
-             * of the URI specified in the `Update URI` header field.
-             *
-             * @param array|false $update           {
-             *                                      The theme update data with the latest details. Default false.
-             *
-             * @type string       $id               Optional. ID of the theme for update purposes, should be a URI
-             *                                      specified in the `Update URI` header field.
-             * @type string       $theme            Directory name of the theme.
-             * @type string       $version          The version of the theme.
-             * @type string       $url              The URL for details of the theme.
-             * @type string       $package          Optional. The update ZIP for the theme.
-             * @type string       $tested           Optional. The version of WordPress the theme is tested against.
-             * @type string       $requires_php     Optional. The version of PHP which the theme requires.
-             * @type bool         $autoupdate       Optional. Whether the theme should automatically update.
-             * @type array        $translations     {
-             *                                      Optional. List of translation updates for the theme.
-             *
-             * @type string       $language         The language the translation update is for.
-             * @type string       $version          The version of the theme this translation is for.
-             *                                      This is not the version of the language file.
-             * @type string       $updated          The update timestamp of the translation file.
-             *                                      Should be a date in the `YYYY-MM-DD HH:MM:SS` format.
-             * @type string       $package          The ZIP location containing the translation update.
-             * @type string       $autoupdate       Whether the translation should be automatically installed.
-             *                                      }
-             *                                      }
-             *
-             * @param array       $theme_data       Theme headers.
-             * @param string      $theme_stylesheet Theme stylesheet.
-             * @param string[]    $locales          Installed locales to look up translations for.
-             *
-             * @since 6.1.0
-             *
-             */
             $update = apply_filters("update_themes_{$hostname}", false, $theme_data, $theme_stylesheet, $locales);
 
             if(! $update)
@@ -930,13 +739,6 @@
         set_site_transient('update_themes', $new_update);
     }
 
-    /**
-     * Performs WordPress automatic background updates.
-     *
-     * Updates WordPress core plus any plugins and themes that have automatic updates enabled.
-     *
-     * @since 3.7.0
-     */
     function wp_maybe_auto_update()
     {
         require_once ABSPATH.'wp-admin/includes/admin.php';
@@ -946,13 +748,6 @@
         $upgrader->run();
     }
 
-    /**
-     * Retrieves a list of all language updates available.
-     *
-     * @return object[] Array of translation objects that have available updates.
-     * @since 3.7.0
-     *
-     */
     function wp_get_translation_updates()
     {
         $updates = [];
@@ -980,13 +775,6 @@
         return $updates;
     }
 
-    /**
-     * Collects counts and UI strings for available updates.
-     *
-     * @return array
-     * @since 3.3.0
-     *
-     */
     function wp_get_update_data()
     {
         $counts = [
@@ -1075,31 +863,9 @@
             'title' => $update_title,
         ];
 
-        /**
-         * Filters the returned array of update data for plugins, themes, and WordPress core.
-         *
-         * @param array $update_data  {
-         *                            Fetched update data.
-         *
-         * @type array  $counts       An array of counts for available plugin, theme, and WordPress updates.
-         * @type string $update_title Titles of available updates.
-         *                            }
-         *
-         * @param array $titles       An array of update counts and UI strings for available updates.
-         *
-         * @since 3.5.0
-         *
-         */
         return apply_filters('wp_get_update_data', $update_data, $titles);
     }
 
-    /**
-     * Determines whether core should be updated.
-     *
-     * @since 2.8.0
-     *
-     * @global string $wp_version The WordPress version string.
-     */
     function _maybe_update_core()
     {
         // Include an unmodified $wp_version.
@@ -1115,16 +881,6 @@
         wp_version_check();
     }
 
-    /**
-     * Checks the last time plugins were run before checking plugin versions.
-     *
-     * This might have been backported to WordPress 2.6.1 for performance reasons.
-     * This is used for the wp-admin to check only so often instead of every page
-     * load.
-     *
-     * @since  2.7.0
-     * @access private
-     */
     function _maybe_update_plugins()
     {
         $current = get_site_transient('update_plugins');
@@ -1137,15 +893,6 @@
         wp_update_plugins();
     }
 
-    /**
-     * Checks themes versions only after a duration of time.
-     *
-     * This is for performance reasons to make sure that on the theme version
-     * checker is not run on every page load.
-     *
-     * @since  2.7.0
-     * @access private
-     */
     function _maybe_update_themes()
     {
         $current = get_site_transient('update_themes');
@@ -1158,11 +905,6 @@
         wp_update_themes();
     }
 
-    /**
-     * Schedules core, theme, and plugin update checks.
-     *
-     * @since 3.1.0
-     */
     function wp_schedule_update_checks()
     {
         if(! wp_next_scheduled('wp_version_check') && ! wp_installing())
@@ -1181,11 +923,6 @@
         }
     }
 
-    /**
-     * Clears existing update caches for plugins, themes, and core.
-     *
-     * @since 4.1.0
-     */
     function wp_clean_update_cache()
     {
         if(function_exists('wp_clean_plugins_cache'))
@@ -1202,11 +939,6 @@
         delete_site_transient('update_core');
     }
 
-    /**
-     * Schedules the removal of all contents in the temporary backup directory.
-     *
-     * @since 6.3.0
-     */
     function wp_delete_all_temp_backups()
     {
         /*
@@ -1225,17 +957,6 @@
         add_action('shutdown', '_wp_delete_all_temp_backups');
     }
 
-    /**
-     * Deletes all contents in the temporary backup directory.
-     *
-     * @return void|WP_Error Void on success, or a WP_Error object on failure.
-     * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-     *
-     * @since  6.3.0
-     *
-     * @access private
-     *
-     */
     function _wp_delete_all_temp_backups()
     {
         global $wp_filesystem;

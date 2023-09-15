@@ -1,13 +1,5 @@
 <?php
-    /**
-     * Multisite upgrade administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     require_once ABSPATH.WPINC.'/http.php';
@@ -43,9 +35,6 @@
 
             if($n < 5)
             {
-                /**
-                 * @global int $wp_db_version WordPress database version.
-                 */
                 global $wp_db_version;
                 update_site_option('wpmu_upgrade_site', $wp_db_version);
             }
@@ -88,24 +77,8 @@
                     wp_die(sprintf(/* translators: 1: Site URL, 2: Server error message. */ __('Warning! Problem updating %1$s. Your server may not be able to connect to sites running on it. Error message: %2$s'), $siteurl, '<em>'.$response->get_error_message().'</em>'));
                 }
 
-                /**
-                 * Fires after the Multisite DB upgrade for each site is complete.
-                 *
-                 * @param array $response The upgrade response array.
-                 *
-                 * @since MU (3.0.0)
-                 *
-                 */
                 do_action('after_mu_upgrade', $response);
 
-                /**
-                 * Fires after each site has been upgraded.
-                 *
-                 * @param int $site_id The Site ID.
-                 *
-                 * @since MU (3.0.0)
-                 *
-                 */
                 do_action('wpmu_upgrade_site', $site_id);
             }
             echo '</ul>';
@@ -135,11 +108,7 @@
             <p><a class="button button-primary" href="upgrade.php?action=upgrade"><?php _e('Upgrade Network'); ?></a>
             </p>
             <?php
-            /**
-             * Fires before the footer on the network upgrade screen.
-             *
-             * @since MU (3.0.0)
-             */
+
             do_action('wpmu_upgrade_page');
             break;
     }

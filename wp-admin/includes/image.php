@@ -1,28 +1,5 @@
 <?php
-    /**
-     * File contains all the administration image manipulation functions.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Crops an image to a given size.
-     *
-     * @param string|int   $src      The source file or Attachment ID.
-     * @param int          $src_x    The start x position to crop from.
-     * @param int          $src_y    The start y position to crop from.
-     * @param int          $src_w    The width to crop.
-     * @param int          $src_h    The height to crop.
-     * @param int          $dst_w    The destination width.
-     * @param int          $dst_h    The destination height.
-     * @param bool|false   $src_abs  Optional. If the source crop points are absolute.
-     * @param string|false $dst_file Optional. The destination file to write to.
-     *
-     * @return string|WP_Error New filepath on success, WP_Error on failure.
-     * @since 2.1.0
-     *
-     */
     function wp_crop_image($src, $src_x, $src_y, $src_w, $src_h, $dst_w, $dst_h, $src_abs = false, $dst_file = false)
     {
         $src_file = $src;
@@ -83,19 +60,6 @@
         return $dst_file;
     }
 
-    /**
-     * Compare the existing image sub-sizes (as saved in the attachment meta)
-     * to the currently registered image sub-sizes, and return the difference.
-     *
-     * Registered sub-sizes that are larger than the image are skipped.
-     *
-     * @param int $attachment_id The image attachment post ID.
-     *
-     * @return array[] Associative array of arrays of image sub-size information for
-     *                 missing image sizes, keyed by image size name.
-     * @since 5.3.0
-     *
-     */
     function wp_get_missing_image_subsizes($attachment_id)
     {
         if(! wp_attachment_is_image($attachment_id))
@@ -155,31 +119,9 @@
          */
         $missing_sizes = array_diff_key($possible_sizes, $image_meta['sizes']);
 
-        /**
-         * Filters the array of missing image sub-sizes for an uploaded image.
-         *
-         * @param array[] $missing_sizes Associative array of arrays of image sub-size information for
-         *                               missing image sizes, keyed by image size name.
-         * @param array   $image_meta    The image meta data.
-         * @param int     $attachment_id The image attachment post ID.
-         *
-         * @since 5.3.0
-         *
-         */
         return apply_filters('wp_get_missing_image_subsizes', $missing_sizes, $image_meta, $attachment_id);
     }
 
-    /**
-     * If any of the currently registered image sub-sizes are missing,
-     * create them and update the image meta data.
-     *
-     * @param int $attachment_id The image attachment post ID.
-     *
-     * @return array|WP_Error The updated image meta data array or WP_Error object
-     *                        if both the image meta and the attached file are missing.
-     * @since 5.3.0
-     *
-     */
     function wp_update_image_subsizes($attachment_id)
     {
         $image_meta = wp_get_attachment_metadata($attachment_id);
@@ -213,7 +155,6 @@
             $image_meta = _wp_make_subsizes($missing_sizes, $image_file, $image_meta, $attachment_id);
         }
 
-        /** This filter is documented in wp-admin/includes/image.php */
         $image_meta = apply_filters('wp_generate_attachment_metadata', $image_meta, $attachment_id, 'update');
 
         // Save the updated metadata.
@@ -222,20 +163,6 @@
         return $image_meta;
     }
 
-    /**
-     * Updates the attached file and image meta data when the original image was edited.
-     *
-     * @param array  $saved_data    The data returned from WP_Image_Editor after successfully saving an image.
-     * @param string $original_file Path to the original file.
-     * @param array  $image_meta    The image meta data.
-     * @param int    $attachment_id The attachment post ID.
-     *
-     * @return array The updated image meta data.
-     * @since  6.0.0 The `$filesize` value was added to the returned array.
-     * @access private
-     *
-     * @since  5.3.0
-     */
     function _wp_image_meta_replace_original($saved_data, $original_file, $image_meta, $attachment_id)
     {
         $new_file = $saved_data['path'];
@@ -259,19 +186,6 @@
         return $image_meta;
     }
 
-    /**
-     * Creates image sub-sizes, adds the new data to the image meta `sizes` array, and updates the image metadata.
-     *
-     * Intended for use after an image is uploaded. Saves/updates the image metadata after each
-     * sub-size is created. If there was an error, it is added to the returned image metadata array.
-     *
-     * @param string $file          Full path to the image file.
-     * @param int    $attachment_id Attachment ID to process.
-     *
-     * @return array The image attachment meta data.
-     * @since 5.3.0
-     *
-     */
     function wp_create_image_subsizes($file, $attachment_id)
     {
         $imagesize = wp_getimagesize($file);
@@ -302,29 +216,6 @@
         // Do not scale (large) PNG images. May result in sub-sizes that have greater file size than the original. See #48736.
         if('image/png' !== $imagesize['mime'])
         {
-            /**
-             * Filters the "BIG image" threshold value.
-             *
-             * If the original image width or height is above the threshold, it will be scaled down. The threshold is
-             * used as max width and max height. The scaled down image will be used as the largest available size, including
-             * the `_wp_attached_file` post meta value.
-             *
-             * Returning `false` from the filter callback will disable the scaling.
-             *
-             * @param int    $threshold     The threshold value in pixels. Default 2560.
-             * @param array  $imagesize     {
-             *                              Indexed array of the image width and height in pixels.
-             *
-             * @type int $0 The image width.
-             * @type int $1 The image height.
-             *                              }
-             *
-             * @param string $file          Full path to the uploaded image file.
-             * @param int    $attachment_id Attachment post ID.
-             *
-             * @since 5.3.0
-             *
-             */
             $threshold = (int) apply_filters('big_image_size_threshold', 2560, $imagesize, $file, $attachment_id);
 
             /*
@@ -427,40 +318,11 @@
 
         $new_sizes = wp_get_registered_image_subsizes();
 
-        /**
-         * Filters the image sizes automatically generated when uploading an image.
-         *
-         * @param array $new_sizes     Associative array of image sizes to be created.
-         * @param array $image_meta    The image meta data: width, height, file, sizes, etc.
-         * @param int   $attachment_id The attachment post ID for the image.
-         *
-         * @since 2.9.0
-         * @since 4.4.0 Added the `$image_meta` argument.
-         * @since 5.3.0 Added the `$attachment_id` argument.
-         *
-         */
         $new_sizes = apply_filters('intermediate_image_sizes_advanced', $new_sizes, $image_meta, $attachment_id);
 
         return _wp_make_subsizes($new_sizes, $file, $image_meta, $attachment_id);
     }
 
-    /**
-     * Low-level function to create image sub-sizes.
-     *
-     * Updates the image meta after each sub-size is created.
-     * Errors are stored in the returned image metadata array.
-     *
-     * @param array  $new_sizes     Array defining what sizes to create.
-     * @param string $file          Full path to the image file.
-     * @param array  $image_meta    The attachment meta data array.
-     * @param int    $attachment_id Attachment ID to process.
-     *
-     * @return array The attachment meta data with updated `sizes` array. Includes an array of errors encountered while
-     *     resizing.
-     * @since  5.3.0
-     * @access private
-     *
-     */
     function _wp_make_subsizes($new_sizes, $file, $image_meta, $attachment_id)
     {
         if(empty($image_meta) || ! is_array($image_meta))
@@ -562,17 +424,6 @@
         return $image_meta;
     }
 
-    /**
-     * Generates attachment meta data and create image sub-sizes for images.
-     *
-     * @param int    $attachment_id Attachment ID to process.
-     * @param string $file          Filepath of the attached image.
-     *
-     * @return array Metadata for attachment.
-     * @since 6.0.0 The `$filesize` value was added to the returned array.
-     *
-     * @since 2.1.0
-     */
     function wp_generate_attachment_metadata($attachment_id, $file)
     {
         $attachment = get_post($attachment_id);
@@ -650,21 +501,7 @@
                         'post_type' => 'attachment',
                         'post_content' => '',
                     ];
-                    /**
-                     * Filters the parameters for the attachment thumbnail creation.
-                     *
-                     * @param array $image_attachment An array of parameters to create the thumbnail.
-                     * @param array $metadata         Current attachment metadata.
-                     * @param array $uploaded         {
-                     *                                Information about the newly-uploaded file.
-                     *
-                     * @type string $file             Filename of the newly-uploaded file.
-                     * @type string $url              URL of the uploaded file.
-                     * @type string $type             File type.
-                     *                                }
-                     * @since 3.9.0
-                     *
-                     */
+
                     $image_attachment = apply_filters('attachment_thumbnail_args', $image_attachment, $metadata, $uploaded);
 
                     $sub_attachment_id = wp_insert_attachment($image_attachment, $uploaded['file']);
@@ -685,15 +522,6 @@
                 'large',
             ];
 
-            /**
-             * Filters the image sizes generated for non-image mime types.
-             *
-             * @param string[] $fallback_sizes An array of image size names.
-             * @param array    $metadata       Current attachment metadata.
-             *
-             * @since 4.7.0
-             *
-             */
             $fallback_sizes = apply_filters('fallback_intermediate_image_sizes', $fallback_sizes, $metadata);
 
             $registered_sizes = wp_get_registered_image_subsizes();
@@ -752,30 +580,9 @@
             $metadata['filesize'] = wp_filesize($file);
         }
 
-        /**
-         * Filters the generated attachment meta data.
-         *
-         * @param array  $metadata      An array of attachment meta data.
-         * @param int    $attachment_id Current attachment ID.
-         * @param string $context       Additional context. Can be 'create' when metadata was initially created for new attachment
-         *                              or 'update' when the metadata was updated.
-         *
-         * @since 5.3.0 The `$context` parameter was added.
-         *
-         * @since 2.1.0
-         */
         return apply_filters('wp_generate_attachment_metadata', $metadata, $attachment_id, 'create');
     }
 
-    /**
-     * Converts a fraction string to a decimal.
-     *
-     * @param string $str Fraction string.
-     *
-     * @return int|float Returns calculated fraction or integer 0 on invalid input.
-     * @since 2.5.0
-     *
-     */
     function wp_exif_frac2dec($str)
     {
         if(! is_scalar($str) || is_bool($str))
@@ -816,15 +623,6 @@
         return $numerator / $denominator;
     }
 
-    /**
-     * Converts the exif date format to a unix timestamp.
-     *
-     * @param string $str A date string expected to be in Exif format (Y:m:d H:i:s).
-     *
-     * @return int|false The unix timestamp, or false on failure.
-     * @since 2.5.0
-     *
-     */
     function wp_exif_date2ts($str)
     {
         [$date, $time] = explode(' ', trim($str));
@@ -833,23 +631,6 @@
         return strtotime("{$y}-{$m}-{$d} {$time}");
     }
 
-    /**
-     * Gets extended image metadata, exif or iptc as available.
-     *
-     * Retrieves the EXIF metadata aperture, credit, camera, caption, copyright, iso
-     * created_timestamp, focal_length, shutter_speed, and title.
-     *
-     * The IPTC metadata that is retrieved is APP13, credit, byline, created date
-     * and time, caption, copyright, and title. Also includes FNumber, Model,
-     * DateTimeDigitized, FocalLength, ISOSpeedRatings, and ExposureTime.
-     *
-     * @param string $file
-     *
-     * @return array|false Image metadata array on success, false on failure.
-     * @todo  Try other exif libraries if available.
-     * @since 2.5.0
-     *
-     */
     function wp_read_image_metadata($file)
     {
         if(! file_exists($file))
@@ -967,15 +748,6 @@
 
         $exif = [];
 
-        /**
-         * Filters the image types to check for exif data.
-         *
-         * @param int[] $image_types Array of image types to check for exif data. Each value
-         *                           is usually one of the `IMAGETYPE_*` constants.
-         *
-         * @since 2.5.0
-         *
-         */
         $exif_image_types = apply_filters('wp_read_image_metadata_types', [
             IMAGETYPE_JPEG,
             IMAGETYPE_TIFF_II,
@@ -1100,32 +872,9 @@
 
         $meta = wp_kses_post_deep($meta);
 
-        /**
-         * Filters the array of meta data read from an image's exif data.
-         *
-         * @param array  $meta       Image meta data.
-         * @param string $file       Path to image file.
-         * @param int    $image_type Type of image, one of the `IMAGETYPE_XXX` constants.
-         * @param array  $iptc       IPTC data.
-         * @param array  $exif       EXIF data.
-         *
-         * @since 5.0.0 The `$exif` parameter was added.
-         *
-         * @since 2.5.0
-         * @since 4.4.0 The `$iptc` parameter was added.
-         */
         return apply_filters('wp_read_image_metadata', $meta, $file, $image_type, $iptc, $exif);
     }
 
-    /**
-     * Validates that file is an image.
-     *
-     * @param string $path File path to test if valid image.
-     *
-     * @return bool True if valid image, false if not valid image.
-     * @since 2.5.0
-     *
-     */
     function file_is_valid_image($path)
     {
         $size = wp_getimagesize($path);
@@ -1133,15 +882,6 @@
         return ! empty($size);
     }
 
-    /**
-     * Validates that file is suitable for displaying within a web page.
-     *
-     * @param string $path File path to test.
-     *
-     * @return bool True if suitable, false if not suitable.
-     * @since 2.5.0
-     *
-     */
     function file_is_displayable_image($path)
     {
         $displayable_image_types = [
@@ -1167,31 +907,9 @@
             $result = true;
         }
 
-        /**
-         * Filters whether the current image is displayable in the browser.
-         *
-         * @param bool   $result Whether the image can be displayed. Default true.
-         * @param string $path   Path to the image.
-         *
-         * @since 2.5.0
-         *
-         */
         return apply_filters('file_is_displayable_image', $result, $path);
     }
 
-    /**
-     * Loads an image resource for editing.
-     *
-     * @param int          $attachment_id Attachment ID.
-     * @param string       $mime_type     Image mime type.
-     * @param string|int[] $size          Optional. Image size. Accepts any registered image size name, or an array
-     *                                    of width and height values in pixels (in that order). Default 'full'.
-     *
-     * @return resource|GdImage|false The resulting image resource or GdImage instance on success,
-     *                                false on failure.
-     * @since 2.9.0
-     *
-     */
     function load_image_to_edit($attachment_id, $mime_type, $size = 'full')
     {
         $filepath = _load_image_to_edit_path($attachment_id, $size);
@@ -1225,17 +943,6 @@
 
         if(is_gd_image($image))
         {
-            /**
-             * Filters the current image being loaded for editing.
-             *
-             * @param resource|GdImage $image         Current image.
-             * @param int              $attachment_id Attachment ID.
-             * @param string|int[]     $size          Requested image size. Can be any registered image size name, or
-             *                                        an array of width and height values in pixels (in that order).
-             *
-             * @since 2.9.0
-             *
-             */
             $image = apply_filters('load_image_to_edit', $image, $attachment_id, $size);
 
             if(function_exists('imagealphablending') && function_exists('imagesavealpha'))
@@ -1248,21 +955,6 @@
         return $image;
     }
 
-    /**
-     * Retrieves the path or URL of an attachment's attached file.
-     *
-     * If the attached file is not present on the local filesystem (usually due to replication plugins),
-     * then the URL of the file is returned if `allow_url_fopen` is supported.
-     *
-     * @param int          $attachment_id Attachment ID.
-     * @param string|int[] $size          Optional. Image size. Accepts any registered image size name, or an array
-     *                                    of width and height values in pixels (in that order). Default 'full'.
-     *
-     * @return string|false File path or URL on success, false on failure.
-     * @since  3.4.0
-     * @access private
-     *
-     */
     function _load_image_to_edit_path($attachment_id, $size = 'full')
     {
         $filepath = get_attached_file($attachment_id);
@@ -1277,65 +969,18 @@
                 {
                     $filepath = path_join(dirname($filepath), $data['file']);
 
-                    /**
-                     * Filters the path to an attachment's file when editing the image.
-                     *
-                     * The filter is evaluated for all image sizes except 'full'.
-                     *
-                     * @param string       $path          Path to the current image.
-                     * @param int          $attachment_id Attachment ID.
-                     * @param string|int[] $size          Requested image size. Can be any registered image size name, or
-                     *                                    an array of width and height values in pixels (in that order).
-                     *
-                     * @since 3.1.0
-                     *
-                     */
                     $filepath = apply_filters('load_image_to_edit_filesystempath', $filepath, $attachment_id, $size);
                 }
             }
         }
         elseif(function_exists('fopen') && ini_get('allow_url_fopen'))
         {
-            /**
-             * Filters the path to an attachment's URL when editing the image.
-             *
-             * The filter is only evaluated if the file isn't stored locally and `allow_url_fopen` is enabled on the server.
-             *
-             * @param string|false $image_url     Current image URL.
-             * @param int          $attachment_id Attachment ID.
-             * @param string|int[] $size          Requested image size. Can be any registered image size name, or
-             *                                    an array of width and height values in pixels (in that order).
-             *
-             * @since 3.1.0
-             *
-             */
             $filepath = apply_filters('load_image_to_edit_attachmenturl', wp_get_attachment_url($attachment_id), $attachment_id, $size);
         }
 
-        /**
-         * Filters the returned path or URL of the current image.
-         *
-         * @param string|false $filepath      File path or URL to current image, or false.
-         * @param int          $attachment_id Attachment ID.
-         * @param string|int[] $size          Requested image size. Can be any registered image size name, or
-         *                                    an array of width and height values in pixels (in that order).
-         *
-         * @since 2.9.0
-         *
-         */
         return apply_filters('load_image_to_edit_path', $filepath, $attachment_id, $size);
     }
 
-    /**
-     * Copies an existing image file.
-     *
-     * @param int $attachment_id Attachment ID.
-     *
-     * @return string|false New file path on success, false on failure.
-     * @since  3.4.0
-     * @access private
-     *
-     */
     function _copy_image_file($attachment_id)
     {
         $dst_file = get_attached_file($attachment_id);

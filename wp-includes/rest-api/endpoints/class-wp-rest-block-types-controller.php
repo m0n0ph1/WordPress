@@ -1,42 +1,11 @@
 <?php
-    /**
-     * REST API: WP_REST_Block_Types_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.5.0
-     */
 
-    /**
-     * Core class used to access block types via the REST API.
-     *
-     * @since 5.5.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Block_Types_Controller extends WP_REST_Controller
     {
-        /**
-         * Instance of WP_Block_Type_Registry.
-         *
-         * @since 5.5.0
-         * @var WP_Block_Type_Registry
-         */
         protected $block_registry;
 
-        /**
-         * Instance of WP_Block_Styles_Registry.
-         *
-         * @since 5.5.0
-         * @var WP_Block_Styles_Registry
-         */
         protected $style_registry;
 
-        /**
-         * Constructor.
-         *
-         * @since 5.5.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
@@ -45,13 +14,6 @@
             $this->style_registry = WP_Block_Styles_Registry::get_instance();
         }
 
-        /**
-         * Registers the routes for block types.
-         *
-         * @since 5.5.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -97,13 +59,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for collections.
-         *
-         * @return array Collection parameters.
-         * @since 5.5.0
-         *
-         */
         public function get_collection_params()
         {
             return [
@@ -115,27 +70,11 @@
             ];
         }
 
-        /**
-         * Checks whether a given request has permission to read post block types.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.5.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             return $this->check_read_permission();
         }
 
-        /**
-         * Checks whether a given block type should be visible.
-         *
-         * @return true|WP_Error True if the block type is visible, WP_Error otherwise.
-         * @since 5.5.0
-         *
-         */
         protected function check_read_permission()
         {
             if(current_user_can('edit_posts'))
@@ -153,15 +92,6 @@
             return new WP_Error('rest_block_type_cannot_view', __('Sorry, you are not allowed to manage block types.'), ['status' => rest_authorization_required_code()]);
         }
 
-        /**
-         * Retrieves all post block types, depending on user context.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.5.0
-         *
-         */
         public function get_items($request)
         {
             $data = [];
@@ -193,18 +123,6 @@
             return rest_ensure_response($data);
         }
 
-        /**
-         * Prepares a block type object for serialization.
-         *
-         * @param WP_Block_Type   $item    Block type data.
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response Block type data.
-         * @since 5.5.0
-         * @since 5.9.0 Renamed `$block_type` to `$item` to match parent class for PHP 8 named parameter support.
-         * @since 6.3.0 Added `selectors` field.
-         *
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -301,29 +219,9 @@
                 $response->add_links($this->prepare_links($block_type));
             }
 
-            /**
-             * Filters a block type returned from the REST API.
-             *
-             * Allows modification of the block type data right before it is returned.
-             *
-             * @param WP_REST_Response $response   The response object.
-             * @param WP_Block_Type    $block_type The original block type object.
-             * @param WP_REST_Request  $request    Request used to generate the response.
-             *
-             * @since 5.5.0
-             *
-             */
             return apply_filters('rest_prepare_block_type', $response, $block_type, $request);
         }
 
-        /**
-         * Retrieves the block type' schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 6.3.0 Added `selectors` field.
-         *
-         * @since 5.5.0
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -705,15 +603,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Prepares links for the request.
-         *
-         * @param WP_Block_Type $block_type Block type data.
-         *
-         * @return array Links for the given block type.
-         * @since 5.5.0
-         *
-         */
         protected function prepare_links($block_type)
         {
             [$namespace] = explode('/', $block_type->name);
@@ -740,15 +629,6 @@
             return $links;
         }
 
-        /**
-         * Checks if a given request has access to read a block type.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
-         * @since 5.5.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $check = $this->check_read_permission();
@@ -766,15 +646,6 @@
             return true;
         }
 
-        /**
-         * Get the block, if the name is valid.
-         *
-         * @param string $name Block name.
-         *
-         * @return WP_Block_Type|WP_Error Block type object if name is valid, WP_Error otherwise.
-         * @since 5.5.0
-         *
-         */
         protected function get_block($name)
         {
             $block_type = $this->block_registry->get_registered($name);
@@ -786,15 +657,6 @@
             return $block_type;
         }
 
-        /**
-         * Retrieves a specific block type.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.5.0
-         *
-         */
         public function get_item($request)
         {
             $block_name = sprintf('%s/%s', $request['namespace'], $request['name']);

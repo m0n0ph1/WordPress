@@ -1,21 +1,5 @@
 <?php
-    /**
-     * WordPress Network Administration API.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      4.4.0
-     */
 
-    /**
-     * Check for an existing network.
-     *
-     * @return string|false Base domain if network exists, otherwise false.
-     * @global wpdb $wpdb WordPress database abstraction object.
-     *
-     * @since 3.0.0
-     *
-     */
     function network_domain_check()
     {
         global $wpdb;
@@ -29,12 +13,6 @@
         return false;
     }
 
-    /**
-     * Allow subdomain installation
-     *
-     * @return bool Whether subdomain installation is allowed
-     * @since 3.0.0
-     */
     function allow_subdomain_install()
     {
         $domain = preg_replace('|https?://([^/]+)|', '$1', get_option('home'));
@@ -46,28 +24,10 @@
         return true;
     }
 
-    /**
-     * Allow subdirectory installation.
-     *
-     * @return bool Whether subdirectory installation is allowed
-     * @global wpdb $wpdb WordPress database abstraction object.
-     *
-     * @since 3.0.0
-     *
-     */
     function allow_subdirectory_install()
     {
         global $wpdb;
 
-        /**
-         * Filters whether to enable the subdirectory installation feature in Multisite.
-         *
-         * @param bool $allow Whether to enable the subdirectory installation feature in Multisite.
-         *                    Default false.
-         *
-         * @since 3.0.0
-         *
-         */
         if(apply_filters('allow_subdirectory_install', false))
         {
             return true;
@@ -87,12 +47,6 @@
         return false;
     }
 
-    /**
-     * Get base domain of network.
-     *
-     * @return string Base domain.
-     * @since 3.0.0
-     */
     function get_clean_basedomain()
     {
         $existing_domain = network_domain_check();
@@ -110,20 +64,6 @@
         return $domain;
     }
 
-    /**
-     * Prints step 1 for Network installation process.
-     *
-     * @param false|WP_Error $errors Optional. Error object. Default false.
-     *
-     * @since 3.0.0
-     *
-     * @global bool          $is_apache
-     *
-     * @todo  Realistically, step 1 should be a welcome screen explaining what a Network is and such.
-     *       Navigating to Tools > Network should not be a sudden "Welcome to a new install process!
-     *       Fill this out and click here." See also contextual help todo.
-     *
-     */
     function network_step1($errors = false)
     {
         global $is_apache;
@@ -376,17 +316,6 @@
         <?php
     }
 
-    /**
-     * Prints step 2 for Network installation process.
-     *
-     * @param false|WP_Error $errors   Optional. Error object. Default false.
-     *
-     * @global wpdb          $wpdb     WordPress database abstraction object.
-     * @global bool          $is_nginx Whether the server software is Nginx or something else.
-     *
-     * @since 3.0.0
-     *
-     */
     function network_step2($errors = false)
     {
         global $wpdb, $is_nginx;

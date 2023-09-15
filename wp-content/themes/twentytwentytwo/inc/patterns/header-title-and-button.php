@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Title and button header block pattern
-     */
+
     return [
         'title' => __('Title and button header', 'twentytwentytwo'),
         'categories' => ['header'],

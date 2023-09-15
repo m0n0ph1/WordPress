@@ -1,11 +1,4 @@
 <?php
-    /**
-     * The template for displaying author info below posts.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty_One
-     * @since      Twenty Twenty-One 1.0
-     */
 
 ?>
 <?php if((bool) get_the_author_meta('description') && post_type_supports(get_post_type(), 'author')) : ?>

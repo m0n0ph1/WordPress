@@ -5,23 +5,8 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_SodiumCompat_Core32_SipHash
-     *
-     * Only uses 32-bit arithmetic, while the original SipHash used 64-bit integers
-     */
     class ParagonIE_Sodium_Core32_SipHash extends ParagonIE_Sodium_Core32_Util
     {
-        /**
-         * @param string $in
-         * @param string $key
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function sipHash24($in, $key)
         {
             $inlen = self::strlen($in);
@@ -139,13 +124,6 @@
             return $v[0]->xorInt64($v[1])->xorInt64($v[2])->xorInt64($v[3])->toReverseString();
         }
 
-        /**
-         * @param array<int, ParagonIE_Sodium_Core32_Int64> $v
-         *
-         * @return array<int, ParagonIE_Sodium_Core32_Int64>
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function sipRound(array $v)
         {
             # v0 += v1;

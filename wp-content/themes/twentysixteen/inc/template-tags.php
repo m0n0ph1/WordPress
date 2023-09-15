@@ -1,22 +1,7 @@
 <?php
-    /**
-     * Custom Twenty Sixteen template tags
-     *
-     * Eventually, some of the functionality here could be replaced by core features.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Sixteen
-     * @since      Twenty Sixteen 1.0
-     */
 
     if(! function_exists('twentysixteen_entry_meta')) :
-        /**
-         * Prints HTML with meta information for the categories, tags.
-         *
-         * Create your own twentysixteen_entry_meta() function to override in a child theme.
-         *
-         * @since Twenty Sixteen 1.0
-         */
+
         function twentysixteen_entry_meta()
         {
             if('post' === get_post_type())
@@ -52,13 +37,7 @@
     endif;
 
     if(! function_exists('twentysixteen_entry_date')) :
-        /**
-         * Prints HTML with date information for current post.
-         *
-         * Create your own twentysixteen_entry_date() function to override in a child theme.
-         *
-         * @since Twenty Sixteen 1.0
-         */
+
         function twentysixteen_entry_date()
         {
             $time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
@@ -75,13 +54,7 @@
     endif;
 
     if(! function_exists('twentysixteen_entry_taxonomies')) :
-        /**
-         * Prints HTML with category and tags for current post.
-         *
-         * Create your own twentysixteen_entry_taxonomies() function to override in a child theme.
-         *
-         * @since Twenty Sixteen 1.0
-         */
+
         function twentysixteen_entry_taxonomies()
         {
             $categories_list = get_the_category_list(_x(', ', 'Used between list items, there is a space after the comma.', 'twentysixteen'));
@@ -99,16 +72,7 @@
     endif;
 
     if(! function_exists('twentysixteen_post_thumbnail')) :
-        /**
-         * Displays an optional post thumbnail.
-         *
-         * Wraps the post thumbnail in an anchor element on index views, or a div
-         * element when on single views.
-         *
-         * Create your own twentysixteen_post_thumbnail() function to override in a child theme.
-         *
-         * @since Twenty Sixteen 1.0
-         */
+
         function twentysixteen_post_thumbnail()
         {
             if(post_password_required() || is_attachment() || ! has_post_thumbnail())
@@ -135,18 +99,7 @@
     endif;
 
     if(! function_exists('twentysixteen_excerpt')) :
-        /**
-         * Displays the optional excerpt.
-         *
-         * Wraps the excerpt in a div element.
-         *
-         * Create your own twentysixteen_excerpt() function to override in a child theme.
-         *
-         * @param string $css_class Optional. Class string of the div element. Defaults to 'entry-summary'.
-         *
-         * @since Twenty Sixteen 1.0
-         *
-         */
+
         function twentysixteen_excerpt($css_class = 'entry-summary')
         {
             $css_class = esc_attr($css_class);
@@ -162,16 +115,7 @@
     endif;
 
     if(! function_exists('twentysixteen_excerpt_more') && ! is_admin()) :
-        /**
-         * Replaces "[...]" (appended to automatically generated excerpts) with ... and
-         * a 'Continue reading' link.
-         *
-         * Create your own twentysixteen_excerpt_more() function to override in a child theme.
-         *
-         * @return string 'Continue reading' link prepended with an ellipsis.
-         * @since Twenty Sixteen 1.0
-         *
-         */
+
         function twentysixteen_excerpt_more()
         {
             $link = sprintf('<a href="%1$s" class="more-link">%2$s</a>', esc_url(get_permalink(get_the_ID())), /* translators: %s: Post title. Only visible to screen readers. */ sprintf(__('Continue reading<span class="screen-reader-text"> "%s"</span>', 'twentysixteen'), get_the_title(get_the_ID())));
@@ -183,15 +127,7 @@
     endif;
 
     if(! function_exists('twentysixteen_categorized_blog')) :
-        /**
-         * Determines whether blog/site has more than one category.
-         *
-         * Create your own twentysixteen_categorized_blog() function to override in a child theme.
-         *
-         * @return bool True if there is more than one category, false otherwise.
-         * @since Twenty Sixteen 1.0
-         *
-         */
+
         function twentysixteen_categorized_blog()
         {
             $all_the_cool_cats = get_transient('twentysixteen_categories');
@@ -223,11 +159,6 @@
         }
     endif;
 
-    /**
-     * Flushes out the transients used in twentysixteen_categorized_blog().
-     *
-     * @since Twenty Sixteen 1.0
-     */
     function twentysixteen_category_transient_flusher()
     {
         if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
@@ -242,13 +173,7 @@
     add_action('save_post', 'twentysixteen_category_transient_flusher');
 
     if(! function_exists('twentysixteen_the_custom_logo')) :
-        /**
-         * Displays the optional custom logo.
-         *
-         * Does nothing if the custom logo is not available.
-         *
-         * @since Twenty Sixteen 1.2
-         */
+
         function twentysixteen_the_custom_logo()
         {
             if(function_exists('the_custom_logo'))
@@ -259,20 +184,9 @@
     endif;
 
     if(! function_exists('wp_body_open')) :
-        /**
-         * Fire the wp_body_open action.
-         *
-         * Added for backward compatibility to support pre-5.2.0 WordPress versions.
-         *
-         * @since Twenty Sixteen 2.0
-         */
+
         function wp_body_open()
         {
-            /**
-             * Triggered after the opening <body> tag.
-             *
-             * @since Twenty Sixteen 2.0
-             */
             do_action('wp_body_open');
         }
     endif;

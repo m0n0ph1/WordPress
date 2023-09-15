@@ -1,15 +1,5 @@
 <?php
-    /**
-     * SVG icons related functions and filters
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Seventeen
-     * @since      Twenty Seventeen 1.0
-     */
 
-    /**
-     * Add SVG definitions to the footer.
-     */
     function twentyseventeen_include_svg_icons()
     {
         // Define SVG sprite file.
@@ -24,18 +14,6 @@
 
     add_action('wp_footer', 'twentyseventeen_include_svg_icons', 9999);
 
-    /**
-     * Return SVG markup.
-     *
-     * @param array $args  {
-     *                     Parameters needed to display an SVG.
-     *
-     * @type string $icon  Required SVG icon filename.
-     * @type string $title Optional SVG title.
-     * @type string $desc  Optional SVG description.
-     *                     }
-     * @return string SVG markup.
-     */
     function twentyseventeen_get_svg($args = [])
     {
         // Make sure $args are an array.
@@ -125,16 +103,6 @@
         return $svg;
     }
 
-    /**
-     * Display SVG icons in social links menu.
-     *
-     * @param string   $item_output The menu item's starting HTML output.
-     * @param WP_Post  $item        Menu item data object.
-     * @param int      $depth       Depth of the menu. Used for padding.
-     * @param stdClass $args        An object of wp_nav_menu() arguments.
-     *
-     * @return string The menu item output with social icon.
-     */
     function twentyseventeen_nav_menu_social_icons($item_output, $item, $depth, $args)
     {
         // Get supported social icons.
@@ -157,16 +125,6 @@
 
     add_filter('walker_nav_menu_start_el', 'twentyseventeen_nav_menu_social_icons', 10, 4);
 
-    /**
-     * Add dropdown icon if menu item has children.
-     *
-     * @param string   $title The menu item's title.
-     * @param WP_Post  $item  The current menu item.
-     * @param stdClass $args  An object of wp_nav_menu() arguments.
-     * @param int      $depth Depth of menu item. Used for padding.
-     *
-     * @return string The menu item's title with dropdown icon.
-     */
     function twentyseventeen_dropdown_icon_to_menu_link($title, $item, $args, $depth)
     {
         if('top' === $args->theme_location)
@@ -185,11 +143,6 @@
 
     add_filter('nav_menu_item_title', 'twentyseventeen_dropdown_icon_to_menu_link', 10, 4);
 
-    /**
-     * Returns an array of supported social links (URL and icon name).
-     *
-     * @return array Array of social links icons.
-     */
     function twentyseventeen_social_links_icons()
     {
         // Supported social links icons.
@@ -237,13 +190,5 @@
             'youtube.com' => 'youtube',
         ];
 
-        /**
-         * Filters Twenty Seventeen social links icons.
-         *
-         * @param array $social_links_icons Array of social links icons.
-         *
-         * @since Twenty Seventeen 1.0
-         *
-         */
         return apply_filters('twentyseventeen_social_links_icons', $social_links_icons);
     }

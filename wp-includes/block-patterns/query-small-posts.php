@@ -1,9 +1,4 @@
 <?php
-    /**
-     * Query: Small image and title.
-     *
-     * @package WordPress
-     */
 
     return [
         'title' => _x('Small image and title', 'Block pattern title'),

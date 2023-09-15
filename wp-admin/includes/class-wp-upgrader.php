@@ -1,146 +1,44 @@
 <?php
-    /**
-     * Upgrade API: WP_Upgrader class
-     *
-     * Requires skin classes and WP_Upgrader subclasses for backward compatibility.
-     *
-     * @package    WordPress
-     * @subpackage Upgrader
-     * @since      2.8.0
-     */
 
-    /** WP_Upgrader_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-wp-upgrader-skin.php';
 
-    /** Plugin_Upgrader_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-plugin-upgrader-skin.php';
 
-    /** Theme_Upgrader_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-theme-upgrader-skin.php';
 
-    /** Bulk_Upgrader_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-bulk-upgrader-skin.php';
 
-    /** Bulk_Plugin_Upgrader_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-bulk-plugin-upgrader-skin.php';
 
-    /** Bulk_Theme_Upgrader_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-bulk-theme-upgrader-skin.php';
 
-    /** Plugin_Installer_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-plugin-installer-skin.php';
 
-    /** Theme_Installer_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-theme-installer-skin.php';
 
-    /** Language_Pack_Upgrader_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-language-pack-upgrader-skin.php';
 
-    /** Automatic_Upgrader_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-automatic-upgrader-skin.php';
 
-    /** WP_Ajax_Upgrader_Skin class */
     require_once ABSPATH.'wp-admin/includes/class-wp-ajax-upgrader-skin.php';
 
-    /**
-     * Core class used for upgrading/installing a local set of files via
-     * the Filesystem Abstraction classes from a Zip file.
-     *
-     * @since 2.8.0
-     */
     #[AllowDynamicProperties]
     class WP_Upgrader
     {
-        /**
-         * The error/notification strings used to update the user on the progress.
-         *
-         * @since 2.8.0
-         * @var array $strings
-         */
         public $strings = [];
 
-        /**
-         * The upgrader skin being used.
-         *
-         * @since 2.8.0
-         * @var Automatic_Upgrader_Skin|WP_Upgrader_Skin $skin
-         */
         public $skin = null;
 
-        /**
-         * The result of the installation.
-         *
-         * This is set by WP_Upgrader::install_package(), only when the package is installed
-         * successfully. It will then be an array, unless a WP_Error is returned by the
-         * {@see 'upgrader_post_install'} filter. In that case, the WP_Error will be assigned to
-         * it.
-         *
-         * @since 2.8.0
-         *
-         * @var array|WP_Error $result             {
-         * @type string        $source             The full path to the source the files were installed from.
-         * @type string        $source_files       List of all the files in the source directory.
-         * @type string        $destination        The full path to the installation destination folder.
-         * @type string        $destination_name   The name of the destination folder, or empty if `$destination`
-         *                                         and `$local_destination` are the same.
-         * @type string        $local_destination  The full local path to the destination folder. This is usually
-         *                                         the same as `$destination`.
-         * @type string        $remote_destination The full remote path to the destination folder
-         *                                         (i.e., from `$wp_filesystem`).
-         * @type bool          $clear_destination  Whether the destination folder was cleared.
-         *                                         }
-         */
         public $result = [];
 
-        /**
-         * The total number of updates being performed.
-         *
-         * Set by the bulk update methods.
-         *
-         * @since 3.0.0
-         * @var int $update_count
-         */
         public $update_count = 0;
 
-        /**
-         * The current update if multiple updates are being performed.
-         *
-         * Used by the bulk update methods, and incremented for each update.
-         *
-         * @since 3.0.0
-         * @var int
-         */
         public $update_current = 0;
 
-        /**
-         * Stores the list of plugins or themes added to temporary backup directory.
-         *
-         * Used by the rollback functions.
-         *
-         * @since 6.3.0
-         * @var array
-         */
         private $temp_backups = [];
 
-        /**
-         * Stores the list of plugins or themes to be restored from temporary backup directory.
-         *
-         * Used by the rollback functions.
-         *
-         * @since 6.3.0
-         * @var array
-         */
         private $temp_restores = [];
 
-        /**
-         * Construct the upgrader with a skin.
-         *
-         * @param WP_Upgrader_Skin $skin The upgrader skin to use. Default is a WP_Upgrader_Skin
-         *                               instance.
-         *
-         * @since 2.8.0
-         *
-         */
         public function __construct($skin = null)
         {
             if(null === $skin)
@@ -153,19 +51,6 @@
             }
         }
 
-        /**
-         * Creates a lock using WordPress options.
-         *
-         * @param string $lock_name       The name of this unique lock.
-         * @param int    $release_timeout Optional. The duration in seconds to respect an existing lock.
-         *                                Default: 1 hour.
-         *
-         * @return bool False if a lock couldn't be created or if the lock is still valid. True otherwise.
-         * @global wpdb  $wpdb            The WordPress database abstraction object.
-         *
-         * @since 4.5.0
-         *
-         */
         public static function create_lock($lock_name, $release_timeout = null)
         {
             global $wpdb;
@@ -206,33 +91,11 @@
             return true;
         }
 
-        /**
-         * Releases an upgrader lock.
-         *
-         * @param string $lock_name The name of this unique lock.
-         *
-         * @return bool True if the lock was successfully released. False on failure.
-         * @since 4.5.0
-         *
-         * @see   WP_Upgrader::create_lock()
-         *
-         */
         public static function release_lock($lock_name)
         {
             return delete_option($lock_name.'.lock');
         }
 
-        /**
-         * Initializes the upgrader.
-         *
-         * This will set the relationship between the skin being used and this upgrader,
-         * and also add the generic strings to `WP_Upgrader::$strings`.
-         *
-         * Additionally, it will schedule a weekly task to clean up the temporary backup directory.
-         *
-         * @since 2.8.0
-         * @since 6.3.0 Added the `schedule_temp_backup_cleanup()` task.
-         */
         public function init()
         {
             $this->skin->set_upgrader($this);
@@ -244,11 +107,6 @@
             }
         }
 
-        /**
-         * Adds the generic strings to WP_Upgrader::$strings.
-         *
-         * @since 2.8.0
-         */
         public function generic_strings()
         {
             $this->strings['bad_request'] = __('Invalid data provided.');
@@ -283,11 +141,6 @@
             $this->strings['temp_backup_delete_failed'] = __('Could not delete the temporary backup directory for %s.');
         }
 
-        /**
-         * Schedules the cleanup of the temporary backup directory.
-         *
-         * @since 6.3.0
-         */
         protected function schedule_temp_backup_cleanup()
         {
             if(false === wp_next_scheduled('wp_delete_temp_updater_backups'))
@@ -296,39 +149,6 @@
             }
         }
 
-        /**
-         * Runs an upgrade/installation.
-         *
-         * Attempts to download the package (if it is not a local file), unpack it, and
-         * install it in the destination folder.
-         *
-         * @param array $options                         {
-         *                                               Array or string of arguments for upgrading/installing a package.
-         *
-         * @type string $package                         The full path or URI of the package to install.
-         *                                               Default empty.
-         * @type string $destination                     The full path to the destination folder.
-         *                                               Default empty.
-         * @type bool   $clear_destination               Whether to delete any files already in the
-         *                                               destination folder. Default false.
-         * @type bool   $clear_working                   Whether to delete the files from the working
-         *                                               directory after copying them to the destination.
-         *                                               Default true.
-         * @type bool   $abort_if_destination_exists     Whether to abort the installation if the destination
-         *                                               folder already exists. When true, `$clear_destination`
-         *                                               should be false. Default true.
-         * @type bool   $is_multi                        Whether this run is one of multiple upgrade/installation
-         *                                               actions being performed in bulk. When true, the skin
-         *                                               WP_Upgrader::header() and WP_Upgrader::footer()
-         *                                               aren't called. Default false.
-         * @type array  $hook_extra                      Extra arguments to pass to the filter hooks called by
-         *                                               WP_Upgrader::run().
-         *                                               }
-         * @return array|false|WP_Error The result from self::install_package() on success, otherwise a WP_Error,
-         *                                               or false if unable to connect to the filesystem.
-         * @since 2.8.0
-         *
-         */
         public function run($options)
         {
             $defaults = [
@@ -347,36 +167,6 @@
 
             $options = wp_parse_args($options, $defaults);
 
-            /**
-             * Filters the package options before running an update.
-             *
-             * See also {@see 'upgrader_process_complete'}.
-             *
-             * @param array $options                      {
-             *                                            Options used by the upgrader.
-             *
-             * @type string $package                      Package for update.
-             * @type string $destination                  Update location.
-             * @type bool   $clear_destination            Clear the destination resource.
-             * @type bool   $clear_working                Clear the working resource.
-             * @type bool   $abort_if_destination_exists  Abort if the Destination directory exists.
-             * @type bool   $is_multi                     Whether the upgrader is running multiple times.
-             * @type array  $hook_extra                   {
-             *                                            Extra hook arguments.
-             *
-             * @type string $action                       Type of action. Default 'update'.
-             * @type string $type                         Type of update process. Accepts 'plugin', 'theme', or 'core'.
-             * @type bool   $bulk                         Whether the update process is a bulk update. Default true.
-             * @type string $plugin                       Path to the plugin file relative to the plugins directory.
-             * @type string $theme                        The stylesheet or template name of the theme.
-             * @type string $language_update_type         The language pack update type. Accepts 'plugin', 'theme',
-             *                                            or 'core'.
-             * @type object $language_update              The language pack update offer.
-             *                                            }
-             *                                            }
-             * @since 4.3.0
-             *
-             */
             $options = apply_filters('upgrader_package_options', $options);
 
             if(! $options['is_multi'])
@@ -478,15 +268,6 @@
                                                  'hook_extra' => $options['hook_extra'],
                                              ]);
 
-            /**
-             * Filters the result of WP_Upgrader::install_package().
-             *
-             * @param array|WP_Error $result     Result from WP_Upgrader::install_package().
-             * @param array          $hook_extra Extra arguments passed to hooked filters.
-             *
-             * @since 5.7.0
-             *
-             */
             $result = apply_filters('upgrader_install_package_result', $result, $options['hook_extra']);
 
             $this->skin->set_result($result);
@@ -529,36 +310,6 @@
 
             if(! $options['is_multi'])
             {
-                /**
-                 * Fires when the upgrader process is complete.
-                 *
-                 * See also {@see 'upgrader_package_options'}.
-                 *
-                 * @param WP_Upgrader $upgrader     WP_Upgrader instance. In other contexts this might be a
-                 *                                  Theme_Upgrader, Plugin_Upgrader, Core_Upgrade, or Language_Pack_Upgrader instance.
-                 * @param array       $hook_extra   {
-                 *                                  Array of bulk item update data.
-                 *
-                 * @type string       $action       Type of action. Default 'update'.
-                 * @type string       $type         Type of update process. Accepts 'plugin', 'theme', 'translation', or 'core'.
-                 * @type bool         $bulk         Whether the update process is a bulk update. Default true.
-                 * @type array        $plugins      Array of the basename paths of the plugins' main files.
-                 * @type array        $themes       The theme slugs.
-                 * @type array        $translations {
-                 *                                  Array of translations update data.
-                 *
-                 * @type string       $language     The locale the translation is for.
-                 * @type string       $type         Type of translation. Accepts 'plugin', 'theme', or 'core'.
-                 * @type string       $slug         Text domain the translation is for. The slug of a theme/plugin or
-                 *                                  'default' for core translations.
-                 * @type string       $version      The version of a theme, plugin, or core.
-                 *                                  }
-                 *                                  }
-                 * @since 4.6.0 `$translations` was added as a possible argument to `$hook_extra`.
-                 *
-                 * @since 3.6.0
-                 * @since 3.7.0 Added to WP_Upgrader::run().
-                 */
                 do_action('upgrader_process_complete', $this, $options['hook_extra']);
 
                 $this->skin->footer();
@@ -567,21 +318,6 @@
             return $result;
         }
 
-        /**
-         * Connects to the filesystem.
-         *
-         * @param string[]            $directories                  Optional. Array of directories. If any of these do
-         *                                                          not exist, a WP_Error object will be returned.
-         *                                                          Default empty array.
-         * @param bool                $allow_relaxed_file_ownership Whether to allow relaxed file ownership.
-         *                                                          Default false.
-         *
-         * @return bool|WP_Error True if able to connect, false or a WP_Error otherwise.
-         * @global WP_Filesystem_Base $wp_filesystem                WordPress filesystem subclass.
-         *
-         * @since 2.8.0
-         *
-         */
         public function fs_connect($directories = [], $allow_relaxed_file_ownership = false)
         {
             global $wp_filesystem;
@@ -655,35 +391,8 @@
             return true;
         }
 
-        /**
-         * Downloads a package.
-         *
-         * @param string $package          The URI of the package. If this is the full path to an
-         *                                 existing local file, it will be returned untouched.
-         * @param bool   $check_signatures Whether to validate file signatures. Default false.
-         * @param array  $hook_extra       Extra arguments to pass to the filter hooks. Default empty array.
-         *
-         * @return string|WP_Error The full path to the downloaded package file, or a WP_Error object.
-         * @since 5.2.0 Added the `$check_signatures` parameter.
-         * @since 5.5.0 Added the `$hook_extra` parameter.
-         *
-         * @since 2.8.0
-         */
         public function download_package($package, $check_signatures = false, $hook_extra = [])
         {
-            /**
-             * Filters whether to return the package.
-             *
-             * @param bool        $reply      Whether to bail without returning the package.
-             *                                Default false.
-             * @param string      $package    The package file name.
-             * @param WP_Upgrader $upgrader   The WP_Upgrader instance.
-             * @param array       $hook_extra Extra arguments passed to hooked filters.
-             *
-             * @since 3.7.0
-             * @since 5.5.0 Added the `$hook_extra` parameter.
-             *
-             */
             $reply = apply_filters('upgrader_pre_download', false, $package, $this, $hook_extra);
             if(false !== $reply)
             {
@@ -712,19 +421,6 @@
             return $download_file;
         }
 
-        /**
-         * Unpacks a compressed package file.
-         *
-         * @param string              $package        Full path to the package file.
-         * @param bool                $delete_package Optional. Whether to delete the package file after attempting
-         *                                            to unpack it. Default true.
-         *
-         * @return string|WP_Error The path to the unpacked contents, or a WP_Error on failure.
-         * @global WP_Filesystem_Base $wp_filesystem  WordPress filesystem subclass.
-         *
-         * @since 2.8.0
-         *
-         */
         public function unpack_package($package, $delete_package = true)
         {
             global $wp_filesystem;
@@ -780,37 +476,6 @@
             return $working_dir;
         }
 
-        /**
-         * Install a package.
-         *
-         * Copies the contents of a package from a source directory, and installs them in
-         * a destination directory. Optionally removes the source. It can also optionally
-         * clear out the destination folder if it already exists.
-         *
-         * @param array|string        $args                        {
-         *                                                         Optional. Array or string of arguments for installing a package. Default empty array.
-         *
-         * @type string               $source                      Required path to the package source. Default empty.
-         * @type string               $destination                 Required path to a folder to install the package in.
-         *                                                         Default empty.
-         * @type bool                 $clear_destination           Whether to delete any files already in the destination
-         *                                                         folder. Default false.
-         * @type bool                 $clear_working               Whether to delete the files from the working directory
-         *                                                         after copying them to the destination. Default false.
-         * @type bool                 $abort_if_destination_exists Whether to abort the installation if
-         *                                                         the destination folder already exists. Default true.
-         * @type array                $hook_extra                  Extra arguments to pass to the filter hooks called by
-         *                                                         WP_Upgrader::install_package(). Default empty array.
-         *                                                         }
-         *
-         * @return array|WP_Error The result (also stored in `WP_Upgrader::$result`), or a WP_Error on failure.
-         * @global WP_Filesystem_Base $wp_filesystem               WordPress filesystem subclass.
-         * @global array              $wp_theme_directories
-         *
-         * @since 2.8.0
-         * @since 6.2.0 Use move_dir() instead of copy_dir() when possible.
-         *
-         */
         public function install_package($args = [])
         {
             global $wp_filesystem, $wp_theme_directories;
@@ -842,18 +507,6 @@
             }
             $this->skin->feedback('installing_package');
 
-            /**
-             * Filters the installation response before the installation has started.
-             *
-             * Returning a value that could be evaluated as a `WP_Error` will effectively
-             * short-circuit the installation, returning that value instead.
-             *
-             * @param bool|WP_Error $response   Installation response.
-             * @param array         $hook_extra Extra arguments passed to hooked filters.
-             *
-             * @since 2.8.0
-             *
-             */
             $res = apply_filters('upgrader_pre_install', true, $args['hook_extra']);
 
             if(is_wp_error($res))
@@ -888,18 +541,6 @@
                 $source = trailingslashit($args['source']);
             }
 
-            /**
-             * Filters the source file location for the upgrade package.
-             *
-             * @param string      $source        File source location.
-             * @param string      $remote_source Remote file source location.
-             * @param WP_Upgrader $upgrader      WP_Upgrader instance.
-             * @param array       $hook_extra    Extra arguments passed to hooked filters.
-             *
-             * @since 2.8.0
-             * @since 4.4.0 The $hook_extra parameter became available.
-             *
-             */
             $source = apply_filters('upgrader_source_selection', $source, $remote_source, $this, $args['hook_extra']);
 
             if(is_wp_error($source))
@@ -952,18 +593,6 @@
 
                 $removed = $this->clear_destination($remote_destination);
 
-                /**
-                 * Filters whether the upgrader cleared the destination.
-                 *
-                 * @param true|WP_Error $removed            Whether the destination was cleared.
-                 *                                          True upon success, WP_Error on failure.
-                 * @param string        $local_destination  The local package destination.
-                 * @param string        $remote_destination The remote package destination.
-                 * @param array         $hook_extra         Extra arguments passed to hooked filters.
-                 *
-                 * @since 2.8.0
-                 *
-                 */
                 $removed = apply_filters('upgrader_clear_destination', $removed, $local_destination, $remote_destination, $args['hook_extra']);
 
                 if(is_wp_error($removed))
@@ -1032,16 +661,6 @@
 
             $this->result = compact('source', 'source_files', 'destination', 'destination_name', 'local_destination', 'remote_destination', 'clear_destination');
 
-            /**
-             * Filters the installation response after the installation has finished.
-             *
-             * @param bool  $response   Installation response.
-             * @param array $hook_extra Extra arguments passed to hooked filters.
-             * @param array $result     Installation result data.
-             *
-             * @since 2.8.0
-             *
-             */
             $res = apply_filters('upgrader_post_install', true, $args['hook_extra'], $this->result);
 
             if(is_wp_error($res))
@@ -1055,23 +674,6 @@
             return $this->result;
         }
 
-        /**
-         * Moves the plugin or theme being updated into a temporary backup directory.
-         *
-         * @param string[]            $args          {
-         *                                           Array of data for the temporary backup.
-         *
-         * @type string               $slug          Plugin or theme slug.
-         * @type string               $src           Path to the root directory for plugins or themes.
-         * @type string               $dir           Destination subdirectory name. Accepts 'plugins' or 'themes'.
-         *                                           }
-         *
-         * @return bool|WP_Error True on success, false on early exit, otherwise WP_Error.
-         * @since 6.3.0
-         *
-         * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-         *
-         */
         public function move_to_temp_backup_dir($args)
         {
             global $wp_filesystem;
@@ -1136,17 +738,6 @@
             return true;
         }
 
-        /**
-         * Clears the directory where this item is going to be installed into.
-         *
-         * @param string              $remote_destination The location on the remote filesystem to be cleared.
-         *
-         * @return true|WP_Error True upon success, WP_Error on failure.
-         * @since 4.3.0
-         *
-         * @global WP_Filesystem_Base $wp_filesystem      WordPress filesystem subclass.
-         *
-         */
         public function clear_destination($remote_destination)
         {
             global $wp_filesystem;
@@ -1192,17 +783,6 @@
             return true;
         }
 
-        /**
-         * Flattens the results of WP_Filesystem_Base::dirlist() for iterating over.
-         *
-         * @param array  $nested_files Array of files as returned by WP_Filesystem_Base::dirlist().
-         * @param string $path         Relative path to prepend to child nodes. Optional.
-         *
-         * @return array A flattened array of the $nested_files specified.
-         * @since  4.9.0
-         * @access protected
-         *
-         */
         protected function flatten_dirlist($nested_files, $path = '')
         {
             $files = [];
@@ -1224,18 +804,6 @@
             return $files;
         }
 
-        /**
-         * Toggles maintenance mode for the site.
-         *
-         * Creates/deletes the maintenance file to enable/disable maintenance mode.
-         *
-         * @param bool                $enable        True to enable maintenance mode, false to disable.
-         *
-         * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-         *
-         * @since 2.8.0
-         *
-         */
         public function maintenance_mode($enable = false)
         {
             global $wp_filesystem;
@@ -1255,15 +823,6 @@
             }
         }
 
-        /**
-         * Restores the plugin or theme from temporary backup.
-         *
-         * @return bool|WP_Error True on success, false on early exit, otherwise WP_Error.
-         * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-         *
-         * @since 6.3.0
-         *
-         */
         public function restore_temp_backup()
         {
             global $wp_filesystem;
@@ -1310,15 +869,6 @@
             return $errors->has_errors() ? $errors : true;
         }
 
-        /**
-         * Deletes a temporary backup.
-         *
-         * @return bool|WP_Error True on success, false on early exit, otherwise WP_Error.
-         * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-         *
-         * @since 6.3.0
-         *
-         */
         public function delete_temp_backup()
         {
             global $wp_filesystem;
@@ -1352,20 +902,14 @@
         }
     }
 
-    /** Plugin_Upgrader class */
     require_once ABSPATH.'wp-admin/includes/class-plugin-upgrader.php';
 
-    /** Theme_Upgrader class */
     require_once ABSPATH.'wp-admin/includes/class-theme-upgrader.php';
 
-    /** Language_Pack_Upgrader class */
     require_once ABSPATH.'wp-admin/includes/class-language-pack-upgrader.php';
 
-    /** Core_Upgrader class */
     require_once ABSPATH.'wp-admin/includes/class-core-upgrader.php';
 
-    /** File_Upload_Upgrader class */
     require_once ABSPATH.'wp-admin/includes/class-file-upload-upgrader.php';
 
-    /** WP_Automatic_Updater class */
     require_once ABSPATH.'wp-admin/includes/class-wp-automatic-updater.php';

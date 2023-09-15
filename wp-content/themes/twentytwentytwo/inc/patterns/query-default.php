@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Default posts block pattern
-     */
+
     return [
         'title' => __('Default posts', 'twentytwentytwo'),
         'categories' => ['query'],

@@ -1,9 +1,4 @@
 <?php
-    /**
-     * Used to set up all core blocks used with the block editor.
-     *
-     * @package WordPress
-     */
 
     define('BLOCKS_PATH', ABSPATH.WPINC.'/blocks/');
 
@@ -12,17 +7,6 @@
     require BLOCKS_PATH.'widget-group.php';
     require BLOCKS_PATH.'require-dynamic-blocks.php';
 
-    /**
-     * Registers core block style handles.
-     *
-     * While {@see register_block_style_handle()} is typically used for that, the way it is
-     * implemented is inefficient for core block styles. Registering those style handles here
-     * avoids unnecessary logic and filesystem lookups in the other function.
-     *
-     * @since 6.3.0
-     *
-     * @global string $wp_version The WordPress version string.
-     */
     function register_core_block_style_handles()
     {
         global $wp_version;
@@ -68,51 +52,7 @@
 
         if(! $files)
         {
-            $files = glob(wp_normalize_path(BLOCKS_PATH.'**/**.css'));
-            $files = array_map(static function($file)
-            {
-                return str_replace(BLOCKS_PATH, '', $file);
-            }, $files);
-
-            // Save core block style paths in cache when not in development mode.
-            if($can_use_cached)
-            {
-                set_transient($transient_name, [
-                    'version' => $wp_version,
-                    'files' => $files,
-                ]);
-            }
-        }
-
-        $register_style = static function($name, $filename, $style_handle) use (
-            $blocks_url, $suffix, $wp_styles, $files
-        )
-        {
-            $style_path = "{$name}/{$filename}{$suffix}.css";
-            $path = wp_normalize_path(BLOCKS_PATH.$style_path);
-
-            if(! in_array($style_path, $files, true))
-            {
-                $wp_styles->add($style_handle, false);
-
-                return;
-            }
-
-            $wp_styles->add($style_handle, $blocks_url.$style_path);
-            $wp_styles->add_data($style_handle, 'path', $path);
-
-            $rtl_file = str_replace("{$suffix}.css", "-rtl{$suffix}.css", $path);
-            if(is_rtl() && in_array($rtl_file, $files, true))
-            {
-                $wp_styles->add_data($style_handle, 'rtl', 'replace');
-                $wp_styles->add_data($style_handle, 'suffix', $suffix);
-                $wp_styles->add_data($style_handle, 'path', $rtl_file);
-            }
-        };
-
-        foreach($core_blocks_meta as $name => $schema)
-        {
-            /** This filter is documented in wp-includes/blocks.php */
+            $files = glob(wp_normalize_path(BLOCKS_PATH.'**
             $schema = apply_filters('block_type_metadata', $schema);
 
             // Backfill these properties similar to `register_block_type_from_metadata()`.
@@ -142,15 +82,10 @@
 
     add_action('init', 'register_core_block_style_handles', 9);
 
-    /**
-     * Registers core block types using metadata files.
-     * Dynamic core blocks are registered separately.
-     *
-     * @since 5.5.0
-     */
+    
     function register_core_block_types_from_metadata()
     {
-        $block_folders = require BLOCKS_PATH.'require-static-blocks.php';
+        $block_folders = require BLOCKS_PATH.'require -static-blocks.php';
         foreach($block_folders as $block_folder)
         {
             register_block_type_from_metadata(BLOCKS_PATH.$block_folder);

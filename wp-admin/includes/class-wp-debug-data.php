@@ -1,20 +1,8 @@
 <?php
-    /**
-     * Class for providing debug data based on a users WordPress environment.
-     *
-     * @package    WordPress
-     * @subpackage Site_Health
-     * @since      5.2.0
-     */
 
     #[AllowDynamicProperties]
     class WP_Debug_Data
     {
-        /**
-         * Calls all core functions to check for updates.
-         *
-         * @since 5.2.0
-         */
         public static function check_for_updates()
         {
             wp_version_check();
@@ -22,20 +10,6 @@
             wp_update_themes();
         }
 
-        /**
-         * Static function for generating site debug data when required.
-         *
-         * @return array The debug data for the site.
-         * @throws ImagickException
-         * @since 5.5.0 Added pretty permalinks support information.
-         *
-         * @since 5.2.0
-         * @global wpdb  $wpdb WordPress database abstraction object.
-         * @global array $_wp_theme_features
-         *
-         * @since 5.3.0 Added database charset, database collation,
-         *              and timezone information.
-         */
         public static function debug_data()
         {
             global $wpdb, $_wp_theme_features;
@@ -1123,17 +1097,6 @@
                         $auto_updates_string = __('Auto-updates disabled');
                     }
 
-                    /**
-                     * Filters the text string of the auto-updates setting for each plugin in the Site Health debug data.
-                     *
-                     * @param string $auto_updates_string The string output for the auto-updates column.
-                     * @param string $plugin_path         The path to the plugin file.
-                     * @param array  $plugin              An array of plugin data.
-                     * @param bool   $enabled             Whether auto-updates are enabled for this item.
-                     *
-                     * @since 5.5.0
-                     *
-                     */
                     $auto_updates_string = apply_filters('plugin_auto_update_debug_string', $auto_updates_string, $plugin_path, $plugin, $enabled);
 
                     $plugin_version_string .= ' | '.$auto_updates_string;
@@ -1270,7 +1233,6 @@
                     $auto_updates_string = __('Disabled');
                 }
 
-                /** This filter is documented in wp-admin/includes/class-wp-debug-data.php */
                 $auto_updates_string = apply_filters('theme_auto_update_debug_string', $auto_updates_string, $active_theme, $enabled);
 
                 $info['wp-active-theme']['fields']['auto_update'] = [
@@ -1365,7 +1327,6 @@
                         $parent_theme_auto_update_string = __('Disabled');
                     }
 
-                    /** This filter is documented in wp-admin/includes/class-wp-debug-data.php */
                     $parent_theme_auto_update_string = apply_filters('theme_auto_update_debug_string', $auto_updates_string, $parent_theme, $enabled);
 
                     $info['wp-parent-theme']['fields']['auto_update'] = [
@@ -1474,16 +1435,6 @@
                         $auto_updates_string = __('Auto-updates disabled');
                     }
 
-                    /**
-                     * Filters the text string of the auto-updates setting for each theme in the Site Health debug data.
-                     *
-                     * @param string   $auto_updates_string The string output for the auto-updates column.
-                     * @param WP_Theme $theme               An object of theme data.
-                     * @param bool     $enabled             Whether auto-updates are enabled for this item.
-                     *
-                     * @since 5.5.0
-                     *
-                     */
                     $auto_updates_string = apply_filters('theme_auto_update_debug_string', $auto_updates_string, $theme, $enabled);
 
                     $theme_version_string .= ' | '.$auto_updates_string;
@@ -1509,82 +1460,11 @@
                 ];
             }
 
-            /**
-             * Filters the debug information shown on the Tools -> Site Health -> Info screen.
-             *
-             * Plugin or themes may wish to introduce their own debug information without creating
-             * additional admin pages. They can utilize this filter to introduce their own sections
-             * or add more data to existing sections.
-             *
-             * Array keys for sections added by core are all prefixed with `wp-`. Plugins and themes
-             * should use their own slug as a prefix, both for consistency as well as avoiding
-             * key collisions. Note that the array keys are used as labels for the copied data.
-             *
-             * All strings are expected to be plain text except `$description` that can contain
-             * inline HTML tags (see below).
-             *
-             * @param array $args                     {
-             *                                        The debug information to be added to the core information page.
-             *
-             *     This is an associative multi-dimensional array, up to three levels deep.
-             *     The topmost array holds the sections, keyed by section ID.
-             *
-             * @type array ...$0 {
-             *                                        Each section has a `$fields` associative array (see below), and each `$value` in `$fields`
-             *                                        can be another associative array of name/value pairs when there is more structured data
-             *                                        to display.
-             *
-             * @type string $label                    Required. The title for this section of the debug output.
-             * @type string $description              Optional. A description for your information section which
-             *                                        may contain basic HTML markup, inline tags only as it is
-             *                                        outputted in a paragraph.
-             * @type bool   $show_count               Optional. If set to `true`, the amount of fields will be included
-             *                                        in the title for this section. Default false.
-             * @type bool   $private                  Optional. If set to `true`, the section and all associated fields
-             *                                        will be excluded from the copied data. Default false.
-             * @type array  $fields                   {
-             *                                        Required. An associative array containing the fields to be displayed in the section,
-             *                                        keyed by field ID.
-             *
-             * @type array ...$0 {
-             *                                        An associative array containing the data to be displayed for the field.
-             *
-             * @type string $label                    Required. The label for this piece of information.
-             * @type mixed  $value                    Required. The output that is displayed for this field.
-             *                                        Text should be translated. Can be an associative array
-             *                                        that is displayed as name/value pairs.
-             *                                        Accepted types: `string|int|float|(string|int|float)[]`.
-             * @type string $debug                    Optional. The output that is used for this field when
-             *                                        the user copies the data. It should be more concise and
-             *                                        not translated. If not set, the content of `$value`
-             *                                        is used. Note that the array keys are used as labels
-             *                                        for the copied data.
-             * @type bool   $private                  Optional. If set to `true`, the field will be excluded
-             *                                        from the copied data, allowing you to show, for example,
-             *                                        API keys here. Default false.
-             *                                        }
-             *                                        }
-             *                                        }
-             *                                        }
-             * @since 5.2.0
-             *
-             */
             $info = apply_filters('debug_information', $info);
 
             return $info;
         }
 
-        /**
-         * Formats the information gathered for debugging, in a manner suitable for copying to a forum or support
-         * ticket.
-         *
-         * @param array  $info_array Information gathered from the `WP_Debug_Data::debug_data()` function.
-         * @param string $data_type  The data type to return, either 'info' or 'debug'.
-         *
-         * @return string The formatted data.
-         * @since 5.2.0
-         *
-         */
         public static function format($info_array, $data_type)
         {
             $return = "`\n";
@@ -1660,17 +1540,6 @@
             return $return;
         }
 
-        /**
-         * Returns the value of a MySQL system variable.
-         *
-         * @param string $mysql_var Name of the MySQL system variable.
-         *
-         * @return string|null The variable value on success. Null if the variable does not exist.
-         * @since 5.9.0
-         *
-         * @global wpdb  $wpdb      WordPress database abstraction object.
-         *
-         */
         public static function get_mysql_var($mysql_var)
         {
             global $wpdb;
@@ -1685,14 +1554,6 @@
             return null;
         }
 
-        /**
-         * Fetches the sizes of the WordPress directories: `wordpress` (ABSPATH), `plugins`, `themes`, and `uploads`.
-         * Intended to supplement the array returned by `WP_Debug_Data::debug_data()`.
-         *
-         * @return array The sizes of the directories, also the database size and total installation size.
-         * @since 5.2.0
-         *
-         */
         public static function get_sizes()
         {
             $size_db = self::get_database_size();
@@ -1838,15 +1699,6 @@
             return $all_sizes;
         }
 
-        /**
-         * Fetches the total size of all the database tables for the active database user.
-         *
-         * @return int The size of the database, in bytes.
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         * @since 5.2.0
-         *
-         */
         public static function get_database_size()
         {
             global $wpdb;

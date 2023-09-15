@@ -1,23 +1,8 @@
 <?php
 
-    /**
-     * WP_Theme Class
-     *
-     * @package    WordPress
-     * @subpackage Theme
-     * @since      3.4.0
-     */
     #[AllowDynamicProperties]
     final class WP_Theme implements ArrayAccess
     {
-        /**
-         * Headers for style.css files.
-         *
-         * @since 3.4.0
-         * @since 5.4.0 Added `Requires at least` and `Requires PHP` headers.
-         * @since 6.1.0 Added `Update URI` header.
-         * @var string[]
-         */
         private static $file_headers = [
             'Name' => 'Theme Name',
             'ThemeURI' => 'Theme URI',
@@ -35,23 +20,6 @@
             'UpdateURI' => 'Update URI',
         ];
 
-        /**
-         * Default themes.
-         *
-         * @since 3.4.0
-         * @since 3.5.0 Added the Twenty Twelve theme.
-         * @since 3.6.0 Added the Twenty Thirteen theme.
-         * @since 3.8.0 Added the Twenty Fourteen theme.
-         * @since 4.1.0 Added the Twenty Fifteen theme.
-         * @since 4.4.0 Added the Twenty Sixteen theme.
-         * @since 4.7.0 Added the Twenty Seventeen theme.
-         * @since 5.0.0 Added the Twenty Nineteen theme.
-         * @since 5.3.0 Added the Twenty Twenty theme.
-         * @since 5.6.0 Added the Twenty Twenty-One theme.
-         * @since 5.9.0 Added the Twenty Twenty-Two theme.
-         * @since 6.1.0 Added the Twenty Twenty-Three theme.
-         * @var string[]
-         */
         private static $default_themes = [
             'classic' => 'WordPress Classic',
             'default' => 'WordPress Default',
@@ -70,160 +38,41 @@
             'twentytwentythree' => 'Twenty Twenty-Three',
         ];
 
-        /**
-         * Renamed theme tags.
-         *
-         * @since 3.8.0
-         * @var string[]
-         */
         private static $tag_map = [
             'fixed-width' => 'fixed-layout',
             'flexible-width' => 'fluid-layout',
         ];
 
-        /**
-         * Flag for whether the themes cache bucket should be persistently cached.
-         *
-         * Default is false. Can be set with the {@see 'wp_cache_themes_persistently'} filter.
-         *
-         * @since 3.4.0
-         * @var bool
-         */
         private static $persistently_cache;
 
-        /**
-         * Expiration time for the themes cache bucket.
-         *
-         * By default the bucket is not cached, so this value is useless.
-         *
-         * @since 3.4.0
-         * @var bool
-         */
         private static $cache_expiration = 1800;
 
-        /**
-         * Whether the theme has been marked as updateable.
-         *
-         * @since 4.4.0
-         * @var bool
-         *
-         * @see   WP_MS_Themes_List_Table
-         */
         public $update = false;
 
-        /**
-         * Absolute path to the theme root, usually wp-content/themes
-         *
-         * @since 3.4.0
-         * @var string
-         */
         private $theme_root;
 
-        /**
-         * Header data from the theme's style.css file.
-         *
-         * @since 3.4.0
-         * @var array
-         */
         private $headers = [];
 
-        /**
-         * Header data from the theme's style.css file after being sanitized.
-         *
-         * @since 3.4.0
-         * @var array
-         */
         private $headers_sanitized;
 
-        /**
-         * Is this theme a block theme.
-         *
-         * @since 6.2.0
-         * @var bool
-         */
         private $block_theme;
 
-        /**
-         * Header name from the theme's style.css after being translated.
-         *
-         * Cached due to sorting functions running over the translated name.
-         *
-         * @since 3.4.0
-         * @var string
-         */
         private $name_translated;
 
-        /**
-         * Errors encountered when initializing the theme.
-         *
-         * @since 3.4.0
-         * @var WP_Error
-         */
         private $errors;
 
-        /**
-         * The directory name of the theme's files, inside the theme root.
-         *
-         * In the case of a child theme, this is directory name of the child theme.
-         * Otherwise, 'stylesheet' is the same as 'template'.
-         *
-         * @since 3.4.0
-         * @var string
-         */
         private $stylesheet;
 
-        /**
-         * The directory name of the theme's files, inside the theme root.
-         *
-         * In the case of a child theme, this is the directory name of the parent theme.
-         * Otherwise, 'template' is the same as 'stylesheet'.
-         *
-         * @since 3.4.0
-         * @var string
-         */
         private $template;
 
-        /**
-         * A reference to the parent theme, in the case of a child theme.
-         *
-         * @since 3.4.0
-         * @var WP_Theme
-         */
         private $parent;
 
-        /**
-         * URL to the theme root, usually an absolute URL to wp-content/themes
-         *
-         * @since 3.4.0
-         * @var string
-         */
         private $theme_root_uri;
 
-        /**
-         * Flag for whether the theme's textdomain is loaded.
-         *
-         * @since 3.4.0
-         * @var bool
-         */
         private $textdomain_loaded;
 
-        /**
-         * Stores an md5 hash of the theme root, to function as the cache key.
-         *
-         * @since 3.4.0
-         * @var string
-         */
         private $cache_hash;
 
-        /**
-         * Determines the latest WordPress default theme that is installed.
-         *
-         * This hits the filesystem.
-         *
-         * @return WP_Theme|false Object, or false if no theme is installed, which would be bad.
-         * @since 4.4.0
-         *
-         */
         public static function get_core_default_theme()
         {
             foreach(array_reverse(self::$default_themes) as $slug => $name)
@@ -238,68 +87,23 @@
             return false;
         }
 
-        /**
-         * Determines whether the theme exists.
-         *
-         * A theme with errors exists. A theme with the error of 'theme_not_found',
-         * meaning that the theme's directory was not found, does not exist.
-         *
-         * @return bool Whether the theme exists.
-         * @since 3.4.0
-         *
-         */
         public function exists()
         {
             return ! ($this->errors() && in_array('theme_not_found', $this->errors()->get_error_codes(), true));
         }
 
-        /**
-         * Returns errors property.
-         *
-         * @return WP_Error|false WP_Error if there are errors, or false.
-         * @since 3.4.0
-         *
-         */
         public function errors()
         {
             return is_wp_error($this->errors) ? $this->errors : false;
         }
 
-        /**
-         * Returns array of stylesheet names of themes allowed on the site or network.
-         *
-         * @param int $blog_id Optional. ID of the site. Defaults to the current site.
-         *
-         * @return string[] Array of stylesheet names.
-         * @since 3.4.0
-         *
-         */
         public static function get_allowed($blog_id = null)
         {
-            /**
-             * Filters the array of themes allowed on the network.
-             *
-             * Site is provided as context so that a list of network allowed themes can
-             * be filtered further.
-             *
-             * @param string[] $allowed_themes An array of theme stylesheet names.
-             * @param int      $blog_id        ID of the site.
-             *
-             * @since 4.5.0
-             *
-             */
             $network = (array) apply_filters('network_allowed_themes', self::get_allowed_on_network(), $blog_id);
 
             return $network + self::get_allowed_on_site($blog_id);
         }
 
-        /**
-         * Returns array of stylesheet names of themes allowed on the network.
-         *
-         * @return string[] Array of stylesheet names.
-         * @since 3.4.0
-         *
-         */
         public static function get_allowed_on_network()
         {
             static $allowed_themes;
@@ -308,28 +112,11 @@
                 $allowed_themes = (array) get_site_option('allowedthemes');
             }
 
-            /**
-             * Filters the array of themes allowed on the network.
-             *
-             * @param string[] $allowed_themes An array of theme stylesheet names.
-             *
-             * @since MU (3.0.0)
-             *
-             */
             $allowed_themes = apply_filters('allowed_themes', $allowed_themes);
 
             return $allowed_themes;
         }
 
-        /**
-         * Returns array of stylesheet names of themes allowed on the site.
-         *
-         * @param int $blog_id Optional. ID of the site. Defaults to the current site.
-         *
-         * @return string[] Array of stylesheet names.
-         * @since 3.4.0
-         *
-         */
         public static function get_allowed_on_site($blog_id = null)
         {
             static $allowed_themes = [];
@@ -341,15 +128,6 @@
 
             if(isset($allowed_themes[$blog_id]))
             {
-                /**
-                 * Filters the array of themes allowed on the site.
-                 *
-                 * @param string[] $allowed_themes An array of theme stylesheet names.
-                 * @param int      $blog_id        ID of the site. Defaults to current site.
-                 *
-                 * @since 4.5.0
-                 *
-                 */
                 return (array) apply_filters('site_allowed_themes', $allowed_themes[$blog_id], $blog_id);
             }
 
@@ -418,27 +196,9 @@
                 }
             }
 
-            /** This filter is documented in wp-includes/class-wp-theme.php */
             return (array) apply_filters('site_allowed_themes', $allowed_themes[$blog_id], $blog_id);
         }
 
-        /**
-         * Gets a raw, unformatted theme header.
-         *
-         * The header is sanitized, but is not translated, and is not marked up for display.
-         * To get a theme header for display, use the display() method.
-         *
-         * Use the get_template() method, not the 'Template' header, for finding the template.
-         * The 'Template' header is only good for what was written in the style.css, while
-         * get_template() takes into account where WordPress actually located the theme and
-         * whether it is actually valid.
-         *
-         * @param string $header Theme header. Name, Description, Author, Version, ThemeURI, AuthorURI, Status, Tags.
-         *
-         * @return string|array|false String or array (for Tags header) on success, false on failure.
-         * @since 3.4.0
-         *
-         */
         public function get($header)
         {
             if(! isset($this->headers[$header]))
@@ -477,36 +237,11 @@
             return $this->headers_sanitized[$header];
         }
 
-        /**
-         * Gets theme data from cache.
-         *
-         * Cache entries are keyed by the theme and the type of data.
-         *
-         * @param string $key Type of data to retrieve (theme, screenshot, headers, post_templates)
-         *
-         * @return mixed Retrieved data
-         * @since 3.4.0
-         *
-         */
         private function cache_get($key)
         {
             return wp_cache_get($key.'-'.$this->cache_hash, 'themes');
         }
 
-        /**
-         * Sanitizes a theme header.
-         *
-         * @param string $header Theme header. Accepts 'Name', 'Description', 'Author', 'Version',
-         *                       'ThemeURI', 'AuthorURI', 'Status', 'Tags', 'RequiresWP', 'RequiresPHP',
-         *                       'UpdateURI'.
-         * @param string $value  Value to sanitize.
-         *
-         * @return string|array An array for Tags header, string otherwise.
-         * @since 3.4.0
-         * @since 5.4.0 Added support for `Requires at least` and `Requires PHP` headers.
-         * @since 6.1.0 Added support for `Update URI` header.
-         *
-         */
         private function sanitize_header($header, $value)
         {
             switch($header)
@@ -564,31 +299,11 @@
             return $value;
         }
 
-        /**
-         * Adds theme data to cache.
-         *
-         * Cache entries keyed by the theme and the type of data.
-         *
-         * @param string       $key  Type of data to store (theme, screenshot, headers, post_templates)
-         * @param array|string $data Data to store
-         *
-         * @return bool Return value from wp_cache_add()
-         * @since 3.4.0
-         *
-         */
         private function cache_add($key, $data)
         {
             return wp_cache_add($key.'-'.$this->cache_hash, $data, 'themes', self::$cache_expiration);
         }
 
-        /**
-         * Enables a theme for all sites on the current network.
-         *
-         * @param string|string[] $stylesheets Stylesheet name or array of stylesheet names.
-         *
-         * @since 4.6.0
-         *
-         */
         public static function network_enable_theme($stylesheets)
         {
             if(! is_multisite())
@@ -610,14 +325,6 @@
             update_site_option('allowedthemes', $allowed_themes);
         }
 
-        /**
-         * Disables a theme for all sites on the current network.
-         *
-         * @param string|string[] $stylesheets Stylesheet name or array of stylesheet names.
-         *
-         * @since 4.6.0
-         *
-         */
         public static function network_disable_theme($stylesheets)
         {
             if(! is_multisite())
@@ -642,14 +349,6 @@
             update_site_option('allowedthemes', $allowed_themes);
         }
 
-        /**
-         * Sorts themes by name.
-         *
-         * @param WP_Theme[] $themes Array of theme objects to sort (passed by reference).
-         *
-         * @since 3.4.0
-         *
-         */
         public static function sort_by_name(&$themes)
         {
             if(str_starts_with(get_user_locale(), 'en_'))
@@ -666,16 +365,6 @@
             }
         }
 
-        /**
-         * Translates a theme header.
-         *
-         * @param string       $header Theme header. Name, Description, Author, Version, ThemeURI, AuthorURI, Status, Tags.
-         * @param string|array $value  Value to translate. An array for Tags header, string otherwise.
-         *
-         * @return string|array Translated value. An array for Tags header, string otherwise.
-         * @since 3.4.0
-         *
-         */
         private function translate_header($header, $value)
         {
             switch($header)
@@ -755,65 +444,21 @@
             return $value;
         }
 
-        /**
-         * Callback function for usort() to naturally sort themes by name.
-         *
-         * Accesses the Name header directly from the class for maximum speed.
-         * Would choke on HTML but we don't care enough to slow it down with strip_tags().
-         *
-         * @param WP_Theme $a First theme.
-         * @param WP_Theme $b Second theme.
-         *
-         * @return int Negative if `$a` falls lower in the natural order than `$b`. Zero if they fall equally.
-         *             Greater than 0 if `$a` falls higher in the natural order than `$b`. Used with usort().
-         * @since 3.4.0
-         *
-         */
         private static function _name_sort($a, $b)
         {
             return strnatcasecmp($a->headers['Name'], $b->headers['Name']);
         }
 
-        /**
-         * Callback function for usort() to naturally sort themes by translated name.
-         *
-         * @param WP_Theme $a First theme.
-         * @param WP_Theme $b Second theme.
-         *
-         * @return int Negative if `$a` falls lower in the natural order than `$b`. Zero if they fall equally.
-         *             Greater than 0 if `$a` falls higher in the natural order than `$b`. Used with usort().
-         * @since 3.4.0
-         *
-         */
         private static function _name_sort_i18n($a, $b)
         {
             return strnatcasecmp($a->name_translated, $b->name_translated);
         }
 
-        /**
-         * When converting the object to a string, the theme name is returned.
-         *
-         * @return string Theme name, ready for display (translated)
-         * @since 3.4.0
-         *
-         */
         public function __toString()
         {
             return (string) $this->display('Name');
         }
 
-        /**
-         * Gets a theme header, formatted and translated for display.
-         *
-         * @param string $header    Theme header. Name, Description, Author, Version, ThemeURI, AuthorURI, Status, Tags.
-         * @param bool   $markup    Optional. Whether to mark up the header. Defaults to true.
-         * @param bool   $translate Optional. Whether to translate the header. Defaults to true.
-         *
-         * @return string|array|false Processed header. An array for Tags if `$markup` is false, string otherwise.
-         *                            False on failure.
-         * @since 3.4.0
-         *
-         */
         public function display($header, $markup = true, $translate = true)
         {
             $value = $this->get($header);
@@ -840,17 +485,6 @@
             return $value;
         }
 
-        /**
-         * Loads the theme's textdomain.
-         *
-         * Translation files are not inherited from the parent theme. TODO: If this fails for the
-         * child theme, it should probably try to load the parent theme's translations.
-         *
-         * @return bool True if the textdomain was successfully loaded or has already been loaded.
-         *  False if no textdomain was specified in the file headers, or if the domain could not be loaded.
-         * @since 3.4.0
-         *
-         */
         public function load_textdomain()
         {
             if(isset($this->textdomain_loaded))
@@ -889,16 +523,6 @@
             return $this->textdomain_loaded;
         }
 
-        /**
-         * Returns the absolute path to the directory of a theme's "stylesheet" files.
-         *
-         * In the case of a child theme, this is the absolute path to the directory
-         * of the child theme's files.
-         *
-         * @return string Absolute path of the stylesheet directory.
-         * @since 3.4.0
-         *
-         */
         public function get_stylesheet_directory()
         {
             if($this->errors() && in_array('theme_root_missing', $this->errors()->get_error_codes(), true))
@@ -909,17 +533,6 @@
             return $this->theme_root.'/'.$this->stylesheet;
         }
 
-        /**
-         * Marks up a theme header.
-         *
-         * @param string       $header    Theme header. Name, Description, Author, Version, ThemeURI, AuthorURI, Status, Tags.
-         * @param string|array $value     Value to mark up. An array for Tags header, string otherwise.
-         * @param string       $translate Whether the header has been translated.
-         *
-         * @return string Value, marked up.
-         * @since 3.4.0
-         *
-         */
         private function markup_header($header, $value, $translate)
         {
             switch($header)
@@ -960,30 +573,11 @@
             return $value;
         }
 
-        /**
-         * Returns the directory name of the theme's "stylesheet" files, inside the theme root.
-         *
-         * In the case of a child theme, this is directory name of the child theme.
-         * Otherwise, get_stylesheet() is the same as get_template().
-         *
-         * @return string Stylesheet
-         * @since 3.4.0
-         *
-         */
         public function get_stylesheet()
         {
             return $this->stylesheet;
         }
 
-        /**
-         * __isset() magic method for properties formerly returned by current_theme_info()
-         *
-         * @param string $offset Property to check if set.
-         *
-         * @return bool Whether the given property is set.
-         * @since 3.4.0
-         *
-         */
         public function __isset($offset)
         {
             static $properties = [
@@ -1006,15 +600,6 @@
             return in_array($offset, $properties, true);
         }
 
-        /**
-         * __get() magic method for properties formerly returned by current_theme_info()
-         *
-         * @param string $offset Property to get.
-         *
-         * @return mixed Property value.
-         * @since 3.4.0
-         *
-         */
         public function __get($offset)
         {
             switch($offset)
@@ -1053,28 +638,11 @@
             }
         }
 
-        /**
-         * Returns reference to the parent theme.
-         *
-         * @return WP_Theme|false Parent theme, or false if the active theme is not a child theme.
-         * @since 3.4.0
-         *
-         */
         public function parent()
         {
             return isset($this->parent) ? $this->parent : false;
         }
 
-        /**
-         * Returns the absolute path to the directory of a theme's "template" files.
-         *
-         * In the case of a child theme, this is the absolute path to the directory
-         * of the parent theme's files.
-         *
-         * @return string Absolute path of the template directory.
-         * @since 3.4.0
-         *
-         */
         public function get_template_directory()
         {
             if($this->parent())
@@ -1089,35 +657,11 @@
             return $theme_root.'/'.$this->template;
         }
 
-        /**
-         * Returns the directory name of the theme's "template" files, inside the theme root.
-         *
-         * In the case of a child theme, this is the directory name of the parent theme.
-         * Otherwise, the get_template() is the same as get_stylesheet().
-         *
-         * @return string Template
-         * @since 3.4.0
-         *
-         */
         public function get_template()
         {
             return $this->template;
         }
 
-        /**
-         * Returns the main screenshot file for the theme.
-         *
-         * The main screenshot is called screenshot.png. gif and jpg extensions are also allowed.
-         *
-         * Screenshots for a theme must be in the stylesheet directory. (In the case of child
-         * themes, parent theme screenshots are not inherited.)
-         *
-         * @param string $uri Type of URL to return, either 'relative' or an absolute URI. Defaults to absolute URI.
-         *
-         * @return string|false Screenshot file. False if the theme does not have a screenshot.
-         * @since 3.4.0
-         *
-         */
         public function get_screenshot($uri = 'uri')
         {
             $screenshot = $this->cache_get('screenshot');
@@ -1154,32 +698,11 @@
             return false;
         }
 
-        /**
-         * Returns the URL to the directory of a theme's "stylesheet" files.
-         *
-         * In the case of a child theme, this is the URL to the directory of the
-         * child theme's files.
-         *
-         * @return string URL to the stylesheet directory.
-         * @since 3.4.0
-         *
-         */
         public function get_stylesheet_directory_uri()
         {
             return $this->get_theme_root_uri().'/'.str_replace('%2F', '/', rawurlencode($this->stylesheet));
         }
 
-        /**
-         * Returns the URL to the directory of the theme root.
-         *
-         * This is typically the absolute URL to wp-content/themes. This forms the basis
-         * for all other URLs returned by WP_Theme, so we pass it to the public function
-         * get_theme_root_uri() and allow it to run the {@see 'theme_root_uri'} filter.
-         *
-         * @return string Theme root URI.
-         * @since 3.4.0
-         *
-         */
         public function get_theme_root_uri()
         {
             if(! isset($this->theme_root_uri))
@@ -1190,36 +713,11 @@
             return $this->theme_root_uri;
         }
 
-        /**
-         * Returns the absolute path to the directory of the theme root.
-         *
-         * This is typically the absolute path to wp-content/themes.
-         *
-         * @return string Theme root.
-         * @since 3.4.0
-         *
-         */
         public function get_theme_root()
         {
             return $this->theme_root;
         }
 
-        /**
-         * Method to implement ArrayAccess for keys formerly returned by get_themes().
-         *
-         * Author, Author Name, Author URI, and Description did not previously return
-         * translated data. We are doing so now as it is safe to do. However, as
-         * Name and Title could have been used as the key for get_themes(), both remain
-         * untranslated for back compatibility. This means that ['Name'] is not ideal,
-         * and care should be taken to use `$theme::display( 'Name' )` to get a properly
-         * translated header.
-         *
-         * @param mixed $offset
-         *
-         * @return mixed
-         * @since 3.4.0
-         *
-         */
         #[ReturnTypeWillChange]
         public function offsetGet($offset)
         {
@@ -1269,20 +767,6 @@
             }
         }
 
-        /**
-         * Returns files in the theme's directory.
-         *
-         * @param string[]|string $type          Optional. Array of extensions to find, string of a single extension,
-         *                                       or null for all extensions. Default null.
-         * @param int             $depth         Optional. How deep to search for files. Defaults to a flat scan (0 depth).
-         *                                       -1 depth is infinite.
-         * @param bool            $search_parent Optional. Whether to return parent files. Default false.
-         *
-         * @return string[] Array of files, keyed by the path to the file relative to the theme's directory, with the
-         *     values being absolute paths.
-         * @since 3.4.0
-         *
-         */
         public function get_files($type = null, $depth = 0, $search_parent = false)
         {
             $files = (array) self::scandir($this->get_stylesheet_directory(), $type, $depth);
@@ -1295,23 +779,6 @@
             return array_filter($files);
         }
 
-        /**
-         * Scans a directory for files of a certain extension.
-         *
-         * @param string            $path          Absolute path to search.
-         * @param array|string|null $extensions    Optional. Array of extensions to find, string of a single extension,
-         *                                         or null for all extensions. Default null.
-         * @param int               $depth         Optional. How many levels deep to search for files. Accepts 0, 1+, or
-         *                                         -1 (infinite depth). Default 0.
-         * @param string            $relative_path Optional. The basename of the absolute path. Used to control the
-         *                                         returned path for the found files, particularly when this function
-         *                                         recurses to lower depths. Default empty.
-         *
-         * @return string[]|false Array of files, keyed by the path to the file relative to the `$path` directory
-         *     prepended with `$relative_path`, with the values being absolute paths. False otherwise.
-         * @since 3.4.0
-         *
-         */
         private static function scandir($path, $extensions = null, $depth = 0, $relative_path = '')
         {
             if(! is_dir($path))
@@ -1334,14 +801,6 @@
             $results = scandir($path);
             $files = [];
 
-            /**
-             * Filters the array of excluded directories and files while scanning theme folder.
-             *
-             * @param string[] $exclusions Array of excluded directories and files.
-             *
-             * @since 4.7.4
-             *
-             */
             $exclusions = (array) apply_filters('theme_scandir_exclusions', [
                 'CVS',
                 'node_modules',
@@ -1373,38 +832,12 @@
             return $files;
         }
 
-        /**
-         * Method to implement ArrayAccess for keys formerly returned by get_themes()
-         *
-         * @param mixed $offset
-         * @param mixed $value
-         *
-         * @since 3.4.0
-         *
-         */
         #[ReturnTypeWillChange]
         public function offsetSet($offset, $value) {}
 
-        /**
-         * Method to implement ArrayAccess for keys formerly returned by get_themes()
-         *
-         * @param mixed $offset
-         *
-         * @since 3.4.0
-         *
-         */
         #[ReturnTypeWillChange]
         public function offsetUnset($offset) {}
 
-        /**
-         * Method to implement ArrayAccess for keys formerly returned by get_themes()
-         *
-         * @param mixed $offset
-         *
-         * @return bool
-         * @since 3.4.0
-         *
-         */
         #[ReturnTypeWillChange]
         public function offsetExists($offset)
         {
@@ -1433,11 +866,6 @@
             return in_array($offset, $keys, true);
         }
 
-        /**
-         * Clears the cache for the theme.
-         *
-         * @since 3.4.0
-         */
         public function cache_delete()
         {
             foreach(['theme', 'screenshot', 'headers', 'post_templates'] as $key)
@@ -1456,19 +884,6 @@
             $this->__construct($this->stylesheet, $this->theme_root);
         }
 
-        /**
-         * Constructor for WP_Theme.
-         *
-         * @param string        $theme_dir  Directory of the theme within the theme_root.
-         * @param string        $theme_root Theme root.
-         * @param WP_Theme|null $_child     If this theme is a parent theme, the child may be passed for validation
-         *                                  purposes.
-         *
-         * @global array        $wp_theme_directories
-         *
-         * @since 3.4.0
-         *
-         */
         public function __construct($theme_dir, $theme_root, $_child = null)
         {
             global $wp_theme_directories;
@@ -1476,7 +891,6 @@
             // Initialize caching on first run.
             if(! isset(self::$persistently_cache))
             {
-                /** This action is documented in wp-includes/theme.php */
                 self::$persistently_cache = apply_filters('wp_cache_themes_persistently', false, 'WP_Theme');
                 if(self::$persistently_cache)
                 {
@@ -1725,13 +1139,6 @@
             }
         }
 
-        /**
-         * Returns whether this theme is a block-based theme or not.
-         *
-         * @return bool
-         * @since 5.9.0
-         *
-         */
         public function is_block_theme()
         {
             if(isset($this->block_theme))
@@ -1758,18 +1165,6 @@
             return $this->block_theme;
         }
 
-        /**
-         * Retrieves the path of a file in the theme.
-         *
-         * Searches in the stylesheet directory before the template directory so themes
-         * which inherit from a parent theme can just override one file.
-         *
-         * @param string $file Optional. File to search for in the stylesheet directory.
-         *
-         * @return string The path of the file.
-         * @since 5.9.0
-         *
-         */
         public function get_file_path($file = '')
         {
             $file = ltrim($file, '/');
@@ -1790,20 +1185,9 @@
                 $path = $template_directory.'/'.$file;
             }
 
-            /** This filter is documented in wp-includes/link-template.php */
             return apply_filters('theme_file_path', $path, $file);
         }
 
-        /**
-         * Returns the URL to the directory of a theme's "template" files.
-         *
-         * In the case of a child theme, this is the URL to the directory of the
-         * parent theme's files.
-         *
-         * @return string URL to the template directory.
-         * @since 3.4.0
-         *
-         */
         public function get_template_directory_uri()
         {
             if($this->parent())
@@ -1818,18 +1202,6 @@
             return $theme_root_uri.'/'.str_replace('%2F', '/', rawurlencode($this->template));
         }
 
-        /**
-         * Returns the theme's post templates for a given post type.
-         *
-         * @param WP_Post|null $post      Optional. The post being edited, provided for context.
-         * @param string       $post_type Optional. Post type to get the templates for. Default 'page'.
-         *                                If a post is provided, its post type is used.
-         *
-         * @return string[] Array of template header names keyed by the template file name.
-         * @since 4.7.0 Added the `$post_type` parameter.
-         *
-         * @since 3.4.0
-         */
         public function get_page_templates($post = null, $post_type = 'page')
         {
             if($post)
@@ -1840,54 +1212,13 @@
             $post_templates = $this->get_post_templates();
             $post_templates = isset($post_templates[$post_type]) ? $post_templates[$post_type] : [];
 
-            /**
-             * Filters list of page templates for a theme.
-             *
-             * @param string[]     $post_templates Array of template header names keyed by the template file name.
-             * @param WP_Theme     $theme          The theme object.
-             * @param WP_Post|null $post           The post being edited, provided for context, or null.
-             * @param string       $post_type      Post type to get the templates for.
-             *
-             * @since 4.9.6
-             *
-             */
             $post_templates = (array) apply_filters('theme_templates', $post_templates, $this, $post, $post_type);
 
-            /**
-             * Filters list of page templates for a theme.
-             *
-             * The dynamic portion of the hook name, `$post_type`, refers to the post type.
-             *
-             * Possible hook names include:
-             *
-             *  - `theme_post_templates`
-             *  - `theme_page_templates`
-             *  - `theme_attachment_templates`
-             *
-             * @param string[]     $post_templates Array of template header names keyed by the template file name.
-             * @param WP_Theme     $theme          The theme object.
-             * @param WP_Post|null $post           The post being edited, provided for context, or null.
-             * @param string       $post_type      Post type to get the templates for.
-             *
-             * @since 4.4.0 Converted to allow complete control over the `$page_templates` array.
-             * @since 4.7.0 Added the `$post_type` parameter.
-             *
-             * @since 3.9.0
-             */
             $post_templates = (array) apply_filters("theme_{$post_type}_templates", $post_templates, $this, $post, $post_type);
 
             return $post_templates;
         }
 
-        /**
-         * Returns the theme's post templates.
-         *
-         * @return array[] Array of page template arrays, keyed by post type and filename,
-         *                 with the value of the translated header name.
-         * @since 5.8.0 Include block templates.
-         *
-         * @since 4.7.0
-         */
         public function get_post_templates()
         {
             // If you screw up your active theme and we invalidate your parent, most things still work. Let it slide.
@@ -1968,17 +1299,6 @@
             return $post_templates;
         }
 
-        /**
-         * Determines whether the theme is allowed (multisite only).
-         *
-         * @param string $check   Optional. Whether to check only the 'network'-wide settings, the 'site'
-         *                        settings, or 'both'. Defaults to 'both'.
-         * @param int    $blog_id Optional. Ignored if only network-wide settings are checked. Defaults to current site.
-         *
-         * @return bool Whether the theme is allowed for the network. Returns true in single-site.
-         * @since 3.4.0
-         *
-         */
         public function is_allowed($check = 'both', $blog_id = null)
         {
             if(! is_multisite())

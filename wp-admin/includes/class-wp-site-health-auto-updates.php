@@ -1,32 +1,13 @@
 <?php
-    /**
-     * Class for testing automatic updates in the WordPress code.
-     *
-     * @package    WordPress
-     * @subpackage Site_Health
-     * @since      5.2.0
-     */
 
     #[AllowDynamicProperties]
     class WP_Site_Health_Auto_Updates
     {
-        /**
-         * WP_Site_Health_Auto_Updates constructor.
-         *
-         * @since 5.2.0
-         */
         public function __construct()
         {
             require_once ABSPATH.'wp-admin/includes/class-wp-upgrader.php';
         }
 
-        /**
-         * Runs tests to determine if auto-updates can run.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function run_tests()
         {
             $tests = [
@@ -65,18 +46,6 @@
             return $tests;
         }
 
-        /**
-         * Tests if auto-updates related constants are set correctly.
-         *
-         * @param string            $constant The name of the constant to check.
-         * @param bool|string|array $value    The value that the constant should be, if set,
-         *                                    or an array of acceptable values.
-         *
-         * @return array The test results.
-         * @since 5.5.1 The `$value` parameter can accept an array.
-         *
-         * @since 5.2.0
-         */
         public function test_constants($constant, $value)
         {
             $acceptable_values = (array) $value;
@@ -90,13 +59,6 @@
             }
         }
 
-        /**
-         * Checks if updates are intercepted by a filter.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function test_wp_version_check_attached()
         {
             if((! is_multisite() || is_main_site() && is_network_admin()) && ! has_filter('wp_version_check', 'wp_version_check'))
@@ -108,16 +70,8 @@
             }
         }
 
-        /**
-         * Checks if automatic updates are disabled by a filter.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function test_filters_automatic_updater_disabled()
         {
-            /** This filter is documented in wp-admin/includes/class-wp-automatic-updater.php */
             if(apply_filters('automatic_updater_disabled', false))
             {
                 return [
@@ -127,13 +81,6 @@
             }
         }
 
-        /**
-         * Checks if automatic updates are disabled.
-         *
-         * @return array|false The test results. False if auto-updates are enabled.
-         * @since 5.3.0
-         *
-         */
         public function test_wp_automatic_updates_disabled()
         {
             if(! class_exists('WP_Automatic_Updater'))
@@ -154,13 +101,6 @@
             ];
         }
 
-        /**
-         * Checks if automatic updates have tried to run, but failed, previously.
-         *
-         * @return array|false The test results. False if the auto-updates failed.
-         * @since 5.2.0
-         *
-         */
         public function test_if_failed_update()
         {
             $failed = get_site_option('auto_core_update_failed');
@@ -198,13 +138,6 @@
             ];
         }
 
-        /**
-         * Checks if WordPress is controlled by a VCS (Git, Subversion etc).
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function test_vcs_abspath()
         {
             $context_dirs = [ABSPATH];
@@ -243,7 +176,6 @@
                 }
             }
 
-            /** This filter is documented in wp-admin/includes/class-wp-automatic-updater.php */
             if($checkout && ! apply_filters('automatic_updates_is_vcs_checkout', true, ABSPATH))
             {
                 return [
@@ -266,13 +198,6 @@
             ];
         }
 
-        /**
-         * Checks if we can access files without providing credentials.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function test_check_wp_filesystem_method()
         {
             // Make sure the `request_filesystem_credentials()` function is available during our REST API call.
@@ -301,15 +226,6 @@
             ];
         }
 
-        /**
-         * Checks if core files are writable by the web user/group.
-         *
-         * @return array|false The test results. False if they're not writeable.
-         * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-         *
-         * @since 5.2.0
-         *
-         */
         public function test_all_files_writable()
         {
             global $wp_filesystem;
@@ -401,13 +317,6 @@
             }
         }
 
-        /**
-         * Checks if the install is using a development branch and can use nightly packages.
-         *
-         * @return array|false The test results. False if it isn't a development version.
-         * @since 5.2.0
-         *
-         */
         public function test_accepts_dev_updates()
         {
             require ABSPATH.WPINC.'/version.php'; // $wp_version; // x.y.z
@@ -425,7 +334,6 @@
                 ];
             }
 
-            /** This filter is documented in wp-admin/includes/class-core-upgrader.php */
             if(! apply_filters('allow_dev_auto_core_updates', $wp_version))
             {
                 return [
@@ -435,13 +343,6 @@
             }
         }
 
-        /**
-         * Checks if the site supports automatic minor updates.
-         *
-         * @return array The test results.
-         * @since 5.2.0
-         *
-         */
         public function test_accepts_minor_updates()
         {
             if(defined('WP_AUTO_UPDATE_CORE') && false === WP_AUTO_UPDATE_CORE)
@@ -452,7 +353,6 @@
                 ];
             }
 
-            /** This filter is documented in wp-admin/includes/class-core-upgrader.php */
             if(! apply_filters('allow_minor_auto_core_updates', true))
             {
                 return [

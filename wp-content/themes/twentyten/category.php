@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Template for displaying Category Archive pages
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Ten
-     * @since      Twenty Ten 1.0
-     */
 
     get_header(); ?>
 

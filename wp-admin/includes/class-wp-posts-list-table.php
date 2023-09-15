@@ -1,76 +1,19 @@
 <?php
-    /**
-     * List Table API: WP_Posts_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying posts in a list table.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_Posts_List_Table extends WP_List_Table
     {
-        /**
-         * Whether the items should be displayed hierarchically or linearly.
-         *
-         * @since 3.1.0
-         * @var bool
-         */
         protected $hierarchical_display;
 
-        /**
-         * Holds the number of pending comments for each post.
-         *
-         * @since 3.1.0
-         * @var array
-         */
         protected $comment_pending_count;
 
-        /**
-         * Current level for output.
-         *
-         * @since 4.3.0
-         * @var int
-         */
         protected $current_level = 0;
 
-        /**
-         * Holds the number of posts for this user.
-         *
-         * @since 3.1.0
-         * @var int
-         */
         private $user_posts_count;
 
-        /**
-         * Holds the number of posts which are sticky.
-         *
-         * @since 3.1.0
-         * @var int
-         */
         private $sticky_posts_count = 0;
 
         private $is_trash;
 
-        /**
-         * Constructor.
-         *
-         * @param array         $args An associative array of arguments.
-         *
-         * @see   WP_List_Table::__construct() for more information on default arguments.
-         *
-         * @global WP_Post_Type $post_type_object
-         * @global wpdb         $wpdb WordPress database abstraction object.
-         *
-         * @since 3.1.0
-         *
-         */
         public function __construct($args = [])
         {
             global $post_type_object, $wpdb;
@@ -120,20 +63,11 @@
             }
         }
 
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             return current_user_can(get_post_type_object($this->screen->post_type)->cap->edit_posts);
         }
 
-        /**
-         * @global string   $mode     List table view mode.
-         * @global array    $avail_post_stati
-         * @global WP_Query $wp_query WordPress Query object.
-         * @global int      $per_page
-         */
         public function prepare_items()
         {
             global $mode, $avail_post_stati, $wp_query, $per_page;
@@ -156,7 +90,6 @@
             $post_type = $this->screen->post_type;
             $per_page = $this->get_items_per_page('edit_'.$post_type.'_per_page');
 
-            /** This filter is documented in wp-admin/includes/post.php */
             $per_page = apply_filters('edit_posts_per_page', $per_page, $post_type);
 
             if($this->hierarchical_display)
@@ -203,21 +136,11 @@
                                        ]);
         }
 
-        /**
-         * Sets whether the table layout should be hierarchical or not.
-         *
-         * @param bool $display Whether the table layout should be hierarchical.
-         *
-         * @since 4.2.0
-         *
-         */
         public function set_hierarchical_display($display)
         {
             $this->hierarchical_display = $display;
         }
 
-        /**
-         */
         public function no_items()
         {
             if(isset($_REQUEST['post_status']) && 'trash' === $_REQUEST['post_status'])
@@ -230,9 +153,6 @@
             }
         }
 
-        /**
-         * @return string
-         */
         public function current_action()
         {
             if(isset($_REQUEST['delete_all']) || isset($_REQUEST['delete_all2']))
@@ -243,9 +163,6 @@
             return parent::current_action();
         }
 
-        /**
-         * @return string[] Array of column titles keyed by their column name.
-         */
         public function get_columns()
         {
             $post_type = $this->screen->post_type;
@@ -265,23 +182,6 @@
             $taxonomies = get_object_taxonomies($post_type, 'objects');
             $taxonomies = wp_filter_object_list($taxonomies, ['show_admin_column' => true], 'and', 'name');
 
-            /**
-             * Filters the taxonomy columns in the Posts list table.
-             *
-             * The dynamic portion of the hook name, `$post_type`, refers to the post
-             * type slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `manage_taxonomies_for_post_columns`
-             *  - `manage_taxonomies_for_page_columns`
-             *
-             * @param string[] $taxonomies Array of taxonomy names to show columns for.
-             * @param string   $post_type  The post type.
-             *
-             * @since 3.5.0
-             *
-             */
             $taxonomies = apply_filters("manage_taxonomies_for_{$post_type}_columns", $taxonomies, $post_type);
             $taxonomies = array_filter($taxonomies, 'taxonomy_exists');
 
@@ -320,55 +220,16 @@
 
             if('page' === $post_type)
             {
-                /**
-                 * Filters the columns displayed in the Pages list table.
-                 *
-                 * @param string[] $post_columns An associative array of column headings.
-                 *
-                 * @since 2.5.0
-                 *
-                 */
                 $posts_columns = apply_filters('manage_pages_columns', $posts_columns);
             }
             else
             {
-                /**
-                 * Filters the columns displayed in the Posts list table.
-                 *
-                 * @param string[] $post_columns An associative array of column headings.
-                 * @param string   $post_type    The post type slug.
-                 *
-                 * @since 1.5.0
-                 *
-                 */
                 $posts_columns = apply_filters('manage_posts_columns', $posts_columns, $post_type);
             }
 
-            /**
-             * Filters the columns displayed in the Posts list table for a specific post type.
-             *
-             * The dynamic portion of the hook name, `$post_type`, refers to the post type slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `manage_post_posts_columns`
-             *  - `manage_page_posts_columns`
-             *
-             * @param string[] $post_columns An associative array of column headings.
-             *
-             * @since 3.0.0
-             *
-             */
             return apply_filters("manage_{$post_type}_posts_columns", $posts_columns);
         }
 
-        /**
-         * @param array     $posts
-         * @param int       $level
-         *
-         * @global WP_Query $wp_query WordPress Query object.
-         * @global int      $per_page
-         */
         public function display_rows($posts = [], $level = 0)
         {
             global $wp_query, $per_page;
@@ -390,14 +251,6 @@
             }
         }
 
-        /**
-         * @param array    $pages
-         * @param int      $pagenum
-         * @param int      $per_page
-         *
-         * @global WP_Post $post Global post object.
-         * @global wpdb    $wpdb WordPress database abstraction object.
-         */
         private function _display_rows_hierarchical($pages, $pagenum = 1, $per_page = 20)
         {
             global $wpdb;
@@ -513,22 +366,6 @@
             }
         }
 
-        /**
-         * Displays the nested hierarchy of sub-pages together with paging
-         * support, based on a top level page ID.
-         *
-         * @param array $children_pages
-         * @param int   $count
-         * @param int   $parent_page
-         * @param int   $level
-         * @param int   $pagenum
-         * @param int   $per_page
-         * @param array $to_display List of pages to be displayed. Passed by reference.
-         *
-         * @since 4.2.0 Added the `$to_display` parameter.
-         *
-         * @since 3.1.0 (Standalone function exists since 2.6.0)
-         */
         private function _page_rows(&$children_pages, &$count, $parent_page, $level, $pagenum, $per_page, &$to_display)
         {
             if(! isset($children_pages[$parent_page]))
@@ -595,13 +432,6 @@
             unset($children_pages[$parent_page]); // Required in order to keep track of orphans.
         }
 
-        /**
-         * @param int|WP_Post $post
-         * @param int         $level
-         *
-         * @global WP_Post    $post Global post object.
-         *
-         */
         public function single_row($post, $level = 0)
         {
             $global_post = get_post();
@@ -639,10 +469,6 @@
             $GLOBALS['post'] = $global_post;
         }
 
-        /**
-         * @param array $posts
-         * @param int   $level
-         */
         private function _display_rows($posts, $level = 0)
         {
             $post_type = $this->screen->post_type;
@@ -667,15 +493,6 @@
             }
         }
 
-        /**
-         * Handles the checkbox column output.
-         *
-         * @param WP_Post $item The current WP_Post object.
-         *
-         * @since 5.9.0 Renamed `$post` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.3.0
-         */
         public function column_cb($item)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -683,17 +500,6 @@
 
             $show = current_user_can('edit_post', $post->ID);
 
-            /**
-             * Filters whether to show the bulk edit checkbox for a post in its list table.
-             *
-             * By default the checkbox is only shown if the current user can edit the post.
-             *
-             * @param bool    $show Whether to show the checkbox.
-             * @param WP_Post $post The current WP_Post object.
-             *
-             * @since 5.7.0
-             *
-             */
             if(apply_filters('wp_list_table_show_post_checkbox', $show, $post)) :
                 ?>
                 <label class="label-covers-full-cell" for="cb-select-<?php the_ID(); ?>">
@@ -717,16 +523,6 @@
             endif;
         }
 
-        /**
-         * Handles the post date column output.
-         *
-         * @param WP_Post $post The current WP_Post object.
-         *
-         * @global string $mode List table view mode.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_date($post)
         {
             global $mode;
@@ -764,17 +560,6 @@
                 $status = __('Last Modified');
             }
 
-            /**
-             * Filters the status text of the post.
-             *
-             * @param string  $status      The status text.
-             * @param WP_Post $post        Post object.
-             * @param string  $column_name The column name.
-             * @param string  $mode        The list display mode ('excerpt' or 'list').
-             *
-             * @since 4.8.0
-             *
-             */
             $status = apply_filters('post_date_column_status', $status, $post, 'date', $mode);
 
             if($status)
@@ -782,31 +567,9 @@
                 echo $status.'<br />';
             }
 
-            /**
-             * Filters the published, scheduled, or unpublished time of the post.
-             *
-             * @param string  $t_time      The published time.
-             * @param WP_Post $post        Post object.
-             * @param string  $column_name The column name.
-             * @param string  $mode        The list display mode ('excerpt' or 'list').
-             *
-             * @since 2.5.1
-             * @since 5.5.0 Removed the difference between 'excerpt' and 'list' modes.
-             *              The published time and date are both displayed now,
-             *              which is equivalent to the previous 'excerpt' mode.
-             *
-             */
             echo apply_filters('post_date_column_time', $t_time, $post, 'date', $mode);
         }
 
-        /**
-         * Handles the comments column output.
-         *
-         * @param WP_Post $post The current WP_Post object.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_comments($post)
         {
             ?>
@@ -820,14 +583,6 @@
             <?php
         }
 
-        /**
-         * Handles the post author column output.
-         *
-         * @param WP_Post $post The current WP_Post object.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_author($post)
         {
             $args = [
@@ -837,17 +592,6 @@
             echo $this->get_edit_link($args, get_the_author());
         }
 
-        /**
-         * Creates a link to edit.php with params.
-         *
-         * @param string[] $args      Associative array of URL parameters for the link.
-         * @param string   $link_text Link text.
-         * @param string   $css_class Optional. Class attribute. Default empty string.
-         *
-         * @return string The formatted link string.
-         * @since 4.4.0
-         *
-         */
         protected function get_edit_link($args, $link_text, $css_class = '')
         {
             $url = add_query_arg($args, 'edit.php');
@@ -868,16 +612,6 @@
             return sprintf('<a href="%s"%s%s>%s</a>', esc_url($url), $class_html, $aria_current, $link_text);
         }
 
-        /**
-         * Handles the default column output.
-         *
-         * @param WP_Post $item        The current WP_Post object.
-         * @param string  $column_name The current column name.
-         *
-         * @since 4.3.0
-         * @since 5.9.0 Renamed `$post` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         public function column_default($item, $column_name)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -933,16 +667,6 @@
                         $term_links[] = $this->get_edit_link($posts_in_term_qv, $label);
                     }
 
-                    /**
-                     * Filters the links in `$taxonomy` column of edit.php.
-                     *
-                     * @param string[]  $term_links Array of term editing links.
-                     * @param string    $taxonomy   Taxonomy name.
-                     * @param WP_Term[] $terms      Array of term objects appearing in the post row.
-                     *
-                     * @since 5.2.0
-                     *
-                     */
                     $term_links = apply_filters('post_column_taxonomy_links', $term_links, $taxonomy, $terms);
 
                     echo implode(wp_get_list_item_separator(), $term_links);
@@ -957,63 +681,16 @@
 
             if(is_post_type_hierarchical($post->post_type))
             {
-                /**
-                 * Fires in each custom column on the Posts list table.
-                 *
-                 * This hook only fires if the current post type is hierarchical,
-                 * such as pages.
-                 *
-                 * @param string $column_name The name of the column to display.
-                 * @param int    $post_id     The current post ID.
-                 *
-                 * @since 2.5.0
-                 *
-                 */
                 do_action('manage_pages_custom_column', $column_name, $post->ID);
             }
             else
             {
-                /**
-                 * Fires in each custom column in the Posts list table.
-                 *
-                 * This hook only fires if the current post type is non-hierarchical,
-                 * such as posts.
-                 *
-                 * @param string $column_name The name of the column to display.
-                 * @param int    $post_id     The current post ID.
-                 *
-                 * @since 1.5.0
-                 *
-                 */
                 do_action('manage_posts_custom_column', $column_name, $post->ID);
             }
 
-            /**
-             * Fires for each custom column of a specific post type in the Posts list table.
-             *
-             * The dynamic portion of the hook name, `$post->post_type`, refers to the post type.
-             *
-             * Possible hook names include:
-             *
-             *  - `manage_post_posts_custom_column`
-             *  - `manage_page_posts_custom_column`
-             *
-             * @param string $column_name The name of the column to display.
-             * @param int    $post_id     The current post ID.
-             *
-             * @since 3.1.0
-             *
-             */
             do_action("manage_{$post->post_type}_posts_custom_column", $column_name, $post->ID);
         }
 
-        /**
-         * Outputs the hidden row displayed when inline editing
-         *
-         * @since 3.1.0
-         *
-         * @global string $mode List table view mode.
-         */
         public function inline_edit()
         {
             global $mode;
@@ -1033,16 +710,6 @@
 
                 $show_in_quick_edit = $taxonomy->show_in_quick_edit;
 
-                /**
-                 * Filters whether the current taxonomy should be shown in the Quick Edit panel.
-                 *
-                 * @param bool   $show_in_quick_edit Whether to show the current taxonomy in Quick Edit.
-                 * @param string $taxonomy_name      Taxonomy name.
-                 * @param string $post_type          Post type of current Quick Edit post.
-                 *
-                 * @since 4.2.0
-                 *
-                 */
                 if(! apply_filters('quick_edit_show_taxonomy', $show_in_quick_edit, $taxonomy_name, $screen->post_type))
                 {
                     continue;
@@ -1173,17 +840,6 @@
                                                                     $users_opt['show_option_none'] = __('&mdash; No Change &mdash;');
                                                                 }
 
-                                                                /**
-                                                                 * Filters the arguments used to generate the Quick Edit authors drop-down.
-                                                                 *
-                                                                 * @param array $users_opt An array of arguments passed to wp_dropdown_users().
-                                                                 * @param bool  $bulk      A flag to denote if it's a bulk action.
-                                                                 *
-                                                                 * @since 5.6.0
-                                                                 *
-                                                                 * @see   wp_dropdown_users()
-                                                                 *
-                                                                 */
                                                                 $users_opt = apply_filters('quick_edit_dropdown_authors_args', $users_opt, $bulk);
 
                                                                 $authors = wp_dropdown_users($users_opt);
@@ -1287,18 +943,6 @@
                                                                     $dropdown_args['show_option_no_change'] = __('&mdash; No Change &mdash;');
                                                                 }
 
-                                                                /**
-                                                                 * Filters the arguments used to generate the Quick Edit page-parent drop-down.
-                                                                 *
-                                                                 * @param array $dropdown_args An array of arguments passed to wp_dropdown_pages().
-                                                                 * @param bool  $bulk          A flag to denote if it's a bulk action.
-                                                                 *
-                                                                 * @see   wp_dropdown_pages()
-                                                                 *
-                                                                 * @since 2.7.0
-                                                                 * @since 5.6.0 The `$bulk` parameter was added.
-                                                                 *
-                                                                 */
                                                                 $dropdown_args = apply_filters('quick_edit_dropdown_pages_args', $dropdown_args, $bulk);
 
                                                                 wp_dropdown_pages($dropdown_args);
@@ -1331,7 +975,7 @@
                                                                 <option value="-1"><?php _e('&mdash; No Change &mdash;'); ?></option>
                                                             <?php endif; // $bulk ?>
                                                             <?php
-                                                                /** This filter is documented in wp-admin/includes/meta-boxes.php */
+
                                                                 $default_title = apply_filters('default_page_template_title', __('Default template'), 'quick-edit');
                                                             ?>
                                                             <option value="default"><?php echo esc_html($default_title); ?></option>
@@ -1518,29 +1162,10 @@
 
                                                 if($bulk)
                                                 {
-                                                    /**
-                                                     * Fires once for each column in Bulk Edit mode.
-                                                     *
-                                                     * @param string $column_name Name of the column to edit.
-                                                     * @param string $post_type   The post type slug.
-                                                     *
-                                                     * @since 2.7.0
-                                                     *
-                                                     */
                                                     do_action('bulk_edit_custom_box', $column_name, $screen->post_type);
                                                 }
                                                 else
                                                 {
-                                                    /**
-                                                     * Fires once for each column in Quick Edit mode.
-                                                     *
-                                                     * @param string $column_name Name of the column to edit.
-                                                     * @param string $post_type   The post type slug, or current screen name if this is a taxonomy list table.
-                                                     * @param string $taxonomy    The taxonomy name, if any.
-                                                     *
-                                                     * @since 2.7.0
-                                                     *
-                                                     */
                                                     do_action('quick_edit_custom_box', $column_name, $screen->post_type, '');
                                                 }
                                             }
@@ -1594,11 +1219,6 @@
             <?php
         }
 
-        /**
-         * @return array
-         * @global array $avail_post_stati
-         * @global array $locked_post_status This seems to be deprecated.
-         */
         protected function get_views()
         {
             global $locked_post_status, $avail_post_stati;
@@ -1719,13 +1339,6 @@
             return $this->get_views_links($status_links);
         }
 
-        /**
-         * Determines if the current view is the "All" view.
-         *
-         * @return bool Whether the current view is the "All" view.
-         * @since 4.2.0
-         *
-         */
         protected function is_base_request()
         {
             $vars = $_GET;
@@ -1743,9 +1356,6 @@
             return 1 === count($vars) && ! empty($vars['mode']);
         }
 
-        /**
-         * @return array
-         */
         protected function get_bulk_actions()
         {
             $actions = [];
@@ -1778,9 +1388,6 @@
             return $actions;
         }
 
-        /**
-         * @param string $which
-         */
         protected function extra_tablenav($which)
         {
             ?>
@@ -1794,22 +1401,6 @@
                         $this->categories_dropdown($this->screen->post_type);
                         $this->formats_dropdown($this->screen->post_type);
 
-                        /**
-                         * Fires before the Filter button on the Posts and Pages list tables.
-                         *
-                         * The Filter button allows sorting by date and/or category on the
-                         * Posts list table, and sorting by date on the Pages list table.
-                         *
-                         * @param string $post_type The post type slug.
-                         * @param string $which     The location of the extra table nav markup:
-                         *                          'top' or 'bottom' for WP_Posts_List_Table,
-                         *                          'bar' for WP_Media_List_Table.
-                         *
-                         * @since 4.6.0 The `$which` parameter was added.
-                         *
-                         * @since 2.1.0
-                         * @since 4.4.0 The `$post_type` parameter was added.
-                         */
                         do_action('restrict_manage_posts', $this->screen->post_type, $which);
 
                         $output = ob_get_clean();
@@ -1828,41 +1419,14 @@
                 ?>
             </div>
             <?php
-            /**
-             * Fires immediately following the closing "actions" div in the tablenav for the posts
-             * list table.
-             *
-             * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-             *
-             * @since 4.4.0
-             *
-             */
+
             do_action('manage_posts_extra_tablenav', $which);
         }
 
-        /**
-         * Displays a categories drop-down for filtering on the Posts list table.
-         *
-         * @param string $post_type Post type slug.
-         *
-         * @global int   $cat       Currently selected category.
-         *
-         * @since 4.6.0
-         *
-         */
         protected function categories_dropdown($post_type)
         {
             global $cat;
 
-            /**
-             * Filters whether to remove the 'Categories' drop-down from the post list table.
-             *
-             * @param bool   $disable   Whether to disable the categories drop-down. Default false.
-             * @param string $post_type Post type slug.
-             *
-             * @since 4.6.0
-             *
-             */
             if(false !== apply_filters('disable_categories_dropdown', false, $post_type))
             {
                 return;
@@ -1885,27 +1449,8 @@
             }
         }
 
-        /**
-         * Displays a formats drop-down for filtering items.
-         *
-         * @param string $post_type Post type slug.
-         *
-         * @since  5.2.0
-         * @access protected
-         *
-         */
         protected function formats_dropdown($post_type)
         {
-            /**
-             * Filters whether to remove the 'Formats' drop-down from the post list table.
-             *
-             * @param bool   $disable   Whether to disable the drop-down. Default false.
-             * @param string $post_type Post type slug.
-             *
-             * @since 5.2.0
-             * @since 5.5.0 The `$post_type` parameter was added.
-             *
-             */
             if(apply_filters('disable_formats_dropdown', false, $post_type))
             {
                 return;
@@ -1962,19 +1507,11 @@
             <?php
         }
 
-        /**
-         * @return bool
-         */
         public function has_items()
         {
             return have_posts();
         }
 
-        /**
-         * @return array
-         * @global string $mode List table view mode.
-         *
-         */
         protected function get_table_classes()
         {
             global $mode;
@@ -1990,9 +1527,6 @@
             ];
         }
 
-        /**
-         * @return array
-         */
         protected function get_sortable_columns()
         {
             $post_type = $this->screen->post_type;
@@ -2030,15 +1564,6 @@
             return $sortables;
         }
 
-        /**
-         * @param WP_Post $post
-         * @param string  $classes
-         * @param string  $data
-         * @param string  $primary
-         *
-         * @since 4.3.0
-         *
-         */
         protected function _column_title($post, $classes, $data, $primary)
         {
             echo '<td class="'.$classes.' page-title" ', $data, '>';
@@ -2047,16 +1572,6 @@
             echo '</td>';
         }
 
-        /**
-         * Handles the title column output.
-         *
-         * @param WP_Post $post The current WP_Post object.
-         *
-         * @global string $mode List table view mode.
-         *
-         * @since 4.3.0
-         *
-         */
         public function column_title($post)
         {
             global $mode;
@@ -2082,7 +1597,6 @@
 
                         if(! isset($parent_name))
                         {
-                            /** This filter is documented in wp-includes/post-template.php */
                             $parent_name = apply_filters('the_title', $parent->post_title, $parent->ID);
                         }
                     }
@@ -2149,19 +1663,6 @@
             get_inline_data($post);
         }
 
-        /**
-         * Generates and displays row action links.
-         *
-         * @param WP_Post $item        Post being acted upon.
-         * @param string  $column_name Current column name.
-         * @param string  $primary     Primary column name.
-         *
-         * @return string Row actions output for posts, or an empty string
-         *                if the current column is not the primary column.
-         * @since 4.3.0
-         * @since 5.9.0 Renamed `$post` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         */
         protected function handle_row_actions($item, $column_name, $primary)
         {
             if($primary !== $column_name)
@@ -2227,49 +1728,16 @@
 
             if(is_post_type_hierarchical($post->post_type))
             {
-                /**
-                 * Filters the array of row action links on the Pages list table.
-                 *
-                 * The filter is evaluated only for hierarchical post types.
-                 *
-                 * @param string[] $actions An array of row action links. Defaults are
-                 *                          'Edit', 'Quick Edit', 'Restore', 'Trash',
-                 *                          'Delete Permanently', 'Preview', and 'View'.
-                 * @param WP_Post  $post    The post object.
-                 *
-                 * @since 2.8.0
-                 *
-                 */
                 $actions = apply_filters('page_row_actions', $actions, $post);
             }
             else
             {
-                /**
-                 * Filters the array of row action links on the Posts list table.
-                 *
-                 * The filter is evaluated only for non-hierarchical post types.
-                 *
-                 * @param string[] $actions An array of row action links. Defaults are
-                 *                          'Edit', 'Quick Edit', 'Restore', 'Trash',
-                 *                          'Delete Permanently', 'Preview', and 'View'.
-                 * @param WP_Post  $post    The post object.
-                 *
-                 * @since 2.8.0
-                 *
-                 */
                 $actions = apply_filters('post_row_actions', $actions, $post);
             }
 
             return $this->row_actions($actions);
         }
 
-        /**
-         * Gets the name of the default primary column.
-         *
-         * @return string Name of the default primary column, in this case, 'title'.
-         * @since 4.3.0
-         *
-         */
         protected function get_default_primary_column_name()
         {
             return 'title';

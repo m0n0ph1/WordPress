@@ -1,21 +1,5 @@
 <?php
-    /**
-     * Options Management Administration Screen.
-     *
-     * If accessed directly in a browser this page shows a list of all saved options
-     * along with editable fields for their values. Serialized data is not supported
-     * and there is no way to remove options via this page. It is not linked to from
-     * anywhere else in the admin.
-     *
-     * This file is also the target of the forms in core and custom options pages
-     * that use the Settings API. In this case it saves the new option values
-     * and returns the user to their page of origin.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
 // Used in the HTML title tag.
@@ -34,17 +18,6 @@
     }
     else
     {
-        /**
-         * Filters the capability required when using the Settings API.
-         *
-         * By default, the options groups for all registered settings require the manage_options capability.
-         * This filter is required to change the capability required for a certain options page.
-         *
-         * @param string $capability The capability used for the page, which is manage_options by default.
-         *
-         * @since 3.2.0
-         *
-         */
         $capability = apply_filters("option_page_capability_{$option_page}", $capability);
     }
 
@@ -199,39 +172,14 @@
     }
     else
     {
-        /**
-         * Filters whether the post-by-email functionality is enabled.
-         *
-         * @param bool $enabled Whether post-by-email configuration is enabled. Default true.
-         *
-         * @since 3.0.0
-         *
-         */
         if(apply_filters('enable_post_by_email_configuration', true))
         {
             $allowed_options['writing'] = array_merge($allowed_options['writing'], $mail_options);
         }
     }
 
-    /**
-     * Filters the allowed options list.
-     *
-     * @param array $allowed_options The allowed options list.
-     *
-     * @deprecated 5.5.0 Use {@see 'allowed_options'} instead.
-     *
-     * @since      2.7.0
-     */
     $allowed_options = apply_filters_deprecated('whitelist_options', [$allowed_options], '5.5.0', 'allowed_options', __('Please consider writing more inclusive code.'));
 
-    /**
-     * Filters the allowed options list.
-     *
-     * @param array $allowed_options The allowed options list.
-     *
-     * @since 5.5.0
-     *
-     */
     $allowed_options = apply_filters('allowed_options', $allowed_options);
 
     if('update' === $action)

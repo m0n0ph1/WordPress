@@ -5,25 +5,10 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_Sodium_Core32_Salsa20
-     */
     abstract class ParagonIE_Sodium_Core32_Salsa20 extends ParagonIE_Sodium_Core32_Util
     {
         const ROUNDS = 20;
 
-        /**
-         * @param string $m
-         * @param string $n
-         * @param int    $ic
-         * @param string $k
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function salsa20_xor_ic($m, $n, $ic, $k)
         {
             $mlen = self::strlen($m);
@@ -72,55 +57,8 @@
             return $c;
         }
 
-        /**
-         * Calculate an salsa20 hash of a single block
-         *
-         * @param string      $in
-         * @param string      $k
-         * @param string|null $c
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function core_salsa20($in, $k, $c = null)
         {
-            /**
-             * @var ParagonIE_Sodium_Core32_Int32 $x0
-             * @var ParagonIE_Sodium_Core32_Int32 $x1
-             * @var ParagonIE_Sodium_Core32_Int32 $x2
-             * @var ParagonIE_Sodium_Core32_Int32 $x3
-             * @var ParagonIE_Sodium_Core32_Int32 $x4
-             * @var ParagonIE_Sodium_Core32_Int32 $x5
-             * @var ParagonIE_Sodium_Core32_Int32 $x6
-             * @var ParagonIE_Sodium_Core32_Int32 $x7
-             * @var ParagonIE_Sodium_Core32_Int32 $x8
-             * @var ParagonIE_Sodium_Core32_Int32 $x9
-             * @var ParagonIE_Sodium_Core32_Int32 $x10
-             * @var ParagonIE_Sodium_Core32_Int32 $x11
-             * @var ParagonIE_Sodium_Core32_Int32 $x12
-             * @var ParagonIE_Sodium_Core32_Int32 $x13
-             * @var ParagonIE_Sodium_Core32_Int32 $x14
-             * @var ParagonIE_Sodium_Core32_Int32 $x15
-             * @var ParagonIE_Sodium_Core32_Int32 $j0
-             * @var ParagonIE_Sodium_Core32_Int32 $j1
-             * @var ParagonIE_Sodium_Core32_Int32 $j2
-             * @var ParagonIE_Sodium_Core32_Int32 $j3
-             * @var ParagonIE_Sodium_Core32_Int32 $j4
-             * @var ParagonIE_Sodium_Core32_Int32 $j5
-             * @var ParagonIE_Sodium_Core32_Int32 $j6
-             * @var ParagonIE_Sodium_Core32_Int32 $j7
-             * @var ParagonIE_Sodium_Core32_Int32 $j8
-             * @var ParagonIE_Sodium_Core32_Int32 $j9
-             * @var ParagonIE_Sodium_Core32_Int32 $j10
-             * @var ParagonIE_Sodium_Core32_Int32 $j11
-             * @var ParagonIE_Sodium_Core32_Int32 $j12
-             * @var ParagonIE_Sodium_Core32_Int32 $j13
-             * @var ParagonIE_Sodium_Core32_Int32 $j14
-             * @var ParagonIE_Sodium_Core32_Int32 $j15
-             */
             if(self::strlen($k) < 32)
             {
                 throw new RangeException('Key must be 32 bytes long');
@@ -232,33 +170,11 @@
             return $x0->toReverseString().$x1->toReverseString().$x2->toReverseString().$x3->toReverseString().$x4->toReverseString().$x5->toReverseString().$x6->toReverseString().$x7->toReverseString().$x8->toReverseString().$x9->toReverseString().$x10->toReverseString().$x11->toReverseString().$x12->toReverseString().$x13->toReverseString().$x14->toReverseString().$x15->toReverseString();
         }
 
-        /**
-         * @param string $message
-         * @param string $nonce
-         * @param string $key
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function salsa20_xor($message, $nonce, $key)
         {
             return self::xorStrings($message, self::salsa20(self::strlen($message), $nonce, $key));
         }
 
-        /**
-         * @param int    $len
-         * @param string $nonce
-         * @param string $key
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function salsa20($len, $nonce, $key)
         {
             if(self::strlen($key) !== 32)

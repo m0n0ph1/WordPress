@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Build User Administration Menu.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
     $menu[2] = [
         __('Dashboard'),

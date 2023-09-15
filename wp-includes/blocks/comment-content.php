@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/comment-content` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/comment-content` block on the server.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string Return the post comment's content.
-     */
     function render_block_core_comment_content($attributes, $content, $block)
     {
         if(! isset($block->context['commentId']))
@@ -36,7 +22,6 @@
             return '';
         }
 
-        /** This filter is documented in wp-includes/comment-template.php */
         $comment_text = apply_filters('comment_text', $comment_text, $comment, $args);
 
         $moderation_note = '';
@@ -74,9 +59,6 @@
         return sprintf('<div %1$s>%2$s%3$s</div>', $wrapper_attributes, $moderation_note, $comment_text);
     }
 
-    /**
-     * Registers the `core/comment-content` block on the server.
-     */
     function register_block_core_comment_content()
     {
         register_block_type_from_metadata(__DIR__.'/comment-content', [

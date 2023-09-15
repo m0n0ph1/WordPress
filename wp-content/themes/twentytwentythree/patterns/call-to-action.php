@@ -1,11 +1,5 @@
 <?php
-    /**
-     * Title: Call to action
-     * Slug: twentytwentythree/cta
-     * Categories: featured
-     * Keywords: Call to action
-     * Block Types: core/buttons
-     */
+
 ?>
 <!-- wp:columns {"align":"wide"} -->
 <div class="wp-block-columns alignwide">

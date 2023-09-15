@@ -1,26 +1,9 @@
 <?php
-    /**
-     * Core Navigation Menu API
-     *
-     * @package    WordPress
-     * @subpackage Nav_Menus
-     * @since      3.0.0
-     */
 
-    /** Walker_Nav_Menu_Edit class */
     require_once ABSPATH.'wp-admin/includes/class-walker-nav-menu-edit.php';
 
-    /** Walker_Nav_Menu_Checklist class */
     require_once ABSPATH.'wp-admin/includes/class-walker-nav-menu-checklist.php';
 
-    /**
-     * Prints the appropriate response to a menu quick search.
-     *
-     * @param array $request The unsanitized request values.
-     *
-     * @since 3.0.0
-     *
-     */
     function _wp_ajax_menu_quick_search($request = [])
     {
         $args = [];
@@ -164,11 +147,6 @@
         }
     }
 
-    /**
-     * Register nav menu meta boxes and advanced menu items.
-     *
-     * @since 3.0.0
-     */
     function wp_nav_menu_setup()
     {
         // Register meta boxes.
@@ -193,13 +171,6 @@
         }
     }
 
-    /**
-     * Limit the amount of meta boxes to pages, posts, links, and categories for first time users.
-     *
-     * @since 3.0.0
-     *
-     * @global array $wp_meta_boxes
-     */
     function wp_initial_nav_menu_meta_boxes()
     {
         global $wp_meta_boxes;
@@ -234,11 +205,6 @@
         update_user_meta($user->ID, 'metaboxhidden_nav-menus', $hidden_meta_boxes);
     }
 
-    /**
-     * Creates meta boxes for any post type menu item..
-     *
-     * @since 3.0.0
-     */
     function wp_nav_menu_post_type_meta_boxes()
     {
         $post_types = get_post_types(['show_in_nav_menus' => true], 'object');
@@ -250,19 +216,6 @@
 
         foreach($post_types as $post_type)
         {
-            /**
-             * Filters whether a menu items meta box will be added for the current
-             * object type.
-             *
-             * If a falsey value is returned instead of an object, the menu items
-             * meta box for the current meta box object will not be added.
-             *
-             * @param WP_Post_Type|false $post_type The current object to add a menu items
-             *                                      meta box for.
-             *
-             * @since 3.0.0
-             *
-             */
             $post_type = apply_filters('nav_menu_meta_box_object', $post_type);
 
             if($post_type)
@@ -275,11 +228,6 @@
         }
     }
 
-    /**
-     * Creates meta boxes for any taxonomy menu item.
-     *
-     * @since 3.0.0
-     */
     function wp_nav_menu_taxonomy_meta_boxes()
     {
         $taxonomies = get_taxonomies(['show_in_nav_menus' => true], 'object');
@@ -291,7 +239,6 @@
 
         foreach($taxonomies as $tax)
         {
-            /** This filter is documented in wp-admin/includes/nav-menu.php */
             $tax = apply_filters('nav_menu_meta_box_object', $tax);
 
             if($tax)
@@ -302,19 +249,6 @@
         }
     }
 
-    /**
-     * Check whether to disable the Menu Locations meta box submit button and inputs.
-     *
-     * @param int|string $nav_menu_selected_id        ID, name, or slug of the currently selected menu.
-     * @param bool       $display                     Whether to display or just return the string.
-     *
-     * @return string|false Disabled attribute if at least one menu exists, false if not.
-     * @since 3.6.0
-     * @since 5.3.1 The `$display` parameter was added.
-     *
-     * @global bool      $one_theme_location_no_menus to determine if no menus exist
-     *
-     */
     function wp_nav_menu_disabled_check($nav_menu_selected_id, $display = true)
     {
         global $one_theme_location_no_menus;
@@ -327,14 +261,6 @@
         return disabled($nav_menu_selected_id, 0, $display);
     }
 
-    /**
-     * Displays a meta box for the custom links menu item.
-     *
-     * @since 3.0.0
-     *
-     * @global int        $_nav_menu_placeholder
-     * @global int|string $nav_menu_selected_id
-     */
     function wp_nav_menu_item_link_meta_box()
     {
         global $_nav_menu_placeholder, $nav_menu_selected_id;
@@ -377,24 +303,6 @@
         <?php
     }
 
-    /**
-     * Displays a meta box for a post type menu item.
-     *
-     * @param string      $data_object Not used.
-     * @param array       $box         {
-     *                                 Post type menu item meta box arguments.
-     *
-     * @type string       $id          Meta box 'id' attribute.
-     * @type string       $title       Meta box title.
-     * @type callable     $callback    Meta box display callback.
-     * @type WP_Post_Type $args        Extra meta box arguments (the post type object for this meta box).
-     *                                 }
-     * @global int|string $nav_menu_selected_id
-     *
-     * @since 3.0.0
-     *
-     * @global int        $_nav_menu_placeholder
-     */
     function wp_nav_menu_item_post_type_meta_box($data_object, $box)
     {
         global $_nav_menu_placeholder, $nav_menu_selected_id;
@@ -640,26 +548,6 @@
 
                         $args['walker'] = $walker;
 
-                        /**
-                         * Filters the posts displayed in the 'Most Recent' tab of the current
-                         * post type's menu items meta box.
-                         *
-                         * The dynamic portion of the hook name, `$post_type_name`, refers to the post type name.
-                         *
-                         * Possible hook names include:
-                         *
-                         *  - `nav_menu_items_post_recent`
-                         *  - `nav_menu_items_page_recent`
-                         *
-                         * @param WP_Post[] $most_recent An array of post objects being listed.
-                         * @param array     $args        An array of `WP_Query` arguments for the meta box.
-                         * @param array     $box         Arguments passed to `wp_nav_menu_item_post_type_meta_box()`.
-                         * @param array     $recent_args An array of `WP_Query` arguments for 'Most Recent' tab.
-                         *
-                         * @since 4.3.0
-                         * @since 4.9.0 Added the `$recent_args` parameter.
-                         *
-                         */
                         $most_recent = apply_filters("nav_menu_items_{$post_type_name}_recent", $most_recent, $args, $box, $recent_args);
 
                         echo walk_nav_menu_tree(array_map('wp_setup_nav_menu_item', $most_recent), 0, (object) $args);
@@ -759,29 +647,6 @@
                             );
                         }
 
-                        /**
-                         * Filters the posts displayed in the 'View All' tab of the current
-                         * post type's menu items meta box.
-                         *
-                         * The dynamic portion of the hook name, `$post_type_name`, refers
-                         * to the slug of the current post type.
-                         *
-                         * Possible hook names include:
-                         *
-                         *  - `nav_menu_items_post`
-                         *  - `nav_menu_items_page`
-                         *
-                         * @param object[]     $posts     The posts for the current post type. Mostly `WP_Post` objects, but
-                         *                                can also contain "fake" post objects to represent other menu items.
-                         * @param array        $args      An array of `WP_Query` arguments.
-                         * @param WP_Post_Type $post_type The current post type object for this menu item meta box.
-                         *
-                         * @since 3.2.0
-                         * @since 4.6.0 Converted the `$post_type` parameter to accept a WP_Post_Type object.
-                         *
-                         * @see   WP_Query::query()
-                         *
-                         */
                         $posts = apply_filters("nav_menu_items_{$post_type_name}", $posts, $args, $post_type);
 
                         $checkbox_items = walk_nav_menu_tree(array_map('wp_setup_nav_menu_item', $posts), 0, (object) $args);
@@ -819,23 +684,6 @@
         <?php
     }
 
-    /**
-     * Displays a meta box for a taxonomy menu item.
-     *
-     * @param string      $data_object Not used.
-     * @param array       $box         {
-     *                                 Taxonomy menu item meta box arguments.
-     *
-     * @type string       $id          Meta box 'id' attribute.
-     * @type string       $title       Meta box title.
-     * @type callable     $callback    Meta box display callback.
-     * @type object       $args        Extra meta box arguments (the taxonomy object for this meta box).
-     *                                 }
-     * @since 3.0.0
-     *
-     * @global int|string $nav_menu_selected_id
-     *
-     */
     function wp_nav_menu_item_taxonomy_meta_box($data_object, $box)
     {
         global $nav_menu_selected_id;
@@ -1097,17 +945,6 @@
         <?php
     }
 
-    /**
-     * Save posted nav menu item data.
-     *
-     * @param int     $menu_id   The menu ID for which to save this item. Value of 0 makes a draft, orphaned menu item.
-     *                           Default 0.
-     * @param array[] $menu_data The unsanitized POSTed menu item data.
-     *
-     * @return int[] The database IDs of the items saved
-     * @since 3.0.0
-     *
-     */
     function wp_save_nav_menu_items($menu_id = 0, $menu_data = [])
     {
         $menu_id = (int) $menu_id;
@@ -1167,17 +1004,6 @@
         return $items_saved;
     }
 
-    /**
-     * Adds custom arguments to some of the meta box object types.
-     *
-     * @param object $data_object The post type or taxonomy meta-object.
-     *
-     * @return object The post type or taxonomy object.
-     * @since  3.0.0
-     *
-     * @access private
-     *
-     */
     function _wp_nav_menu_meta_box_object($data_object = null)
     {
         if(isset($data_object->name))
@@ -1216,15 +1042,6 @@
         return $data_object;
     }
 
-    /**
-     * Returns the menu formatted to edit.
-     *
-     * @param int $menu_id Optional. The ID of the menu to format. Default 0.
-     *
-     * @return string|WP_Error The menu formatted to edit or error object on failure.
-     * @since 3.0.0
-     *
-     */
     function wp_get_nav_menu_to_edit($menu_id = 0)
     {
         $menu = wp_get_nav_menu_object($menu_id);
@@ -1243,15 +1060,6 @@
                 return $result.' <ul class="menu" id="menu-to-edit"> </ul>';
             }
 
-            /**
-             * Filters the Walker class used when adding nav menu items.
-             *
-             * @param string $class   The walker class to use. Default 'Walker_Nav_Menu_Edit'.
-             * @param int    $menu_id ID of the menu being rendered.
-             *
-             * @since 3.0.0
-             *
-             */
             $walker_class_name = apply_filters('wp_edit_nav_menu_walker', 'Walker_Nav_Menu_Edit', $menu_id);
 
             if(class_exists($walker_class_name))
@@ -1310,13 +1118,6 @@
         }
     }
 
-    /**
-     * Returns the columns for the nav menus page.
-     *
-     * @return string[] Array of column titles keyed by their column name.
-     * @since 3.0.0
-     *
-     */
     function wp_nav_menu_manage_columns()
     {
         return [
@@ -1330,14 +1131,6 @@
         ];
     }
 
-    /**
-     * Deletes orphaned draft menu items
-     *
-     * @access private
-     * @since  3.0.0
-     *
-     * @global wpdb $wpdb WordPress database abstraction object.
-     */
     function _wp_delete_orphaned_draft_menu_items()
     {
         global $wpdb;
@@ -1360,16 +1153,6 @@
         }
     }
 
-    /**
-     * Saves nav menu items.
-     *
-     * @param int|string $nav_menu_selected_id    ID, slug, or name of the currently-selected menu.
-     * @param string     $nav_menu_selected_title Title of the currently-selected menu.
-     *
-     * @return string[] The menu updated messages.
-     * @since 3.6.0
-     *
-     */
     function wp_nav_menu_update_menu_items($nav_menu_selected_id, $nav_menu_selected_title)
     {
         $unsorted_menu_items = wp_get_nav_menu_items($nav_menu_selected_id, [
@@ -1480,7 +1263,6 @@
 
         wp_defer_term_counting(false);
 
-        /** This action is documented in wp-includes/nav-menu.php */
         do_action('wp_update_nav_menu', $nav_menu_selected_id);
 
         /* translators: %s: Nav menu title. */
@@ -1498,14 +1280,6 @@
         return $messages;
     }
 
-    /**
-     * If a JSON blob of navigation menu data is in POST data, expand it and inject
-     * it into `$_POST` to avoid PHP `max_input_vars` limitations. See #14134.
-     *
-     * @ignore
-     * @since  4.5.3
-     * @access private
-     */
     function _wp_expand_nav_menu_post_data()
     {
         if(! isset($_POST['nav-menu-data']))

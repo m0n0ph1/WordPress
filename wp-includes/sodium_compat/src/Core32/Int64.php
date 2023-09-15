@@ -1,35 +1,13 @@
 <?php
 
-    /**
-     * Class ParagonIE_Sodium_Core32_Int64
-     *
-     * Encapsulates a 64-bit integer.
-     *
-     * These are immutable. It always returns a new instance.
-     */
     class ParagonIE_Sodium_Core32_Int64
     {
-        /**
-         * @var array<int, int> - four 16-bit integers
-         */
         public $limbs = [0, 0, 0, 0];
 
-        /**
-         * @var int
-         */
         public $overflow = 0;
 
-        /**
-         * @var bool
-         */
         public $unsignedInt = false;
 
-        /**
-         * ParagonIE_Sodium_Core32_Int64 constructor.
-         *
-         * @param array $array
-         * @param bool  $unsignedInt
-         */
         public function __construct($array = [0, 0, 0, 0], $unsignedInt = false)
         {
             $this->limbs = [
@@ -42,14 +20,6 @@
             $this->unsignedInt = $unsignedInt;
         }
 
-        /**
-         * @param int $low
-         * @param int $high
-         *
-         * @return self
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public static function fromInts($low, $high)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($low, 'int', 1);
@@ -66,13 +36,6 @@
                                                      ]);
         }
 
-        /**
-         * @param int $low
-         *
-         * @return self
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public static function fromInt($low)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($low, 'int', 1);
@@ -86,13 +49,6 @@
                                                      ]);
         }
 
-        /**
-         * @param string $string
-         *
-         * @return self
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public static function fromString($string)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($string, 'string', 1);
@@ -115,13 +71,6 @@
             return $return;
         }
 
-        /**
-         * @param string $string
-         *
-         * @return self
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public static function fromReverseString($string)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($string, 'string', 1);
@@ -144,13 +93,6 @@
             return $return;
         }
 
-        /**
-         * Adds two int64 objects
-         *
-         * @param ParagonIE_Sodium_Core32_Int64 $addend
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         */
         public function addInt64(ParagonIE_Sodium_Core32_Int64 $addend)
         {
             $i0 = $this->limbs[0];
@@ -186,19 +128,10 @@
             return $return;
         }
 
-        /**
-         * Adds a normal integer to an int64 object
-         *
-         * @param int $int
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public function addInt($int)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($int, 'int', 1);
-            /** @var int $int */
+
             $int = (int) $int;
 
             $i0 = $this->limbs[0];
@@ -229,21 +162,11 @@
             return $return;
         }
 
-        /**
-         * @param int $b
-         *
-         * @return bool
-         */
         public function isGreaterThan($b = 0)
         {
             return $this->compareInt($b) > 0;
         }
 
-        /**
-         * @param int $b
-         *
-         * @return int
-         */
         public function compareInt($b = 0)
         {
             $gt = 0;
@@ -254,38 +177,24 @@
             while($i > 0)
             {
                 --$i;
-                /** @var int $x1 */
+
                 $x1 = $this->limbs[$i];
-                /** @var int $x2 */
+
                 $x2 = ($b >> ($j << 4)) & 0xffff;
-                /** int */
+
                 $gt |= (($x2 - $x1) >> 8) & $eq;
-                /** int */
+
                 $eq &= (($x2 ^ $x1) - 1) >> 8;
             }
 
             return ($gt + $gt - $eq) + 1;
         }
 
-        /**
-         * @param int $b
-         *
-         * @return bool
-         */
         public function isLessThanInt($b = 0)
         {
             return $this->compareInt($b) < 0;
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Int64 $int
-         * @param int                           $size
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedAssignment
-         */
         public function mulInt64(ParagonIE_Sodium_Core32_Int64 $int, $size = 0)
         {
             if(ParagonIE_Sodium_Compat::$fastMult)
@@ -316,8 +225,6 @@
             $b2 = $b->limbs[2];
             $b3 = $b->limbs[3];
 
-            /** @var int $size */
-            /** @var int $i */
             for($i = (int) $size; $i >= 0; --$i)
             {
                 $mask = -($b3 & 1);
@@ -376,11 +283,6 @@
             return $return;
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Int64 $right
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         */
         public function mulInt64Fast(ParagonIE_Sodium_Core32_Int64 $right)
         {
             $aNeg = ($this->limbs[0] >> 15) & 1;
@@ -437,18 +339,11 @@
             return $return;
         }
 
-        /**
-         * @param array<int, int> $a
-         * @param array<int, int> $b
-         * @param int             $baseLog2
-         *
-         * @return array<int, int>
-         */
         public function multiplyLong(array $a, array $b, $baseLog2 = 16)
         {
             $a_l = count($a);
             $b_l = count($b);
-            /** @var array<int, int> $r */
+
             $r = array_fill(0, $a_l + $b_l + 1, 0);
             $base = 1 << $baseLog2;
             for($i = 0; $i < $a_l; ++$i)
@@ -467,29 +362,20 @@
             return array_slice($r, 0, 5);
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Int64 $A
-         * @param ParagonIE_Sodium_Core32_Int64 $B
-         *
-         * @return array<int, ParagonIE_Sodium_Core32_Int64>
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedInferredReturnType
-         */
         public static function ctSelect(
             ParagonIE_Sodium_Core32_Int64 $A, ParagonIE_Sodium_Core32_Int64 $B
         ) {
             $a = clone $A;
             $b = clone $B;
-            /** @var int $aNeg */
+
             $aNeg = ($a->limbs[0] >> 15) & 1;
-            /** @var int $bNeg */
+
             $bNeg = ($b->limbs[0] >> 15) & 1;
-            /** @var int $m */
+
             $m = (-($aNeg & $bNeg)) | 1;
-            /** @var int $swap */
+
             $swap = $bNeg & ~$aNeg;
-            /** @var int $d */
+
             $d = -$swap;
 
             /*
@@ -509,21 +395,14 @@
             ];
         }
 
-        /**
-         * @param int $hi
-         * @param int $lo
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         */
         public function mask64($hi = 0, $lo = 0)
         {
-            /** @var int $a */
             $a = ($hi >> 16) & 0xffff;
-            /** @var int $b */
+
             $b = ($hi) & 0xffff;
-            /** @var int $c */
+
             $c = ($lo >> 16) & 0xffff;
-            /** @var int $d */
+
             $d = ($lo & 0xffff);
 
             return new ParagonIE_Sodium_Core32_Int64([
@@ -534,13 +413,6 @@
                                                      ], $this->unsignedInt);
         }
 
-        /**
-         * XOR this 64-bit integer with another.
-         *
-         * @param ParagonIE_Sodium_Core32_Int64 $b
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         */
         public function xorInt64(ParagonIE_Sodium_Core32_Int64 $b)
         {
             $return = new ParagonIE_Sodium_Core32_Int64();
@@ -555,15 +427,6 @@
             return $return;
         }
 
-        /**
-         * @param int $int
-         * @param int $size
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedAssignment
-         */
         public function mulInt($int = 0, $size = 0)
         {
             if(ParagonIE_Sodium_Compat::$fastMult)
@@ -572,9 +435,9 @@
             }
             ParagonIE_Sodium_Core32_Util::declareScalarType($int, 'int', 1);
             ParagonIE_Sodium_Core32_Util::declareScalarType($size, 'int', 2);
-            /** @var int $int */
+
             $int = (int) $int;
-            /** @var int $size */
+
             $size = (int) $size;
 
             if(! $size)
@@ -596,8 +459,6 @@
             $a2 = $a->limbs[2];
             $a3 = $a->limbs[3];
 
-            /** @var int $size */
-            /** @var int $i */
             for($i = $size; $i >= 0; --$i)
             {
                 $mask = -($int & 1);
@@ -644,11 +505,6 @@
             return $return;
         }
 
-        /**
-         * @param int $int
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         */
         public function mulIntFast($int)
         {
             // Handle negative numbers
@@ -714,13 +570,6 @@
             return $return;
         }
 
-        /**
-         * OR this 64-bit integer with another.
-         *
-         * @param ParagonIE_Sodium_Core32_Int64 $b
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         */
         public function orInt64(ParagonIE_Sodium_Core32_Int64 $b)
         {
             $return = new ParagonIE_Sodium_Core32_Int64();
@@ -735,18 +584,10 @@
             return $return;
         }
 
-        /**
-         * @param int $c
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArrayAccess
-         */
         public function rotateLeft($c = 0)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($c, 'int', 1);
-            /** @var int $c */
+
             $c = (int) $c;
 
             $return = new ParagonIE_Sodium_Core32_Int64();
@@ -759,22 +600,18 @@
             }
             else
             {
-                /** @var array<int, int> $limbs */
                 $limbs =& $return->limbs;
 
-                /** @var array<int, int> $myLimbs */
                 $myLimbs =& $this->limbs;
 
-                /** @var int $idx_shift */
                 $idx_shift = ($c >> 4) & 3;
-                /** @var int $sub_shift */
+
                 $sub_shift = $c & 15;
 
                 for($i = 3; $i >= 0; --$i)
                 {
-                    /** @var int $j */
                     $j = ($i + $idx_shift) & 3;
-                    /** @var int $k */
+
                     $k = ($i + $idx_shift + 1) & 3;
                     $limbs[$i] = (int) ((((int) ($myLimbs[$j]) << $sub_shift) | ((int) ($myLimbs[$k]) >> (16 - $sub_shift))) & 0xffff);
                 }
@@ -783,27 +620,16 @@
             return $return;
         }
 
-        /**
-         * Rotate to the right
-         *
-         * @param int $c
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArrayAccess
-         */
         public function rotateRight($c = 0)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($c, 'int', 1);
-            /** @var int $c */
+
             $c = (int) $c;
 
-            /** @var ParagonIE_Sodium_Core32_Int64 $return */
             $return = new ParagonIE_Sodium_Core32_Int64();
             $return->unsignedInt = $this->unsignedInt;
             $c &= 63;
-            /** @var int $c */
+
             if($c === 0)
             {
                 // NOP, but we want a copy.
@@ -811,22 +637,18 @@
             }
             else
             {
-                /** @var array<int, int> $limbs */
                 $limbs =& $return->limbs;
 
-                /** @var array<int, int> $myLimbs */
                 $myLimbs =& $this->limbs;
 
-                /** @var int $idx_shift */
                 $idx_shift = ($c >> 4) & 3;
-                /** @var int $sub_shift */
+
                 $sub_shift = $c & 15;
 
                 for($i = 3; $i >= 0; --$i)
                 {
-                    /** @var int $j */
                     $j = ($i - $idx_shift) & 3;
-                    /** @var int $k */
+
                     $k = ($i - $idx_shift - 1) & 3;
                     $limbs[$i] = (int) ((((int) ($myLimbs[$j]) >> (int) ($sub_shift)) | ((int) ($myLimbs[$k]) << (16 - (int) ($sub_shift)))) & 0xffff);
                 }
@@ -835,17 +657,10 @@
             return $return;
         }
 
-        /**
-         * @param int $c
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public function shiftLeft($c = 0)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($c, 'int', 1);
-            /** @var int $c */
+
             $c = (int) $c;
 
             $return = new ParagonIE_Sodium_Core32_Int64();
@@ -890,7 +705,6 @@
             }
             elseif($c < 0)
             {
-                /** @var int $c */
                 return $this->shiftRight(-$c);
             }
             else
@@ -899,14 +713,13 @@
                 {
                     throw new TypeError();
                 }
-                /** @var int $carry */
+
                 $carry = 0;
                 for($i = 3; $i >= 0; --$i)
                 {
-                    /** @var int $tmp */
                     $tmp = ($this->limbs[$i] << $c) | ($carry & 0xffff);
                     $return->limbs[$i] = (int) ($tmp & 0xffff);
-                    /** @var int $carry */
+
                     $carry = $tmp >> 16;
                 }
             }
@@ -914,18 +727,11 @@
             return $return;
         }
 
-        /**
-         * @param int $c
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public function shiftRight($c = 0)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($c, 'int', 1);
             $c = (int) $c;
-            /** @var int $c */
+
             $return = new ParagonIE_Sodium_Core32_Int64();
             $return->unsignedInt = $this->unsignedInt;
             $c &= 63;
@@ -978,7 +784,7 @@
                 {
                     throw new TypeError();
                 }
-                /** @var int $carryRight */
+
                 $carryRight = ($negative & 0xffff);
                 $mask = (int) (((1 << ($c + 1)) - 1) & 0xffff);
                 for($i = 0; $i < 4; ++$i)
@@ -991,15 +797,6 @@
             return $return;
         }
 
-        /**
-         * Subtract a normal integer from an int64 object.
-         *
-         * @param int $int
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public function subInt($int)
         {
             ParagonIE_Sodium_Core32_Util::declareScalarType($int, 'int', 1);
@@ -1008,13 +805,11 @@
             $return = new ParagonIE_Sodium_Core32_Int64();
             $return->unsignedInt = $this->unsignedInt;
 
-            /** @var int $carry */
             $carry = 0;
             for($i = 3; $i >= 0; --$i)
             {
-                /** @var int $tmp */
                 $tmp = $this->limbs[$i] - (($int >> 16) & 0xffff) + $carry;
-                /** @var int $carry */
+
                 $carry = $tmp >> 16;
                 $return->limbs[$i] = (int) ($tmp & 0xffff);
             }
@@ -1022,24 +817,16 @@
             return $return;
         }
 
-        /**
-         * The difference between two Int64 objects.
-         *
-         * @param ParagonIE_Sodium_Core32_Int64 $b
-         *
-         * @return ParagonIE_Sodium_Core32_Int64
-         */
         public function subInt64(ParagonIE_Sodium_Core32_Int64 $b)
         {
             $return = new ParagonIE_Sodium_Core32_Int64();
             $return->unsignedInt = $this->unsignedInt;
-            /** @var int $carry */
+
             $carry = 0;
             for($i = 3; $i >= 0; --$i)
             {
-                /** @var int $tmp */
                 $tmp = $this->limbs[$i] - $b->limbs[$i] + $carry;
-                /** @var int $carry */
+
                 $carry = ($tmp >> 16);
                 $return->limbs[$i] = (int) ($tmp & 0xffff);
             }
@@ -1047,17 +834,11 @@
             return $return;
         }
 
-        /**
-         * @return int
-         */
         public function toInt()
         {
             return (int) ((($this->limbs[2] & 0xffff) << 16) | ($this->limbs[3] & 0xffff));
         }
 
-        /**
-         * @return array<int, int>
-         */
         public function toArray()
         {
             return [
@@ -1066,9 +847,6 @@
             ];
         }
 
-        /**
-         * @return ParagonIE_Sodium_Core32_Int32
-         */
         public function toInt32()
         {
             $return = new ParagonIE_Sodium_Core32_Int32();
@@ -1080,9 +858,6 @@
             return $return;
         }
 
-        /**
-         * @return ParagonIE_Sodium_Core32_Int64
-         */
         public function toInt64()
         {
             $return = new ParagonIE_Sodium_Core32_Int64();
@@ -1096,11 +871,6 @@
             return $return;
         }
 
-        /**
-         * @param bool $bool
-         *
-         * @return self
-         */
         public function setUnsignedInt($bool = false)
         {
             $this->unsignedInt = ! empty($bool);
@@ -1108,18 +878,11 @@
             return $this;
         }
 
-        /**
-         * @return string
-         * @throws TypeError
-         */
         public function toReverseString()
         {
             return ParagonIE_Sodium_Core32_Util::intToChr($this->limbs[3] & 0xff).ParagonIE_Sodium_Core32_Util::intToChr(($this->limbs[3] >> 8) & 0xff).ParagonIE_Sodium_Core32_Util::intToChr($this->limbs[2] & 0xff).ParagonIE_Sodium_Core32_Util::intToChr(($this->limbs[2] >> 8) & 0xff).ParagonIE_Sodium_Core32_Util::intToChr($this->limbs[1] & 0xff).ParagonIE_Sodium_Core32_Util::intToChr(($this->limbs[1] >> 8) & 0xff).ParagonIE_Sodium_Core32_Util::intToChr($this->limbs[0] & 0xff).ParagonIE_Sodium_Core32_Util::intToChr(($this->limbs[0] >> 8) & 0xff);
         }
 
-        /**
-         * @return string
-         */
         public function __toString()
         {
             try
@@ -1133,10 +896,6 @@
             }
         }
 
-        /**
-         * @return string
-         * @throws TypeError
-         */
         public function toString()
         {
             return ParagonIE_Sodium_Core32_Util::intToChr(($this->limbs[0] >> 8) & 0xff).ParagonIE_Sodium_Core32_Util::intToChr($this->limbs[0] & 0xff).ParagonIE_Sodium_Core32_Util::intToChr(($this->limbs[1] >> 8) & 0xff).ParagonIE_Sodium_Core32_Util::intToChr($this->limbs[1] & 0xff).ParagonIE_Sodium_Core32_Util::intToChr(($this->limbs[2] >> 8) & 0xff).ParagonIE_Sodium_Core32_Util::intToChr($this->limbs[2] & 0xff).ParagonIE_Sodium_Core32_Util::intToChr(($this->limbs[3] >> 8) & 0xff).ParagonIE_Sodium_Core32_Util::intToChr($this->limbs[3] & 0xff);

@@ -1,15 +1,5 @@
 <?php
-    /**
-     * Manage link administration actions.
-     *
-     * This page is accessed by the link management pages and handles the forms and
-     * Ajax processes for link actions.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     wp_reset_vars(['action', 'cat_id', 'link_id']);

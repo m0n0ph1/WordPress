@@ -1,24 +1,5 @@
 <?php
-    /**
-     * Implement an optional custom header for Twenty Twelve
-     *
-     * See https://codex.wordpress.org/Custom_Headers
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twelve
-     * @since      Twenty Twelve 1.0
-     */
 
-    /**
-     * Set up the WordPress core custom header arguments and settings.
-     *
-     * @uses  add_theme_support() to register support for 3.4 and up.
-     * @uses  twentytwelve_header_style() to style front end.
-     * @uses  twentytwelve_admin_header_style() to style wp-admin form.
-     * @uses  twentytwelve_admin_header_image() to add custom markup to wp-admin form.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_custom_header_setup()
     {
         $args = [
@@ -49,11 +30,6 @@
 
     add_action('after_setup_theme', 'twentytwelve_custom_header_setup');
 
-    /**
-     * Load our special font CSS file.
-     *
-     * @since Twenty Twelve 1.2
-     */
     function twentytwelve_custom_header_fonts()
     {
         $font_url = twentytwelve_get_font_url();
@@ -65,13 +41,6 @@
 
     add_action('admin_print_styles-appearance_page_custom-header', 'twentytwelve_custom_header_fonts');
 
-    /**
-     * Style the header text displayed on the blog.
-     *
-     * get_header_textcolor() options: 515151 is default, hide text (returns 'blank'), or any hex value.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_header_style()
     {
         $text_color = get_header_textcolor();
@@ -110,11 +79,6 @@
         <?php
     }
 
-    /**
-     * Style the header image displayed on the Appearance > Header admin panel.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_admin_header_style()
     {
         ?>
@@ -157,13 +121,6 @@
         <?php
     }
 
-    /**
-     * Output markup to be displayed on the Appearance > Header admin panel.
-     *
-     * This callback overrides the default markup displayed there.
-     *
-     * @since Twenty Twelve 1.0
-     */
     function twentytwelve_admin_header_image()
     {
         $style = 'color: #'.get_header_textcolor().';';
@@ -195,11 +152,6 @@
         <?php
     }
 
-    /**
-     * Output markup to be displayed.
-     *
-     * @since Twenty Twelve 4.1
-     */
     function twentytwelve_header_image()
     {
         $custom_header = get_custom_header();

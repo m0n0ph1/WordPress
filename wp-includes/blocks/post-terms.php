@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/post-terms` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/post-terms` block on the server.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string Returns the filtered post terms for the current post wrapped inside "a" tags.
-     */
     function render_block_core_post_terms($attributes, $content, $block)
     {
         if(! isset($block->context['postId']) || ! isset($attributes['term']))
@@ -61,9 +47,6 @@
         return get_the_term_list($block->context['postId'], $attributes['term'], wp_kses_post($prefix), '<span class="wp-block-post-terms__separator">'.esc_html($separator).'</span>', wp_kses_post($suffix));
     }
 
-    /**
-     * Registers the `core/post-terms` block on the server.
-     */
     function register_block_core_post_terms()
     {
         $taxonomies = get_taxonomies([

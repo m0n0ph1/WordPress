@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Layered images with duotone block pattern
-     */
+
     return [
         'title' => __('Layered images with duotone', 'twentytwentytwo'),
         'categories' => ['featured', 'gallery'],

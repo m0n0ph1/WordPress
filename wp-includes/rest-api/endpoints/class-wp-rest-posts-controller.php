@@ -1,61 +1,15 @@
 <?php
-    /**
-     * REST API: WP_REST_Posts_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      4.7.0
-     */
 
-    /**
-     * Core class to access posts via the REST API.
-     *
-     * @since 4.7.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Posts_Controller extends WP_REST_Controller
     {
-        /**
-         * Post type.
-         *
-         * @since 4.7.0
-         * @var string
-         */
         protected $post_type;
 
-        /**
-         * Instance of a post meta fields object.
-         *
-         * @since 4.7.0
-         * @var WP_REST_Post_Meta_Fields
-         */
         protected $meta;
 
-        /**
-         * Passwordless post access permitted.
-         *
-         * @since 5.7.1
-         * @var int[]
-         */
         protected $password_check_passed = [];
 
-        /**
-         * Whether the controller supports batching.
-         *
-         * @since 5.9.0
-         * @var array
-         */
         protected $allow_batch = ['v1' => true];
 
-        /**
-         * Constructor.
-         *
-         * @param string $post_type Post type.
-         *
-         * @since 4.7.0
-         *
-         */
         public function __construct($post_type)
         {
             $this->post_type = $post_type;
@@ -66,13 +20,6 @@
             $this->meta = new WP_REST_Post_Meta_Fields($this->post_type);
         }
 
-        /**
-         * Registers the routes for posts.
-         *
-         * @since 4.7.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -139,15 +86,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for the posts collection.
-         *
-         * @return array Collection parameters.
-         * @since 5.4.0 The `tax_relation` query parameter was added.
-         * @since 5.7.0 The `modified_after` and `modified_before` query parameters were added.
-         *
-         * @since 4.7.0
-         */
         public function get_collection_params()
         {
             $query_params = parent::get_collection_params();
@@ -320,34 +258,9 @@
                 ];
             }
 
-            /**
-             * Filters collection parameters for the posts controller.
-             *
-             * The dynamic part of the filter `$this->post_type` refers to the post
-             * type slug for the controller.
-             *
-             * This filter registers the collection parameter, but does not map the
-             * collection parameter to an internal WP_Query parameter. Use the
-             * `rest_{$this->post_type}_query` filter to set WP_Query parameters.
-             *
-             * @param array        $query_params JSON Schema-formatted collection parameters.
-             * @param WP_Post_Type $post_type    Post type object.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters("rest_{$this->post_type}_collection_params", $query_params, $post_type);
         }
 
-        /**
-         * Prepares the collection schema for including and excluding items by terms.
-         *
-         * @param array $query_params Collection schema.
-         *
-         * @return array Updated schema.
-         * @since 5.7.0
-         *
-         */
         private function prepare_taxonomy_limit_schema(array $query_params)
         {
             $taxonomies = wp_list_filter(get_object_taxonomies($this->post_type, 'objects'), ['show_in_rest' => true]);
@@ -436,13 +349,6 @@
             return $query_params;
         }
 
-        /**
-         * Retrieves the post's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 4.7.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -837,23 +743,6 @@
             // Take a snapshot of which fields are in the schema pre-filtering.
             $schema_fields = array_keys($schema['properties']);
 
-            /**
-             * Filters the post's schema.
-             *
-             * The dynamic portion of the filter, `$this->post_type`, refers to the
-             * post type slug for the controller.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_post_item_schema`
-             *  - `rest_page_item_schema`
-             *  - `rest_attachment_item_schema`
-             *
-             * @param array $schema Item schema data.
-             *
-             * @since 5.4.0
-             *
-             */
             $schema = apply_filters("rest_{$this->post_type}_item_schema", $schema);
 
             // Emit a _doing_it_wrong warning if user tries to add new properties using this filter.
@@ -868,13 +757,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Retrieves Link Description Objects that should be added to the Schema for the posts collection.
-         *
-         * @return array
-         * @since 4.9.8
-         *
-         */
         protected function get_schema_links()
         {
             $href = rest_url("{$this->namespace}/{$this->rest_base}/{id}");
@@ -998,15 +880,6 @@
             return $links;
         }
 
-        /**
-         * Checks if a given request has access to read posts.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             $post_type = get_post_type_object($this->post_type);
@@ -1019,20 +892,6 @@
             return true;
         }
 
-        /**
-         * Overrides the result of the post password check for REST requested posts.
-         *
-         * Allow users to read the content of password protected posts if they have
-         * previously passed a permission check or if they have the `edit_post` capability
-         * for the post being checked.
-         *
-         * @param bool    $required Whether the post requires a password check.
-         * @param WP_Post $post     The post been password checked.
-         *
-         * @return bool Result of password check taking in to account REST API considerations.
-         * @since 5.7.1
-         *
-         */
         public function check_password_required($required, $post)
         {
             if(! $required)
@@ -1056,15 +915,6 @@
             return ! current_user_can('edit_post', $post->ID);
         }
 
-        /**
-         * Retrieves a collection of posts.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_items($request)
         {
             // Ensure a search string is set in case the orderby is set to 'relevance'.
@@ -1202,28 +1052,6 @@
             // Force the post_type argument, since it's not a user input variable.
             $args['post_type'] = $this->post_type;
 
-            /**
-             * Filters WP_Query arguments when querying posts via the REST API.
-             *
-             * The dynamic portion of the hook name, `$this->post_type`, refers to the post type slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_post_query`
-             *  - `rest_page_query`
-             *  - `rest_attachment_query`
-             *
-             * Enables adding extra arguments or setting defaults for a post collection request.
-             *
-             * @param array           $args    Array of arguments for WP_Query.
-             * @param WP_REST_Request $request The REST API request.
-             *
-             * @link  https://developer.wordpress.org/reference/classes/wp_query/
-             *
-             * @since 4.7.0
-             * @since 5.7.0 Moved after the `tax_query` query arg is generated.
-             *
-             */
             $args = apply_filters("rest_{$this->post_type}_query", $args, $request);
             $query_args = $this->prepare_items_query($args, $request);
 
@@ -1315,16 +1143,6 @@
             return $response;
         }
 
-        /**
-         * Prepares the 'tax_query' for a collection of posts.
-         *
-         * @param array           $args    WP_Query arguments.
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return array Updated query arguments.
-         * @since 5.7.0
-         *
-         */
         private function prepare_tax_query(array $args, WP_REST_Request $request)
         {
             $relation = $request['tax_relation'];
@@ -1407,33 +1225,12 @@
             return $args;
         }
 
-        /**
-         * Determines the allowed query_vars for a get_items() response and prepares
-         * them for WP_Query.
-         *
-         * @param array           $prepared_args Optional. Prepared WP_Query arguments. Default empty array.
-         * @param WP_REST_Request $request       Optional. Full details about the request.
-         *
-         * @return array Items query arguments.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_items_query($prepared_args = [], $request = null)
         {
             $query_args = [];
 
             foreach($prepared_args as $key => $value)
             {
-                /**
-                 * Filters the query_vars used in get_items() for the constructed query.
-                 *
-                 * The dynamic portion of the hook name, `$key`, refers to the query_var key.
-                 *
-                 * @param string $value The query_var value.
-                 *
-                 * @since 4.7.0
-                 *
-                 */
                 $query_args[$key] = apply_filters("rest_query_var-{$key}", $value); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
             }
 
@@ -1461,17 +1258,6 @@
             return $query_args;
         }
 
-        /**
-         * Checks if a post can be read.
-         *
-         * Correctly handles posts with the inherit status.
-         *
-         * @param WP_Post $post Post object.
-         *
-         * @return bool Whether the post can be read.
-         * @since 4.7.0
-         *
-         */
         public function check_read_permission($post)
         {
             $post_type = get_post_type_object($post->post_type);
@@ -1514,15 +1300,6 @@
             return false;
         }
 
-        /**
-         * Checks if a given post type can be viewed or managed.
-         *
-         * @param WP_Post_Type|string $post_type Post type name or object.
-         *
-         * @return bool Whether the post type is allowed in REST.
-         * @since 4.7.0
-         *
-         */
         protected function check_is_post_type_allowed($post_type)
         {
             if(! is_object($post_type))
@@ -1538,17 +1315,6 @@
             return false;
         }
 
-        /**
-         * Prepares a single post output for response.
-         *
-         * @param WP_Post         $item    Post object.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response Response object.
-         * @since 5.9.0 Renamed `$post` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.7.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -1595,7 +1361,7 @@
             if(rest_is_field_included('guid', $fields))
             {
                 $data['guid'] = [
-                    /** This filter is documented in wp-includes/post-template.php */
+
                     'rendered' => apply_filters('get_the_guid', $post->guid, $post->ID),
                     'raw' => $post->guid,
                 ];
@@ -1687,7 +1453,6 @@
             }
             if(rest_is_field_included('content.rendered', $fields))
             {
-                /** This filter is documented in wp-includes/post-template.php */
                 $data['content']['rendered'] = post_password_required($post) ? '' : apply_filters('the_content', $post->post_content);
             }
             if(rest_is_field_included('content.protected', $fields))
@@ -1701,10 +1466,8 @@
 
             if(rest_is_field_included('excerpt', $fields))
             {
-                /** This filter is documented in wp-includes/post-template.php */
                 $excerpt = apply_filters('get_the_excerpt', $post->post_excerpt, $post);
 
-                /** This filter is documented in wp-includes/post-template.php */
                 $excerpt = apply_filters('the_excerpt', $excerpt);
 
                 $data['excerpt'] = [
@@ -1849,38 +1612,9 @@
                 }
             }
 
-            /**
-             * Filters the post data for a REST API response.
-             *
-             * The dynamic portion of the hook name, `$this->post_type`, refers to the post type slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_prepare_post`
-             *  - `rest_prepare_page`
-             *  - `rest_prepare_attachment`
-             *
-             * @param WP_REST_Response $response The response object.
-             * @param WP_Post          $post     Post object.
-             * @param WP_REST_Request  $request  Request object.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters("rest_prepare_{$this->post_type}", $response, $post, $request);
         }
 
-        /**
-         * Checks the post_date_gmt or modified_gmt and prepare any post or
-         * modified date for single post output.
-         *
-         * @param string      $date_gmt GMT publication time.
-         * @param string|null $date     Optional. Local publication time. Default null.
-         *
-         * @return string|null ISO8601/RFC3339 formatted datetime.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_date_response($date_gmt, $date = null)
         {
             // Use the date if passed.
@@ -1899,19 +1633,6 @@
             return mysql_to_rfc3339($date_gmt);
         }
 
-        /**
-         * Checks if the user can access password-protected content.
-         *
-         * This method determines whether we need to override the regular password
-         * check in core with a filter.
-         *
-         * @param WP_Post         $post    Post to check against.
-         * @param WP_REST_Request $request Request data to check.
-         *
-         * @return bool True if the user can access password-protected content, otherwise false.
-         * @since 4.7.0
-         *
-         */
         public function can_access_password_content($post, $request)
         {
             if(empty($post->post_password))
@@ -1939,15 +1660,6 @@
             return hash_equals($post->post_password, $request['password']);
         }
 
-        /**
-         * Prepares links for the request.
-         *
-         * @param WP_Post $post Post object.
-         *
-         * @return array Links for the given post.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_links($post)
         {
             // Entity meta.
@@ -2072,16 +1784,6 @@
             return $links;
         }
 
-        /**
-         * Gets the link relations available for the post and current user.
-         *
-         * @param WP_Post         $post    Post object.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return array List of link relations.
-         * @since 4.9.8
-         *
-         */
         protected function get_available_actions($post, $request)
         {
             if('edit' !== $request['context'])
@@ -2140,15 +1842,6 @@
             return $rels;
         }
 
-        /**
-         * Checks if a given request has access to read a post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return bool|WP_Error True if the request has read access for the item, WP_Error object or false otherwise.
-         * @since 4.7.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $post = $this->get_post($request['id']);
@@ -2185,15 +1878,6 @@
             return true;
         }
 
-        /**
-         * Gets the post, if the ID is valid.
-         *
-         * @param int $id Supplied ID.
-         *
-         * @return WP_Post|WP_Error Post object if ID is valid, WP_Error otherwise.
-         * @since 4.7.2
-         *
-         */
         protected function get_post($id)
         {
             $error = new WP_Error('rest_post_invalid_id', __('Invalid post ID.'), ['status' => 404]);
@@ -2212,15 +1896,6 @@
             return $post;
         }
 
-        /**
-         * Checks if a post can be edited.
-         *
-         * @param WP_Post $post Post object.
-         *
-         * @return bool Whether the post can be edited.
-         * @since 4.7.0
-         *
-         */
         protected function check_update_permission($post)
         {
             $post_type = get_post_type_object($post->post_type);
@@ -2233,15 +1908,6 @@
             return current_user_can('edit_post', $post->ID);
         }
 
-        /**
-         * Retrieves a single post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_item($request)
         {
             $post = $this->get_post($request['id']);
@@ -2261,15 +1927,6 @@
             return $response;
         }
 
-        /**
-         * Checks if a given request has access to create a post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to create items, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function create_item_permissions_check($request)
         {
             if(! empty($request['id']))
@@ -2302,15 +1959,6 @@
             return true;
         }
 
-        /**
-         * Checks whether current user can assign all terms sent with the current request.
-         *
-         * @param WP_REST_Request $request The request object with post and terms data.
-         *
-         * @return bool Whether the current user can assign the provided terms.
-         * @since 4.7.0
-         *
-         */
         protected function check_assign_terms_permission($request)
         {
             $taxonomies = wp_list_filter(get_object_taxonomies($this->post_type, 'objects'), ['show_in_rest' => true]);
@@ -2341,15 +1989,6 @@
             return true;
         }
 
-        /**
-         * Creates a single post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function create_item($request)
         {
             if(! empty($request['id']))
@@ -2399,24 +2038,6 @@
 
             $post = get_post($post_id);
 
-            /**
-             * Fires after a single post is created or updated via the REST API.
-             *
-             * The dynamic portion of the hook name, `$this->post_type`, refers to the post type slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_insert_post`
-             *  - `rest_insert_page`
-             *  - `rest_insert_attachment`
-             *
-             * @param WP_Post         $post     Inserted or updated post object.
-             * @param WP_REST_Request $request  Request object.
-             * @param bool            $creating True when creating a post, false when updating.
-             *
-             * @since 4.7.0
-             *
-             */
             do_action("rest_insert_{$this->post_type}", $post, $request, true);
 
             $schema = $this->get_item_schema();
@@ -2475,24 +2096,6 @@
 
             $request->set_param('context', 'edit');
 
-            /**
-             * Fires after a single post is completely created or updated via the REST API.
-             *
-             * The dynamic portion of the hook name, `$this->post_type`, refers to the post type slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_after_insert_post`
-             *  - `rest_after_insert_page`
-             *  - `rest_after_insert_attachment`
-             *
-             * @param WP_Post         $post     Inserted or updated post object.
-             * @param WP_REST_Request $request  Request object.
-             * @param bool            $creating True when creating a post, false when updating.
-             *
-             * @since 5.0.0
-             *
-             */
             do_action("rest_after_insert_{$this->post_type}", $post, $request, true);
 
             wp_after_insert_post($post, false, null);
@@ -2506,15 +2109,6 @@
             return $response;
         }
 
-        /**
-         * Prepares a single post for create or update.
-         *
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return stdClass|WP_Error Post object or WP_Error.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_item_for_database($request)
         {
             $prepared_post = new stdClass();
@@ -2730,37 +2324,9 @@
                 $prepared_post->page_template = null;
             }
 
-            /**
-             * Filters a post before it is inserted via the REST API.
-             *
-             * The dynamic portion of the hook name, `$this->post_type`, refers to the post type slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_pre_insert_post`
-             *  - `rest_pre_insert_page`
-             *  - `rest_pre_insert_attachment`
-             *
-             * @param stdClass        $prepared_post An object representing a single post prepared
-             *                                       for inserting or updating the database.
-             * @param WP_REST_Request $request       Request object.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters("rest_pre_insert_{$this->post_type}", $prepared_post, $request);
         }
 
-        /**
-         * Determines validity and normalizes the given status parameter.
-         *
-         * @param string       $post_status Post status.
-         * @param WP_Post_Type $post_type   Post type.
-         *
-         * @return string|WP_Error Post status or WP_Error if lacking the proper permission.
-         * @since 4.7.0
-         *
-         */
         protected function handle_status_param($post_status, $post_type)
         {
             switch($post_status)
@@ -2792,16 +2358,6 @@
             return $post_status;
         }
 
-        /**
-         * Determines the featured media based on a request param.
-         *
-         * @param int $featured_media Featured Media ID.
-         * @param int $post_id        Post ID.
-         *
-         * @return bool|WP_Error Whether the post thumbnail was successfully deleted, otherwise WP_Error.
-         * @since 4.7.0
-         *
-         */
         protected function handle_featured_media($featured_media, $post_id)
         {
             $featured_media = (int) $featured_media;
@@ -2823,17 +2379,6 @@
             }
         }
 
-        /**
-         * Sets the template for a post.
-         *
-         * @param string $template Page template filename.
-         * @param int    $post_id  Post ID.
-         * @param bool   $validate Whether to validate that the template selected is valid.
-         *
-         * @since 4.9.0 Added the `$validate` parameter.
-         *
-         * @since 4.7.0
-         */
         public function handle_template($template, $post_id, $validate = false)
         {
             if($validate && ! array_key_exists($template, wp_get_theme()->get_page_templates(get_post($post_id))))
@@ -2844,16 +2389,6 @@
             update_post_meta($post_id, '_wp_page_template', $template);
         }
 
-        /**
-         * Updates the post's terms from a REST request.
-         *
-         * @param int             $post_id The post ID to update the terms form.
-         * @param WP_REST_Request $request The request object with post and terms data.
-         *
-         * @return null|WP_Error WP_Error on an error assigning any of the terms, otherwise null.
-         * @since 4.7.0
-         *
-         */
         protected function handle_terms($post_id, $request)
         {
             $taxonomies = wp_list_filter(get_object_taxonomies($this->post_type, 'objects'), ['show_in_rest' => true]);
@@ -2876,15 +2411,6 @@
             }
         }
 
-        /**
-         * Checks if a given request has access to update a post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to update the item, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function update_item_permissions_check($request)
         {
             $post = $this->get_post($request['id']);
@@ -2918,15 +2444,6 @@
             return true;
         }
 
-        /**
-         * Updates a single post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function update_item($request)
         {
             $valid_check = $this->get_post($request['id']);
@@ -2982,7 +2499,6 @@
 
             $post = get_post($post_id);
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php */
             do_action("rest_insert_{$this->post_type}", $post, $request, false);
 
             $schema = $this->get_item_schema();
@@ -3049,7 +2565,6 @@
                 return rest_ensure_response($response);
             }
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php */
             do_action("rest_after_insert_{$this->post_type}", $post, $request, false);
 
             wp_after_insert_post($post, true, $post_before);
@@ -3059,15 +2574,6 @@
             return rest_ensure_response($response);
         }
 
-        /**
-         * Checks if a given request has access to delete a post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to delete the item, WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function delete_item_permissions_check($request)
         {
             $post = $this->get_post($request['id']);
@@ -3084,15 +2590,6 @@
             return true;
         }
 
-        /**
-         * Checks if a post can be deleted.
-         *
-         * @param WP_Post $post Post object.
-         *
-         * @return bool Whether the post can be deleted.
-         * @since 4.7.0
-         *
-         */
         protected function check_delete_permission($post)
         {
             $post_type = get_post_type_object($post->post_type);
@@ -3105,15 +2602,6 @@
             return current_user_can('delete_post', $post->ID);
         }
 
-        /**
-         * Deletes a single post.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function delete_item($request)
         {
             $post = $this->get_post($request['id']);
@@ -3132,25 +2620,6 @@
                 $supports_trash = $supports_trash && MEDIA_TRASH;
             }
 
-            /**
-             * Filters whether a post is trashable.
-             *
-             * The dynamic portion of the hook name, `$this->post_type`, refers to the post type slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_post_trashable`
-             *  - `rest_page_trashable`
-             *  - `rest_attachment_trashable`
-             *
-             * Pass false to disable Trash support for the post.
-             *
-             * @param bool    $supports_trash Whether the post type support trashing.
-             * @param WP_Post $post           The Post object being considered for trashing support.
-             *
-             * @since 4.7.0
-             *
-             */
             $supports_trash = apply_filters("rest_{$this->post_type}_trashable", $supports_trash, $post);
 
             if(! $this->check_delete_permission($post))
@@ -3199,42 +2668,11 @@
                 return new WP_Error('rest_cannot_delete', __('The post cannot be deleted.'), ['status' => 500]);
             }
 
-            /**
-             * Fires immediately after a single post is deleted or trashed via the REST API.
-             *
-             * They dynamic portion of the hook name, `$this->post_type`, refers to the post type slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_delete_post`
-             *  - `rest_delete_page`
-             *  - `rest_delete_attachment`
-             *
-             * @param WP_Post          $post     The deleted or trashed post.
-             * @param WP_REST_Response $response The response data.
-             * @param WP_REST_Request  $request  The request sent to the API.
-             *
-             * @since 4.7.0
-             *
-             */
             do_action("rest_delete_{$this->post_type}", $post, $response, $request);
 
             return $response;
         }
 
-        /**
-         * Checks whether the status is valid for the given post.
-         *
-         * Allows for sending an update request with the current status, even if that status would not be acceptable.
-         *
-         * @param string          $status  The provided status.
-         * @param WP_REST_Request $request The request object.
-         * @param string          $param   The parameter name.
-         *
-         * @return true|WP_Error True if the status is valid, or WP_Error if not.
-         * @since 5.6.0
-         *
-         */
         public function check_status($status, $request, $param)
         {
             if($request['id'])
@@ -3252,17 +2690,6 @@
             return rest_validate_value_from_schema($status, $args, $param);
         }
 
-        /**
-         * Checks whether the template is valid for the given post.
-         *
-         * @param string          $template Page template filename.
-         * @param WP_REST_Request $request  Request.
-         *
-         * @return true|WP_Error True if template is still valid or if the same as existing value, or a WP_Error if
-         *     template not supported.
-         * @since 4.9.0
-         *
-         */
         public function check_template($template, $request)
         {
             if(! $template)
@@ -3298,34 +2725,11 @@
             return new WP_Error('rest_invalid_param', /* translators: 1: Parameter, 2: List of valid values. */ sprintf(__('%1$s is not one of %2$s.'), 'template', implode(', ', array_keys($allowed_templates))));
         }
 
-        /**
-         * Overwrites the default protected title format.
-         *
-         * By default, WordPress will show password protected posts with a title of
-         * "Protected: %s", as the REST API communicates the protected status of a post
-         * in a machine readable format, we remove the "Protected: " prefix.
-         *
-         * @return string Protected title format.
-         * @since 4.7.0
-         *
-         */
         public function protected_title_format()
         {
             return '%s';
         }
 
-        /**
-         * Sanitizes and validates the list of post statuses, including whether the
-         * user can query private statuses.
-         *
-         * @param string|array    $statuses  One or more post statuses.
-         * @param WP_REST_Request $request   Full details about the request.
-         * @param string          $parameter Additional parameter to pass to validation.
-         *
-         * @return array|WP_Error A list of valid statuses, otherwise WP_Error object.
-         * @since 4.7.0
-         *
-         */
         public function sanitize_post_statuses($statuses, $request, $parameter)
         {
             $statuses = wp_parse_slug_list($statuses);
@@ -3360,15 +2764,6 @@
             return $statuses;
         }
 
-        /**
-         * Checks if a post can be created.
-         *
-         * @param WP_Post $post Post object.
-         *
-         * @return bool Whether the post can be created.
-         * @since 4.7.0
-         *
-         */
         protected function check_create_permission($post)
         {
             $post_type = get_post_type_object($post->post_type);

@@ -1,23 +1,5 @@
 <?php
-    /**
-     * Spacing block support flag.
-     *
-     * For backwards compatibility, this remains separate to the dimensions.php
-     * block support despite both belonging under a single panel in the editor.
-     *
-     * @package WordPress
-     * @since   5.8.0
-     */
 
-    /**
-     * Registers the style block attribute for block types that support it.
-     *
-     * @param WP_Block_Type $block_type Block Type.
-     *
-     * @since  5.8.0
-     * @access private
-     *
-     */
     function wp_register_spacing_support($block_type)
     {
         $has_spacing_support = block_has_support($block_type, 'spacing', false);
@@ -36,19 +18,6 @@
         }
     }
 
-    /**
-     * Adds CSS classes for block spacing to the incoming attributes array.
-     * This will be applied to the block markup in the front-end.
-     *
-     * @param WP_Block_Type $block_type       Block Type.
-     * @param array         $block_attributes Block attributes.
-     *
-     * @return array Block spacing CSS classes and inline styles.
-     * @since  6.1.0 Implemented the style engine to generate CSS and classnames.
-     * @access private
-     *
-     * @since  5.8.0
-     */
     function wp_apply_spacing_support($block_type, $block_attributes)
     {
         if(wp_should_skip_block_supports_serialization($block_type, 'spacing'))

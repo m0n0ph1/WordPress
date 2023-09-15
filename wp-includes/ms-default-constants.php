@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Defines constants and global variables that can be overridden, generally in wp-config.php.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
-    /**
-     * Defines Multisite upload constants.
-     *
-     * Exists for backward compatibility with legacy file-serving through
-     * wp-includes/ms-files.php (wp-content/blogs.php in MU).
-     *
-     * @since 3.0.0
-     */
     function ms_upload_constants()
     {
         // This filter is attached in ms-default-filters.php but that file is not included during SHORTINIT.
@@ -49,34 +34,20 @@
         }
     }
 
-    /**
-     * Defines Multisite cookie constants.
-     *
-     * @since 3.0.0
-     */
     function ms_cookie_constants()
     {
         $current_network = get_network();
 
-        /**
-         * @since 1.2.0
-         */
         if(! defined('COOKIEPATH'))
         {
             define('COOKIEPATH', $current_network->path);
         }
 
-        /**
-         * @since 1.5.0
-         */
         if(! defined('SITECOOKIEPATH'))
         {
             define('SITECOOKIEPATH', $current_network->path);
         }
 
-        /**
-         * @since 2.6.0
-         */
         if(! defined('ADMIN_COOKIE_PATH'))
         {
             $site_path = parse_url(get_option('siteurl'), PHP_URL_PATH);
@@ -90,9 +61,6 @@
             }
         }
 
-        /**
-         * @since 2.0.0
-         */
         if(! defined('COOKIE_DOMAIN') && is_subdomain_install())
         {
             if(! empty($current_network->cookie_domain))
@@ -106,47 +74,19 @@
         }
     }
 
-    /**
-     * Defines Multisite file constants.
-     *
-     * Exists for backward compatibility with legacy file-serving through
-     * wp-includes/ms-files.php (wp-content/blogs.php in MU).
-     *
-     * @since 3.0.0
-     */
     function ms_file_constants()
     {
-        /**
-         * Optional support for X-Sendfile header
-         *
-         * @since 3.0.0
-         */
         if(! defined('WPMU_SENDFILE'))
         {
             define('WPMU_SENDFILE', false);
         }
 
-        /**
-         * Optional support for X-Accel-Redirect header
-         *
-         * @since 3.0.0
-         */
         if(! defined('WPMU_ACCEL_REDIRECT'))
         {
             define('WPMU_ACCEL_REDIRECT', false);
         }
     }
 
-    /**
-     * Defines Multisite subdomain constants and handles warnings and notices.
-     *
-     * VHOST is deprecated in favor of SUBDOMAIN_INSTALL, which is a bool.
-     *
-     * On first call, the constants are checked and defined. On second call,
-     * we will have translations loaded and can trigger warnings easily.
-     *
-     * @since 3.0.0
-     */
     function ms_subdomain_constants()
     {
         static $subdomain_error = null;

@@ -23,19 +23,10 @@
     {
         const syncword = 0x0B77;
 
-        /**
-         * @var array
-         */
         private $AC3header = [];
 
-        /**
-         * @var int
-         */
         private $BSIoffset = 0;
 
-        /**
-         * @return bool
-         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
@@ -606,11 +597,6 @@
             return true;
         }
 
-        /**
-         * @param int $length
-         *
-         * @return int
-         */
         private function readHeaderBSI($length)
         {
             $data = substr($this->AC3header['bsi'], $this->BSIoffset, $length);
@@ -619,11 +605,6 @@
             return bindec($data);
         }
 
-        /**
-         * @param int $cmixlev
-         *
-         * @return int|float|string|false
-         */
         public static function centerMixLevelLookup($cmixlev)
         {
             static $centerMixLevelLookup;
@@ -640,11 +621,6 @@
             return (isset($centerMixLevelLookup[$cmixlev]) ? $centerMixLevelLookup[$cmixlev] : false);
         }
 
-        /**
-         * @param int $surmixlev
-         *
-         * @return int|float|string|false
-         */
         public static function surroundMixLevelLookup($surmixlev)
         {
             static $surroundMixLevelLookup;
@@ -661,11 +637,6 @@
             return (isset($surroundMixLevelLookup[$surmixlev]) ? $surroundMixLevelLookup[$surmixlev] : false);
         }
 
-        /**
-         * @param int $dsurmod
-         *
-         * @return string|false
-         */
         public static function dolbySurroundModeLookup($dsurmod)
         {
             static $dolbySurroundModeLookup = [
@@ -678,11 +649,6 @@
             return (isset($dolbySurroundModeLookup[$dsurmod]) ? $dolbySurroundModeLookup[$dsurmod] : false);
         }
 
-        /**
-         * @param int $compre
-         *
-         * @return float|int
-         */
         public static function heavyCompression($compre)
         {
             // The first four bits indicate gain changes in 6.02dB increments which can be
@@ -737,11 +703,6 @@
             return $log_gain - $lin_gain;
         }
 
-        /**
-         * @param int $roomtyp
-         *
-         * @return string|false
-         */
         public static function roomTypeLookup($roomtyp)
         {
             static $roomTypeLookup = [
@@ -754,11 +715,6 @@
             return (isset($roomTypeLookup[$roomtyp]) ? $roomTypeLookup[$roomtyp] : false);
         }
 
-        /**
-         * @param int $numblkscod
-         *
-         * @return int|false
-         */
         public static function blocksPerSyncFrame($numblkscod)
         {
             static $blocksPerSyncFrameLookup = [
@@ -771,11 +727,6 @@
             return (isset($blocksPerSyncFrameLookup[$numblkscod]) ? $blocksPerSyncFrameLookup[$numblkscod] : false);
         }
 
-        /**
-         * @param int $fscod2
-         *
-         * @return int|string|false
-         */
         public static function sampleRateCodeLookup2($fscod2)
         {
             static $sampleRateCodeLookup2 = [
@@ -789,11 +740,6 @@
             return (isset($sampleRateCodeLookup2[$fscod2]) ? $sampleRateCodeLookup2[$fscod2] : false);
         }
 
-        /**
-         * @param int $fscod
-         *
-         * @return int|string|false
-         */
         public static function sampleRateCodeLookup($fscod)
         {
             static $sampleRateCodeLookup = [
@@ -807,12 +753,6 @@
             return (isset($sampleRateCodeLookup[$fscod]) ? $sampleRateCodeLookup[$fscod] : false);
         }
 
-        /**
-         * @param int $frmsizecod
-         * @param int $fscod
-         *
-         * @return int|false
-         */
         public static function frameSizeLookup($frmsizecod, $fscod)
         {
             // LSB is whether padding is used or not
@@ -855,11 +795,6 @@
             return (isset($frameSizeLookup[$framesizeid][$fscod]) ? $frameSizeLookup[$framesizeid][$fscod] + $paddingBytes : false);
         }
 
-        /**
-         * @param int $frmsizecod
-         *
-         * @return int|false
-         */
         public static function bitrateLookup($frmsizecod)
         {
             // LSB is whether padding is used or not
@@ -891,12 +826,6 @@
             return (isset($bitrateLookup[$framesizeid]) ? $bitrateLookup[$framesizeid] : false);
         }
 
-        /**
-         * @param int $bsmod
-         * @param int $acmod
-         *
-         * @return string|false
-         */
         public static function serviceTypeLookup($bsmod, $acmod)
         {
             static $serviceTypeLookup = [];
@@ -923,11 +852,6 @@
             return (isset($serviceTypeLookup[$bsmod][$acmod]) ? $serviceTypeLookup[$bsmod][$acmod] : false);
         }
 
-        /**
-         * @param int $acmod
-         *
-         * @return array|false
-         */
         public static function audioCodingModeLookup($acmod)
         {
             // array(channel configuration, # channels (not incl LFE), channel order)
@@ -945,12 +869,6 @@
             return (isset($audioCodingModeLookup[$acmod]) ? $audioCodingModeLookup[$acmod] : false);
         }
 
-        /**
-         * @param int  $acmod
-         * @param bool $lfeon
-         *
-         * @return array
-         */
         public static function channelsEnabledLookup($acmod, $lfeon)
         {
             $lookup = [

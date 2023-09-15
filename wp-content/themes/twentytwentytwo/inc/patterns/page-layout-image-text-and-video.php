@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Page layout with image, text and video.
-     */
+
     return [
         'title' => __('Page layout with image, text and video', 'twentytwentytwo'),
         'categories' => ['pages'],

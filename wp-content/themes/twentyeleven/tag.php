@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Template used to display Tag Archive pages
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Eleven
-     * @since      Twenty Eleven 1.0
-     */
 
     get_header(); ?>
 
@@ -26,14 +19,6 @@
                     $tag_description = tag_description();
                     if(! empty($tag_description))
                     {
-                        /**
-                         * Filters the default Twenty Eleven tag description.
-                         *
-                         * @param string The default tag description.
-                         *
-                         * @since Twenty Eleven 1.0
-                         *
-                         */
                         echo apply_filters('tag_archive_meta', '<div class="tag-archive-meta">'.$tag_description.'</div>');
                     }
                 ?>

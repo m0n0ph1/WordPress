@@ -1,21 +1,5 @@
 <?php
-    /**
-     * WordPress Translation Installation Administration API
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Retrieve translations from WordPress Translation API.
-     *
-     * @param string       $type Type of translations. Accepts 'plugins', 'themes', 'core'.
-     * @param array|object $args Translation API arguments. Optional.
-     *
-     * @return array|WP_Error On success an associative array of translations, WP_Error on failure.
-     * @since 4.0.0
-     *
-     */
     function translations_api($type, $args = null)
     {
         // Include an unmodified $wp_version.
@@ -26,16 +10,6 @@
             return new WP_Error('invalid_type', __('Invalid translation type.'));
         }
 
-        /**
-         * Allows a plugin to override the WordPress.org Translation Installation API entirely.
-         *
-         * @param false|array $result The result array. Default false.
-         * @param string      $type   The type of translations being requested.
-         * @param object      $args   Translation API arguments.
-         *
-         * @since 4.0.0
-         *
-         */
         $res = apply_filters('translations_api', false, $type, $args);
 
         if(false === $res)
@@ -85,29 +59,9 @@
             }
         }
 
-        /**
-         * Filters the Translation Installation API response results.
-         *
-         * @param array|WP_Error $res  Response as an associative array or WP_Error.
-         * @param string         $type The type of translations being requested.
-         * @param object         $args Translation API arguments.
-         *
-         * @since 4.0.0
-         *
-         */
         return apply_filters('translations_api_result', $res, $type, $args);
     }
 
-    /**
-     * Get available translations from the WordPress.org API.
-     *
-     * @return array[] Array of translations, each an array of data, keyed by the language. If the API response results
-     *                 in an error, an empty array will be returned.
-     * @see   translations_api()
-     *
-     * @since 4.0.0
-     *
-     */
     function wp_get_available_translations()
     {
         if(! wp_installing())
@@ -144,16 +98,6 @@
         return $translations;
     }
 
-    /**
-     * Output the select form for the language selection on the installation screen.
-     *
-     * @param array[] $languages        Array of available languages (populated via the Translation API).
-     *
-     * @global string $wp_local_package Locale code of the package.
-     *
-     * @since 4.0.0
-     *
-     */
     function wp_install_language_form($languages)
     {
         global $wp_local_package;
@@ -184,18 +128,6 @@
         echo '<p class="step"><span class="spinner"></span><input id="language-continue" type="submit" class="button button-primary button-large" value="Continue" /></p>';
     }
 
-    /**
-     * Download a language pack.
-     *
-     * @param string $download Language code to download.
-     *
-     * @return string|false Returns the language code if successfully downloaded
-     *                      (or already installed), or false on failure.
-     * @since 4.0.0
-     *
-     * @see   wp_get_available_translations()
-     *
-     */
     function wp_download_language_pack($download)
     {
         // Check if the translation is already installed.
@@ -244,14 +176,6 @@
         return $translation->language;
     }
 
-    /**
-     * Check if WordPress has access to the filesystem without asking for
-     * credentials.
-     *
-     * @return bool Returns true on success, false on failure.
-     * @since 4.0.0
-     *
-     */
     function wp_can_install_language_pack()
     {
         if(! wp_is_file_mod_allowed('can_install_language_pack'))

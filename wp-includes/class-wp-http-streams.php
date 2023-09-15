@@ -1,31 +1,8 @@
 <?php
-    /**
-     * HTTP API: WP_Http_Streams class
-     *
-     * @package    WordPress
-     * @subpackage HTTP
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used to integrate PHP Streams as an HTTP transport.
-     *
-     * @since 2.7.0
-     * @since 3.7.0 Combined with the fsockopen transport and switched to `stream_socket_client()`.
-     */
     #[AllowDynamicProperties]
     class WP_Http_Streams
     {
-        /**
-         * Determines whether this class can be used for retrieving a URL.
-         *
-         * @param array $args Optional. Array of request arguments. Default empty array.
-         *
-         * @return bool False means this class can not be used, true means it can.
-         * @since 2.7.0
-         * @since 3.7.0 Combined with the fsockopen transport and switched to stream_socket_client().
-         *
-         */
         public static function test($args = [])
         {
             if(! function_exists('stream_socket_client'))
@@ -47,32 +24,9 @@
                 }
             }
 
-            /**
-             * Filters whether streams can be used as a transport for retrieving a URL.
-             *
-             * @param bool  $use_class Whether the class can be used. Default true.
-             * @param array $args      Request arguments.
-             *
-             * @since 2.7.0
-             *
-             */
             return apply_filters('use_streams_transport', true, $args);
         }
 
-        /**
-         * Send a HTTP request to a URI using PHP Streams.
-         *
-         * @param string       $url  The request URL.
-         * @param string|array $args Optional. Override the defaults.
-         *
-         * @return array|WP_Error Array containing 'headers', 'body', 'response', 'cookies', 'filename'. A WP_Error
-         *     instance upon error
-         * @see   WP_Http::request() For default options descriptions.
-         *
-         * @since 2.7.0
-         * @since 3.7.0 Combined with the fsockopen transport and switched to stream_socket_client().
-         *
-         */
         public function request($url, $args = [])
         {
             $defaults = [
@@ -159,22 +113,10 @@
 
             if($is_local)
             {
-                /**
-                 * Filters whether SSL should be verified for local HTTP API requests.
-                 *
-                 * @param bool|string $ssl_verify Boolean to control whether to verify the SSL connection
-                 *                                or path to an SSL certificate.
-                 * @param string      $url        The request URL.
-                 *
-                 * @since 2.8.0
-                 * @since 5.1.0 The `$url` parameter was added.
-                 *
-                 */
                 $ssl_verify = apply_filters('https_local_ssl_verify', $ssl_verify, $url);
             }
             elseif(! $is_local)
             {
-                /** This filter is documented in wp-includes/class-wp-http.php */
                 $ssl_verify = apply_filters('https_ssl_verify', $ssl_verify, $url);
             }
 
@@ -467,23 +409,6 @@
             return $response;
         }
 
-        /**
-         * Verifies the received SSL certificate against its Common Names and subjectAltName fields.
-         *
-         * PHP's SSL verifications only verify that it's a valid Certificate, it doesn't verify if
-         * the certificate is valid for the hostname which was requested.
-         * This function verifies the requested hostname against certificate's subjectAltName field,
-         * if that is empty, or contains no DNS entries, a fallback to the Common Name field is used.
-         *
-         * IP Address support is included if the request is being made to an IP address.
-         *
-         * @param resource $stream The PHP Stream which the SSL request is being made over
-         * @param string   $host   The hostname being requested
-         *
-         * @return bool If the certificate presented in $stream is valid for $host
-         * @since 3.7.0
-         *
-         */
         public static function verify_ssl_certificate($stream, $host)
         {
             $context_options = stream_context_get_options($stream);
@@ -549,17 +474,6 @@
         }
     }
 
-    /**
-     * Deprecated HTTP Transport method which used fsockopen.
-     *
-     * This class is not used, and is included for backward compatibility only.
-     * All code should make use of WP_Http directly through its API.
-     *
-     * @see        WP_HTTP::request
-     *
-     * @since      2.7.0
-     * @deprecated 3.7.0 Please use WP_HTTP::request() directly
-     */
     class WP_HTTP_Fsockopen extends WP_Http_Streams
     {
         // For backward compatibility for users who are using the class directly.

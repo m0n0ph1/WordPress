@@ -1,19 +1,5 @@
 <?php
-    /**
-     * WordPress Widgets Administration API
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Display list of the available widgets.
-     *
-     * @since 2.5.0
-     *
-     * @global array $wp_registered_widgets
-     * @global array $wp_registered_widget_controls
-     */
     function wp_list_widgets()
     {
         global $wp_registered_widgets, $wp_registered_widget_controls;
@@ -69,32 +55,11 @@
         }
     }
 
-    /**
-     * Callback to sort array by a 'name' key.
-     *
-     * @param array $a First array.
-     * @param array $b Second array.
-     *
-     * @return int
-     * @since  3.1.0
-     * @access private
-     *
-     */
     function _sort_name_callback($a, $b)
     {
         return strnatcasecmp($a['name'], $b['name']);
     }
 
-    /**
-     * Show the widgets and their settings for a sidebar.
-     * Used in the admin widget config screen.
-     *
-     * @param string $sidebar      Sidebar ID.
-     * @param string $sidebar_name Optional. Sidebar name. Default empty.
-     *
-     * @since 2.5.0
-     *
-     */
     function wp_list_widget_controls($sidebar, $sidebar_name = '')
     {
         add_filter('dynamic_sidebar_params', 'wp_list_widget_controls_dynamic_sidebar');
@@ -131,17 +96,6 @@
         echo '</div>';
     }
 
-    /**
-     * Retrieves the widget control arguments.
-     *
-     * @param array  $params
-     *
-     * @return array
-     * @since 2.5.0
-     *
-     * @global array $wp_registered_widgets
-     *
-     */
     function wp_list_widget_controls_dynamic_sidebar($params)
     {
         global $wp_registered_widgets;
@@ -166,13 +120,6 @@
         return $params;
     }
 
-    /**
-     * @param string $id_base
-     *
-     * @return int
-     * @global array $wp_registered_widgets
-     *
-     */
     function next_widget_id_number($id_base)
     {
         global $wp_registered_widgets;
@@ -190,21 +137,6 @@
         return $number;
     }
 
-    /**
-     * Meta widget used to display the control form for a widget.
-     *
-     * Called from dynamic_sidebar().
-     *
-     * @param array  $sidebar_args
-     *
-     * @return array
-     * @global array $wp_registered_widget_controls
-     * @global array $sidebars_widgets
-     *
-     * @since 2.5.0
-     *
-     * @global array $wp_registered_widgets
-     */
     function wp_widget_control($sidebar_args)
     {
         global $wp_registered_widgets, $wp_registered_widget_controls, $sidebars_widgets;
@@ -356,11 +288,6 @@
         return $sidebar_args;
     }
 
-    /**
-     * @param string $classes
-     *
-     * @return string
-     */
     function wp_widgets_access_body_class($classes)
     {
         return "$classes widgets_access ";

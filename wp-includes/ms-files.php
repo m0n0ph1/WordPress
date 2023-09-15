@@ -1,12 +1,4 @@
 <?php
-    /**
-     * Multisite upload handler.
-     *
-     * @since      3.0.0
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     */
 
     define('MS_FILES_REQUEST', true);
     define('SHORTINIT', true);

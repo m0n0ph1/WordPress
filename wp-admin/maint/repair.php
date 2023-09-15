@@ -1,10 +1,5 @@
 <?php
-    /**
-     * Database Repair and Optimization Script.
-     *
-     * @package    WordPress
-     * @subpackage Database
-     */
+
     define('WP_REPAIRING', true);
 
     require_once dirname(__DIR__, 2).'/wp-load.php';
@@ -102,14 +97,6 @@
 
         $tables = $wpdb->tables();
 
-        /**
-         * Filters additional database tables to repair.
-         *
-         * @param string[] $tables Array of prefixed table names to be repaired.
-         *
-         * @since 3.0.0
-         *
-         */
         $tables = array_merge($tables, (array) apply_filters('tables_to_repair', []));
 
         // Loop over the tables, checking and repairing as needed.

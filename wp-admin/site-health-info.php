@@ -1,10 +1,4 @@
 <?php
-    /**
-     * Tools Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     if(! defined('ABSPATH'))
     {

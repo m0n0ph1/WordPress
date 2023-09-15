@@ -5,51 +5,20 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_Sodium_Core_Poly1305_State
-     */
     class ParagonIE_Sodium_Core_Poly1305_State extends ParagonIE_Sodium_Core_Util
     {
-        /**
-         * @var array<int, int>
-         */
         public $h;
 
-        /**
-         * @var int[]
-         */
         public $r;
 
-        /**
-         * @var int[]
-         */
         public $pad;
 
-        /**
-         * @var array<int, int>
-         */
         protected $buffer = [];
 
-        /**
-         * @var bool
-         */
         protected $final = false;
 
-        /**
-         * @var int
-         */
         protected $leftover = 0;
 
-        /**
-         * ParagonIE_Sodium_Core_Poly1305_State constructor.
-         *
-         * @param string $key
-         *
-         * @throws InvalidArgumentException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public function __construct($key = '')
         {
             if(self::strlen($key) < 32)
@@ -80,9 +49,6 @@
             $this->final = false;
         }
 
-        /**
-         * Zero internal buffer upon destruction
-         */
         public function __destruct()
         {
             $this->r[0] ^= $this->r[0];
@@ -103,15 +69,6 @@
             $this->final = true;
         }
 
-        /**
-         * @param string $message
-         *
-         * @return self
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public function update($message = '')
         {
             $bytes = self::strlen($message);
@@ -150,7 +107,6 @@
             /* process full blocks */
             if($bytes >= ParagonIE_Sodium_Core_Poly1305::BLOCK_SIZE)
             {
-                /** @var int $want */
                 $want = $bytes & ~(ParagonIE_Sodium_Core_Poly1305::BLOCK_SIZE - 1);
                 if($want >= ParagonIE_Sodium_Core_Poly1305::BLOCK_SIZE)
                 {
@@ -178,22 +134,13 @@
             return $this;
         }
 
-        /**
-         * @param string $message
-         * @param int    $bytes
-         *
-         * @return self
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public function blocks($message, $bytes)
         {
             if(self::strlen($message) < 16)
             {
                 $message = str_pad($message, 16, "\x00", STR_PAD_RIGHT);
             }
-            /** @var int $hibit */
+
             $hibit = $this->final ? 0 : 1 << 24; /* 1 << 128 */
             $r0 = (int) $this->r[0];
             $r1 = (int) $this->r[1];
@@ -233,39 +180,34 @@
                 $d4 = (self::mul($h0, $r4, 27) + self::mul($h1, $r3, 27) + self::mul($h2, $r2, 27) + self::mul($h3, $r1, 27) + self::mul($h4, $r0, 27));
 
                 /* (partial) h %= p */
-                /** @var int $c */
+
                 $c = $d0 >> 26;
-                /** @var int $h0 */
+
                 $h0 = $d0 & 0x3ffffff;
                 $d1 += $c;
 
-                /** @var int $c */
                 $c = $d1 >> 26;
-                /** @var int $h1 */
+
                 $h1 = $d1 & 0x3ffffff;
                 $d2 += $c;
 
-                /** @var int $c */
                 $c = $d2 >> 26;
-                /** @var int $h2 */
+
                 $h2 = $d2 & 0x3ffffff;
                 $d3 += $c;
 
-                /** @var int $c */
                 $c = $d3 >> 26;
-                /** @var int $h3 */
+
                 $h3 = $d3 & 0x3ffffff;
                 $d4 += $c;
 
-                /** @var int $c */
                 $c = $d4 >> 26;
-                /** @var int $h4 */
+
                 $h4 = $d4 & 0x3ffffff;
                 $h0 += (int) self::mul($c, 5, 3);
 
-                /** @var int $c */
                 $c = $h0 >> 26;
-                /** @var int $h0 */
+
                 $h0 &= 0x3ffffff;
                 $h1 += $c;
 
@@ -285,12 +227,6 @@
             return $this;
         }
 
-        /**
-         * @return string
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public function finish()
         {
             /* process the remaining block */
@@ -312,66 +248,61 @@
             $h3 = (int) $this->h[3];
             $h4 = (int) $this->h[4];
 
-            /** @var int $c */
             $c = $h1 >> 26;
-            /** @var int $h1 */
+
             $h1 &= 0x3ffffff;
-            /** @var int $h2 */
+
             $h2 += $c;
-            /** @var int $c */
+
             $c = $h2 >> 26;
-            /** @var int $h2 */
+
             $h2 &= 0x3ffffff;
             $h3 += $c;
-            /** @var int $c */
+
             $c = $h3 >> 26;
             $h3 &= 0x3ffffff;
             $h4 += $c;
-            /** @var int $c */
+
             $c = $h4 >> 26;
             $h4 &= 0x3ffffff;
-            /** @var int $h0 */
+
             $h0 += self::mul($c, 5, 3);
-            /** @var int $c */
+
             $c = $h0 >> 26;
-            /** @var int $h0 */
+
             $h0 &= 0x3ffffff;
-            /** @var int $h1 */
+
             $h1 += $c;
 
             /* compute h + -p */
-            /** @var int $g0 */
+
             $g0 = $h0 + 5;
-            /** @var int $c */
+
             $c = $g0 >> 26;
-            /** @var int $g0 */
+
             $g0 &= 0x3ffffff;
 
-            /** @var int $g1 */
             $g1 = $h1 + $c;
-            /** @var int $c */
+
             $c = $g1 >> 26;
             $g1 &= 0x3ffffff;
 
-            /** @var int $g2 */
             $g2 = $h2 + $c;
-            /** @var int $c */
+
             $c = $g2 >> 26;
-            /** @var int $g2 */
+
             $g2 &= 0x3ffffff;
 
-            /** @var int $g3 */
             $g3 = $h3 + $c;
-            /** @var int $c */
+
             $c = $g3 >> 26;
-            /** @var int $g3 */
+
             $g3 &= 0x3ffffff;
 
-            /** @var int $g4 */
             $g4 = ($h4 + $c - (1 << 26)) & 0xffffffff;
 
             /* select h if h < p, or h + -p if h >= p */
-            /** @var int $mask */
+
             $mask = ($g4 >> 31) - 1;
 
             $g0 &= $mask;
@@ -380,27 +311,26 @@
             $g3 &= $mask;
             $g4 &= $mask;
 
-            /** @var int $mask */
             $mask = ~$mask & 0xffffffff;
-            /** @var int $h0 */
+
             $h0 = ($h0 & $mask) | $g0;
-            /** @var int $h1 */
+
             $h1 = ($h1 & $mask) | $g1;
-            /** @var int $h2 */
+
             $h2 = ($h2 & $mask) | $g2;
-            /** @var int $h3 */
+
             $h3 = ($h3 & $mask) | $g3;
-            /** @var int $h4 */
+
             $h4 = ($h4 & $mask) | $g4;
 
             /* h = h % (2^128) */
-            /** @var int $h0 */
+
             $h0 = (($h0) | ($h1 << 26)) & 0xffffffff;
-            /** @var int $h1 */
+
             $h1 = (($h1 >> 6) | ($h2 << 20)) & 0xffffffff;
-            /** @var int $h2 */
+
             $h2 = (($h2 >> 12) | ($h3 << 14)) & 0xffffffff;
-            /** @var int $h3 */
+
             $h3 = (($h3 >> 18) | ($h4 << 8)) & 0xffffffff;
 
             /* mac = (h + pad) % (2^128) */

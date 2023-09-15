@@ -1,19 +1,5 @@
 <?php
-    /**
-     * List Table API: WP_Plugin_Install_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying plugins to install in a list table.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_List_Table
-     */
     class WP_Plugin_Install_List_Table extends WP_List_Table
     {
         public $order = 'ASC';
@@ -24,21 +10,11 @@
 
         private $error;
 
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             return current_user_can('install_plugins');
         }
 
-        /**
-         * @global array  $tabs
-         * @global string $tab
-         * @global int    $paged
-         * @global string $type
-         * @global string $term
-         */
         public function prepare_items()
         {
             require_once ABSPATH.'wp-admin/includes/plugin-install.php';
@@ -80,25 +56,8 @@
 
             $nonmenu_tabs = ['plugin-information']; // Valid actions to perform which do not have a Menu item.
 
-            /**
-             * Filters the tabs shown on the Add Plugins screen.
-             *
-             * @param string[] $tabs The tabs shown on the Add Plugins screen. Defaults include
-             *                       'featured', 'popular', 'recommended', 'favorites', and 'upload'.
-             *
-             * @since 2.7.0
-             *
-             */
             $tabs = apply_filters('install_plugins_tabs', $tabs);
 
-            /**
-             * Filters tabs not associated with a menu item on the Add Plugins screen.
-             *
-             * @param string[] $nonmenu_tabs The tabs that don't have a menu item on the Add Plugins screen.
-             *
-             * @since 2.7.0
-             *
-             */
             $nonmenu_tabs = apply_filters('install_plugins_nonmenu_tabs', $nonmenu_tabs);
 
             // If a non-valid menu tab has been selected, And it's not a non-menu action.
@@ -182,26 +141,6 @@
                     break;
             }
 
-            /**
-             * Filters API request arguments for each Add Plugins screen tab.
-             *
-             * The dynamic portion of the hook name, `$tab`, refers to the plugin install tabs.
-             *
-             * Possible hook names include:
-             *
-             *  - `install_plugins_table_api_args_favorites`
-             *  - `install_plugins_table_api_args_featured`
-             *  - `install_plugins_table_api_args_popular`
-             *  - `install_plugins_table_api_args_recommended`
-             *  - `install_plugins_table_api_args_upload`
-             *  - `install_plugins_table_api_args_search`
-             *  - `install_plugins_table_api_args_beta`
-             *
-             * @param array|false $args Plugin install API arguments.
-             *
-             * @since 3.7.0
-             *
-             */
             $args = apply_filters("install_plugins_table_api_args_{$tab}", $args);
 
             if(! $args)
@@ -262,17 +201,6 @@
             }
         }
 
-        /**
-         * Returns the list of known plugins.
-         *
-         * Uses the transient data from the updates API to determine the known
-         * installed plugins.
-         *
-         * @return array
-         * @since  4.9.0
-         * @access protected
-         *
-         */
         protected function get_installed_plugins()
         {
             $plugins = [];
@@ -305,8 +233,6 @@
             return $plugins;
         }
 
-        /**
-         */
         public function no_items()
         {
             if(isset($this->error))
@@ -322,14 +248,10 @@
             }
         }
 
-        /**
-         * Overrides parent views so we can use the filter bar display.
-         */
         public function views()
         {
             $views = $this->get_views();
 
-            /** This filter is documented in wp-admin/includes/class-wp-list-table.php */
             $views = apply_filters("views_{$this->screen->id}", $views);
 
             $this->screen->render_screen_reader_content('heading_views');
@@ -353,12 +275,6 @@
             <?php
         }
 
-        /**
-         * @return array
-         * @global string $tab
-         *
-         * @global array  $tabs
-         */
         protected function get_views()
         {
             global $tabs, $tab;
@@ -378,13 +294,6 @@
             return $this->get_views_links($display_tabs);
         }
 
-        /**
-         * Displays the plugin install table.
-         *
-         * Overrides the parent display() method to provide a different container.
-         *
-         * @since 4.0.0
-         */
         public function display()
         {
             $singular = $this->_args['singular'];
@@ -411,12 +320,6 @@
             $this->display_tablenav('bottom');
         }
 
-        /**
-         * @param string  $which
-         *
-         * @global string $tab
-         *
-         */
         protected function display_tablenav($which)
         {
             if('featured' === $GLOBALS['tab'])
@@ -431,11 +334,7 @@
                 <div class="tablenav top">
                     <div class="alignleft actions">
                         <?php
-                            /**
-                             * Fires before the Plugin Install table header pagination is displayed.
-                             *
-                             * @since 2.7.0
-                             */
+
                             do_action('install_plugins_table_header');
                         ?>
                     </div>
@@ -451,17 +350,11 @@
             }
         }
 
-        /**
-         * @return array
-         */
         protected function get_table_classes()
         {
             return ['widefat', $this->_args['plural']];
         }
 
-        /**
-         * @return string[] Array of column titles keyed by their column name.
-         */
         public function get_columns()
         {
             return [];
@@ -537,16 +430,6 @@
                 // Remove any HTML from the description.
                 $description = strip_tags($plugin['short_description']);
 
-                /**
-                 * Filters the plugin card description on the Add Plugins screen.
-                 *
-                 * @param string $description Plugin card description.
-                 * @param array  $plugin      An array of plugin data. See {@see plugins_api()}
-                 *                            for the list of possible values.
-                 *
-                 * @since 6.0.0
-                 *
-                 */
                 $description = apply_filters('plugin_install_description', $description, $plugin);
 
                 $version = wp_kses($plugin['version'], $plugins_allowedtags);
@@ -666,17 +549,6 @@
                     $plugin_icon_url = $plugin['icons']['default'];
                 }
 
-                /**
-                 * Filters the install action links for a plugin.
-                 *
-                 * @param string[] $action_links An array of plugin action links.
-                 *                               Defaults are links to Details and Install Now.
-                 * @param array    $plugin       An array of plugin data. See {@see plugins_api()}
-                 *                               for the list of possible values.
-                 *
-                 * @since 2.7.0
-                 *
-                 */
                 $action_links = apply_filters('plugin_install_action_links', $action_links, $plugin);
 
                 $last_updated_timestamp = strtotime($plugin['last_updated']);
@@ -817,28 +689,11 @@
             }
         }
 
-        /**
-         * Returns a list of slugs of installed plugins, if known.
-         *
-         * Uses the transient data from the updates API to determine the slugs of
-         * known installed plugins. This might be better elsewhere, perhaps even
-         * within get_plugins().
-         *
-         * @return array
-         * @since 4.0.0
-         *
-         */
         protected function get_installed_plugin_slugs()
         {
             return array_keys($this->get_installed_plugins());
         }
 
-        /**
-         * @param object $plugin_a
-         * @param object $plugin_b
-         *
-         * @return int
-         */
         private function order_callback($plugin_a, $plugin_b)
         {
             $orderby = $this->orderby;

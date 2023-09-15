@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Footer with text, title, and logo
-     */
+
     return [
         'title' => __('Footer with text, title, and logo', 'twentytwentytwo'),
         'categories' => ['footer'],

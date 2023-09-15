@@ -1,12 +1,4 @@
 <?php
-    /**
-     * Displays header site branding
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Seventeen
-     * @since      Twenty Seventeen 1.0
-     * @version    1.0
-     */
 
 ?>
 <div class="site-branding">

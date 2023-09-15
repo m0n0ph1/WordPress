@@ -1,34 +1,8 @@
 <?php
-    /**
-     * REST API: WP_REST_Meta_Fields class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      4.7.0
-     */
 
-    /**
-     * Core class to manage meta values for an object via the REST API.
-     *
-     * @since 4.7.0
-     */
     #[AllowDynamicProperties]
     abstract class WP_REST_Meta_Fields
     {
-        /**
-         * Prepares a meta value for output.
-         *
-         * Default preparation for meta fields. Override by passing the
-         * `prepare_callback` in your `show_in_rest` options.
-         *
-         * @param mixed           $value   Meta value from the database.
-         * @param WP_REST_Request $request Request object.
-         * @param array           $args    REST-specific options for the meta key.
-         *
-         * @return mixed Value prepared for output. If a non-JsonSerializable object, null.
-         * @since 4.7.0
-         *
-         */
         public static function prepare_value($value, $request, $args)
         {
             if($args['single'])
@@ -53,15 +27,6 @@
             return rest_sanitize_value_from_schema($value, $schema);
         }
 
-        /**
-         * Gets the empty value for a schema type.
-         *
-         * @param string $type The schema type.
-         *
-         * @return mixed
-         * @since 5.3.0
-         *
-         */
         protected static function get_empty_value_for_type($type)
         {
             switch($type)
@@ -82,14 +47,6 @@
             }
         }
 
-        /**
-         * Registers the meta field.
-         *
-         * @since      4.7.0
-         * @deprecated 5.6.0
-         *
-         * @see        register_rest_field()
-         */
         public function register_field()
         {
             _deprecated_function(__METHOD__, '5.6.0');
@@ -101,22 +58,8 @@
             ]);
         }
 
-        /**
-         * Retrieves the object type for register_rest_field().
-         *
-         * @return string The REST field type, such as post type name, taxonomy name, 'comment', or `user`.
-         * @since 4.7.0
-         *
-         */
         abstract protected function get_rest_field_type();
 
-        /**
-         * Retrieves the object's meta schema, conforming to JSON Schema.
-         *
-         * @return array Field schema data.
-         * @since 4.7.0
-         *
-         */
         public function get_field_schema()
         {
             $fields = $this->get_registered_fields();
@@ -140,13 +83,6 @@
             return $schema;
         }
 
-        /**
-         * Retrieves all the registered meta fields.
-         *
-         * @return array Registered fields.
-         * @since 4.7.0
-         *
-         */
         protected function get_registered_fields()
         {
             $registered = [];
@@ -220,38 +156,13 @@
             return $registered;
         }
 
-        /**
-         * Retrieves the object meta type.
-         *
-         * @return string One of 'post', 'comment', 'term', 'user', or anything
-         *                else supported by `_get_meta_table()`.
-         * @since 4.7.0
-         *
-         */
         abstract protected function get_meta_type();
 
-        /**
-         * Retrieves the object meta subtype.
-         *
-         * @return string Subtype for the meta type, or empty string if no specific subtype.
-         * @since 4.9.8
-         *
-         */
         protected function get_meta_subtype()
         {
             return '';
         }
 
-        /**
-         * Retrieves the meta field value.
-         *
-         * @param int             $object_id Object ID to fetch meta for.
-         * @param WP_REST_Request $request   Full details about the request.
-         *
-         * @return array Array containing the meta values keyed by name.
-         * @since 4.7.0
-         *
-         */
         public function get_value($object_id, $request)
         {
             $fields = $this->get_registered_fields();
@@ -294,21 +205,6 @@
             return $response;
         }
 
-        /**
-         * Prepares a meta value for a response.
-         *
-         * This is required because some native types cannot be stored correctly
-         * in the database, such as booleans. We need to cast back to the relevant
-         * type before passing back to JSON.
-         *
-         * @param mixed           $value   Meta value to prepare.
-         * @param WP_REST_Request $request Current request object.
-         * @param array           $args    Options for the field.
-         *
-         * @return mixed Prepared value.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_value_for_response($value, $request, $args)
         {
             if(! empty($args['prepare_callback']))
@@ -319,16 +215,6 @@
             return $value;
         }
 
-        /**
-         * Updates meta values.
-         *
-         * @param array $meta      Array of meta parsed from the request.
-         * @param int   $object_id Object ID to fetch meta for.
-         *
-         * @return null|WP_Error Null on success, WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function update_value($meta, $object_id)
         {
             $fields = $this->get_registered_fields();
@@ -404,17 +290,6 @@
             return null;
         }
 
-        /**
-         * Deletes a meta value for an object.
-         *
-         * @param int    $object_id Object ID the field belongs to.
-         * @param string $meta_key  Key for the field.
-         * @param string $name      Name for the field that is exposed in the REST API.
-         *
-         * @return true|WP_Error True if meta field is deleted, WP_Error otherwise.
-         * @since 4.7.0
-         *
-         */
         protected function delete_meta_value($object_id, $meta_key, $name)
         {
             $meta_type = $this->get_meta_type();
@@ -443,18 +318,6 @@
             return true;
         }
 
-        /**
-         * Updates a meta value for an object.
-         *
-         * @param int    $object_id Object ID to update.
-         * @param string $meta_key  Key for the custom field.
-         * @param string $name      Name for the field that is exposed in the REST API.
-         * @param mixed  $value     Updated value.
-         *
-         * @return true|WP_Error True if the meta field was updated, WP_Error otherwise.
-         * @since 4.7.0
-         *
-         */
         protected function update_meta_value($object_id, $meta_key, $name, $value)
         {
             $meta_type = $this->get_meta_type();
@@ -487,18 +350,6 @@
             return true;
         }
 
-        /**
-         * Checks if the user provided value is equivalent to a stored value for the given meta key.
-         *
-         * @param string $meta_key     The meta key being checked.
-         * @param string $subtype      The object subtype.
-         * @param mixed  $stored_value The currently stored value retrieved from get_metadata().
-         * @param mixed  $user_value   The value provided by the user.
-         *
-         * @return bool
-         * @since 5.5.0
-         *
-         */
         protected function is_meta_value_same_as_stored_value($meta_key, $subtype, $stored_value, $user_value)
         {
             $args = $this->get_registered_fields()[$meta_key];
@@ -513,20 +364,6 @@
             return $sanitized === $stored_value;
         }
 
-        /**
-         * Updates multiple meta values for an object.
-         *
-         * Alters the list of values in the database to match the list of provided values.
-         *
-         * @param int    $object_id Object ID to update.
-         * @param string $meta_key  Key for the custom field.
-         * @param string $name      Name for the field that is exposed in the REST API.
-         * @param array  $values    List of values to update to.
-         *
-         * @return true|WP_Error True if meta fields are updated, WP_Error otherwise.
-         * @since 4.7.0
-         *
-         */
         protected function update_multi_meta_value($object_id, $meta_key, $name, $values)
         {
             $meta_type = $this->get_meta_type();
@@ -610,17 +447,6 @@
             return true;
         }
 
-        /**
-         * Check the 'meta' value of a request is an associative array.
-         *
-         * @param mixed           $value   The meta value submitted in the request.
-         * @param WP_REST_Request $request Full details about the request.
-         * @param string          $param   The parameter name.
-         *
-         * @return array|false The meta array, if valid, false otherwise.
-         * @since 4.7.0
-         *
-         */
         public function check_meta_is_array($value, $request, $param)
         {
             if(! is_array($value))
@@ -631,21 +457,6 @@
             return $value;
         }
 
-        /**
-         * Recursively add additionalProperties = false to all objects in a schema if no additionalProperties setting
-         * is specified.
-         *
-         * This is needed to restrict properties of objects in meta values to only
-         * registered items, as the REST API will allow additional properties by
-         * default.
-         *
-         * @param array $schema The schema array.
-         *
-         * @return array
-         * @since      5.3.0
-         * @deprecated 5.6.0 Use rest_default_additional_properties_to_false() instead.
-         *
-         */
         protected function default_additional_properties_to_false($schema)
         {
             _deprecated_function(__METHOD__, '5.6.0', 'rest_default_additional_properties_to_false()');

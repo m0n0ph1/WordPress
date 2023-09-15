@@ -1,12 +1,4 @@
 <?php
-    /**
-     * Portable PHP password hashing framework.
-     *
-     * @package phpass
-     * @since   2.5.0
-     * @version 0.5 / WordPress
-     * @link    https://www.openwall.com/phpass/
-     */
 
 #
 # Portable PHP password hashing framework.
@@ -34,14 +26,6 @@
 # requirements (there can be none), but merely suggestions.
 #
 
-    /**
-     * Portable PHP password hashing framework.
-     *
-     * @package phpass
-     * @version 0.5 / WordPress
-     * @link    https://www.openwall.com/phpass/
-     * @since   2.5.0
-     */
     class PasswordHash
     {
         var $itoa64;

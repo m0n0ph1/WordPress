@@ -1,21 +1,5 @@
 <?php
-    /**
-     * Multisite administration functions.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
-    /**
-     * Determines whether uploaded file exceeds space quota.
-     *
-     * @param array $file An element from the `$_FILES` array for a given file.
-     *
-     * @return array The `$_FILES` array element with 'error' key set if file exceeds quota. 'error' is empty otherwise.
-     * @since 3.0.0
-     *
-     */
     function check_upload_size($file)
     {
         if(get_site_option('upload_space_check_disabled'))
@@ -61,16 +45,6 @@
         return $file;
     }
 
-    /**
-     * Deletes a site.
-     *
-     * @param int  $blog_id Site ID.
-     * @param bool $drop    True if site's database tables should be dropped. Default false.
-     *
-     * @since 3.0.0
-     * @since 5.1.0 Use wp_delete_site() internally to delete the site row from the database.
-     *
-     */
     function wpmu_delete_blog($blog_id, $drop = false)
     {
         $blog_id = (int) $blog_id;
@@ -112,7 +86,6 @@
         }
         else
         {
-            /** This action is documented in wp-includes/ms-blogs.php */
             do_action_deprecated('delete_blog', [$blog_id, false], '5.1.0');
 
             $users = get_users([
@@ -131,7 +104,6 @@
 
             update_blog_status($blog_id, 'deleted', 1);
 
-            /** This action is documented in wp-includes/ms-blogs.php */
             do_action_deprecated('deleted_blog', [$blog_id, false], '5.1.0');
         }
 
@@ -141,24 +113,6 @@
         }
     }
 
-    /**
-     * Deletes a user and all of their posts from the network.
-     *
-     * This function:
-     *
-     * - Deletes all posts (of all post types) authored by the user on all sites on the network
-     * - Deletes all links owned by the user on all sites on the network
-     * - Removes the user from all sites on the network
-     * - Deletes the user from the database
-     *
-     * @param int   $id   The user ID.
-     *
-     * @return bool True if the user was deleted, false otherwise.
-     * @since 3.0.0
-     *
-     * @global wpdb $wpdb WordPress database abstraction object.
-     *
-     */
     function wpmu_delete_user($id)
     {
         global $wpdb;
@@ -183,16 +137,6 @@
             return false;
         }
 
-        /**
-         * Fires before a user is deleted from the network.
-         *
-         * @param int     $id   ID of the user about to be deleted from the network.
-         * @param WP_User $user WP_User object of the user about to be deleted from the network.
-         *
-         * @since MU (3.0.0)
-         * @since 5.5.0 Added the `$user` parameter.
-         *
-         */
         do_action('wpmu_delete_user', $id, $user);
 
         $blogs = get_blogs_of_user($id);
@@ -235,22 +179,11 @@
 
         clean_user_cache($user);
 
-        /** This action is documented in wp-admin/includes/user.php */
         do_action('deleted_user', $id, null, $user);
 
         return true;
     }
 
-    /**
-     * Checks whether a site has used its allotted upload space.
-     *
-     * @param bool $display_message Optional. If set to true and the quota is exceeded,
-     *                              a warning message is displayed. Default true.
-     *
-     * @return bool True if user is over upload space quota, otherwise false.
-     * @since MU (3.0.0)
-     *
-     */
     function upload_is_user_over_quota($display_message = true)
     {
         if(get_site_option('upload_space_check_disabled'))
@@ -280,11 +213,6 @@
         }
     }
 
-    /**
-     * Displays the amount of disk space used by the current site. Not used in core.
-     *
-     * @since MU (3.0.0)
-     */
     function display_space_usage()
     {
         $space_allowed = get_space_allowed();
@@ -303,15 +231,6 @@
         <?php
     }
 
-    /**
-     * Gets the remaining upload space for this site.
-     *
-     * @param int $size Current max size in bytes.
-     *
-     * @return int Max size in bytes.
-     * @since MU (3.0.0)
-     *
-     */
     function fix_import_form_size($size)
     {
         if(upload_is_user_over_quota(false))
@@ -323,14 +242,6 @@
         return min($size, $available);
     }
 
-    /**
-     * Displays the site upload space quota setting form on the Edit Site Settings screen.
-     *
-     * @param int $id The ID of the site to display the setting for.
-     *
-     * @since 3.0.0
-     *
-     */
     function upload_space_setting($id)
     {
         switch_to_blog($id);
@@ -365,15 +276,6 @@
         <?php
     }
 
-    /**
-     * Cleans the user cache for a specific user.
-     *
-     * @param int $id The user ID.
-     *
-     * @return int|false The ID of the refreshed user or false if the user does not exist.
-     * @since 3.0.0
-     *
-     */
     function refresh_user_details($id)
     {
         $id = (int) $id;
@@ -389,16 +291,6 @@
         return $id;
     }
 
-    /**
-     * Returns the language for a language code.
-     *
-     * @param string $code Optional. The two-letter language code. Default empty.
-     *
-     * @return string The language corresponding to $code if it exists. If it does not exist,
-     *                then the first two letters of $code is returned.
-     * @since 3.0.0
-     *
-     */
     function format_code_lang($code = '')
     {
         $code = strtolower(substr($code, 0, 2));
@@ -590,27 +482,11 @@
             'zu' => 'Zulu',
         ];
 
-        /**
-         * Filters the language codes.
-         *
-         * @param string[] $lang_codes Array of key/value pairs of language codes where key is the short version.
-         * @param string   $code       A two-letter designation of the language.
-         *
-         * @since MU (3.0.0)
-         *
-         */
         $lang_codes = apply_filters('lang_codes', $lang_codes, $code);
 
         return strtr($code, $lang_codes);
     }
 
-    /**
-     * Displays an access denied message when a user tries to view a site's dashboard they
-     * do not have access to.
-     *
-     * @since  3.2.0
-     * @access private
-     */
     function _access_denied_splash()
     {
         if(! is_user_logged_in() || is_network_admin())
@@ -651,15 +527,6 @@
         wp_die($output, 403);
     }
 
-    /**
-     * Checks if the current user has permissions to import new users.
-     *
-     * @param string $permission A permission to be checked. Currently not used.
-     *
-     * @return bool True if the user has proper permissions, false if they do not.
-     * @since 3.0.0
-     *
-     */
     function check_import_new_users($permission)
     {
         if(! current_user_can('manage_network_users'))
@@ -672,15 +539,6 @@
 
 // See "import_allow_fetch_attachments" and "import_attachment_size_limit" filters too.
 
-    /**
-     * Generates and displays a drop-down of available languages.
-     *
-     * @param string[] $lang_files Optional. An array of the language files. Default empty array.
-     * @param string   $current    Optional. The current language code. Default empty.
-     *
-     * @since 3.0.0
-     *
-     */
     function mu_dropdown_languages($lang_files = [], $current = '')
     {
         $flag = false;
@@ -717,31 +575,11 @@
         // Order by name.
         uksort($output, 'strnatcasecmp');
 
-        /**
-         * Filters the languages available in the dropdown.
-         *
-         * @param string[] $output     Array of HTML output for the dropdown.
-         * @param string[] $lang_files Array of available language files.
-         * @param string   $current    The current language code.
-         *
-         * @since MU (3.0.0)
-         *
-         */
         $output = apply_filters('mu_dropdown_languages', $output, $lang_files, $current);
 
         echo implode("\n\t", $output);
     }
 
-    /**
-     * Displays an admin notice to upgrade all sites after a core upgrade.
-     *
-     * @return void|false Void on success. False if the current user is not a super admin.
-     * @global int    $wp_db_version WordPress database version.
-     * @global string $pagenow       The filename of the current screen.
-     *
-     * @since 3.0.0
-     *
-     */
     function site_admin_notice()
     {
         global $wp_db_version, $pagenow;
@@ -762,19 +600,6 @@
         }
     }
 
-    /**
-     * Avoids a collision between a site slug and a permalink slug.
-     *
-     * In a subdirectory installation this will make sure that a site and a post do not use the
-     * same subdirectory by checking for a site with the same name as a new post.
-     *
-     * @param array $data    An array of post data.
-     * @param array $postarr An array of posts. Not currently used.
-     *
-     * @return array The new array of post data after checking for collisions.
-     * @since 3.0.0
-     *
-     */
     function avoid_blog_page_permalink_collision($data, $postarr)
     {
         if(is_subdomain_install())
@@ -815,14 +640,6 @@
         return $data;
     }
 
-    /**
-     * Handles the display of choosing a user's primary site.
-     *
-     * This displays the user's primary site and allows the user to choose
-     * which site is primary.
-     *
-     * @since 3.0.0
-     */
     function choose_primary_blog()
     {
         ?>
@@ -879,18 +696,6 @@
         <?php
     }
 
-    /**
-     * Determines whether or not this network from this page can be edited.
-     *
-     * By default editing of network is restricted to the Network Admin for that `$network_id`.
-     * This function allows for this to be overridden.
-     *
-     * @param int $network_id The network ID to check.
-     *
-     * @return bool True if network can be edited, false otherwise.
-     * @since 3.1.0
-     *
-     */
     function can_edit_network($network_id)
     {
         if(get_current_network_id() === (int) $network_id)
@@ -902,25 +707,9 @@
             $result = false;
         }
 
-        /**
-         * Filters whether this network can be edited from this page.
-         *
-         * @param bool $result     Whether the network can be edited from this page.
-         * @param int  $network_id The network ID to check.
-         *
-         * @since 3.1.0
-         *
-         */
         return apply_filters('can_edit_network', $result, $network_id);
     }
 
-    /**
-     * Prints thickbox image paths for Network Admin.
-     *
-     * @since  3.1.0
-     *
-     * @access private
-     */
     function _thickbox_path_admin_subfolder()
     {
         ?>
@@ -930,11 +719,6 @@
         <?php
     }
 
-    /**
-     * @param array $users
-     *
-     * @return bool
-     */
     function confirm_delete_users($users)
     {
         $current_user = wp_get_current_user();
@@ -1068,7 +852,7 @@
                 ?>
             </table>
             <?php
-                /** This action is documented in wp-admin/users.php */
+
                 do_action('delete_user_form', $current_user, $allusers);
 
                 if(1 === count($users)) :
@@ -1086,11 +870,6 @@
         return true;
     }
 
-    /**
-     * Prints JavaScript in the header on the Network Settings screen.
-     *
-     * @since 4.1.0
-     */
     function network_settings_add_js()
     {
         ?>
@@ -1111,42 +890,8 @@
         <?php
     }
 
-    /**
-     * Outputs the HTML for a network's "Edit Site" tabular interface.
-     *
-     * @param array   $args     {
-     *                          Optional. Array or string of Query parameters. Default empty array.
-     *
-     * @type int      $blog_id  The site ID. Default is the current site.
-     * @type array    $links    The tabs to include with (label|url|cap) keys.
-     * @type string   $selected The ID of the selected link.
-     *                          }
-     * @global string $pagenow  The filename of the current screen.
-     *
-     * @since 4.6.0
-     *
-     */
     function network_edit_site_nav($args = [])
     {
-        /**
-         * Filters the links that appear on site-editing network pages.
-         *
-         * Default links: 'site-info', 'site-users', 'site-themes', and 'site-settings'.
-         *
-         * @param array $links     {
-         *                         An array of link data representing individual network admin pages.
-         *
-         * @type array  $link_slug {
-         *                         An array of information about the individual link to a page.
-         *
-         *         $type string $label Label to use for the link.
-         *         $type string $url   URL, relative to `network_admin_url()` to use for the link.
-         *         $type string $cap   Capability required to see the link.
-         *     }
-         * }
-         * @since 4.6.0
-         *
-         */
         $links = apply_filters('network_edit_site_nav_links', [
             'site-info' => [
                 'label' => __('Info'),
@@ -1218,13 +963,6 @@
         echo '</nav>';
     }
 
-    /**
-     * Returns the arguments for the help tab on the Edit Site screens.
-     *
-     * @return array Help tab arguments.
-     * @since 4.9.0
-     *
-     */
     function get_site_screen_help_tab_args()
     {
         return [
@@ -1234,13 +972,6 @@
         ];
     }
 
-    /**
-     * Returns the content for the help sidebar on the Edit Site screens.
-     *
-     * @return string Help sidebar content.
-     * @since 4.9.0
-     *
-     */
     function get_site_screen_help_sidebar_content()
     {
         return '<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/network-admin-sites-screen/">Documentation on Site Management</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forum/multisite/">Support forums</a>').'</p>';

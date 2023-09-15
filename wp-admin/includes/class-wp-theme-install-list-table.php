@@ -1,38 +1,14 @@
 <?php
-    /**
-     * List Table API: WP_Theme_Install_List_Table class
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.1.0
-     */
 
-    /**
-     * Core class used to implement displaying themes to install in a list table.
-     *
-     * @since 3.1.0
-     *
-     * @see   WP_Themes_List_Table
-     */
     class WP_Theme_Install_List_Table extends WP_Themes_List_Table
     {
         public $features = [];
 
-        /**
-         * @return bool
-         */
         public function ajax_user_can()
         {
             return current_user_can('install_themes');
         }
 
-        /**
-         * @global array  $tabs
-         * @global string $tab
-         * @global int    $paged
-         * @global string $type
-         * @global array  $theme_field_defaults
-         */
         public function prepare_items()
         {
             require ABSPATH.'wp-admin/includes/theme-install.php';
@@ -72,18 +48,8 @@
 
             $nonmenu_tabs = ['theme-information']; // Valid actions to perform which do not have a Menu item.
 
-            /** This filter is documented in wp-admin/theme-install.php */
             $tabs = apply_filters('install_themes_tabs', $tabs);
 
-            /**
-             * Filters tabs not associated with a menu item on the Install Themes screen.
-             *
-             * @param string[] $nonmenu_tabs The tabs that don't have a menu item on
-             *                               the Install Themes screen.
-             *
-             * @since 2.8.0
-             *
-             */
             $nonmenu_tabs = apply_filters('install_themes_nonmenu_tabs', $nonmenu_tabs);
 
             // If a non-valid menu tab has been selected, And it's not a non-menu action.
@@ -137,26 +103,6 @@
                     break;
             }
 
-            /**
-             * Filters API request arguments for each Install Themes screen tab.
-             *
-             * The dynamic portion of the hook name, `$tab`, refers to the theme install
-             * tab.
-             *
-             * Possible hook names include:
-             *
-             *  - `install_themes_table_api_args_dashboard`
-             *  - `install_themes_table_api_args_featured`
-             *  - `install_themes_table_api_args_new`
-             *  - `install_themes_table_api_args_search`
-             *  - `install_themes_table_api_args_updated`
-             *  - `install_themes_table_api_args_upload`
-             *
-             * @param array|false $args Theme install API arguments.
-             *
-             * @since 3.7.0
-             *
-             */
             $args = apply_filters("install_themes_table_api_args_{$tab}", $args);
 
             if(! $args)
@@ -180,20 +126,11 @@
                                        ]);
         }
 
-        /**
-         */
         public function no_items()
         {
             _e('No themes match your request.');
         }
 
-        /**
-         * Displays the theme install table.
-         *
-         * Overrides the parent display() method to provide a different container.
-         *
-         * @since 3.1.0
-         */
         public function display()
         {
             wp_nonce_field('fetch-list-'.get_class($this), '_ajax_fetch_list_nonce');
@@ -201,11 +138,7 @@
             <div class="tablenav top themes">
                 <div class="alignleft actions">
                     <?php
-                        /**
-                         * Fires in the Install Themes list table header.
-                         *
-                         * @since 2.8.0
-                         */
+
                         do_action('install_themes_table_header');
                     ?>
                 </div>
@@ -221,8 +154,6 @@
             $this->tablenav('bottom');
         }
 
-        /**
-         */
         public function display_rows()
         {
             $themes = $this->items;
@@ -240,29 +171,6 @@
             $this->theme_installer();
         }
 
-        /**
-         * Prints a theme from the WordPress.org API.
-         *
-         * @param stdClass $theme          {
-         *                                 An object that contains theme data returned by the WordPress.org API.
-         *
-         * @type string    $name           Theme name, e.g. 'Twenty Twenty-One'.
-         * @type string    $slug           Theme slug, e.g. 'twentytwentyone'.
-         * @type string    $version        Theme version, e.g. '1.1'.
-         * @type string    $author         Theme author username, e.g. 'melchoyce'.
-         * @type string    $preview_url    Preview URL, e.g. 'https://2021.wordpress.net/'.
-         * @type string    $screenshot_url Screenshot URL, e.g. 'https://wordpress.org/themes/twentytwentyone/'.
-         * @type float     $rating         Rating score.
-         * @type int       $num_ratings    The number of ratings.
-         * @type string    $homepage       Theme homepage, e.g. 'https://wordpress.org/themes/twentytwentyone/'.
-         * @type string    $description    Theme description.
-         * @type string    $download_link  Theme ZIP download URL.
-         *                                 }
-         * @global array   $themes_allowedtags
-         *
-         * @since 3.1.0
-         *
-         */
         public function single_row($theme)
         {
             global $themes_allowedtags;
@@ -313,17 +221,6 @@
 
             $actions[] = sprintf('<a class="install-theme-preview" href="%s" title="%s">%s</a>', esc_url($preview_url), /* translators: %s: Theme name. */ esc_attr(sprintf(__('Preview %s'), $name)), __('Preview'));
 
-            /**
-             * Filters the install action links for a theme in the Install Themes list table.
-             *
-             * @param string[] $actions An array of theme action links. Defaults are
-             *                          links to Install Now, Preview, and Details.
-             * @param stdClass $theme   An object that contains theme data returned by the
-             *                          WordPress.org API.
-             *
-             * @since 3.4.0
-             *
-             */
             $actions = apply_filters('theme_install_actions', $actions, $theme);
 
             ?>
@@ -356,15 +253,6 @@
             $this->install_theme_info($theme);
         }
 
-        /**
-         * Checks to see if the theme is already installed.
-         *
-         * @param stdClass $theme A WordPress.org Theme API object.
-         *
-         * @return string Theme status.
-         * @since 3.4.0
-         *
-         */
         private function _get_theme_status($theme)
         {
             $status = 'install';
@@ -389,14 +277,6 @@
             return $status;
         }
 
-        /**
-         * Prints the info for a theme (to be used in the theme installer modal).
-         *
-         * @param stdClass $theme A WordPress.org Theme API object.
-         *
-         * @global array   $themes_allowedtags
-         *
-         */
         public function install_theme_info($theme)
         {
             global $themes_allowedtags;
@@ -472,9 +352,6 @@
             <?php
         }
 
-        /**
-         * Prints the wrapper for the theme installer.
-         */
         public function theme_installer()
         {
             ?>
@@ -502,12 +379,6 @@
             <?php
         }
 
-        /**
-         * Prints the wrapper for the theme installer with a provided theme's data.
-         * Used to make the theme installer work for no-js.
-         *
-         * @param stdClass $theme A WordPress.org Theme API object.
-         */
         public function theme_installer_single($theme)
         {
             ?>
@@ -522,28 +393,12 @@
             <?php
         }
 
-        /**
-         * Send required variables to JavaScript land
-         *
-         * @param array   $extra_args Unused.
-         *
-         * @global string $tab        Current tab within Themes->Install screen
-         * @global string $type       Type of search.
-         *
-         * @since 3.4.0
-         *
-         */
         public function _js_vars($extra_args = [])
         {
             global $tab, $type;
             parent::_js_vars(compact('tab', 'type'));
         }
 
-        /**
-         * @return array
-         * @global string $tab
-         * @global array  $tabs
-         */
         protected function get_views()
         {
             global $tabs, $tab;

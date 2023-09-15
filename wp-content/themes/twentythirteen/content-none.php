@@ -1,11 +1,5 @@
 <?php
-    /**
-     * The template for displaying a "No posts found" message
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Thirteen
-     * @since      Twenty Thirteen 1.0
-     */
+
 ?>
 
 <header class="page-header">

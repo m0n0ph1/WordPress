@@ -1,12 +1,5 @@
 <?php
-    /**
-     * WordPress Export Administration Screen
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** Load WordPress Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('export'))
@@ -14,17 +7,11 @@
         wp_die(__('Sorry, you are not allowed to export the content of this site.'));
     }
 
-    /** Load WordPress export API */
     require_once ABSPATH.'wp-admin/includes/export.php';
 
     // Used in the HTML title tag.
     $title = __('Export');
 
-    /**
-     * Display JavaScript on the page.
-     *
-     * @since 3.5.0
-     */
     function export_add_js()
     {
         ?>
@@ -131,14 +118,6 @@
             $args['content'] = $_GET['content'];
         }
 
-        /**
-         * Filters the export args.
-         *
-         * @param array $args The arguments to send to the exporter.
-         *
-         * @since 3.5.0
-         *
-         */
         $args = apply_filters('export_args', $args);
 
         export_wp($args);
@@ -147,17 +126,6 @@
 
     require_once ABSPATH.'wp-admin/admin-header.php';
 
-    /**
-     * Creates the date options fields for exporting a given post type.
-     *
-     * @param string     $post_type The post type. Default 'post'.
-     *
-     * @global WP_Locale $wp_locale WordPress date and time locale object.
-     *
-     * @since 3.1.0
-     *
-     * @global wpdb      $wpdb      WordPress database abstraction object.
-     */
     function export_date_options($post_type = 'post')
     {
         global $wpdb, $wp_locale;
@@ -359,11 +327,7 @@
 
         </fieldset>
         <?php
-            /**
-             * Fires at the end of the export filters form.
-             *
-             * @since 3.5.0
-             */
+
             do_action('export_filters');
         ?>
 

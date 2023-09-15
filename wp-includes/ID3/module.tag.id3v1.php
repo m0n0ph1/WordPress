@@ -21,11 +21,6 @@
 
     class getid3_id3v1 extends getid3_handler
     {
-        /**
-         * @param string $OriginalGenre
-         *
-         * @return string|false
-         */
         public static function StandardiseID3v1GenreName($OriginalGenre)
         {
             if(($GenreID = self::LookupGenreID($OriginalGenre)) !== false)
@@ -36,12 +31,6 @@
             return $OriginalGenre;
         }
 
-        /**
-         * @param string $genre
-         * @param bool   $allowSCMPXextended
-         *
-         * @return string|false
-         */
         public static function LookupGenreID($genre, $allowSCMPXextended = false)
         {
             $GenreLookup = self::ArrayOfGenres($allowSCMPXextended);
@@ -57,11 +46,6 @@
             return false;
         }
 
-        /**
-         * @param bool $allowSCMPXextended
-         *
-         * @return string[]
-         */
         public static function ArrayOfGenres($allowSCMPXextended = false)
         {
             static $GenreLookup = [
@@ -292,12 +276,6 @@
             return ($allowSCMPXextended ? $GenreLookupSCMPX : $GenreLookup);
         }
 
-        /**
-         * @param string $genreid
-         * @param bool   $allowSCMPXextended
-         *
-         * @return string|false
-         */
         public static function LookupGenreName($genreid, $allowSCMPXextended = true)
         {
             switch($genreid)
@@ -318,9 +296,6 @@
             return (isset($GenreLookup[$genreid]) ? $GenreLookup[$genreid] : false);
         }
 
-        /**
-         * @return bool
-         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
@@ -456,27 +431,11 @@
             return true;
         }
 
-        /**
-         * @param string $str
-         *
-         * @return string
-         */
         public static function cutfield($str)
         {
             return trim(substr($str, 0, strcspn($str, "\x00")));
         }
 
-        /**
-         * @param string     $title
-         * @param string     $artist
-         * @param string     $album
-         * @param string     $year
-         * @param int        $genreid
-         * @param string     $comment
-         * @param int|string $track
-         *
-         * @return string
-         */
         public static function GenerateID3v1Tag($title, $artist, $album, $year, $genreid, $comment, $track = '')
         {
             $ID3v1Tag = 'TAG';

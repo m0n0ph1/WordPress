@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/avatar` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/avatar` block on the server.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string Return the avatar.
-     */
     function render_block_core_avatar($attributes, $content, $block)
     {
         $size = isset($attributes['size']) ? $attributes['size'] : 96;
@@ -78,14 +64,6 @@
         return sprintf('<div %1s>%2s</div>', $wrapper_attributes, $avatar_block);
     }
 
-    /**
-     * Generates class names and styles to apply the border support styles for
-     * the Avatar block.
-     *
-     * @param array $attributes The block attributes.
-     *
-     * @return array The border-related classnames and styles for the block.
-     */
     function get_block_core_avatar_border_attributes($attributes)
     {
         $border_styles = [];
@@ -139,9 +117,6 @@
         return $attributes;
     }
 
-    /**
-     * Registers the `core/avatar` block on the server.
-     */
     function register_block_core_avatar()
     {
         register_block_type_from_metadata(__DIR__.'/avatar', [

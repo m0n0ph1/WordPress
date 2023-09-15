@@ -1,14 +1,4 @@
 <?php
-    /**
-     * The template for displaying search results pages
-     *
-     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/#search-result
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Seventeen
-     * @since      Twenty Seventeen 1.0
-     * @version    1.0
-     */
 
     get_header(); ?>
 
@@ -36,11 +26,6 @@
                         while(have_posts()) :
                             the_post();
 
-                            /**
-                             * Run the loop for the search to output the results.
-                             * If you want to overload this in a child theme then include a file
-                             * called content-search.php and that will be used instead.
-                             */
                             get_template_part('template-parts/post/content', 'excerpt');
 
                         endwhile; // End the loop.

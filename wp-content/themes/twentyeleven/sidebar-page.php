@@ -1,13 +1,4 @@
 <?php
-    /**
-     * Template Name: Sidebar Template
-     *
-     * Description: A Page Template that adds a sidebar to pages.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Eleven
-     * @since      Twenty Eleven 1.0
-     */
 
     get_header(); ?>
 

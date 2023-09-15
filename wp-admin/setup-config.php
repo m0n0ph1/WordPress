@@ -1,29 +1,9 @@
 <?php
-    /**
-     * Retrieves and creates the wp-config.php file.
-     *
-     * The permissions for the base directory must allow for writing files in order
-     * for the wp-config.php to be created using this page.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * We are installing.
-     */
     define('WP_INSTALLING', true);
 
-    /**
-     * We are blissfully unaware of anything.
-     */
     define('WP_SETUP_CONFIG', true);
 
-    /**
-     * Disable error reporting
-     *
-     * Set this to error_reporting( -1 ) for debugging
-     */
     error_reporting(0);
 
     if(! defined('ABSPATH'))
@@ -33,10 +13,8 @@
 
     require ABSPATH.'wp-settings.php';
 
-    /** Load WordPress Administration Upgrade API */
     require_once ABSPATH.'wp-admin/includes/upgrade.php';
 
-    /** Load WordPress Translation Installation API */
     require_once ABSPATH.'wp-admin/includes/translation-install.php';
 
     nocache_headers();
@@ -69,15 +47,6 @@
 
     $step = isset($_GET['step']) ? (int) $_GET['step'] : -1;
 
-    /**
-     * Display setup wp-config.php file header.
-     *
-     * @param string|string[] $body_classes Class attribute values for the body tag.
-     *
-     * @since 2.3.0
-     *
-     * @ignore
-     */
     function setup_config_display_header($body_classes = [])
     {
     $body_classes = (array) $body_classes;
@@ -337,15 +306,11 @@
         }
 
         // Test the DB connection.
-        /**#@+
-         *
-         * @ignore
-         */
+
         define('DB_NAME', $dbname);
         define('DB_USER', $uname);
         define('DB_PASSWORD', $pwd);
         define('DB_HOST', $dbhost);
-        /**#@-*/
 
         // Re-construct $wpdb with these new values.
         unset($wpdb);

@@ -1,10 +1,4 @@
 <?php
-    /**
-     * Post advanced form for inclusion in the administration panels.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     // Don't load directly.
     if(! defined('ABSPATH'))
@@ -12,11 +6,6 @@
         die('-1');
     }
 
-    /**
-     * @global string       $post_type
-     * @global WP_Post_Type $post_type_object
-     * @global WP_Post      $post Global post object.
-     */
     global $post_type, $post_type_object, $post;
 
     // Flag that we're not loading the block editor.
@@ -49,16 +38,6 @@
 
     if(post_type_supports($post_type, 'editor') && ! wp_is_mobile() && ! ($is_IE && preg_match('/MSIE [5678]/', $_SERVER['HTTP_USER_AGENT'])))
     {
-        /**
-         * Filters whether to enable the 'expand' functionality in the post editor.
-         *
-         * @param bool   $expand    Whether to enable the 'expand' functionality. Default true.
-         * @param string $post_type Post type.
-         *
-         * @since 4.0.0
-         * @since 4.1.0 Added the `$post_type` parameter.
-         *
-         */
         if(apply_filters('wp_editor_expand', true, $post_type))
         {
             wp_enqueue_script('editor-expand');
@@ -72,12 +51,6 @@
         wp_enqueue_script('jquery-touch-punch');
     }
 
-    /**
-     * Post ID global
-     *
-     * @name $post_ID
-     * @var int
-     */
     $post_ID = isset($post_ID) ? (int) $post_ID : 0;
     $user_ID = isset($user_ID) ? (int) $user_ID : 0;
     $action = isset($action) ? $action : '';
@@ -188,14 +161,6 @@
     ];
     $messages['attachment'] = array_fill(1, 10, __('Media file updated.')); // Hack, for now.
 
-    /**
-     * Filters the post updated messages.
-     *
-     * @param array[] $messages Post updated messages. For defaults see `$messages` declarations above.
-     *
-     * @since 3.0.0
-     *
-     */
     $messages = apply_filters('post_updated_messages', $messages);
 
     $message = false;
@@ -411,14 +376,7 @@
     </div>
     <form name="post" action="post.php" method="post" id="post"
         <?php
-            /**
-             * Fires inside the post editor form tag.
-             *
-             * @param WP_Post $post Post object.
-             *
-             * @since 3.0.0
-             *
-             */
+
             do_action('post_edit_form_tag', $post);
 
             $referer = wp_get_referer();
@@ -456,16 +414,7 @@
         ?>
 
         <?php
-            /**
-             * Fires at the beginning of the edit form.
-             *
-             * At this point, the required hidden fields and nonces have already been output.
-             *
-             * @param WP_Post $post Post object.
-             *
-             * @since 3.7.0
-             *
-             */
+
             do_action('edit_form_top', $post);
         ?>
 
@@ -478,15 +427,7 @@
                         <div id="titlediv">
                             <div id="titlewrap">
                                 <?php
-                                    /**
-                                     * Filters the title field placeholder text.
-                                     *
-                                     * @param string  $text Placeholder text. Default 'Add title'.
-                                     * @param WP_Post $post Post object.
-                                     *
-                                     * @since 3.1.0
-                                     *
-                                     */
+
                                     $title_placeholder = apply_filters('enter_title_here', __('Add title'), $post);
                                 ?>
                                 <label class="screen-reader-text"
@@ -501,14 +442,7 @@
                                        autocomplete="off"/>
                             </div>
                             <?php
-                                /**
-                                 * Fires before the permalink field in the edit form.
-                                 *
-                                 * @param WP_Post $post Post object.
-                                 *
-                                 * @since 4.1.0
-                                 *
-                                 */
+
                                 do_action('edit_form_before_permalink', $post);
                             ?>
                             <div class="inside">
@@ -550,14 +484,7 @@
                         </div><!-- /titlediv -->
                         <?php
                     }
-                        /**
-                         * Fires after the title field.
-                         *
-                         * @param WP_Post $post Post object.
-                         *
-                         * @since 3.5.0
-                         *
-                         */
+
                         do_action('edit_form_after_title', $post);
 
                         if(post_type_supports($post_type, 'editor'))
@@ -621,14 +548,7 @@
                             </div>
                             <?php
                         }
-                        /**
-                         * Fires after the content editor.
-                         *
-                         * @param WP_Post $post Post object.
-                         *
-                         * @since 3.5.0
-                         *
-                         */
+
                         do_action('edit_form_after_editor', $post);
                     ?>
                 </div><!-- /post-body-content -->
@@ -638,30 +558,10 @@
 
                         if('page' === $post_type)
                         {
-                            /**
-                             * Fires before meta boxes with 'side' context are output for the 'page' post type.
-                             *
-                             * The submitpage box is a meta box with 'side' context, so this hook fires just before it is output.
-                             *
-                             * @param WP_Post $post Post object.
-                             *
-                             * @since 2.5.0
-                             *
-                             */
                             do_action('submitpage_box', $post);
                         }
                         else
                         {
-                            /**
-                             * Fires before meta boxes with 'side' context are output for all post types other than 'page'.
-                             *
-                             * The submitpost box is a meta box with 'side' context, so this hook fires just before it is output.
-                             *
-                             * @param WP_Post $post Post object.
-                             *
-                             * @since 2.5.0
-                             *
-                             */
                             do_action('submitpost_box', $post);
                         }
 
@@ -676,26 +576,10 @@
 
                         if('page' === $post_type)
                         {
-                            /**
-                             * Fires after 'normal' context meta boxes have been output for the 'page' post type.
-                             *
-                             * @param WP_Post $post Post object.
-                             *
-                             * @since 1.5.0
-                             *
-                             */
                             do_action('edit_page_form', $post);
                         }
                         else
                         {
-                            /**
-                             * Fires after 'normal' context meta boxes have been output for all post types other than 'page'.
-                             *
-                             * @param WP_Post $post Post object.
-                             *
-                             * @since 1.5.0
-                             *
-                             */
                             do_action('edit_form_advanced', $post);
                         }
 
@@ -704,14 +588,7 @@
                     ?>
                 </div>
                 <?php
-                    /**
-                     * Fires after all meta box sections have been output, before the closing #post-body div.
-                     *
-                     * @param WP_Post $post Post object.
-                     *
-                     * @since 2.1.0
-                     *
-                     */
+
                     do_action('dbx_post_sidebar', $post);
 
                 ?>

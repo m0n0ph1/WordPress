@@ -1,28 +1,9 @@
 <?php
-    /**
-     * Deprecated functions from past WordPress versions. You shouldn't use these
-     * functions and look for the alternatives instead. The functions will be
-     * removed in a later version.
-     *
-     * @package    WordPress
-     * @subpackage Deprecated
-     */
 
     /*
  * Deprecated functions come here to die.
  */
 
-    /**
-     * Retrieves all post data for a given post.
-     *
-     * @param int $postid Post ID.
-     *
-     * @return array Post data.
-     * @see        get_post()
-     *
-     * @since      0.71
-     * @deprecated 1.5.1 Use get_post()
-     */
     function get_postdata($postid)
     {
         _deprecated_function(__FUNCTION__, '1.5.1', 'get_post()');
@@ -50,16 +31,6 @@
         return $postdata;
     }
 
-    /**
-     * Sets up the WordPress Loop.
-     *
-     * Use The Loop instead.
-     *
-     * @link       https://developer.wordpress.org/themes/basics/the-loop/
-     *
-     * @since      1.0.1
-     * @deprecated 1.5.0
-     */
     function start_wp()
     {
         global $wp_query;
@@ -72,17 +43,6 @@
         setup_postdata(get_post());
     }
 
-    /**
-     * Returns or prints a category ID.
-     *
-     * @param bool $display Optional. Whether to display the output. Default true.
-     *
-     * @return int Category ID.
-     * @see        get_the_category()
-     *
-     * @since      0.71
-     * @deprecated 0.71 Use get_the_category()
-     */
     function the_category_ID($display = true)
     {
         _deprecated_function(__FUNCTION__, '0.71', 'get_the_category()');
@@ -99,17 +59,6 @@
         return $cat;
     }
 
-    /**
-     * Prints a category with optional text before and after.
-     *
-     * @param string $before Optional. Text to display before the category. Default empty.
-     * @param string $after  Optional. Text to display after the category. Default empty.
-     *
-     * @see        get_the_category_by_ID()
-     *
-     * @since      0.71
-     * @deprecated 0.71 Use get_the_category_by_ID()
-     */
     function the_category_head($before = '', $after = '')
     {
         global $currentcat, $previouscat;
@@ -128,21 +77,6 @@
         }
     }
 
-    /**
-     * Prints a link to the previous post.
-     *
-     * @param string $format
-     * @param string $previous
-     * @param string $title
-     * @param string $in_same_cat
-     * @param int    $limitprev
-     * @param string $excluded_categories
-     *
-     * @since      1.5.0
-     * @deprecated 2.0.0 Use previous_post_link()
-     * @see        previous_post_link()
-     *
-     */
     function previous_post(
         $format = '%', $previous = 'previous post: ', $title = 'yes', $in_same_cat = 'no', $limitprev = 1, $excluded_categories = ''
     ) {
@@ -174,21 +108,6 @@
         echo $format;
     }
 
-    /**
-     * Prints link to the next post.
-     *
-     * @param string $format
-     * @param string $next
-     * @param string $title
-     * @param string $in_same_cat
-     * @param int    $limitnext
-     * @param string $excluded_categories
-     *
-     * @since      0.71
-     * @deprecated 2.0.0 Use next_post_link()
-     * @see        next_post_link()
-     *
-     */
     function next_post(
         $format = '%', $next = 'next post: ', $title = 'yes', $in_same_cat = 'no', $limitnext = 1, $excluded_categories = ''
     ) {
@@ -220,19 +139,6 @@
         echo $format;
     }
 
-    /**
-     * Whether user can create a post.
-     *
-     * @param int $user_id
-     * @param int $blog_id     Not Used
-     * @param int $category_id Not Used
-     *
-     * @return bool
-     * @deprecated 2.0.0 Use current_user_can()
-     * @see        current_user_can()
-     *
-     * @since      1.5.0
-     */
     function user_can_create_post($user_id, $blog_id = 1, $category_id = 'None')
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'current_user_can()');
@@ -242,19 +148,6 @@
         return ($author_data->user_level > 1);
     }
 
-    /**
-     * Whether user can create a post.
-     *
-     * @param int $user_id
-     * @param int $blog_id     Not Used
-     * @param int $category_id Not Used
-     *
-     * @return bool
-     * @deprecated 2.0.0 Use current_user_can()
-     * @see        current_user_can()
-     *
-     * @since      1.5.0
-     */
     function user_can_create_draft($user_id, $blog_id = 1, $category_id = 'None')
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'current_user_can()');
@@ -264,19 +157,6 @@
         return ($author_data->user_level >= 1);
     }
 
-    /**
-     * Whether user can edit a post.
-     *
-     * @param int $user_id
-     * @param int $post_id
-     * @param int $blog_id Not Used
-     *
-     * @return bool
-     * @deprecated 2.0.0 Use current_user_can()
-     * @see        current_user_can()
-     *
-     * @since      1.5.0
-     */
     function user_can_edit_post($user_id, $post_id, $blog_id = 1)
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'current_user_can()');
@@ -295,19 +175,6 @@
         }
     }
 
-    /**
-     * Whether user can delete a post.
-     *
-     * @param int $user_id
-     * @param int $post_id
-     * @param int $blog_id Not Used
-     *
-     * @return bool
-     * @deprecated 2.0.0 Use current_user_can()
-     * @see        current_user_can()
-     *
-     * @since      1.5.0
-     */
     function user_can_delete_post($user_id, $post_id, $blog_id = 1)
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'current_user_can()');
@@ -316,19 +183,6 @@
         return user_can_edit_post($user_id, $post_id, $blog_id);
     }
 
-    /**
-     * Whether user can set new posts' dates.
-     *
-     * @param int $user_id
-     * @param int $blog_id     Not Used
-     * @param int $category_id Not Used
-     *
-     * @return bool
-     * @deprecated 2.0.0 Use current_user_can()
-     * @see        current_user_can()
-     *
-     * @since      1.5.0
-     */
     function user_can_set_post_date($user_id, $blog_id = 1, $category_id = 'None')
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'current_user_can()');
@@ -338,19 +192,6 @@
         return (($author_data->user_level > 4) && user_can_create_post($user_id, $blog_id, $category_id));
     }
 
-    /**
-     * Whether user can delete a post.
-     *
-     * @param int $user_id
-     * @param int $post_id
-     * @param int $blog_id Not Used
-     *
-     * @return bool returns true if $user_id can edit $post_id's date
-     * @deprecated 2.0.0 Use current_user_can()
-     * @see        current_user_can()
-     *
-     * @since      1.5.0
-     */
     function user_can_edit_post_date($user_id, $post_id, $blog_id = 1)
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'current_user_can()');
@@ -360,19 +201,6 @@
         return (($author_data->user_level > 4) && user_can_edit_post($user_id, $post_id, $blog_id));
     }
 
-    /**
-     * Whether user can delete a post.
-     *
-     * @param int $user_id
-     * @param int $post_id
-     * @param int $blog_id Not Used
-     *
-     * @return bool returns true if $user_id can edit $post_id's comments
-     * @deprecated 2.0.0 Use current_user_can()
-     * @see        current_user_can()
-     *
-     * @since      1.5.0
-     */
     function user_can_edit_post_comments($user_id, $post_id, $blog_id = 1)
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'current_user_can()');
@@ -381,19 +209,6 @@
         return user_can_edit_post($user_id, $post_id, $blog_id);
     }
 
-    /**
-     * Whether user can delete a post.
-     *
-     * @param int $user_id
-     * @param int $post_id
-     * @param int $blog_id Not Used
-     *
-     * @return bool returns true if $user_id can delete $post_id's comments
-     * @deprecated 2.0.0 Use current_user_can()
-     * @see        current_user_can()
-     *
-     * @since      1.5.0
-     */
     function user_can_delete_post_comments($user_id, $post_id, $blog_id = 1)
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'current_user_can()');
@@ -402,18 +217,6 @@
         return user_can_edit_post_comments($user_id, $post_id, $blog_id);
     }
 
-    /**
-     * Can user can edit other user.
-     *
-     * @param int $user_id
-     * @param int $other_user
-     *
-     * @return bool
-     * @since      1.5.0
-     * @deprecated 2.0.0 Use current_user_can()
-     * @see        current_user_can()
-     *
-     */
     function user_can_edit_user($user_id, $other_user)
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'current_user_can()');
@@ -430,32 +233,6 @@
         }
     }
 
-    /**
-     * Gets the links associated with category $cat_name.
-     *
-     * @param string $cat_name         Optional. The category name to use. If no match is found, uses all.
-     *                                 Default 'noname'.
-     * @param string $before           Optional. The HTML to output before the link. Default empty.
-     * @param string $after            Optional. The HTML to output after the link. Default '<br />'.
-     * @param string $between          Optional. The HTML to output between the link/image and its description.
-     *                                 Not used if no image or $show_images is true. Default ' '.
-     * @param bool   $show_images      Optional. Whether to show images (if defined). Default true.
-     * @param string $orderby          Optional. The order to output the links. E.g. 'id', 'name', 'url',
-     *                                 'description', 'rating', or 'owner'. Default 'id'.
-     *                                 If you start the name with an underscore, the order will be reversed.
-     *                                 Specifying 'rand' as the order will return links in a random order.
-     * @param bool   $show_description Optional. Whether to show the description if show_images=false/not defined.
-     *                                 Default true.
-     * @param bool   $show_rating      Optional. Show rating stars/chars. Default false.
-     * @param int    $limit            Optional. Limit to X entries. If not specified, all entries are shown.
-     *                                 Default -1.
-     * @param int    $show_updated     Optional. Whether to show last updated timestamp. Default 0.
-     *
-     * @since      0.71
-     * @deprecated 2.1.0 Use get_bookmarks()
-     * @see        get_bookmarks()
-     *
-     */
     function get_linksbyname(
         $cat_name = "noname", $before = '', $after = '<br />', $between = " ", $show_images = true, $orderby = 'id', $show_description = true, $show_rating = false, $limit = -1, $show_updated = 0
     ) {
@@ -471,18 +248,6 @@
         get_links($cat_id, $before, $after, $between, $show_images, $orderby, $show_description, $show_rating, $limit, $show_updated);
     }
 
-    /**
-     * Gets the links associated with the named category.
-     *
-     * @param string $category The category to use.
-     * @param string $args
-     *
-     * @return string|null
-     * @since      1.0.1
-     * @deprecated 2.1.0 Use wp_list_bookmarks()
-     * @see        wp_list_bookmarks()
-     *
-     */
     function wp_get_linksbyname($category, $args = '')
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'wp_list_bookmarks()');
@@ -503,29 +268,6 @@
         return wp_list_bookmarks($parsed_args);
     }
 
-    /**
-     * Gets an array of link objects associated with category $cat_name.
-     *
-     *     $links = get_linkobjectsbyname( 'fred' );
-     *     foreach ( $links as $link ) {
-     *        echo '<li>' . $link->link_name . '</li>';
-     *     }
-     *
-     * @param string $cat_name Optional. The category name to use. If no match is found, uses all.
-     *                         Default 'noname'.
-     * @param string $orderby  Optional. The order to output the links. E.g. 'id', 'name', 'url',
-     *                         'description', 'rating', or 'owner'. Default 'name'.
-     *                         If you start the name with an underscore, the order will be reversed.
-     *                         Specifying 'rand' as the order will return links in a random order.
-     * @param int    $limit    Optional. Limit to X entries. If not specified, all entries are shown.
-     *                         Default -1.
-     *
-     * @return array
-     * @deprecated 2.1.0 Use get_bookmarks()
-     * @see        get_bookmarks()
-     *
-     * @since      1.0.1
-     */
     function get_linkobjectsbyname($cat_name = "noname", $orderby = 'name', $limit = -1)
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'get_bookmarks()');
@@ -540,49 +282,6 @@
         return get_linkobjects($cat_id, $orderby, $limit);
     }
 
-    /**
-     * Gets an array of link objects associated with category n.
-     *
-     * Usage:
-     *
-     *     $links = get_linkobjects(1);
-     *     if ($links) {
-     *        foreach ($links as $link) {
-     *            echo '<li>'.$link->link_name.'<br />'.$link->link_description.'</li>';
-     *        }
-     *     }
-     *
-     * Fields are:
-     *
-     * - link_id
-     * - link_url
-     * - link_name
-     * - link_image
-     * - link_target
-     * - link_category
-     * - link_description
-     * - link_visible
-     * - link_owner
-     * - link_rating
-     * - link_updated
-     * - link_rel
-     * - link_notes
-     *
-     * @param int    $category Optional. The category to use. If no category supplied, uses all.
-     *                         Default 0.
-     * @param string $orderby  Optional. The order to output the links. E.g. 'id', 'name', 'url',
-     *                         'description', 'rating', or 'owner'. Default 'name'.
-     *                         If you start the name with an underscore, the order will be reversed.
-     *                         Specifying 'rand' as the order will return links in a random order.
-     * @param int    $limit    Optional. Limit to X entries. If not specified, all entries are shown.
-     *                         Default 0.
-     *
-     * @return array
-     * @deprecated 2.1.0 Use get_bookmarks()
-     * @see        get_bookmarks()
-     *
-     * @since      1.0.1
-     */
     function get_linkobjects($category = 0, $orderby = 'name', $limit = 0)
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'get_bookmarks()');
@@ -598,31 +297,6 @@
         return $links_array;
     }
 
-    /**
-     * Gets the links associated with category 'cat_name' and display rating stars/chars.
-     *
-     * @param string $cat_name         Optional. The category name to use. If no match is found, uses all.
-     *                                 Default 'noname'.
-     * @param string $before           Optional. The HTML to output before the link. Default empty.
-     * @param string $after            Optional. The HTML to output after the link. Default '<br />'.
-     * @param string $between          Optional. The HTML to output between the link/image and its description.
-     *                                 Not used if no image or $show_images is true. Default ' '.
-     * @param bool   $show_images      Optional. Whether to show images (if defined). Default true.
-     * @param string $orderby          Optional. The order to output the links. E.g. 'id', 'name', 'url',
-     *                                 'description', 'rating', or 'owner'. Default 'id'.
-     *                                 If you start the name with an underscore, the order will be reversed.
-     *                                 Specifying 'rand' as the order will return links in a random order.
-     * @param bool   $show_description Optional. Whether to show the description if show_images=false/not defined.
-     *                                 Default true.
-     * @param int    $limit            Optional. Limit to X entries. If not specified, all entries are shown.
-     *                                 Default -1.
-     * @param int    $show_updated     Optional. Whether to show last updated timestamp. Default 0.
-     *
-     * @since      0.71
-     * @deprecated 2.1.0 Use get_bookmarks()
-     * @see        get_bookmarks()
-     *
-     */
     function get_linksbyname_withrating(
         $cat_name = "noname", $before = '', $after = '<br />', $between = " ", $show_images = true, $orderby = 'id', $show_description = true, $limit = -1, $show_updated = 0
     ) {
@@ -631,31 +305,6 @@
         get_linksbyname($cat_name, $before, $after, $between, $show_images, $orderby, $show_description, true, $limit, $show_updated);
     }
 
-    /**
-     * Gets the links associated with category n and display rating stars/chars.
-     *
-     * @param int    $category         Optional. The category to use. If no category supplied, uses all.
-     *                                 Default 0.
-     * @param string $before           Optional. The HTML to output before the link. Default empty.
-     * @param string $after            Optional. The HTML to output after the link. Default '<br />'.
-     * @param string $between          Optional. The HTML to output between the link/image and its description.
-     *                                 Not used if no image or $show_images is true. Default ' '.
-     * @param bool   $show_images      Optional. Whether to show images (if defined). Default true.
-     * @param string $orderby          Optional. The order to output the links. E.g. 'id', 'name', 'url',
-     *                                 'description', 'rating', or 'owner'. Default 'id'.
-     *                                 If you start the name with an underscore, the order will be reversed.
-     *                                 Specifying 'rand' as the order will return links in a random order.
-     * @param bool   $show_description Optional. Whether to show the description if show_images=false/not defined.
-     *                                 Default true.
-     * @param int    $limit            Optional. Limit to X entries. If not specified, all entries are shown.
-     *                                 Default -1.
-     * @param int    $show_updated     Optional. Whether to show last updated timestamp. Default 0.
-     *
-     * @since      0.71
-     * @deprecated 2.1.0 Use get_bookmarks()
-     * @see        get_bookmarks()
-     *
-     */
     function get_links_withrating(
         $category = -1, $before = '', $after = '<br />', $between = " ", $show_images = true, $orderby = 'id', $show_description = true, $limit = -1, $show_updated = 0
     ) {
@@ -664,16 +313,6 @@
         get_links($category, $before, $after, $between, $show_images, $orderby, $show_description, true, $limit, $show_updated);
     }
 
-    /**
-     * Gets the auto_toggle setting.
-     *
-     * @param int $id The category to get. If no category supplied uses 0
-     *
-     * @return int Only returns 0.
-     * @since      0.71
-     * @deprecated 2.1.0
-     *
-     */
     function get_autotoggle($id = 0)
     {
         _deprecated_function(__FUNCTION__, '2.1.0');
@@ -681,34 +320,6 @@
         return 0;
     }
 
-    /**
-     * Lists categories.
-     *
-     * @param int    $optionall
-     * @param string $all
-     * @param string $sort_column
-     * @param string $sort_order
-     * @param string $file
-     * @param bool   $list
-     * @param int    $optiondates
-     * @param int    $optioncount
-     * @param int    $hide_empty
-     * @param int    $use_desc_for_title
-     * @param bool   $children
-     * @param int    $child_of
-     * @param int    $categories
-     * @param int    $recurse
-     * @param string $feed
-     * @param string $feed_image
-     * @param string $exclude
-     * @param bool   $hierarchical
-     *
-     * @return null|false
-     * @since      0.71
-     * @deprecated 2.1.0 Use wp_list_categories()
-     * @see        wp_list_categories()
-     *
-     */
     function list_cats(
         $optionall = 1, $all = 'All', $sort_column = 'ID', $sort_order = 'asc', $file = '', $list = true, $optiondates = 0, $optioncount = 0, $hide_empty = 1, $use_desc_for_title = 1, $children = false, $child_of = 0, $categories = 0, $recurse = 0, $feed = '', $feed_image = '', $exclude = '', $hierarchical = false
     ) {
@@ -719,17 +330,6 @@
         return wp_list_cats($query);
     }
 
-    /**
-     * Lists categories.
-     *
-     * @param string|array $args
-     *
-     * @return null|string|false
-     * @see        wp_list_categories()
-     *
-     * @since      1.2.0
-     * @deprecated 2.1.0 Use wp_list_categories()
-     */
     function wp_list_cats($args = '')
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'wp_list_categories()');
@@ -766,26 +366,6 @@
         return wp_list_categories($parsed_args);
     }
 
-    /**
-     * Deprecated method for generating a drop-down of categories.
-     *
-     * @param int    $optionall
-     * @param string $all
-     * @param string $orderby
-     * @param string $order
-     * @param int    $show_last_update
-     * @param int    $show_count
-     * @param int    $hide_empty
-     * @param bool   $optionnone
-     * @param int    $selected
-     * @param int    $exclude
-     *
-     * @return string
-     * @since      0.71
-     * @deprecated 2.1.0 Use wp_dropdown_categories()
-     * @see        wp_dropdown_categories()
-     *
-     */
     function dropdown_cats(
         $optionall = 1, $all = 'All', $orderby = 'ID', $order = 'asc', $show_last_update = 0, $show_count = 0, $hide_empty = 1, $optionnone = false, $selected = 0, $exclude = 0
     ) {
@@ -809,22 +389,6 @@
         return wp_dropdown_categories($query);
     }
 
-    /**
-     * Lists authors.
-     *
-     * @param bool   $optioncount
-     * @param bool   $exclude_admin
-     * @param bool   $show_fullname
-     * @param bool   $hide_empty
-     * @param string $feed
-     * @param string $feed_image
-     *
-     * @return null|string
-     * @since      1.2.0
-     * @deprecated 2.1.0 Use wp_list_authors()
-     * @see        wp_list_authors()
-     *
-     */
     function list_authors(
         $optioncount = false, $exclude_admin = true, $show_fullname = false, $hide_empty = true, $feed = '', $feed_image = ''
     ) {
@@ -835,18 +399,6 @@
         return wp_list_authors($args);
     }
 
-    /**
-     * Retrieves a list of post categories.
-     *
-     * @param int $blogid Not Used
-     * @param int $post_id
-     *
-     * @return array
-     * @since      1.0.1
-     * @deprecated 2.1.0 Use wp_get_post_categories()
-     * @see        wp_get_post_categories()
-     *
-     */
     function wp_get_post_cats($blogid = '1', $post_id = 0)
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'wp_get_post_categories()');
@@ -854,20 +406,6 @@
         return wp_get_post_categories($post_id);
     }
 
-    /**
-     * Sets the categories that the post ID belongs to.
-     *
-     * @param int   $blogid Not used
-     * @param int   $post_id
-     * @param array $post_categories
-     *
-     * @return bool|mixed
-     * @since      1.0.1
-     * @deprecated 2.1.0
-     * @deprecated Use wp_set_post_categories()
-     * @see        wp_set_post_categories()
-     *
-     */
     function wp_set_post_cats($blogid = '1', $post_id = 0, $post_categories = [])
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'wp_set_post_categories()');
@@ -875,22 +413,6 @@
         return wp_set_post_categories($post_id, $post_categories);
     }
 
-    /**
-     * Retrieves a list of archives.
-     *
-     * @param string $type
-     * @param string $limit
-     * @param string $format
-     * @param string $before
-     * @param string $after
-     * @param bool   $show_post_count
-     *
-     * @return string|null
-     * @since      0.71
-     * @deprecated 2.1.0 Use wp_get_archives()
-     * @see        wp_get_archives()
-     *
-     */
     function get_archives(
         $type = '', $limit = '', $format = 'html', $before = '', $after = '', $show_post_count = false
     ) {
@@ -900,19 +422,6 @@
         return wp_get_archives($args);
     }
 
-    /**
-     * Returns or Prints link to the author's posts.
-     *
-     * @param bool   $display
-     * @param int    $author_id
-     * @param string $author_nicename Optional.
-     *
-     * @return string|null
-     * @deprecated 2.1.0 Use get_author_posts_url()
-     * @see        get_author_posts_url()
-     *
-     * @since      1.2.0
-     */
     function get_author_link($display, $author_id, $author_nicename = '')
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'get_author_posts_url()');
@@ -927,23 +436,6 @@
         return $link;
     }
 
-    /**
-     * Print list of pages based on arguments.
-     *
-     * @param string $before
-     * @param string $after
-     * @param string $next_or_number
-     * @param string $nextpagelink
-     * @param string $previouspagelink
-     * @param string $pagelink
-     * @param string $more_file
-     *
-     * @return string
-     * @since      0.71
-     * @deprecated 2.1.0 Use wp_link_pages()
-     * @see        wp_link_pages()
-     *
-     */
     function link_pages(
         $before = '<br />', $after = '<br />', $next_or_number = 'number', $nextpagelink = 'next page', $previouspagelink = 'previous page', $pagelink = '%', $more_file = ''
     ) {
@@ -954,17 +446,6 @@
         return wp_link_pages($args);
     }
 
-    /**
-     * Get value based on option.
-     *
-     * @param string $option
-     *
-     * @return string
-     * @see        get_option()
-     *
-     * @since      0.71
-     * @deprecated 2.1.0 Use get_option()
-     */
     function get_settings($option)
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'get_option()');
@@ -972,46 +453,18 @@
         return get_option($option);
     }
 
-    /**
-     * Print the permalink of the current post in the loop.
-     *
-     * @since      0.71
-     * @deprecated 1.2.0 Use the_permalink()
-     * @see        the_permalink()
-     */
     function permalink_link()
     {
         _deprecated_function(__FUNCTION__, '1.2.0', 'the_permalink()');
         the_permalink();
     }
 
-    /**
-     * Print the permalink to the RSS feed.
-     *
-     * @param string $deprecated
-     *
-     * @deprecated 2.3.0 Use the_permalink_rss()
-     * @see        the_permalink_rss()
-     *
-     * @since      0.71
-     */
     function permalink_single_rss($deprecated = '')
     {
         _deprecated_function(__FUNCTION__, '2.3.0', 'the_permalink_rss()');
         the_permalink_rss();
     }
 
-    /**
-     * Gets the links associated with category.
-     *
-     * @param string $args a query string
-     *
-     * @return null|string
-     * @see        wp_list_bookmarks()
-     *
-     * @since      1.0.1
-     * @deprecated 2.1.0 Use wp_list_bookmarks()
-     */
     function wp_get_links($args = '')
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'wp_list_bookmarks()');
@@ -1043,34 +496,6 @@
         return wp_list_bookmarks($parsed_args);
     }
 
-    /**
-     * Gets the links associated with category by ID.
-     *
-     * @param int    $category         Optional. The category to use. If no category supplied uses all.
-     *                                 Default 0.
-     * @param string $before           Optional. The HTML to output before the link. Default empty.
-     * @param string $after            Optional. The HTML to output after the link. Default '<br />'.
-     * @param string $between          Optional. The HTML to output between the link/image and its description.
-     *                                 Not used if no image or $show_images is true. Default ' '.
-     * @param bool   $show_images      Optional. Whether to show images (if defined). Default true.
-     * @param string $orderby          Optional. The order to output the links. E.g. 'id', 'name', 'url',
-     *                                 'description', 'rating', or 'owner'. Default 'name'.
-     *                                 If you start the name with an underscore, the order will be reversed.
-     *                                 Specifying 'rand' as the order will return links in a random order.
-     * @param bool   $show_description Optional. Whether to show the description if show_images=false/not defined.
-     *                                 Default true.
-     * @param bool   $show_rating      Optional. Show rating stars/chars. Default false.
-     * @param int    $limit            Optional. Limit to X entries. If not specified, all entries are shown.
-     *                                 Default -1.
-     * @param int    $show_updated     Optional. Whether to show last updated timestamp. Default 1.
-     * @param bool   $display          Whether to display the results, or return them instead.
-     *
-     * @return null|string
-     * @since      0.71
-     * @deprecated 2.1.0 Use get_bookmarks()
-     * @see        get_bookmarks()
-     *
-     */
     function get_links(
         $category = -1, $before = '', $after = '<br />', $between = ' ', $show_images = true, $orderby = 'name', $show_description = true, $show_rating = false, $limit = -1, $show_updated = 1, $display = true
     ) {
@@ -1195,19 +620,6 @@
         echo $output;
     }
 
-    /**
-     * Output entire list of links by category.
-     *
-     * Output a list of all links, listed by category, using the settings in
-     * $wpdb->linkcategories and output it as a nested HTML unordered list.
-     *
-     * @param string $order Sort link categories by 'name' or 'id'
-     *
-     * @deprecated 2.1.0 Use wp_list_bookmarks()
-     * @see        wp_list_bookmarks()
-     *
-     * @since      1.0.1
-     */
     function get_links_list($order = 'name')
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'wp_list_bookmarks()');
@@ -1247,35 +659,11 @@
         }
     }
 
-    /**
-     * Show the link to the links popup and the number of links.
-     *
-     * @param string $text   the text of the link
-     * @param int    $width  the width of the popup window
-     * @param int    $height the height of the popup window
-     * @param string $file   the page to open in the popup window
-     * @param bool   $count  the number of links in the db
-     *
-     * @deprecated 2.1.0
-     *
-     * @since      0.71
-     */
     function links_popup_script($text = 'Links', $width = 400, $height = 400, $file = 'links.all.php', $count = true)
     {
         _deprecated_function(__FUNCTION__, '2.1.0');
     }
 
-    /**
-     * Legacy function that retrieved the value of a link's link_rating field.
-     *
-     * @param object $link Link object.
-     *
-     * @return mixed Value of the 'link_rating' field, false otherwise.
-     * @see        sanitize_bookmark_field()
-     *
-     * @since      1.0.1
-     * @deprecated 2.1.0 Use sanitize_bookmark_field()
-     */
     function get_linkrating($link)
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'sanitize_bookmark_field()');
@@ -1283,17 +671,6 @@
         return sanitize_bookmark_field('link_rating', $link->link_rating, $link->link_id, 'display');
     }
 
-    /**
-     * Gets the name of category by ID.
-     *
-     * @param int $id The category to get. If no category supplied uses 0
-     *
-     * @return string
-     * @see        get_category()
-     *
-     * @since      0.71
-     * @deprecated 2.1.0 Use get_category()
-     */
     function get_linkcatname($id = 0)
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'get_category()');
@@ -1319,34 +696,12 @@
         return $cat->name;
     }
 
-    /**
-     * Print RSS comment feed link.
-     *
-     * @param string $link_text
-     *
-     * @deprecated 2.5.0 Use post_comments_feed_link()
-     * @see        post_comments_feed_link()
-     *
-     * @since      1.0.1
-     */
     function comments_rss_link($link_text = 'Comments RSS')
     {
         _deprecated_function(__FUNCTION__, '2.5.0', 'post_comments_feed_link()');
         post_comments_feed_link($link_text);
     }
 
-    /**
-     * Print/Return link to category RSS2 feed.
-     *
-     * @param bool $display
-     * @param int  $cat_id
-     *
-     * @return string
-     * @since      1.2.0
-     * @deprecated 2.5.0 Use get_category_feed_link()
-     * @see        get_category_feed_link()
-     *
-     */
     function get_category_rss_link($display = false, $cat_id = 1)
     {
         _deprecated_function(__FUNCTION__, '2.5.0', 'get_category_feed_link()');
@@ -1361,18 +716,6 @@
         return $link;
     }
 
-    /**
-     * Print/Return link to author RSS feed.
-     *
-     * @param bool $display
-     * @param int  $author_id
-     *
-     * @return string
-     * @since      1.2.0
-     * @deprecated 2.5.0 Use get_author_feed_link()
-     * @see        get_author_feed_link()
-     *
-     */
     function get_author_rss_link($display = false, $author_id = 1)
     {
         _deprecated_function(__FUNCTION__, '2.5.0', 'get_author_feed_link()');
@@ -1386,15 +729,6 @@
         return $link;
     }
 
-    /**
-     * Return link to the post RSS feed.
-     *
-     * @return string
-     * @deprecated 2.2.0 Use get_post_comments_feed_link()
-     * @see        get_post_comments_feed_link()
-     *
-     * @since      1.5.0
-     */
     function comments_rss()
     {
         _deprecated_function(__FUNCTION__, '2.2.0', 'get_post_comments_feed_link()');
@@ -1402,19 +736,6 @@
         return esc_url(get_post_comments_feed_link());
     }
 
-    /**
-     * An alias of wp_create_user().
-     *
-     * @param string $username The user's username.
-     * @param string $password The user's password.
-     * @param string $email    The user's email.
-     *
-     * @return int The new user's ID.
-     * @deprecated 2.0.0 Use wp_create_user()
-     * @see        wp_create_user()
-     *
-     * @since      2.0.0
-     */
     function create_user($username, $password, $email)
     {
         _deprecated_function(__FUNCTION__, '2.0.0', 'wp_create_user()');
@@ -1422,11 +743,6 @@
         return wp_create_user($username, $password, $email);
     }
 
-    /**
-     * Unused function.
-     *
-     * @deprecated 2.5.0
-     */
     function gzip_compression()
     {
         _deprecated_function(__FUNCTION__, '2.5.0');
@@ -1434,19 +750,6 @@
         return false;
     }
 
-    /**
-     * Retrieve an array of comment data about comment $comment_id.
-     *
-     * @param int  $comment_id         The ID of the comment
-     * @param int  $no_cache           Whether to use the cache (cast to bool)
-     * @param bool $include_unapproved Whether to include unapproved comments
-     *
-     * @return array The comment data
-     * @deprecated 2.7.0 Use get_comment()
-     * @see        get_comment()
-     *
-     * @since      0.71
-     */
     function get_commentdata($comment_id, $no_cache = 0, $include_unapproved = false)
     {
         _deprecated_function(__FUNCTION__, '2.7.0', 'get_comment()');
@@ -1454,17 +757,6 @@
         return get_comment($comment_id, ARRAY_A);
     }
 
-    /**
-     * Retrieve the category name by the category ID.
-     *
-     * @param int $cat_id Category ID
-     *
-     * @return string category name
-     * @see        get_cat_name()
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use get_cat_name()
-     */
     function get_catname($cat_id)
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_cat_name()');
@@ -1472,21 +764,6 @@
         return get_cat_name($cat_id);
     }
 
-    /**
-     * Retrieve category children list separated before and after the term IDs.
-     *
-     * @param int    $id      Category ID to retrieve children.
-     * @param string $before  Optional. Prepend before category term ID. Default '/'.
-     * @param string $after   Optional. Append after category term ID. Default empty string.
-     * @param array  $visited Optional. Category Term IDs that have already been added.
-     *                        Default empty array.
-     *
-     * @return string
-     * @see        get_term_children()
-     *
-     * @since      1.2.0
-     * @deprecated 2.8.0 Use get_term_children()
-     */
     function get_category_children($id, $before = '/', $after = '', $visited = [])
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_term_children()');
@@ -1496,7 +773,7 @@
         }
 
         $chain = '';
-        /** TODO: Consult hierarchy */
+
         $cat_ids = get_all_category_ids();
         foreach((array) $cat_ids as $cat_id)
         {
@@ -1521,17 +798,6 @@
         return $chain;
     }
 
-    /**
-     * Retrieves all category IDs.
-     *
-     * @return int[] List of all of the category IDs.
-     * @deprecated 4.0.0 Use get_terms()
-     * @see        get_terms()
-     *
-     * @link       https://developer.wordpress.org/reference/functions/get_all_category_ids/
-     *
-     * @since      2.0.0
-     */
     function get_all_category_ids()
     {
         _deprecated_function(__FUNCTION__, '4.0.0', 'get_terms()');
@@ -1545,15 +811,6 @@
         return $cat_ids;
     }
 
-    /**
-     * Retrieve the description of the author of the current post.
-     *
-     * @return string The author's description.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_description()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'description\')');
@@ -1561,28 +818,12 @@
         return get_the_author_meta('description');
     }
 
-    /**
-     * Display the description of the author of the current post.
-     *
-     * @since      1.0.0
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_description()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'description\')');
         the_author_meta('description');
     }
 
-    /**
-     * Retrieve the login name of the author of the current post.
-     *
-     * @return string The author's login name (username).
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_login()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'login\')');
@@ -1590,28 +831,12 @@
         return get_the_author_meta('login');
     }
 
-    /**
-     * Display the login name of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_login()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'login\')');
         the_author_meta('login');
     }
 
-    /**
-     * Retrieve the first name of the author of the current post.
-     *
-     * @return string The author's first name.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_firstname()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'first_name\')');
@@ -1619,28 +844,12 @@
         return get_the_author_meta('first_name');
     }
 
-    /**
-     * Display the first name of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_firstname()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'first_name\')');
         the_author_meta('first_name');
     }
 
-    /**
-     * Retrieve the last name of the author of the current post.
-     *
-     * @return string The author's last name.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_lastname()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'last_name\')');
@@ -1648,28 +857,12 @@
         return get_the_author_meta('last_name');
     }
 
-    /**
-     * Display the last name of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_lastname()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'last_name\')');
         the_author_meta('last_name');
     }
 
-    /**
-     * Retrieve the nickname of the author of the current post.
-     *
-     * @return string The author's nickname.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_nickname()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'nickname\')');
@@ -1677,28 +870,12 @@
         return get_the_author_meta('nickname');
     }
 
-    /**
-     * Display the nickname of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_nickname()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'nickname\')');
         the_author_meta('nickname');
     }
 
-    /**
-     * Retrieve the email of the author of the current post.
-     *
-     * @return string The author's username.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_email()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'email\')');
@@ -1706,28 +883,12 @@
         return get_the_author_meta('email');
     }
 
-    /**
-     * Display the email of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_email()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'email\')');
         the_author_meta('email');
     }
 
-    /**
-     * Retrieve the ICQ number of the author of the current post.
-     *
-     * @return string The author's ICQ number.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_icq()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'icq\')');
@@ -1735,28 +896,12 @@
         return get_the_author_meta('icq');
     }
 
-    /**
-     * Display the ICQ number of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_icq()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'icq\')');
         the_author_meta('icq');
     }
 
-    /**
-     * Retrieve the Yahoo! IM name of the author of the current post.
-     *
-     * @return string The author's Yahoo! IM name.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_yim()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'yim\')');
@@ -1764,28 +909,12 @@
         return get_the_author_meta('yim');
     }
 
-    /**
-     * Display the Yahoo! IM name of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_yim()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'yim\')');
         the_author_meta('yim');
     }
 
-    /**
-     * Retrieve the MSN address of the author of the current post.
-     *
-     * @return string The author's MSN address.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_msn()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'msn\')');
@@ -1793,28 +922,12 @@
         return get_the_author_meta('msn');
     }
 
-    /**
-     * Display the MSN address of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_msn()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'msn\')');
         the_author_meta('msn');
     }
 
-    /**
-     * Retrieve the AIM address of the author of the current post.
-     *
-     * @return string The author's AIM address.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_aim()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'aim\')');
@@ -1822,30 +935,12 @@
         return get_the_author_meta('aim');
     }
 
-    /**
-     * Display the AIM address of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta('aim')
-     * @see        the_author_meta()
-     */
     function the_author_aim()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'aim\')');
         the_author_meta('aim');
     }
 
-    /**
-     * Retrieve the specified author's preferred display name.
-     *
-     * @param int $auth_id The ID of the author.
-     *
-     * @return string The author's display name.
-     * @see        get_the_author_meta()
-     *
-     * @since      1.0.0
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     */
     function get_author_name($auth_id = false)
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'display_name\')');
@@ -1853,15 +948,6 @@
         return get_the_author_meta('display_name', $auth_id);
     }
 
-    /**
-     * Retrieve the URL to the home page of the author of the current post.
-     *
-     * @return string The URL to the author's page.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_url()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'url\')');
@@ -1869,28 +955,12 @@
         return get_the_author_meta('url');
     }
 
-    /**
-     * Display the URL to the home page of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_url()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'url\')');
         the_author_meta('url');
     }
 
-    /**
-     * Retrieve the ID of the author of the current post.
-     *
-     * @return string|int The author's ID.
-     * @deprecated 2.8.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     * @since      1.5.0
-     */
     function get_the_author_ID()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'get_the_author_meta(\'ID\')');
@@ -1898,63 +968,18 @@
         return get_the_author_meta('ID');
     }
 
-    /**
-     * Display the ID of the author of the current post.
-     *
-     * @since      0.71
-     * @deprecated 2.8.0 Use the_author_meta()
-     * @see        the_author_meta()
-     */
     function the_author_ID()
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'the_author_meta(\'ID\')');
         the_author_meta('ID');
     }
 
-    /**
-     * Display the post content for the feed.
-     *
-     * For encoding the HTML or the $encode_html parameter, there are three possible values:
-     * - '0' will make urls footnotes and use make_url_footnote().
-     * - '1' will encode special characters and automatically display all of the content.
-     * - '2' will strip all HTML tags from the content.
-     *
-     * Also note that you cannot set the amount of words and not set the HTML encoding.
-     * If that is the case, then the HTML encoding will default to 2, which will strip
-     * all HTML tags.
-     *
-     * To restrict the amount of words of the content, you can use the cut parameter.
-     * If the content is less than the amount, then there won't be any dots added to the end.
-     * If there is content left over, then dots will be added and the rest of the content
-     * will be removed.
-     *
-     * @param string $more_link_text Optional. Text to display when more content is available
-     *                               but not displayed. Default '(more...)'.
-     * @param int    $stripteaser    Optional. Default 0.
-     * @param string $more_file      Optional.
-     * @param int    $cut            Optional. Amount of words to keep for the content.
-     * @param int    $encode_html    Optional. How to encode the content.
-     *
-     * @see        the_content_feed()
-     *
-     * @since      0.71
-     *
-     * @deprecated 2.9.0 Use the_content_feed()
-     */
     function the_content_rss(
         $more_link_text = '(more...)', $stripteaser = 0, $more_file = '', $cut = 0, $encode_html = 0
     ) {
         _deprecated_function(__FUNCTION__, '2.9.0', 'the_content_feed()');
         $content = get_the_content($more_link_text, $stripteaser);
 
-        /**
-         * Filters the post content in the context of an RSS feed.
-         *
-         * @param string $content Content of the current post.
-         *
-         * @since 0.71
-         *
-         */
         $content = apply_filters('the_content_rss', $content);
         if($cut && ! $encode_html)
         {
@@ -1987,7 +1012,6 @@
                 $use_dotdotdot = 0;
             }
 
-            /** @todo Check performance, might be faster to use array slice instead. */
             for($i = 0; $i < $k; $i++)
             {
                 $excerpt .= $blah[$i].' ';
@@ -1999,19 +1023,6 @@
         echo $content;
     }
 
-    /**
-     * Strip HTML and put links at the bottom of stripped content.
-     *
-     * Searches for all of the links, strips them out of the content, and places
-     * them at the bottom of the content with numbers.
-     *
-     * @param string $content Content to get links.
-     *
-     * @return string HTML stripped out of content with links at the bottom.
-     * @since      0.71
-     * @deprecated 2.9.0
-     *
-     */
     function make_url_footnote($content)
     {
         _deprecated_function(__FUNCTION__, '2.9.0', '');
@@ -2033,28 +1044,6 @@
         return $content;
     }
 
-    /**
-     * Retrieve translated string with vertical bar context
-     *
-     * Quite a few times, there will be collisions with similar translatable text
-     * found in more than two places but with different translated context.
-     *
-     * In order to use the separate contexts, the _c() function is used and the
-     * translatable string uses a pipe ('|') which has the context the string is in.
-     *
-     * When the translated string is returned, it is everything before the pipe, not
-     * including the pipe character. If there is no pipe in the translated text then
-     * everything is returned.
-     *
-     * @param string $text   Text to translate.
-     * @param string $domain Optional. Domain to retrieve the translated text.
-     *
-     * @return string Translated context string without pipe.
-     * @since      2.2.0
-     * @deprecated 2.9.0 Use _x()
-     * @see        _x()
-     *
-     */
     function _c($text, $domain = 'default')
     {
         _deprecated_function(__FUNCTION__, '2.9.0', '_x()');
@@ -2062,19 +1051,6 @@
         return before_last_bar(translate($text, $domain));
     }
 
-    /**
-     * Translates $text like translate(), but assumes that the text
-     * contains a context after its last vertical bar.
-     *
-     * @param string $text   Text to translate.
-     * @param string $domain Domain to retrieve the translated text.
-     *
-     * @return string Translated text.
-     * @since      2.5.0
-     * @deprecated 3.0.0 Use _x()
-     * @see        _x()
-     *
-     */
     function translate_with_context($text, $domain = 'default')
     {
         _deprecated_function(__FUNCTION__, '2.9.0', '_x()');
@@ -2082,23 +1058,6 @@
         return before_last_bar(translate($text, $domain));
     }
 
-    /**
-     * Legacy version of _n(), which supports contexts.
-     *
-     * Strips everything from the translation after the last bar.
-     *
-     * @param string $single The text to be used if the number is singular.
-     * @param string $plural The text to be used if the number is plural.
-     * @param int    $number The number to compare against to use either the singular or plural form.
-     * @param string $domain Optional. Text domain. Unique identifier for retrieving translated strings.
-     *                       Default 'default'.
-     *
-     * @return string The translated singular or plural form.
-     * @see        _nx()
-     *
-     * @since      2.7.0
-     * @deprecated 3.0.0 Use _nx()
-     */
     function _nc($single, $plural, $number, $domain = 'default')
     {
         _deprecated_function(__FUNCTION__, '2.9.0', '_nx()');
@@ -2106,13 +1065,6 @@
         return before_last_bar(_n($single, $plural, $number, $domain));
     }
 
-    /**
-     * Retrieve the plural or single form based on the amount.
-     *
-     * @since      1.2.0
-     * @deprecated 2.8.0 Use _n()
-     * @see        _n()
-     */
     function __ngettext(...$args)
     { // phpcs:ignore PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.FunctionDoubleUnderscore
         _deprecated_function(__FUNCTION__, '2.8.0', '_n()');
@@ -2120,13 +1072,6 @@
         return _n(...$args);
     }
 
-    /**
-     * Register plural strings in POT file, but don't translate them.
-     *
-     * @since      2.5.0
-     * @deprecated 2.8.0 Use _n_noop()
-     * @see        _n_noop()
-     */
     function __ngettext_noop(...$args)
     { // phpcs:ignore PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.FunctionDoubleUnderscore
         _deprecated_function(__FUNCTION__, '2.8.0', '_n_noop()');
@@ -2134,15 +1079,6 @@
         return _n_noop(...$args);
     }
 
-    /**
-     * Retrieve all autoload options, or all options if no autoloaded ones exist.
-     *
-     * @return array List of all options.
-     * @deprecated 3.0.0 Use wp_load_alloptions())
-     * @see        wp_load_alloptions()
-     *
-     * @since      1.0.0
-     */
     function get_alloptions()
     {
         _deprecated_function(__FUNCTION__, '3.0.0', 'wp_load_alloptions()');
@@ -2150,20 +1086,6 @@
         return wp_load_alloptions();
     }
 
-    /**
-     * Retrieve HTML content of attachment image with link.
-     *
-     * @param int   $id        Optional. Post ID.
-     * @param bool  $fullsize  Optional. Whether to use full size image. Default false.
-     * @param array $max_dims  Optional. Max image dimensions.
-     * @param bool  $permalink Optional. Whether to include permalink to image. Default false.
-     *
-     * @return string
-     * @see        wp_get_attachment_link()
-     *
-     * @since      2.0.0
-     * @deprecated 2.5.0 Use wp_get_attachment_link()
-     */
     function get_the_attachment_link($id = 0, $fullsize = false, $max_dims = false, $permalink = false)
     {
         _deprecated_function(__FUNCTION__, '2.5.0', 'wp_get_attachment_link()');
@@ -2187,18 +1109,6 @@
         return "<a href='$url' title='$post_title'>$innerHTML</a>";
     }
 
-    /**
-     * Retrieve icon URL and Path.
-     *
-     * @param int  $id       Optional. Post ID.
-     * @param bool $fullsize Optional. Whether to have full image. Default false.
-     *
-     * @return array Icon URL and full path to file, respectively.
-     * @since      2.1.0
-     * @deprecated 2.5.0 Use wp_get_attachment_image_src()
-     * @see        wp_get_attachment_image_src()
-     *
-     */
     function get_attachment_icon_src($id = 0, $fullsize = false)
     {
         _deprecated_function(__FUNCTION__, '2.5.0', 'wp_get_attachment_image_src()');
@@ -2227,7 +1137,6 @@
         {
             // No thumb, no image. We'll look for a mime-related icon instead.
 
-            /** This filter is documented in wp-includes/post.php */
             $icon_dir = apply_filters('icon_dir', get_template_directory().'/images');
             $src_file = $icon_dir.'/'.wp_basename($src);
         }
@@ -2240,19 +1149,6 @@
         return [$src, $src_file];
     }
 
-    /**
-     * Retrieve HTML content of icon attachment image element.
-     *
-     * @param int   $id       Optional. Post ID.
-     * @param bool  $fullsize Optional. Whether to have full size image. Default false.
-     * @param array $max_dims Optional. Dimensions of image.
-     *
-     * @return string|false HTML content.
-     * @deprecated 2.5.0 Use wp_get_attachment_image()
-     * @see        wp_get_attachment_image()
-     *
-     * @since      2.0.0
-     */
     function get_attachment_icon($id = 0, $fullsize = false, $max_dims = false)
     {
         _deprecated_function(__FUNCTION__, '2.5.0', 'wp_get_attachment_image()');
@@ -2310,19 +1206,6 @@
         return apply_filters('attachment_icon', $icon, $post->ID);
     }
 
-    /**
-     * Retrieve HTML content of image element.
-     *
-     * @param int   $id       Optional. Post ID.
-     * @param bool  $fullsize Optional. Whether to have full size image. Default false.
-     * @param array $max_dims Optional. Dimensions of image.
-     *
-     * @return string|false
-     * @deprecated 2.5.0 Use wp_get_attachment_image()
-     * @see        wp_get_attachment_image()
-     *
-     * @since      2.0.0
-     */
     function get_attachment_innerHTML($id = 0, $fullsize = false, $max_dims = false)
     {
         _deprecated_function(__FUNCTION__, '2.5.0', 'wp_get_attachment_image()');
@@ -2342,21 +1225,6 @@
         return apply_filters('attachment_innerHTML', $innerHTML, $post->ID);
     }
 
-    /**
-     * Retrieves bookmark data based on ID.
-     *
-     * @param int    $bookmark_id ID of link
-     * @param string $output      Optional. Type of output. Accepts OBJECT, ARRAY_N, or ARRAY_A.
-     *                            Default OBJECT.
-     * @param string $filter      Optional. How to filter the link for output. Accepts 'raw', 'edit',
-     *                            'attribute', 'js', 'db', or 'display'. Default 'raw'.
-     *
-     * @return object|array Bookmark object or array, depending on the type specified by `$output`.
-     * @deprecated 2.1.0 Use get_bookmark()
-     * @see        get_bookmark()
-     *
-     * @since      2.0.0
-     */
     function get_link($bookmark_id, $output = OBJECT, $filter = 'raw')
     {
         _deprecated_function(__FUNCTION__, '2.1.0', 'get_bookmark()');
@@ -2364,23 +1232,6 @@
         return get_bookmark($bookmark_id, $output, $filter);
     }
 
-    /**
-     * Checks and cleans a URL.
-     *
-     * A number of characters are removed from the URL. If the URL is for displaying
-     * (the default behavior) ampersands are also replaced. The 'clean_url' filter
-     * is applied to the returned cleaned URL.
-     *
-     * @param string $url       The URL to be cleaned.
-     * @param array  $protocols Optional. An array of acceptable protocols.
-     * @param string $context   Optional. How the URL will be used. Default is 'display'.
-     *
-     * @return string The cleaned $url after the {@see 'clean_url'} filter is applied.
-     * @deprecated 3.0.0 Use esc_url()
-     * @see        esc_url()
-     *
-     * @since      1.2.0
-     */
     function clean_url($url, $protocols = null, $context = 'display')
     {
         if($context == 'db')
@@ -2395,19 +1246,6 @@
         return esc_url($url, $protocols, $context);
     }
 
-    /**
-     * Escape single quotes, specialchar double quotes, and fix line endings.
-     *
-     * The filter {@see 'js_escape'} is also applied by esc_js().
-     *
-     * @param string $text The text to be escaped.
-     *
-     * @return string Escaped text.
-     * @see        esc_js()
-     *
-     * @since      2.0.4
-     * @deprecated 2.8.0 Use esc_js()
-     */
     function js_escape($text)
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'esc_js()');
@@ -2415,19 +1253,6 @@
         return esc_js($text);
     }
 
-    /**
-     * Legacy escaping for HTML blocks.
-     *
-     * @param string       $text          Text to escape.
-     * @param string       $quote_style   Unused.
-     * @param false|string $charset       Unused.
-     * @param false        $double_encode Whether to double encode. Unused.
-     *
-     * @return string Escaped `$text`.
-     * @see        esc_html()
-     *
-     * @deprecated 2.8.0 Use esc_html()
-     */
     function wp_specialchars($text, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false)
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'esc_html()');
@@ -2441,17 +1266,6 @@
         }
     }
 
-    /**
-     * Escaping for HTML attributes.
-     *
-     * @param string $text
-     *
-     * @return string
-     * @see        esc_attr()
-     *
-     * @since      2.0.6
-     * @deprecated 2.8.0 Use esc_attr()
-     */
     function attribute_escape($text)
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'esc_attr()');
@@ -2459,26 +1273,6 @@
         return esc_attr($text);
     }
 
-    /**
-     * Register widget for sidebar with backward compatibility.
-     *
-     * Allows $name to be an array that accepts either three elements to grab the
-     * first element and the third for the name or just uses the first element of
-     * the array for the name.
-     *
-     * Passes to wp_register_sidebar_widget() after argument list and backward
-     * compatibility is complete.
-     *
-     * @param string|int $name            Widget ID.
-     * @param callable   $output_callback Run when widget is called.
-     * @param string     $classname       Optional. Classname widget option. Default empty.
-     * @param mixed      ...$params       Widget parameters.
-     *
-     * @deprecated 2.8.0 Use wp_register_sidebar_widget()
-     * @see        wp_register_sidebar_widget()
-     *
-     * @since      2.2.0
-     */
     function register_sidebar_widget($name, $output_callback, $classname = '', ...$params)
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'wp_register_sidebar_widget()');
@@ -2505,16 +1299,6 @@
         wp_register_sidebar_widget($id, $name, $output_callback, $options, ...$params);
     }
 
-    /**
-     * Serves as an alias of wp_unregister_sidebar_widget().
-     *
-     * @param int|string $id Widget ID.
-     *
-     * @deprecated 2.8.0 Use wp_unregister_sidebar_widget()
-     * @see        wp_unregister_sidebar_widget()
-     *
-     * @since      2.2.0
-     */
     function unregister_sidebar_widget($id)
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'wp_unregister_sidebar_widget()');
@@ -2522,27 +1306,6 @@
         return wp_unregister_sidebar_widget($id);
     }
 
-    /**
-     * Registers widget control callback for customizing options.
-     *
-     * Allows $name to be an array that accepts either three elements to grab the
-     * first element and the third for the name or just uses the first element of
-     * the array for the name.
-     *
-     * Passes to wp_register_widget_control() after the argument list has
-     * been compiled.
-     *
-     * @param int|string $name             Sidebar ID.
-     * @param callable   $control_callback Widget control callback to display and process form.
-     * @param int        $width            Widget width.
-     * @param int        $height           Widget height.
-     * @param mixed      ...$params        Widget parameters.
-     *
-     * @see        wp_register_widget_control()
-     *
-     * @since      2.2.0
-     * @deprecated 2.8.0 Use wp_register_widget_control()
-     */
     function register_widget_control($name, $control_callback, $width = '', $height = '', ...$params)
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'wp_register_widget_control()');
@@ -2573,16 +1336,6 @@
         wp_register_widget_control($id, $name, $control_callback, $options, ...$params);
     }
 
-    /**
-     * Alias of wp_unregister_widget_control().
-     *
-     * @param int|string $id Widget ID.
-     *
-     * @deprecated 2.8.0 Use wp_unregister_widget_control()
-     * @see        wp_unregister_widget_control()
-     *
-     * @since      2.2.0
-     */
     function unregister_widget_control($id)
     {
         _deprecated_function(__FUNCTION__, '2.8.0', 'wp_unregister_widget_control()');
@@ -2590,19 +1343,6 @@
         return wp_unregister_widget_control($id);
     }
 
-    /**
-     * Remove user meta data.
-     *
-     * @param int    $user_id    User ID.
-     * @param string $meta_key   Metadata key.
-     * @param mixed  $meta_value Optional. Metadata value. Default empty.
-     *
-     * @return bool True deletion completed and false if user_id is not a number.
-     * @deprecated 3.0.0 Use delete_user_meta()
-     * @see        delete_user_meta()
-     *
-     * @since      2.0.0
-     */
     function delete_usermeta($user_id, $meta_key, $meta_value = '')
     {
         _deprecated_function(__FUNCTION__, '3.0.0', 'delete_user_meta()');
@@ -2646,23 +1386,6 @@
         return true;
     }
 
-    /**
-     * Retrieve user metadata.
-     *
-     * If $user_id is not a number, then the function will fail over with a 'false'
-     * boolean return value. Other returned values depend on whether there is only
-     * one item to be returned, which be that single item type. If there is more
-     * than one metadata value, then it will be list of metadata values.
-     *
-     * @param int    $user_id  User ID
-     * @param string $meta_key Optional. Metadata key. Default empty.
-     *
-     * @return mixed
-     * @since      2.0.0
-     * @deprecated 3.0.0 Use get_user_meta()
-     * @see        get_user_meta()
-     *
-     */
     function get_usermeta($user_id, $meta_key = '')
     {
         _deprecated_function(__FUNCTION__, '3.0.0', 'get_user_meta()');
@@ -2717,25 +1440,6 @@
         }
     }
 
-    /**
-     * Update metadata of user.
-     *
-     * There is no need to serialize values, they will be serialized if it is
-     * needed. The metadata key can only be a string with underscores. All else will
-     * be removed.
-     *
-     * Will remove the metadata, if the meta value is empty.
-     *
-     * @param int    $user_id    User ID
-     * @param string $meta_key   Metadata key.
-     * @param mixed  $meta_value Metadata value.
-     *
-     * @return bool True on successful update, false on failure.
-     * @deprecated 3.0.0 Use update_user_meta()
-     * @see        update_user_meta()
-     *
-     * @since      2.0.0
-     */
     function update_usermeta($user_id, $meta_key, $meta_value)
     {
         _deprecated_function(__FUNCTION__, '3.0.0', 'update_user_meta()');
@@ -2746,7 +1450,6 @@
         }
         $meta_key = preg_replace('|[^a-z0-9_]|i', '', $meta_key);
 
-        /** @todo Might need fix because usermeta data is assumed to be already escaped */
         if(is_string($meta_value))
         {
             $meta_value = stripslashes($meta_value);
@@ -2793,22 +1496,6 @@
         return true;
     }
 
-    /**
-     * Get users for the site.
-     *
-     * For setups that use the multisite feature. Can be used outside of the
-     * multisite feature.
-     *
-     * @param int   $id   Site ID.
-     *
-     * @return array List of users that are part of that site ID
-     * @see        get_users()
-     *
-     * @global wpdb $wpdb WordPress database abstraction object.
-     *
-     * @since      2.2.0
-     * @deprecated 3.1.0 Use get_users()
-     */
     function get_users_of_blog($id = '')
     {
         _deprecated_function(__FUNCTION__, '3.1.0', 'get_users()');
@@ -2824,16 +1511,6 @@
         return $users;
     }
 
-    /**
-     * Enable/disable automatic general feed link outputting.
-     *
-     * @param bool $add Optional. Add or remove links. Default true.
-     *
-     * @deprecated 3.0.0 Use add_theme_support()
-     * @see        add_theme_support()
-     *
-     * @since      2.8.0
-     */
     function automatic_feed_links($add = true)
     {
         _deprecated_function(__FUNCTION__, '3.0.0', "add_theme_support( 'automatic-feed-links' )");
@@ -2848,18 +1525,6 @@
         } // Just do this yourself in 3.0+.
     }
 
-    /**
-     * Retrieve user data based on field.
-     *
-     * @param string    $field User meta field.
-     * @param false|int $user  Optional. User ID to retrieve the field for. Default false (current user).
-     *
-     * @return string The author's field from the current author's DB object.
-     * @since      1.5.0
-     * @deprecated 3.0.0 Use get_the_author_meta()
-     * @see        get_the_author_meta()
-     *
-     */
     function get_profile($field, $user = false)
     {
         _deprecated_function(__FUNCTION__, '3.0.0', 'get_the_author_meta()');
@@ -2872,17 +1537,6 @@
         return get_the_author_meta($field, $user);
     }
 
-    /**
-     * Retrieves the number of posts a user has written.
-     *
-     * @param int $userid User to count posts for.
-     *
-     * @return int Number of posts the given user has written.
-     * @see        count_user_posts()
-     *
-     * @since      0.71
-     * @deprecated 3.0.0 Use count_user_posts()
-     */
     function get_usernumposts($userid)
     {
         _deprecated_function(__FUNCTION__, '3.0.0', 'count_user_posts()');
@@ -2890,37 +1544,11 @@
         return count_user_posts($userid);
     }
 
-    /**
-     * Callback used to change %uXXXX to &#YYY; syntax
-     *
-     * @param array $matches Single Match
-     *
-     * @return string An HTML entity
-     * @since      2.8.0
-     * @access     private
-     * @deprecated 3.0.0
-     *
-     */
     function funky_javascript_callback($matches)
     {
         return "&#".base_convert($matches[1], 16, 10).";";
     }
 
-    /**
-     * Fixes JavaScript bugs in browsers.
-     *
-     * Converts unicode characters to HTML numbered entities.
-     *
-     * @param string $text Text to be made safe.
-     *
-     * @return string Fixed text.
-     * @global       $is_macIE
-     * @global       $is_winIE
-     *
-     * @since      1.5.0
-     * @deprecated 3.0.0
-     *
-     */
     function funky_javascript_fix($text)
     {
         _deprecated_function(__FUNCTION__, '3.0.0');
@@ -2935,17 +1563,6 @@
         return $text;
     }
 
-    /**
-     * Checks that the taxonomy name exists.
-     *
-     * @param string $taxonomy Name of taxonomy object
-     *
-     * @return bool Whether the taxonomy exists.
-     * @see        taxonomy_exists()
-     *
-     * @since      2.3.0
-     * @deprecated 3.0.0 Use taxonomy_exists()
-     */
     function is_taxonomy($taxonomy)
     {
         _deprecated_function(__FUNCTION__, '3.0.0', 'taxonomy_exists()');
@@ -2953,19 +1570,6 @@
         return taxonomy_exists($taxonomy);
     }
 
-    /**
-     * Check if Term exists.
-     *
-     * @param int|string $term     The term to check
-     * @param string     $taxonomy The taxonomy name to use
-     * @param int        $parent   ID of parent term under which to confine the exists search.
-     *
-     * @return mixed Get the term ID or term object, if exists.
-     * @deprecated 3.0.0 Use term_exists()
-     * @see        term_exists()
-     *
-     * @since      2.3.0
-     */
     function is_term($term, $taxonomy = '', $parent = 0)
     {
         _deprecated_function(__FUNCTION__, '3.0.0', 'term_exists()');
@@ -2973,22 +1577,6 @@
         return term_exists($term, $taxonomy, $parent);
     }
 
-    /**
-     * Determines whether the current admin page is generated by a plugin.
-     *
-     * Use global $plugin_page and/or get_plugin_page_hookname() hooks.
-     *
-     * For more information on this and similar theme functions, check out
-     * the {@link https://developer.wordpress.org/themes/basics/conditional-tags/
-     * Conditional Tags} article in the Theme Developer Handbook.
-     *
-     * @return bool
-     * @deprecated 3.1.0
-     *
-     * @global $plugin_page
-     *
-     * @since      1.5.0
-     */
     function is_plugin_page()
     {
         _deprecated_function(__FUNCTION__, '3.1.0');
@@ -3003,18 +1591,6 @@
         return false;
     }
 
-    /**
-     * Update the categories cache.
-     *
-     * This function does not appear to be used anymore or does not appear to be
-     * needed. It might be a legacy function left over from when there was a need
-     * for updating the category cache.
-     *
-     * @return bool Always return True
-     * @deprecated 3.1.0
-     *
-     * @since      1.5.0
-     */
     function update_category_cache()
     {
         _deprecated_function(__FUNCTION__, '3.1.0');
@@ -3022,14 +1598,6 @@
         return true;
     }
 
-    /**
-     * Check for PHP timezone support
-     *
-     * @return bool
-     * @deprecated 3.2.0
-     *
-     * @since      2.9.0
-     */
     function wp_timezone_supported()
     {
         _deprecated_function(__FUNCTION__, '3.2.0');
@@ -3037,21 +1605,6 @@
         return true;
     }
 
-    /**
-     * Displays an editor: TinyMCE, HTML, or both.
-     *
-     * @param string $content       Textarea content.
-     * @param string $id            Optional. HTML ID attribute value. Default 'content'.
-     * @param string $prev_id       Optional. Unused.
-     * @param bool   $media_buttons Optional. Whether to display media buttons. Default true.
-     * @param int    $tab_index     Optional. Unused.
-     * @param bool   $extended      Optional. Unused.
-     *
-     * @since      2.1.0
-     * @deprecated 3.3.0 Use wp_editor()
-     * @see        wp_editor()
-     *
-     */
     function the_editor(
         $content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2, $extended = true
     ) {
@@ -3060,16 +1613,6 @@
         wp_editor($content, $id, ['media_buttons' => $media_buttons]);
     }
 
-    /**
-     * Perform the query to get the $metavalues array(s) needed by _fill_user and _fill_many_users
-     *
-     * @param array $ids User ID numbers list.
-     *
-     * @return array of arrays. The array is indexed by user_id, containing $metavalues object arrays.
-     * @since      3.0.0
-     * @deprecated 3.3.0
-     *
-     */
     function get_user_metavalues($ids)
     {
         _deprecated_function(__FUNCTION__, '3.3.0');
@@ -3098,19 +1641,6 @@
         return $objects;
     }
 
-    /**
-     * Sanitize every user field.
-     *
-     * If the context is 'raw', then the user object or array will get minimal santization of the int fields.
-     *
-     * @param object|array $user    The user object or array.
-     * @param string       $context Optional. How to sanitize user fields. Default 'display'.
-     *
-     * @return object|array The now sanitized user object or array (will be the same type as $user).
-     * @deprecated 3.3.0
-     *
-     * @since      2.3.0
-     */
     function sanitize_user_object($user, $context = 'display')
     {
         _deprecated_function(__FUNCTION__, '3.3.0');
@@ -3150,23 +1680,6 @@
         return $user;
     }
 
-    /**
-     * Get boundary post relational link.
-     *
-     * Can either be start or end post relational link.
-     *
-     * @param string $title               Optional. Link title format. Default '%title'.
-     * @param bool   $in_same_cat         Optional. Whether link should be in a same category.
-     *                                    Default false.
-     * @param string $excluded_categories Optional. Excluded categories IDs. Default empty.
-     * @param bool   $start               Optional. Whether to display link to first or last post.
-     *                                    Default true.
-     *
-     * @return string
-     * @deprecated 3.3.0
-     *
-     * @since      2.8.0
-     */
     function get_boundary_post_rel_link(
         $title = '%title', $in_same_cat = false, $excluded_categories = '', $start = true
     ) {
@@ -3202,17 +1715,6 @@
         return apply_filters("{$boundary}_post_rel_link", $link);
     }
 
-    /**
-     * Display relational link for the first post.
-     *
-     * @param string $title               Optional. Link title format.
-     * @param bool   $in_same_cat         Optional. Whether link should be in a same category.
-     * @param string $excluded_categories Optional. Excluded categories IDs.
-     *
-     * @deprecated 3.3.0
-     *
-     * @since      2.8.0
-     */
     function start_post_rel_link($title = '%title', $in_same_cat = false, $excluded_categories = '')
     {
         _deprecated_function(__FUNCTION__, '3.3.0');
@@ -3220,14 +1722,6 @@
         echo get_boundary_post_rel_link($title, $in_same_cat, $excluded_categories, true);
     }
 
-    /**
-     * Get site index relational link.
-     *
-     * @return string
-     * @deprecated 3.3.0
-     *
-     * @since      2.8.0
-     */
     function get_index_rel_link()
     {
         _deprecated_function(__FUNCTION__, '3.3.0');
@@ -3237,12 +1731,6 @@
         return apply_filters("index_rel_link", $link);
     }
 
-    /**
-     * Display relational link for the site index.
-     *
-     * @since      2.8.0
-     * @deprecated 3.3.0
-     */
     function index_rel_link()
     {
         _deprecated_function(__FUNCTION__, '3.3.0');
@@ -3250,16 +1738,6 @@
         echo get_index_rel_link();
     }
 
-    /**
-     * Get parent post relational link.
-     *
-     * @param string $title Optional. Link title format. Default '%title'.
-     *
-     * @return string
-     * @since      2.8.0
-     * @deprecated 3.3.0
-     *
-     */
     function get_parent_post_rel_link($title = '%title')
     {
         _deprecated_function(__FUNCTION__, '3.3.0');
@@ -3287,15 +1765,6 @@
         return apply_filters("parent_post_rel_link", $link);
     }
 
-    /**
-     * Display relational link for parent item
-     *
-     * @param string $title Optional. Link title format. Default '%title'.
-     *
-     * @deprecated 3.3.0
-     *
-     * @since      2.8.0
-     */
     function parent_post_rel_link($title = '%title')
     {
         _deprecated_function(__FUNCTION__, '3.3.0');
@@ -3303,15 +1772,6 @@
         echo get_parent_post_rel_link($title);
     }
 
-    /**
-     * Add the "Dashboard"/"Visit Site" menu.
-     *
-     * @param WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance.
-     *
-     * @deprecated 3.3.0
-     *
-     * @since      3.2.0
-     */
     function wp_admin_bar_dashboard_view_site_menu($wp_admin_bar)
     {
         _deprecated_function(__FUNCTION__, '3.3.0');
@@ -3339,17 +1799,6 @@
         }
     }
 
-    /**
-     * Checks if the current user belong to a given site.
-     *
-     * @param int $blog_id Site ID
-     *
-     * @return bool True if the current users belong to $blog_id, false if not.
-     * @see        is_user_member_of_blog()
-     *
-     * @since      MU (3.0.0)
-     * @deprecated 3.3.0 Use is_user_member_of_blog()
-     */
     function is_blog_user($blog_id = 0)
     {
         _deprecated_function(__FUNCTION__, '3.3.0', 'is_user_member_of_blog()');
@@ -3357,20 +1806,6 @@
         return is_user_member_of_blog(get_current_user_id(), $blog_id);
     }
 
-    /**
-     * Open the file handle for debugging.
-     *
-     * @param string $filename File name.
-     * @param string $mode     Type of access you required to the stream.
-     *
-     * @return false Always false.
-     * @link       https://www.php.net/manual/en/function.error-log.php
-     *
-     * @since      0.71
-     * @deprecated 3.4.0 Use error_log()
-     * @see        error_log()
-     *
-     */
     function debug_fopen($filename, $mode)
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'error_log()');
@@ -3378,19 +1813,6 @@
         return false;
     }
 
-    /**
-     * Write contents to the file used for debugging.
-     *
-     * @param mixed  $fp      Unused.
-     * @param string $message Message to log.
-     *
-     * @see        error_log()
-     *
-     * @link       https://www.php.net/manual/en/function.error-log.php
-     *
-     * @since      0.71
-     * @deprecated 3.4.0 Use error_log()
-     */
     function debug_fwrite($fp, $message)
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'error_log()');
@@ -3400,36 +1822,11 @@
         }
     }
 
-    /**
-     * Close the debugging file handle.
-     *
-     * @param mixed $fp Unused.
-     *
-     * @deprecated 3.4.0 Use error_log()
-     * @see        error_log()
-     *
-     * @link       https://www.php.net/manual/en/function.error-log.php
-     *
-     * @since      0.71
-     */
     function debug_fclose($fp)
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'error_log()');
     }
 
-    /**
-     * Retrieve list of themes with theme data in theme directory.
-     *
-     * The theme is broken, if it doesn't have a parent theme and is missing either
-     * style.css and, or index.php. If the theme has a parent theme then it is
-     * broken, if it is missing style.css; index.php is optional.
-     *
-     * @return array Theme list with theme data.
-     * @deprecated 3.4.0 Use wp_get_themes()
-     * @see        wp_get_themes()
-     *
-     * @since      1.5.0
-     */
     function get_themes()
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'wp_get_themes()');
@@ -3459,17 +1856,6 @@
         return $wp_themes;
     }
 
-    /**
-     * Retrieve theme data.
-     *
-     * @param string $theme Theme name.
-     *
-     * @return array|null Null, if theme name does not exist. Theme data, if exists.
-     * @see        wp_get_theme()
-     *
-     * @since      1.5.0
-     * @deprecated 3.4.0 Use wp_get_theme()
-     */
     function get_theme($theme)
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'wp_get_theme( $stylesheet )');
@@ -3483,15 +1869,6 @@
         return null;
     }
 
-    /**
-     * Retrieve current theme name.
-     *
-     * @return string
-     * @deprecated 3.4.0 Use wp_get_theme()
-     * @see        wp_get_theme()
-     *
-     * @since      1.5.0
-     */
     function get_current_theme()
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'wp_get_theme()');
@@ -3504,19 +1881,6 @@
         return wp_get_theme()->get('Name');
     }
 
-    /**
-     * Accepts matches array from preg_replace_callback in wpautop() or a string.
-     *
-     * Ensures that the contents of a `<pre>...</pre>` HTML block are not
-     * converted into paragraphs or line breaks.
-     *
-     * @param array|string $matches The array or string
-     *
-     * @return string The pre block without paragraph/line break conversion.
-     * @since      1.2.0
-     * @deprecated 3.4.0
-     *
-     */
     function clean_pre($matches)
     {
         _deprecated_function(__FUNCTION__, '3.4.0');
@@ -3537,19 +1901,6 @@
         return $text;
     }
 
-    /**
-     * Add callbacks for image header display.
-     *
-     * @param callable $wp_head_callback       Call on the {@see 'wp_head'} action.
-     * @param callable $admin_head_callback    Call on custom header administration screen.
-     * @param callable $admin_preview_callback Output a custom header image div on the custom header administration
-     *                                         screen. Optional.
-     *
-     * @since      2.1.0
-     * @deprecated 3.4.0 Use add_theme_support()
-     * @see        add_theme_support()
-     *
-     */
     function add_custom_image_header($wp_head_callback, $admin_head_callback, $admin_preview_callback = '')
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'add_theme_support( \'custom-header\', $args )');
@@ -3565,15 +1916,6 @@
         return add_theme_support('custom-header', $args);
     }
 
-    /**
-     * Remove image header support.
-     *
-     * @return null|bool Whether support was removed.
-     * @deprecated 3.4.0 Use remove_theme_support()
-     * @see        remove_theme_support()
-     *
-     * @since      3.1.0
-     */
     function remove_custom_image_header()
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'remove_theme_support( \'custom-header\' )');
@@ -3581,19 +1923,6 @@
         return remove_theme_support('custom-header');
     }
 
-    /**
-     * Add callbacks for background image display.
-     *
-     * @param callable $wp_head_callback       Call on the {@see 'wp_head'} action.
-     * @param callable $admin_head_callback    Call on custom background administration screen.
-     * @param callable $admin_preview_callback Output a custom background image div on the custom background
-     *                                         administration screen. Optional.
-     *
-     * @since      3.0.0
-     * @deprecated 3.4.0 Use add_theme_support()
-     * @see        add_theme_support()
-     *
-     */
     function add_custom_background($wp_head_callback = '', $admin_head_callback = '', $admin_preview_callback = '')
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'add_theme_support( \'custom-background\', $args )');
@@ -3614,15 +1943,6 @@
         return add_theme_support('custom-background', $args);
     }
 
-    /**
-     * Remove custom background support.
-     *
-     * @return null|bool Whether support was removed.
-     * @deprecated 3.4.0 Use add_custom_background()
-     * @see        add_custom_background()
-     *
-     * @since      3.1.0
-     */
     function remove_custom_background()
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'remove_theme_support( \'custom-background\' )');
@@ -3630,17 +1950,6 @@
         return remove_theme_support('custom-background');
     }
 
-    /**
-     * Retrieve theme data from parsed theme file.
-     *
-     * @param string $theme_file Theme file path.
-     *
-     * @return array Theme data.
-     * @see        wp_get_theme()
-     *
-     * @since      1.5.0
-     * @deprecated 3.4.0 Use wp_get_theme()
-     */
     function get_theme_data($theme_file)
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'wp_get_theme()');
@@ -3671,18 +1980,6 @@
         return $theme_data;
     }
 
-    /**
-     * Alias of update_post_cache().
-     *
-     * @param array $pages list of page objects
-     *
-     * @since      1.5.1
-     * @deprecated 3.4.0 Use update_post_cache()
-     * @see        update_post_cache()
-     *
-     * @see        update_post_cache() Posts and pages are the same, alias is intentional
-     *
-     */
     function update_page_cache(&$pages)
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'update_post_cache()');
@@ -3690,19 +1987,6 @@
         update_post_cache($pages);
     }
 
-    /**
-     * Will clean the page in the cache.
-     *
-     * Clean (read: delete) page from cache that matches $id. Will also clean cache
-     * associated with 'all_page_ids' and 'get_pages'.
-     *
-     * @param int $id Page ID to clean
-     *
-     * @deprecated 3.4.0 Use clean_post_cache
-     * @see        clean_post_cache()
-     *
-     * @since      2.0.0
-     */
     function clean_page_cache($id)
     {
         _deprecated_function(__FUNCTION__, '3.4.0', 'clean_post_cache()');
@@ -3710,19 +1994,6 @@
         clean_post_cache($id);
     }
 
-    /**
-     * Retrieve nonce action "Are you sure" message.
-     *
-     * Deprecated in 3.4.1 and 3.5.0. Backported to 3.3.3.
-     *
-     * @param string $action Nonce action.
-     *
-     * @return string Are you sure message.
-     * @see        wp_nonce_ays()
-     *
-     * @since      2.0.4
-     * @deprecated 3.4.1 Use wp_nonce_ays()
-     */
     function wp_explain_nonce($action)
     {
         _deprecated_function(__FUNCTION__, '3.4.1', 'wp_nonce_ays()');
@@ -3730,16 +2001,6 @@
         return __('Are you sure you want to do this?');
     }
 
-    /**
-     * Display "sticky" CSS class, if a post is sticky.
-     *
-     * @param int $post_id An optional post ID.
-     *
-     * @deprecated 3.5.0 Use post_class()
-     * @see        post_class()
-     *
-     * @since      2.7.0
-     */
     function sticky_class($post_id = null)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'post_class()');
@@ -3749,36 +2010,11 @@
         }
     }
 
-    /**
-     * Retrieve post ancestors.
-     *
-     * This is no longer needed as WP_Post lazy-loads the ancestors
-     * property with get_post_ancestors().
-     *
-     * @param WP_Post $post Post object, passed by reference (unused).
-     *
-     * @deprecated 3.5.0 Use get_post_ancestors()
-     * @see        get_post_ancestors()
-     *
-     * @since      2.3.4
-     */
     function _get_post_ancestors(&$post)
     {
         _deprecated_function(__FUNCTION__, '3.5.0');
     }
 
-    /**
-     * Load an image from a string, if PHP supports it.
-     *
-     * @param string $file Filename of the image to load.
-     *
-     * @return resource|GdImage|string The resulting image resource or GdImage instance on success,
-     *                                 error string on failure.
-     * @see        wp_get_image_editor()
-     *
-     * @since      2.1.0
-     * @deprecated 3.5.0 Use wp_get_image_editor()
-     */
     function wp_load_image($file)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'wp_get_image_editor()');
@@ -3813,31 +2049,6 @@
         return $image;
     }
 
-    /**
-     * Scale down an image to fit a particular size and save a new copy of the image.
-     *
-     * The PNG transparency will be preserved using the function, as well as the
-     * image type. If the file going in is PNG, then the resized image is going to
-     * be PNG. The only supported image types are PNG, GIF, and JPEG.
-     *
-     * Some functionality requires API to exist, so some PHP version may lose out
-     * support. This is not the fault of WordPress (where functionality is
-     * downgraded, not actual defects), but of your PHP version.
-     *
-     * @param string $file         Image file path.
-     * @param int    $max_w        Maximum width to resize to.
-     * @param int    $max_h        Maximum height to resize to.
-     * @param bool   $crop         Optional. Whether to crop image or resize. Default false.
-     * @param string $suffix       Optional. File suffix. Default null.
-     * @param string $dest_path    Optional. New image file path. Default null.
-     * @param int    $jpeg_quality Optional. Image quality percentage. Default 90.
-     *
-     * @return mixed WP_Error on failure. String with new destination path.
-     * @since      2.5.0
-     * @deprecated 3.5.0 Use wp_get_image_editor()
-     * @see        wp_get_image_editor()
-     *
-     */
     function image_resize($file, $max_w, $max_h, $crop = false, $suffix = null, $dest_path = null, $jpeg_quality = 90)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'wp_get_image_editor()');
@@ -3866,21 +2077,6 @@
         return $dest_file;
     }
 
-    /**
-     * Retrieve a single post, based on post ID.
-     *
-     * Has categories in 'post_category' property or key. Has tags in 'tags_input'
-     * property or key.
-     *
-     * @param int    $postid Post ID.
-     * @param string $mode   How to return result, either OBJECT, ARRAY_N, or ARRAY_A.
-     *
-     * @return WP_Post|null Post object or array holding post contents and information
-     * @since      1.0.0
-     * @deprecated 3.5.0 Use get_post()
-     * @see        get_post()
-     *
-     */
     function wp_get_single_post($postid = 0, $mode = OBJECT)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'get_post()');
@@ -3888,18 +2084,6 @@
         return get_post($postid, $mode);
     }
 
-    /**
-     * Check that the user login name and password is correct.
-     *
-     * @param string $user_login User name.
-     * @param string $user_pass  User password.
-     *
-     * @return bool False if does not authenticate, true if username and password authenticates.
-     * @since      0.71
-     * @deprecated 3.5.0 Use wp_authenticate()
-     * @see        wp_authenticate()
-     *
-     */
     function user_pass_ok($user_login, $user_pass)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'wp_authenticate()');
@@ -3912,25 +2096,8 @@
         return true;
     }
 
-    /**
-     * Callback formerly fired on the save_post hook. No longer needed.
-     *
-     * @since      2.3.0
-     * @deprecated 3.5.0
-     */
     function _save_post_hook() {}
 
-    /**
-     * Check if the installed version of GD supports particular image type
-     *
-     * @param string $mime_type
-     *
-     * @return bool
-     * @see        wp_image_editor_supports()
-     *
-     * @since      2.9.0
-     * @deprecated 3.5.0 Use wp_image_editor_supports()
-     */
     function gd_edit_image_support($mime_type)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'wp_image_editor_supports()');
@@ -3967,17 +2134,6 @@
         return false;
     }
 
-    /**
-     * Converts an integer byte value to a shorthand byte value.
-     *
-     * @param int $bytes An integer byte value.
-     *
-     * @return string A shorthand byte value.
-     * @see        size_format()
-     *
-     * @since      2.3.0
-     * @deprecated 3.6.0 Use size_format()
-     */
     function wp_convert_bytes_to_hr($bytes)
     {
         _deprecated_function(__FUNCTION__, '3.6.0', 'size_format()');
@@ -4000,17 +2156,6 @@
         return $size.$unit;
     }
 
-    /**
-     * Formerly used internally to tidy up the search terms.
-     *
-     * @param string $t Search terms to "tidy", e.g. trim.
-     *
-     * @return string Trimmed search terms.
-     * @since      2.9.0
-     * @access     private
-     * @deprecated 3.7.0
-     *
-     */
     function _search_terms_tidy($t)
     {
         _deprecated_function(__FUNCTION__, '3.7.0');
@@ -4018,17 +2163,6 @@
         return trim($t, "\"'\n\r ");
     }
 
-    /**
-     * Determine if TinyMCE is available.
-     *
-     * Checks to see if the user has deleted the tinymce files to slim down
-     * their WordPress installation.
-     *
-     * @return bool Whether TinyMCE exists.
-     * @deprecated 3.9.0
-     *
-     * @since      2.1.0
-     */
     function rich_edit_exists()
     {
         global $wp_rich_edit_exists;
@@ -4042,34 +2176,11 @@
         return $wp_rich_edit_exists;
     }
 
-    /**
-     * Old callback for tag link tooltips.
-     *
-     * @param int $count Number of topics.
-     *
-     * @return int Number of topics.
-     * @since      2.7.0
-     * @access     private
-     * @deprecated 3.9.0
-     *
-     */
     function default_topic_count_text($count)
     {
         return $count;
     }
 
-    /**
-     * Formerly used to escape strings before inserting into the DB.
-     *
-     * Has not performed this function for many, many years. Use wpdb::prepare() instead.
-     *
-     * @param string $content The text to format.
-     *
-     * @return string The very same text.
-     * @since      0.71
-     * @deprecated 3.9.0
-     *
-     */
     function format_to_post($content)
     {
         _deprecated_function(__FUNCTION__, '3.9.0');
@@ -4077,17 +2188,6 @@
         return $content;
     }
 
-    /**
-     * Formerly used to escape strings before searching the DB. It was poorly documented and never worked as described.
-     *
-     * @param string $text The text to be escaped.
-     *
-     * @return string text, safe for inclusion in LIKE query.
-     * @see        wpdb::esc_like()
-     *
-     * @since      2.5.0
-     * @deprecated 4.0.0 Use wpdb::esc_like()
-     */
     function like_escape($text)
     {
         _deprecated_function(__FUNCTION__, '4.0.0', 'wpdb::esc_like()');
@@ -4095,19 +2195,6 @@
         return str_replace(["%", "_"], ["\\%", "\\_"], $text);
     }
 
-    /**
-     * Determines if the URL can be accessed over SSL.
-     *
-     * Determines if the URL can be accessed over SSL by using the WordPress HTTP API to access
-     * the URL using https as the scheme.
-     *
-     * @param string $url The URL to test.
-     *
-     * @return bool Whether SSL access is available.
-     * @since      2.5.0
-     * @deprecated 4.0.0
-     *
-     */
     function url_is_accessable_via_ssl($url)
     {
         _deprecated_function(__FUNCTION__, '4.0.0');
@@ -4126,29 +2213,11 @@
         return false;
     }
 
-    /**
-     * Start preview theme output buffer.
-     *
-     * Will only perform task if the user has permissions and template and preview
-     * query variables exist.
-     *
-     * @since      2.6.0
-     * @deprecated 4.3.0
-     */
     function preview_theme()
     {
         _deprecated_function(__FUNCTION__, '4.3.0');
     }
 
-    /**
-     * Private function to modify the current template when previewing a theme
-     *
-     * @return string
-     * @deprecated 4.3.0
-     * @access     private
-     *
-     * @since      2.9.0
-     */
     function _preview_theme_template_filter()
     {
         _deprecated_function(__FUNCTION__, '4.3.0');
@@ -4156,15 +2225,6 @@
         return '';
     }
 
-    /**
-     * Private function to modify the current stylesheet when previewing a theme
-     *
-     * @return string
-     * @deprecated 4.3.0
-     * @access     private
-     *
-     * @since      2.9.0
-     */
     function _preview_theme_stylesheet_filter()
     {
         _deprecated_function(__FUNCTION__, '4.3.0');
@@ -4172,17 +2232,6 @@
         return '';
     }
 
-    /**
-     * Callback function for ob_start() to capture all links in the theme.
-     *
-     * @param string $content
-     *
-     * @return string
-     * @since      2.6.0
-     * @deprecated 4.3.0
-     * @access     private
-     *
-     */
     function preview_theme_ob_filter($content)
     {
         _deprecated_function(__FUNCTION__, '4.3.0');
@@ -4190,19 +2239,6 @@
         return $content;
     }
 
-    /**
-     * Manipulates preview theme links in order to control and maintain location.
-     *
-     * Callback function for preg_replace_callback() to accept and filter matches.
-     *
-     * @param array $matches
-     *
-     * @return string
-     * @since      2.6.0
-     * @deprecated 4.3.0
-     * @access     private
-     *
-     */
     function preview_theme_ob_filter_callback($matches)
     {
         _deprecated_function(__FUNCTION__, '4.3.0');
@@ -4210,42 +2246,12 @@
         return '';
     }
 
-    /**
-     * Formats text for the rich text editor.
-     *
-     * The {@see 'richedit_pre'} filter is applied here. If `$text` is empty the filter will
-     * be applied to an empty string.
-     *
-     * @param string $text The text to be formatted.
-     *
-     * @return string The formatted text after filter is applied.
-     * @see        format_for_editor()
-     *
-     * @since      2.0.0
-     * @deprecated 4.3.0 Use format_for_editor()
-     */
     function wp_richedit_pre($text)
     {
         _deprecated_function(__FUNCTION__, '4.3.0', 'format_for_editor()');
 
         if(empty($text))
         {
-            /**
-             * Filters text returned for the rich text editor.
-             *
-             * This filter is first evaluated, and the value returned, if an empty string
-             * is passed to wp_richedit_pre(). If an empty string is passed, it results
-             * in a break tag and line feed.
-             *
-             * If a non-empty string is passed, the filter is evaluated on the wp_richedit_pre()
-             * return after being formatted.
-             *
-             * @param string $output Text for the rich text editor.
-             *
-             * @deprecated 4.3.0
-             *
-             * @since      2.0.0
-             */
             return apply_filters('richedit_pre', '');
         }
 
@@ -4253,24 +2259,9 @@
         $output = wpautop($output);
         $output = htmlspecialchars($output, ENT_NOQUOTES, get_option('blog_charset'));
 
-        /** This filter is documented in wp-includes/deprecated.php */
         return apply_filters('richedit_pre', $output);
     }
 
-    /**
-     * Formats text for the HTML editor.
-     *
-     * Unless $output is empty it will pass through htmlspecialchars before the
-     * {@see 'htmledit_pre'} filter is applied.
-     *
-     * @param string $output The text to be formatted.
-     *
-     * @return string Formatted text after filter applied.
-     * @see        format_for_editor()
-     *
-     * @since      2.5.0
-     * @deprecated 4.3.0 Use format_for_editor()
-     */
     function wp_htmledit_pre($output)
     {
         _deprecated_function(__FUNCTION__, '4.3.0', 'format_for_editor()');
@@ -4280,29 +2271,9 @@
             $output = htmlspecialchars($output, ENT_NOQUOTES, get_option('blog_charset'));
         } // Convert only '< > &'.
 
-        /**
-         * Filters the text before it is formatted for the HTML editor.
-         *
-         * @param string $output The HTML-formatted text.
-         *
-         * @deprecated 4.3.0
-         *
-         * @since      2.5.0
-         */
         return apply_filters('htmledit_pre', $output);
     }
 
-    /**
-     * Retrieve permalink from post ID.
-     *
-     * @param int|WP_Post $post Optional. Post ID or WP_Post object. Default is global $post.
-     *
-     * @return string|false
-     * @see        get_permalink()
-     *
-     * @since      1.0.0
-     * @deprecated 4.4.0 Use get_permalink()
-     */
     function post_permalink($post = 0)
     {
         _deprecated_function(__FUNCTION__, '4.4.0', 'get_permalink()');
@@ -4310,23 +2281,6 @@
         return get_permalink($post);
     }
 
-    /**
-     * Perform a HTTP HEAD or GET request.
-     *
-     * If $file_path is a writable filename, this will do a GET request and write
-     * the file to that path.
-     *
-     * @param string      $url       URL to fetch.
-     * @param string|bool $file_path Optional. File path to write request to. Default false.
-     * @param int         $red       Optional. The number of Redirects followed, Upon 5 being hit,
-     *                               returns false. Default 1.
-     *
-     * @return \WpOrg\Requests\Utility\CaseInsensitiveDictionary|false Headers on success, false on failure.
-     * @deprecated 4.4.0 Use WP_Http
-     * @see        WP_Http
-     *
-     * @since      2.5.0
-     */
     function wp_get_http($url, $file_path = false, $red = 1)
     {
         _deprecated_function(__FUNCTION__, '4.4.0', 'WP_Http');
@@ -4388,17 +2342,6 @@
         return $headers;
     }
 
-    /**
-     * Whether SSL login should be forced.
-     *
-     * @param string|bool $force Optional Whether to force SSL login. Default null.
-     *
-     * @return bool True if forced, false if not forced.
-     * @see        force_ssl_admin()
-     *
-     * @since      2.6.0
-     * @deprecated 4.4.0 Use force_ssl_admin()
-     */
     function force_ssl_login($force = null)
     {
         _deprecated_function(__FUNCTION__, '4.4.0', 'force_ssl_admin()');
@@ -4406,14 +2349,6 @@
         return force_ssl_admin($force);
     }
 
-    /**
-     * Retrieve path of comment popup template in current or parent template.
-     *
-     * @return string Full path to comments popup template file.
-     * @deprecated 4.5.0
-     *
-     * @since      1.5.0
-     */
     function get_comments_popup_template()
     {
         _deprecated_function(__FUNCTION__, '4.5.0');
@@ -4421,18 +2356,6 @@
         return '';
     }
 
-    /**
-     * Determines whether the current URL is within the comments popup window.
-     *
-     * For more information on this and similar theme functions, check out
-     * the {@link https://developer.wordpress.org/themes/basics/conditional-tags/
-     * Conditional Tags} article in the Theme Developer Handbook.
-     *
-     * @return false Always returns false.
-     * @deprecated 4.5.0
-     *
-     * @since      1.5.0
-     */
     function is_comments_popup()
     {
         _deprecated_function(__FUNCTION__, '4.5.0');
@@ -4440,27 +2363,11 @@
         return false;
     }
 
-    /**
-     * Display the JS popup script to show a comment.
-     *
-     * @since      0.71
-     * @deprecated 4.5.0
-     */
     function comments_popup_script()
     {
         _deprecated_function(__FUNCTION__, '4.5.0');
     }
 
-    /**
-     * Adds element attributes to open links in new tabs.
-     *
-     * @param string $text Content to replace links to open in a new tab.
-     *
-     * @return string Content that has filtered links.
-     * @since      0.71
-     * @deprecated 4.5.0
-     *
-     */
     function popuplinks($text)
     {
         _deprecated_function(__FUNCTION__, '4.5.0');
@@ -4469,17 +2376,6 @@
         return $text;
     }
 
-    /**
-     * The Google Video embed handler callback.
-     *
-     * Deprecated function that previously assisted in turning Google Video URLs
-     * into embeds but that service has since been shut down.
-     *
-     * @return string An empty string.
-     * @deprecated 4.6.0
-     *
-     * @since      2.9.0
-     */
     function wp_embed_handler_googlevideo($matches, $attr, $url, $rawattr)
     {
         _deprecated_function(__FUNCTION__, '4.6.0');
@@ -4487,14 +2383,6 @@
         return '';
     }
 
-    /**
-     * Retrieve path of paged template in current or parent template.
-     *
-     * @return string Full path to paged template file.
-     * @deprecated 4.7.0 The paged.php template is no longer part of the theme template hierarchy.
-     *
-     * @since      1.5.0
-     */
     function get_paged_template()
     {
         _deprecated_function(__FUNCTION__, '4.7.0');
@@ -4502,27 +2390,6 @@
         return get_query_template('paged');
     }
 
-    /**
-     * Removes the HTML JavaScript entities found in early versions of Netscape 4.
-     *
-     * Previously, this function was pulled in from the original
-     * import of kses and removed a specific vulnerability only
-     * existent in early version of Netscape 4. However, this
-     * vulnerability never affected any other browsers and can
-     * be considered safe for the modern web.
-     *
-     * The regular expression which sanitized this vulnerability
-     * has been removed in consideration of the performance and
-     * energy demands it placed, now merely passing through its
-     * input to the return.
-     *
-     * @param string $content
-     *
-     * @return string
-     * @since      1.0.0
-     * @deprecated 4.7.0 Officially dropped security support for Netscape 4.
-     *
-     */
     function wp_kses_js_entities($content)
     {
         _deprecated_function(__FUNCTION__, '4.7.0');
@@ -4530,21 +2397,6 @@
         return preg_replace('%&\s*\{[^}]*(\}\s*;?|$)%', '', $content);
     }
 
-    /**
-     * Sort categories by ID.
-     *
-     * Used by usort() as a callback, should not be used directly. Can actually be
-     * used to sort any term object.
-     *
-     * @param object $a
-     * @param object $b
-     *
-     * @return int
-     * @deprecated 4.7.0 Use wp_list_sort()
-     * @access     private
-     *
-     * @since      2.3.0
-     */
     function _usort_terms_by_ID($a, $b)
     {
         _deprecated_function(__FUNCTION__, '4.7.0', 'wp_list_sort()');
@@ -4563,21 +2415,6 @@
         }
     }
 
-    /**
-     * Sort categories by name.
-     *
-     * Used by usort() as a callback, should not be used directly. Can actually be
-     * used to sort any term object.
-     *
-     * @param object $a
-     * @param object $b
-     *
-     * @return int
-     * @deprecated 4.7.0 Use wp_list_sort()
-     * @access     private
-     *
-     * @since      2.3.0
-     */
     function _usort_terms_by_name($a, $b)
     {
         _deprecated_function(__FUNCTION__, '4.7.0', 'wp_list_sort()');
@@ -4585,20 +2422,6 @@
         return strcmp($a->name, $b->name);
     }
 
-    /**
-     * Sort menu items by the desired key.
-     *
-     * @param object  $a The first object to compare
-     * @param object  $b The second object to compare
-     *
-     * @return int -1, 0, or 1 if $a is considered to be respectively less than, equal to, or greater than $b.
-     * @since      3.0.0
-     * @deprecated 4.7.0 Use wp_list_sort()
-     * @access     private
-     *
-     * @global string $_menu_item_sort_prop
-     *
-     */
     function _sort_nav_menu_items($a, $b)
     {
         global $_menu_item_sort_prop;
@@ -4632,37 +2455,15 @@
         }
     }
 
-    /**
-     * Retrieves the Press This bookmarklet link.
-     *
-     * @return string
-     * @deprecated 4.9.0
-     * @since      2.6.0
-     */
     function get_shortcut_link()
     {
         _deprecated_function(__FUNCTION__, '4.9.0');
 
         $link = '';
 
-        /**
-         * Filters the Press This bookmarklet link.
-         *
-         * @param string $link The Press This bookmarklet link.
-         *
-         * @deprecated 4.9.0
-         *
-         * @since      2.6.0
-         */
         return apply_filters('shortcut_link', $link);
     }
 
-    /**
-     * Ajax handler for saving a post from Press This.
-     *
-     * @since      4.2.0
-     * @deprecated 4.9.0
-     */
     function wp_ajax_press_this_save_post()
     {
         _deprecated_function(__FUNCTION__, '4.9.0');
@@ -4678,12 +2479,6 @@
         }
     }
 
-    /**
-     * Ajax handler for creating new category from Press This.
-     *
-     * @since      4.2.0
-     * @deprecated 4.9.0
-     */
     function wp_ajax_press_this_add_category()
     {
         _deprecated_function(__FUNCTION__, '4.9.0');
@@ -4699,17 +2494,6 @@
         }
     }
 
-    /**
-     * Return the user request object for the specified request ID.
-     *
-     * @param int $request_id The ID of the user request.
-     *
-     * @return WP_User_Request|false
-     * @see        wp_get_user_request()
-     *
-     * @since      4.9.6
-     * @deprecated 5.4.0 Use wp_get_user_request()
-     */
     function wp_get_user_request_data($request_id)
     {
         _deprecated_function(__FUNCTION__, '5.4.0', 'wp_get_user_request()');
@@ -4717,18 +2501,6 @@
         return wp_get_user_request($request_id);
     }
 
-    /**
-     * Filters 'img' elements in post content to add 'srcset' and 'sizes' attributes.
-     *
-     * @param string $content The raw post content to be filtered.
-     *
-     * @return string Converted content with 'srcset' and 'sizes' attributes added to images.
-     * @see        wp_image_add_srcset_and_sizes()
-     *
-     * @since      4.4.0
-     * @deprecated 5.5.0
-     *
-     */
     function wp_make_content_images_responsive($content)
     {
         _deprecated_function(__FUNCTION__, '5.5.0', 'wp_filter_content_tags()');
@@ -4737,35 +2509,12 @@
         return wp_filter_content_tags($content);
     }
 
-    /**
-     * Turn register globals off.
-     *
-     * @since      2.1.0
-     * @access     private
-     * @deprecated 5.5.0
-     */
     function wp_unregister_GLOBALS()
     {  // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
         // register_globals was deprecated in PHP 5.3 and removed entirely in PHP 5.4.
         _deprecated_function(__FUNCTION__, '5.5.0');
     }
 
-    /**
-     * Does comment contain disallowed characters or words.
-     *
-     * @param string $author     The author of the comment
-     * @param string $email      The email of the comment
-     * @param string $url        The url used in the comment
-     * @param string $comment    The comment content
-     * @param string $user_ip    The comment author's IP address
-     * @param string $user_agent The author's browser user agent
-     *
-     * @return bool True if comment contains disallowed content, false if comment does not
-     * @deprecated 5.5.0 Use wp_check_comment_disallowed_list() instead.
-     *                   Please consider writing more inclusive code.
-     *
-     * @since      1.5.0
-     */
     function wp_blacklist_check($author, $email, $url, $comment, $user_ip, $user_agent)
     {
         _deprecated_function(__FUNCTION__, '5.5.0', 'wp_check_comment_disallowed_list()');
@@ -4773,23 +2522,6 @@
         return wp_check_comment_disallowed_list($author, $email, $url, $comment, $user_ip, $user_agent);
     }
 
-    /**
-     * Filters out `register_meta()` args based on an allowed list.
-     *
-     * `register_meta()` args may change over time, so requiring the allowed list
-     * to be explicitly turned off is a warranty seal of sorts.
-     *
-     * @access     private
-     *
-     * @param array $args         Arguments from `register_meta()`.
-     * @param array $default_args Default arguments for `register_meta()`.
-     *
-     * @return array Filtered arguments.
-     * @deprecated 5.5.0 Use _wp_register_meta_args_allowed_list() instead.
-     *                   Please consider writing more inclusive code.
-     *
-     * @since      4.6.0
-     */
     function _wp_register_meta_args_whitelist($args, $default_args)
     {
         _deprecated_function(__FUNCTION__, '5.5.0', '_wp_register_meta_args_allowed_list()');
@@ -4797,20 +2529,6 @@
         return _wp_register_meta_args_allowed_list($args, $default_args);
     }
 
-    /**
-     * Adds an array of options to the list of allowed options.
-     *
-     * @param array        $new_options
-     * @param string|array $options
-     *
-     * @return array
-     * @since      2.7.0
-     * @deprecated 5.5.0 Use add_allowed_options() instead.
-     *                   Please consider writing more inclusive code.
-     *
-     * @global array       $allowed_options
-     *
-     */
     function add_option_whitelist($new_options, $options = '')
     {
         _deprecated_function(__FUNCTION__, '5.5.0', 'add_allowed_options()');
@@ -4818,20 +2536,6 @@
         return add_allowed_options($new_options, $options);
     }
 
-    /**
-     * Removes a list of options from the allowed options list.
-     *
-     * @param array        $del_options
-     * @param string|array $options
-     *
-     * @return array
-     * @since      2.7.0
-     * @deprecated 5.5.0 Use remove_allowed_options() instead.
-     *                   Please consider writing more inclusive code.
-     *
-     * @global array       $allowed_options
-     *
-     */
     function remove_option_whitelist($del_options, $options = '')
     {
         _deprecated_function(__FUNCTION__, '5.5.0', 'remove_allowed_options()');
@@ -4839,58 +2543,16 @@
         return remove_allowed_options($del_options, $options);
     }
 
-    /**
-     * Adds slashes to only string values in an array of values.
-     *
-     * This should be used when preparing data for core APIs that expect slashed data.
-     * This should not be used to escape data going directly into an SQL query.
-     *
-     * @param mixed $value Scalar or array of scalars.
-     *
-     * @return mixed Slashes $value
-     * @see        wp_slash()
-     *
-     * @since      5.3.0
-     * @deprecated 5.6.0 Use wp_slash()
-     *
-     */
     function wp_slash_strings_only($value)
     {
         return map_deep($value, 'addslashes_strings_only');
     }
 
-    /**
-     * Adds slashes only if the provided value is a string.
-     *
-     * @param mixed $value
-     *
-     * @return mixed
-     * @see        wp_slash()
-     *
-     * @since      5.3.0
-     * @deprecated 5.6.0
-     *
-     */
     function addslashes_strings_only($value)
     {
         return is_string($value) ? addslashes($value) : $value;
     }
 
-    /**
-     * Displays a `noindex` meta tag if required by the blog configuration.
-     *
-     * If a blog is marked as not being public then the `noindex` meta tag will be
-     * output to tell web robots not to index the page content.
-     *
-     * Typical usage is as a {@see 'wp_head'} callback:
-     *
-     *     add_action( 'wp_head', 'noindex' );
-     *
-     * @see        wp_no_robots()
-     *
-     * @since      2.1.0
-     * @deprecated 5.7.0 Use wp_robots_noindex() instead on 'wp_robots' filter.
-     */
     function noindex()
     {
         _deprecated_function(__FUNCTION__, '5.7.0', 'wp_robots_noindex()');
@@ -4902,19 +2564,6 @@
         }
     }
 
-    /**
-     * Display a `noindex` meta tag.
-     *
-     * Outputs a `noindex` meta tag that tells web robots not to index the page content.
-     *
-     * Typical usage is as a {@see 'wp_head'} callback:
-     *
-     *     add_action( 'wp_head', 'wp_no_robots' );
-     *
-     * @since      3.3.0
-     * @since      5.3.0 Echo `noindex,nofollow` if search engine visibility is discouraged.
-     * @deprecated 5.7.0 Use wp_robots_no_robots() instead on 'wp_robots' filter.
-     */
     function wp_no_robots()
     {
         _deprecated_function(__FUNCTION__, '5.7.0', 'wp_robots_no_robots()');
@@ -4929,23 +2578,6 @@
         echo "<meta name='robots' content='noindex,nofollow' />\n";
     }
 
-    /**
-     * Display a `noindex,noarchive` meta tag and referrer `strict-origin-when-cross-origin` meta tag.
-     *
-     * Outputs a `noindex,noarchive` meta tag that tells web robots not to index or cache the page content.
-     * Outputs a referrer `strict-origin-when-cross-origin` meta tag that tells the browser not to send
-     * the full URL as a referrer to other sites when cross-origin assets are loaded.
-     *
-     * Typical usage is as a {@see 'wp_head'} callback:
-     *
-     *     add_action( 'wp_head', 'wp_sensitive_page_meta' );
-     *
-     * @since      5.0.1
-     * @deprecated 5.7.0 Use wp_robots_sensitive_page() instead on 'wp_robots' filter
-     *                   and wp_strict_cross_origin_referrer() on 'wp_head' action.
-     *
-     * @see        wp_robots_sensitive_page()
-     */
     function wp_sensitive_page_meta()
     {
         _deprecated_function(__FUNCTION__, '5.7.0', 'wp_robots_sensitive_page()');
@@ -4956,20 +2588,6 @@
         wp_strict_cross_origin_referrer();
     }
 
-    /**
-     * Render inner blocks from the `core/columns` block for generating an excerpt.
-     *
-     * @param array $columns        The parsed columns block.
-     * @param array $allowed_blocks The list of allowed inner blocks.
-     *
-     * @return string The rendered inner blocks.
-     * @since      5.2.0
-     * @access     private
-     * @deprecated 5.8.0 Use _excerpt_render_inner_blocks() introduced in 5.8.0.
-     *
-     * @see        _excerpt_render_inner_blocks()
-     *
-     */
     function _excerpt_render_inner_columns_blocks($columns, $allowed_blocks)
     {
         _deprecated_function(__FUNCTION__, '5.8.0', '_excerpt_render_inner_blocks()');
@@ -4977,19 +2595,6 @@
         return _excerpt_render_inner_blocks($columns, $allowed_blocks);
     }
 
-    /**
-     * Renders the duotone filter SVG and returns the CSS filter property to
-     * reference the rendered SVG.
-     *
-     * @param array $preset Duotone preset value as seen in theme.json.
-     *
-     * @return string Duotone CSS filter property.
-     * @see        wp_get_duotone_filter_property()
-     *
-     * @since      5.9.0
-     * @deprecated 5.9.1 Use wp_get_duotone_filter_property() introduced in 5.9.1.
-     *
-     */
     function wp_render_duotone_filter_preset($preset)
     {
         _deprecated_function(__FUNCTION__, '5.9.1', 'wp_get_duotone_filter_property()');
@@ -4997,20 +2602,6 @@
         return wp_get_duotone_filter_property($preset);
     }
 
-    /**
-     * Checks whether serialization of the current block's border properties should occur.
-     *
-     * @param WP_Block_Type $block_type Block type.
-     *
-     * @return bool Whether serialization of the current block's border properties
-     *              should occur.
-     * @see        wp_should_skip_block_supports_serialization()
-     *
-     * @since      5.8.0
-     * @access     private
-     * @deprecated 6.0.0 Use wp_should_skip_block_supports_serialization() introduced in 6.0.0.
-     *
-     */
     function wp_skip_border_serialization($block_type)
     {
         _deprecated_function(__FUNCTION__, '6.0.0', 'wp_should_skip_block_supports_serialization()');
@@ -5020,19 +2611,6 @@
         return is_array($border_support) && array_key_exists('__experimentalSkipSerialization', $border_support) && $border_support['__experimentalSkipSerialization'];
     }
 
-    /**
-     * Checks whether serialization of the current block's dimensions properties should occur.
-     *
-     * @param WP_Block_type $block_type Block type.
-     *
-     * @return bool Whether to serialize spacing support styles & classes.
-     * @see        wp_should_skip_block_supports_serialization()
-     *
-     * @since      5.9.0
-     * @access     private
-     * @deprecated 6.0.0 Use wp_should_skip_block_supports_serialization() introduced in 6.0.0.
-     *
-     */
     function wp_skip_dimensions_serialization($block_type)
     {
         _deprecated_function(__FUNCTION__, '6.0.0', 'wp_should_skip_block_supports_serialization()');
@@ -5042,19 +2620,6 @@
         return is_array($dimensions_support) && array_key_exists('__experimentalSkipSerialization', $dimensions_support) && $dimensions_support['__experimentalSkipSerialization'];
     }
 
-    /**
-     * Checks whether serialization of the current block's spacing properties should occur.
-     *
-     * @param WP_Block_Type $block_type Block type.
-     *
-     * @return bool Whether to serialize spacing support styles & classes.
-     * @see        wp_should_skip_block_supports_serialization()
-     *
-     * @since      5.9.0
-     * @access     private
-     * @deprecated 6.0.0 Use wp_should_skip_block_supports_serialization() introduced in 6.0.0.
-     *
-     */
     function wp_skip_spacing_serialization($block_type)
     {
         _deprecated_function(__FUNCTION__, '6.0.0', 'wp_should_skip_block_supports_serialization()');
@@ -5064,30 +2629,11 @@
         return is_array($spacing_support) && array_key_exists('__experimentalSkipSerialization', $spacing_support) && $spacing_support['__experimentalSkipSerialization'];
     }
 
-    /**
-     * Inject the block editor assets that need to be loaded into the editor's iframe as an inline script.
-     *
-     * @since      5.8.0
-     * @deprecated 6.0.0
-     */
     function wp_add_iframed_editor_assets_html()
     {
         _deprecated_function(__FUNCTION__, '6.0.0');
     }
 
-    /**
-     * Retrieves thumbnail for an attachment.
-     * Note that this works only for the (very) old image metadata style where 'thumb' was set,
-     * and the 'sizes' array did not exist. This function returns false for the newer image metadata style
-     * despite that 'thumbnail' is present in the 'sizes' array.
-     *
-     * @param int $post_id Optional. Attachment ID. Default is the ID of the global `$post`.
-     *
-     * @return string|false Thumbnail file path on success, false on failure.
-     * @since      2.1.0
-     * @deprecated 6.1.0
-     *
-     */
     function wp_get_attachment_thumb_file($post_id = 0)
     {
         _deprecated_function(__FUNCTION__, '6.1.0');
@@ -5115,15 +2661,6 @@
             $thumbfile = str_replace(wp_basename($file), $imagedata['thumb'], $file);
             if(file_exists($thumbfile))
             {
-                /**
-                 * Filters the attachment thumbnail file path.
-                 *
-                 * @param string $thumbfile File path to the attachment thumbnail.
-                 * @param int    $post_id   Attachment ID.
-                 *
-                 * @since 2.1.0
-                 *
-                 */
                 return apply_filters('wp_get_attachment_thumb_file', $thumbfile, $post->ID);
             }
         }
@@ -5131,22 +2668,6 @@
         return false;
     }
 
-    /**
-     * Gets the path to a translation file for loading a textdomain just in time.
-     *
-     * Caches the retrieved results internally.
-     *
-     * @param string $domain Text domain. Unique identifier for retrieving translated strings.
-     * @param bool   $reset  Whether to reset the internal cache. Used by the switch to locale functionality.
-     *
-     * @return string|false The path to the translation file or false if no translation file was found.
-     * @since      4.7.0
-     * @deprecated 6.1.0
-     * @access     private
-     *
-     * @see        _load_textdomain_just_in_time()
-     *
-     */
     function _get_path_to_translation($domain, $reset = false)
     {
         _deprecated_function(__FUNCTION__, '6.1.0', 'WP_Textdomain_Registry');
@@ -5166,21 +2687,6 @@
         return $available_translations[$domain];
     }
 
-    /**
-     * Gets the path to a translation file in the languages directory for the current locale.
-     *
-     * Holds a cached list of available .mo files to improve performance.
-     *
-     * @param string $domain Text domain. Unique identifier for retrieving translated strings.
-     *
-     * @return string|false The path to the translation file or false if no translation file was found.
-     * @see        _get_path_to_translation()
-     *
-     * @since      4.7.0
-     * @deprecated 6.1.0
-     * @access     private
-     *
-     */
     function _get_path_to_translation_from_lang_dir($domain)
     {
         _deprecated_function(__FUNCTION__, '6.1.0', 'WP_Textdomain_Registry');
@@ -5224,16 +2730,6 @@
         return false;
     }
 
-    /**
-     * Allows multiple block styles.
-     *
-     * @param array $metadata Metadata for registering a block type.
-     *
-     * @return array Metadata for registering a block type.
-     * @since      5.9.0
-     * @deprecated 6.1.0
-     *
-     */
     function _wp_multiple_block_styles($metadata)
     {
         _deprecated_function(__FUNCTION__, '6.1.0');
@@ -5241,22 +2737,6 @@
         return $metadata;
     }
 
-    /**
-     * Generates an inline style for a typography feature e.g. text decoration,
-     * text transform, and font style.
-     *
-     * @param array  $attributes   Block's attributes.
-     * @param string $feature      Key for the feature within the typography styles.
-     * @param string $css_property Slug for the CSS property the inline style sets.
-     *
-     * @return string CSS inline style.
-     * @deprecated 6.1.0 Use wp_style_engine_get_styles() introduced in 6.1.0.
-     *
-     * @see        wp_style_engine_get_styles()
-     *
-     * @since      5.8.0
-     * @access     private
-     */
     function wp_typography_get_css_variable_inline_style($attributes, $feature, $css_property)
     {
         _deprecated_function(__FUNCTION__, '6.1.0', 'wp_style_engine_get_styles()');
@@ -5285,15 +2765,6 @@
         return sprintf('%s:var(--wp--preset--%s--%s);', $css_property, $css_property, $slug);
     }
 
-    /**
-     * Determines whether global terms are enabled.
-     *
-     * @return bool Always returns false.
-     * @since      6.1.0 This function now always returns false.
-     * @deprecated 6.1.0
-     *
-     * @since      3.0.0
-     */
     function global_terms_enabled()
     {
         _deprecated_function(__FUNCTION__, '6.1.0');
@@ -5301,18 +2772,6 @@
         return false;
     }
 
-    /**
-     * Filter the SQL clauses of an attachment query to include filenames.
-     *
-     * @param array $clauses An array including WHERE, GROUP BY, JOIN, ORDER BY,
-     *                       DISTINCT, fields (SELECT), and LIMITS clauses.
-     *
-     * @return array The unmodified clauses.
-     * @since      4.7.0
-     * @deprecated 6.0.3
-     * @access     private
-     *
-     */
     function _filter_query_attachment_filenames($clauses)
     {
         _deprecated_function(__FUNCTION__, '6.0.3', 'add_filter( "wp_allow_query_attachment_by_filename", "__return_true" )');
@@ -5321,30 +2780,6 @@
         return $clauses;
     }
 
-    /**
-     * Retrieves a page given its title.
-     *
-     * If more than one post uses the same title, the post with the smallest ID will be returned.
-     * Be careful: in case of more than one post having the same title, it will check the oldest
-     * publication date, not the smallest ID.
-     *
-     * Because this function uses the MySQL '=' comparison, $page_title will usually be matched
-     * as case-insensitive with default collation.
-     *
-     * @param string       $page_title Page title.
-     * @param string       $output     Optional. The required return type. One of OBJECT, ARRAY_A, or ARRAY_N, which
-     *                                 correspond to a WP_Post object, an associative array, or a numeric array,
-     *                                 respectively. Default OBJECT.
-     * @param string|array $post_type  Optional. Post type or array of post types. Default 'page'.
-     *
-     * @return WP_Post|array|null WP_Post (or array) on success, or null on failure.
-     * @since      2.1.0
-     * @since      3.0.0 The `$post_type` parameter was added.
-     * @deprecated 6.2.0 Use WP_Query.
-     *
-     * @global wpdb        $wpdb       WordPress database abstraction object.
-     *
-     */
     function get_page_by_title($page_title, $output = OBJECT, $post_type = 'page')
     {
         _deprecated_function(__FUNCTION__, '6.2.0', 'WP_Query');
@@ -5381,16 +2816,6 @@
         return null;
     }
 
-    /**
-     * Returns the correct template for the site's home page.
-     *
-     * @access     private
-     * @return array|null A template object, or null if none could be found.
-     * @deprecated 6.2.0 Site Editor's server-side redirect for missing postType and postId
-     *                   query args is removed. Thus, this function is no longer used.
-     *
-     * @since      6.0.0
-     */
     function _resolve_home_block_template()
     {
         _deprecated_function(__FUNCTION__, '6.2.0');
@@ -5420,28 +2845,11 @@
         ];
     }
 
-    /**
-     * Displays the link to the Windows Live Writer manifest file.
-     *
-     * @link       https://msdn.microsoft.com/en-us/library/bb463265.aspx
-     * @since      2.3.1
-     * @deprecated 6.3.0 WLW manifest is no longer in use and no longer included in core,
-     *                   so the output from this function is removed.
-     */
     function wlwmanifest_link()
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
     }
 
-    /**
-     * Queues comments for metadata lazy-loading.
-     *
-     * @param WP_Comment[] $comments Array of comment objects.
-     *
-     * @deprecated 6.3.0 Use wp_lazyload_comment_meta() instead.
-     *
-     * @since      4.5.0
-     */
     function wp_queue_comments_for_comment_meta_lazyload($comments)
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'wp_lazyload_comment_meta()');
@@ -5461,34 +2869,6 @@
         wp_lazyload_comment_meta($comment_ids);
     }
 
-    /**
-     * Gets the default value to use for a `loading` attribute on an element.
-     *
-     * This function should only be called for a tag and context if lazy-loading is generally enabled.
-     *
-     * The function usually returns 'lazy', but uses certain heuristics to guess whether the current element is likely
-     * to appear above the fold, in which case it returns a boolean `false`, which will lead to the `loading` attribute
-     * being omitted on the element. The purpose of this refinement is to avoid lazy-loading elements that are within
-     * the initial viewport, which can have a negative performance impact.
-     *
-     * Under the hood, the function uses {@see wp_increase_content_media_count()} every time it is called for an
-     * element
-     * within the main content. If the element is the very first content element, the `loading` attribute will be
-     * omitted. This default threshold of 3 content elements to omit the `loading` attribute for can be customized
-     * using the
-     * {@see 'wp_omit_loading_attr_threshold'} filter.
-     *
-     * @param string    $context  Context for the element for which the `loading` attribute value is requested.
-     *
-     * @return string|bool The default `loading` attribute value. Either 'lazy', 'eager', or a boolean `false`, to
-     *     indicate that the `loading` attribute should be skipped.
-     * @see        wp_get_loading_optimization_attributes()
-     *
-     * @global WP_Query $wp_query WordPress Query object.
-     *
-     * @since      5.9.0
-     * @deprecated 6.3.0 Use wp_get_loading_optimization_attributes() instead.
-     */
     function wp_get_loading_attr_default($context)
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'wp_get_loading_optimization_attributes()');
@@ -5566,18 +2946,6 @@
         return 'lazy';
     }
 
-    /**
-     * Adds `loading` attribute to an `img` HTML tag.
-     *
-     * @param string $image   The HTML `img` tag where the attribute should be added.
-     * @param string $context Additional context to pass to the filters.
-     *
-     * @return string Converted `img` tag with `loading` attribute added.
-     * @since      5.5.0
-     * @deprecated 6.3.0 Use wp_img_tag_add_loading_optimization_attrs() instead.
-     * @see        wp_img_tag_add_loading_optimization_attrs()
-     *
-     */
     function wp_img_tag_add_loading_attr($image, $context)
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'wp_img_tag_add_loading_optimization_attrs()');
@@ -5593,7 +2961,6 @@
             return $image;
         }
 
-        /** This filter is documented in wp-admin/includes/media.php */
         $value = apply_filters('wp_img_tag_add_loading_attr', $value, $image, $context);
 
         if($value)
@@ -5609,24 +2976,6 @@
         return $image;
     }
 
-    /**
-     * Takes input from [0, n] and returns it as [0, 1].
-     *
-     * Direct port of TinyColor's function, lightly simplified to maintain
-     * consistency with TinyColor.
-     *
-     * @link       https://github.com/bgrins/TinyColor
-     *
-     * @since      5.8.0
-     * @deprecated 6.3.0
-     *
-     * @access     private
-     *
-     * @param mixed $n   Number of unknown type.
-     * @param int   $max Upper value of the range to bound to.
-     *
-     * @return float Value in the range [0, 1].
-     */
     function wp_tinycolor_bound01($n, $max)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -5653,21 +3002,6 @@
         return ($n % $max) / (float) $max;
     }
 
-    /**
-     * Direct port of tinycolor's boundAlpha function to maintain consistency with
-     * how tinycolor works.
-     *
-     * @link       https://github.com/bgrins/TinyColor
-     *
-     * @since      5.9.0
-     * @deprecated 6.3.0
-     *
-     * @access     private
-     *
-     * @param mixed $n Number of unknown type.
-     *
-     * @return float Value in the range [0,1].
-     */
     function _wp_tinycolor_bound_alpha($n)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -5684,23 +3018,6 @@
         return 1;
     }
 
-    /**
-     * Rounds and converts values of an RGB object.
-     *
-     * Direct port of TinyColor's function, lightly simplified to maintain
-     * consistency with TinyColor.
-     *
-     * @link       https://github.com/bgrins/TinyColor
-     *
-     * @since      5.8.0
-     * @deprecated 6.3.0
-     *
-     * @access     private
-     *
-     * @param array $rgb_color RGB object.
-     *
-     * @return array Rounded and converted RGB object.
-     */
     function wp_tinycolor_rgb_to_rgb($rgb_color)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -5712,25 +3029,6 @@
         ];
     }
 
-    /**
-     * Helper function for hsl to rgb conversion.
-     *
-     * Direct port of TinyColor's function, lightly simplified to maintain
-     * consistency with TinyColor.
-     *
-     * @link       https://github.com/bgrins/TinyColor
-     *
-     * @since      5.8.0
-     * @deprecated 6.3.0
-     *
-     * @access     private
-     *
-     * @param float $p first component.
-     * @param float $q second component.
-     * @param float $t third component.
-     *
-     * @return float R, G, or B component.
-     */
     function wp_tinycolor_hue_to_rgb($p, $q, $t)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -5759,23 +3057,6 @@
         return $p;
     }
 
-    /**
-     * Converts an HSL object to an RGB object with converted and rounded values.
-     *
-     * Direct port of TinyColor's function, lightly simplified to maintain
-     * consistency with TinyColor.
-     *
-     * @link       https://github.com/bgrins/TinyColor
-     *
-     * @since      5.8.0
-     * @deprecated 6.3.0
-     *
-     * @access     private
-     *
-     * @param array $hsl_color HSL object.
-     *
-     * @return array Rounded and converted RGB object.
-     */
     function wp_tinycolor_hsl_to_rgb($hsl_color)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -5807,26 +3088,6 @@
         ];
     }
 
-    /**
-     * Parses hex, hsl, and rgb CSS strings using the same regex as TinyColor v1.4.2
-     * used in the JavaScript. Only colors output from react-color are implemented.
-     *
-     * Direct port of TinyColor's function, lightly simplified to maintain
-     * consistency with TinyColor.
-     *
-     * @link       https://github.com/bgrins/TinyColor
-     * @link       https://github.com/casesandberg/react-color/
-     *
-     * @since      5.8.0
-     * @since      5.9.0 Added alpha processing.
-     * @deprecated 6.3.0
-     *
-     * @access     private
-     *
-     * @param string $color_str CSS color string.
-     *
-     * @return array RGB object.
-     */
     function wp_tinycolor_string_to_rgb($color_str)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -5968,18 +3229,6 @@
         }
     }
 
-    /**
-     * Returns the prefixed id for the duotone filter for use as a CSS id.
-     *
-     * @param array $preset Duotone preset value as seen in theme.json.
-     *
-     * @return string Duotone filter CSS id.
-     * @since      5.9.1
-     * @deprecated 6.3.0
-     *
-     * @access     private
-     *
-     */
     function wp_get_duotone_filter_id($preset)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -5987,19 +3236,6 @@
         return WP_Duotone::get_filter_id_from_preset($preset);
     }
 
-    /**
-     * Returns the CSS filter property url to reference the rendered SVG.
-     *
-     * @param array $preset Duotone preset value as seen in theme.json.
-     *
-     * @return string Duotone CSS filter property url value.
-     * @deprecated 6.3.0
-     *
-     * @access     private
-     *
-     * @since      5.9.0
-     * @since      6.1.0 Allow unset for preset colors.
-     */
     function wp_get_duotone_filter_property($preset)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -6007,18 +3243,6 @@
         return WP_Duotone::get_filter_css_property_value_from_preset($preset);
     }
 
-    /**
-     * Returns the duotone filter SVG string for the preset.
-     *
-     * @param array $preset Duotone preset value as seen in theme.json.
-     *
-     * @return string Duotone SVG filter.
-     * @since      5.9.1
-     * @deprecated 6.3.0
-     *
-     * @access     private
-     *
-     */
     function wp_get_duotone_filter_svg($preset)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -6026,17 +3250,6 @@
         return WP_Duotone::get_filter_svg_from_preset($preset);
     }
 
-    /**
-     * Registers the style and colors block attributes for block types that support it.
-     *
-     * @param WP_Block_Type $block_type Block Type.
-     *
-     * @deprecated 6.3.0 Use WP_Duotone::register_duotone_support() instead.
-     *
-     * @access     private
-     *
-     * @since      5.8.0
-     */
     function wp_register_duotone_support($block_type)
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Duotone::register_duotone_support()');
@@ -6044,20 +3257,6 @@
         return WP_Duotone::register_duotone_support($block_type);
     }
 
-    /**
-     * Renders out the duotone stylesheet and SVG.
-     *
-     * @param string $block_content Rendered block content.
-     * @param array  $block         Block object.
-     *
-     * @return string Filtered block content.
-     * @since      5.8.0
-     * @since      6.1.0 Allow unset for preset colors.
-     * @deprecated 6.3.0 Use WP_Duotone::render_duotone_support() instead.
-     *
-     * @access     private
-     *
-     */
     function wp_render_duotone_support($block_content, $block)
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Duotone::render_duotone_support()');
@@ -6066,14 +3265,6 @@
         return WP_Duotone::render_duotone_support($block_content, $block, $wp_block);
     }
 
-    /**
-     * Returns a string containing the SVGs to be referenced as filters (duotone).
-     *
-     * @return string
-     * @deprecated 6.3.0 SVG generation is handled on a per-block basis in block supports.
-     *
-     * @since      5.9.1
-     */
     function wp_get_global_styles_svg_filters()
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -6113,17 +3304,6 @@
         return $svgs;
     }
 
-    /**
-     * Renders the SVG filters supplied by theme.json.
-     *
-     * Note that this doesn't render the per-block user-defined
-     * filters which are handled by wp_render_duotone_support,
-     * but it should be rendered before the filtered content
-     * in the body to satisfy Safari's rendering quirks.
-     *
-     * @since      5.9.1
-     * @deprecated 6.3.0 SVG generation is handled on a per-block basis in block supports.
-     */
     function wp_global_styles_render_svg_filters()
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -6144,21 +3324,6 @@
         }
     }
 
-    /**
-     * Build an array with CSS classes and inline styles defining the colors
-     * which will be applied to the navigation markup in the front-end.
-     *
-     * @param array $context     Navigation block context.
-     * @param array $attributes  Block attributes.
-     * @param bool  $is_sub_menu Whether the block is a sub-menu.
-     *
-     * @return array Colors CSS classes and inline styles.
-     * @since      5.9.0
-     * @deprecated 6.3.0 This was removed from the Navigation Submenu block in favour of `wp_apply_colors_support()`.
-     *                   `wp_apply_colors_support()` returns an array with similar class and style values,
-     *                   but with different keys: `class` and `style`.
-     *
-     */
     function block_core_navigation_submenu_build_css_colors($context, $attributes, $is_sub_menu = false)
     {
         _deprecated_function(__FUNCTION__, '6.3.0');
@@ -6246,35 +3411,6 @@
         return $colors;
     }
 
-    /**
-     * Runs the theme.json webfonts handler.
-     *
-     * Using `WP_Theme_JSON_Resolver`, it gets the fonts defined
-     * in the `theme.json` for the current selection and style
-     * variations, validates the font-face properties, generates
-     * the '@font-face' style declarations, and then enqueues the
-     * styles for both the editor and front-end.
-     *
-     * Design Notes:
-     * This is not a public API, but rather an internal handler.
-     * A future public Webfonts API will replace this stopgap code.
-     *
-     * This code design is intentional.
-     *    a. It hides the inner-workings.
-     *    b. It does not expose API ins or outs for consumption.
-     *    c. It only works with a theme's `theme.json`.
-     *
-     * Why?
-     *    a. To avoid backwards-compatibility issues when
-     *       the Webfonts API is introduced in Core.
-     *    b. To make `fontFace` declarations in `theme.json` work.
-     *
-     * @link       https://github.com/WordPress/gutenberg/issues/40472
-     *
-     * @since      6.0.0
-     * @deprecated 6.4.0 Use wp_print_font_faces() instead.
-     * @access     private
-     */
     function _wp_theme_json_webfonts_handler()
     {
         _deprecated_function(__FUNCTION__, '6.4.0', 'wp_print_font_faces');
@@ -6293,13 +3429,6 @@
         // Webfonts to be processed.
         $registered_webfonts = [];
 
-        /**
-         * Gets the webfonts from theme.json.
-         *
-         * @return array Array of defined webfonts.
-         * @since 6.0.0
-         *
-         */
         $fn_get_webfonts_from_theme_json = static function()
         {
             // Get settings from theme.json.
@@ -6369,20 +3498,6 @@
             return $webfonts;
         };
 
-        /**
-         * Transforms each 'src' into an URI by replacing 'file:./'
-         * placeholder from theme.json.
-         *
-         * The absolute path to the webfont file(s) cannot be defined in
-         * theme.json. `file:./` is the placeholder which is replaced by
-         * the theme's URL path to the theme's root.
-         *
-         * @param array $src Webfont file(s) `src`.
-         *
-         * @return array Webfont's `src` in URI.
-         * @since 6.0.0
-         *
-         */
         $fn_transform_src_into_uri = static function(array $src)
         {
             foreach($src as $key => $url)
@@ -6399,15 +3514,6 @@
             return $src;
         };
 
-        /**
-         * Converts the font-face properties (i.e. keys) into kebab-case.
-         *
-         * @param array $font_face Font face to convert.
-         *
-         * @return array Font faces with each property in kebab-case format.
-         * @since 6.0.0
-         *
-         */
         $fn_convert_keys_to_kebab_case = static function(array $font_face)
         {
             foreach($font_face as $property => $value)
@@ -6423,15 +3529,6 @@
             return $font_face;
         };
 
-        /**
-         * Validates a webfont.
-         *
-         * @param array $webfont The webfont arguments.
-         *
-         * @return array|false The validated webfont arguments, or false if the webfont is invalid.
-         * @since 6.0.0
-         *
-         */
         $fn_validate_webfont = static function($webfont)
         {
             $webfont = wp_parse_args($webfont, [
@@ -6511,16 +3608,6 @@
             return $webfont;
         };
 
-        /**
-         * Registers webfonts declared in theme.json.
-         *
-         * @since 6.0.0
-         *
-         * @uses  $registered_webfonts To access and update the registered webfonts registry (passed by reference).
-         * @uses  $fn_get_webfonts_from_theme_json To run the function that gets the webfonts from theme.json.
-         * @uses  $fn_convert_keys_to_kebab_case To run the function that converts keys into kebab-case.
-         * @uses  $fn_validate_webfont To run the function that validates each font-face (webfont) from theme.json.
-         */
         $fn_register_webfonts = static function() use (
             &$registered_webfonts, $fn_get_webfonts_from_theme_json, $fn_convert_keys_to_kebab_case, $fn_validate_webfont, $fn_transform_src_into_uri
         )
@@ -6550,15 +3637,6 @@
             }
         };
 
-        /**
-         * Orders 'src' items to optimize for browser support.
-         *
-         * @param array $webfont Webfont to process.
-         *
-         * @return array Ordered `src` items.
-         * @since 6.0.0
-         *
-         */
         $fn_order_src = static function(array $webfont)
         {
             $src = [];
@@ -6628,17 +3706,6 @@
             return $webfont;
         };
 
-        /**
-         * Compiles the 'src' into valid CSS.
-         *
-         * @param string $font_family Font family.
-         * @param array  $value       Value to process.
-         *
-         * @return string The CSS.
-         * @since 6.2.0 Removed local() CSS.
-         *
-         * @since 6.0.0
-         */
         $fn_compile_src = static function($font_family, array $value)
         {
             $src = '';
@@ -6653,15 +3720,6 @@
             return $src;
         };
 
-        /**
-         * Compiles the font variation settings.
-         *
-         * @param array $font_variation_settings Array of font variation settings.
-         *
-         * @return string The CSS.
-         * @since 6.0.0
-         *
-         */
         $fn_compile_variations = static function(array $font_variation_settings)
         {
             $variations = '';
@@ -6674,18 +3732,6 @@
             return $variations;
         };
 
-        /**
-         * Builds the font-family's CSS.
-         *
-         * @param array $webfont Webfont to process.
-         *
-         * @return string This font-family's CSS.
-         * @uses  $fn_compile_variations To run the function that compiles the variations.
-         *
-         * @since 6.0.0
-         *
-         * @uses  $fn_compile_src To run the function that compiles the src.
-         */
         $fn_build_font_face_css = static function(array $webfont) use ($fn_compile_src, $fn_compile_variations)
         {
             $css = '';
@@ -6728,17 +3774,6 @@
             return $css;
         };
 
-        /**
-         * Gets the '@font-face' CSS styles for locally-hosted font files.
-         *
-         * @return string The `@font-face` CSS.
-         * @uses  $registered_webfonts To access and update the registered webfonts registry (passed by reference).
-         * @uses  $fn_order_src To run the function that orders the src.
-         * @uses  $fn_build_font_face_css To run the function that builds the font-face CSS.
-         *
-         * @since 6.0.0
-         *
-         */
         $fn_get_css = static function() use (&$registered_webfonts, $fn_order_src, $fn_build_font_face_css)
         {
             $css = '';
@@ -6755,13 +3790,6 @@
             return $css;
         };
 
-        /**
-         * Generates and enqueues webfonts styles.
-         *
-         * @since 6.0.0
-         *
-         * @uses  $fn_get_css To run the function that gets the CSS.
-         */
         $fn_generate_and_enqueue_styles = static function() use ($fn_get_css)
         {
             // Generate the styles.
@@ -6781,13 +3809,6 @@
             wp_add_inline_style('wp-webfonts', $styles);
         };
 
-        /**
-         * Generates and enqueues editor styles.
-         *
-         * @since 6.0.0
-         *
-         * @uses  $fn_get_css To run the function that gets the CSS.
-         */
         $fn_generate_and_enqueue_editor_styles = static function() use ($fn_get_css)
         {
             // Generate the styles.

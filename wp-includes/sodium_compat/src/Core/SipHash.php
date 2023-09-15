@@ -5,31 +5,8 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_SodiumCompat_Core_SipHash
-     *
-     * Only uses 32-bit arithmetic, while the original SipHash used 64-bit integers
-     */
     class ParagonIE_Sodium_Core_SipHash extends ParagonIE_Sodium_Core_Util
     {
-        /**
-         * Implements Siphash-2-4 using only 32-bit numbers.
-         *
-         * When we split an int into two, the higher bits go to the lower index.
-         * e.g. 0xDEADBEEFAB10C92D becomes [
-         *     0 => 0xDEADBEEF,
-         *     1 => 0xAB10C92D
-         * ].
-         *
-         * @param string $in
-         * @param string $key
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function sipHash24($in, $key)
         {
             $inlen = self::strlen($in);
@@ -175,14 +152,6 @@
             return self::store32_le($v[1] ^ $v[3] ^ $v[5] ^ $v[7]).self::store32_le($v[0] ^ $v[2] ^ $v[4] ^ $v[6]);
         }
 
-        /**
-         * @param int[] $v
-         *
-         * @return int[]
-         *
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function sipRound(array $v)
         {
             # v0 += v1;
@@ -234,23 +203,12 @@
             return $v;
         }
 
-        /**
-         * Add two 32 bit integers representing a 64-bit integer.
-         *
-         * @param int[] $a
-         * @param int[] $b
-         *
-         * @return array<int, mixed>
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function add(array $a, array $b)
         {
-            /** @var int $x1 */
             $x1 = $a[1] + $b[1];
-            /** @var int $c */
+
             $c = $x1 >> 32; // Carry if ($a + $b) > 0xffffffff
-            /** @var int $x0 */
+
             $x0 = $a[0] + $b[0] + $c;
 
             return [
@@ -259,15 +217,6 @@
             ];
         }
 
-        /**
-         * @param int $int0
-         * @param int $int1
-         * @param int $c
-         *
-         * @return array<int, mixed>
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function rotl_64($int0, $int1, $c)
         {
             $int0 &= 0xffffffff;

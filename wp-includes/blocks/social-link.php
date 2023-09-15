@@ -1,19 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/social-link` blocks.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/social-link` block on server.
-     *
-     * @param Array    $attributes The block attributes.
-     * @param String   $content    InnerBlocks content of the Block.
-     * @param WP_Block $block      Block object.
-     *
-     * @return string Rendered HTML of the referenced block.
-     */
     function render_block_core_social_link($attributes, $content, $block)
     {
         $open_in_new_tab = isset($block->context['openInNewTab']) ? $block->context['openInNewTab'] : false;
@@ -30,19 +16,11 @@
             return '';
         }
 
-        /**
-         * Prepend emails with `mailto:` if not set.
-         * The `is_email` returns false for emails with schema.
-         */
         if(is_email($url))
         {
             $url = 'mailto:'.$url;
         }
 
-        /**
-         * Prepend URL with https:// if it doesn't appear to contain a scheme
-         * and it's not a relative link starting with //.
-         */
         if(! parse_url($url, PHP_URL_SCHEME) && ! str_starts_with($url, '//'))
         {
             $url = 'https://'.$url;
@@ -76,9 +54,6 @@
         return $processor->get_updated_html();
     }
 
-    /**
-     * Registers the `core/social-link` blocks.
-     */
     function register_block_core_social_link()
     {
         register_block_type_from_metadata(__DIR__.'/social-link', [
@@ -88,13 +63,6 @@
 
     add_action('init', 'register_block_core_social_link');
 
-    /**
-     * Returns the SVG for social link.
-     *
-     * @param string $service The service icon.
-     *
-     * @return string SVG Element for service icon.
-     */
     function block_core_social_link_get_icon($service)
     {
         $services = block_core_social_link_services();
@@ -106,13 +74,6 @@
         return $services['share']['icon'];
     }
 
-    /**
-     * Returns the brand name for social link.
-     *
-     * @param string $service The service icon.
-     *
-     * @return string Brand label.
-     */
     function block_core_social_link_get_name($service)
     {
         $services = block_core_social_link_services();
@@ -124,14 +85,6 @@
         return $services['share']['name'];
     }
 
-    /**
-     * Returns the SVG for social link.
-     *
-     * @param string $service The service slug to extract data from.
-     * @param string $field   The field ('name', 'icon', etc) to extract for a service.
-     *
-     * @return array|string
-     */
     function block_core_social_link_services($service = '', $field = '')
     {
         $services_data = [
@@ -325,13 +278,6 @@
         return $services_data;
     }
 
-    /**
-     * Returns CSS styles for icon and icon background colors.
-     *
-     * @param array $context Block context passed to Social Link.
-     *
-     * @return string Inline CSS styles for link's icon and background colors.
-     */
     function block_core_social_link_get_color_styles($context)
     {
         $styles = [];
@@ -349,13 +295,6 @@
         return implode('', $styles);
     }
 
-    /**
-     * Returns CSS classes for icon and icon background colors.
-     *
-     * @param array $context Block context passed to Social Sharing Link.
-     *
-     * @return string CSS classes for link's icon and background colors.
-     */
     function block_core_social_link_get_color_classes($context)
     {
         $classes = [];

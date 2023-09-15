@@ -1,10 +1,4 @@
 <?php
-    /**
-     * Edit comment form for inclusion in another file.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
 // Don't load directly.
     if(! defined('ABSPATH'))
@@ -12,9 +6,6 @@
         die('-1');
     }
 
-    /**
-     * @global WP_Comment $comment Global comment object.
-     */
     global $comment;
 ?>
     <form name="post" action="comment.php" method="post" id="post">
@@ -189,9 +180,7 @@
                                                         ?>
                                                     </legend>
                                                     <?php
-                                                        /**
-                                                         * @global string $action
-                                                         */
+
                                                         global $action;
 
                                                         touch_time(('editcomment' === $action), 0);
@@ -236,15 +225,7 @@
                                             ?>
 
                                             <?php
-                                                /**
-                                                 * Filters miscellaneous actions for the edit comment form sidebar.
-                                                 *
-                                                 * @param string     $html    Output HTML to display miscellaneous action.
-                                                 * @param WP_Comment $comment Current comment object.
-                                                 *
-                                                 * @since 4.3.0
-                                                 *
-                                                 */
+
                                                 echo apply_filters('edit_comment_misc_actions', '', $comment);
                                             ?>
 
@@ -268,17 +249,9 @@
 
                     <div id="postbox-container-2" class="postbox-container">
                         <?php
-                            /** This action is documented in wp-admin/includes/meta-boxes.php */
+
                             do_action('add_meta_boxes', 'comment', $comment);
 
-                            /**
-                             * Fires when comment-specific meta boxes are added.
-                             *
-                             * @param WP_Comment $comment Comment object.
-                             *
-                             * @since 3.0.0
-                             *
-                             */
                             do_action('add_meta_boxes_comment', $comment);
 
                             do_meta_boxes(null, 'normal', $comment);

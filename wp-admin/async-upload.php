@@ -1,10 +1,4 @@
 <?php
-    /**
-     * Server-side file upload handler from wp-plupload or other asynchronous upload methods.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     if(isset($_REQUEST['action']) && 'upload-attachment' === $_REQUEST['action'])
     {
@@ -143,22 +137,5 @@
         // Long form response - big chunk of HTML.
         $type = $_REQUEST['type'];
 
-        /**
-         * Filters the returned ID of an uploaded attachment.
-         *
-         * The dynamic portion of the hook name, `$type`, refers to the attachment type.
-         *
-         * Possible hook names include:
-         *
-         *  - `async_upload_audio`
-         *  - `async_upload_file`
-         *  - `async_upload_image`
-         *  - `async_upload_video`
-         *
-         * @param int $id Uploaded attachment ID.
-         *
-         * @since 2.5.0
-         *
-         */
         echo apply_filters("async_upload_{$type}", $id);
     }

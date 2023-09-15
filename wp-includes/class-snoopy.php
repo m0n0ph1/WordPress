@@ -1,42 +1,11 @@
 <?php
 
-    /**
-     * Deprecated. Use WP_HTTP (http.php) instead.
-     */
     _deprecated_file(basename(__FILE__), '3.0.0', WPINC.'/http.php');
 
     if(! class_exists('Snoopy', false)) :
-        /*************************************************
-         *
-         * Snoopy - the PHP net client
-         * Author: Monte Ohrt <monte@ispi.net>
-         * Copyright (c): 1999-2008 New Digital Group, all rights reserved
-         * Version: 1.2.4
-         * This library is free software; you can redistribute it and/or
-         * modify it under the terms of the GNU Lesser General Public
-         * License as published by the Free Software Foundation; either
-         * version 2.1 of the License, or (at your option) any later version.
-         *
-         * This library is distributed in the hope that it will be useful,
-         * but WITHOUT ANY WARRANTY; without even the implied warranty of
-         * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-         * Lesser General Public License for more details.
-         *
-         * You should have received a copy of the GNU Lesser General Public
-         * License along with this library; if not, write to the Free Software
-         * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-         *
-         * You may contact the author of Snoopy by e-mail at:
-         * monte@ohrt.com
-         *
-         * The latest version of Snoopy can be obtained from:
-         * http://snoopy.sourceforge.net/
-         *************************************************/
 
         class Snoopy
         {
-            /**** Public variables ****/
-
             /* user definable vars */
 
             var $host = "www.php.net";        // host name we are connecting to
@@ -121,8 +90,6 @@
             // library functions built into php,
             // as these functions are not stable
             // as of this Snoopy release.
-
-            /**** Private variables ****/
 
             var $_maxlinelen = 4096;                // max line length (headers)
 

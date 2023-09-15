@@ -1,20 +1,5 @@
 <?php
-    /**
-     * Shadow block support flag.
-     *
-     * @package WordPress
-     * @since   6.3.0
-     */
 
-    /**
-     * Registers the style and shadow block attributes for block types that support it.
-     *
-     * @param WP_Block_Type $block_type Block Type.
-     *
-     * @since  6.3.0
-     * @access private
-     *
-     */
     function wp_register_shadow_support($block_type)
     {
         $has_shadow_support = block_has_support($block_type, 'shadow', false);
@@ -44,18 +29,6 @@
         }
     }
 
-    /**
-     * Add CSS classes and inline styles for shadow features to the incoming attributes array.
-     * This will be applied to the block markup in the front-end.
-     *
-     * @param WP_Block_Type $block_type       Block type.
-     * @param array         $block_attributes Block attributes.
-     *
-     * @return array Shadow CSS classes and inline styles.
-     * @since  6.3.0
-     * @access private
-     *
-     */
     function wp_apply_shadow_support($block_type, $block_attributes)
     {
         $has_shadow_support = block_has_support($block_type, 'shadow', false);

@@ -1,40 +1,14 @@
 <?php
-    /**
-     * Customizer settings for this theme.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty_One
-     * @since      Twenty Twenty-One 1.0
-     */
 
     if(! class_exists('Twenty_Twenty_One_Customize'))
     {
-        /**
-         * Customizer Settings.
-         *
-         * @since Twenty Twenty-One 1.0
-         */
         class Twenty_Twenty_One_Customize
         {
-            /**
-             * Constructor. Instantiate the object.
-             *
-             * @since Twenty Twenty-One 1.0
-             */
             public function __construct()
             {
                 add_action('customize_register', [$this, 'register']);
             }
 
-            /**
-             * Register customizer options.
-             *
-             * @param WP_Customize_Manager $wp_customize Theme Customizer object.
-             *
-             * @return void
-             * @since Twenty Twenty-One 1.0
-             *
-             */
             public function register($wp_customize)
             {
                 // Change site-title & description to postMessage.
@@ -67,9 +41,6 @@
                     'label' => esc_html__('Display Site Title & Tagline', 'twentytwentyone'),
                 ]);
 
-                /**
-                 * Add excerpt or full text selector to customizer
-                 */
                 $wp_customize->add_section('excerpt_settings', [
                     'title' => esc_html__('Excerpt Settings', 'twentytwentyone'),
                     'priority' => 120,
@@ -124,39 +95,16 @@
                 );
             }
 
-            /**
-             * Sanitize boolean for checkbox.
-             *
-             * @param bool $checked Whether or not a box is checked.
-             *
-             * @return bool
-             * @since Twenty Twenty-One 1.0
-             *
-             */
             public static function sanitize_checkbox($checked = null)
             {
                 return (bool) isset($checked) && true === $checked;
             }
 
-            /**
-             * Render the site title for the selective refresh partial.
-             *
-             * @return void
-             * @since Twenty Twenty-One 1.0
-             *
-             */
             public function partial_blogname()
             {
                 bloginfo('name');
             }
 
-            /**
-             * Render the site tagline for the selective refresh partial.
-             *
-             * @return void
-             * @since Twenty Twenty-One 1.0
-             *
-             */
             public function partial_blogdescription()
             {
                 bloginfo('description');

@@ -1,37 +1,7 @@
 <?php
-    /**
-     * REST API functions.
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      4.4.0
-     */
 
-    /**
-     * Version number for our API.
-     *
-     * @var string
-     */
     define('REST_API_VERSION', '2.0');
 
-    /**
-     * Registers a REST API route.
-     *
-     * Note: Do not use before the {@see 'rest_api_init'} hook.
-     *
-     * @param string $route_namespace The first URL segment after core prefix. Should be unique to your package/plugin.
-     * @param string $route           The base URL for route you are adding.
-     * @param array  $args            Optional. Either an array of options for the endpoint, or an array of arrays for
-     *                                multiple methods. Default empty array.
-     * @param bool   $override        Optional. If the route already exists, should we override it? True overrides,
-     *                                false merges (with newer overriding if duplicate keys exist). Default false.
-     *
-     * @return bool True on success, false on error.
-     * @since 5.5.0 Added a `_doing_it_wrong()` notice when the required `permission_callback` argument is not set.
-     *
-     * @since 4.4.0
-     * @since 5.1.0 Added a `_doing_it_wrong()` notice when not called on or after the `rest_api_init` hook.
-     */
     function register_rest_route($route_namespace, $route, $args = [], $override = false)
     {
         if(empty($route_namespace))
@@ -118,30 +88,6 @@
         return true;
     }
 
-    /**
-     * Registers a new field on an existing WordPress object type.
-     *
-     * @param string|array $object_type               Object(s) the field is being registered to,
-     *                                                "post"|"term"|"comment" etc.
-     * @param string       $attribute                 The attribute name.
-     * @param array        $args                      {
-     *                                                Optional. An array of arguments used to handle the registered field.
-     *
-     * @type callable|null $get_callback              Optional. The callback function used to retrieve the field value. Default is
-     *                                                'null', the field will not be returned in the response. The function
-     *                                                will be passed the prepared object data.
-     * @type callable|null $update_callback           Optional. The callback function used to set and update the field value.
-     *                                                Default is 'null', the value cannot be set or updated. The function will be passed the model object, like
-     *                                                WP_Post.
-     * @type array|null    $schema                    Optional. The schema for this field.
-     *                                                Default is 'null', no schema entry will be returned.
-     *                                                }
-     * @global array       $wp_rest_additional_fields Holds registered fields, organized
-     *                                                by object type.
-     *
-     * @since 4.7.0
-     *
-     */
     function register_rest_field($object_type, $attribute, $args = [])
     {
         global $wp_rest_additional_fields;
@@ -162,14 +108,6 @@
         }
     }
 
-    /**
-     * Registers rewrite rules for the REST API.
-     *
-     * @since 4.4.0
-     *
-     * @see   rest_api_register_rewrites()
-     * @global WP $wp Current WordPress environment instance.
-     */
     function rest_api_init()
     {
         rest_api_register_rewrites();
@@ -178,14 +116,6 @@
         $wp->add_query_var('rest_route');
     }
 
-    /**
-     * Adds REST rewrite rules.
-     *
-     * @since 4.4.0
-     *
-     * @see   add_rewrite_rule()
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     */
     function rest_api_register_rewrites()
     {
         global $wp_rewrite;
@@ -196,14 +126,6 @@
         add_rewrite_rule('^'.$wp_rewrite->index.'/'.rest_get_url_prefix().'/(.*)?', 'index.php?rest_route=/$matches[1]', 'top');
     }
 
-    /**
-     * Registers the default REST API filters.
-     *
-     * Attached to the {@see 'rest_api_init'} action
-     * to make testing and disabling these filters easier.
-     *
-     * @since 4.4.0
-     */
     function rest_api_default_filters()
     {
         if(defined('REST_REQUEST') && REST_REQUEST)
@@ -226,11 +148,6 @@
         add_filter('rest_index', 'rest_add_application_passwords_to_index');
     }
 
-    /**
-     * Registers default REST API routes.
-     *
-     * @since 4.7.0
-     */
     function create_initial_rest_routes()
     {
         foreach(get_post_types(['show_in_rest' => true], 'objects') as $post_type)
@@ -300,16 +217,6 @@
             new WP_REST_Post_Format_Search_Handler(),
         ];
 
-        /**
-         * Filters the search handlers to use in the REST search controller.
-         *
-         * @param array $search_handlers List of search handlers to use in the controller. Each search
-         *                               handler instance must extend the `WP_REST_Search_Handler` class.
-         *                               Default is only a handler for posts.
-         *
-         * @since 5.0.0
-         *
-         */
         $search_handlers = apply_filters('wp_rest_search_handlers', $search_handlers);
 
         $controller = new WP_REST_Search_Controller($search_handlers);
@@ -393,13 +300,6 @@
         $controller->register_routes();
     }
 
-    /**
-     * Loads the REST API.
-     *
-     * @since 4.4.0
-     *
-     * @global WP $wp Current WordPress environment instance.
-     */
     function rest_api_loaded()
     {
         if(empty($GLOBALS['wp']->query_vars['rest_route']))
@@ -407,12 +307,6 @@
             return;
         }
 
-        /**
-         * Whether this is a REST Request.
-         *
-         * @since 4.4.0
-         * @var bool
-         */
         define('REST_REQUEST', true);
 
         // Initialize the server.
@@ -430,42 +324,11 @@
         die();
     }
 
-    /**
-     * Retrieves the URL prefix for any API resource.
-     *
-     * @return string Prefix.
-     * @since 4.4.0
-     *
-     */
     function rest_get_url_prefix()
     {
-        /**
-         * Filters the REST URL prefix.
-         *
-         * @param string $prefix URL prefix. Default 'wp-json'.
-         *
-         * @since 4.4.0
-         *
-         */
         return apply_filters('rest_url_prefix', 'wp-json');
     }
 
-    /**
-     * Retrieves the URL to a REST endpoint on a site.
-     *
-     * Note: The returned URL is NOT escaped.
-     *
-     * @param int|null    $blog_id    Optional. Blog ID. Default of null returns URL for current blog.
-     * @param string      $path       Optional. REST route. Default '/'.
-     * @param string      $scheme     Optional. Sanitization scheme. Default 'rest'.
-     *
-     * @return string Full URL to the endpoint.
-     * @todo  Check if this is even necessary
-     * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
-     *
-     * @since 4.4.0
-     *
-     */
     function get_rest_url($blog_id = null, $path = '/', $scheme = 'rest')
     {
         if(empty($path))
@@ -524,50 +387,14 @@
             $url = set_url_scheme($url, 'https');
         }
 
-        /**
-         * Filters the REST URL.
-         *
-         * Use this filter to adjust the url returned by the get_rest_url() function.
-         *
-         * @param string   $url     REST URL.
-         * @param string   $path    REST route.
-         * @param int|null $blog_id Blog ID.
-         * @param string   $scheme  Sanitization scheme.
-         *
-         * @since 4.4.0
-         *
-         */
         return apply_filters('rest_url', $url, $path, $blog_id, $scheme);
     }
 
-    /**
-     * Retrieves the URL to a REST endpoint.
-     *
-     * Note: The returned URL is NOT escaped.
-     *
-     * @param string $path   Optional. REST route. Default empty.
-     * @param string $scheme Optional. Sanitization scheme. Default 'rest'.
-     *
-     * @return string Full URL to the endpoint.
-     * @since 4.4.0
-     *
-     */
     function rest_url($path = '', $scheme = 'rest')
     {
         return get_rest_url(null, $path, $scheme);
     }
 
-    /**
-     * Do a REST request.
-     *
-     * Used primarily to route internal requests through WP_REST_Server.
-     *
-     * @param WP_REST_Request|string $request Request.
-     *
-     * @return WP_REST_Response REST response.
-     * @since 4.4.0
-     *
-     */
     function rest_do_request($request)
     {
         $request = rest_ensure_request($request);
@@ -575,64 +402,21 @@
         return rest_get_server()->dispatch($request);
     }
 
-    /**
-     * Retrieves the current REST server instance.
-     *
-     * Instantiates a new instance if none exists already.
-     *
-     * @return WP_REST_Server REST server instance.
-     * @global WP_REST_Server $wp_rest_server REST server instance.
-     *
-     * @since 4.5.0
-     *
-     */
     function rest_get_server()
     {
         /* @var WP_REST_Server $wp_rest_server */ global $wp_rest_server;
 
         if(empty($wp_rest_server))
         {
-            /**
-             * Filters the REST Server Class.
-             *
-             * This filter allows you to adjust the server class used by the REST API, using a
-             * different class to handle requests.
-             *
-             * @param string $class_name The name of the server class. Default 'WP_REST_Server'.
-             *
-             * @since 4.4.0
-             *
-             */
             $wp_rest_server_class = apply_filters('wp_rest_server_class', 'WP_REST_Server');
             $wp_rest_server = new $wp_rest_server_class();
 
-            /**
-             * Fires when preparing to serve a REST API request.
-             *
-             * Endpoint objects should be created and register their hooks on this action rather
-             * than another action to ensure they're only loaded when needed.
-             *
-             * @param WP_REST_Server $wp_rest_server Server object.
-             *
-             * @since 4.4.0
-             *
-             */
             do_action('rest_api_init', $wp_rest_server);
         }
 
         return $wp_rest_server;
     }
 
-    /**
-     * Ensures request arguments are a request object (for consistency).
-     *
-     * @param array|string|WP_REST_Request $request Request to check.
-     *
-     * @return WP_REST_Request REST request instance.
-     * @since 4.4.0
-     * @since 5.3.0 Accept string argument for the request path.
-     *
-     */
     function rest_ensure_request($request)
     {
         if($request instanceof WP_REST_Request)
@@ -648,21 +432,6 @@
         return new WP_REST_Request('GET', '', $request);
     }
 
-    /**
-     * Ensures a REST response is a response object (for consistency).
-     *
-     * This implements WP_REST_Response, allowing usage of `set_status`/`header`/etc
-     * without needing to double-check the object. Will also allow WP_Error to indicate error
-     * responses, so users should immediately check for this value.
-     *
-     * @param WP_REST_Response|WP_Error|WP_HTTP_Response|mixed $response Response to check.
-     *
-     * @return WP_REST_Response|WP_Error If response generated an error, WP_Error, if response
-     *                                   is already an instance, WP_REST_Response, otherwise
-     *                                   returns a new WP_REST_Response instance.
-     * @since 4.4.0
-     *
-     */
     function rest_ensure_response($response)
     {
         if(is_wp_error($response))
@@ -687,16 +456,6 @@
         return new WP_REST_Response($response);
     }
 
-    /**
-     * Handles _deprecated_function() errors.
-     *
-     * @param string $function_name The function that was called.
-     * @param string $replacement   The function that should have been called.
-     * @param string $version       Version.
-     *
-     * @since 4.4.0
-     *
-     */
     function rest_handle_deprecated_function($function_name, $replacement, $version)
     {
         if(! WP_DEBUG || headers_sent())
@@ -717,16 +476,6 @@
         header(sprintf('X-WP-DeprecatedFunction: %s', $string));
     }
 
-    /**
-     * Handles _deprecated_argument() errors.
-     *
-     * @param string $function_name The function that was called.
-     * @param string $message       A message regarding the change.
-     * @param string $version       Version.
-     *
-     * @since 4.4.0
-     *
-     */
     function rest_handle_deprecated_argument($function_name, $message, $version)
     {
         if(! WP_DEBUG || headers_sent())
@@ -747,16 +496,6 @@
         header(sprintf('X-WP-DeprecatedParam: %s', $string));
     }
 
-    /**
-     * Handles _doing_it_wrong errors.
-     *
-     * @param string      $function_name The function that was called.
-     * @param string      $message       A message explaining what has been done incorrectly.
-     * @param string|null $version       The version of WordPress where the message was added.
-     *
-     * @since 5.5.0
-     *
-     */
     function rest_handle_doing_it_wrong($function_name, $message, $version)
     {
         if(! WP_DEBUG || headers_sent())
@@ -780,15 +519,6 @@
         header(sprintf('X-WP-DoingItWrong: %s', $string));
     }
 
-    /**
-     * Sends Cross-Origin Resource Sharing headers with API requests.
-     *
-     * @param mixed $value Response data.
-     *
-     * @return mixed Response data.
-     * @since 4.4.0
-     *
-     */
     function rest_send_cors_headers($value)
     {
         $origin = get_http_origin();
@@ -813,20 +543,6 @@
         return $value;
     }
 
-    /**
-     * Handles OPTIONS requests for the server.
-     *
-     * This is handled outside of the server code, as it doesn't obey normal route
-     * mapping.
-     *
-     * @param mixed           $response Current response, either response or `null` to indicate pass-through.
-     * @param WP_REST_Server  $handler  ResponseHandler instance (usually WP_REST_Server).
-     * @param WP_REST_Request $request  The request that was used to make current response.
-     *
-     * @return WP_REST_Response Modified response, either response or `null` to indicate pass-through.
-     * @since 4.4.0
-     *
-     */
     function rest_handle_options_request($response, $handler, $request)
     {
         if(! empty($response) || $request->get_method() !== 'OPTIONS')
@@ -874,17 +590,6 @@
         return $response;
     }
 
-    /**
-     * Sends the "Allow" header to state all methods that can be sent to the current route.
-     *
-     * @param WP_REST_Response $response Current response being served.
-     * @param WP_REST_Server   $server   ResponseHandler instance (usually WP_REST_Server).
-     * @param WP_REST_Request  $request  The request that was used to make current response.
-     *
-     * @return WP_REST_Response Response to be served, with "Allow" header if route has allowed methods.
-     * @since 4.4.0
-     *
-     */
     function rest_send_allow_header($response, $server, $request)
     {
         $matched_route = $response->get_matched_route();
@@ -927,17 +632,6 @@
         return $response;
     }
 
-    /**
-     * Recursively computes the intersection of arrays using keys for comparison.
-     *
-     * @param array $array1 The array with master keys to check.
-     * @param array $array2 An array to compare keys against.
-     *
-     * @return array An associative array containing all the entries of array1 which have keys
-     *               that are present in all arguments.
-     * @since 5.3.0
-     *
-     */
     function _rest_array_intersect_key_recursive($array1, $array2)
     {
         $array1 = array_intersect_key($array1, $array2);
@@ -952,17 +646,6 @@
         return $array1;
     }
 
-    /**
-     * Filters the REST API response to include only a white-listed set of response object fields.
-     *
-     * @param WP_REST_Response $response Current response being served.
-     * @param WP_REST_Server   $server   ResponseHandler instance (usually WP_REST_Server).
-     * @param WP_REST_Request  $request  The request that was used to make current response.
-     *
-     * @return WP_REST_Response Response to be served, trimmed down to contain a subset of fields.
-     * @since 4.8.0
-     *
-     */
     function rest_filter_response_fields($response, $server, $request)
     {
         if(! isset($request['_fields']) || $response->is_error())
@@ -1021,23 +704,6 @@
         return $response;
     }
 
-    /**
-     * Given an array of fields to include in a response, some of which may be
-     * `nested.fields`, determine whether the provided field should be included
-     * in the response body.
-     *
-     * If a parent field is passed in, the presence of any nested field within
-     * that parent will cause the method to return `true`. For example "title"
-     * will return true if any of `title`, `title.raw` or `title.rendered` is
-     * provided.
-     *
-     * @param string $field  A field to test for inclusion in the response body.
-     * @param array  $fields An array of string fields supported by the endpoint.
-     *
-     * @return bool Whether to include the field or not.
-     * @since 5.3.0
-     *
-     */
     function rest_is_field_included($field, $fields)
     {
         if(in_array($field, $fields, true))
@@ -1068,13 +734,6 @@
         return false;
     }
 
-    /**
-     * Adds the REST API URL to the WP RSD endpoint.
-     *
-     * @since 4.4.0
-     *
-     * @see   get_rest_url()
-     */
     function rest_output_rsd()
     {
         $api_root = get_rest_url();
@@ -1088,13 +747,6 @@
         <?php
     }
 
-    /**
-     * Outputs the REST API link tag into page header.
-     *
-     * @since 4.4.0
-     *
-     * @see   get_rest_url()
-     */
     function rest_output_link_wp_head()
     {
         $api_root = get_rest_url();
@@ -1114,11 +766,6 @@
         }
     }
 
-    /**
-     * Sends a Link header for the REST API.
-     *
-     * @since 4.4.0
-     */
     function rest_output_link_header()
     {
         if(headers_sent())
@@ -1143,22 +790,6 @@
         }
     }
 
-    /**
-     * Checks for errors when using cookie-based authentication.
-     *
-     * WordPress' built-in cookie authentication is always active
-     * for logged in users. However, the API has to check nonces
-     * for each request to ensure users are not vulnerable to CSRF.
-     *
-     * @param WP_Error|mixed $result Error from another authentication handler,
-     *                               null if we should handle it, or another value if not.
-     *
-     * @return WP_Error|mixed|bool WP_Error if the cookie is invalid, the $result, otherwise true.
-     * @since 4.4.0
-     *
-     * @global mixed         $wp_rest_auth_cookie
-     *
-     */
     function rest_cookie_check_errors($result)
     {
         if(! empty($result))
@@ -1212,16 +843,6 @@
         return true;
     }
 
-    /**
-     * Collects cookie authentication status.
-     *
-     * Collects errors from wp_validate_auth_cookie for use by rest_cookie_check_errors.
-     *
-     * @since 4.4.0
-     *
-     * @see   current_action()
-     * @global mixed $wp_rest_auth_cookie
-     */
     function rest_cookie_collect_status()
     {
         global $wp_rest_auth_cookie;
@@ -1238,19 +859,6 @@
         $wp_rest_auth_cookie = true;
     }
 
-    /**
-     * Collects the status of authenticating with an application password.
-     *
-     * @param WP_Error               $user_or_error The authenticated user or error instance.
-     * @param array                  $app_password  The Application Password used to authenticate.
-     *
-     * @global WP_User|WP_Error|null $wp_rest_application_password_status
-     * @global string|null           $wp_rest_application_password_uuid
-     *
-     * @since 5.6.0
-     * @since 5.7.0 Added the `$app_password` parameter.
-     *
-     */
     function rest_application_password_collect_status($user_or_error, $app_password = [])
     {
         global $wp_rest_application_password_status, $wp_rest_application_password_uuid;
@@ -1267,15 +875,6 @@
         }
     }
 
-    /**
-     * Gets the Application Password used for authenticating the request.
-     *
-     * @return string|null The Application Password UUID, or null if Application Passwords was not used.
-     * @global string|null $wp_rest_application_password_uuid
-     *
-     * @since 5.7.0
-     *
-     */
     function rest_get_authenticated_app_password()
     {
         global $wp_rest_application_password_uuid;
@@ -1283,18 +882,6 @@
         return $wp_rest_application_password_uuid;
     }
 
-    /**
-     * Checks for errors when using application password-based authentication.
-     *
-     * @param WP_Error|null|true     $result Error from another authentication handler,
-     *                                       null if we should handle it, or another value if not.
-     *
-     * @return WP_Error|null|true WP_Error if the application password is invalid, the $result, otherwise true.
-     * @since 5.6.0
-     *
-     * @global WP_User|WP_Error|null $wp_rest_application_password_status
-     *
-     */
     function rest_application_password_check_errors($result)
     {
         global $wp_rest_application_password_status;
@@ -1326,15 +913,6 @@
         return $result;
     }
 
-    /**
-     * Adds Application Passwords info to the REST API index.
-     *
-     * @param WP_REST_Response $response The index response object.
-     *
-     * @return WP_REST_Response
-     * @since 5.6.0
-     *
-     */
     function rest_add_application_passwords_to_index($response)
     {
         if(! wp_is_application_passwords_available())
@@ -1351,18 +929,6 @@
         return $response;
     }
 
-    /**
-     * Retrieves the avatar urls in various sizes.
-     *
-     * @param mixed $id_or_email The Gravatar to retrieve a URL for. Accepts a user_id, gravatar md5 hash,
-     *                           user email, WP_User object, WP_Post object, or WP_Comment object.
-     *
-     * @return (string|false)[] Avatar URLs keyed by size. Each value can be a URL string or boolean false.
-     * @since 4.7.0
-     *
-     * @see   get_avatar_url()
-     *
-     */
     function rest_get_avatar_urls($id_or_email)
     {
         $avatar_sizes = rest_get_avatar_sizes();
@@ -1376,41 +942,11 @@
         return $urls;
     }
 
-    /**
-     * Retrieves the pixel sizes for avatars.
-     *
-     * @return int[] List of pixel sizes for avatars. Default `[ 24, 48, 96 ]`.
-     * @since 4.7.0
-     *
-     */
     function rest_get_avatar_sizes()
     {
-        /**
-         * Filters the REST avatar sizes.
-         *
-         * Use this filter to adjust the array of sizes returned by the
-         * `rest_get_avatar_sizes` function.
-         *
-         * @param int[] $sizes An array of int values that are the pixel sizes for avatars.
-         *                     Default `[ 24, 48, 96 ]`.
-         *
-         * @since 4.4.0
-         *
-         */
         return apply_filters('rest_avatar_sizes', [24, 48, 96]);
     }
 
-    /**
-     * Parses an RFC3339 time into a Unix timestamp.
-     *
-     * @param string $date      RFC3339 timestamp.
-     * @param bool   $force_utc Optional. Whether to force UTC timezone instead of using
-     *                          the timestamp's timezone. Default false.
-     *
-     * @return int Unix timestamp.
-     * @since 4.4.0
-     *
-     */
     function rest_parse_date($date, $force_utc = false)
     {
         if($force_utc)
@@ -1428,15 +964,6 @@
         return strtotime($date);
     }
 
-    /**
-     * Parses a 3 or 6 digit hex color (with #).
-     *
-     * @param string $color 3 or 6 digit hex color (with #).
-     *
-     * @return string|false
-     * @since 5.4.0
-     *
-     */
     function rest_parse_hex_color($color)
     {
         $regex = '|^#([A-Fa-f0-9]{3}){1,2}$|';
@@ -1448,24 +975,6 @@
         return $color;
     }
 
-    /**
-     * Parses a date into both its local and UTC equivalent, in MySQL datetime format.
-     *
-     * @param string $date   RFC3339 timestamp.
-     * @param bool   $is_utc Whether the provided date should be interpreted as UTC. Default false.
-     *
-     * @return array|null {
-     *     Local and UTC datetime strings, in MySQL datetime format (Y-m-d H:i:s),
-     *     null on failure.
-     *
-     * @type string $0 Local datetime string.
-     * @type string $1 UTC datetime string.
-     *                       }
-     * @see   rest_parse_date()
-     *
-     * @since 4.4.0
-     *
-     */
     function rest_get_date_with_gmt($date, $is_utc = false)
     {
         /*
@@ -1501,29 +1010,11 @@
         return [$local, $utc];
     }
 
-    /**
-     * Returns a contextual HTTP error code for authorization failure.
-     *
-     * @return int 401 if the user is not logged in, 403 if the user is logged in.
-     * @since 4.7.0
-     *
-     */
     function rest_authorization_required_code()
     {
         return is_user_logged_in() ? 403 : 401;
     }
 
-    /**
-     * Validate a request argument based on details registered to the route.
-     *
-     * @param mixed           $value
-     * @param WP_REST_Request $request
-     * @param string          $param
-     *
-     * @return true|WP_Error
-     * @since 4.7.0
-     *
-     */
     function rest_validate_request_arg($value, $request, $param)
     {
         $attributes = $request->get_attributes();
@@ -1536,17 +1027,6 @@
         return rest_validate_value_from_schema($value, $args, $param);
     }
 
-    /**
-     * Sanitize a request argument based on details registered to the route.
-     *
-     * @param mixed           $value
-     * @param WP_REST_Request $request
-     * @param string          $param
-     *
-     * @return mixed
-     * @since 4.7.0
-     *
-     */
     function rest_sanitize_request_arg($value, $request, $param)
     {
         $attributes = $request->get_attributes();
@@ -1559,20 +1039,6 @@
         return rest_sanitize_value_from_schema($value, $args, $param);
     }
 
-    /**
-     * Parse a request argument based on details registered to the route.
-     *
-     * Runs a validation check and sanitizes the value, primarily to be used via
-     * the `sanitize_callback` arguments in the endpoint args registration.
-     *
-     * @param mixed           $value
-     * @param WP_REST_Request $request
-     * @param string          $param
-     *
-     * @return mixed
-     * @since 4.7.0
-     *
-     */
     function rest_parse_request_arg($value, $request, $param)
     {
         $is_valid = rest_validate_request_arg($value, $request, $param);
@@ -1587,17 +1053,6 @@
         return $value;
     }
 
-    /**
-     * Determines if an IP address is valid.
-     *
-     * Handles both IPv4 and IPv6 addresses.
-     *
-     * @param string $ip IP address.
-     *
-     * @return string|false The valid IP address, otherwise false.
-     * @since 4.7.0
-     *
-     */
     function rest_is_ip_address($ip)
     {
         $ipv4_pattern = '/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/';
@@ -1610,15 +1065,6 @@
         return $ip;
     }
 
-    /**
-     * Changes a boolean-like value into the proper boolean value.
-     *
-     * @param bool|string|int $value The value being evaluated.
-     *
-     * @return bool Returns the proper associated boolean value.
-     * @since 4.7.0
-     *
-     */
     function rest_sanitize_boolean($value)
     {
         // String values are translated to `true`; make sure 'false' is false.
@@ -1635,15 +1081,6 @@
         return (bool) $value;
     }
 
-    /**
-     * Determines if a given value is boolean-like.
-     *
-     * @param bool|string $maybe_bool The value being evaluated.
-     *
-     * @return bool True if a boolean, otherwise false.
-     * @since 4.7.0
-     *
-     */
     function rest_is_boolean($maybe_bool)
     {
         if(is_bool($maybe_bool))
@@ -1673,29 +1110,11 @@
         return false;
     }
 
-    /**
-     * Determines if a given value is integer-like.
-     *
-     * @param mixed $maybe_integer The value being evaluated.
-     *
-     * @return bool True if an integer, otherwise false.
-     * @since 5.5.0
-     *
-     */
     function rest_is_integer($maybe_integer)
     {
         return is_numeric($maybe_integer) && round((float) $maybe_integer) === (float) $maybe_integer;
     }
 
-    /**
-     * Determines if a given value is array-like.
-     *
-     * @param mixed $maybe_array The value being evaluated.
-     *
-     * @return bool
-     * @since 5.5.0
-     *
-     */
     function rest_is_array($maybe_array)
     {
         if(is_scalar($maybe_array))
@@ -1706,15 +1125,6 @@
         return wp_is_numeric_array($maybe_array);
     }
 
-    /**
-     * Converts an array-like value to an array.
-     *
-     * @param mixed $maybe_array The value being evaluated.
-     *
-     * @return array Returns the array extracted from the value.
-     * @since 5.5.0
-     *
-     */
     function rest_sanitize_array($maybe_array)
     {
         if(is_scalar($maybe_array))
@@ -1731,15 +1141,6 @@
         return array_values($maybe_array);
     }
 
-    /**
-     * Determines if a given value is object-like.
-     *
-     * @param mixed $maybe_object The value being evaluated.
-     *
-     * @return bool True if object like, otherwise false.
-     * @since 5.5.0
-     *
-     */
     function rest_is_object($maybe_object)
     {
         if('' === $maybe_object)
@@ -1760,15 +1161,6 @@
         return is_array($maybe_object);
     }
 
-    /**
-     * Converts an object-like value to an array.
-     *
-     * @param mixed $maybe_object The value being evaluated.
-     *
-     * @return array Returns the object extracted from the value as an associative array.
-     * @since 5.5.0
-     *
-     */
     function rest_sanitize_object($maybe_object)
     {
         if('' === $maybe_object)
@@ -1794,16 +1186,6 @@
         return $maybe_object;
     }
 
-    /**
-     * Gets the best type for a value.
-     *
-     * @param mixed    $value The value to check.
-     * @param string[] $types The list of possible types.
-     *
-     * @return string The best matching type, an empty string if no types match.
-     * @since 5.5.0
-     *
-     */
     function rest_get_best_type_for_value($value, $types)
     {
         static $checks = [
@@ -1836,20 +1218,6 @@
         return '';
     }
 
-    /**
-     * Handles getting the best type for a multi-type schema.
-     *
-     * This is a wrapper for {@see rest_get_best_type_for_value()} that handles
-     * backward compatibility for schemas that use invalid types.
-     *
-     * @param mixed  $value The value to check.
-     * @param array  $args  The schema array to use.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return string
-     * @since 5.5.0
-     *
-     */
     function rest_handle_multi_type_schema($value, $args, $param = '')
     {
         $allowed_types = ['array', 'object', 'string', 'number', 'integer', 'boolean', 'null'];
@@ -1876,15 +1244,6 @@
         return $best_type;
     }
 
-    /**
-     * Checks if an array is made up of unique items.
-     *
-     * @param array $input_array The array to check.
-     *
-     * @return bool True if the array contains unique items, false otherwise.
-     * @since 5.5.0
-     *
-     */
     function rest_validate_array_contains_unique_items($input_array)
     {
         $seen = [];
@@ -1907,18 +1266,6 @@
         return true;
     }
 
-    /**
-     * Stabilizes a value following JSON Schema semantics.
-     *
-     * For lists, order is preserved. For objects, properties are reordered alphabetically.
-     *
-     * @param mixed $value The value to stabilize. Must already be sanitized. Objects should have been converted to
-     *                     arrays.
-     *
-     * @return mixed The stabilized value.
-     * @since 5.5.0
-     *
-     */
     function rest_stabilize_value($value)
     {
         if(is_scalar($value) || is_null($value))
@@ -1943,16 +1290,6 @@
         return $value;
     }
 
-    /**
-     * Validates if the JSON Schema pattern matches a value.
-     *
-     * @param string $pattern The pattern to match against.
-     * @param string $value   The value to check.
-     *
-     * @return bool           True if the pattern matches the given value, false otherwise.
-     * @since 5.6.0
-     *
-     */
     function rest_validate_json_schema_pattern($pattern, $value)
     {
         $escaped_pattern = str_replace('#', '\\#', $pattern);
@@ -1960,16 +1297,6 @@
         return 1 === preg_match('#'.$escaped_pattern.'#u', $value);
     }
 
-    /**
-     * Finds the schema for a property using the patternProperties keyword.
-     *
-     * @param string $property The property name to check.
-     * @param array  $args     The schema array to use.
-     *
-     * @return array|null      The schema of matching pattern property, or null if no patterns match.
-     * @since 5.6.0
-     *
-     */
     function rest_find_matching_pattern_property_schema($property, $args)
     {
         if(isset($args['patternProperties']))
@@ -1986,16 +1313,6 @@
         return null;
     }
 
-    /**
-     * Formats a combining operation error into a WP_Error object.
-     *
-     * @param string $param The parameter name.
-     * @param array  $error The error details.
-     *
-     * @return WP_Error
-     * @since 5.6.0
-     *
-     */
     function rest_format_combining_operation_error($param, $error)
     {
         $position = $error['index'];
@@ -2011,17 +1328,6 @@
         return new WP_Error('rest_no_matching_schema', /* translators: 1: Parameter, 2: Reason. */ sprintf(__('%1$s does not match the expected format. Reason: %2$s'), $param, $reason), ['position' => $position]);
     }
 
-    /**
-     * Gets the error of combining operation.
-     *
-     * @param array  $value  The value to validate.
-     * @param string $param  The parameter name, used in error messages.
-     * @param array  $errors The errors array, to search for possible error.
-     *
-     * @return WP_Error      The combining operation error.
-     * @since 5.6.0
-     *
-     */
     function rest_get_combining_operation_error($value, $param, $errors)
     {
         // If there is only one error, simply return it.
@@ -2095,17 +1401,6 @@
         return new WP_Error('rest_no_matching_schema', sprintf(__('%s does not match any of the expected formats.'), $param));
     }
 
-    /**
-     * Finds the matching schema among the "anyOf" schemas.
-     *
-     * @param mixed  $value The value to validate.
-     * @param array  $args  The schema array to use.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return array|WP_Error The matching schema or WP_Error instance if all schemas do not match.
-     * @since 5.6.0
-     *
-     */
     function rest_find_any_matching_schema($value, $args, $param)
     {
         $errors = [];
@@ -2133,19 +1428,6 @@
         return rest_get_combining_operation_error($value, $param, $errors);
     }
 
-    /**
-     * Finds the matching schema among the "oneOf" schemas.
-     *
-     * @param mixed  $value                  The value to validate.
-     * @param array  $args                   The schema array to use.
-     * @param string $param                  The parameter name, used in error messages.
-     * @param bool   $stop_after_first_match Optional. Whether the process should stop after the first successful match.
-     *
-     * @return array|WP_Error                The matching schema or WP_Error instance if the number of matching schemas
-     *     is not equal to one.
-     * @since 5.6.0
-     *
-     */
     function rest_find_one_matching_schema($value, $args, $param, $stop_after_first_match = false)
     {
         $matching_schemas = [];
@@ -2213,20 +1495,6 @@
         return $matching_schemas[0]['schema_object'];
     }
 
-    /**
-     * Checks the equality of two values, following JSON Schema semantics.
-     *
-     * Property order is ignored for objects.
-     *
-     * Values must have been previously sanitized/coerced to their native types.
-     *
-     * @param mixed $value1 The first value to check.
-     * @param mixed $value2 The second value to check.
-     *
-     * @return bool True if the values are equal or false otherwise.
-     * @since 5.7.0
-     *
-     */
     function rest_are_values_equal($value1, $value2)
     {
         if(is_array($value1) && is_array($value2))
@@ -2255,17 +1523,6 @@
         return $value1 === $value2;
     }
 
-    /**
-     * Validates that the given value is a member of the JSON Schema "enum".
-     *
-     * @param mixed  $value The value to validate.
-     * @param array  $args  The schema array to use.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return true|WP_Error True if the "enum" contains the value or a WP_Error instance otherwise.
-     * @since 5.7.0
-     *
-     */
     function rest_validate_enum($value, $args, $param)
     {
         $sanitized_value = rest_sanitize_value_from_schema($value, $args, $param);
@@ -2299,13 +1556,6 @@
         return new WP_Error('rest_not_in_enum', wp_sprintf(__('%1$s is not one of %2$l.'), $param, $encoded_enum_values));
     }
 
-    /**
-     * Get all valid JSON schema properties.
-     *
-     * @return string[] All valid JSON schema properties.
-     * @since 5.6.0
-     *
-     */
     function rest_get_allowed_schema_keywords()
     {
         return [
@@ -2337,29 +1587,6 @@
         ];
     }
 
-    /**
-     * Validate a value based on a schema.
-     *
-     * @param mixed  $value The value to validate.
-     * @param array  $args  Schema array to use for validation.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return true|WP_Error
-     * @since 4.7.0
-     * @since 4.9.0 Support the "object" type.
-     * @since 5.2.0 Support validating "additionalProperties" against a schema.
-     * @since 5.3.0 Support multiple types.
-     * @since 5.4.0 Convert an empty string to an empty object.
-     * @since 5.5.0 Add the "uuid" and "hex-color" formats.
-     *              Support the "minLength", "maxLength" and "pattern" keywords for strings.
-     *              Support the "minItems", "maxItems" and "uniqueItems" keywords for arrays.
-     *              Validate required properties.
-     * @since 5.6.0 Support the "minProperties" and "maxProperties" keywords for objects.
-     *              Support the "multipleOf" keyword for numbers and integers.
-     *              Support the "patternProperties" keyword for objects.
-     *              Support the "anyOf" and "oneOf" keywords.
-     *
-     */
     function rest_validate_value_from_schema($value, $args, $param = '')
     {
         if(isset($args['anyOf']))
@@ -2505,16 +1732,6 @@
         return true;
     }
 
-    /**
-     * Validates a null value based on a schema.
-     *
-     * @param mixed  $value The value to validate.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return true|WP_Error
-     * @since 5.7.0
-     *
-     */
     function rest_validate_null_value_from_schema($value, $param)
     {
         if(null !== $value)
@@ -2525,16 +1742,6 @@
         return true;
     }
 
-    /**
-     * Validates a boolean value based on a schema.
-     *
-     * @param mixed  $value The value to validate.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return true|WP_Error
-     * @since 5.7.0
-     *
-     */
     function rest_validate_boolean_value_from_schema($value, $param)
     {
         if(! rest_is_boolean($value))
@@ -2545,17 +1752,6 @@
         return true;
     }
 
-    /**
-     * Validates an object value based on a schema.
-     *
-     * @param mixed  $value The value to validate.
-     * @param array  $args  Schema array to use for validation.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return true|WP_Error
-     * @since 5.7.0
-     *
-     */
     function rest_validate_object_value_from_schema($value, $args, $param)
     {
         if(! rest_is_object($value))
@@ -2640,17 +1836,6 @@
         return true;
     }
 
-    /**
-     * Validates an array value based on a schema.
-     *
-     * @param mixed  $value The value to validate.
-     * @param array  $args  Schema array to use for validation.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return true|WP_Error
-     * @since 5.7.0
-     *
-     */
     function rest_validate_array_value_from_schema($value, $args, $param)
     {
         if(! rest_is_array($value))
@@ -2691,17 +1876,6 @@
         return true;
     }
 
-    /**
-     * Validates a number value based on a schema.
-     *
-     * @param mixed  $value The value to validate.
-     * @param array  $args  Schema array to use for validation.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return true|WP_Error
-     * @since 5.7.0
-     *
-     */
     function rest_validate_number_value_from_schema($value, $args, $param)
     {
         if(! is_numeric($value))
@@ -2778,17 +1952,6 @@
         return true;
     }
 
-    /**
-     * Validates a string value based on a schema.
-     *
-     * @param mixed  $value The value to validate.
-     * @param array  $args  Schema array to use for validation.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return true|WP_Error
-     * @since 5.7.0
-     *
-     */
     function rest_validate_string_value_from_schema($value, $args, $param)
     {
         if(! is_string($value))
@@ -2814,17 +1977,6 @@
         return true;
     }
 
-    /**
-     * Validates an integer value based on a schema.
-     *
-     * @param mixed  $value The value to validate.
-     * @param array  $args  Schema array to use for validation.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return true|WP_Error
-     * @since 5.7.0
-     *
-     */
     function rest_validate_integer_value_from_schema($value, $args, $param)
     {
         $is_valid_number = rest_validate_number_value_from_schema($value, $args, $param);
@@ -2841,20 +1993,6 @@
         return true;
     }
 
-    /**
-     * Sanitize a value based on a schema.
-     *
-     * @param mixed  $value The value to sanitize.
-     * @param array  $args  Schema array to use for sanitization.
-     * @param string $param The parameter name, used in error messages.
-     *
-     * @return mixed|WP_Error The sanitized value or a WP_Error instance if the value cannot be safely sanitized.
-     * @since 4.7.0
-     * @since 5.5.0 Added the `$param` parameter.
-     * @since 5.6.0 Support the "anyOf" and "oneOf" keywords.
-     * @since 5.9.0 Added `text-field` and `textarea-field` formats.
-     *
-     */
     function rest_sanitize_value_from_schema($value, $args, $param = '')
     {
         if(isset($args['anyOf']))
@@ -3030,17 +2168,6 @@
         return $value;
     }
 
-    /**
-     * Append result of internal request to REST API for purpose of preloading data to be attached to a page.
-     * Expected to be called in the context of `array_reduce`.
-     *
-     * @param array  $memo Reduce accumulator.
-     * @param string $path REST API path to preload.
-     *
-     * @return array Modified reduce accumulator.
-     * @since 5.0.0
-     *
-     */
     function rest_preload_api_request($memo, $path)
     {
         /*
@@ -3092,7 +2219,7 @@
         if(200 === $response->status)
         {
             $server = rest_get_server();
-            /** This filter is documented in wp-includes/rest-api/class-wp-rest-server.php */
+
             $response = apply_filters('rest_post_dispatch', rest_ensure_response($response), $server, $request);
             $embed = $request->has_param('_embed') ? rest_parse_embed_param($request['_embed']) : false;
             $data = (array) $server->response_to_data($response, $embed);
@@ -3116,15 +2243,6 @@
         return $memo;
     }
 
-    /**
-     * Parses the "_embed" parameter into the list of resources to embed.
-     *
-     * @param string|array $embed Raw "_embed" parameter value.
-     *
-     * @return true|string[] Either true to embed all embeds, or a list of relations to embed.
-     * @since 5.4.0
-     *
-     */
     function rest_parse_embed_param($embed)
     {
         if(! $embed || 'true' === $embed || '1' === $embed)
@@ -3142,19 +2260,6 @@
         return $rels;
     }
 
-    /**
-     * Filters the response to remove any fields not available in the given context.
-     *
-     * @param array|object $response_data The response data to modify.
-     * @param array        $schema        The schema for the endpoint used to filter the response.
-     * @param string       $context       The requested context.
-     *
-     * @return array|object The filtered response data.
-     * @since 5.5.0
-     * @since 5.6.0 Support the "patternProperties" keyword for objects.
-     *              Support the "anyOf" and "oneOf" keywords.
-     *
-     */
     function rest_filter_response_by_context($response_data, $schema, $context)
     {
         if(isset($schema['anyOf']))
@@ -3289,16 +2394,6 @@
         return $response_data;
     }
 
-    /**
-     * Sets the "additionalProperties" to false by default for all object definitions in the schema.
-     *
-     * @param array $schema The schema to modify.
-     *
-     * @return array The modified schema.
-     * @since 5.5.0
-     * @since 5.6.0 Support the "patternProperties" keyword.
-     *
-     */
     function rest_default_additional_properties_to_false($schema)
     {
         $type = (array) $schema['type'];
@@ -3338,16 +2433,6 @@
         return $schema;
     }
 
-    /**
-     * Gets the REST API route for a post.
-     *
-     * @param int|WP_Post $post Post ID or post object.
-     *
-     * @return string The route path with a leading slash for the given post,
-     *                or an empty string if there is not a route.
-     * @since 5.5.0
-     *
-     */
     function rest_get_route_for_post($post)
     {
         $post = get_post($post);
@@ -3365,28 +2450,9 @@
 
         $route = sprintf('%s/%d', $post_type_route, $post->ID);
 
-        /**
-         * Filters the REST API route for a post.
-         *
-         * @param string  $route The route path.
-         * @param WP_Post $post  The post object.
-         *
-         * @since 5.5.0
-         *
-         */
         return apply_filters('rest_route_for_post', $route, $post);
     }
 
-    /**
-     * Gets the REST API route for a post type.
-     *
-     * @param string $post_type The name of a registered post type.
-     *
-     * @return string The route path with a leading slash for the given post type,
-     *                or an empty string if there is not a route.
-     * @since 5.9.0
-     *
-     */
     function rest_get_route_for_post_type_items($post_type)
     {
         $post_type = get_post_type_object($post_type);
@@ -3404,28 +2470,9 @@
         $rest_base = ! empty($post_type->rest_base) ? $post_type->rest_base : $post_type->name;
         $route = sprintf('/%s/%s', $namespace, $rest_base);
 
-        /**
-         * Filters the REST API route for a post type.
-         *
-         * @param string       $route     The route path.
-         * @param WP_Post_Type $post_type The post type object.
-         *
-         * @since 5.9.0
-         *
-         */
         return apply_filters('rest_route_for_post_type_items', $route, $post_type);
     }
 
-    /**
-     * Gets the REST API route for a term.
-     *
-     * @param int|WP_Term $term Term ID or term object.
-     *
-     * @return string The route path with a leading slash for the given term,
-     *                or an empty string if there is not a route.
-     * @since 5.5.0
-     *
-     */
     function rest_get_route_for_term($term)
     {
         $term = get_term($term);
@@ -3443,27 +2490,9 @@
 
         $route = sprintf('%s/%d', $taxonomy_route, $term->term_id);
 
-        /**
-         * Filters the REST API route for a term.
-         *
-         * @param string  $route The route path.
-         * @param WP_Term $term  The term object.
-         *
-         * @since 5.5.0
-         *
-         */
         return apply_filters('rest_route_for_term', $route, $term);
     }
 
-    /**
-     * Gets the REST API route for a taxonomy.
-     *
-     * @param string $taxonomy Name of taxonomy.
-     *
-     * @return string The route path with a leading slash for the given taxonomy.
-     * @since 5.9.0
-     *
-     */
     function rest_get_route_for_taxonomy_items($taxonomy)
     {
         $taxonomy = get_taxonomy($taxonomy);
@@ -3481,25 +2510,9 @@
         $rest_base = ! empty($taxonomy->rest_base) ? $taxonomy->rest_base : $taxonomy->name;
         $route = sprintf('/%s/%s', $namespace, $rest_base);
 
-        /**
-         * Filters the REST API route for a taxonomy.
-         *
-         * @param string      $route    The route path.
-         * @param WP_Taxonomy $taxonomy The taxonomy object.
-         *
-         * @since 5.9.0
-         *
-         */
         return apply_filters('rest_route_for_taxonomy_items', $route, $taxonomy);
     }
 
-    /**
-     * Gets the REST route for the currently queried object.
-     *
-     * @return string The REST route of the resource, or an empty string if no resource identified.
-     * @since 5.5.0
-     *
-     */
     function rest_get_queried_resource_route()
     {
         if(is_singular())
@@ -3519,29 +2532,9 @@
             $route = '';
         }
 
-        /**
-         * Filters the REST route for the currently queried object.
-         *
-         * @param string $link The route with a leading slash, or an empty string.
-         *
-         * @since 5.5.0
-         *
-         */
         return apply_filters('rest_queried_resource_route', $route);
     }
 
-    /**
-     * Retrieves an array of endpoint arguments from the item schema and endpoint method.
-     *
-     * @param array  $schema The full JSON schema for the endpoint.
-     * @param string $method Optional. HTTP method of the endpoint. The arguments for `CREATABLE` endpoints are
-     *                       checked for required values and may fall-back to a given default, this is not done
-     *                       on `EDITABLE` endpoints. Default WP_REST_Server::CREATABLE.
-     *
-     * @return array The endpoint arguments.
-     * @since 5.6.0
-     *
-     */
     function rest_get_endpoint_args_for_schema($schema, $method = WP_REST_Server::CREATABLE)
     {
         $schema_properties = ! empty($schema['properties']) ? $schema['properties'] : [];
@@ -3599,19 +2592,6 @@
         return $endpoint_args;
     }
 
-    /**
-     * Converts an error to a response object.
-     *
-     * This iterates over all error codes and messages to change it into a flat
-     * array. This enables simpler client behavior, as it is represented as a
-     * list in JSON rather than an object/map.
-     *
-     * @param WP_Error $error WP_Error instance.
-     *
-     * @return WP_REST_Response List of associative arrays with code and message keys.
-     * @since 5.7.0
-     *
-     */
     function rest_convert_error_to_response($error)
     {
         $status = array_reduce($error->get_all_error_data(), static function($status, $error_data)

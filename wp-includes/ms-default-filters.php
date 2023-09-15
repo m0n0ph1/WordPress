@@ -1,17 +1,4 @@
 <?php
-    /**
-     * Sets up the default filters and actions for Multisite.
-     *
-     * If you need to remove a default hook, this file will give you the priority
-     * for which to use to remove the hook.
-     *
-     * Not all of the Multisite default hooks are found in ms-default-filters.php
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @see        default-filters.php
-     * @since      3.0.0
-     */
 
     add_action('init', 'ms_subdomain_constants');
 

@@ -1,13 +1,5 @@
 <?php
-    /**
-     * Add New User network administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.1.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('create_users'))
@@ -56,14 +48,6 @@
             }
             else
             {
-                /**
-                 * Fires after a new user has been created via the network user-new.php page.
-                 *
-                 * @param int $user_id ID of the newly created user.
-                 *
-                 * @since 4.4.0
-                 *
-                 */
                 do_action('network_user_new_created_user', $user_id);
 
                 wp_redirect(
@@ -168,11 +152,7 @@
                 </tr>
             </table>
             <?php
-                /**
-                 * Fires at the end of the new user form in network admin.
-                 *
-                 * @since 4.5.0
-                 */
+
                 do_action('network_user_new_form');
 
                 wp_nonce_field('add-user', '_wpnonce_add-user');

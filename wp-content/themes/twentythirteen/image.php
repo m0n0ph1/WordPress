@@ -1,13 +1,4 @@
 <?php
-    /**
-     * The template for displaying image attachments
-     *
-     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Thirteen
-     * @since      Twenty Thirteen 1.0
-     */
 
     get_header(); ?>
 

@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Large post titles block pattern
-     */
+
     return [
         'title' => __('Large post titles', 'twentytwentytwo'),
         'categories' => ['query'],

@@ -1,14 +1,5 @@
 <?php
-    /**
-     * Edit post administration panel.
-     *
-     * Manage Post actions: post, edit, delete, etc.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     $parent_file = 'edit.php';
@@ -34,11 +25,6 @@
     }
     $post_ID = $post_id;
 
-    /**
-     * @global string  $post_type
-     * @global object  $post_type_object
-     * @global WP_Post $post Global post object.
-     */
     global $post_type, $post_type_object, $post;
 
     if($post_id)
@@ -212,15 +198,6 @@
 
             $title = $post_type_object->labels->edit_item;
 
-            /**
-             * Allows replacement of the editor.
-             *
-             * @param bool    $replace Whether to replace the editor. Default false.
-             * @param WP_Post $post    Post object.
-             *
-             * @since 4.9.0
-             *
-             */
             if(true === apply_filters('replace_editor', false, $post))
             {
                 break;
@@ -411,16 +388,7 @@
             exit;
 
         default:
-            /**
-             * Fires for a given custom post action request.
-             *
-             * The dynamic portion of the hook name, `$action`, refers to the custom post action.
-             *
-             * @param int $post_id Post ID sent with the request.
-             *
-             * @since 4.6.0
-             *
-             */
+
             do_action("post_action_{$action}", $post_id);
 
             wp_redirect(admin_url('edit.php'));

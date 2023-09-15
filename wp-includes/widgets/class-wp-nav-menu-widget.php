@@ -1,26 +1,7 @@
 <?php
-    /**
-     * Widget API: WP_Nav_Menu_Widget class
-     *
-     * @package    WordPress
-     * @subpackage Widgets
-     * @since      4.4.0
-     */
 
-    /**
-     * Core class used to implement the Navigation Menu widget.
-     *
-     * @since 3.0.0
-     *
-     * @see   WP_Widget
-     */
     class WP_Nav_Menu_Widget extends WP_Widget
     {
-        /**
-         * Sets up a new Navigation Menu widget instance.
-         *
-         * @since 3.0.0
-         */
         public function __construct()
         {
             $widget_ops = [
@@ -31,16 +12,6 @@
             parent::__construct('nav_menu', __('Navigation Menu'), $widget_ops);
         }
 
-        /**
-         * Outputs the content for the current Navigation Menu widget instance.
-         *
-         * @param array $args     Display arguments including 'before_title', 'after_title',
-         *                        'before_widget', and 'after_widget'.
-         * @param array $instance Settings for the current Navigation Menu widget instance.
-         *
-         * @since 3.0.0
-         *
-         */
         public function widget($args, $instance)
         {
             // Get menu.
@@ -54,7 +25,6 @@
             $default_title = __('Menu');
             $title = ! empty($instance['title']) ? $instance['title'] : '';
 
-            /** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
             $title = apply_filters('widget_title', $title, $instance, $this->id_base);
 
             echo $args['before_widget'];
@@ -66,15 +36,6 @@
 
             $format = current_theme_supports('html5', 'navigation-widgets') ? 'html5' : 'xhtml';
 
-            /**
-             * Filters the HTML format of widgets with navigation links.
-             *
-             * @param string $format The type of markup to use in widgets with navigation links.
-             *                       Accepts 'html5', 'xhtml'.
-             *
-             * @since 5.5.0
-             *
-             */
             $format = apply_filters('navigation_widgets_format', $format);
 
             if('html5' === $format)
@@ -99,40 +60,11 @@
                 ];
             }
 
-            /**
-             * Filters the arguments for the Navigation Menu widget.
-             *
-             * @param array        $nav_menu_args {
-             *                                    An array of arguments passed to wp_nav_menu() to retrieve a navigation menu.
-             *
-             * @type callable|bool $fallback_cb   Callback to fire if the menu doesn't exist. Default empty.
-             * @type mixed         $menu          Menu ID, slug, or name.
-             *                                    }
-             *
-             * @param WP_Term      $nav_menu      Nav menu object for the current menu.
-             * @param array        $args          Display arguments for the current widget.
-             * @param array        $instance      Array of settings for the current widget.
-             *
-             * @since 4.2.0
-             * @since 4.4.0 Added the `$instance` parameter.
-             *
-             */
             wp_nav_menu(apply_filters('widget_nav_menu_args', $nav_menu_args, $nav_menu, $args, $instance));
 
             echo $args['after_widget'];
         }
 
-        /**
-         * Handles updating settings for the current Navigation Menu widget instance.
-         *
-         * @param array $new_instance New settings for this instance as input by the user via
-         *                            WP_Widget::form().
-         * @param array $old_instance Old settings for this instance.
-         *
-         * @return array Updated settings to save.
-         * @since 3.0.0
-         *
-         */
         public function update($new_instance, $old_instance)
         {
             $instance = [];
@@ -148,15 +80,6 @@
             return $instance;
         }
 
-        /**
-         * Outputs the settings form for the Navigation Menu widget.
-         *
-         * @param array                 $instance Current settings.
-         *
-         * @since 3.0.0
-         *
-         * @global WP_Customize_Manager $wp_customize
-         */
         public function form($instance)
         {
             global $wp_customize;

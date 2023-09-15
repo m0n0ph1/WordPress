@@ -1,20 +1,7 @@
 <?php
-    /**
-     * Custom template tags for Twenty Fifteen
-     *
-     * Eventually, some of the functionality here could be replaced by core features.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Fifteen
-     * @since      Twenty Fifteen 1.0
-     */
 
     if(! function_exists('twentyfifteen_comment_nav')) :
-        /**
-         * Display navigation to next/previous comments when applicable.
-         *
-         * @since Twenty Fifteen 1.0
-         */
+
         function twentyfifteen_comment_nav()
         {
             // Are there comments to navigate through?
@@ -49,11 +36,7 @@
     endif;
 
     if(! function_exists('twentyfifteen_entry_meta')) :
-        /**
-         * Prints HTML with meta information for the categories, tags.
-         *
-         * @since Twenty Fifteen 1.0
-         */
+
         function twentyfifteen_entry_meta()
         {
             if(is_sticky() && is_home() && ! is_paged())
@@ -119,13 +102,6 @@
         }
     endif;
 
-    /**
-     * Determine whether blog/site has more than one category.
-     *
-     * @return bool True of there is more than one category, false otherwise.
-     * @since Twenty Fifteen 1.0
-     *
-     */
     function twentyfifteen_categorized_blog()
     {
         $all_the_cool_cats = get_transient('twentyfifteen_categories');
@@ -158,11 +134,6 @@
         }
     }
 
-    /**
-     * Flush out the transients used in {@see twentyfifteen_categorized_blog()}.
-     *
-     * @since Twenty Fifteen 1.0
-     */
     function twentyfifteen_category_transient_flusher()
     {
         // Like, beat it. Dig?
@@ -173,14 +144,7 @@
     add_action('save_post', 'twentyfifteen_category_transient_flusher');
 
     if(! function_exists('twentyfifteen_post_thumbnail')) :
-        /**
-         * Display an optional post thumbnail.
-         *
-         * Wraps the post thumbnail in an anchor element on index views, or a div
-         * element when on single views.
-         *
-         * @since Twenty Fifteen 1.0
-         */
+
         function twentyfifteen_post_thumbnail()
         {
             if(post_password_required() || is_attachment() || ! has_post_thumbnail())
@@ -209,17 +173,7 @@
     endif;
 
     if(! function_exists('twentyfifteen_get_link_url')) :
-        /**
-         * Return the post URL.
-         *
-         * Falls back to the post permalink if no URL is found in the post.
-         *
-         * @return string The Link format URL.
-         * @see   get_url_in_content()
-         *
-         * @since Twenty Fifteen 1.0
-         *
-         */
+
         function twentyfifteen_get_link_url()
         {
             $has_url = get_url_in_content(get_the_content());
@@ -229,13 +183,7 @@
     endif;
 
     if(! function_exists('twentyfifteen_excerpt_more') && ! is_admin()) :
-        /**
-         * Replaces "[...]" (appended to automatically generated excerpts) with ... and a 'Continue reading' link.
-         *
-         * @return string 'Continue reading' link prepended with an ellipsis.
-         * @since Twenty Fifteen 1.0
-         *
-         */
+
         function twentyfifteen_excerpt_more($more)
         {
             $link = sprintf('<a href="%1$s" class="more-link">%2$s</a>', esc_url(get_permalink(get_the_ID())), /* translators: %s: Post title. Only visible to screen readers. */ sprintf(__('Continue reading %s', 'twentyfifteen'), '<span class="screen-reader-text">'.get_the_title(get_the_ID()).'</span>'));
@@ -247,13 +195,7 @@
     endif;
 
     if(! function_exists('twentyfifteen_the_custom_logo')) :
-        /**
-         * Displays the optional custom logo.
-         *
-         * Does nothing if the custom logo is not available.
-         *
-         * @since Twenty Fifteen 1.5
-         */
+
         function twentyfifteen_the_custom_logo()
         {
             if(function_exists('the_custom_logo'))
@@ -264,20 +206,9 @@
     endif;
 
     if(! function_exists('wp_body_open')) :
-        /**
-         * Fire the wp_body_open action.
-         *
-         * Added for backward compatibility to support pre-5.2.0 WordPress versions.
-         *
-         * @since Twenty Fifteen 2.5
-         */
+
         function wp_body_open()
         {
-            /**
-             * Triggered after the opening <body> tag.
-             *
-             * @since Twenty Fifteen 2.5
-             */
             do_action('wp_body_open');
         }
     endif;

@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Poster with right sidebar block pattern
-     */
+
     return [
         'title' => __('Poster with right sidebar', 'twentytwentytwo'),
         'categories' => ['pages'],

@@ -5,26 +5,8 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_Sodium_Core32_Curve25519
-     *
-     * Implements Curve25519 core functions
-     *
-     * Based on the ref10 curve25519 code provided by libsodium
-     *
-     * @ref https://github.com/jedisct1/libsodium/blob/master/src/libsodium/crypto_core/curve25519/ref10/curve25519_ref10.c
-     */
     abstract class ParagonIE_Sodium_Core32_Curve25519 extends ParagonIE_Sodium_Core32_Curve25519_H
     {
-        /**
-         * @param string $s
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P3
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_frombytes_negate_vartime($s)
         {
             static $d = null;
@@ -43,7 +25,6 @@
                                                                           ParagonIE_Sodium_Core32_Int32::fromInt(self::$d[9])
                                                                       ]);
             }
-            /** @var ParagonIE_Sodium_Core32_Curve25519_Fe $d */
 
             # fe_frombytes(h->Y,s);
             # fe_1(h->Z);
@@ -54,7 +35,7 @@
             # fe_sub(u,u,h->Z);       /* u = y^2-1 */
             # fe_add(v,v,h->Z);       /* v = dy^2+1 */
             $u = self::fe_sq($h->Y);
-            /** @var ParagonIE_Sodium_Core32_Curve25519_Fe $d */
+
             $v = self::fe_mul($u, $d);
             $u = self::fe_sub($u, $h->Z); /* u =  y^2 - 1 */
             $v = self::fe_add($v, $h->Z); /* v = dy^2 + 1 */
@@ -116,15 +97,6 @@
             return $h;
         }
 
-        /**
-         * Get a field element of size 10 with a value of 0
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function fe_0()
         {
             return ParagonIE_Sodium_Core32_Curve25519_Fe::fromArray([
@@ -141,45 +113,31 @@
                                                                     ]);
         }
 
-        /**
-         * Give: 32-byte string.
-         * Receive: A field element object to use for internal calculations.
-         *
-         * @param string $s
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws RangeException
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedMethodCall
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function fe_frombytes($s)
         {
             if(self::strlen($s) !== 32)
             {
                 throw new RangeException('Expected a 32-byte string.');
             }
-            /** @var ParagonIE_Sodium_Core32_Int32 $h0 */
+
             $h0 = ParagonIE_Sodium_Core32_Int32::fromInt(self::load_4($s));
-            /** @var ParagonIE_Sodium_Core32_Int32 $h1 */
+
             $h1 = ParagonIE_Sodium_Core32_Int32::fromInt(self::load_3(self::substr($s, 4, 3)) << 6);
-            /** @var ParagonIE_Sodium_Core32_Int32 $h2 */
+
             $h2 = ParagonIE_Sodium_Core32_Int32::fromInt(self::load_3(self::substr($s, 7, 3)) << 5);
-            /** @var ParagonIE_Sodium_Core32_Int32 $h3 */
+
             $h3 = ParagonIE_Sodium_Core32_Int32::fromInt(self::load_3(self::substr($s, 10, 3)) << 3);
-            /** @var ParagonIE_Sodium_Core32_Int32 $h4 */
+
             $h4 = ParagonIE_Sodium_Core32_Int32::fromInt(self::load_3(self::substr($s, 13, 3)) << 2);
-            /** @var ParagonIE_Sodium_Core32_Int32 $h5 */
+
             $h5 = ParagonIE_Sodium_Core32_Int32::fromInt(self::load_4(self::substr($s, 16, 4)));
-            /** @var ParagonIE_Sodium_Core32_Int32 $h6 */
+
             $h6 = ParagonIE_Sodium_Core32_Int32::fromInt(self::load_3(self::substr($s, 20, 3)) << 7);
-            /** @var ParagonIE_Sodium_Core32_Int32 $h7 */
+
             $h7 = ParagonIE_Sodium_Core32_Int32::fromInt(self::load_3(self::substr($s, 23, 3)) << 5);
-            /** @var ParagonIE_Sodium_Core32_Int32 $h8 */
+
             $h8 = ParagonIE_Sodium_Core32_Int32::fromInt(self::load_3(self::substr($s, 26, 3)) << 4);
-            /** @var ParagonIE_Sodium_Core32_Int32 $h9 */
+
             $h9 = ParagonIE_Sodium_Core32_Int32::fromInt((self::load_3(self::substr($s, 29, 3)) & 8388607) << 2);
 
             $carry9 = $h9->addInt(1 << 24)->shiftRight(25);
@@ -225,15 +183,6 @@
             return ParagonIE_Sodium_Core32_Curve25519_Fe::fromArray([$h0, $h1, $h2, $h3, $h4, $h5, $h6, $h7, $h8, $h9]);
         }
 
-        /**
-         * Get a field element of size 10 with a value of 1
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function fe_1()
         {
             return ParagonIE_Sodium_Core32_Curve25519_Fe::fromArray([
@@ -250,20 +199,6 @@
                                                                     ]);
         }
 
-        /**
-         * Square a field element
-         *
-         * h = f * f
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedMethodCall
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function fe_sq(ParagonIE_Sodium_Core32_Curve25519_Fe $f)
         {
             $f0 = $f[0]->toInt64();
@@ -367,19 +302,6 @@
             $h8 = $f0f8_2->addInt64($f1f7_4)->addInt64($f2f6_2)->addInt64($f3f5_4)->addInt64($f4f4)->addInt64($f9f9_38);
             $h9 = $f0f9_2->addInt64($f1f8_2)->addInt64($f2f7_2)->addInt64($f3f6_2)->addInt64($f4f5_2);
 
-            /**
-             * @var ParagonIE_Sodium_Core32_Int64 $h0
-             * @var ParagonIE_Sodium_Core32_Int64 $h1
-             * @var ParagonIE_Sodium_Core32_Int64 $h2
-             * @var ParagonIE_Sodium_Core32_Int64 $h3
-             * @var ParagonIE_Sodium_Core32_Int64 $h4
-             * @var ParagonIE_Sodium_Core32_Int64 $h5
-             * @var ParagonIE_Sodium_Core32_Int64 $h6
-             * @var ParagonIE_Sodium_Core32_Int64 $h7
-             * @var ParagonIE_Sodium_Core32_Int64 $h8
-             * @var ParagonIE_Sodium_Core32_Int64 $h9
-             */
-
             $carry0 = $h0->addInt(1 << 25)->shiftRight(26);
             $h1 = $h1->addInt64($carry0);
             $h0 = $h0->subInt64($carry0->shiftLeft(26));
@@ -442,50 +364,9 @@
                                                                     ]);
         }
 
-        /**
-         * Multiply two field elements
-         *
-         * h = f * g
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $g
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         * @security Is multiplication a source of timing leaks? If so, can we do
-         *           anything to prevent that from happening?
-         *
-         */
         public static function fe_mul(
             ParagonIE_Sodium_Core32_Curve25519_Fe $f, ParagonIE_Sodium_Core32_Curve25519_Fe $g
         ) {
-            /**
-             * @var ParagonIE_Sodium_Core32_Int32[] $f
-             * @var ParagonIE_Sodium_Core32_Int32[] $g
-             * @var ParagonIE_Sodium_Core32_Int64   $f0
-             * @var ParagonIE_Sodium_Core32_Int64   $f1
-             * @var ParagonIE_Sodium_Core32_Int64   $f2
-             * @var ParagonIE_Sodium_Core32_Int64   $f3
-             * @var ParagonIE_Sodium_Core32_Int64   $f4
-             * @var ParagonIE_Sodium_Core32_Int64   $f5
-             * @var ParagonIE_Sodium_Core32_Int64   $f6
-             * @var ParagonIE_Sodium_Core32_Int64   $f7
-             * @var ParagonIE_Sodium_Core32_Int64   $f8
-             * @var ParagonIE_Sodium_Core32_Int64   $f9
-             * @var ParagonIE_Sodium_Core32_Int64   $g0
-             * @var ParagonIE_Sodium_Core32_Int64   $g1
-             * @var ParagonIE_Sodium_Core32_Int64   $g2
-             * @var ParagonIE_Sodium_Core32_Int64   $g3
-             * @var ParagonIE_Sodium_Core32_Int64   $g4
-             * @var ParagonIE_Sodium_Core32_Int64   $g5
-             * @var ParagonIE_Sodium_Core32_Int64   $g6
-             * @var ParagonIE_Sodium_Core32_Int64   $g7
-             * @var ParagonIE_Sodium_Core32_Int64   $g8
-             * @var ParagonIE_Sodium_Core32_Int64   $g9
-             */
             $f0 = $f[0]->toInt64();
             $f1 = $f[1]->toInt64();
             $f2 = $f[2]->toInt64();
@@ -651,28 +532,6 @@
             // $h9 = $f0g9 + $f1g8    + $f2g7    + $f3g6    + $f4g5    + $f5g4    + $f6g3    + $f7g2    + $f8g1    + $f9g0   ;
             $h9 = $f0g9->addInt64($f1g8)->addInt64($f2g7)->addInt64($f3g6)->addInt64($f4g5)->addInt64($f5g4)->addInt64($f6g3)->addInt64($f7g2)->addInt64($f8g1)->addInt64($f9g0);
 
-            /**
-             * @var ParagonIE_Sodium_Core32_Int64 $h0
-             * @var ParagonIE_Sodium_Core32_Int64 $h1
-             * @var ParagonIE_Sodium_Core32_Int64 $h2
-             * @var ParagonIE_Sodium_Core32_Int64 $h3
-             * @var ParagonIE_Sodium_Core32_Int64 $h4
-             * @var ParagonIE_Sodium_Core32_Int64 $h5
-             * @var ParagonIE_Sodium_Core32_Int64 $h6
-             * @var ParagonIE_Sodium_Core32_Int64 $h7
-             * @var ParagonIE_Sodium_Core32_Int64 $h8
-             * @var ParagonIE_Sodium_Core32_Int64 $h9
-             * @var ParagonIE_Sodium_Core32_Int64 $carry0
-             * @var ParagonIE_Sodium_Core32_Int64 $carry1
-             * @var ParagonIE_Sodium_Core32_Int64 $carry2
-             * @var ParagonIE_Sodium_Core32_Int64 $carry3
-             * @var ParagonIE_Sodium_Core32_Int64 $carry4
-             * @var ParagonIE_Sodium_Core32_Int64 $carry5
-             * @var ParagonIE_Sodium_Core32_Int64 $carry6
-             * @var ParagonIE_Sodium_Core32_Int64 $carry7
-             * @var ParagonIE_Sodium_Core32_Int64 $carry8
-             * @var ParagonIE_Sodium_Core32_Int64 $carry9
-             */
             $carry0 = $h0->addInt(1 << 25)->shiftRight(26);
             $h1 = $h1->addInt64($carry0);
             $h0 = $h0->subInt64($carry0->shiftLeft(26));
@@ -730,29 +589,6 @@
                                                                     ]);
         }
 
-        /**
-         * Subtract two field elements.
-         *
-         * h = f - g
-         *
-         * Preconditions:
-         * |f| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
-         * |g| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
-         *
-         * Postconditions:
-         * |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $g
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedMethodCall
-         * @psalm-suppress MixedTypeCoercion
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function fe_sub(
             ParagonIE_Sodium_Core32_Curve25519_Fe $f, ParagonIE_Sodium_Core32_Curve25519_Fe $g
         ) {
@@ -770,20 +606,6 @@
                                                                     ]);
         }
 
-        /**
-         * Add two field elements.
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $g
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedMethodCall
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function fe_add(
             ParagonIE_Sodium_Core32_Curve25519_Fe $f, ParagonIE_Sodium_Core32_Curve25519_Fe $g
         ) {
@@ -793,21 +615,9 @@
                 $arr[$i] = $f[$i]->addInt32($g[$i]);
             }
 
-            /** @var array<int, ParagonIE_Sodium_Core32_Int32> $arr */
             return ParagonIE_Sodium_Core32_Curve25519_Fe::fromArray($arr);
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $z
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         * @ref https://github.com/jedisct1/libsodium/blob/68564326e1e9dc57ef03746f85734232d20ca6fb/src/libsodium/crypto_core/curve25519/ref10/curve25519_ref10.c#L1054-L1106
-         *
-         */
         public static function fe_pow22523(ParagonIE_Sodium_Core32_Curve25519_Fe $z)
         {
             # fe_sq(t0, z);
@@ -924,17 +734,6 @@
             return self::fe_mul($t0, $z);
         }
 
-        /**
-         * Returns 0 if this field element results in all NUL bytes.
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         *
-         * @return bool
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function fe_isnonzero(ParagonIE_Sodium_Core32_Curve25519_Fe $f)
         {
             static $zero;
@@ -944,29 +743,11 @@
             }
             $str = self::fe_tobytes($f);
 
-            /** @var string $zero */
             return ! self::verify_32($str, $zero);
         }
 
-        /**
-         * Convert a field element to a byte string.
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $h
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedMethodCall
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function fe_tobytes(ParagonIE_Sodium_Core32_Curve25519_Fe $h)
         {
-            /**
-             * @var ParagonIE_Sodium_Core32_Int64[] $f
-             * @var ParagonIE_Sodium_Core32_Int64   $q
-             */
             $f = [];
 
             for($i = 0; $i < 10; ++$i)
@@ -1028,9 +809,6 @@
             $h8 = $f[8]->toInt32()->toInt();
             $h9 = $f[9]->toInt32()->toInt();
 
-            /**
-             * @var array<int, int>
-             */
             $s = [
                 (int) (($h0 >> 0) & 0xff),
                 (int) (($h0 >> 8) & 0xff),
@@ -1069,17 +847,6 @@
             return self::intArrayToString($s);
         }
 
-        /**
-         * Is a field element negative? (1 = yes, 0 = no. Used in calculations.)
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         *
-         * @return int
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function fe_isnegative(ParagonIE_Sodium_Core32_Curve25519_Fe $f)
         {
             $str = self::fe_tobytes($f);
@@ -1087,19 +854,6 @@
             return (int) (self::chrToInt($str[0]) & 1);
         }
 
-        /**
-         * Get the negative values for each piece of the field element.
-         *
-         * h = -f
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedMethodCall
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function fe_neg(ParagonIE_Sodium_Core32_Curve25519_Fe $f)
         {
             $h = new ParagonIE_Sodium_Core32_Curve25519_Fe();
@@ -1111,15 +865,6 @@
             return $h;
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $h
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_p3_tobytes(ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $h)
         {
             $recip = self::fe_invert($h->Z);
@@ -1131,15 +876,6 @@
             return $s;
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $Z
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function fe_invert(ParagonIE_Sodium_Core32_Curve25519_Fe $Z)
         {
             $z = clone $Z;
@@ -1201,15 +937,6 @@
             return self::fe_mul($t1, $t0);
         }
 
-        /**
-         * Convert a group element to a byte string.
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P2 $h
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public static function ge_tobytes(ParagonIE_Sodium_Core32_Curve25519_Ge_P2 $h)
         {
             $recip = self::fe_invert($h->Z);
@@ -1221,26 +948,13 @@
             return $s;
         }
 
-        /**
-         * @param string                                   $a
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $A
-         * @param string                                   $b
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P2
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArrayAccess
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function ge_double_scalarmult_vartime(
             $a, ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $A, $b
         ) {
-            /** @var array<int, ParagonIE_Sodium_Core32_Curve25519_Ge_Cached> $Ai */
             $Ai = [];
 
             static $Bi = [];
-            /** @var array<int, ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp> $Bi */
+
             if(! $Bi)
             {
                 for($i = 0; $i < 8; ++$i)
@@ -1288,13 +1002,12 @@
             {
                 $Ai[$i] = new ParagonIE_Sodium_Core32_Curve25519_Ge_Cached(self::fe_0(), self::fe_0(), self::fe_0(), self::fe_0());
             }
-            /** @var array<int, ParagonIE_Sodium_Core32_Curve25519_Ge_Cached> $Ai */
 
             # slide(aslide,a);
             # slide(bslide,b);
-            /** @var array<int, int> $aslide */
+
             $aslide = self::slide($a);
-            /** @var array<int, int> $bslide */
+
             $bslide = self::slide($b);
 
             # ge_p3_to_cached(&Ai[0],A);
@@ -1354,7 +1067,6 @@
                     $u = self::ge_p1p1_to_p3($t);
                     $t = self::ge_sub($u, $Ai[(int) floor(-$aslide[$i] / 2)]);
                 }
-                /** @var array<int, ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp> $Bi */
 
                 # if (bslide[i] > 0) {
                 if($bslide[$i] > 0)
@@ -1362,9 +1074,9 @@
                     # ge_p1p1_to_p3(&u,&t);
                     # ge_madd(&t,&u,&Bi[bslide[i]/2]);
                     $u = self::ge_p1p1_to_p3($t);
-                    /** @var int $index */
+
                     $index = (int) floor($bslide[$i] / 2);
-                    /** @var ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $thisB */
+
                     $thisB = $Bi[$index];
                     $t = self::ge_madd($t, $u, $thisB);
                     # } else if (bslide[i] < 0) {
@@ -1375,10 +1087,8 @@
                     # ge_msub(&t,&u,&Bi[(-bslide[i])/2]);
                     $u = self::ge_p1p1_to_p3($t);
 
-                    /** @var int $index */
                     $index = (int) floor(-$bslide[$i] / 2);
 
-                    /** @var ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $thisB */
                     $thisB = $Bi[$index];
                     $t = self::ge_msub($t, $u, $thisB);
                 }
@@ -1389,17 +1099,6 @@
             return $r;
         }
 
-        /**
-         * @param string $a
-         *
-         * @return array<int, mixed>
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArrayOffset
-         * @internal       You should not use this directly from another application
-         *
-         * @ref https://github.com/jedisct1/libsodium/blob/157c4a80c13b117608aeae12178b2d38825f9f8f/src/libsodium/crypto_core/curve25519/ref10/curve25519_ref10.c#L1185-L1215
-         */
         public static function slide($a)
         {
             if(self::strlen($a) < 256)
@@ -1409,7 +1108,7 @@
                     $a = str_pad($a, 256, '0', STR_PAD_RIGHT);
                 }
             }
-            /** @var array<int, int> $r */
+
             $r = [];
             for($i = 0; $i < 256; ++$i)
             {
@@ -1454,15 +1153,6 @@
             return $r;
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_Cached
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_p3_to_cached(ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p)
         {
             static $d2 = null;
@@ -1481,7 +1171,7 @@
                                                                            ParagonIE_Sodium_Core32_Int32::fromInt(self::$d2[9])
                                                                        ]);
             }
-            /** @var ParagonIE_Sodium_Core32_Curve25519_Fe $d2 */
+
             $r = new ParagonIE_Sodium_Core32_Curve25519_Ge_Cached();
             $r->YplusX = self::fe_add($p->Y, $p->X);
             $r->YminusX = self::fe_sub($p->Y, $p->X);
@@ -1491,15 +1181,6 @@
             return $r;
         }
 
-        /**
-         * Create a copy of a field element.
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function fe_copy(ParagonIE_Sodium_Core32_Curve25519_Fe $f)
         {
             $h = clone $f;
@@ -1507,15 +1188,6 @@
             return $h;
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_p3_dbl(ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p)
         {
             $q = self::ge_p3_to_p2($p);
@@ -1523,27 +1195,11 @@
             return self::ge_p2_dbl($q);
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P2
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_p3_to_p2(ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p)
         {
             return new ParagonIE_Sodium_Core32_Curve25519_Ge_P2($p->X, $p->Y, $p->Z);
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P2 $p
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_p2_dbl(ParagonIE_Sodium_Core32_Curve25519_Ge_P2 $p)
         {
             $r = new ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1();
@@ -1561,20 +1217,6 @@
             return $r;
         }
 
-        /**
-         * Square and double a field element
-         *
-         * h = 2 * f * f
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedMethodCall
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function fe_sq2(ParagonIE_Sodium_Core32_Curve25519_Fe $f)
         {
             $f0 = $f[0]->toInt64();
@@ -1668,18 +1310,6 @@
             $h8 = $f0f8_2->addInt64($f1f7_4)->addInt64($f2f6_2)->addInt64($f3f5_4)->addInt64($f4f4)->addInt64($f9f9_38);
             $h9 = $f0f9_2->addInt64($f1f8_2)->addInt64($f2f7_2)->addInt64($f3f6_2)->addInt64($f4f5_2);
 
-            /**
-             * @var ParagonIE_Sodium_Core32_Int64 $h0
-             * @var ParagonIE_Sodium_Core32_Int64 $h1
-             * @var ParagonIE_Sodium_Core32_Int64 $h2
-             * @var ParagonIE_Sodium_Core32_Int64 $h3
-             * @var ParagonIE_Sodium_Core32_Int64 $h4
-             * @var ParagonIE_Sodium_Core32_Int64 $h5
-             * @var ParagonIE_Sodium_Core32_Int64 $h6
-             * @var ParagonIE_Sodium_Core32_Int64 $h7
-             * @var ParagonIE_Sodium_Core32_Int64 $h8
-             * @var ParagonIE_Sodium_Core32_Int64 $h9
-             */
             $h0 = $h0->shiftLeft(1);
             $h1 = $h1->shiftLeft(1);
             $h2 = $h2->shiftLeft(1);
@@ -1748,15 +1378,6 @@
                                                                     ]);
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1 $p
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P3
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_p1p1_to_p3(ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1 $p)
         {
             $r = new ParagonIE_Sodium_Core32_Curve25519_Ge_P3();
@@ -1768,20 +1389,6 @@
             return $r;
         }
 
-        /**
-         * Add two group elements.
-         *
-         * r = p + q
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3     $p
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_Cached $q
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_add(
             ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p, ParagonIE_Sodium_Core32_Curve25519_Ge_Cached $q
         ) {
@@ -1801,32 +1408,11 @@
             return $r;
         }
 
-        /**
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P2
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_p2_0()
         {
             return new ParagonIE_Sodium_Core32_Curve25519_Ge_P2(self::fe_0(), self::fe_1(), self::fe_1());
         }
 
-        /**
-         * Subtract two group elements.
-         *
-         * r = p - q
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3     $p
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_Cached $q
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_sub(
             ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p, ParagonIE_Sodium_Core32_Curve25519_Ge_Cached $q
         ) {
@@ -1847,17 +1433,6 @@
             return $r;
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1    $R
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3      $p
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $q
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_madd(
             ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1 $R, ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p, ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $q
         ) {
@@ -1876,17 +1451,6 @@
             return $r;
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1    $R
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3      $p
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $q
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_msub(
             ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1 $R, ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $p, ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $q
         ) {
@@ -1906,15 +1470,6 @@
             return $r;
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1 $p
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P2
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_p1p1_to_p2(ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1 $p)
         {
             $r = new ParagonIE_Sodium_Core32_Curve25519_Ge_P2();
@@ -1925,32 +1480,18 @@
             return $r;
         }
 
-        /**
-         * @param string $a
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P3
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedOperand
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function ge_scalarmult_base($a)
         {
-            /** @var array<int, int> $e */
             $e = [];
             $r = new ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1();
 
             for($i = 0; $i < 32; ++$i)
             {
-                /** @var int $dbl */
                 $dbl = (int) $i << 1;
                 $e[$dbl] = (int) self::chrToInt($a[$i]) & 15;
                 $e[$dbl + 1] = (int) (self::chrToInt($a[$i]) >> 4) & 15;
             }
 
-            /** @var int $carry */
             $carry = 0;
             for($i = 0; $i < 63; ++$i)
             {
@@ -1960,7 +1501,6 @@
                 $e[$i] -= $carry << 4;
             }
 
-            /** @var array<int, int> $e */
             $e[63] += (int) $carry;
 
             $h = self::ge_p3_0();
@@ -1993,31 +1533,11 @@
             return $h;
         }
 
-        /**
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P3
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ge_p3_0()
         {
             return new ParagonIE_Sodium_Core32_Curve25519_Ge_P3(self::fe_0(), self::fe_1(), self::fe_1(), self::fe_0());
         }
 
-        /**
-         * @param int $pos
-         * @param int $b
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedArrayAccess
-         * @psalm-suppress MixedArrayOffset
-         * @psalm-suppress MixedArgument
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function ge_select($pos = 0, $b = 0)
         {
             static $base = null;
@@ -2089,50 +1609,23 @@
             return self::cmov($t, $minusT, -$bnegative);
         }
 
-        /**
-         * @param string|int $char
-         *
-         * @return int (1 = yes, 0 = no)
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function negative($char)
         {
             if(is_int($char))
             {
                 return $char < 0 ? 1 : 0;
             }
-            /** @var string $char */
+
             $x = self::chrToInt(self::substr($char, 0, 1));
 
             return (int) ($x >> 31);
         }
 
-        /**
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public static function ge_precomp_0()
         {
             return new ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp(self::fe_1(), self::fe_1(), self::fe_0());
         }
 
-        /**
-         * Conditional move
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $t
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $u
-         * @param int                                           $b
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function cmov(
             ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $t, ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp $u, $b
         ) {
@@ -2144,25 +1637,9 @@
             return new ParagonIE_Sodium_Core32_Curve25519_Ge_Precomp(self::fe_cmov($t->yplusx, $u->yplusx, $b), self::fe_cmov($t->yminusx, $u->yminusx, $b), self::fe_cmov($t->xy2d, $u->xy2d, $b));
         }
 
-        /**
-         * Constant-time conditional move.
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $f
-         * @param ParagonIE_Sodium_Core32_Curve25519_Fe $g
-         * @param int                                   $b
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Fe
-         * @throws SodiumException
-         * @throws TypeError
-         * @psalm-suppress MixedAssignment
-         * @psalm-suppress MixedMethodCall
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function fe_cmov(
             ParagonIE_Sodium_Core32_Curve25519_Fe $f, ParagonIE_Sodium_Core32_Curve25519_Fe $g, $b = 0
         ) {
-            /** @var array<int, ParagonIE_Sodium_Core32_Int32> $h */
             $h = [];
             for($i = 0; $i < 10; ++$i)
             {
@@ -2177,19 +1654,9 @@
                 $h[$i] = $f[$i]->xorInt32($f[$i]->xorInt32($g[$i])->mask($b));
             }
 
-            /** @var array<int, ParagonIE_Sodium_Core32_Int32> $h */
             return ParagonIE_Sodium_Core32_Curve25519_Fe::fromArray($h);
         }
 
-        /**
-         * @param int $b
-         * @param int $c
-         *
-         * @return int
-         * @psalm-suppress MixedReturnStatement
-         * @internal       You should not use this directly from another application
-         *
-         */
         public static function equal($b, $c)
         {
             $b0 = $b & 0xffff;
@@ -2203,20 +1670,6 @@
             return ($d0 & $d1) & 1;
         }
 
-        /**
-         * Calculates (ab + c) mod l
-         * where l = 2^252 + 27742317777372353535851937790883648493
-         *
-         * @param string $a
-         * @param string $b
-         * @param string $c
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function sc_muladd($a, $b, $c)
         {
             $a0 = ParagonIE_Sodium_Core32_Int64::fromInt(2097151 & self::load_3(self::substr($a, 0, 3)));
@@ -2257,32 +1710,6 @@
             $c11 = ParagonIE_Sodium_Core32_Int64::fromInt(0x1fffffff & (self::load_4(self::substr($c, 28, 4)) >> 7));
 
             /* Can't really avoid the pyramid here: */
-            /**
-             * @var ParagonIE_Sodium_Core32_Int64 $s0
-             * @var ParagonIE_Sodium_Core32_Int64 $s1
-             * @var ParagonIE_Sodium_Core32_Int64 $s2
-             * @var ParagonIE_Sodium_Core32_Int64 $s3
-             * @var ParagonIE_Sodium_Core32_Int64 $s4
-             * @var ParagonIE_Sodium_Core32_Int64 $s5
-             * @var ParagonIE_Sodium_Core32_Int64 $s6
-             * @var ParagonIE_Sodium_Core32_Int64 $s7
-             * @var ParagonIE_Sodium_Core32_Int64 $s8
-             * @var ParagonIE_Sodium_Core32_Int64 $s9
-             * @var ParagonIE_Sodium_Core32_Int64 $s10
-             * @var ParagonIE_Sodium_Core32_Int64 $s11
-             * @var ParagonIE_Sodium_Core32_Int64 $s12
-             * @var ParagonIE_Sodium_Core32_Int64 $s13
-             * @var ParagonIE_Sodium_Core32_Int64 $s14
-             * @var ParagonIE_Sodium_Core32_Int64 $s15
-             * @var ParagonIE_Sodium_Core32_Int64 $s16
-             * @var ParagonIE_Sodium_Core32_Int64 $s17
-             * @var ParagonIE_Sodium_Core32_Int64 $s18
-             * @var ParagonIE_Sodium_Core32_Int64 $s19
-             * @var ParagonIE_Sodium_Core32_Int64 $s20
-             * @var ParagonIE_Sodium_Core32_Int64 $s21
-             * @var ParagonIE_Sodium_Core32_Int64 $s22
-             * @var ParagonIE_Sodium_Core32_Int64 $s23
-             */
 
             $s0 = $c0->addInt64($a0->mulInt64($b0, 24));
             $s1 = $c1->addInt64($a0->mulInt64($b1, 24))->addInt64($a1->mulInt64($b0, 24));
@@ -2637,9 +2064,6 @@
             $S10 = $s10->toInt();
             $S11 = $s11->toInt();
 
-            /**
-             * @var array<int, int>
-             */
             $arr = [
                 (int) (0xff & ($S0 >> 0)),
                 (int) (0xff & ($S0 >> 8)),
@@ -2678,43 +2102,8 @@
             return self::intArrayToString($arr);
         }
 
-        /**
-         * @param string $s
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function sc_reduce($s)
         {
-            /**
-             * @var ParagonIE_Sodium_Core32_Int64 $s0
-             * @var ParagonIE_Sodium_Core32_Int64 $s1
-             * @var ParagonIE_Sodium_Core32_Int64 $s2
-             * @var ParagonIE_Sodium_Core32_Int64 $s3
-             * @var ParagonIE_Sodium_Core32_Int64 $s4
-             * @var ParagonIE_Sodium_Core32_Int64 $s5
-             * @var ParagonIE_Sodium_Core32_Int64 $s6
-             * @var ParagonIE_Sodium_Core32_Int64 $s7
-             * @var ParagonIE_Sodium_Core32_Int64 $s8
-             * @var ParagonIE_Sodium_Core32_Int64 $s9
-             * @var ParagonIE_Sodium_Core32_Int64 $s10
-             * @var ParagonIE_Sodium_Core32_Int64 $s11
-             * @var ParagonIE_Sodium_Core32_Int64 $s12
-             * @var ParagonIE_Sodium_Core32_Int64 $s13
-             * @var ParagonIE_Sodium_Core32_Int64 $s14
-             * @var ParagonIE_Sodium_Core32_Int64 $s15
-             * @var ParagonIE_Sodium_Core32_Int64 $s16
-             * @var ParagonIE_Sodium_Core32_Int64 $s17
-             * @var ParagonIE_Sodium_Core32_Int64 $s18
-             * @var ParagonIE_Sodium_Core32_Int64 $s19
-             * @var ParagonIE_Sodium_Core32_Int64 $s20
-             * @var ParagonIE_Sodium_Core32_Int64 $s21
-             * @var ParagonIE_Sodium_Core32_Int64 $s22
-             * @var ParagonIE_Sodium_Core32_Int64 $s23
-             */
             $s0 = ParagonIE_Sodium_Core32_Int64::fromInt(2097151 & self::load_3(self::substr($s, 0, 3)));
             $s1 = ParagonIE_Sodium_Core32_Int64::fromInt(2097151 & (self::load_4(self::substr($s, 2, 4)) >> 5));
             $s2 = ParagonIE_Sodium_Core32_Int64::fromInt(2097151 & (self::load_3(self::substr($s, 5, 3)) >> 2));
@@ -2996,9 +2385,6 @@
             $S10 = $s10->toInt32()->toInt();
             $S11 = $s11->toInt32()->toInt();
 
-            /**
-             * @var array<int, int>
-             */
             $arr = [
                 (int) ($S0 >> 0),
                 (int) ($S0 >> 8),
@@ -3037,15 +2423,6 @@
             return self::intArrayToString($arr);
         }
 
-        /**
-         * multiply by the order of the main subgroup l = 2^252+27742317777372353535851937790883648493
-         *
-         * @param ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $A
-         *
-         * @return ParagonIE_Sodium_Core32_Curve25519_Ge_P3
-         * @throws SodiumException
-         * @throws TypeError
-         */
         public static function ge_mul_l(ParagonIE_Sodium_Core32_Curve25519_Ge_P3 $A)
         {
             $aslide = [
@@ -3304,7 +2681,6 @@
                 1
             ];
 
-            /** @var array<int, ParagonIE_Sodium_Core32_Curve25519_Ge_Cached> $Ai size 8 */
             $Ai = [];
 
             # ge_p3_to_cached(&Ai[0], A);

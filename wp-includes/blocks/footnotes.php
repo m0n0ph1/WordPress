@@ -1,21 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/footnotes` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Renders the `core/footnotes` block on the server.
-     *
-     * @param array    $attributes Block attributes.
-     * @param string   $content    Block default content.
-     * @param WP_Block $block      Block instance.
-     *
-     * @return string Returns the HTML representing the footnotes.
-     * @since 6.3.0
-     *
-     */
     function render_block_core_footnotes($attributes, $content, $block)
     {
         // Bail out early if the post ID is not set for some reason.
@@ -55,11 +39,6 @@
         return sprintf('<ol %1$s>%2$s</ol>', $wrapper_attributes, $block_content);
     }
 
-    /**
-     * Registers the `core/footnotes` block on the server.
-     *
-     * @since 6.3.0
-     */
     function register_block_core_footnotes()
     {
         foreach(['post', 'page'] as $post_type)
@@ -77,14 +56,6 @@
 
     add_action('init', 'register_block_core_footnotes');
 
-    /**
-     * Saves the footnotes meta value to the revision.
-     *
-     * @param int $revision_id The revision ID.
-     *
-     * @since 6.3.0
-     *
-     */
     function wp_save_footnotes_meta($revision_id)
     {
         $post_id = wp_is_post_revision($revision_id);
@@ -103,16 +74,6 @@
 
     add_action('wp_after_insert_post', 'wp_save_footnotes_meta');
 
-    /**
-     * Keeps track of the revision ID for "rest_after_insert_{$post_type}".
-     *
-     * @param int  $revision_id                       The revision ID.
-     *
-     * @global int $wp_temporary_footnote_revision_id The footnote revision ID.
-     *
-     * @since 6.3.0
-     *
-     */
     function wp_keep_footnotes_revision_id($revision_id)
     {
         global $wp_temporary_footnote_revision_id;
@@ -121,24 +82,6 @@
 
     add_action('_wp_put_post_revision', 'wp_keep_footnotes_revision_id');
 
-    /**
-     * This is a specific fix for the REST API. The REST API doesn't update
-     * the post and post meta in one go (through `meta_input`). While it
-     * does fix the `wp_after_insert_post` hook to be called correctly after
-     * updating meta, it does NOT fix hooks such as post_updated and
-     * save_post, which are normally also fired after post meta is updated
-     * in `wp_insert_post()`. Unfortunately, `wp_save_post_revision` is
-     * added to the `post_updated` action, which means the meta is not
-     * available at the time, so we have to add it afterwards through the
-     * `"rest_after_insert_{$post_type}"` action.
-     *
-     * @param WP_Post $post                              The post object.
-     *
-     * @global int    $wp_temporary_footnote_revision_id The footnote revision ID.
-     *
-     * @since 6.3.0
-     *
-     */
     function wp_add_footnotes_revisions_to_post_meta($post)
     {
         global $wp_temporary_footnote_revision_id;
@@ -171,15 +114,6 @@
     add_action('rest_after_insert_post', 'wp_add_footnotes_revisions_to_post_meta');
     add_action('rest_after_insert_page', 'wp_add_footnotes_revisions_to_post_meta');
 
-    /**
-     * Restores the footnotes meta value from the revision.
-     *
-     * @param int $post_id     The post ID.
-     * @param int $revision_id The revision ID.
-     *
-     * @since 6.3.0
-     *
-     */
     function wp_restore_footnotes_from_revision($post_id, $revision_id)
     {
         $footnotes = get_post_meta($revision_id, 'footnotes', true);
@@ -196,15 +130,6 @@
 
     add_action('wp_restore_post_revision', 'wp_restore_footnotes_from_revision', 10, 2);
 
-    /**
-     * Adds the footnotes field to the revision.
-     *
-     * @param array $fields The revision fields.
-     *
-     * @return array The revision fields.
-     * @since 6.3.0
-     *
-     */
     function wp_add_footnotes_to_revision($fields)
     {
         $fields['footnotes'] = __('Footnotes');
@@ -214,18 +139,6 @@
 
     add_filter('_wp_post_revision_fields', 'wp_add_footnotes_to_revision');
 
-    /**
-     * Gets the footnotes field from the revision.
-     *
-     * @param string $revision_field The field value, but $revision->$field
-     *                               (footnotes) does not exist.
-     * @param string $field          The field name, in this case "footnotes".
-     * @param object $revision       The revision object to compare against.
-     *
-     * @return string The field value.
-     * @since 6.3.0
-     *
-     */
     function wp_get_footnotes_from_revision($revision_field, $field, $revision)
     {
         return get_metadata('post', $revision->ID, $field, true);
@@ -233,16 +146,6 @@
 
     add_filter('_wp_post_revision_field_footnotes', 'wp_get_footnotes_from_revision', 10, 3);
 
-    /**
-     * The REST API autosave endpoint doesn't save meta, so we can use the
-     * `wp_creating_autosave` when it updates an exiting autosave, and
-     * `_wp_put_post_revision` when it creates a new autosave.
-     *
-     * @param int|array $autosave The autosave ID or array.
-     *
-     * @since 6.3.0
-     *
-     */
     function _wp_rest_api_autosave_meta($autosave)
     {
         // Ensure it's a REST API request.
@@ -277,24 +180,6 @@
 // Then https://github.com/WordPress/wordpress-develop/blob/2103cb9966e57d452c94218bbc3171579b536a40/src/wp-includes/revision.php#L367.
     add_action('_wp_put_post_revision', '_wp_rest_api_autosave_meta');
 
-    /**
-     * This is a workaround for the autosave endpoint returning early if the
-     * revision field are equal. The problem is that "footnotes" is not real
-     * revision post field, so there's nothing to compare against.
-     *
-     * This trick sets the "footnotes" field (value doesn't matter), which will
-     * cause the autosave endpoint to always update the latest revision. That should
-     * be fine, it should be ok to update the revision even if nothing changed. Of
-     * course, this is temporary fix.
-     *
-     * @param WP_Post         $prepared_post The prepared post object.
-     * @param WP_REST_Request $request       The request object.
-     *
-     * See https://github.com/WordPress/wordpress-develop/blob/2103cb9966e57d452c94218bbc3171579b536a40/src/wp-includes/rest-api/endpoints/class-wp-rest-autosaves-controller.php#L365-L384. See https://github.com/WordPress/wordpress-develop/blob/2103cb9966e57d452c94218bbc3171579b536a40/src/wp-includes/rest-api/endpoints/class-wp-rest-autosaves-controller.php#L219.
-     *
-     * @since 6.3.0
-     *
-     */
     function _wp_rest_api_force_autosave_difference($prepared_post, $request)
     {
         // We only want to be altering POST requests.

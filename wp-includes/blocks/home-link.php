@@ -1,18 +1,5 @@
 <?php
-    /**
-     * Server-side rendering of the `core/home-link` block.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Build an array with CSS classes and inline styles defining the colors
-     * which will be applied to the home link markup in the front-end.
-     *
-     * @param array $context home link block context.
-     *
-     * @return array Colors CSS classes and inline styles.
-     */
     function block_core_home_link_build_css_colors($context)
     {
         $colors = [
@@ -67,14 +54,6 @@
         return $colors;
     }
 
-    /**
-     * Build an array with CSS classes and inline styles defining the font sizes
-     * which will be applied to the home link markup in the front-end.
-     *
-     * @param array $context Home link block context.
-     *
-     * @return array Font size CSS classes and inline styles.
-     */
     function block_core_home_link_build_css_font_sizes($context)
     {
         // CSS classes.
@@ -100,13 +79,6 @@
         return $font_sizes;
     }
 
-    /**
-     * Builds an array with classes and style for the li wrapper
-     *
-     * @param array $context Home link block context.
-     *
-     * @return string The li wrapper attributes.
-     */
     function block_core_home_link_build_li_wrapper_attributes($context)
     {
         $colors = block_core_home_link_build_css_colors($context);
@@ -123,15 +95,6 @@
         return $wrapper_attributes;
     }
 
-    /**
-     * Renders the `core/home-link` block.
-     *
-     * @param array    $attributes The block attributes.
-     * @param string   $content    The saved content.
-     * @param WP_Block $block      The parsed block.
-     *
-     * @return string Returns the post content with the home url added.
-     */
     function render_block_core_home_link($attributes, $content, $block)
     {
         if(empty($attributes['label']))
@@ -144,12 +107,6 @@
         return sprintf('<li %1$s><a class="wp-block-home-link__content wp-block-navigation-item__content" href="%2$s" rel="home"%3$s>%4$s</a></li>', block_core_home_link_build_li_wrapper_attributes($block->context), esc_url(home_url()), $aria_current, wp_kses_post($attributes['label']));
     }
 
-    /**
-     * Register the home block
-     *
-     * @throws WP_Error An WP_Error exception parsing the block definition.
-     * @uses render_block_core_home_link()
-     */
     function register_block_core_home_link()
     {
         register_block_type_from_metadata(__DIR__.'/home-link', [

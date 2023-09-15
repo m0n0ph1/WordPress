@@ -1,27 +1,7 @@
 <?php
-    /**
-     * Widget API: WP_Widget_Media_Gallery class
-     *
-     * @package    WordPress
-     * @subpackage Widgets
-     * @since      4.9.0
-     */
 
-    /**
-     * Core class that implements a gallery widget.
-     *
-     * @since 4.9.0
-     *
-     * @see   WP_Widget_Media
-     * @see   WP_Widget
-     */
     class WP_Widget_Media_Gallery extends WP_Widget_Media
     {
-        /**
-         * Constructor.
-         *
-         * @since 4.9.0
-         */
         public function __construct()
         {
             parent::__construct('media_gallery', __('Gallery'), [
@@ -37,14 +17,6 @@
             ]);
         }
 
-        /**
-         * Render the media on the frontend.
-         *
-         * @param array $instance Widget instance props.
-         *
-         * @since 4.9.0
-         *
-         */
         public function render_media($instance)
         {
             $instance = array_merge(wp_list_pluck($this->get_instance_schema(), 'default'), $instance);
@@ -63,17 +35,6 @@
             echo gallery_shortcode($shortcode_atts);
         }
 
-        /**
-         * Get schema for properties of a widget instance (item).
-         *
-         * @return array Schema for properties.
-         * @see   WP_REST_Controller::get_item_schema()
-         * @see   WP_REST_Controller::get_additional_fields()
-         * @link  https://core.trac.wordpress.org/ticket/35574
-         *
-         * @since 4.9.0
-         *
-         */
         public function get_instance_schema()
         {
             $schema = [
@@ -118,17 +79,11 @@
                 ],
             ];
 
-            /** This filter is documented in wp-includes/widgets/class-wp-widget-media.php */
             $schema = apply_filters("widget_{$this->id_base}_instance_schema", $schema, $this);
 
             return $schema;
         }
 
-        /**
-         * Loads the required media files for the media manager and scripts for media widgets.
-         *
-         * @since 4.9.0
-         */
         public function enqueue_admin_scripts()
         {
             parent::enqueue_admin_scripts();
@@ -154,19 +109,14 @@
 
             wp_add_inline_script(
                 $handle, sprintf(
-                '
+                           '
 					wp.mediaWidgets.controlConstructors[ %1$s ].prototype.mime_type = %2$s;
 					_.extend( wp.mediaWidgets.controlConstructors[ %1$s ].prototype.l10n, %3$s );
 				', wp_json_encode($this->id_base), wp_json_encode($this->widget_options['mime_type']), wp_json_encode($this->l10n)
-            )
+                       )
             );
         }
 
-        /**
-         * Render form template scripts.
-         *
-         * @since 4.9.0
-         */
         public function render_control_template_scripts()
         {
             parent::render_control_template_scripts();
@@ -224,16 +174,6 @@
             <?php
         }
 
-        /**
-         * Whether the widget has content to show.
-         *
-         * @param array $instance Widget instance props.
-         *
-         * @return bool Whether widget has content.
-         * @since  4.9.0
-         * @access protected
-         *
-         */
         protected function has_content($instance)
         {
             if(! empty($instance['ids']))

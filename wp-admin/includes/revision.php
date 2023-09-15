@@ -1,24 +1,5 @@
 <?php
-    /**
-     * WordPress Administration Revisions API
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      3.6.0
-     */
 
-    /**
-     * Get the revision UI diff.
-     *
-     * @param WP_Post|int $post         The post object or post ID.
-     * @param int         $compare_from The revision ID to compare from.
-     * @param int         $compare_to   The revision ID to come to.
-     *
-     * @return array|false Associative array of a post's revisioned fields and their diffs.
-     *                     Or, false on failure.
-     * @since 3.6.0
-     *
-     */
     function wp_get_revision_ui_diff($post, $compare_from, $compare_to)
     {
         $post = get_post($post);
@@ -81,30 +62,8 @@
 
         foreach(_wp_post_revision_fields($post) as $field => $name)
         {
-            /**
-             * Contextually filter a post revision field.
-             *
-             * The dynamic portion of the hook name, `$field`, corresponds to a name of a
-             * field of the revision object.
-             *
-             * Possible hook names include:
-             *
-             *  - `_wp_post_revision_field_post_title`
-             *  - `_wp_post_revision_field_post_content`
-             *  - `_wp_post_revision_field_post_excerpt`
-             *
-             * @param string  $revision_field The current revision field to compare to or from.
-             * @param string  $field          The current revision field.
-             * @param WP_Post $compare_from   The revision post object to compare to or from.
-             * @param string  $context        The context of whether the current revision is the old
-             *                                or the new one. Values are 'to' or 'from'.
-             *
-             * @since 3.6.0
-             *
-             */
             $content_from = $compare_from ? apply_filters("_wp_post_revision_field_{$field}", $compare_from->$field, $field, $compare_from, 'from') : '';
 
-            /** This filter is documented in wp-admin/includes/revision.php */
             $content_to = apply_filters("_wp_post_revision_field_{$field}", $compare_to->$field, $field, $compare_to, 'to');
 
             $args = [
@@ -113,25 +72,6 @@
                 'title_right' => __('Added'),
             ];
 
-            /**
-             * Filters revisions text diff options.
-             *
-             * Filters the options passed to wp_text_diff() when viewing a post revision.
-             *
-             * @param array   $args            {
-             *                                 Associative array of options to pass to wp_text_diff().
-             *
-             * @type bool     $show_split_view True for split view (two columns), false for
-             *                                 un-split view (single column). Default true.
-             *                                 }
-             *
-             * @param string  $field           The current revision field.
-             * @param WP_Post $compare_from    The revision post to compare from.
-             * @param WP_Post $compare_to      The revision post to compare to.
-             *
-             * @since 4.1.0
-             *
-             */
             $args = apply_filters('revision_text_diff_options', $args, $field, $compare_from, $compare_to);
 
             $diff = wp_text_diff($content_from, $content_to, $args);
@@ -174,30 +114,9 @@
             }
         }
 
-        /**
-         * Filters the fields displayed in the post revision diff UI.
-         *
-         * @param array[] $return       Array of revision UI fields. Each item is an array of id, name, and diff.
-         * @param WP_Post $compare_from The revision post to compare from.
-         * @param WP_Post $compare_to   The revision post to compare to.
-         *
-         * @since 4.1.0
-         *
-         */
         return apply_filters('wp_get_revision_ui_diff', $return, $compare_from, $compare_to);
     }
 
-    /**
-     * Prepare revisions for JavaScript.
-     *
-     * @param WP_Post|int $post                 The post object or post ID.
-     * @param int         $selected_revision_id The selected revision ID.
-     * @param int         $from                 Optional. The revision ID to compare from.
-     *
-     * @return array An associative array of revision data and related settings.
-     * @since 3.6.0
-     *
-     */
     function wp_prepare_revisions_for_js($post, $selected_revision_id, $from = null)
     {
         $post = get_post($post);
@@ -236,11 +155,11 @@
             {
                 $restore_link = str_replace(
                     '&amp;', '&', wp_nonce_url(
-                    add_query_arg([
-                                      'revision' => $revision->ID,
-                                      'action' => 'restore',
-                                  ], admin_url('revision.php')), "restore-post_{$revision->ID}"
-                )
+                               add_query_arg([
+                                                 'revision' => $revision->ID,
+                                                 'action' => 'restore',
+                                             ], admin_url('revision.php')), "restore-post_{$revision->ID}"
+                           )
                 );
             }
 
@@ -286,30 +205,6 @@
                 'restoreUrl' => $can_restore ? $restore_link : false,
             ];
 
-            /**
-             * Filters the array of revisions used on the revisions screen.
-             *
-             * @param array     $revisions_data {
-             *                                  The bootstrapped data for the revisions screen.
-             *
-             * @type int        $id             Revision ID.
-             * @type string     $title          Title for the revision's parent WP_Post object.
-             * @type int        $author         Revision post author ID.
-             * @type string     $date           Date the revision was modified.
-             * @type string     $dateShort      Short-form version of the date the revision was modified.
-             * @type string     $timeAgo        GMT-aware amount of time ago the revision was modified.
-             * @type bool       $autosave       Whether the revision is an autosave.
-             * @type bool       $current        Whether the revision is both not an autosave and the post
-             *                                  modified date matches the revision modified date (GMT-aware).
-             * @type bool|false $restoreUrl     URL if the revision can be restored, false otherwise.
-             *                                  }
-             *
-             * @param WP_Post   $revision       The revision's WP_Post object.
-             * @param WP_Post   $post           The revision's parent WP_Post object.
-             *
-             * @since 4.4.0
-             *
-             */
             $revisions[$revision->ID] = apply_filters('wp_prepare_revision_for_js', $revisions_data, $revision, $post);
         }
 
@@ -395,13 +290,6 @@
         ];
     }
 
-    /**
-     * Print JavaScript templates required for the revisions experience.
-     *
-     * @since 4.1.0
-     *
-     * @global WP_Post $post Global post object.
-     */
     function wp_print_revision_templates()
     {
         global $post;

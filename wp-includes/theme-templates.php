@@ -1,16 +1,5 @@
 <?php
 
-    /**
-     * Sets a custom slug when creating auto-draft template parts.
-     *
-     * This is only needed for auto-drafts created by the regular WP editor.
-     * If this page is to be removed, this will not be necessary.
-     *
-     * @param int $post_id Post ID.
-     *
-     * @since 5.9.0
-     *
-     */
     function wp_set_unique_slug_on_create_template_part($post_id)
     {
         $post = get_post($post_id);
@@ -34,21 +23,6 @@
         }
     }
 
-    /**
-     * Generates a unique slug for templates.
-     *
-     * @access private
-     *
-     * @param string $override_slug The filtered value of the slug (starts as `null` from apply_filter).
-     * @param string $slug          The original/un-filtered slug (post_name).
-     * @param int    $post_id       Post ID.
-     * @param string $post_status   No uniqueness checks are made if the post is still draft or pending.
-     * @param string $post_type     Post type.
-     *
-     * @return string The original, desired slug.
-     * @since  5.8.0
-     *
-     */
     function wp_filter_wp_template_unique_post_slug($override_slug, $slug, $post_id, $post_status, $post_type)
     {
         if('wp_template' !== $post_type && 'wp_template_part' !== $post_type)
@@ -110,14 +84,6 @@
         return $override_slug;
     }
 
-    /**
-     * Prints the skip-link script & styles.
-     *
-     * @access private
-     * @since  5.8.0
-     *
-     * @global string $_wp_current_template_content
-     */
     function the_block_template_skip_link()
     {
         global $_wp_current_template_content;
@@ -136,9 +102,7 @@
         ?>
 
         <?php
-        /**
-         * Print the skip-link styles.
-         */ ?>
+        ?>
         <style id="skip-link-styles">
             .skip-link.screen-reader-text {
                 border: 0;
@@ -171,9 +135,7 @@
             }
         </style>
         <?php
-        /**
-         * Print the skip-link script.
-         */ ?>
+        ?>
         <script>
             (function () {
                 var skipLinkTarget = document.querySelector('main'),
@@ -217,12 +179,6 @@
         <?php
     }
 
-    /**
-     * Enables the block templates (editor mode) for themes with theme.json by default.
-     *
-     * @access private
-     * @since  5.8.0
-     */
     function wp_enable_block_templates()
     {
         if(wp_is_block_theme() || wp_theme_has_theme_json())

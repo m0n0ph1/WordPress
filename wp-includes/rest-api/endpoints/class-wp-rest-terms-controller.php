@@ -1,69 +1,17 @@
 <?php
-    /**
-     * REST API: WP_REST_Terms_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      4.7.0
-     */
 
-    /**
-     * Core class used to managed terms associated with a taxonomy via the REST API.
-     *
-     * @since 4.7.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Terms_Controller extends WP_REST_Controller
     {
-        /**
-         * Taxonomy key.
-         *
-         * @since 4.7.0
-         * @var string
-         */
         protected $taxonomy;
 
-        /**
-         * Instance of a term meta fields object.
-         *
-         * @since 4.7.0
-         * @var WP_REST_Term_Meta_Fields
-         */
         protected $meta;
 
-        /**
-         * Column to have the terms be sorted by.
-         *
-         * @since 4.7.0
-         * @var string
-         */
         protected $sort_column;
 
-        /**
-         * Number of terms that were found.
-         *
-         * @since 4.7.0
-         * @var int
-         */
         protected $total_terms;
 
-        /**
-         * Whether the controller supports batching.
-         *
-         * @since 5.9.0
-         * @var array
-         */
         protected $allow_batch = ['v1' => true];
 
-        /**
-         * Constructor.
-         *
-         * @param string $taxonomy Taxonomy key.
-         *
-         * @since 4.7.0
-         *
-         */
         public function __construct($taxonomy)
         {
             $this->taxonomy = $taxonomy;
@@ -74,13 +22,6 @@
             $this->meta = new WP_REST_Term_Meta_Fields($taxonomy);
         }
 
-        /**
-         * Registers the routes for terms.
-         *
-         * @since 4.7.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -138,13 +79,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for collections.
-         *
-         * @return array Collection parameters.
-         * @since 4.7.0
-         *
-         */
         public function get_collection_params()
         {
             $query_params = parent::get_collection_params();
@@ -232,34 +166,9 @@
                 ],
             ];
 
-            /**
-             * Filters collection parameters for the terms controller.
-             *
-             * The dynamic part of the filter `$this->taxonomy` refers to the taxonomy
-             * slug for the controller.
-             *
-             * This filter registers the collection parameter, but does not map the
-             * collection parameter to an internal WP_Term_Query parameter.  Use the
-             * `rest_{$this->taxonomy}_query` filter to set WP_Term_Query parameters.
-             *
-             * @param array       $query_params JSON Schema-formatted collection parameters.
-             * @param WP_Taxonomy $taxonomy     Taxonomy object.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters("rest_{$this->taxonomy}_collection_params", $query_params, $taxonomy);
         }
 
-        /**
-         * Checks if a request has access to read terms in the specified taxonomy.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return bool|WP_Error True if the request has read access, otherwise false or WP_Error object.
-         * @since 4.7.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             $tax_obj = get_taxonomy($this->taxonomy);
@@ -296,15 +205,6 @@
             return true;
         }
 
-        /**
-         * Checks that the taxonomy is valid.
-         *
-         * @param string $taxonomy Taxonomy to check.
-         *
-         * @return bool Whether the taxonomy is allowed for REST management.
-         * @since 4.7.0
-         *
-         */
         protected function check_is_taxonomy_allowed($taxonomy)
         {
             $taxonomy_obj = get_taxonomy($taxonomy);
@@ -316,16 +216,6 @@
             return false;
         }
 
-        /**
-         * Checks if the terms for a post can be read.
-         *
-         * @param WP_Post         $post    Post object.
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return bool Whether the terms for the post can be read.
-         * @since 6.0.3
-         *
-         */
         public function check_read_terms_permission_for_post($post, $request)
         {
             // If the requested post isn't associated with this taxonomy, deny access.
@@ -350,15 +240,6 @@
             return false;
         }
 
-        /**
-         * Retrieves terms associated with a taxonomy.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_items($request)
         {
             // Retrieve the list of registered collection query parameters.
@@ -435,27 +316,6 @@
                 }
             }
 
-            /**
-             * Filters get_terms() arguments when querying terms via the REST API.
-             *
-             * The dynamic portion of the hook name, `$this->taxonomy`, refers to the taxonomy slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_category_query`
-             *  - `rest_post_tag_query`
-             *
-             * Enables adding extra arguments or setting defaults for a terms
-             * collection request.
-             *
-             * @param array           $prepared_args Array of arguments for get_terms().
-             * @param WP_REST_Request $request       The REST API request.
-             *
-             * @since 4.7.0
-             *
-             * @link  https://developer.wordpress.org/reference/functions/get_terms/
-             *
-             */
             $prepared_args = apply_filters("rest_{$this->taxonomy}_query", $prepared_args, $request);
 
             if(! empty($prepared_args['post']))
@@ -529,16 +389,6 @@
             return $response;
         }
 
-        /**
-         * Prepares a single term output for response.
-         *
-         * @param WP_Term         $item    Term object.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response Response object.
-         * @since 4.7.0
-         *
-         */
         public function prepare_item_for_response($item, $request)
         {
             $fields = $this->get_fields_for_response($request);
@@ -600,37 +450,9 @@
                 $response->add_links($this->prepare_links($item));
             }
 
-            /**
-             * Filters the term data for a REST API response.
-             *
-             * The dynamic portion of the hook name, `$this->taxonomy`, refers to the taxonomy slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_prepare_category`
-             *  - `rest_prepare_post_tag`
-             *
-             * Allows modification of the term data right before it is returned.
-             *
-             * @param WP_REST_Response $response The response object.
-             * @param WP_Term          $item     The original term object.
-             * @param WP_REST_Request  $request  Request used to generate the response.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters("rest_prepare_{$this->taxonomy}", $response, $item, $request);
         }
 
-        /**
-         * Prepares links for the request.
-         *
-         * @param WP_Term $term Term object.
-         *
-         * @return array Links for the given term.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_links($term)
         {
             $links = [
@@ -689,15 +511,6 @@
             return $links;
         }
 
-        /**
-         * Checks if a request has access to read or edit the specified term.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, otherwise WP_Error object.
-         * @since 4.7.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $term = $this->get_term($request['id']);
@@ -715,15 +528,6 @@
             return true;
         }
 
-        /**
-         * Get the term, if the ID is valid.
-         *
-         * @param int $id Supplied ID.
-         *
-         * @return WP_Term|WP_Error Term object if ID is valid, WP_Error otherwise.
-         * @since 4.7.2
-         *
-         */
         protected function get_term($id)
         {
             $error = new WP_Error('rest_term_invalid', __('Term does not exist.'), ['status' => 404]);
@@ -747,15 +551,6 @@
             return $term;
         }
 
-        /**
-         * Gets a single term from a taxonomy.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function get_item($request)
         {
             $term = $this->get_term($request['id']);
@@ -769,15 +564,6 @@
             return rest_ensure_response($response);
         }
 
-        /**
-         * Checks if a request has access to create a term.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to create items, false or WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function create_item_permissions_check($request)
         {
             if(! $this->check_is_taxonomy_allowed($this->taxonomy))
@@ -795,15 +581,6 @@
             return true;
         }
 
-        /**
-         * Creates a single term in a taxonomy.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function create_item($request)
         {
             if(isset($request['parent']))
@@ -846,23 +623,6 @@
 
             $term = get_term($term['term_id'], $this->taxonomy);
 
-            /**
-             * Fires after a single term is created or updated via the REST API.
-             *
-             * The dynamic portion of the hook name, `$this->taxonomy`, refers to the taxonomy slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_insert_category`
-             *  - `rest_insert_post_tag`
-             *
-             * @param WP_Term         $term     Inserted or updated term object.
-             * @param WP_REST_Request $request  Request object.
-             * @param bool            $creating True when creating a term, false when updating.
-             *
-             * @since 4.7.0
-             *
-             */
             do_action("rest_insert_{$this->taxonomy}", $term, $request, true);
 
             $schema = $this->get_item_schema();
@@ -885,23 +645,6 @@
 
             $request->set_param('context', 'edit');
 
-            /**
-             * Fires after a single term is completely created or updated via the REST API.
-             *
-             * The dynamic portion of the hook name, `$this->taxonomy`, refers to the taxonomy slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_after_insert_category`
-             *  - `rest_after_insert_post_tag`
-             *
-             * @param WP_Term         $term     Inserted or updated term object.
-             * @param WP_REST_Request $request  Request object.
-             * @param bool            $creating True when creating a term, false when updating.
-             *
-             * @since 5.0.0
-             *
-             */
             do_action("rest_after_insert_{$this->taxonomy}", $term, $request, true);
 
             $response = $this->prepare_item_for_response($term, $request);
@@ -913,15 +656,6 @@
             return $response;
         }
 
-        /**
-         * Prepares a single term for create or update.
-         *
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return object Term object.
-         * @since 4.7.0
-         *
-         */
         public function prepare_item_for_database($request)
         {
             $prepared_term = new stdClass();
@@ -965,32 +699,9 @@
                 $prepared_term->parent = $parent_term_id;
             }
 
-            /**
-             * Filters term data before inserting term via the REST API.
-             *
-             * The dynamic portion of the hook name, `$this->taxonomy`, refers to the taxonomy slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_pre_insert_category`
-             *  - `rest_pre_insert_post_tag`
-             *
-             * @param object          $prepared_term Term object.
-             * @param WP_REST_Request $request       Request object.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters("rest_pre_insert_{$this->taxonomy}", $prepared_term, $request);
         }
 
-        /**
-         * Retrieves the term's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 4.7.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -1072,15 +783,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Checks if a request has access to update the specified term.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to update the item, false or WP_Error object otherwise.
-         * @since 4.7.0
-         *
-         */
         public function update_item_permissions_check($request)
         {
             $term = $this->get_term($request['id']);
@@ -1098,15 +800,6 @@
             return true;
         }
 
-        /**
-         * Updates a single term from a taxonomy.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function update_item($request)
         {
             $term = $this->get_term($request['id']);
@@ -1145,7 +838,6 @@
 
             $term = get_term($term->term_id, $this->taxonomy);
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php */
             do_action("rest_insert_{$this->taxonomy}", $term, $request, false);
 
             $schema = $this->get_item_schema();
@@ -1168,7 +860,6 @@
 
             $request->set_param('context', 'edit');
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php */
             do_action("rest_after_insert_{$this->taxonomy}", $term, $request, false);
 
             $response = $this->prepare_item_for_response($term, $request);
@@ -1176,15 +867,6 @@
             return rest_ensure_response($response);
         }
 
-        /**
-         * Checks if a request has access to delete the specified term.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to delete the item, otherwise false or WP_Error object.
-         * @since 4.7.0
-         *
-         */
         public function delete_item_permissions_check($request)
         {
             $term = $this->get_term($request['id']);
@@ -1202,15 +884,6 @@
             return true;
         }
 
-        /**
-         * Deletes a single term from a taxonomy.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function delete_item($request)
         {
             $term = $this->get_term($request['id']);
@@ -1244,23 +917,6 @@
                                     'previous' => $previous->get_data(),
                                 ]);
 
-            /**
-             * Fires after a single term is deleted via the REST API.
-             *
-             * The dynamic portion of the hook name, `$this->taxonomy`, refers to the taxonomy slug.
-             *
-             * Possible hook names include:
-             *
-             *  - `rest_delete_category`
-             *  - `rest_delete_post_tag`
-             *
-             * @param WP_Term          $term     The deleted term.
-             * @param WP_REST_Response $response The response data.
-             * @param WP_REST_Request  $request  The request sent to the API.
-             *
-             * @since 4.7.0
-             *
-             */
             do_action("rest_delete_{$this->taxonomy}", $term, $response, $request);
 
             return $response;

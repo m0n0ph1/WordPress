@@ -1,39 +1,12 @@
 <?php
 
-    /**
-     * Class ParagonIE_Sodium_Core_Base64
-     *
-     *  Copyright (c) 2016 - 2018 Paragon Initiative Enterprises.
-     *  Copyright (c) 2014 Steve "Sc00bz" Thomas (steve at tobtu dot com)
-     *
-     * We have to copy/paste the contents into the variant files because PHP 5.2
-     * doesn't support late static binding, and we have no better workaround
-     * available that won't break PHP 7+. Therefore, we're forced to duplicate code.
-     */
     abstract class ParagonIE_Sodium_Core_Base64_Common
     {
-        /**
-         * Encode into Base64
-         *
-         * Base64 character set "[A-Z][a-z][0-9]+/"
-         *
-         * @param string $src
-         *
-         * @return string
-         * @throws TypeError
-         */
         public static function encode($src)
         {
             return self::doEncode($src, true);
         }
 
-        /**
-         * @param string $src
-         * @param bool   $pad Include = padding?
-         *
-         * @return string
-         * @throws TypeError
-         */
         protected static function doEncode($src, $pad = true)
         {
             $dest = '';
@@ -41,7 +14,6 @@
             // Main loop (no padding):
             for($i = 0; $i + 3 <= $srcLen; $i += 3)
             {
-                /** @var array<int, int> $chunk */
                 $chunk = unpack('C*', ParagonIE_Sodium_Core_Util::substr($src, $i, 3));
                 $b0 = $chunk[1];
                 $b1 = $chunk[2];
@@ -52,7 +24,6 @@
             // The last chunk, which may have padding:
             if($i < $srcLen)
             {
-                /** @var array<int, int> $chunk */
                 $chunk = unpack('C*', ParagonIE_Sodium_Core_Util::substr($src, $i, $srcLen - $i));
                 $b0 = $chunk[1];
                 if($i + 1 < $srcLen)
@@ -77,44 +48,13 @@
             return $dest;
         }
 
-        /**
-         * Uses bitwise operators instead of table-lookups to turn 8-bit integers
-         * into 6-bit integers.
-         *
-         * @param int $src
-         *
-         * @return string
-         */
         abstract protected static function encode6Bits($src);
 
-        /**
-         * Encode into Base64, no = padding
-         *
-         * Base64 character set "[A-Z][a-z][0-9]+/"
-         *
-         * @param string $src
-         *
-         * @return string
-         * @throws TypeError
-         */
         public static function encodeUnpadded($src)
         {
             return self::doEncode($src, false);
         }
 
-        /**
-         * decode from base64 into binary
-         *
-         * Base64 character set "./[A-Z][a-z][0-9]"
-         *
-         * @param string $src
-         * @param bool   $strictPadding
-         *
-         * @return string
-         * @throws RangeException
-         * @throws TypeError
-         * @psalm-suppress RedundantCondition
-         */
         public static function decode($src, $strictPadding = false)
         {
             // Remove padding
@@ -157,7 +97,6 @@
             // Main loop (no padding):
             for($i = 0; $i + 4 <= $srcLen; $i += 4)
             {
-                /** @var array<int, int> $chunk */
                 $chunk = unpack('C*', ParagonIE_Sodium_Core_Util::substr($src, $i, 4));
                 $c0 = self::decode6Bits($chunk[1]);
                 $c1 = self::decode6Bits($chunk[2]);
@@ -170,7 +109,6 @@
             // The last chunk, which may have padding:
             if($i < $srcLen)
             {
-                /** @var array<int, int> $chunk */
                 $chunk = unpack('C*', ParagonIE_Sodium_Core_Util::substr($src, $i, $srcLen - $i));
                 $c0 = self::decode6Bits($chunk[1]);
 
@@ -192,7 +130,7 @@
                     $err |= 1;
                 }
             }
-            /** @var bool $check */
+
             $check = ($err === 0);
             if(! $check)
             {
@@ -202,17 +140,5 @@
             return $dest;
         }
 
-        /**
-         * Uses bitwise operators instead of table-lookups to turn 6-bit integers
-         * into 8-bit integers.
-         *
-         * Base64 character set:
-         * [A-Z]      [a-z]      [0-9]      +     /
-         * 0x41-0x5a, 0x61-0x7a, 0x30-0x39, 0x2b, 0x2f
-         *
-         * @param int $src
-         *
-         * @return int
-         */
         abstract protected static function decode6Bits($src);
     }

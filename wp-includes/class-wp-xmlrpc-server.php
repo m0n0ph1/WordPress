@@ -1,72 +1,18 @@
 <?php
-    /**
-     * XML-RPC protocol support for WordPress.
-     *
-     * @package    WordPress
-     * @subpackage Publishing
-     */
 
-    /**
-     * WordPress XMLRPC server implementation.
-     *
-     * Implements compatibility for Blogger API, MetaWeblog API, MovableType, and
-     * pingback. Additional WordPress API for managing comments, pages, posts,
-     * options, etc.
-     *
-     * As of WordPress 3.5.0, XML-RPC is enabled by default. It can be disabled
-     * via the {@see 'xmlrpc_enabled'} filter found in wp_xmlrpc_server::set_is_enabled().
-     *
-     * @since 1.5.0
-     *
-     * @see   IXR_Server
-     */
     #[AllowDynamicProperties]
     class wp_xmlrpc_server extends IXR_Server
     {
-        /**
-         * Methods.
-         *
-         * @var array
-         */
         public $methods;
 
-        /**
-         * Blog options.
-         *
-         * @var array
-         */
         public $blog_options;
 
-        /**
-         * IXR_Error instance.
-         *
-         * @var IXR_Error
-         */
         public $error;
 
-        /**
-         * Flags that the user authentication has failed in this instance of wp_xmlrpc_server.
-         *
-         * @var bool
-         */
         protected $auth_failed = false;
 
-        /**
-         * Flags that XML-RPC is enabled
-         *
-         * @var bool
-         */
         private $is_enabled;
 
-        /**
-         * Registers all of the XMLRPC methods that XMLRPC server understands.
-         *
-         * Sets up server and method property. Passes XMLRPC methods through the
-         * {@see 'xmlrpc_methods'} filter to allow plugins to extend or replace
-         * XML-RPC methods.
-         *
-         * @since 1.5.0
-         */
         public function __construct()
         {
             $this->methods = [
@@ -166,28 +112,11 @@
 
             $this->initialise_blog_option_info();
 
-            /**
-             * Filters the methods exposed by the XML-RPC server.
-             *
-             * This filter can be used to add new methods, and remove built-in methods.
-             *
-             * @param string[] $methods An array of XML-RPC methods, keyed by their methodName.
-             *
-             * @since 1.5.0
-             *
-             */
             $this->methods = apply_filters('xmlrpc_methods', $this->methods);
 
             $this->set_is_enabled();
         }
 
-        /**
-         * Sets up blog options property.
-         *
-         * Passes property through {@see 'xmlrpc_blog_options'} filter.
-         *
-         * @since 2.6.0
-         */
         public function initialise_blog_option_info()
         {
             $this->blog_options = [
@@ -341,25 +270,9 @@
                 ],
             ];
 
-            /**
-             * Filters the XML-RPC blog options property.
-             *
-             * @param array $blog_options An array of XML-RPC blog options.
-             *
-             * @since 2.6.0
-             *
-             */
             $this->blog_options = apply_filters('xmlrpc_blog_options', $this->blog_options);
         }
 
-        /**
-         * Sets wp_xmlrpc_server::$is_enabled property.
-         *
-         * Determines whether the xmlrpc server is enabled on this WordPress install
-         * and set the is_enabled property accordingly.
-         *
-         * @since 5.7.3
-         */
         private function set_is_enabled()
         {
             /*
@@ -372,42 +285,9 @@
                 $is_enabled = apply_filters('option_enable_xmlrpc', true);
             }
 
-            /**
-             * Filters whether XML-RPC methods requiring authentication are enabled.
-             *
-             * Contrary to the way it's named, this filter does not control whether XML-RPC is *fully*
-             * enabled, rather, it only controls whether XML-RPC methods requiring authentication -
-             * such as for publishing purposes - are enabled.
-             *
-             * Further, the filter does not control whether pingbacks or other custom endpoints that don't
-             * require authentication are enabled. This behavior is expected, and due to how parity was matched
-             * with the `enable_xmlrpc` UI option the filter replaced when it was introduced in 3.5.
-             *
-             * To disable XML-RPC methods that require authentication, use:
-             *
-             *     add_filter( 'xmlrpc_enabled', '__return_false' );
-             *
-             * For more granular control over all XML-RPC methods and requests, see the {@see 'xmlrpc_methods'}
-             * and {@see 'xmlrpc_element_limit'} hooks.
-             *
-             * @param bool $is_enabled Whether XML-RPC is enabled. Default true.
-             *
-             * @since 3.5.0
-             *
-             */
             $this->is_enabled = apply_filters('xmlrpc_enabled', $is_enabled);
         }
 
-        /**
-         * Makes private/protected methods readable for backward compatibility.
-         *
-         * @param string $name      Method to call.
-         * @param array  $arguments Arguments to pass when calling.
-         *
-         * @return array|IXR_Error|false Return value of the callback, false otherwise.
-         * @since 4.0.0
-         *
-         */
         public function __call($name, $arguments)
         {
             if('_multisite_getUsersBlogs' === $name)
@@ -418,20 +298,6 @@
             return false;
         }
 
-        /**
-         * Private function for retrieving a users blogs for multisite setups.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 3.0.0
-         *
-         */
         protected function _multisite_getUsersBlogs($args)
         {
             $current_blog = get_site();
@@ -463,25 +329,6 @@
             }
         }
 
-        /**
-         * Retrieves the blogs of the user.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type string $0 Username.
-         * @type string $1 Password.
-         *                    }
-         * @return array|IXR_Error Array contains:
-         *                    - 'isAdmin'
-         *                    - 'isPrimary' - whether the blog is the user's primary blog
-         *                    - 'url'
-         *                    - 'blogid'
-         *                    - 'blogName'
-         *                    - 'xmlrpc' - url of xmlrpc endpoint
-         * @since 2.6.0
-         *
-         */
         public function wp_getUsersBlogs($args)
         {
             if(! $this->minimum_args($args, 2))
@@ -508,21 +355,6 @@
                 return $this->error;
             }
 
-            /**
-             * Fires after the XML-RPC user has been authenticated but before the rest of
-             * the method logic begins.
-             *
-             * All built-in XML-RPC methods use the action xmlrpc_call, with a parameter
-             * equal to the method's name, e.g., wp.getUsersBlogs, wp.newPost, etc.
-             *
-             * @param string           $name   The method name.
-             * @param array|string     $args   The escaped arguments passed to the method.
-             * @param wp_xmlrpc_server $server The XML-RPC server instance.
-             *
-             * @since 5.7.0 Added the `$args` and `$server` parameters.
-             *
-             * @since 2.5.0
-             */
             do_action('xmlrpc_call', 'wp.getUsersBlogs', $args, $this);
 
             $blogs = (array) get_blogs_of_user($user->ID);
@@ -564,16 +396,6 @@
             return $struct;
         }
 
-        /**
-         * Checks if the method received at least the minimum number of arguments.
-         *
-         * @param array $args  An array of arguments to check.
-         * @param int   $count Minimum number of arguments.
-         *
-         * @return bool True if `$args` contains at least `$count` arguments, false otherwise.
-         * @since 3.4.0
-         *
-         */
         protected function minimum_args($args, $count)
         {
             if(! is_array($args) || count($args) < $count)
@@ -586,22 +408,6 @@
             return true;
         }
 
-        /**
-         * Retrieves blogs that user owns.
-         *
-         * Will make more sense once we support multiple blogs.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function blogger_getUsersBlogs($args)
         {
             if(! $this->minimum_args($args, 3))
@@ -625,7 +431,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'blogger.getUsersBlogs', $args, $this);
 
             $is_admin = current_user_can('manage_options');
@@ -641,16 +446,6 @@
             return [$struct];
         }
 
-        /**
-         * Escapes string or array of strings for database.
-         *
-         * @param string|array $data Escape single string or array of strings.
-         *
-         * @return string|void Returns with string is passed, alters by-reference
-         *                     when array is passed.
-         * @since 1.5.2
-         *
-         */
         public function escape(&$data)
         {
             if(! is_array($data))
@@ -671,16 +466,6 @@
             }
         }
 
-        /**
-         * Logs user in.
-         *
-         * @param string $username User's username.
-         * @param string $password User's password.
-         *
-         * @return WP_User|false WP_User object if authentication passed, false otherwise.
-         * @since 2.8.0
-         *
-         */
         public function login($username, $password)
         {
             if(! $this->is_enabled)
@@ -706,15 +491,6 @@
                 // Flag that authentication has failed once on this wp_xmlrpc_server instance.
                 $this->auth_failed = true;
 
-                /**
-                 * Filters the XML-RPC user login error message.
-                 *
-                 * @param IXR_Error $error The XML-RPC error message.
-                 * @param WP_Error  $user  WP_Error object.
-                 *
-                 * @since 3.5.0
-                 *
-                 */
                 $this->error = apply_filters('xmlrpc_login_error', $this->error, $user);
 
                 return false;
@@ -725,41 +501,16 @@
             return $user;
         }
 
-        /**
-         * Serves the XML-RPC request.
-         *
-         * @since 2.9.0
-         */
         public function serve_request()
         {
             $this->IXR_Server($this->methods);
         }
 
-        /**
-         * Tests XMLRPC API by saying, "Hello!" to client.
-         *
-         * @return string Hello string response.
-         * @since 1.5.0
-         *
-         */
         public function sayHello()
         {
             return 'Hello!';
         }
 
-        /**
-         * Tests XMLRPC API by adding two numbers for client.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int $0 A number to add.
-         * @type int $1 A second number to add.
-         *                    }
-         * @return int Sum of the two given numbers.
-         * @since 1.5.0
-         *
-         */
         public function addTwoNumbers($args)
         {
             $number1 = $args[0];
@@ -768,35 +519,11 @@
             return $number1 + $number2;
         }
 
-        /**
-         * Checks user's credentials. Deprecated.
-         *
-         * @param string $username User's username.
-         * @param string $password User's password.
-         *
-         * @return bool Whether authentication passed.
-         * @since      1.5.0
-         * @deprecated 2.8.0 Use wp_xmlrpc_server::login()
-         * @see        wp_xmlrpc_server::login()
-         *
-         */
         public function login_pass_ok($username, $password)
         {
             return (bool) $this->login($username, $password);
         }
 
-        /**
-         * Sends error response to client.
-         *
-         * Sends an XML error response to the client. If the endpoint is enabled
-         * an HTTP 200 response is always sent per the XML-RPC specification.
-         *
-         * @param IXR_Error|string $error   Error code or an error object.
-         * @param false            $message Error message. Optional.
-         *
-         * @since 5.7.3
-         *
-         */
         public function error($error, $message = false)
         {
             // Accepts either an error object or an error code and message
@@ -813,53 +540,6 @@
             $this->output($error->getXml());
         }
 
-        /**
-         * Creates a new post for any registered post type.
-         *
-         * @param array $args                   {
-         *                                      Method arguments. Note: top-level arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 {
-         *                                      Content struct for adding a new post. See wp_insert_post() for information on
-         *                                      additional post fields
-         *
-         * @type string $post_type              Post type. Default 'post'.
-         * @type string $post_status            Post status. Default 'draft'
-         * @type string $post_title             Post title.
-         * @type int    $post_author            Post author ID.
-         * @type string $post_excerpt           Post excerpt.
-         * @type string $post_content           Post content.
-         * @type string $post_date_gmt          Post date in GMT.
-         * @type string $post_date              Post date.
-         * @type string $post_password          Post password (20-character limit).
-         * @type string $comment_status         Post comment enabled status. Accepts 'open' or 'closed'.
-         * @type string $ping_status            Post ping status. Accepts 'open' or 'closed'.
-         * @type bool   $sticky                 Whether the post should be sticky. Automatically false if
-         *                                      `$post_status` is 'private'.
-         * @type int    $post_thumbnail         ID of an image to use as the post thumbnail/featured image.
-         * @type array  $custom_fields          Array of meta key/value pairs to add to the post.
-         * @type array  $terms                  Associative array with taxonomy names as keys and arrays
-         *                                      of term IDs as values.
-         * @type array  $terms_names            Associative array with taxonomy names as keys and arrays
-         *                                      of term names as values.
-         * @type array  $enclosure              {
-         *                                      Array of feed enclosure data to add to post meta.
-         *
-         * @type string $url                    URL for the feed enclosure.
-         * @type int    $length                 Size in bytes of the enclosure.
-         * @type string $type                   Mime-type for the enclosure.
-         *                                      }
-         *                                      }
-         *                                      }
-         * @return int|IXR_Error Post ID on success, IXR_Error instance otherwise.
-         * @since 3.4.0
-         *
-         * @link  https://en.wikipedia.org/wiki/RSS_enclosure for information on RSS enclosures.
-         *
-         */
         public function wp_newPost($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -901,7 +581,6 @@
                 }
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.newPost', $args, $this);
 
             unset($content_struct['ID']);
@@ -909,13 +588,6 @@
             return $this->_insert_post($user, $content_struct);
         }
 
-        /**
-         * Converts a WordPress date string to an IXR_Date object.
-         *
-         * @param string $date Date string to convert.
-         *
-         * @return IXR_Date IXR_Date object.
-         */
         protected function _convert_date($date)
         {
             if('0000-00-00 00:00:00' === $date)
@@ -926,18 +598,6 @@
             return new IXR_Date(mysql2date('Ymd\TH:i:s', $date, false));
         }
 
-        /**
-         * Helper method for wp_newPost() and wp_editPost(), containing shared logic.
-         *
-         * @param WP_User         $user           The post author if post_author isn't set in $content_struct.
-         * @param array|IXR_Error $content_struct Post data to insert.
-         *
-         * @return IXR_Error|string
-         * @see   wp_insert_post()
-         *
-         * @since 3.4.0
-         *
-         */
         protected function _insert_post($user, $content_struct)
         {
             $defaults = [
@@ -1256,15 +916,6 @@
 
             $this->attach_uploads($post_id, $post_data['post_content']);
 
-            /**
-             * Filters post data array to be inserted via XML-RPC.
-             *
-             * @param array $post_data      Parsed array of post data.
-             * @param array $content_struct Post data array.
-             *
-             * @since 3.4.0
-             *
-             */
             $post_data = apply_filters('xmlrpc_wp_insert_post_data', $post_data, $content_struct);
 
             // Remove all null values to allow for using the insert/update post default values for those keys instead.
@@ -1294,17 +945,6 @@
             return (string) $post_id;
         }
 
-        /**
-         * Encapsulates the logic for sticking a post and determining if
-         * the user has permission to do so.
-         *
-         * @param array $post_data
-         * @param bool  $update
-         *
-         * @return void|IXR_Error
-         * @since 4.3.0
-         *
-         */
         private function _toggle_sticky($post_data, $update = false)
         {
             $post_type = get_post_type_object($post_data['post_type']);
@@ -1342,15 +982,6 @@
             }
         }
 
-        /**
-         * Sets custom fields for post.
-         *
-         * @param int   $post_id Post ID.
-         * @param array $fields  Custom fields.
-         *
-         * @since 2.5.0
-         *
-         */
         public function set_custom_fields($post_id, $fields)
         {
             $post_id = (int) $post_id;
@@ -1392,15 +1023,6 @@
             }
         }
 
-        /**
-         * Adds an enclosure to a post if it's new.
-         *
-         * @param int   $post_id   Post ID.
-         * @param array $enclosure Enclosure data.
-         *
-         * @since 2.8.0
-         *
-         */
         public function add_enclosure_if_new($post_id, $enclosure)
         {
             if(is_array($enclosure) && isset($enclosure['url']) && isset($enclosure['length']) && isset($enclosure['type']))
@@ -1427,17 +1049,6 @@
             }
         }
 
-        /**
-         * Attaches an upload to a post.
-         *
-         * @param int    $post_id      Post ID.
-         * @param string $post_content Post Content for attachment.
-         *
-         * @since 2.1.0
-         *
-         * @global wpdb  $wpdb         WordPress database abstraction object.
-         *
-         */
         public function attach_uploads($post_id, $post_content)
         {
             global $wpdb;
@@ -1456,25 +1067,6 @@
             }
         }
 
-        /**
-         * Edits a post for any registered post type.
-         *
-         * The $content_struct parameter only needs to contain fields that
-         * should be changed. All other fields will retain their existing values.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Post ID.
-         * @type array  $4 Extra content arguments.
-         *                    }
-         * @return true|IXR_Error True on success, IXR_Error on failure.
-         * @since 3.4.0
-         *
-         */
         public function wp_editPost($args)
         {
             if(! $this->minimum_args($args, 5))
@@ -1495,7 +1087,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.editPost', $args, $this);
 
             $post = get_post($post_id, ARRAY_A);
@@ -1553,23 +1144,6 @@
             return true;
         }
 
-        /**
-         * Deletes a post for any registered post type.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Post ID.
-         *                    }
-         * @return true|IXR_Error True on success, IXR_Error instance on failure.
-         * @since 3.4.0
-         *
-         * @see   wp_delete_post()
-         *
-         */
         public function wp_deletePost($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -1589,7 +1163,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.deletePost', $args, $this);
 
             $post = get_post($post_id, ARRAY_A);
@@ -1613,55 +1186,6 @@
             return true;
         }
 
-        /**
-         * Retrieves a post.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Post ID.
-         * @type array  $4 Optional. The subset of post type fields to return.
-         *                    }
-         * @return array|IXR_Error Array contains (based on $fields parameter):
-         *                    - 'post_id'
-         *                    - 'post_title'
-         *                    - 'post_date'
-         *                    - 'post_date_gmt'
-         *                    - 'post_modified'
-         *                    - 'post_modified_gmt'
-         *                    - 'post_status'
-         *                    - 'post_type'
-         *                    - 'post_name'
-         *                    - 'post_author'
-         *                    - 'post_password'
-         *                    - 'post_excerpt'
-         *                    - 'post_content'
-         *                    - 'link'
-         *                    - 'comment_status'
-         *                    - 'ping_status'
-         *                    - 'sticky'
-         *                    - 'custom_fields'
-         *                    - 'terms'
-         *                    - 'categories'
-         *                    - 'tags'
-         *                    - 'enclosure'
-         * @since 3.4.0
-         *
-         * The optional $fields parameter specifies what fields will be included
-         * in the response array. This should be a list of field names. 'post_id' will
-         * always be included in the response regardless of the value of $fields.
-         *
-         * Instead of, or in addition to, individual field names, conceptual group
-         * names can be used to specify multiple fields. The available conceptual
-         * groups are 'post' (all basic fields), 'taxonomies', 'custom_fields',
-         * and 'enclosure'.
-         *
-         * @see   get_post()
-         *
-         */
         public function wp_getPost($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -1681,16 +1205,6 @@
             }
             else
             {
-                /**
-                 * Filters the default post query fields used by the given XML-RPC method.
-                 *
-                 * @param array  $fields An array of post fields to retrieve. By default,
-                 *                       contains 'post', 'terms', and 'custom_fields'.
-                 * @param string $method Method name.
-                 *
-                 * @since 3.4.0
-                 *
-                 */
                 $fields = apply_filters('xmlrpc_default_post_fields', ['post', 'terms', 'custom_fields'], 'wp.getPost');
             }
 
@@ -1700,7 +1214,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPost', $args, $this);
 
             $post = get_post($post_id, ARRAY_A);
@@ -1718,14 +1231,6 @@
             return $this->_prepare_post($post, $fields);
         }
 
-        /**
-         * Prepares post data for return in an XML-RPC object.
-         *
-         * @param array $post   The unprepared post data.
-         * @param array $fields The subset of post type fields to return.
-         *
-         * @return array The prepared post data.
-         */
         protected function _prepare_post($post, $fields)
         {
             // Holds the data for this post. built up based on $fields.
@@ -1819,27 +1324,9 @@
                 }
             }
 
-            /**
-             * Filters XML-RPC-prepared date for the given post.
-             *
-             * @param array $_post  An array of modified post data.
-             * @param array $post   An array of post data.
-             * @param array $fields An array of post fields.
-             *
-             * @since 3.4.0
-             *
-             */
             return apply_filters('xmlrpc_prepare_post', $_post, $post, $fields);
         }
 
-        /**
-         * Converts a WordPress GMT date string to an IXR_Date object.
-         *
-         * @param string $date_gmt WordPress GMT date string.
-         * @param string $date     Date string.
-         *
-         * @return IXR_Date IXR_Date object.
-         */
         protected function _convert_date_gmt($date_gmt, $date)
         {
             if('0000-00-00 00:00:00' !== $date && '0000-00-00 00:00:00' === $date_gmt)
@@ -1850,14 +1337,6 @@
             return $this->_convert_date($date_gmt);
         }
 
-        /**
-         * Prepares media item data for return in an XML-RPC object.
-         *
-         * @param WP_Post $media_item     The unprepared media item data.
-         * @param string  $thumbnail_size The image size to use for the thumbnail URL.
-         *
-         * @return array The prepared media item data.
-         */
         protected function _prepare_media_item($media_item, $thumbnail_size = 'thumbnail')
         {
             $_media_item = [
@@ -1882,26 +1361,9 @@
                 $_media_item['thumbnail'] = $_media_item['link'];
             }
 
-            /**
-             * Filters XML-RPC-prepared data for the given media item.
-             *
-             * @param array   $_media_item    An array of media item data.
-             * @param WP_Post $media_item     Media item object.
-             * @param string  $thumbnail_size Image size.
-             *
-             * @since 3.4.0
-             *
-             */
             return apply_filters('xmlrpc_prepare_media_item', $_media_item, $media_item, $thumbnail_size);
         }
 
-        /**
-         * Prepares term data for return in an XML-RPC object.
-         *
-         * @param array|object $term The unprepared term data.
-         *
-         * @return array The prepared term data.
-         */
         protected function _prepare_term($term)
         {
             $_term = $term;
@@ -1922,27 +1384,9 @@
             // Get term meta.
             $_term['custom_fields'] = $this->get_term_custom_fields($_term['term_id']);
 
-            /**
-             * Filters XML-RPC-prepared data for the given term.
-             *
-             * @param array        $_term An array of term data.
-             * @param array|object $term  Term object or array.
-             *
-             * @since 3.4.0
-             *
-             */
             return apply_filters('xmlrpc_prepare_term', $_term, $term);
         }
 
-        /**
-         * Retrieves custom fields for a term.
-         *
-         * @param int $term_id Term ID.
-         *
-         * @return array Array of custom fields, if they exist.
-         * @since 4.9.0
-         *
-         */
         public function get_term_custom_fields($term_id)
         {
             $term_id = (int) $term_id;
@@ -1966,15 +1410,6 @@
             return $custom_fields;
         }
 
-        /**
-         * Retrieves custom fields for post.
-         *
-         * @param int $post_id Post ID.
-         *
-         * @return array Custom fields, if exist.
-         * @since 2.5.0
-         *
-         */
         public function get_custom_fields($post_id)
         {
             $post_id = (int) $post_id;
@@ -1999,28 +1434,6 @@
             return $custom_fields;
         }
 
-        /**
-         * Retrieves posts.
-         *
-         * @param array $args  {
-         *                     Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Optional. Modifies the query used to retrieve posts. Accepts 'post_type',
-         *                     'post_status', 'number', 'offset', 'orderby', 's', and 'order'.
-         *                     Default empty array.
-         * @type array  $4 Optional. The subset of post type fields to return in the response array.
-         *                     }
-         * @return array|IXR_Error Array containing a collection of posts.
-         * @see   wp_getPost() for more on `$fields`
-         * @see   get_posts() for more on `$filter` values
-         *
-         * @since 3.4.0
-         *
-         * @see   wp_get_recent_posts()
-         */
         public function wp_getPosts($args)
         {
             if(! $this->minimum_args($args, 3))
@@ -2040,7 +1453,6 @@
             }
             else
             {
-                /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
                 $fields = apply_filters('xmlrpc_default_post_fields', [
                     'post',
                     'terms',
@@ -2054,7 +1466,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPosts', $args, $this);
 
             $query = [];
@@ -2132,25 +1543,6 @@
             return $struct;
         }
 
-        /**
-         * Creates a new term.
-         *
-         * @param array $args  {
-         *                     Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Content struct for adding a new term. The struct must contain
-         *                     the term 'name' and 'taxonomy'. Optional accepted values include
-         *                     'parent', 'description', and 'slug'.
-         *                     }
-         * @return int|IXR_Error The term ID on success, or an IXR_Error object on failure.
-         * @since 3.4.0
-         *
-         * @see   wp_insert_term()
-         *
-         */
         public function wp_newTerm($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -2170,7 +1562,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.newTerm', $args, $this);
 
             if(! taxonomy_exists($content_struct['taxonomy']))
@@ -2250,15 +1641,6 @@
             return (string) $term['term_id'];
         }
 
-        /**
-         * Sets custom fields for a term.
-         *
-         * @param int   $term_id Term ID.
-         * @param array $fields  Custom fields.
-         *
-         * @since 4.9.0
-         *
-         */
         public function set_term_custom_fields($term_id, $fields)
         {
             $term_id = (int) $term_id;
@@ -2294,26 +1676,6 @@
             }
         }
 
-        /**
-         * Edits a term.
-         *
-         * @param array $args  {
-         *                     Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Term ID.
-         * @type array  $4 Content struct for editing a term. The struct must contain the
-         *                     term 'taxonomy'. Optional accepted values include 'name', 'parent',
-         *                     'description', and 'slug'.
-         *                     }
-         * @return true|IXR_Error True on success, IXR_Error instance on failure.
-         * @since 3.4.0
-         *
-         * @see   wp_update_term()
-         *
-         */
         public function wp_editTerm($args)
         {
             if(! $this->minimum_args($args, 5))
@@ -2334,7 +1696,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.editTerm', $args, $this);
 
             if(! taxonomy_exists($content_struct['taxonomy']))
@@ -2430,24 +1791,6 @@
             return true;
         }
 
-        /**
-         * Deletes a term.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type string $3 Taxonomy name.
-         * @type int    $4 Term ID.
-         *                    }
-         * @return true|IXR_Error True on success, IXR_Error instance on failure.
-         * @since 3.4.0
-         *
-         * @see   wp_delete_term()
-         *
-         */
         public function wp_deleteTerm($args)
         {
             if(! $this->minimum_args($args, 5))
@@ -2468,7 +1811,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.deleteTerm', $args, $this);
 
             if(! taxonomy_exists($taxonomy))
@@ -2509,33 +1851,6 @@
             return $result;
         }
 
-        /**
-         * Retrieves a term.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type string $3 Taxonomy name.
-         * @type int    $4 Term ID.
-         *                    }
-         * @return array|IXR_Error IXR_Error on failure, array on success, containing:
-         *                    - 'term_id'
-         *                    - 'name'
-         *                    - 'slug'
-         *                    - 'term_group'
-         *                    - 'term_taxonomy_id'
-         *                    - 'taxonomy'
-         *                    - 'description'
-         *                    - 'parent'
-         *                    - 'count'
-         * @since 3.4.0
-         *
-         * @see   get_term()
-         *
-         */
         public function wp_getTerm($args)
         {
             if(! $this->minimum_args($args, 5))
@@ -2556,7 +1871,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getTerm', $args, $this);
 
             if(! taxonomy_exists($taxonomy))
@@ -2586,28 +1900,6 @@
             return $this->_prepare_term($term);
         }
 
-        /**
-         * Retrieves all terms for a taxonomy.
-         *
-         * @param array $args  {
-         *                     Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type string $3 Taxonomy name.
-         * @type array  $4 Optional. Modifies the query used to retrieve posts. Accepts 'number',
-         *                     'offset', 'orderby', 'order', 'hide_empty', and 'search'. Default empty array.
-         *                     }
-         * @return array|IXR_Error An associative array of terms data on success, IXR_Error instance otherwise.
-         * @since 3.4.0
-         *
-         * The optional $filter parameter modifies the query used to retrieve terms.
-         * Accepted keys are 'number', 'offset', 'orderby', 'order', 'hide_empty', and 'search'.
-         *
-         * @see   get_terms()
-         *
-         */
         public function wp_getTerms($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -2628,7 +1920,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getTerms', $args, $this);
 
             if(! taxonomy_exists($taxonomy))
@@ -2696,26 +1987,6 @@
             return $struct;
         }
 
-        /**
-         * Retrieves a taxonomy.
-         *
-         * @param array $args  {
-         *                     Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type string $3 Taxonomy name.
-         * @type array  $4 Optional. Array of taxonomy fields to limit to in the return.
-         *                     Accepts 'labels', 'cap', 'menu', and 'object_type'.
-         *                     Default empty array.
-         *                     }
-         * @return array|IXR_Error An array of taxonomy data on success, IXR_Error instance otherwise.
-         * @since 3.4.0
-         *
-         * @see   get_taxonomy()
-         *
-         */
         public function wp_getTaxonomy($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -2735,16 +2006,6 @@
             }
             else
             {
-                /**
-                 * Filters the default taxonomy query fields used by the given XML-RPC method.
-                 *
-                 * @param array  $fields An array of taxonomy fields to retrieve. By default,
-                 *                       contains 'labels', 'cap', and 'object_type'.
-                 * @param string $method The method name.
-                 *
-                 * @since 3.4.0
-                 *
-                 */
                 $fields = apply_filters('xmlrpc_default_taxonomy_fields', [
                     'labels',
                     'cap',
@@ -2758,7 +2019,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getTaxonomy', $args, $this);
 
             if(! taxonomy_exists($taxonomy))
@@ -2776,14 +2036,6 @@
             return $this->_prepare_taxonomy($taxonomy, $fields);
         }
 
-        /**
-         * Prepares taxonomy data for return in an XML-RPC object.
-         *
-         * @param WP_Taxonomy $taxonomy The unprepared taxonomy data.
-         * @param array       $fields   The subset of taxonomy fields to return.
-         *
-         * @return array The prepared taxonomy data.
-         */
         protected function _prepare_taxonomy($taxonomy, $fields)
         {
             $_taxonomy = [
@@ -2815,38 +2067,9 @@
                 $_taxonomy['object_type'] = array_unique((array) $taxonomy->object_type);
             }
 
-            /**
-             * Filters XML-RPC-prepared data for the given taxonomy.
-             *
-             * @param array       $_taxonomy An array of taxonomy data.
-             * @param WP_Taxonomy $taxonomy  Taxonomy object.
-             * @param array       $fields    The subset of taxonomy fields to return.
-             *
-             * @since 3.4.0
-             *
-             */
             return apply_filters('xmlrpc_prepare_taxonomy', $_taxonomy, $taxonomy, $fields);
         }
 
-        /**
-         * Retrieves all taxonomies.
-         *
-         * @param array $args      {
-         *                         Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Optional. An array of arguments for retrieving taxonomies.
-         * @type array  $4 Optional. The subset of taxonomy fields to return.
-         *                         }
-         * @return array|IXR_Error An associative array of taxonomy data with returned fields determined
-         *                         by `$fields`, or an IXR_Error instance on failure.
-         * @since 3.4.0
-         *
-         * @see   get_taxonomies()
-         *
-         */
         public function wp_getTaxonomies($args)
         {
             if(! $this->minimum_args($args, 3))
@@ -2866,7 +2089,6 @@
             }
             else
             {
-                /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
                 $fields = apply_filters('xmlrpc_default_taxonomy_fields', [
                     'labels',
                     'cap',
@@ -2880,7 +2102,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getTaxonomies', $args, $this);
 
             $taxonomies = get_taxonomies($filter, 'objects');
@@ -2902,42 +2123,6 @@
             return $struct;
         }
 
-        /**
-         * Retrieves a user.
-         *
-         * The optional $fields parameter specifies what fields will be included
-         * in the response array. This should be a list of field names. 'user_id' will
-         * always be included in the response regardless of the value of $fields.
-         *
-         * Instead of, or in addition to, individual field names, conceptual group
-         * names can be used to specify multiple fields. The available conceptual
-         * groups are 'basic' and 'all'.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 User ID.
-         * @type array  $4 Optional. Array of fields to return.
-         *                    }
-         * @return array|IXR_Error Array contains (based on $fields parameter):
-         *                    - 'user_id'
-         *                    - 'username'
-         *                    - 'first_name'
-         *                    - 'last_name'
-         *                    - 'registered'
-         *                    - 'bio'
-         *                    - 'email'
-         *                    - 'nickname'
-         *                    - 'nicename'
-         *                    - 'url'
-         *                    - 'display_name'
-         *                    - 'roles'
-         * @uses get_userdata()
-         *
-         */
         public function wp_getUser($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -2957,15 +2142,6 @@
             }
             else
             {
-                /**
-                 * Filters the default user query fields used by the given XML-RPC method.
-                 *
-                 * @param array  $fields An array of user fields to retrieve. By default, contains 'all'.
-                 * @param string $method The method name.
-                 *
-                 * @since 3.5.0
-                 *
-                 */
                 $fields = apply_filters('xmlrpc_default_user_fields', ['all'], 'wp.getUser');
             }
 
@@ -2975,7 +2151,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getUser', $args, $this);
 
             if(! current_user_can('edit_user', $user_id))
@@ -2993,14 +2168,6 @@
             return $this->_prepare_user($user_data, $fields);
         }
 
-        /**
-         * Prepares user data for return in an XML-RPC object.
-         *
-         * @param WP_User $user   The unprepared user object.
-         * @param array   $fields The subset of user fields to return.
-         *
-         * @return array The prepared user data.
-         */
         protected function _prepare_user($user, $fields)
         {
             $_user = ['user_id' => (string) $user->ID];
@@ -3034,43 +2201,9 @@
                 $_user = array_merge($_user, $requested_fields);
             }
 
-            /**
-             * Filters XML-RPC-prepared data for the given user.
-             *
-             * @param array   $_user  An array of user data.
-             * @param WP_User $user   User object.
-             * @param array   $fields An array of user fields.
-             *
-             * @since 3.5.0
-             *
-             */
             return apply_filters('xmlrpc_prepare_user', $_user, $user, $fields);
         }
 
-        /**
-         * Retrieves users.
-         *
-         * The optional $filter parameter modifies the query used to retrieve users.
-         * Accepted keys are 'number' (default: 50), 'offset' (default: 0), 'role',
-         * 'who', 'orderby', and 'order'.
-         *
-         * The optional $fields parameter specifies what fields will be included
-         * in the response array.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Optional. Arguments for the user query.
-         * @type array  $4 Optional. Fields to return.
-         *                    }
-         * @return array|IXR_Error users data
-         * @uses get_users()
-         * @see  wp_getUser() for more on $fields and return values
-         *
-         */
         public function wp_getUsers($args)
         {
             if(! $this->minimum_args($args, 3))
@@ -3090,7 +2223,6 @@
             }
             else
             {
-                /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
                 $fields = apply_filters('xmlrpc_default_user_fields', ['all'], 'wp.getUsers');
             }
 
@@ -3100,7 +2232,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getUsers', $args, $this);
 
             if(! current_user_can('list_users'))
@@ -3152,21 +2283,6 @@
             return $_users;
         }
 
-        /**
-         * Retrieves information about the requesting user.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username
-         * @type string $2 Password
-         * @type array  $3 Optional. Fields to return.
-         *                    }
-         * @return array|IXR_Error (@see wp_getUser)
-         * @uses get_userdata()
-         *
-         */
         public function wp_getProfile($args)
         {
             if(! $this->minimum_args($args, 3))
@@ -3185,7 +2301,6 @@
             }
             else
             {
-                /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
                 $fields = apply_filters('xmlrpc_default_user_fields', ['all'], 'wp.getProfile');
             }
 
@@ -3195,7 +2310,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getProfile', $args, $this);
 
             if(! current_user_can('edit_user', $user->ID))
@@ -3208,28 +2322,6 @@
             return $this->_prepare_user($user_data, $fields);
         }
 
-        /**
-         * Edits user's profile.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Content struct. It can optionally contain:
-         *                    - 'first_name'
-         *                    - 'last_name'
-         *                    - 'website'
-         *                    - 'display_name'
-         *                    - 'nickname'
-         *                    - 'nicename'
-         *                    - 'bio'
-         *                    }
-         * @return true|IXR_Error True, on success.
-         * @uses wp_update_user()
-         *
-         */
         public function wp_editProfile($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -3249,7 +2341,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.editProfile', $args, $this);
 
             if(! current_user_can('edit_user', $user->ID))
@@ -3312,21 +2403,6 @@
             return true;
         }
 
-        /**
-         * Retrieves a page.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type int    $1 Page ID.
-         * @type string $2 Username.
-         * @type string $3 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.2.0
-         *
-         */
         public function wp_getPage($args)
         {
             $this->escape($args);
@@ -3352,7 +2428,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to edit this page.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPage', $args, $this);
 
             // If we found the page then format the data.
@@ -3367,13 +2442,6 @@
             }
         }
 
-        /**
-         * Prepares page data for return in an XML-RPC object.
-         *
-         * @param WP_Post $page The unprepared page data.
-         *
-         * @return array The prepared page data.
-         */
         protected function _prepare_page($page)
         {
             // Get all of the page content and link.
@@ -3442,33 +2510,9 @@
                 'wp_page_template' => $page_template,
             ];
 
-            /**
-             * Filters XML-RPC-prepared data for the given page.
-             *
-             * @param array   $_page An array of page data.
-             * @param WP_Post $page  Page object.
-             *
-             * @since 3.4.0
-             *
-             */
             return apply_filters('xmlrpc_prepare_page', $_page, $page);
         }
 
-        /**
-         * Retrieves Pages.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Optional. Number of pages. Default 10.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.2.0
-         *
-         */
         public function wp_getPages($args)
         {
             $this->escape($args);
@@ -3488,7 +2532,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to edit pages.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPages', $args, $this);
 
             $pages = get_posts([
@@ -3517,23 +2560,6 @@
             return [];
         }
 
-        /**
-         * Creates a new page.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Content struct.
-         *                    }
-         * @return int|IXR_Error
-         * @since 2.2.0
-         *
-         * @see   wp_xmlrpc_server::mw_newPost()
-         *
-         */
         public function wp_newPage($args)
         {
             // Items not escaped here will be escaped in wp_newPost().
@@ -3546,7 +2572,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.newPage', $args, $this);
 
             // Mark this as content for a page.
@@ -3556,44 +2581,6 @@
             return $this->mw_newPost($args);
         }
 
-        /**
-         * Creates a new post.
-         *
-         * The 'content_struct' argument must contain:
-         *  - title
-         *  - description
-         *  - mt_excerpt
-         *  - mt_text_more
-         *  - mt_keywords
-         *  - mt_tb_ping_urls
-         *  - categories
-         *
-         * Also, it can optionally contain:
-         *  - wp_slug
-         *  - wp_password
-         *  - wp_page_parent_id
-         *  - wp_page_order
-         *  - wp_author_id
-         *  - post_status | page_status - can be 'draft', 'private', 'publish', or 'pending'
-         *  - mt_allow_comments - can be 'open' or 'closed'
-         *  - mt_allow_pings - can be 'open' or 'closed'
-         *  - date_created_gmt
-         *  - dateCreated
-         *  - wp_post_thumbnail
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Content structure.
-         * @type int    $4 Optional. Publish flag. 0 for draft, 1 for publish. Default 0.
-         *                    }
-         * @return int|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function mw_newPost($args)
         {
             $this->escape($args);
@@ -3609,7 +2596,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'metaWeblog.newPost', $args, $this);
 
             $page_template = '';
@@ -3964,35 +2950,11 @@
                 return new IXR_Error(500, __('Sorry, the post could not be created.'));
             }
 
-            /**
-             * Fires after a new post has been successfully created via the XML-RPC MovableType API.
-             *
-             * @param int   $post_id ID of the new post.
-             * @param array $args    An array of arguments to create the new post.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_mw_newPost', $post_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             return (string) $post_id;
         }
 
-        /**
-         * Deletes a page.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Page ID.
-         *                    }
-         * @return true|IXR_Error True, if success.
-         * @since 2.2.0
-         *
-         */
         public function wp_deletePage($args)
         {
             $this->escape($args);
@@ -4007,7 +2969,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.deletePage', $args, $this);
 
             /*
@@ -4033,37 +2994,11 @@
                 return new IXR_Error(500, __('Failed to delete the page.'));
             }
 
-            /**
-             * Fires after a page has been successfully deleted via XML-RPC.
-             *
-             * @param int   $page_id ID of the deleted page.
-             * @param array $args    An array of arguments to delete the page.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_wp_deletePage', $page_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             return true;
         }
 
-        /**
-         * Edits a page.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type int    $1 Page ID.
-         * @type string $2 Username.
-         * @type string $3 Password.
-         * @type string $4 Content.
-         * @type int    $5 Publish flag. 0 for draft, 1 for publish.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.2.0
-         *
-         */
         public function wp_editPage($args)
         {
             // Items will be escaped in mw_editPost().
@@ -4082,7 +3017,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.editPage', $args, $this);
 
             // Get the page data and make sure it is a page.
@@ -4114,22 +3048,6 @@
             return $this->mw_editPost($args);
         }
 
-        /**
-         * Edits a post.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Post ID.
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Content structure.
-         * @type int    $4 Optional. Publish flag. 0 for draft, 1 for publish. Default 0.
-         *                    }
-         * @return true|IXR_Error True on success.
-         * @since 1.5.0
-         *
-         */
         public function mw_editPost($args)
         {
             $this->escape($args);
@@ -4146,7 +3064,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'metaWeblog.editPost', $args, $this);
 
             $postdata = get_post($post_id, ARRAY_A);
@@ -4494,36 +3411,11 @@
                 set_post_format($post_id, $content_struct['wp_post_format']);
             }
 
-            /**
-             * Fires after a post has been successfully updated via the XML-RPC MovableType API.
-             *
-             * @param int   $post_id ID of the updated post.
-             * @param array $args    An array of arguments to update the post.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_mw_editPost', $post_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             return true;
         }
 
-        /**
-         * Retrieves page list.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.2.0
-         *
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         */
         public function wp_getPageList($args)
         {
             global $wpdb;
@@ -4544,7 +3436,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to edit pages.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPageList', $args, $this);
 
             // Get list of page IDs and titles.
@@ -4577,20 +3468,6 @@
             return $page_list;
         }
 
-        /**
-         * Retrieves authors list.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.2.0
-         *
-         */
         public function wp_getAuthors($args)
         {
             $this->escape($args);
@@ -4609,7 +3486,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to edit posts.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getAuthors', $args, $this);
 
             $authors = [];
@@ -4625,20 +3501,6 @@
             return $authors;
         }
 
-        /**
-         * Gets the list of all tags.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.7.0
-         *
-         */
         public function wp_getTags($args)
         {
             $this->escape($args);
@@ -4657,7 +3519,6 @@
                 return new IXR_Error(401, __('Sorry, you must be able to edit posts on this site in order to view tags.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getKeywords', $args, $this);
 
             $tags = [];
@@ -4682,21 +3543,6 @@
             return $tags;
         }
 
-        /**
-         * Creates a new category.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Category.
-         *                    }
-         * @return int|IXR_Error Category ID.
-         * @since 2.2.0
-         *
-         */
         public function wp_newCategory($args)
         {
             $this->escape($args);
@@ -4711,7 +3557,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.newCategory', $args, $this);
 
             // Make sure the user is allowed to add a category.
@@ -4768,35 +3613,11 @@
                 return new IXR_Error(500, __('Sorry, the category could not be created.'));
             }
 
-            /**
-             * Fires after a new category has been successfully created via XML-RPC.
-             *
-             * @param int   $cat_id ID of the new category.
-             * @param array $args   An array of new category arguments.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_wp_newCategory', $cat_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             return $cat_id;
         }
 
-        /**
-         * Deletes a category.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Category ID.
-         *                    }
-         * @return bool|IXR_Error See wp_delete_term() for return info.
-         * @since 2.5.0
-         *
-         */
         public function wp_deleteCategory($args)
         {
             $this->escape($args);
@@ -4811,7 +3632,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.deleteCategory', $args, $this);
 
             if(! current_user_can('delete_term', $category_id))
@@ -4823,37 +3643,12 @@
 
             if(true == $status)
             {
-                /**
-                 * Fires after a category has been successfully deleted via XML-RPC.
-                 *
-                 * @param int   $category_id ID of the deleted category.
-                 * @param array $args        An array of arguments to delete the category.
-                 *
-                 * @since 3.4.0
-                 *
-                 */
                 do_action('xmlrpc_call_success_wp_deleteCategory', $category_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
             }
 
             return $status;
         }
 
-        /**
-         * Retrieves category list.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Category
-         * @type int    $4 Max number of results.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.2.0
-         *
-         */
         public function wp_suggestCategories($args)
         {
             $this->escape($args);
@@ -4874,7 +3669,6 @@
                 return new IXR_Error(401, __('Sorry, you must be able to edit posts on this site in order to view categories.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.suggestCategories', $args, $this);
 
             $category_suggestions = [];
@@ -4894,21 +3688,6 @@
             return $category_suggestions;
         }
 
-        /**
-         * Retrieves a comment.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Comment ID.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.7.0
-         *
-         */
         public function wp_getComment($args)
         {
             $this->escape($args);
@@ -4923,7 +3702,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getComment', $args, $this);
 
             $comment = get_comment($comment_id);
@@ -4940,13 +3718,6 @@
             return $this->_prepare_comment($comment);
         }
 
-        /**
-         * Prepares comment data for return in an XML-RPC object.
-         *
-         * @param WP_Comment $comment The unprepared comment data.
-         *
-         * @return array The prepared comment data.
-         */
         protected function _prepare_comment($comment)
         {
             // Format page date.
@@ -4985,47 +3756,9 @@
                 'type' => $comment->comment_type,
             ];
 
-            /**
-             * Filters XML-RPC-prepared data for the given comment.
-             *
-             * @param array      $_comment An array of prepared comment data.
-             * @param WP_Comment $comment  Comment object.
-             *
-             * @since 3.4.0
-             *
-             */
             return apply_filters('xmlrpc_prepare_comment', $_comment, $comment);
         }
 
-        /**
-         * Retrieves comments.
-         *
-         * Besides the common blog_id (unused), username, and password arguments,
-         * it takes a filter array as the last argument.
-         *
-         * Accepted 'filter' keys are 'status', 'post_id', 'offset', and 'number'.
-         *
-         * The defaults are as follows:
-         * - 'status'  - Default is ''. Filter by status (e.g., 'approve', 'hold')
-         * - 'post_id' - Default is ''. The post where the comment is posted.
-         *               Empty string shows all comments.
-         * - 'number'  - Default is 10. Total number of media items to retrieve.
-         * - 'offset'  - Default is 0. See WP_Query::query() for more.
-         *
-         * @param array $args      {
-         *                         Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Optional. Query arguments.
-         *                         }
-         * @return array|IXR_Error Array containing a collection of comments.
-         *                         See wp_xmlrpc_server::wp_getComment() for a description
-         *                         of each item contents.
-         * @since 2.7.0
-         *
-         */
         public function wp_getComments($args)
         {
             $this->escape($args);
@@ -5040,7 +3773,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getComments', $args, $this);
 
             if(isset($struct['status']))
@@ -5106,24 +3838,6 @@
             return $comments_struct;
         }
 
-        /**
-         * Deletes a comment.
-         *
-         * By default, the comment will be moved to the Trash instead of deleted.
-         * See wp_delete_comment() for more information on this behavior.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Comment ID.
-         *                    }
-         * @return bool|IXR_Error See wp_delete_comment().
-         * @since 2.7.0
-         *
-         */
         public function wp_deleteComment($args)
         {
             $this->escape($args);
@@ -5148,55 +3862,18 @@
                 return new IXR_Error(403, __('Sorry, you are not allowed to delete this comment.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.deleteComment', $args, $this);
 
             $status = wp_delete_comment($comment_id);
 
             if($status)
             {
-                /**
-                 * Fires after a comment has been successfully deleted via XML-RPC.
-                 *
-                 * @param int   $comment_id ID of the deleted comment.
-                 * @param array $args       An array of arguments to delete the comment.
-                 *
-                 * @since 3.4.0
-                 *
-                 */
                 do_action('xmlrpc_call_success_wp_deleteComment', $comment_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
             }
 
             return $status;
         }
 
-        /**
-         * Edits a comment.
-         *
-         * Besides the common blog_id (unused), username, and password arguments,
-         * it takes a comment_id integer and a content_struct array as the last argument.
-         *
-         * The allowed keys in the content_struct array are:
-         *  - 'author'
-         *  - 'author_url'
-         *  - 'author_email'
-         *  - 'content'
-         *  - 'date_created_gmt'
-         *  - 'status'. Common statuses are 'approve', 'hold', 'spam'. See get_comment_statuses() for more details.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Comment ID.
-         * @type array  $4 Content structure.
-         *                    }
-         * @return true|IXR_Error True, on success.
-         * @since 2.7.0
-         *
-         */
         public function wp_editComment($args)
         {
             $this->escape($args);
@@ -5222,7 +3899,6 @@
                 return new IXR_Error(403, __('Sorry, you are not allowed to moderate or edit this comment.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.editComment', $args, $this);
             $comment = [
                 'comment_ID' => $comment_id,
@@ -5281,36 +3957,11 @@
                 return new IXR_Error(500, __('Sorry, the comment could not be updated.'));
             }
 
-            /**
-             * Fires after a comment has been successfully updated via XML-RPC.
-             *
-             * @param int   $comment_id ID of the updated comment.
-             * @param array $args       An array of arguments to update the comment.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_wp_editComment', $comment_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             return true;
         }
 
-        /**
-         * Creates a new comment.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int        $0 Blog ID (unused).
-         * @type string     $1 Username.
-         * @type string     $2 Password.
-         * @type string|int $3 Post ID or URL.
-         * @type array      $4 Content structure.
-         *                    }
-         * @return int|IXR_Error See wp_new_comment().
-         * @since 2.7.0
-         *
-         */
         public function wp_newComment($args)
         {
             $this->escape($args);
@@ -5320,15 +3971,6 @@
             $post = $args[3];
             $content_struct = $args[4];
 
-            /**
-             * Filters whether to allow anonymous comments over XML-RPC.
-             *
-             * @param bool $allow Whether to allow anonymous commenting via XML-RPC.
-             *                    Default false.
-             *
-             * @since 2.7.0
-             *
-             */
             $allow_anon = apply_filters('xmlrpc_allow_anonymous_comments', false);
 
             $user = $this->login($username, $password);
@@ -5437,7 +4079,6 @@
 
             $comment['comment_parent'] = isset($content_struct['comment_parent']) ? absint($content_struct['comment_parent']) : 0;
 
-            /** This filter is documented in wp-includes/comment.php */
             $allow_empty = apply_filters('allow_empty_comment', false, $comment);
 
             if(! $allow_empty && '' === $comment['comment_content'])
@@ -5445,7 +4086,6 @@
                 return new IXR_Error(403, __('Comment is required.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.newComment', $args, $this);
 
             $comment_id = wp_new_comment($comment, true);
@@ -5459,34 +4099,11 @@
                 return new IXR_Error(403, __('Something went wrong.'));
             }
 
-            /**
-             * Fires after a new comment has been successfully created via XML-RPC.
-             *
-             * @param int   $comment_id ID of the new comment.
-             * @param array $args       An array of new comment arguments.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_wp_newComment', $comment_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             return $comment_id;
         }
 
-        /**
-         * Retrieves all of the comment status.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.7.0
-         *
-         */
         public function wp_getCommentStatusList($args)
         {
             $this->escape($args);
@@ -5505,27 +4122,11 @@
                 return new IXR_Error(403, __('Sorry, you are not allowed to access details about this site.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getCommentStatusList', $args, $this);
 
             return get_comment_statuses();
         }
 
-        /**
-         * Retrieves comment counts.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Post ID.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.5.0
-         *
-         */
         public function wp_getCommentCount($args)
         {
             $this->escape($args);
@@ -5551,7 +4152,6 @@
                 return new IXR_Error(403, __('Sorry, you are not allowed to access details of this post.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getCommentCount', $args, $this);
 
             $count = wp_count_comments($post_id);
@@ -5564,20 +4164,6 @@
             ];
         }
 
-        /**
-         * Retrieves post statuses.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.5.0
-         *
-         */
         public function wp_getPostStatusList($args)
         {
             $this->escape($args);
@@ -5596,26 +4182,11 @@
                 return new IXR_Error(403, __('Sorry, you are not allowed to access details about this site.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPostStatusList', $args, $this);
 
             return get_post_statuses();
         }
 
-        /**
-         * Retrieves page statuses.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.5.0
-         *
-         */
         public function wp_getPageStatusList($args)
         {
             $this->escape($args);
@@ -5634,26 +4205,11 @@
                 return new IXR_Error(403, __('Sorry, you are not allowed to access details about this site.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPageStatusList', $args, $this);
 
             return get_page_statuses();
         }
 
-        /**
-         * Retrieves page templates.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.6.0
-         *
-         */
         public function wp_getPageTemplates($args)
         {
             $this->escape($args);
@@ -5678,21 +4234,6 @@
             return $templates;
         }
 
-        /**
-         * Retrieves blog options.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Optional. Options.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.6.0
-         *
-         */
         public function wp_getOptions($args)
         {
             $this->escape($args);
@@ -5716,15 +4257,6 @@
             return $this->_getOptions($options);
         }
 
-        /**
-         * Retrieves blog options value from list.
-         *
-         * @param array $options Options to retrieve.
-         *
-         * @return array
-         * @since 2.6.0
-         *
-         */
         public function _getOptions($options)
         {
             $data = [];
@@ -5751,21 +4283,6 @@
             return $data;
         }
 
-        /**
-         * Updates blog options.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Options.
-         *                    }
-         * @return array|IXR_Error
-         * @since 2.6.0
-         *
-         */
         public function wp_setOptions($args)
         {
             $this->escape($args);
@@ -5806,29 +4323,6 @@
             return $this->_getOptions($option_names);
         }
 
-        /**
-         * Retrieves a media item by ID.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Attachment ID.
-         *                    }
-         * @return array|IXR_Error Associative array contains:
-         *                    - 'date_created_gmt'
-         *                    - 'parent'
-         *                    - 'link'
-         *                    - 'thumbnail'
-         *                    - 'title'
-         *                    - 'caption'
-         *                    - 'description'
-         *                    - 'metadata'
-         * @since 3.1.0
-         *
-         */
         public function wp_getMediaItem($args)
         {
             $this->escape($args);
@@ -5848,7 +4342,6 @@
                 return new IXR_Error(403, __('Sorry, you are not allowed to upload files.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getMediaItem', $args, $this);
 
             $attachment = get_post($attachment_id);
@@ -5860,35 +4353,6 @@
             return $this->_prepare_media_item($attachment);
         }
 
-        /**
-         * Retrieves a collection of media library items (or attachments).
-         *
-         * Besides the common blog_id (unused), username, and password arguments,
-         * it takes a filter array as the last argument.
-         *
-         * Accepted 'filter' keys are 'parent_id', 'mime_type', 'offset', and 'number'.
-         *
-         * The defaults are as follows:
-         * - 'number'    - Default is 5. Total number of media items to retrieve.
-         * - 'offset'    - Default is 0. See WP_Query::query() for more.
-         * - 'parent_id' - Default is ''. The post where the media item is attached.
-         *                 Empty string shows all media items. 0 shows unattached media items.
-         * - 'mime_type' - Default is ''. Filter by mime type (e.g., 'image/jpeg', 'application/pdf')
-         *
-         * @param array $args      {
-         *                         Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Optional. Query arguments.
-         *                         }
-         * @return array|IXR_Error Array containing a collection of media items.
-         *                         See wp_xmlrpc_server::wp_getMediaItem() for a description
-         *                         of each item contents.
-         * @since 3.1.0
-         *
-         */
         public function wp_getMediaLibrary($args)
         {
             $this->escape($args);
@@ -5908,7 +4372,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to upload files.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getMediaLibrary', $args, $this);
 
             $parent_id = (isset($struct['parent_id'])) ? absint($struct['parent_id']) : '';
@@ -5934,20 +4397,6 @@
             return $attachments_struct;
         }
 
-        /**
-         * Retrieves a list of post formats used by the site.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error List of post formats, otherwise IXR_Error object.
-         * @since 3.1.0
-         *
-         */
         public function wp_getPostFormats($args)
         {
             $this->escape($args);
@@ -5966,7 +4415,6 @@
                 return new IXR_Error(403, __('Sorry, you are not allowed to access details about this site.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPostFormats', $args, $this);
 
             $formats = get_post_format_strings();
@@ -5997,33 +4445,6 @@
 	 * Specs on http://plant.blogger.com/api and https://groups.yahoo.com/group/bloggerDev/
 	 */
 
-        /**
-         * Retrieves a post type.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type string $3 Post type name.
-         * @type array  $4 Optional. Fields to fetch.
-         *                    }
-         * @return array|IXR_Error Array contains:
-         *                    - 'labels'
-         *                    - 'description'
-         *                    - 'capability_type'
-         *                    - 'cap'
-         *                    - 'map_meta_cap'
-         *                    - 'hierarchical'
-         *                    - 'menu_position'
-         *                    - 'taxonomies'
-         *                    - 'supports'
-         * @since 3.4.0
-         *
-         * @see   get_post_type_object()
-         *
-         */
         public function wp_getPostType($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -6043,16 +4464,6 @@
             }
             else
             {
-                /**
-                 * Filters the default post type query fields used by the given XML-RPC method.
-                 *
-                 * @param array  $fields An array of post type fields to retrieve. By default,
-                 *                       contains 'labels', 'cap', and 'taxonomies'.
-                 * @param string $method The method name.
-                 *
-                 * @since 3.4.0
-                 *
-                 */
                 $fields = apply_filters('xmlrpc_default_posttype_fields', [
                     'labels',
                     'cap',
@@ -6066,7 +4477,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPostType', $args, $this);
 
             if(! post_type_exists($post_type_name))
@@ -6084,17 +4494,6 @@
             return $this->_prepare_post_type($post_type, $fields);
         }
 
-        /**
-         * Prepares post data for return in an XML-RPC object.
-         *
-         * @param WP_Post_Type $post_type Post type object.
-         * @param array        $fields    The subset of post fields to return.
-         *
-         * @return array The prepared post type data.
-         * @since 4.6.0 Converted the `$post_type` parameter to accept a WP_Post_Type object.
-         *
-         * @since 3.4.0
-         */
         protected function _prepare_post_type($post_type, $fields)
         {
             $_post_type = [
@@ -6131,37 +4530,9 @@
                 $_post_type['taxonomies'] = get_object_taxonomies($post_type->name, 'names');
             }
 
-            /**
-             * Filters XML-RPC-prepared date for the given post type.
-             *
-             * @param array        $_post_type An array of post type data.
-             * @param WP_Post_Type $post_type  Post type object.
-             *
-             * @since 3.4.0
-             * @since 4.6.0 Converted the `$post_type` parameter to accept a WP_Post_Type object.
-             *
-             */
             return apply_filters('xmlrpc_prepare_post_type', $_post_type, $post_type);
         }
 
-        /**
-         * Retrieves post types.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Optional. Query arguments.
-         * @type array  $4 Optional. Fields to fetch.
-         *                    }
-         * @return array|IXR_Error
-         * @since 3.4.0
-         *
-         * @see   get_post_types()
-         *
-         */
         public function wp_getPostTypes($args)
         {
             if(! $this->minimum_args($args, 3))
@@ -6181,7 +4552,6 @@
             }
             else
             {
-                /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
                 $fields = apply_filters('xmlrpc_default_posttype_fields', [
                     'labels',
                     'cap',
@@ -6195,7 +4565,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getPostTypes', $args, $this);
 
             $post_types = get_post_types($filter, 'objects');
@@ -6215,28 +4584,6 @@
             return $struct;
         }
 
-        /**
-         * Retrieves revisions for a specific post.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Post ID.
-         * @type array  $4 Optional. Fields to fetch.
-         *                    }
-         * @return array|IXR_Error Array containing a collection of posts.
-         * @see   wp_getPost() for more on $fields
-         *
-         * @since 3.5.0
-         *
-         * The optional $fields parameter specifies what fields will be included
-         * in the response array.
-         *
-         * @uses  wp_get_post_revisions()
-         */
         public function wp_getRevisions($args)
         {
             if(! $this->minimum_args($args, 4))
@@ -6256,16 +4603,6 @@
             }
             else
             {
-                /**
-                 * Filters the default revision query fields used by the given XML-RPC method.
-                 *
-                 * @param array  $field  An array of revision fields to retrieve. By default,
-                 *                       contains 'post_date' and 'post_date_gmt'.
-                 * @param string $method The method name.
-                 *
-                 * @since 3.5.0
-                 *
-                 */
                 $fields = apply_filters('xmlrpc_default_revision_fields', [
                     'post_date',
                     'post_date_gmt'
@@ -6278,7 +4615,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.getRevisions', $args, $this);
 
             $post = get_post($post_id);
@@ -6326,23 +4662,6 @@
             return $struct;
         }
 
-        /**
-         * Restores a post revision.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Revision ID.
-         *                    }
-         * @return bool|IXR_Error false if there was an error restoring, true if success.
-         * @since 3.5.0
-         *
-         * @uses  wp_restore_post_revision()
-         *
-         */
         public function wp_restoreRevision($args)
         {
             if(! $this->minimum_args($args, 3))
@@ -6362,7 +4681,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'wp.restoreRevision', $args, $this);
 
             $revision = wp_get_post_revision($revision_id);
@@ -6398,22 +4716,6 @@
             return (bool) $post;
         }
 
-        /**
-         * Retrieves user's data.
-         *
-         * Gives your client some info about you, so you don't have to.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function blogger_getUserInfo($args)
         {
             $this->escape($args);
@@ -6432,7 +4734,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to access user data on this site.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'blogger.getUserInfo', $args, $this);
 
             $struct = [
@@ -6446,21 +4747,6 @@
             return $struct;
         }
 
-        /**
-         * Retrieves a post.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type int    $1 Post ID.
-         * @type string $2 Username.
-         * @type string $3 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function blogger_getPost($args)
         {
             $this->escape($args);
@@ -6486,7 +4772,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to edit this post.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'blogger.getPost', $args, $this);
 
             $categories = implode(',', wp_get_post_categories($post_id));
@@ -6505,22 +4790,6 @@
             return $struct;
         }
 
-        /**
-         * Retrieves the list of recent posts.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type string $0 App key (unused).
-         * @type int    $1 Blog ID (unused).
-         * @type string $2 Username.
-         * @type string $3 Password.
-         * @type int    $4 Optional. Number of posts.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function blogger_getRecentPosts($args)
         {
             $this->escape($args);
@@ -6548,7 +4817,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to edit posts.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'blogger.getRecentPosts', $args, $this);
 
             $posts_list = wp_get_recent_posts($query);
@@ -6586,31 +4854,11 @@
             return $recent_posts;
         }
 
-        /**
-         * Deprecated.
-         *
-         * @param array $args Unused.
-         *
-         * @return IXR_Error Error object.
-         * @since      1.5.0
-         * @deprecated 3.5.0
-         *
-         */
         public function blogger_getTemplate($args)
         {
             return new IXR_Error(403, __('Sorry, this method is not supported.'));
         }
 
-        /**
-         * Deprecated.
-         *
-         * @param array $args Unused.
-         *
-         * @return IXR_Error Error object.
-         * @since      1.5.0
-         * @deprecated 3.5.0
-         *
-         */
         public function blogger_setTemplate($args)
         {
             return new IXR_Error(403, __('Sorry, this method is not supported.'));
@@ -6621,23 +4869,6 @@
 	 * Specs on wherever Dave Winer wants them to be.
 	 */
 
-        /**
-         * Creates a new post.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type string $0 App key (unused).
-         * @type int    $1 Blog ID (unused).
-         * @type string $2 Username.
-         * @type string $3 Password.
-         * @type string $4 Content.
-         * @type int    $5 Publish flag. 0 for draft, 1 for publish.
-         *                    }
-         * @return int|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function blogger_newPost($args)
         {
             $this->escape($args);
@@ -6653,7 +4884,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'blogger.newPost', $args, $this);
 
             $cap = ($publish) ? 'publish_posts' : 'edit_posts';
@@ -6688,37 +4918,11 @@
 
             $this->attach_uploads($post_id, $post_content);
 
-            /**
-             * Fires after a new post has been successfully created via the XML-RPC Blogger API.
-             *
-             * @param int   $post_id ID of the new post.
-             * @param array $args    An array of new post arguments.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_blogger_newPost', $post_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             return $post_id;
         }
 
-        /**
-         * Edits a post.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type int    $1 Post ID.
-         * @type string $2 Username.
-         * @type string $3 Password.
-         * @type string $4 Content
-         * @type int    $5 Publish flag. 0 for draft, 1 for publish.
-         *                    }
-         * @return true|IXR_Error true when done.
-         * @since 1.5.0
-         *
-         */
         public function blogger_editPost($args)
         {
             $this->escape($args);
@@ -6735,7 +4939,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'blogger.editPost', $args, $this);
 
             $actual_post = get_post($post_id, ARRAY_A);
@@ -6773,35 +4976,11 @@
             }
             $this->attach_uploads($actual_post['ID'], $postdata['post_content']);
 
-            /**
-             * Fires after a post has been successfully updated via the XML-RPC Blogger API.
-             *
-             * @param int   $post_id ID of the updated post.
-             * @param array $args    An array of arguments for the post to edit.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_blogger_editPost', $post_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             return true;
         }
 
-        /**
-         * Deletes a post.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type int    $1 Post ID.
-         * @type string $2 Username.
-         * @type string $3 Password.
-         *                    }
-         * @return true|IXR_Error True when post is deleted.
-         * @since 1.5.0
-         *
-         */
         public function blogger_deletePost($args)
         {
             $this->escape($args);
@@ -6816,7 +4995,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'blogger.deletePost', $args, $this);
 
             $actual_post = get_post($post_id, ARRAY_A);
@@ -6838,34 +5016,11 @@
                 return new IXR_Error(500, __('Sorry, the post could not be deleted.'));
             }
 
-            /**
-             * Fires after a post has been successfully deleted via the XML-RPC Blogger API.
-             *
-             * @param int   $post_id ID of the deleted post.
-             * @param array $args    An array of arguments to delete the post.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_blogger_deletePost', $post_id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             return true;
         }
 
-        /**
-         * Retrieves a post.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Post ID.
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function mw_getPost($args)
         {
             $this->escape($args);
@@ -6891,7 +5046,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to edit this post.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'metaWeblog.getPost', $args, $this);
 
             if('' !== $postdata['post_date'])
@@ -7012,21 +5166,6 @@
             }
         }
 
-        /**
-         * Retrieves list of recent posts.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Optional. Number of posts.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function mw_getRecentPosts($args)
         {
             $this->escape($args);
@@ -7053,7 +5192,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to edit posts.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'metaWeblog.getRecentPosts', $args, $this);
 
             $posts_list = wp_get_recent_posts($query);
@@ -7155,20 +5293,6 @@
             return $recent_posts;
         }
 
-        /**
-         * Retrieves the list of categories on a given blog.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function mw_getCategories($args)
         {
             $this->escape($args);
@@ -7187,7 +5311,6 @@
                 return new IXR_Error(401, __('Sorry, you must be able to edit posts on this site in order to view categories.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'metaWeblog.getCategories', $args, $this);
 
             $categories_struct = [];
@@ -7213,25 +5336,6 @@
             return $categories_struct;
         }
 
-        /**
-         * Uploads a file, following your settings.
-         *
-         * Adapted from a patch by Johann Richard.
-         *
-         * @link  http://mycvs.org/archives/2004/06/30/file-upload-to-wordpress-in-ecto/
-         *
-         * @since 1.5.0
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Data.
-         *                    }
-         * @return array|IXR_Error
-         */
         public function mw_newMediaObject($args)
         {
             $username = $this->escape($args[1]);
@@ -7248,7 +5352,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'metaWeblog.newMediaObject', $args, $this);
 
             if(! current_user_can('upload_files'))
@@ -7265,17 +5368,6 @@
                 return $this->error;
             }
 
-            /**
-             * Filters whether to preempt the XML-RPC media upload.
-             *
-             * Returning a truthy value will effectively short-circuit the media upload,
-             * returning that value as a 500 error instead.
-             *
-             * @param bool $error Whether to pre-empt the media upload. Default false.
-             *
-             * @since 2.1.0
-             *
-             */
             $upload_err = apply_filters('pre_upload_error', false);
             if($upload_err)
             {
@@ -7314,15 +5406,6 @@
             $id = wp_insert_attachment($attachment, $upload['file'], $post_id);
             wp_update_attachment_metadata($id, wp_generate_attachment_metadata($id, $upload['file']));
 
-            /**
-             * Fires after a new attachment has been added via the XML-RPC MovableType API.
-             *
-             * @param int   $id   ID of the new attachment.
-             * @param array $args An array of arguments to add the attachment.
-             *
-             * @since 3.4.0
-             *
-             */
             do_action('xmlrpc_call_success_mw_newMediaObject', $id, $args); // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 
             $struct = $this->_prepare_media_item(get_post($id));
@@ -7335,21 +5418,6 @@
             return $struct;
         }
 
-        /**
-         * Retrieves the post titles of recent posts.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type int    $3 Optional. Number of posts.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function mt_getRecentPostTitles($args)
         {
             $this->escape($args);
@@ -7371,7 +5439,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'mt.getRecentPostTitles', $args, $this);
 
             $posts_list = wp_get_recent_posts($query);
@@ -7413,20 +5480,6 @@
 	 * Specs archive on http://web.archive.org/web/20050220091302/http://www.movabletype.org:80/docs/mtmanual_programmatic.html
 	 */
 
-        /**
-         * Retrieves the list of all categories on a blog.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Blog ID (unused).
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function mt_getCategoryList($args)
         {
             $this->escape($args);
@@ -7445,7 +5498,6 @@
                 return new IXR_Error(401, __('Sorry, you must be able to edit posts on this site in order to view categories.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'mt.getCategoryList', $args, $this);
 
             $categories_struct = [];
@@ -7469,20 +5521,6 @@
             return $categories_struct;
         }
 
-        /**
-         * Retrieves post categories.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Post ID.
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function mt_getPostCategories($args)
         {
             $this->escape($args);
@@ -7507,7 +5545,6 @@
                 return new IXR_Error(401, __('Sorry, you are not allowed to edit this post.'));
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'mt.getPostCategories', $args, $this);
 
             $categories = [];
@@ -7527,21 +5564,6 @@
             return $categories;
         }
 
-        /**
-         * Sets categories for a post.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Post ID.
-         * @type string $1 Username.
-         * @type string $2 Password.
-         * @type array  $3 Categories.
-         *                    }
-         * @return true|IXR_Error True on success.
-         * @since 1.5.0
-         *
-         */
         public function mt_setPostCategories($args)
         {
             $this->escape($args);
@@ -7557,7 +5579,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'mt.setPostCategories', $args, $this);
 
             if(! get_post($post_id))
@@ -7581,58 +5602,24 @@
             return true;
         }
 
-        /**
-         * Retrieves an array of methods supported by this server.
-         *
-         * @return array
-         * @since 1.5.0
-         *
-         */
         public function mt_supportedMethods()
         {
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'mt.supportedMethods', [], $this);
 
             return array_keys($this->methods);
         }
 
-        /**
-         * Retrieves an empty array because we don't support per-post text filters.
-         *
-         * @since 1.5.0
-         */
         public function mt_supportedTextFilters()
         {
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'mt.supportedTextFilters', [], $this);
 
-            /**
-             * Filters the MoveableType text filters list for XML-RPC.
-             *
-             * @param array $filters An array of text filters.
-             *
-             * @since 2.2.0
-             *
-             */
             return apply_filters('xmlrpc_text_filters', []);
         }
 
-        /**
-         * Retrieves trackbacks sent to a given post.
-         *
-         * @param int   $post_id
-         *
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         */
         public function mt_getTrackbackPings($post_id)
         {
             global $wpdb;
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'mt.getTrackbackPings', $post_id, $this);
 
             $actual_post = get_post($post_id, ARRAY_A);
@@ -7667,20 +5654,6 @@
             return $trackback_pings;
         }
 
-        /**
-         * Sets a post's publish status to 'publish'.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type int    $0 Post ID.
-         * @type string $1 Username.
-         * @type string $2 Password.
-         *                    }
-         * @return int|IXR_Error
-         * @since 1.5.0
-         *
-         */
         public function mt_publishPost($args)
         {
             $this->escape($args);
@@ -7695,7 +5668,6 @@
                 return $this->error;
             }
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'mt.publishPost', $args, $this);
 
             $postdata = get_post($post_id, ARRAY_A);
@@ -7718,26 +5690,10 @@
             return wp_update_post($postdata);
         }
 
-        /**
-         * Retrieves a pingback and registers it.
-         *
-         * @param array $args {
-         *                    Method arguments. Note: arguments must be ordered as documented.
-         *
-         * @type string $0 URL of page linked from.
-         * @type string $1 URL of page linked to.
-         *                    }
-         * @return string|IXR_Error
-         * @since 1.5.0
-         *
-         * @global wpdb $wpdb WordPress database abstraction object.
-         *
-         */
         public function pingback_ping($args)
         {
             global $wpdb;
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'pingback.ping', $args, $this);
 
             $this->escape($args);
@@ -7746,15 +5702,6 @@
             $pagelinkedto = str_replace('&amp;', '&', $args[1]);
             $pagelinkedto = str_replace('&', '&amp;', $pagelinkedto);
 
-            /**
-             * Filters the pingback source URI.
-             *
-             * @param string $pagelinkedfrom URI of the page linked from.
-             * @param string $pagelinkedto   URI of the page linked to.
-             *
-             * @since 3.6.0
-             *
-             */
             $pagelinkedfrom = apply_filters('pingback_ping_source_uri', $pagelinkedfrom, $pagelinkedto);
 
             if(! $pagelinkedfrom)
@@ -7861,7 +5808,6 @@
 
             $remote_ip = preg_replace('/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR']);
 
-            /** This filter is documented in wp-includes/class-wp-http.php */
             $user_agent = apply_filters('http_headers_useragent', 'WordPress/'.get_bloginfo('version').'; '.get_bloginfo('url'), $pagelinkedfrom);
 
             // Let's check the remote site.
@@ -7884,15 +5830,6 @@
                 return $this->pingback_error(16, __('The source URL does not exist.'));
             }
 
-            /**
-             * Filters the pingback remote source.
-             *
-             * @param string $remote_source Response source for the page linked from.
-             * @param string $pagelinkedto  URL of the page linked to.
-             *
-             * @since 2.5.0
-             *
-             */
             $remote_source = apply_filters('pre_remote_source', $remote_source, $pagelinkedto);
 
             // Work around bug in strip_tags():
@@ -7983,14 +5920,6 @@
                 return $this->pingback_error(0, $comment_id->get_error_message());
             }
 
-            /**
-             * Fires after a post pingback has been sent.
-             *
-             * @param int $comment_id Comment ID.
-             *
-             * @since 0.71
-             *
-             */
             do_action('pingback_post', $comment_id);
 
             /* translators: 1: URL of the page linked from, 2: URL of the page linked to. */
@@ -8003,47 +5932,15 @@
 	 * Specs on www.hixie.ch/specs/pingback/pingback
 	 */
 
-        /**
-         * Sends a pingback error based on the given error code and message.
-         *
-         * @param int    $code    Error code.
-         * @param string $message Error message.
-         *
-         * @return IXR_Error Error object.
-         * @since 3.6.0
-         *
-         */
         protected function pingback_error($code, $message)
         {
-            /**
-             * Filters the XML-RPC pingback error return.
-             *
-             * @param IXR_Error $error An IXR_Error object containing the error code and message.
-             *
-             * @since 3.5.1
-             *
-             */
             return apply_filters('xmlrpc_pingback_error', new IXR_Error($code, $message));
         }
 
-        /**
-         * Retrieves an array of URLs that pingbacked the given URL.
-         *
-         * Specs on http://www.aquarionics.com/misc/archives/blogite/0198.html
-         *
-         * @param string $url
-         *
-         * @return array|IXR_Error
-         * @since 1.5.0
-         *
-         * @global wpdb  $wpdb WordPress database abstraction object.
-         *
-         */
         public function pingback_extensions_getPingbacks($url)
         {
             global $wpdb;
 
-            /** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
             do_action('xmlrpc_call', 'pingback.extensions.getPingbacks', $url, $this);
 
             $url = $this->escape($url);
@@ -8082,15 +5979,6 @@
             return $pingbacks;
         }
 
-        /**
-         * Helper method for filtering out elements from an array.
-         *
-         * @param int $count Number to compare to one.
-         *
-         * @return bool True if the number is greater than one, false otherwise.
-         * @since 3.4.0
-         *
-         */
         private function _is_greater_than_one($count)
         {
             return $count > 1;

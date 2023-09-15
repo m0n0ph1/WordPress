@@ -1,51 +1,5 @@
 <?php
-    /**
-     * SimplePie
-     *
-     * A PHP-Based RSS and Atom Feed Framework.
-     * Takes the hard work out of managing a complete RSS/Atom solution.
-     *
-     * Copyright (c) 2004-2016, Ryan Parman, Sam Sneddon, Ryan McCue, and contributors
-     * All rights reserved.
-     *
-     * Redistribution and use in source and binary forms, with or without modification, are
-     * permitted provided that the following conditions are met:
-     *
-     *    * Redistributions of source code must retain the above copyright notice, this list of
-     *      conditions and the following disclaimer.
-     *
-     *    * Redistributions in binary form must reproduce the above copyright notice, this list
-     *      of conditions and the following disclaimer in the documentation and/or other materials
-     *      provided with the distribution.
-     *
-     *    * Neither the name of the SimplePie Team nor the names of its contributors may be used
-     *      to endorse or promote products derived from this software without specific prior
-     *      written permission.
-     *
-     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-     * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-     * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS
-     * AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-     * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-     * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-     * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-     * POSSIBILITY OF SUCH DAMAGE.
-     *
-     * @package   SimplePie
-     * @copyright 2004-2016 Ryan Parman, Sam Sneddon, Ryan McCue
-     * @author    Ryan Parman
-     * @author    Sam Sneddon
-     * @author    Ryan McCue
-     * @link      http://simplepie.org/ SimplePie
-     * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
-     */
 
-    /**
-     * Miscellanous utilities
-     *
-     * @package SimplePie
-     */
     class SimplePie_Misc
     {
         public static function time_hms($seconds)
@@ -87,15 +41,6 @@
             return $iri->get_uri();
         }
 
-        /**
-         * Get a HTML/XML element from a HTML string
-         *
-         * @param string $realname Element name (including namespace prefix if applicable)
-         * @param string $string   HTML document
-         *
-         * @return array
-         * @deprecated Use DOMDocument instead (parsing HTML with regex is bad!)
-         */
         public static function get_element($realname, $string)
         {
             $return = [];
@@ -134,14 +79,6 @@
             return $return;
         }
 
-        /**
-         * Decode HTML entities
-         *
-         * @param string $data Input data
-         *
-         * @return string Output data
-         * @deprecated Use DOMDocument instead
-         */
         public static function entities_decode($data)
         {
             $decoder = new SimplePie_Decode_HTML_Entities($data);
@@ -282,13 +219,6 @@
             return $curl;
         }
 
-        /**
-         * Strip HTML comments
-         *
-         * @param string $data Data to strip comments from
-         *
-         * @return string Comment stripped string
-         */
         public static function strip_comments($data)
         {
             $output = '';
@@ -315,13 +245,6 @@
             return $parser->parse($dt);
         }
 
-        /**
-         * Remove RFC822 comments
-         *
-         * @param string $data Data to strip comments from
-         *
-         * @return string Comment stripped string
-         */
         public static function uncomment_rfc822($string)
         {
             $string = (string) $string;
@@ -496,15 +419,6 @@
             return $tokens;
         }
 
-        /**
-         * Converts a unicode codepoint to a UTF-8 character
-         *
-         * @static
-         *
-         * @param int $codepoint Unicode codepoint
-         *
-         * @return string UTF-8 character
-         */
         public static function codepoint_to_utf8($codepoint)
         {
             $codepoint = (int) $codepoint;
@@ -545,18 +459,6 @@
             return "\xEF\xBF\xBD";
         }
 
-        /**
-         * Similar to parse_str()
-         *
-         * Returns an associative array of name/value pairs, where the value is an
-         * array of values that have used the same name
-         *
-         * @static
-         *
-         * @param string $str The input string.
-         *
-         * @return array
-         */
         public static function parse_str($str)
         {
             $return = [];
@@ -578,15 +480,6 @@
             return $return;
         }
 
-        /**
-         * Detect XML encoding, as per XML 1.0 Appendix F.1
-         *
-         * @param string             $data     XML data
-         * @param SimplePie_Registry $registry Class registry
-         *
-         * @return array Possible encodings
-         * @todo Add support for EBCDIC
-         */
         public static function xml_encoding($data, $registry)
         {
             // UTF-32 Big Endian BOM
@@ -678,15 +571,6 @@
             return $encoding;
         }
 
-        /**
-         * Change a string from one encoding to another
-         *
-         * @param string $data   Raw data in $input encoding
-         * @param string $input  Encoding of $data
-         * @param string $output Encoding you want
-         *
-         * @return string|boolean False if we can't convert it
-         */
         public static function change_encoding($data, $input, $output)
         {
             $input = SimplePie_Misc::encoding($input);
@@ -728,18 +612,6 @@
             return false;
         }
 
-        /**
-         * Normalize an encoding name
-         *
-         * This is automatically generated by create.php
-         *
-         * To generate it, run `php create.php` on the command line, and copy the
-         * output to replace this function.
-         *
-         * @param string $charset Character set to standardise
-         *
-         * @return string Standardised name
-         */
         public static function encoding($charset)
         {
             // Normalization from UTS #22
@@ -2053,15 +1925,6 @@
             }
         }
 
-        /**
-         * Converts a Windows-1252 encoded string to a UTF-8 encoded string
-         *
-         * @static
-         *
-         * @param string $string Windows-1252 encoded string
-         *
-         * @return string UTF-8 encoded string
-         */
         public static function windows_1252_to_utf8($string)
         {
             static $convert_table = [
@@ -2242,13 +2105,6 @@
             return @iconv($input, $output, $data);
         }
 
-        /**
-         * @param string $data
-         * @param string $input
-         * @param string $output
-         *
-         * @return string|false
-         */
         protected static function change_encoding_uconverter($data, $input, $output)
         {
             return @\UConverter::transcode($data, $output, $input);
@@ -2337,12 +2193,6 @@
             <?php
         }
 
-        /**
-         * Get the SimplePie build timestamp
-         *
-         * Uses the git index if it exists, otherwise uses the modification time
-         * of the newest file.
-         */
         public static function get_build()
         {
             $root = dirname(dirname(__FILE__));
@@ -2371,9 +2221,6 @@
             return filemtime(__FILE__);
         }
 
-        /**
-         * Format debugging information
-         */
         public static function debug(&$sp)
         {
             $info = 'SimplePie '.SIMPLEPIE_VERSION.' Build '.SIMPLEPIE_BUILD."\n";
@@ -2468,13 +2315,6 @@
             // No-op
         }
 
-        /**
-         * Sanitize a URL by removing HTTP credentials.
-         *
-         * @param string $url the URL to sanitize.
-         *
-         * @return string the same URL without HTTP credentials.
-         */
         public static function url_remove_credentials($url)
         {
             return preg_replace('#^(https?://)[^/:@]+:[^/:@]+@#i', '$1', $url);

@@ -1,21 +1,7 @@
 <?php
-    /**
-     * Custom template tags for Twenty Fourteen
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Fourteen
-     * @since      Twenty Fourteen 1.0
-     */
 
     if(! function_exists('twentyfourteen_paging_nav')) :
-        /**
-         * Display navigation to next/previous set of posts when applicable.
-         *
-         * @since Twenty Fourteen 1.0
-         *
-         * @global WP_Query   $wp_query   WordPress Query object.
-         * @global WP_Rewrite $wp_rewrite WordPress Rewrite object.
-         */
+
         function twentyfourteen_paging_nav()
         {
             global $wp_query, $wp_rewrite;
@@ -74,11 +60,7 @@
     endif;
 
     if(! function_exists('twentyfourteen_post_nav')) :
-        /**
-         * Display navigation to next/previous post when applicable.
-         *
-         * @since Twenty Fourteen 1.0
-         */
+
         function twentyfourteen_post_nav()
         {
             // Don't print empty markup if there's nowhere to navigate.
@@ -114,11 +96,7 @@
     endif;
 
     if(! function_exists('twentyfourteen_posted_on')) :
-        /**
-         * Print HTML with meta information for the current post-date/time and author.
-         *
-         * @since Twenty Fourteen 1.0
-         */
+
         function twentyfourteen_posted_on()
         {
             if(is_sticky() && is_home() && ! is_paged())
@@ -131,13 +109,6 @@
         }
     endif;
 
-    /**
-     * Find out if blog has more than one category.
-     *
-     * @return bool true if blog has more than 1 category
-     * @since Twenty Fourteen 1.0
-     *
-     */
     function twentyfourteen_categorized_blog()
     {
         $all_the_cool_cats = get_transient('twentyfourteen_category_count');
@@ -166,11 +137,6 @@
         }
     }
 
-    /**
-     * Flush out the transients used in twentyfourteen_categorized_blog.
-     *
-     * @since Twenty Fourteen 1.0
-     */
     function twentyfourteen_category_transient_flusher()
     {
         // Like, beat it. Dig?
@@ -181,15 +147,7 @@
     add_action('save_post', 'twentyfourteen_category_transient_flusher');
 
     if(! function_exists('twentyfourteen_post_thumbnail')) :
-        /**
-         * Display an optional post thumbnail.
-         *
-         * Wraps the post thumbnail in an anchor element on index
-         * views, or a div element when on single views.
-         *
-         * @since Twenty Fourteen 1.0
-         * @since Twenty Fourteen 1.4 Was made 'pluggable', or overridable.
-         */
+
         function twentyfourteen_post_thumbnail()
         {
             if(post_password_required() || is_attachment() || ! has_post_thumbnail())
@@ -234,16 +192,7 @@
     endif;
 
     if(! function_exists('twentyfourteen_excerpt_more') && ! is_admin()) :
-        /**
-         * Replaces "[...]" (appended to automatically generated excerpts) with ...
-         * and a Continue reading link.
-         *
-         * @param string $more Default Read More excerpt link.
-         *
-         * @return string Filtered Read More excerpt link.
-         * @since Twenty Fourteen 1.3
-         *
-         */
+
         function twentyfourteen_excerpt_more($more)
         {
             $link = sprintf('<a href="%1$s" class="more-link">%2$s</a>', esc_url(get_permalink(get_the_ID())), /* translators: %s: Post title. Only visible to screen readers. */ sprintf(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'twentyfourteen'), '<span class="screen-reader-text">'.get_the_title(get_the_ID()).'</span>'));
@@ -255,20 +204,9 @@
     endif;
 
     if(! function_exists('wp_body_open')) :
-        /**
-         * Fire the wp_body_open action.
-         *
-         * Added for backward compatibility to support pre-5.2.0 WordPress versions.
-         *
-         * @since Twenty Fourteen 2.7
-         */
+
         function wp_body_open()
         {
-            /**
-             * Triggered after the opening <body> tag.
-             *
-             * @since Twenty Fourteen 2.7
-             */
             do_action('wp_body_open');
         }
     endif;

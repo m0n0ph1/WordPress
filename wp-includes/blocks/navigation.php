@@ -1,21 +1,9 @@
 <?php
-    /**
-     * Server-side rendering of the `core/navigation` block.
-     *
-     * @package WordPress
-     */
 
 // These functions are used for the __unstableLocation feature and only active
 // when the gutenberg plugin is active.
     if(defined('IS_GUTENBERG_PLUGIN') && IS_GUTENBERG_PLUGIN)
     {
-        /**
-         * Returns the menu items for a WordPress menu location.
-         *
-         * @param string $location The menu location.
-         *
-         * @return array Menu items for the location.
-         */
         function block_core_navigation_get_menu_items_at_location($location)
         {
             if(empty($location))
@@ -48,15 +36,6 @@
             return $menu_items;
         }
 
-        /**
-         * Sorts a standard array of menu items into a nested structure keyed by the
-         * id of the parent menu.
-         *
-         * @param array $menu_items Menu items to sort.
-         *
-         * @return array An array keyed by the id of the parent menu where each element
-         *               is an array of menu items that belong to that parent.
-         */
         function block_core_navigation_sort_menu_items_by_parent_id($menu_items)
         {
             $sorted_menu_items = [];
@@ -75,34 +54,6 @@
             return $menu_items_by_parent_id;
         }
 
-        /**
-         * Add Interactivity API directives to the navigation-submenu and page-list blocks markup using the Tag Processor
-         * The final HTML of the navigation-submenu and the page-list blocks will look similar to this:
-         *
-         * <li
-         *   class="has-child"
-         *   data-wp-context='{ "core": { "navigation": { "isMenuOpen": false, "overlay": false } } }'
-         *   data-wp-effect="effects.core.navigation.initMenu"
-         *   data-wp-on.keydown="actions.core.navigation.handleMenuKeydown"
-         *   data-wp-on.focusout="actions.core.navigation.handleMenuFocusout"
-         * >
-         *   <button
-         *     class="wp-block-navigation-submenu__toggle"
-         *     data-wp-on.click="actions.core.navigation.openMenu"
-         *     data-wp-bind.aria-expanded="context.core.navigation.isMenuOpen"
-         *   >
-         *   </button>
-         *   <span>Title</span>
-         *   <ul class="wp-block-navigation__submenu-container">
-         *     SUBMENU ITEMS
-         *   </ul>
-         * </li>
-         *
-         * @param string $w                Markup of the navigation block.
-         * @param array  $block_attributes Block attributes.
-         *
-         * @return string Submenu markup with the directives injected.
-         */
         function block_core_navigation_add_directives_to_submenu($w, $block_attributes)
         {
             while($w->next_tag([
@@ -143,13 +94,6 @@
 
         ;
 
-        /**
-         * Replaces view script for the Navigation block with version using Interactivity API.
-         *
-         * @param array $metadata Block metadata as read in via block.json.
-         *
-         * @return array Filtered block type metadata.
-         */
         function gutenberg_block_core_navigation_update_interactive_view_script($metadata)
         {
             if('core/navigation' === $metadata['name'])
@@ -163,14 +107,6 @@
         add_filter('block_type_metadata', 'gutenberg_block_core_navigation_update_interactive_view_script', 10, 1);
     }
 
-    /**
-     * Build an array with CSS classes and inline styles defining the colors
-     * which will be applied to the navigation markup in the front-end.
-     *
-     * @param array $attributes Navigation block attributes.
-     *
-     * @return array Colors CSS classes and inline styles.
-     */
     function block_core_navigation_build_css_colors($attributes)
     {
         $colors = [
@@ -271,14 +207,6 @@
         return $colors;
     }
 
-    /**
-     * Build an array with CSS classes and inline styles defining the font sizes
-     * which will be applied to the navigation markup in the front-end.
-     *
-     * @param array $attributes Navigation block attributes.
-     *
-     * @return array Font size CSS classes and inline styles.
-     */
     function block_core_navigation_build_css_font_sizes($attributes)
     {
         // CSS classes.
@@ -304,26 +232,11 @@
         return $font_sizes;
     }
 
-    /**
-     * Returns the top-level submenu SVG chevron icon.
-     *
-     * @return string
-     */
     function block_core_navigation_render_submenu_icon()
     {
         return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false"><path d="M1.50002 4L6.00002 8L10.5 4" stroke-width="1.5"></path></svg>';
     }
 
-    /**
-     * Filter out empty "null" blocks from the block list.
-     * 'parse_blocks' includes a null block with '\n\n' as the content when
-     * it encounters whitespace. This is not a bug but rather how the parser
-     * is designed.
-     *
-     * @param array $parsed_blocks the parsed blocks to be normalized.
-     *
-     * @return array the normalized parsed blocks.
-     */
     function block_core_navigation_filter_out_empty_blocks($parsed_blocks)
     {
         $filtered = array_filter($parsed_blocks, static function($block)
@@ -335,13 +248,6 @@
         return array_values($filtered);
     }
 
-    /**
-     * Returns true if the navigation block contains a nested navigation block.
-     *
-     * @param WP_Block_List $inner_blocks Inner block instance to be normalized.
-     *
-     * @return bool true if the navigation block contains a nested navigation block.
-     */
     function block_core_navigation_block_contains_core_navigation($inner_blocks)
     {
         foreach($inner_blocks as $block)
@@ -359,15 +265,6 @@
         return false;
     }
 
-    /**
-     * Retrieves the appropriate fallback to be used on the front of the
-     * site when there is no menu assigned to the Nav block.
-     *
-     * This aims to mirror how the fallback mechanic for wp_nav_menu works.
-     * See https://developer.wordpress.org/reference/functions/wp_nav_menu/#more-information.
-     *
-     * @return array the array of blocks to be used as a fallback.
-     */
     function block_core_navigation_get_fallback_blocks()
     {
         $page_list_fallback = [
@@ -401,28 +298,9 @@
             $fallback_blocks = ! empty($maybe_fallback) ? $maybe_fallback : $fallback_blocks;
         }
 
-        /**
-         * Filters the fallback experience for the Navigation block.
-         *
-         * Returning a falsey value will opt out of the fallback and cause the block not to render.
-         * To customise the blocks provided return an array of blocks - these should be valid
-         * children of the `core/navigation` block.
-         *
-         * @param array[] default fallback blocks provided by the default block mechanic.
-         *
-         * @since 5.9.0
-         *
-         */
         return apply_filters('block_core_navigation_render_fallback', $fallback_blocks);
     }
 
-    /**
-     * Iterate through all inner blocks recursively and get navigation link block's post IDs.
-     *
-     * @param WP_Block_List $inner_blocks Block list class instance.
-     *
-     * @return array Array of post IDs.
-     */
     function block_core_navigation_get_post_ids($inner_blocks)
     {
         $post_ids = array_map('block_core_navigation_from_block_get_post_ids', iterator_to_array($inner_blocks));
@@ -430,13 +308,6 @@
         return array_unique(array_merge(...$post_ids));
     }
 
-    /**
-     * Get post IDs from a navigation link block instance.
-     *
-     * @param WP_Block $block Instance of a block.
-     *
-     * @return array Array of post IDs.
-     */
     function block_core_navigation_from_block_get_post_ids($block)
     {
         $post_ids = [];
@@ -457,15 +328,6 @@
         return $post_ids;
     }
 
-    /**
-     * Renders the `core/navigation` block on server.
-     *
-     * @param array    $attributes The block attributes.
-     * @param string   $content    The saved content.
-     * @param WP_Block $block      The parsed block.
-     *
-     * @return string Returns the post content with the legacy widget added.
-     */
     function render_block_core_navigation($attributes, $content, $block)
     {
         static $seen_menu_names = [];
@@ -476,13 +338,6 @@
 
         $nav_menu_name = '';
 
-        /**
-         * Deprecated:
-         * The rgbTextColor and rgbBackgroundColor attributes
-         * have been deprecated in favor of
-         * customTextColor and customBackgroundColor ones.
-         * Move the values from old attrs to the new ones.
-         */
         if(isset($attributes['rgbTextColor']) && empty($attributes['textColor']))
         {
             $attributes['customTextColor'] = $attributes['rgbTextColor'];
@@ -495,9 +350,6 @@
 
         unset($attributes['rgbTextColor'], $attributes['rgbBackgroundColor']);
 
-        /**
-         * This is for backwards compatibility after `isResponsive` attribute has been removed.
-         */
         $has_old_responsive_attribute = ! empty($attributes['isResponsive']) && $attributes['isResponsive'];
         $is_responsive_menu = isset($attributes['overlayMenu']) && 'never' !== $attributes['overlayMenu'] || $has_old_responsive_attribute;
 
@@ -585,15 +437,6 @@
             return '';
         }
 
-        /**
-         * Filter navigation block $inner_blocks.
-         * Allows modification of a navigation block menu items.
-         *
-         * @param \WP_Block_List $inner_blocks
-         *
-         * @since 6.1.0
-         *
-         */
         $inner_blocks = apply_filters('block_core_navigation_render_inner_blocks', $inner_blocks);
 
         $layout_justification = [
@@ -836,12 +679,6 @@
         return sprintf('<nav %1$s %3$s>%2$s</nav>', $wrapper_attributes, $responsive_container_markup, $nav_element_directives);
     }
 
-    /**
-     * Register the navigation block.
-     *
-     * @throws WP_Error An WP_Error exception parsing the block definition.
-     * @uses render_block_core_navigation()
-     */
     function register_block_core_navigation()
     {
         register_block_type_from_metadata(__DIR__.'/navigation', [
@@ -851,14 +688,6 @@
 
     add_action('init', 'register_block_core_navigation');
 
-    /**
-     * Filter that changes the parsed attribute values of navigation blocks contain typographic presets to contain the
-     * values directly.
-     *
-     * @param array $parsed_block The block being rendered.
-     *
-     * @return array The block being rendered without typographic presets.
-     */
     function block_core_navigation_typographic_presets_backcompatibility($parsed_block)
     {
         if('core/navigation' === $parsed_block['blockName'])
@@ -892,20 +721,6 @@
 
     add_filter('render_block_data', 'block_core_navigation_typographic_presets_backcompatibility');
 
-    /**
-     * Turns menu item data into a nested array of parsed blocks
-     *
-     * @param array $menu_items               An array of menu items that represent
-     *                                        an individual level of a menu.
-     * @param array $menu_items_by_parent_id  An array keyed by the id of the
-     *                                        parent menu where each element is an
-     *                                        array of menu items that belong to
-     *                                        that parent.
-     *
-     * @return array An array of parsed block data.
-     * @deprecated 6.3.0 Use WP_Navigation_Fallback::parse_blocks_from_menu_items() instead.
-     *
-     */
     function block_core_navigation_parse_blocks_from_menu_items($menu_items, $menu_items_by_parent_id)
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::parse_blocks_from_menu_items');
@@ -950,13 +765,6 @@
         return $blocks;
     }
 
-    /**
-     * Get the classic navigation menu to use as a fallback.
-     *
-     * @return object WP_Term The classic navigation.
-     * @deprecated 6.3.0 Use WP_Navigation_Fallback::get_classic_menu_fallback() instead.
-     *
-     */
     function block_core_navigation_get_classic_menu_fallback()
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::get_classic_menu_fallback');
@@ -998,15 +806,6 @@
         }
     }
 
-    /**
-     * Converts a classic navigation to blocks.
-     *
-     * @param object $classic_nav_menu WP_Term The classic navigation object to convert.
-     *
-     * @return array the normalized parsed blocks.
-     * @deprecated 6.3.0 Use WP_Navigation_Fallback::get_classic_menu_fallback_blocks() instead.
-     *
-     */
     function block_core_navigation_get_classic_menu_fallback_blocks($classic_nav_menu)
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::get_classic_menu_fallback_blocks');
@@ -1038,13 +837,6 @@
         return serialize_blocks($inner_blocks);
     }
 
-    /**
-     * If there's a classic menu then use it as a fallback.
-     *
-     * @return array the normalized parsed blocks.
-     * @deprecated 6.3.0 Use WP_Navigation_Fallback::create_classic_menu_fallback() instead.
-     *
-     */
     function block_core_navigation_maybe_use_classic_menu_fallback()
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::create_classic_menu_fallback');
@@ -1084,13 +876,6 @@
         return block_core_navigation_get_most_recently_published_navigation();
     }
 
-    /**
-     * Finds the most recently published `wp_navigation` Post.
-     *
-     * @return WP_Post|null the first non-empty Navigation or null.
-     * @deprecated 6.3.0 Use WP_Navigation_Fallback::get_most_recently_published_navigation() instead.
-     *
-     */
     function block_core_navigation_get_most_recently_published_navigation()
     {
         _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::get_most_recently_published_navigation');

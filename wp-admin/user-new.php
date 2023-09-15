@@ -1,12 +1,5 @@
 <?php
-    /**
-     * New User Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(is_multisite())
@@ -102,16 +95,6 @@
                 $roles = get_editable_roles();
                 $role = $roles[$_REQUEST['role']];
 
-                /**
-                 * Fires immediately after an existing user is invited to join the site, but before the notification is sent.
-                 *
-                 * @param int    $user_id     The invited user's ID.
-                 * @param array  $role        Array containing role information for the invited user.
-                 * @param string $newuser_key The key of the invitation.
-                 *
-                 * @since 4.4.0
-                 *
-                 */
                 do_action('invite_user', $user_id, $role, $newuser_key);
 
                 $switched_locale = switch_to_user_locale($user_id);
@@ -141,25 +124,6 @@ Please click the following link to confirm the invite:
                 $new_user_email['message'] = sprintf($message, get_option('blogname'), home_url(), wp_specialchars_decode(translate_user_role($role['name'])), home_url("/newbloguser/$newuser_key/"));
                 $new_user_email['headers'] = '';
 
-                /**
-                 * Filters the contents of the email sent when an existing user is invited to join the site.
-                 *
-                 * @param array  $new_user_email {
-                 *                               Used to build wp_mail().
-                 *
-                 * @type string  $to             The email address of the invited user.
-                 * @type string  $subject        The subject of the email.
-                 * @type string  $message        The content of the email.
-                 * @type string  $headers        Headers.
-                 *                               }
-                 *
-                 * @param int    $user_id        The invited user's ID.
-                 * @param array  $role           Array containing role information for the invited user.
-                 * @param string $newuser_key    The key of the invitation.
-                 *
-                 * @since 5.6.0
-                 *
-                 */
                 $new_user_email = apply_filters('invited_user_email', $new_user_email, $user_id, $role, $newuser_key);
 
                 wp_mail($new_user_email['to'], $new_user_email['subject'], $new_user_email['message'], $new_user_email['headers']);
@@ -217,7 +181,6 @@ Please click the following link to confirm the invite:
             }
             else
             {
-                /** This filter is documented in wp-includes/user.php */
                 $new_user_login = apply_filters('pre_user_login', sanitize_user(wp_unslash($_REQUEST['user_login']), true));
                 if(isset($_POST['noconfirmation']) && current_user_can('manage_network_users'))
                 {
@@ -300,14 +263,6 @@ Please click the following link to confirm the invite:
     wp_enqueue_script('wp-ajax-response');
     wp_enqueue_script('user-profile');
 
-    /**
-     * Filters whether to enable user auto-complete for non-super admins in Multisite.
-     *
-     * @param bool $enable Whether to enable auto-complete for non-super admins. Default false.
-     *
-     * @since 3.4.0
-     *
-     */
     if(is_multisite() && current_user_can('promote_users') && ! wp_is_large_network('users') && (current_user_can('manage_network_users') || apply_filters('autocomplete_users_for_site_admins', false)))
     {
         wp_enqueue_script('user-suggest');
@@ -449,11 +404,7 @@ Please click the following link to confirm the invite:
                 ?>
                 <form method="post" name="adduser" id="adduser" class="validate" novalidate="novalidate"
                     <?php
-                        /**
-                         * Fires inside the adduser form tag.
-                         *
-                         * @since 3.0.0
-                         */
+
                         do_action('user_new_form_tag');
                     ?>
                 >
@@ -487,18 +438,7 @@ Please click the following link to confirm the invite:
                         <?php } ?>
                     </table>
                     <?php
-                        /**
-                         * Fires at the end of the new user form.
-                         *
-                         * Passes a contextual string to make both types of new user forms
-                         * uniquely targetable. Contexts are 'add-existing-user' (Multisite),
-                         * and 'add-new-user' (single site and network admin).
-                         *
-                         * @param string $type A contextual string specifying which type of new user form the hook follows.
-                         *
-                         * @since 3.7.0
-                         *
-                         */
+
                         do_action('user_new_form', 'add-existing-user');
                     ?>
                     <?php submit_button(__('Add Existing User'), 'primary', 'adduser', true, ['id' => 'addusersub']); ?>
@@ -516,7 +456,7 @@ Please click the following link to confirm the invite:
                 <p><?php _e('Create a brand new user and add them to this site.'); ?></p>
                 <form method="post" name="createuser" id="createuser" class="validate" novalidate="novalidate"
                     <?php
-                        /** This action is documented in wp-admin/user-new.php */
+
                         do_action('user_new_form_tag');
                     ?>
                 >
@@ -676,7 +616,8 @@ Please click the following link to confirm the invite:
                                     <label for="send_user_notification"><?php _e('Send the new user an email about their account.'); ?></label>
                                 </td>
                             </tr>
-                        <?php } // End if ! is_multisite(). ?>
+                        <?php } // End if ! is_multisite().
+                        ?>
                         <?php if(current_user_can('promote_users')) { ?>
                             <tr class="form-field">
                                 <th scope="row"><label for="role"><?php _e('Role'); ?></label></th>
@@ -707,7 +648,7 @@ Please click the following link to confirm the invite:
                     </table>
 
                     <?php
-                        /** This action is documented in wp-admin/user-new.php */
+
                         do_action('user_new_form', 'add-new-user');
                     ?>
 

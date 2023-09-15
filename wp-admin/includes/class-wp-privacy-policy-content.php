@@ -1,40 +1,12 @@
 <?php
-    /**
-     * WP_Privacy_Policy_Content class.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     * @since      4.9.6
-     */
 
     #[AllowDynamicProperties]
     final class WP_Privacy_Policy_Content
     {
         private static $policy_content = [];
 
-        /**
-         * Constructor
-         *
-         * @since 4.9.6
-         */
         private function __construct() {}
 
-        /**
-         * Adds content to the postbox shown when editing the privacy policy.
-         *
-         * Plugins and themes should suggest text for inclusion in the site's privacy policy.
-         * The suggested text should contain information about any functionality that affects user privacy,
-         * and will be shown in the Suggested Privacy Policy Content postbox.
-         *
-         * Intended for use from `wp_add_privacy_policy_content()`.
-         *
-         * @param string $plugin_name The name of the plugin or theme that is suggesting content for the site's privacy
-         *                            policy.
-         * @param string $policy_text The suggested content for inclusion in the policy.
-         *
-         * @since 4.9.6
-         *
-         */
         public static function add($plugin_name, $policy_text)
         {
             if(empty($plugin_name) || empty($policy_text))
@@ -53,11 +25,6 @@
             }
         }
 
-        /**
-         * Performs a quick check to determine whether any privacy info has changed.
-         *
-         * @since 4.9.6
-         */
         public static function text_change_check()
         {
             $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
@@ -141,11 +108,6 @@
             return 'changed' === $state;
         }
 
-        /**
-         * Outputs a warning when some privacy info has changed.
-         *
-         * @since 4.9.6
-         */
         public static function policy_text_changed_notice()
         {
             $screen = get_current_screen()->id;
@@ -166,15 +128,6 @@
             <?php
         }
 
-        /**
-         * Updates the cached policy info when the policy page is updated.
-         *
-         * @param int $post_id The ID of the updated post.
-         *
-         * @since  4.9.6
-         * @access private
-         *
-         */
         public static function _policy_page_updated($post_id)
         {
             $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
@@ -225,17 +178,6 @@
             }
         }
 
-        /**
-         * Adds a notice with a link to the guide when editing the privacy policy page.
-         *
-         * @param WP_Post|null $post The currently edited post. Default null.
-         *
-         * @since 5.0.0 The `$post` parameter was made optional.
-         *
-         * @global WP_Post     $post Global post object.
-         *
-         * @since 4.9.6
-         */
         public static function notice($post = null)
         {
             if(is_null($post))
@@ -288,11 +230,6 @@
             }
         }
 
-        /**
-         * Outputs the privacy policy guide together with content from the theme and plugins.
-         *
-         * @since 4.9.6
-         */
         public static function privacy_policy_guide()
         {
             $content_array = self::get_suggested_policy_text();
@@ -369,15 +306,6 @@
             }
         }
 
-        /**
-         * Checks for updated, added or removed privacy policy information from plugins.
-         *
-         * Caches the current info in post_meta of the policy page.
-         *
-         * @return array The privacy policy text/information added by core and plugins.
-         * @since 4.9.6
-         *
-         */
         public static function get_suggested_policy_text()
         {
             $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
@@ -485,28 +413,12 @@
             return $checked;
         }
 
-        /**
-         * Adds the suggested privacy policy text to the policy postbox.
-         *
-         * @since 4.9.6
-         */
         public static function add_suggested_content()
         {
             $content = self::get_default_content(false, false);
             wp_add_privacy_policy_content(__('WordPress'), $content);
         }
 
-        /**
-         * Returns the default suggested privacy policy content.
-         *
-         * @param bool $description Whether to include the descriptions under the section headings. Default false.
-         * @param bool $blocks      Whether to format the content for the block editor. Default true.
-         *
-         * @return string The default policy content.
-         * @since 5.0.0 Added the `$blocks` parameter.
-         *
-         * @since 4.9.6
-         */
         public static function get_default_content($description = false, $blocks = true)
         {
             $suggested_text = '<strong class="privacy-policy-tutorial">'.__('Suggested text:').' </strong>';
@@ -765,21 +677,9 @@
             }
 
             $content = implode('', $strings);
+
             // End of the suggested privacy policy text.
 
-            /**
-             * Filters the default content suggested for inclusion in a privacy policy.
-             *
-             * @param string   $content     The default policy content.
-             * @param string[] $strings     An array of privacy policy content strings.
-             * @param bool     $description Whether policy descriptions should be included.
-             * @param bool     $blocks      Whether the content should be formatted for the block editor.
-             *
-             * @since      5.0.0 Added the `$strings`, `$description`, and `$blocks` parameters.
-             * @deprecated 5.7.0 Use wp_add_privacy_policy_content() instead.
-             *
-             * @since      4.9.6
-             */
             return apply_filters_deprecated('wp_get_default_privacy_policy_content', [
                 $content,
                 $strings,

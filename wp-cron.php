@@ -1,20 +1,4 @@
 <?php
-    /**
-     * A pseudo-cron daemon for scheduling WordPress tasks.
-     *
-     * WP-Cron is triggered when the site receives a visit. In the scenario
-     * where a site may not receive enough visits to execute scheduled tasks
-     * in a timely manner, this file can be called directly or via a server
-     * cron daemon for X number of times.
-     *
-     * Defining DISABLE_WP_CRON as true and calling this file directly are
-     * mutually exclusive and the latter does not rely on the former to work.
-     *
-     * The HTTP request to this file will not slow down the visitor who happens to
-     * visit when a scheduled cron event runs.
-     *
-     * @package WordPress
-     */
 
     ignore_user_abort(true);
 
@@ -39,34 +23,16 @@
         die();
     }
 
-    /**
-     * Tell WordPress the cron task is running.
-     *
-     * @var bool
-     */
     define('DOING_CRON', true);
 
     if(! defined('ABSPATH'))
     {
-        /** Set up WordPress environment */
         require_once __DIR__.'/wp-load.php';
     }
 
 // Attempt to raise the PHP memory limit for cron event processing.
     wp_raise_memory_limit('cron');
 
-    /**
-     * Retrieves the cron lock.
-     *
-     * Returns the uncached `doing_cron` transient.
-     *
-     * @return string|int|false Value of the `doing_cron` transient, 0|false otherwise.
-     * @since 3.3.0
-     *
-     * @global wpdb $wpdb WordPress database abstraction object.
-     *
-     * @ignore
-     */
     function _get_cron_lock()
     {
         global $wpdb;
@@ -153,16 +119,6 @@
                     {
                         error_log(sprintf(/* translators: 1: Hook name, 2: Error code, 3: Error message, 4: Event data. */ __('Cron reschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s'), $hook, $result->get_error_code(), $result->get_error_message(), wp_json_encode($v)));
 
-                        /**
-                         * Fires when an error happens rescheduling a cron event.
-                         *
-                         * @param WP_Error $result The WP_Error object.
-                         * @param string   $hook   Action hook to execute when the event is run.
-                         * @param array    $v      Event data.
-                         *
-                         * @since 6.1.0
-                         *
-                         */
                         do_action('cron_reschedule_event_error', $result, $hook, $v);
                     }
                 }
@@ -173,29 +129,9 @@
                 {
                     error_log(sprintf(/* translators: 1: Hook name, 2: Error code, 3: Error message, 4: Event data. */ __('Cron unschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s'), $hook, $result->get_error_code(), $result->get_error_message(), wp_json_encode($v)));
 
-                    /**
-                     * Fires when an error happens unscheduling a cron event.
-                     *
-                     * @param WP_Error $result The WP_Error object.
-                     * @param string   $hook   Action hook to execute when the event is run.
-                     * @param array    $v      Event data.
-                     *
-                     * @since 6.1.0
-                     *
-                     */
                     do_action('cron_unschedule_event_error', $result, $hook, $v);
                 }
 
-                /**
-                 * Fires scheduled events.
-                 *
-                 * @param string $hook Name of the hook that was scheduled to be fired.
-                 * @param array  $args The arguments to be passed to the hook.
-                 *
-                 * @ignore
-                 * @since 2.1.0
-                 *
-                 */
                 do_action_ref_array($hook, $v['args']);
 
                 // If the hook ran too long and another cron process stole the lock, quit.

@@ -1,12 +1,4 @@
 <?php
-    /**
-     * The template file for displaying the comments and comment form for the
-     * Twenty Twenty theme.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty
-     * @since      Twenty Twenty 1.0
-     */
 
     /*
      * If the current post is protected by a password and
@@ -79,7 +71,8 @@
                         }
                         ?>
 
-                        <nav class="comments-pagination pagination<?php echo $pagination_classes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output ?>"
+                        <nav class="comments-pagination pagination<?php echo $pagination_classes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output
+                        ?>"
                              aria-label="<?php esc_attr_e('Comments', 'twentytwenty'); ?>">
                             <?php echo wp_kses_post($comment_pagination); ?>
                         </nav>

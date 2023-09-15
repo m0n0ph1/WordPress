@@ -1,14 +1,5 @@
 <?php
-    /**
-     * Contains the post embed content template part
-     *
-     * When a post is embedded in an iframe, this file is used to create the content template part
-     * output if the active theme does not include an embed-content.php template.
-     *
-     * @package    WordPress
-     * @subpackage Theme_Compat
-     * @since      4.5.0
-     */
+
 ?>
     <div <?php post_class('wp-embed'); ?>>
         <?php
@@ -24,14 +15,6 @@
                 $thumbnail_id = get_the_ID();
             }
 
-            /**
-             * Filters the thumbnail image ID for use in the embed template.
-             *
-             * @param int|false $thumbnail_id Attachment ID, or false if there is none.
-             *
-             * @since 4.9.0
-             *
-             */
             $thumbnail_id = apply_filters('embed_thumbnail_id', $thumbnail_id);
 
             if($thumbnail_id)
@@ -54,33 +37,10 @@
                     }
                 }
 
-                /**
-                 * Filters the thumbnail image size for use in the embed template.
-                 *
-                 * @param string $image_size   Thumbnail image size.
-                 * @param int    $thumbnail_id Attachment ID.
-                 *
-                 * @since 4.4.0
-                 * @since 4.5.0 Added `$thumbnail_id` parameter.
-                 *
-                 */
                 $image_size = apply_filters('embed_thumbnail_image_size', $image_size, $thumbnail_id);
 
                 $shape = $measurements[0] / $measurements[1] >= 1.75 ? 'rectangular' : 'square';
 
-                /**
-                 * Filters the thumbnail shape for use in the embed template.
-                 *
-                 * Rectangular images are shown above the title while square images
-                 * are shown next to the content.
-                 *
-                 * @param string $shape        Thumbnail image shape. Either 'rectangular' or 'square'.
-                 * @param int    $thumbnail_id Attachment ID.
-                 *
-                 * @since 4.4.0
-                 * @since 4.5.0 Added `$thumbnail_id` parameter.
-                 *
-                 */
                 $shape = apply_filters('embed_thumbnail_image_shape', $shape, $thumbnail_id);
             }
 
@@ -110,11 +70,7 @@
         <div class="wp-embed-excerpt"><?php the_excerpt_embed(); ?></div>
 
         <?php
-            /**
-             * Prints additional content after the embed excerpt.
-             *
-             * @since 4.4.0
-             */
+
             do_action('embed_content');
         ?>
 
@@ -123,11 +79,7 @@
 
             <div class="wp-embed-meta">
                 <?php
-                    /**
-                     * Prints additional meta content in the embed template.
-                     *
-                     * @since 4.4.0
-                     */
+
                     do_action('embed_content_meta');
                 ?>
             </div>

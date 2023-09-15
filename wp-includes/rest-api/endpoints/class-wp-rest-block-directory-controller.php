@@ -1,33 +1,13 @@
 <?php
-    /**
-     * REST API: WP_REST_Block_Directory_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.5.0
-     */
 
-    /**
-     * Controller which provides REST endpoint for the blocks.
-     *
-     * @since 5.5.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Block_Directory_Controller extends WP_REST_Controller
     {
-        /**
-         * Constructs the controller.
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'block-directory';
         }
 
-        /**
-         * Registers the necessary REST API routes.
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base.'/search', [
@@ -41,13 +21,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the search params for the blocks collection.
-         *
-         * @return array Collection parameters.
-         * @since 5.5.0
-         *
-         */
         public function get_collection_params()
         {
             $query_params = parent::get_collection_params();
@@ -63,26 +36,9 @@
 
             unset($query_params['search']);
 
-            /**
-             * Filters REST API collection parameters for the block directory controller.
-             *
-             * @param array $query_params JSON Schema-formatted collection parameters.
-             *
-             * @since 5.5.0
-             *
-             */
             return apply_filters('rest_block_directory_collection_params', $query_params);
         }
 
-        /**
-         * Checks whether a given request has permission to install and activate plugins.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has permission, WP_Error object otherwise.
-         * @since 5.5.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             if(! current_user_can('install_plugins') || ! current_user_can('activate_plugins'))
@@ -93,15 +49,6 @@
             return true;
         }
 
-        /**
-         * Search and retrieve blocks metadata
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.5.0
-         *
-         */
         public function get_items($request)
         {
             require_once ABSPATH.'wp-admin/includes/plugin-install.php';
@@ -137,17 +84,6 @@
             return rest_ensure_response($result);
         }
 
-        /**
-         * Parse block metadata for a block, and prepare it for an API response.
-         *
-         * @param array           $item    The plugin metadata.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.9.0 Renamed `$plugin` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 5.5.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -187,15 +123,6 @@
             return $response;
         }
 
-        /**
-         * Generates a list of links to include in the response for the plugin.
-         *
-         * @param array $plugin The plugin data from WordPress.org.
-         *
-         * @return array
-         * @since 5.5.0
-         *
-         */
         protected function prepare_links($plugin)
         {
             $links = [
@@ -217,15 +144,6 @@
             return $links;
         }
 
-        /**
-         * Finds an installed plugin for the given slug.
-         *
-         * @param string $slug The WordPress.org directory slug for a plugin.
-         *
-         * @return string The plugin file found matching it.
-         * @since 5.5.0
-         *
-         */
         protected function find_plugin_for_slug($slug)
         {
             require_once ABSPATH.'wp-admin/includes/plugin.php';
@@ -242,13 +160,6 @@
             return $slug.'/'.reset($plugin_files);
         }
 
-        /**
-         * Retrieves the theme's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.5.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)

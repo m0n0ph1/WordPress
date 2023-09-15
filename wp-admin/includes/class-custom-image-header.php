@@ -1,59 +1,16 @@
 <?php
-    /**
-     * The custom header image script.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * The custom header image class.
-     *
-     * @since 2.1.0
-     */
     #[AllowDynamicProperties]
     class Custom_Image_Header
     {
-        /**
-         * Callback for administration header.
-         *
-         * @var callable
-         * @since 2.1.0
-         */
         public $admin_header_callback;
 
-        /**
-         * Callback for header div.
-         *
-         * @var callable
-         * @since 3.0.0
-         */
         public $admin_image_div_callback;
 
-        /**
-         * Holds default headers.
-         *
-         * @var array
-         * @since 3.0.0
-         */
         public $default_headers = [];
 
-        /**
-         * Used to trigger a success message when settings updated and set to true.
-         *
-         * @since 3.0.0
-         * @var bool
-         */
         private $updated;
 
-        /**
-         * Constructor - Register administration header callback.
-         *
-         * @param callable $admin_header_callback
-         * @param callable $admin_image_div_callback Optional custom image div output callback.
-         *
-         * @since 2.1.0
-         */
         public function __construct($admin_header_callback, $admin_image_div_callback = '')
         {
             $this->admin_header_callback = $admin_header_callback;
@@ -67,11 +24,6 @@
             add_action('wp_ajax_custom-header-remove', [$this, 'ajax_header_remove']);
         }
 
-        /**
-         * Sets up the hooks for the Custom Header admin page.
-         *
-         * @since 2.1.0
-         */
         public function init()
         {
             $page = add_theme_page(_x('Header', 'custom image header'), _x('Header', 'custom image header'), 'edit_theme_options', 'custom-header', [
@@ -96,11 +48,6 @@
             }
         }
 
-        /**
-         * Adds contextual help.
-         *
-         * @since 3.0.0
-         */
         public function help()
         {
             get_current_screen()->add_help_tab([
@@ -124,11 +71,6 @@
             get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://codex.wordpress.org/Appearance_Header_Screen">Documentation on Custom Header</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
         }
 
-        /**
-         * Sets up the enqueue for the JavaScript files.
-         *
-         * @since 2.1.0
-         */
         public function js_includes()
         {
             $step = $this->step();
@@ -148,13 +90,6 @@
             }
         }
 
-        /**
-         * Gets the current step.
-         *
-         * @return int Current step.
-         * @since 2.6.0
-         *
-         */
         public function step()
         {
             if(! isset($_GET['step']))
@@ -171,11 +106,6 @@
             return $step;
         }
 
-        /**
-         * Sets up the enqueue for the CSS files.
-         *
-         * @since 2.7.0
-         */
         public function css_includes()
         {
             $step = $this->step();
@@ -190,11 +120,6 @@
             }
         }
 
-        /**
-         * Executes custom header modification.
-         *
-         * @since 2.6.0
-         */
         public function take_action()
         {
             if(! current_user_can('edit_theme_options'))
@@ -261,13 +186,6 @@
             }
         }
 
-        /**
-         * Resets a header image to the default image for the theme.
-         *
-         * This method does not do anything if the theme does not have a default header image.
-         *
-         * @since 3.4.0
-         */
         final public function reset_header_image()
         {
             $this->process_default_headers();
@@ -296,13 +214,6 @@
             set_theme_mod('header_image_data', (object) $default_data);
         }
 
-        /**
-         * Processes the default headers.
-         *
-         * @since 3.0.0
-         *
-         * @global array $_wp_default_headers
-         */
         public function process_default_headers()
         {
             global $_wp_default_headers;
@@ -329,30 +240,11 @@
             }
         }
 
-        /**
-         * Removes a header image.
-         *
-         * @since 3.4.0
-         */
         final public function remove_header_image()
         {
             $this->set_header_image('remove-header');
         }
 
-        /**
-         * Chooses a header image, selected from existing uploaded and default headers,
-         * or provides an array of uploaded header data (either new, or from media library).
-         *
-         * @param mixed $choice Which header image to select. Allows for values of 'random-default-image',
-         *                      for randomly cycling among the default images; 'random-uploaded-image',
-         *                      for randomly cycling among the uploaded images; the key of a default image
-         *                      registered for that theme; and the key of an image uploaded for that theme
-         *                      (the attachment ID of the image). Or an array of arguments: attachment_id,
-         *                      url, width, height. All are required.
-         *
-         * @since 3.4.0
-         *
-         */
         final public function set_header_image($choice)
         {
             if(is_array($choice) || is_object($choice))
@@ -413,11 +305,6 @@
             set_theme_mod('header_image_data', $header_image_data);
         }
 
-        /**
-         * Executes JavaScript depending on step.
-         *
-         * @since 2.1.0
-         */
         public function js()
         {
             $step = $this->step();
@@ -432,11 +319,6 @@
             }
         }
 
-        /**
-         * Displays JavaScript based on Step 1 and 3.
-         *
-         * @since 2.6.0
-         */
         public function js_1()
         {
             $default_color = '';
@@ -496,11 +378,6 @@
             <?php
         }
 
-        /**
-         * Displays JavaScript based on Step 2.
-         *
-         * @since 2.6.0
-         */
         public function js_2()
         {
             ?>
@@ -571,11 +448,6 @@
             <?php
         }
 
-        /**
-         * Displays the page based on the current step.
-         *
-         * @since 2.1.0
-         */
         public function admin_page()
         {
             if(! current_user_can('edit_theme_options'))
@@ -599,11 +471,6 @@
             }
         }
 
-        /**
-         * Displays second step of custom header image page.
-         *
-         * @since 2.1.0
-         */
         public function step_2()
         {
             check_admin_referer('custom-header-upload', '_wpnonce-custom-header-upload');
@@ -666,15 +533,6 @@
 
                 $this->set_header_image(compact('url', 'attachment_id', 'width', 'height'));
 
-                /**
-                 * Fires after the header image is set or an error is returned.
-                 *
-                 * @param string $file          Path to the file.
-                 * @param int    $attachment_id Attachment ID.
-                 *
-                 * @since 2.1.0
-                 *
-                 */
                 do_action('wp_create_file_in_uploads', $file, $attachment_id); // For replication.
 
                 return $this->finished();
@@ -690,7 +548,6 @@
                     wp_die(__('Image could not be processed. Please go back and try again.'), __('Image Processing Error'));
                 }
 
-                /** This filter is documented in wp-admin/includes/class-custom-image-header.php */
                 $image = apply_filters('wp_create_file_in_uploads', $image, $attachment_id); // For replication.
 
                 $url = str_replace(wp_basename($url), wp_basename($image), $url);
@@ -747,11 +604,6 @@
             <?php
         }
 
-        /**
-         * Uploads the file to be cropped in the second step.
-         *
-         * @since 3.4.0
-         */
         public function step_2_manage_upload()
         {
             $overrides = ['test_form' => false];
@@ -791,22 +643,12 @@
             return compact('attachment_id', 'file', 'filename', 'url', 'type');
         }
 
-        /**
-         * Displays last step of custom header image page.
-         *
-         * @since 2.1.0
-         */
         public function finished()
         {
             $this->updated = true;
             $this->step_1();
         }
 
-        /**
-         * Displays first step of custom header image page.
-         *
-         * @since 2.1.0
-         */
         public function step_1()
         {
             $this->process_default_headers();
@@ -1087,11 +929,6 @@
                     <?php
                     endif;
 
-                        /**
-                         * Fires just before the submit button in the custom header options form.
-                         *
-                         * @since 3.1.0
-                         */
                         do_action('custom_header_options');
 
                         wp_nonce_field('custom-header-options', '_wpnonce-custom-header-options');
@@ -1104,18 +941,6 @@
             <?php
         }
 
-        /**
-         * Displays UI for selecting one of several default headers.
-         *
-         * Shows the random image option if this theme has multiple header images.
-         * Random image option is on by default if no header has been set.
-         *
-         * @param string $type The header type. One of 'default' (for the Uploaded Images control)
-         *                     or 'uploaded' (for the Uploaded Images control).
-         *
-         * @since 3.0.0
-         *
-         */
         public function show_header_selector($type = 'default')
         {
             if('default' === $type)
@@ -1159,13 +984,6 @@
             echo '<div class="clear"></div></div>';
         }
 
-        /**
-         * Displays third step of custom header image page.
-         *
-         * @since 2.1.0
-         * @since 4.4.0 Switched to using wp_get_attachment_url() instead of the guid
-         *              for retrieving the header image URL.
-         */
         public function step_3()
         {
             check_admin_referer('custom-header-crop-image');
@@ -1216,7 +1034,6 @@
                 wp_die(__('Image could not be processed. Please go back and try again.'), __('Image Processing Error'));
             }
 
-            /** This filter is documented in wp-admin/includes/class-custom-image-header.php */
             $cropped = apply_filters('wp_create_file_in_uploads', $cropped, $attachment_id); // For replication.
 
             $attachment = $this->create_attachment_object($cropped, $attachment_id);
@@ -1247,15 +1064,6 @@
             return $this->finished();
         }
 
-        /**
-         * Calculates width and height based on what the currently selected theme supports.
-         *
-         * @param array $dimensions
-         *
-         * @return array dst_height and dst_width of header image.
-         * @since 3.9.0
-         *
-         */
         final public function get_header_dimensions($dimensions)
         {
             $max_width = 0;
@@ -1312,16 +1120,6 @@
             return $dst;
         }
 
-        /**
-         * Creates an attachment 'object'.
-         *
-         * @param string $cropped              Cropped image URL.
-         * @param int    $parent_attachment_id Attachment ID of parent image.
-         *
-         * @return array An array with attachment object data.
-         * @since 3.9.0
-         *
-         */
         final public function create_attachment_object($cropped, $parent_attachment_id)
         {
             $parent = get_post($parent_attachment_id);
@@ -1343,16 +1141,6 @@
             return $attachment;
         }
 
-        /**
-         * Inserts an attachment and its metadata.
-         *
-         * @param array  $attachment An array with attachment object data.
-         * @param string $cropped    File path to cropped image.
-         *
-         * @return int Attachment ID.
-         * @since 3.9.0
-         *
-         */
         final public function insert_attachment($attachment, $cropped)
         {
             $parent_id = isset($attachment['post_parent']) ? $attachment['post_parent'] : null;
@@ -1367,16 +1155,6 @@
                 $metadata['attachment_parent'] = $parent_id;
             }
 
-            /**
-             * Filters the header image attachment metadata.
-             *
-             * @param array $metadata Attachment metadata.
-             *
-             * @see   wp_generate_attachment_metadata()
-             *
-             * @since 3.9.0
-             *
-             */
             $metadata = apply_filters('wp_header_image_attachment_metadata', $metadata);
 
             wp_update_attachment_metadata($attachment_id, $metadata);
@@ -1384,40 +1162,16 @@
             return $attachment_id;
         }
 
-        /**
-         * Unused since 3.5.0.
-         *
-         * @param array $form_fields
-         *
-         * @return array $form_fields
-         * @since 3.4.0
-         *
-         */
         public function attachment_fields_to_edit($form_fields)
         {
             return $form_fields;
         }
 
-        /**
-         * Unused since 3.5.0.
-         *
-         * @param array $tabs
-         *
-         * @return array $tabs
-         * @since 3.4.0
-         *
-         */
         public function filter_upload_tabs($tabs)
         {
             return $tabs;
         }
 
-        /**
-         * Gets attachment uploaded by Media Manager, crops it, then saves it as a
-         * new object. Returns JSON-encoded object details.
-         *
-         * @since 3.9.0
-         */
         public function ajax_header_crop()
         {
             check_ajax_referer('image_editor-'.$_POST['id'], 'nonce');
@@ -1448,7 +1202,6 @@
                 wp_send_json_error(['message' => __('Image could not be processed. Please go back and try again.')]);
             }
 
-            /** This filter is documented in wp-admin/includes/class-custom-image-header.php */
             $cropped = apply_filters('wp_create_file_in_uploads', $cropped, $attachment_id); // For replication.
 
             $attachment = $this->create_attachment_object($cropped, $attachment_id);
@@ -1475,15 +1228,6 @@
             wp_send_json_success($attachment);
         }
 
-        /**
-         * Gets the ID of a previous crop from the same base image.
-         *
-         * @param array $attachment An array with a cropped attachment object data.
-         *
-         * @return int|false An attachment ID if one exists. False if none.
-         * @since 4.9.0
-         *
-         */
         public function get_previous_crop($attachment)
         {
             $header_images = $this->get_uploaded_header_images();
@@ -1508,13 +1252,6 @@
             return $previous;
         }
 
-        /**
-         * Gets the previously uploaded header images.
-         *
-         * @return array Uploaded header images.
-         * @since 3.9.0
-         *
-         */
         public function get_uploaded_header_images()
         {
             $header_images = get_uploaded_header_images();
@@ -1531,15 +1268,6 @@
             return $header_images;
         }
 
-        /**
-         * Given an attachment ID for a header image, updates its "last used"
-         * timestamp to now.
-         *
-         * Triggered when the user tries adds a new header image from the
-         * Media Manager, even if s/he doesn't save that change.
-         *
-         * @since 3.9.0
-         */
         public function ajax_header_add()
         {
             check_ajax_referer('header-add', 'nonce');
@@ -1562,15 +1290,6 @@
             wp_send_json_success();
         }
 
-        /**
-         * Given an attachment ID for a header image, unsets it as a user-uploaded
-         * header image for the active theme.
-         *
-         * Triggered when the user clicks the overlay "X" button next to each image
-         * choice in the Customizer's Header tool.
-         *
-         * @since 3.9.0
-         */
         public function ajax_header_remove()
         {
             check_ajax_referer('header-remove', 'nonce');
@@ -1593,15 +1312,6 @@
             wp_send_json_success();
         }
 
-        /**
-         * Updates the last-used postmeta on a header image attachment after saving a new header image via the
-         * Customizer.
-         *
-         * @param WP_Customize_Manager $wp_customize Customize manager.
-         *
-         * @since 3.9.0
-         *
-         */
         public function customize_set_last_used($wp_customize)
         {
             $header_image_data_setting = $wp_customize->get_setting('header_image_data');
@@ -1623,13 +1333,6 @@
             update_post_meta($attachment_id, $key, time());
         }
 
-        /**
-         * Gets the details of default header images if defined.
-         *
-         * @return array Default header images.
-         * @since 3.9.0
-         *
-         */
         public function get_default_header_images()
         {
             $this->process_default_headers();

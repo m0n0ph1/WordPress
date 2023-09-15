@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Title, navigation, and social links header block pattern
-     */
+
     return [
         'title' => __('Title, navigation, and social links header', 'twentytwentytwo'),
         'categories' => ['header'],

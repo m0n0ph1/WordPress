@@ -1,19 +1,5 @@
 <?php
-    /**
-     * WordPress Administration Importer API.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /**
-     * Retrieves the list of importers.
-     *
-     * @return array
-     * @global array $wp_importers
-     * @since 2.0.0
-     *
-     */
     function get_importers()
     {
         global $wp_importers;
@@ -25,38 +11,11 @@
         return $wp_importers;
     }
 
-    /**
-     * Sorts a multidimensional array by first member of each top level member.
-     *
-     * Used by uasort() as a callback, should not be used directly.
-     *
-     * @param array $a
-     * @param array $b
-     *
-     * @return int
-     * @since  2.9.0
-     * @access private
-     *
-     */
     function _usort_by_first_member($a, $b)
     {
         return strnatcasecmp($a[0], $b[0]);
     }
 
-    /**
-     * Registers importer for WordPress.
-     *
-     * @param string   $id          Importer tag. Used to uniquely identify importer.
-     * @param string   $name        Importer name and title.
-     * @param string   $description Importer description.
-     * @param callable $callback    Callback to run.
-     *
-     * @return void|WP_Error Void on success. WP_Error when $callback is WP_Error.
-     * @global array   $wp_importers
-     *
-     * @since 2.0.0
-     *
-     */
     function register_importer($id, $name, $description, $callback)
     {
         global $wp_importers;
@@ -67,28 +26,11 @@
         $wp_importers[$id] = [$name, $description, $callback];
     }
 
-    /**
-     * Cleanup importer.
-     *
-     * Removes attachment based on ID.
-     *
-     * @param string $id Importer ID.
-     *
-     * @since 2.0.0
-     *
-     */
     function wp_import_cleanup($id)
     {
         wp_delete_attachment($id);
     }
 
-    /**
-     * Handles importer uploading and adds attachment.
-     *
-     * @return array Uploaded file's details on success, error message on failure.
-     * @since 2.0.0
-     *
-     */
     function wp_import_handle_upload()
     {
         if(! isset($_FILES['import']))
@@ -135,13 +77,6 @@
         ];
     }
 
-    /**
-     * Returns a list from WordPress.org of popular importer plugins.
-     *
-     * @return array Importers with metadata for each.
-     * @since 3.5.0
-     *
-     */
     function wp_get_popular_importers()
     {
         // Include an unmodified $wp_version.

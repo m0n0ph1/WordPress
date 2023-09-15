@@ -1,20 +1,4 @@
 <?php
-    /**
-     * mail_fetch/setup.php
-     *
-     * Copyright (c) 1999-2011 CDI (cdi@thewebmasters.net) All Rights Reserved
-     * Modified by Philippe Mingo 2001-2009 mingo@rotedic.com
-     * An RFC 1939 compliant wrapper class for the POP3 protocol.
-     *
-     * Licensed under the GNU GPL. For full terms see the file COPYING.
-     *
-     * POP3 class
-     *
-     * @copyright  1999-2011 The SquirrelMail Project Team
-     * @license    https://opensource.org/licenses/gpl-license.php GNU Public License
-     * @package    plugins
-     * @subpackage mail_fetch
-     */
 
     class POP3
     {
@@ -51,17 +35,11 @@
         //  This must be set to true
         //  manually
 
-        /**
-         * PHP4 constructor.
-         */
         public function POP3($server = '', $timeout = '')
         {
             self::__construct($server, $timeout);
         }
 
-        /**
-         * PHP5 constructor.
-         */
         function __construct($server = '', $timeout = '')
         {
             settype($this->BUFFER, "integer");

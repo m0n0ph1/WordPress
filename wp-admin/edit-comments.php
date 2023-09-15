@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Edit Comments Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
     if(! current_user_can('edit_posts'))
     {
@@ -24,9 +17,6 @@
 
         if('delete_all' === $doaction && ! empty($_REQUEST['pagegen_timestamp']))
         {
-            /**
-             * @global wpdb $wpdb WordPress database abstraction object.
-             */
             global $wpdb;
 
             $comment_status = wp_unslash($_REQUEST['comment_status']);
@@ -120,7 +110,6 @@
         {
             $screen = get_current_screen()->id;
 
-            /** This action is documented in wp-admin/edit.php */
             $redirect_to = apply_filters("handle_bulk_actions-{$screen}", $redirect_to, $doaction, $comment_ids); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
         }
 
@@ -173,9 +162,6 @@
     wp_enqueue_script('admin-comments');
     enqueue_comment_hotkeys_js();
 
-    /**
-     * @global int $post_id
-     */
     global $post_id;
 
     if($post_id)

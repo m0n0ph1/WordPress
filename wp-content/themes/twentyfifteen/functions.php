@@ -1,58 +1,17 @@
 <?php
-    /**
-     * Twenty Fifteen functions and definitions
-     *
-     * Set up the theme and provides some helper functions, which are used in the
-     * theme as custom template tags. Others are attached to action and filter
-     * hooks in WordPress to change core functionality.
-     *
-     * When using a child theme you can override certain functions (those wrapped
-     * in a function_exists() call) by defining them first in your child theme's
-     * functions.php file. The child theme's functions.php file is included before
-     * the parent theme's file, so the child theme functions would be used.
-     *
-     * @link       https://developer.wordpress.org/themes/basics/theme-functions/
-     * @link       https://developer.wordpress.org/themes/advanced-topics/child-themes/
-     *
-     * Functions that are not pluggable (not wrapped in function_exists()) are
-     * instead attached to a filter or action hook.
-     *
-     * For more information on hooks, actions, and filters,
-     * {@link https://developer.wordpress.org/plugins/}
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Fifteen
-     * @since      Twenty Fifteen 1.0
-     */
 
-    /**
-     * Set the content width based on the theme's design and stylesheet.
-     *
-     * @since Twenty Fifteen 1.0
-     */
     if(! isset($content_width))
     {
         $content_width = 660;
     }
 
-    /**
-     * Twenty Fifteen only works in WordPress 4.1 or later.
-     */
     if(version_compare($GLOBALS['wp_version'], '4.1-alpha', '<'))
     {
         require get_template_directory().'/inc/back-compat.php';
     }
 
     if(! function_exists('twentyfifteen_setup')) :
-        /**
-         * Sets up theme defaults and registers support for various WordPress features.
-         *
-         * Note that this function is hooked into the after_setup_theme hook, which
-         * runs before the init hook. The init hook is too late for some features, such
-         * as indicating support for post thumbnails.
-         *
-         * @since Twenty Fifteen 1.0
-         */
+
         function twentyfifteen_setup()
         {
             /*
@@ -146,21 +105,10 @@
             // Setup the WordPress core custom background feature.
 
             add_theme_support(
-                'custom-background', /**
-             * Filters Twenty Fifteen custom-background support arguments.
-             *
-             * @param array $args    {
-             *                       An array of custom-background support arguments.
-             *
-             * @type string $default -color      Default color of the background.
-             * @type string $default -attachment Default attachment of the background.
-             *                       }
-             * @since Twenty Fifteen 1.0
-             *
-             */ apply_filters('twentyfifteen_custom_background_args', [
-                'default-color' => $default_color,
-                'default-attachment' => 'fixed',
-            ])
+                'custom-background', apply_filters('twentyfifteen_custom_background_args', [
+                                       'default-color' => $default_color,
+                                       'default-attachment' => 'fixed',
+                                   ])
             );
 
             /*
@@ -317,13 +265,6 @@
     endif; // twentyfifteen_setup()
     add_action('after_setup_theme', 'twentyfifteen_setup');
 
-    /**
-     * Register widget area.
-     *
-     * @since Twenty Fifteen 1.0
-     *
-     * @link  https://developer.wordpress.org/reference/functions/register_sidebar/
-     */
     function twentyfifteen_widgets_init()
     {
         register_sidebar([
@@ -340,14 +281,7 @@
     add_action('widgets_init', 'twentyfifteen_widgets_init');
 
     if(! function_exists('twentyfifteen_fonts_url')) :
-        /**
-         * Register fonts for Twenty Fifteen.
-         *
-         * @return string Fonts URL for the theme.
-         * @since Twenty Fifteen 3.4 Replaced Google URL with self-hosted fonts.
-         *
-         * @since Twenty Fifteen 1.0
-         */
+
         function twentyfifteen_fonts_url()
         {
             $fonts_url = '';
@@ -389,13 +323,6 @@
         }
     endif;
 
-    /**
-     * JavaScript Detection.
-     *
-     * Adds a `js` class to the root `<html>` element when JavaScript is detected.
-     *
-     * @since Twenty Fifteen 1.1
-     */
     function twentyfifteen_javascript_detection()
     {
         echo "<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>\n";
@@ -403,11 +330,6 @@
 
     add_action('wp_head', 'twentyfifteen_javascript_detection', 0);
 
-    /**
-     * Enqueue scripts and styles.
-     *
-     * @since Twenty Fifteen 1.0
-     */
     function twentyfifteen_scripts()
     {
         // Add custom fonts, used in the main stylesheet.
@@ -458,11 +380,6 @@
 
     add_action('wp_enqueue_scripts', 'twentyfifteen_scripts');
 
-    /**
-     * Enqueue styles for the block-based editor.
-     *
-     * @since Twenty Fifteen 2.1
-     */
     function twentyfifteen_block_editor_styles()
     {
         // Block styles.
@@ -474,17 +391,6 @@
 
     add_action('enqueue_block_editor_assets', 'twentyfifteen_block_editor_styles');
 
-    /**
-     * Add preconnect for Google Fonts.
-     *
-     * @param array  $urls          URLs to print for resource hints.
-     * @param string $relation_type The relation type the URLs are printed.
-     *
-     * @return array URLs to print for resource hints.
-     * @deprecated Twenty Fifteen 3.4 Disabled filter because, by default, fonts are self-hosted.
-     *
-     * @since      Twenty Fifteen 1.7
-     */
     function twentyfifteen_resource_hints($urls, $relation_type)
     {
         if(wp_style_is('twentyfifteen-fonts', 'queue') && 'preconnect' === $relation_type)
@@ -507,13 +413,6 @@
 
 // add_filter( 'wp_resource_hints', 'twentyfifteen_resource_hints', 10, 2 );
 
-    /**
-     * Add featured image as background image to post navigation elements.
-     *
-     * @since Twenty Fifteen 1.0
-     *
-     * @see   wp_add_inline_style()
-     */
     function twentyfifteen_post_nav_background()
     {
         if(! is_single())
@@ -555,18 +454,6 @@
 
     add_action('wp_enqueue_scripts', 'twentyfifteen_post_nav_background');
 
-    /**
-     * Display descriptions in main navigation.
-     *
-     * @param string   $item_output The menu item's starting HTML output.
-     * @param WP_Post  $item        Menu item data object.
-     * @param int      $depth       Depth of the menu. Used for padding.
-     * @param stdClass $args        An object of wp_nav_menu() arguments.
-     *
-     * @return string Menu item with possible description.
-     * @since Twenty Fifteen 1.0
-     *
-     */
     function twentyfifteen_nav_description($item_output, $item, $depth, $args)
     {
         if('primary' === $args->theme_location && $item->description)
@@ -579,15 +466,6 @@
 
     add_filter('walker_nav_menu_start_el', 'twentyfifteen_nav_description', 10, 4);
 
-    /**
-     * Add a `screen-reader-text` class to the search form's submit button.
-     *
-     * @param string $html Search form HTML.
-     *
-     * @return string Modified search form HTML.
-     * @since Twenty Fifteen 1.0
-     *
-     */
     function twentyfifteen_search_form_modify($html)
     {
         return str_replace('class="search-submit"', 'class="search-submit screen-reader-text"', $html);
@@ -595,16 +473,6 @@
 
     add_filter('get_search_form', 'twentyfifteen_search_form_modify');
 
-    /**
-     * Modifies tag cloud widget arguments to display all tags in the same font size
-     * and use list format for better accessibility.
-     *
-     * @param array $args Arguments for tag cloud widget.
-     *
-     * @return array The filtered arguments for tag cloud widget.
-     * @since Twenty Fifteen 1.9
-     *
-     */
     function twentyfifteen_widget_tag_cloud_args($args)
     {
         $args['largest'] = 22;
@@ -617,16 +485,6 @@
 
     add_filter('widget_tag_cloud_args', 'twentyfifteen_widget_tag_cloud_args');
 
-    /**
-     * Prevents `author-bio.php` partial template from interfering with rendering
-     * an author archive of a user with the `bio` username.
-     *
-     * @param string $template Template file.
-     *
-     * @return string Replacement template file.
-     * @since Twenty Fifteen 2.6
-     *
-     */
     function twentyfifteen_author_bio_template($template)
     {
         if(is_author())
@@ -644,30 +502,10 @@
 
     add_filter('author_template', 'twentyfifteen_author_bio_template');
 
-    /**
-     * Implement the Custom Header feature.
-     *
-     * @since Twenty Fifteen 1.0
-     */
     require get_template_directory().'/inc/custom-header.php';
 
-    /**
-     * Custom template tags for this theme.
-     *
-     * @since Twenty Fifteen 1.0
-     */
     require get_template_directory().'/inc/template-tags.php';
 
-    /**
-     * Customizer additions.
-     *
-     * @since Twenty Fifteen 1.0
-     */
     require get_template_directory().'/inc/customizer.php';
 
-    /**
-     * Block Patterns.
-     *
-     * @since Twenty Fifteen 3.0
-     */
     require get_template_directory().'/inc/block-patterns.php';

@@ -1,10 +1,4 @@
 <?php
-    /**
-     * Tools Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     if(isset($_GET['page']) && ! empty($_POST))
     {
@@ -48,7 +42,6 @@
         }
     }
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
 // Used in the HTML title tag.
@@ -86,11 +79,6 @@
                 endif;
             endif;
 
-            /**
-             * Fires at the end of the Tools Administration screen.
-             *
-             * @since 2.8.0
-             */
             do_action('tool_box');
 
         ?>

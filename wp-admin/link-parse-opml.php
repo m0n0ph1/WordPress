@@ -1,40 +1,12 @@
 <?php
-    /**
-     * Parse OPML XML files and store in globals.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     if(! defined('ABSPATH'))
     {
         die();
     }
 
-    /**
-     * @global string $opml
-     */
     global $opml;
 
-    /**
-     * Starts a new XML tag.
-     *
-     * Callback function for xml_set_element_handler().
-     *
-     * @param resource $parser   XML Parser resource.
-     * @param string   $tag_name XML element name.
-     * @param array    $attrs    XML element attributes.
-     *
-     * @global array   $targets
-     * @global array   $descriptions
-     * @global array   $feeds
-     *
-     * @since  0.71
-     * @access private
-     *
-     * @global array   $names
-     * @global array   $urls
-     */
     function startElement($parser, $tag_name, $attrs)
     { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
         global $names, $urls, $targets, $descriptions, $feeds;
@@ -69,18 +41,6 @@
         } // End if outline.
     }
 
-    /**
-     * Ends a new XML tag.
-     *
-     * Callback function for xml_set_element_handler().
-     *
-     * @param resource $parser   XML Parser resource.
-     * @param string   $tag_name XML tag name.
-     *
-     * @since  0.71
-     * @access private
-     *
-     */
     function endElement($parser, $tag_name)
     { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
         // Nothing to do.

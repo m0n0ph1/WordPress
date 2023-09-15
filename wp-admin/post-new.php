@@ -1,19 +1,7 @@
 <?php
-    /**
-     * New Post Administration Screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
-    /**
-     * @global string  $post_type
-     * @global object  $post_type_object
-     * @global WP_Post $post Global post object.
-     */
     global $post_type, $post_type_object, $post;
 
     if(! isset($_GET['post_type']))
@@ -81,7 +69,6 @@
     $post = get_default_post_to_edit($post_type, true);
     $post_ID = $post->ID;
 
-    /** This filter is documented in wp-admin/post.php */
     if(apply_filters('replace_editor', false, $post) !== true)
     {
         if(use_block_editor_for_post($post))

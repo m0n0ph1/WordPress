@@ -1,14 +1,7 @@
 <?php
-    /**
-     * Site Editor administration screen.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
     global $editor_styles;
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('edit_theme_options'))
@@ -112,10 +105,10 @@
 
     wp_add_inline_script(
         'wp-edit-site', sprintf(
-        'wp.domReady( function() {
+                          'wp.domReady( function() {
 			wp.editSite.initializeEditor( "site-editor", %s );
 		} );', wp_json_encode($editor_settings)
-    )
+                      )
     );
 
 // Preload server-registered block schemas.
@@ -134,7 +127,6 @@
         wp_enqueue_style('wp-block-library-theme');
     }
 
-    /** This action is documented in wp-admin/edit-form-blocks.php */
     do_action('enqueue_block_editor_assets');
 
     require_once ABSPATH.'wp-admin/admin-header.php';
@@ -145,16 +137,7 @@
         <div class="wrap hide-if-js site-editor-no-js">
             <h1 class="wp-heading-inline"><?php _e('Edit site'); ?></h1>
             <?php
-                /**
-                 * Filters the message displayed in the site editor interface when JavaScript is
-                 * not enabled in the browser.
-                 *
-                 * @param string  $message The message being displayed.
-                 * @param WP_Post $post    The post being edited.
-                 *
-                 * @since 6.3.0
-                 *
-                 */
+
                 $message = apply_filters('site_editor_no_javascript_message', __('The site editor requires JavaScript. Please enable JavaScript in your browser settings.'), $post);
                 wp_admin_notice($message, [
                     'type' => 'error',

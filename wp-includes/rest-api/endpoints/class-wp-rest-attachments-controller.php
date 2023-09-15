@@ -1,36 +1,9 @@
 <?php
-    /**
-     * REST API: WP_REST_Attachments_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      4.7.0
-     */
 
-    /**
-     * Core controller used to access attachments via the REST API.
-     *
-     * @since 4.7.0
-     *
-     * @see   WP_REST_Posts_Controller
-     */
     class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
     {
-        /**
-         * Whether the controller supports batching.
-         *
-         * @since 5.9.0
-         * @var false
-         */
         protected $allow_batch = false;
 
-        /**
-         * Registers the routes for attachments.
-         *
-         * @since 5.3.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             parent::register_routes();
@@ -58,13 +31,6 @@
             ]);
         }
 
-        /**
-         * Gets the request args for the edit item route.
-         *
-         * @return array
-         * @since 5.5.0
-         *
-         */
         protected function get_edit_media_item_args()
         {
             return [
@@ -185,15 +151,6 @@
             ];
         }
 
-        /**
-         * Checks if a given request has access to create an attachment.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error Boolean true if the attachment may be created, or a WP_Error if not.
-         * @since 4.7.0
-         *
-         */
         public function create_item_permissions_check($request)
         {
             $ret = parent::create_item_permissions_check($request);
@@ -217,15 +174,6 @@
             return true;
         }
 
-        /**
-         * Creates a single attachment.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function create_item($request)
         {
             if(
@@ -276,16 +224,6 @@
 
             $request->set_param('context', 'edit');
 
-            /**
-             * Fires after a single attachment is completely created or updated via the REST API.
-             *
-             * @param WP_Post         $attachment Inserted or updated attachment object.
-             * @param WP_REST_Request $request    Request object.
-             * @param bool            $creating   True when creating an attachment, false when updating.
-             *
-             * @since 5.0.0
-             *
-             */
             do_action('rest_after_insert_attachment', $attachment, $request, true);
 
             wp_after_insert_post($attachment, false, null);
@@ -317,15 +255,6 @@
             return $response;
         }
 
-        /**
-         * Inserts the attachment post in the database. Does not update the attachment meta.
-         *
-         * @param WP_REST_Request $request
-         *
-         * @return array|WP_Error
-         * @since 5.3.0
-         *
-         */
         protected function insert_attachment($request)
         {
             // Get the file via $_FILES or raw data.
@@ -402,17 +331,6 @@
 
             $attachment = get_post($id);
 
-            /**
-             * Fires after a single attachment is created or updated via the REST API.
-             *
-             * @param WP_Post         $attachment Inserted or updated attachment
-             *                                    object.
-             * @param WP_REST_Request $request    The request sent to the API.
-             * @param bool            $creating   True when creating an attachment, false when updating.
-             *
-             * @since 4.7.0
-             *
-             */
             do_action('rest_insert_attachment', $attachment, $request, true);
 
             return [
@@ -421,16 +339,6 @@
             ];
         }
 
-        /**
-         * Handles an upload via multipart/form-data ($_FILES).
-         *
-         * @param array $files   Data from the `$_FILES` superglobal.
-         * @param array $headers HTTP headers from the request.
-         *
-         * @return array|WP_Error Data from wp_handle_upload().
-         * @since 4.7.0
-         *
-         */
         protected function upload_from_file($files, $headers)
         {
             if(empty($files))
@@ -481,17 +389,6 @@
             return $file;
         }
 
-        /**
-         * Determine if uploaded file exceeds space quota on multisite.
-         *
-         * Replicates check_upload_size().
-         *
-         * @param array $file $_FILES array for a given file.
-         *
-         * @return true|WP_Error True if can upload, error for errors.
-         * @since 4.9.8
-         *
-         */
         protected function check_upload_size($file)
         {
             if(! is_multisite())
@@ -529,16 +426,6 @@
             return true;
         }
 
-        /**
-         * Handles an upload via raw POST data.
-         *
-         * @param string $data    Supplied file data.
-         * @param array  $headers HTTP headers from the request.
-         *
-         * @return array|WP_Error Data from wp_handle_sideload().
-         * @since 4.7.0
-         *
-         */
         protected function upload_from_data($data, $headers)
         {
             if(empty($data))
@@ -624,36 +511,6 @@
             return $sideloaded;
         }
 
-        /**
-         * Parses filename from a Content-Disposition header value.
-         *
-         * As per RFC6266:
-         *
-         *     content-disposition = "Content-Disposition" ":"
-         *                            disposition-type *( ";" disposition-parm )
-         *
-         *     disposition-type    = "inline" | "attachment" | disp-ext-type
-         *                         ; case-insensitive
-         *     disp-ext-type       = token
-         *
-         *     disposition-parm    = filename-parm | disp-ext-parm
-         *
-         *     filename-parm       = "filename" "=" value
-         *                         | "filename*" "=" ext-value
-         *
-         *     disp-ext-parm       = token "=" value
-         *                         | ext-token "=" ext-value
-         *     ext-token           = <the characters in token, followed by "*">
-         *
-         * @param string[] $disposition_header List of Content-Disposition header values.
-         *
-         * @return string|null Filename if available, or null if not found.
-         * @link  https://tools.ietf.org/html/rfc6266
-         *
-         * @since 4.7.0
-         *
-         * @link  https://tools.ietf.org/html/rfc2388
-         */
         public static function get_filename_from_disposition($disposition_header)
         {
             // Get the filename.
@@ -702,15 +559,6 @@
             return $filename;
         }
 
-        /**
-         * Prepares a single attachment for create or update.
-         *
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return stdClass|WP_Error Post object.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_item_for_database($request)
         {
             $prepared_attachment = parent::prepare_item_for_database($request);
@@ -749,13 +597,6 @@
             return $prepared_attachment;
         }
 
-        /**
-         * Retrieves the attachment's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema as an array.
-         * @since 4.7.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -871,17 +712,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Prepares a single attachment output for response.
-         *
-         * @param WP_Post         $item    Attachment object.
-         * @param WP_REST_Request $request Request object.
-         *
-         * @return WP_REST_Response Response object.
-         * @since 5.9.0 Renamed `$post` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 4.7.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -895,17 +725,15 @@
             {
                 $data['description'] = [
                     'raw' => $post->post_content,
-                    /** This filter is documented in wp-includes/post-template.php */
+
                     'rendered' => apply_filters('the_content', $post->post_content),
                 ];
             }
 
             if(in_array('caption', $fields, true))
             {
-                /** This filter is documented in wp-includes/post-template.php */
                 $caption = apply_filters('get_the_excerpt', $post->post_excerpt, $post);
 
-                /** This filter is documented in wp-includes/post-template.php */
                 $caption = apply_filters('the_excerpt', $caption);
 
                 $data['caption'] = [
@@ -1010,30 +838,9 @@
                 }
             }
 
-            /**
-             * Filters an attachment returned from the REST API.
-             *
-             * Allows modification of the attachment right before it is returned.
-             *
-             * @param WP_REST_Response $response The response object.
-             * @param WP_Post          $post     The original attachment post.
-             * @param WP_REST_Request  $request  Request used to generate the response.
-             *
-             * @since 4.7.0
-             *
-             */
             return apply_filters('rest_prepare_attachment', $response, $post, $request);
         }
 
-        /**
-         * Updates a single attachment.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, WP_Error object on failure.
-         * @since 4.7.0
-         *
-         */
         public function update_item($request)
         {
             if(
@@ -1073,7 +880,6 @@
 
             $request->set_param('context', 'edit');
 
-            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-attachments-controller.php */
             do_action('rest_after_insert_attachment', $attachment, $request, false);
 
             wp_after_insert_post($attachment, true, $attachment_before);
@@ -1084,15 +890,6 @@
             return $response;
         }
 
-        /**
-         * Performs post processing on an attachment.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, WP_Error object on failure.
-         * @since 5.3.0
-         *
-         */
         public function post_process_item($request)
         {
             switch($request['action'])
@@ -1108,29 +905,11 @@
             return $this->prepare_item_for_response(get_post($request['id']), $request);
         }
 
-        /**
-         * Checks if a given request can perform post processing on an attachment.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has access to update the item, WP_Error object otherwise.
-         * @since 5.3.0
-         *
-         */
         public function post_process_item_permissions_check($request)
         {
             return $this->update_item_permissions_check($request);
         }
 
-        /**
-         * Checks if a given request has access to editing media.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.5.0
-         *
-         */
         public function edit_media_item_permissions_check($request)
         {
             if(! current_user_can('upload_files'))
@@ -1141,15 +920,6 @@
             return $this->update_item_permissions_check($request);
         }
 
-        /**
-         * Applies edits to a media item and creates a new attachment record.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, WP_Error object on failure.
-         * @since 5.5.0
-         *
-         */
         public function edit_media_item($request)
         {
             require_once ABSPATH.'wp-admin/includes/image.php';
@@ -1387,16 +1157,6 @@
                 'file' => _wp_relative_upload_path($image_file),
             ];
 
-            /**
-             * Filters the meta data for the new image created by editing an existing image.
-             *
-             * @param array $new_image_meta    Meta data for the new image.
-             * @param int   $new_attachment_id Attachment post ID for the new image.
-             * @param int   $attachment_id     Attachment post ID for the edited (parent) image.
-             *
-             * @since 5.5.0
-             *
-             */
             $new_image_meta = apply_filters('wp_edited_image_metadata', $new_image_meta, $new_attachment_id, $attachment_id);
 
             wp_update_attachment_metadata($new_attachment_id, $new_image_meta);
@@ -1408,13 +1168,6 @@
             return $response;
         }
 
-        /**
-         * Retrieves the query params for collections of attachments.
-         *
-         * @return array Query parameters for the attachment collection as an array.
-         * @since 4.7.0
-         *
-         */
         public function get_collection_params()
         {
             $params = parent::get_collection_params();
@@ -1438,15 +1191,6 @@
             return $params;
         }
 
-        /**
-         * Retrieves the supported media types.
-         *
-         * Media types are considered the MIME type category.
-         *
-         * @return array Array of supported media types.
-         * @since 4.7.0
-         *
-         */
         protected function get_media_types()
         {
             $media_types = [];
@@ -1466,17 +1210,6 @@
             return $media_types;
         }
 
-        /**
-         * Determines the allowed query_vars for a get_items() response and
-         * prepares for WP_Query.
-         *
-         * @param array           $prepared_args Optional. Array of prepared arguments. Default empty array.
-         * @param WP_REST_Request $request       Optional. Request to prepare items for.
-         *
-         * @return array Array of query arguments.
-         * @since 4.7.0
-         *
-         */
         protected function prepare_items_query($prepared_args = [], $request = null)
         {
             $query_args = parent::prepare_items_query($prepared_args, $request);

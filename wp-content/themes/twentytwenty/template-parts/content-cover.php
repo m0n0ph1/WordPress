@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Displays the content when the cover template is used.
-     *
-     * @package    WordPress
-     * @subpackage Twenty_Twenty
-     * @since      Twenty Twenty 1.0
-     */
 
 ?>
 
@@ -59,15 +52,6 @@
 
                         <?php
 
-                            /**
-                             * Allow child themes and plugins to filter the display of the categories in the article
-                             * header.
-                             *
-                             * @param bool Whether to show the categories in article header. Default true.
-                             *
-                             * @since Twenty Twenty 1.0
-                             *
-                             */
                             $show_categories = apply_filters('twentytwenty_show_categories_in_entry_header', true);
 
                             if(true === $show_categories && has_category())

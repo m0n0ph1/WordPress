@@ -1,7 +1,5 @@
 <?php
-    /**
-     * About page links (dark)
-     */
+
     return [
         'title' => __('About page links (dark)', 'twentytwentytwo'),
         'categories' => ['pages', 'buttons'],

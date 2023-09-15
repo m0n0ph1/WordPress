@@ -1,27 +1,12 @@
 <?php
 
-    /**
-     * WP_HTTP_IXR_Client
-     *
-     * @package WordPress
-     * @since   3.1.0
-     */
     #[AllowDynamicProperties]
     class WP_HTTP_IXR_Client extends IXR_Client
     {
         public $scheme;
 
-        /**
-         * @var IXR_Error
-         */
         public $error;
 
-        /**
-         * @param string       $server
-         * @param string|false $path
-         * @param int|false    $port
-         * @param int          $timeout
-         */
         public function __construct($server, $path = false, $port = false, $timeout = 15)
         {
             if(! $path)
@@ -55,13 +40,6 @@
             $this->timeout = $timeout;
         }
 
-        /**
-         * @return bool
-         * @since 5.5.0 Formalized the existing `...$args` parameter by adding it
-         *              to the function signature.
-         *
-         * @since 3.1.0
-         */
         public function query(...$args)
         {
             $method = array_shift($args);
@@ -82,14 +60,6 @@
                 $args['headers'][$header] = $value;
             }
 
-            /**
-             * Filters the headers collection to be sent to the XML-RPC server.
-             *
-             * @param string[] $headers Associative array of headers to be sent.
-             *
-             * @since 4.4.0
-             *
-             */
             $args['headers'] = apply_filters('wp_http_ixr_client_headers', $args['headers']);
 
             if(false !== $this->timeout)

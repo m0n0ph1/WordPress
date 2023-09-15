@@ -1,16 +1,5 @@
 <?php
-    /**
-     * Block template loader functions.
-     *
-     * @package WordPress
-     */
 
-    /**
-     * Adds necessary hooks to resolve '_wp-find-template' requests.
-     *
-     * @access private
-     * @since  5.9.0
-     */
     function _add_template_loader_filters()
     {
         if(isset($_GET['_wp-find-template']) && current_theme_supports('block-templates'))
@@ -19,25 +8,6 @@
         }
     }
 
-    /**
-     * Finds a block template with equal or higher specificity than a given PHP template file.
-     *
-     * Internally, this communicates the block content that needs to be used by the template canvas through a global
-     * variable.
-     *
-     * @param string   $template  Path to the template. See locate_template().
-     * @param string   $type      Sanitized filename without extension.
-     * @param string[] $templates A list of template candidates, in descending order of priority.
-     *
-     * @return string The path to the Site Editor template canvas file, or the fallback PHP template.
-     * @since 5.8.0
-     * @since 6.3.0 Added `$_wp_current_template_id` global for editing of current template directly from the admin
-     *     bar.
-     *
-     * @global string  $_wp_current_template_content
-     * @global string  $_wp_current_template_id
-     *
-     */
     function locate_block_template($template, $type, array $templates)
     {
         global $_wp_current_template_content, $_wp_current_template_id;
@@ -121,20 +91,6 @@
         return ABSPATH.WPINC.'/template-canvas.php';
     }
 
-    /**
-     * Returns the correct 'wp_template' to render for the request template type.
-     *
-     * @access private
-     *
-     * @param string   $template_type      The current template type.
-     * @param string[] $template_hierarchy The current template hierarchy, ordered by priority.
-     * @param string   $fallback_template  A PHP fallback template to use if no matching block template is found.
-     *
-     * @return WP_Block_Template|null template A template object, or null if none could be found.
-     * @since  5.8.0
-     * @since  5.9.0 Added the `$fallback_template` parameter.
-     *
-     */
     function resolve_block_template($template_type, $template_hierarchy, $fallback_template)
     {
         if(! $template_type)
@@ -198,31 +154,11 @@
         return count($templates) ? $templates[0] : null;
     }
 
-    /**
-     * Displays title tag with content, regardless of whether theme has title-tag support.
-     *
-     * @access private
-     * @since  5.8.0
-     *
-     * @see    _wp_render_title_tag()
-     */
     function _block_template_render_title_tag()
     {
         echo '<title>'.wp_get_document_title().'</title>'."\n";
     }
 
-    /**
-     * Returns the markup for the current template.
-     *
-     * @access private
-     * @return string Block template markup.
-     * @global string   $_wp_current_template_content
-     * @global WP_Embed $wp_embed
-     * @global WP_Query $wp_query
-     *
-     * @since  5.8.0
-     *
-     */
     function get_the_block_template_html()
     {
         global $_wp_current_template_content, $wp_embed, $wp_query;
@@ -279,46 +215,16 @@
         return '<div class="wp-site-blocks">'.$content.'</div>';
     }
 
-    /**
-     * Renders a 'viewport' meta tag.
-     *
-     * This is hooked into {@see 'wp_head'} to decouple its output from the default template canvas.
-     *
-     * @access private
-     * @since  5.8.0
-     */
     function _block_template_viewport_meta_tag()
     {
         echo '<meta name="viewport" content="width=device-width, initial-scale=1" />'."\n";
     }
 
-    /**
-     * Strips .php or .html suffix from template file names.
-     *
-     * @access private
-     *
-     * @param string $template_file Template file name.
-     *
-     * @return string Template file name without extension.
-     * @since  5.8.0
-     *
-     */
     function _strip_template_file_suffix($template_file)
     {
         return preg_replace('/\.(php|html)$/', '', $template_file);
     }
 
-    /**
-     * Removes post details from block context when rendering a block template.
-     *
-     * @access private
-     *
-     * @param array $context Default context.
-     *
-     * @return array Filtered context.
-     * @since  5.8.0
-     *
-     */
     function _block_template_render_without_post_block_context($context)
     {
         /*
@@ -336,19 +242,6 @@
         return $context;
     }
 
-    /**
-     * Sets the current WP_Query to return auto-draft posts.
-     *
-     * The auto-draft status indicates a new post, so allow the the WP_Query instance to
-     * return an auto-draft post for template resolution when editing a new post.
-     *
-     * @access private
-     *
-     * @param WP_Query $wp_query Current WP_Query instance, passed by reference.
-     *
-     * @since  5.9.0
-     *
-     */
     function _resolve_template_for_new_post($wp_query)
     {
         if(! $wp_query->is_main_query())

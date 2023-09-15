@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Text-based grid of posts block pattern
-     */
+
     return [
         'title' => __('Text-based grid of posts', 'twentytwentytwo'),
         'categories' => ['query'],

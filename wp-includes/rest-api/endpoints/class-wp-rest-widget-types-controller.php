@@ -1,39 +1,13 @@
 <?php
-    /**
-     * REST API: WP_REST_Widget_Types_Controller class
-     *
-     * @package    WordPress
-     * @subpackage REST_API
-     * @since      5.8.0
-     */
 
-    /**
-     * Core class to access widget types via the REST API.
-     *
-     * @since 5.8.0
-     *
-     * @see   WP_REST_Controller
-     */
     class WP_REST_Widget_Types_Controller extends WP_REST_Controller
     {
-        /**
-         * Constructor.
-         *
-         * @since 5.8.0
-         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'widget-types';
         }
 
-        /**
-         * Registers the widget type routes.
-         *
-         * @since 5.8.0
-         *
-         * @see   register_rest_route()
-         */
         public function register_routes()
         {
             register_rest_route($this->namespace, '/'.$this->rest_base, [
@@ -112,13 +86,6 @@
             ]);
         }
 
-        /**
-         * Retrieves the query params for collections.
-         *
-         * @return array Collection parameters.
-         * @since 5.8.0
-         *
-         */
         public function get_collection_params()
         {
             return [
@@ -126,27 +93,11 @@
             ];
         }
 
-        /**
-         * Checks whether a given request has permission to read widget types.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-         * @since 5.8.0
-         *
-         */
         public function get_items_permissions_check($request)
         {
             return $this->check_read_permission();
         }
 
-        /**
-         * Checks whether the user can read widget types.
-         *
-         * @return true|WP_Error True if the widget type is visible, WP_Error otherwise.
-         * @since 5.8.0
-         *
-         */
         protected function check_read_permission()
         {
             if(! current_user_can('edit_theme_options'))
@@ -159,15 +110,6 @@
             return true;
         }
 
-        /**
-         * Retrieves the list of all widget types.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.8.0
-         *
-         */
         public function get_items($request)
         {
             $data = [];
@@ -180,16 +122,6 @@
             return rest_ensure_response($data);
         }
 
-        /**
-         * Normalize array of widgets.
-         *
-         * @return array Array of widgets.
-         * @global WP_Widget_Factory $wp_widget_factory
-         * @global array             $wp_registered_widgets The list of registered widgets.
-         *
-         * @since 5.8.0
-         *
-         */
         protected function get_widgets()
         {
             global $wp_widget_factory, $wp_registered_widgets;
@@ -238,17 +170,6 @@
             return $widgets;
         }
 
-        /**
-         * Prepares a widget type object for serialization.
-         *
-         * @param array           $item    Widget type data.
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response Widget type data.
-         * @since 5.9.0 Renamed `$widget_type` to `$item` to match parent class for PHP 8 named parameter support.
-         *
-         * @since 5.8.0
-         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
@@ -304,26 +225,9 @@
                 $response->add_links($this->prepare_links($widget_type));
             }
 
-            /**
-             * Filters the REST API response for a widget type.
-             *
-             * @param WP_REST_Response $response    The response object.
-             * @param array            $widget_type The array of widget data.
-             * @param WP_REST_Request  $request     The request object.
-             *
-             * @since 5.8.0
-             *
-             */
             return apply_filters('rest_prepare_widget_type', $response, $widget_type, $request);
         }
 
-        /**
-         * Retrieves the widget type's schema, conforming to JSON Schema.
-         *
-         * @return array Item schema data.
-         * @since 5.8.0
-         *
-         */
         public function get_item_schema()
         {
             if($this->schema)
@@ -376,15 +280,6 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
-        /**
-         * Prepares links for the widget type.
-         *
-         * @param array $widget_type Widget type data.
-         *
-         * @return array Links for the given widget type.
-         * @since 5.8.0
-         *
-         */
         protected function prepare_links($widget_type)
         {
             return [
@@ -397,15 +292,6 @@
             ];
         }
 
-        /**
-         * Checks if a given request has access to read a widget type.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
-         * @since 5.8.0
-         *
-         */
         public function get_item_permissions_check($request)
         {
             $check = $this->check_read_permission();
@@ -423,15 +309,6 @@
             return true;
         }
 
-        /**
-         * Gets the details about the requested widget.
-         *
-         * @param string $id The widget type id.
-         *
-         * @return array|WP_Error The array of widget data if the name is valid, WP_Error otherwise.
-         * @since 5.8.0
-         *
-         */
         public function get_widget($id)
         {
             foreach($this->get_widgets() as $widget)
@@ -445,15 +322,6 @@
             return new WP_Error('rest_widget_type_invalid', __('Invalid widget type.'), ['status' => 404]);
         }
 
-        /**
-         * Retrieves a single widget type from the collection.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.8.0
-         *
-         */
         public function get_item($request)
         {
             $widget_id = $request['id'];
@@ -467,30 +335,6 @@
             return rest_ensure_response($data);
         }
 
-        /**
-         * An RPC-style endpoint which can be used by clients to turn user input in
-         * a widget admin form into an encoded instance object.
-         *
-         * Accepts:
-         *
-         * - id:        A widget type ID.
-         * - instance:  A widget's encoded instance object. Optional.
-         * - form_data: Form data from submitting a widget's admin form. Optional.
-         *
-         * Returns:
-         * - instance: The encoded instance object after updating the widget with
-         *             the given form data.
-         * - form:     The widget's admin form after updating the widget with the
-         *             given form data.
-         *
-         * @param WP_REST_Request    $request Full details about the request.
-         *
-         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-         * @since 5.8.0
-         *
-         * @global WP_Widget_Factory $wp_widget_factory
-         *
-         */
         public function encode_form_data($request)
         {
             global $wp_widget_factory;
@@ -537,7 +381,6 @@
 
                 $instance = $widget_object->update($new_instance, $old_instance);
 
-                /** This filter is documented in wp-includes/class-wp-widget.php */
                 $instance = apply_filters('widget_update_callback', $instance, $new_instance, $old_instance, $widget_object);
             }
 
@@ -562,46 +405,22 @@
             return rest_ensure_response($response);
         }
 
-        /**
-         * Returns the output of WP_Widget::form() when called with the provided
-         * instance. Used by encode_form_data() to preview a widget's form.
-         *
-         * @param WP_Widget $widget_object Widget object to call widget() on.
-         * @param array     $instance      Widget instance settings.
-         *
-         * @return string
-         * @since 5.8.0
-         *
-         */
         private function get_widget_form($widget_object, $instance)
         {
             ob_start();
 
-            /** This filter is documented in wp-includes/class-wp-widget.php */
             $instance = apply_filters('widget_form_callback', $instance, $widget_object);
 
             if(false !== $instance)
             {
                 $return = $widget_object->form($instance);
 
-                /** This filter is documented in wp-includes/class-wp-widget.php */
                 do_action_ref_array('in_widget_form', [&$widget_object, &$return, $instance]);
             }
 
             return ob_get_clean();
         }
 
-        /**
-         * Returns the output of WP_Widget::widget() when called with the provided
-         * instance. Used by encode_form_data() to preview a widget.
-         *
-         * @param string $widget   The widget's PHP class name (see class-wp-widget.php).
-         * @param array  $instance Widget instance settings.
-         *
-         * @return string
-         * @since 5.8.0
-         *
-         */
         private function get_widget_preview($widget, $instance)
         {
             ob_start();
@@ -610,15 +429,6 @@
             return ob_get_clean();
         }
 
-        /**
-         * Renders a single Legacy Widget and wraps it in a JSON-encodable array.
-         *
-         * @param WP_REST_Request $request Full details about the request.
-         *
-         * @return array An array with rendered Legacy Widget HTML.
-         * @since 5.9.0
-         *
-         */
         public function render($request)
         {
             return [
@@ -626,16 +436,6 @@
             ];
         }
 
-        /**
-         * Renders a page containing a preview of the requested Legacy Widget block.
-         *
-         * @param string $id_base  The id base of the requested widget.
-         * @param array  $instance The widget instance attributes.
-         *
-         * @return string Rendered Legacy Widget block preview.
-         * @since 5.9.0
-         *
-         */
         private function render_legacy_widget_preview_iframe($id_base, $instance)
         {
             if(! defined('IFRAME_REQUEST'))

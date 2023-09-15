@@ -1,15 +1,9 @@
 <?php
-    /**
-     * RSS2 Feed Template for displaying RSS2 Comments feed.
-     *
-     * @package WordPress
-     */
 
     header('Content-Type: '.feed_content_type('rss2').'; charset='.get_option('blog_charset'), true);
 
     echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
 
-    /** This action is documented in wp-includes/feed-rss2.php */
     do_action('rss_tag_pre', 'rss2-comments');
 ?>
 <rss version="2.0"
@@ -18,16 +12,12 @@
      xmlns:atom="http://www.w3.org/2005/Atom"
      xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
     <?php
-        /** This action is documented in wp-includes/feed-rss2.php */
+
         do_action('rss2_ns');
     ?>
 
     <?php
-        /**
-         * Fires at the end of the RSS root to add namespaces.
-         *
-         * @since 2.8.0
-         */
+
         do_action('rss2_comments_ns');
     ?>
 >
@@ -57,22 +47,18 @@
         <lastBuildDate><?php echo get_feed_build_date('r'); ?></lastBuildDate>
         <sy:updatePeriod>
             <?php
-                /** This filter is documented in wp-includes/feed-rss2.php */
+
                 echo apply_filters('rss_update_period', 'hourly');
             ?>
         </sy:updatePeriod>
         <sy:updateFrequency>
             <?php
-                /** This filter is documented in wp-includes/feed-rss2.php */
+
                 echo apply_filters('rss_update_frequency', '1');
             ?>
         </sy:updateFrequency>
         <?php
-            /**
-             * Fires at the end of the RSS2 comment feed header.
-             *
-             * @since 2.3.0
-             */
+
             do_action('commentsrss2_head');
 
             while(have_comments()) :
@@ -86,7 +72,7 @@
                             if(! is_singular())
                             {
                                 $title = get_the_title($comment_post->ID);
-                                /** This filter is documented in wp-includes/feed.php */
+
                                 $title = apply_filters('the_title_rss', $title);
                                 /* translators: Individual comment title. 1: Post title, 2: Comment author name. */
                                 printf(ent2ncr(__('Comment on %1$s by %2$s')), $title, get_comment_author_rss());
@@ -114,15 +100,7 @@
                     ?>
 
                     <?php
-                        /**
-                         * Fires at the end of each RSS2 comment feed item.
-                         *
-                         * @param int $comment_id      The ID of the comment being displayed.
-                         * @param int $comment_post_id The ID of the post the comment is connected to.
-                         *
-                         * @since 2.1.0
-                         *
-                         */
+
                         do_action('commentrss2_item', $comment->comment_ID, $comment_post->ID);
                     ?>
                 </item>

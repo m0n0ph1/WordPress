@@ -1,11 +1,5 @@
 <?php
-    /**
-     * Discussion settings administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
-    /** WordPress Administration Bootstrap */
+
     require_once __DIR__.'/admin.php';
 
     if(! current_user_can('manage_options'))
@@ -130,14 +124,7 @@
                                    id="thread_comments"
                                    value="1" <?php checked('1', get_option('thread_comments')); ?> />
                             <?php
-                                /**
-                                 * Filters the maximum depth of threaded/nested comments.
-                                 *
-                                 * @param int $max_depth The maximum depth of threaded comments. Default 10.
-                                 *
-                                 * @since 2.7.0
-                                 *
-                                 */
+
                                 $maxdeep = (int) apply_filters('thread_comments_depth_max', 10);
 
                                 $thread_comments_depth = '</label> <label for="thread_comments_depth"><select name="thread_comments_depth" id="thread_comments_depth">';
@@ -392,17 +379,7 @@
                                 'retro' => __('Retro (Generated)'),
                                 'robohash' => __('RoboHash (Generated)'),
                             ];
-                            /**
-                             * Filters the default avatars.
-                             *
-                             * Avatars are stored in key/value pairs, where the key is option value,
-                             * and the name is the displayed avatar name.
-                             *
-                             * @param string[] $avatar_defaults Associative array of default avatars.
-                             *
-                             * @since 2.6.0
-                             *
-                             */
+
                             $avatar_defaults = apply_filters('avatar_defaults', $avatar_defaults);
                             $default = get_option('avatar_default', 'mystery');
                             $avatar_list = '';
@@ -421,14 +398,6 @@
 
                             remove_filter('pre_option_show_avatars', '__return_true', 100);
 
-                            /**
-                             * Filters the HTML output of the default avatar list.
-                             *
-                             * @param string $avatar_list HTML markup of the avatar list.
-                             *
-                             * @since 2.6.0
-                             *
-                             */
                             echo apply_filters('default_avatar_select', $avatar_list);
                         ?>
 

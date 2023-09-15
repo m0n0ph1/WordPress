@@ -1,7 +1,5 @@
 <?php
-    /**
-     * Small header with dark background block pattern
-     */
+
     return [
         'title' => __('Small header with dark background', 'twentytwentytwo'),
         'categories' => ['header'],

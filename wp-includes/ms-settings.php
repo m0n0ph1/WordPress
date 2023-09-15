@@ -1,46 +1,13 @@
 <?php
-    /**
-     * Used to set up and fix common variables and include
-     * the Multisite procedural and class library.
-     *
-     * Allows for some configuration in wp-config.php (see ms-default-constants.php)
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.0.0
-     */
 
-    /**
-     * Objects representing the current network and current site.
-     *
-     * These may be populated through a custom `sunrise.php`. If not, then this
-     * file will attempt to populate them based on the current request.
-     *
-     * @global WP_Network $current_site The current network.
-     * @global object     $current_blog The current site.
-     * @global string     $domain       Deprecated. The domain of the site found on load.
-     *                                  Use `get_site()->domain` instead.
-     * @global string     $path         Deprecated. The path of the site found on load.
-     *                                  Use `get_site()->path` instead.
-     * @global int        $site_id      Deprecated. The ID of the network found on load.
-     *                                  Use `get_current_network_id()` instead.
-     * @global bool       $public       Deprecated. Whether the site found on load is public.
-     *                                  Use `get_site()->public` instead.
-     *
-     * @since 3.0.0
-     */
     global $current_site, $current_blog, $domain, $path, $site_id, $public;
 
-    /** WP_Network class */
     require_once ABSPATH.WPINC.'/class-wp-network.php';
 
-    /** WP_Site class */
     require_once ABSPATH.WPINC.'/class-wp-site.php';
 
-    /** Multisite loader */
     require_once ABSPATH.WPINC.'/ms-load.php';
 
-    /** Default Multisite constants */
     require_once ABSPATH.WPINC.'/ms-default-constants.php';
 
     if(defined('SUNRISE'))
@@ -48,7 +15,6 @@
         include_once WP_CONTENT_DIR.'/sunrise.php';
     }
 
-    /** Check for and define SUBDOMAIN_INSTALL and the deprecated VHOST constant. */
     ms_subdomain_constants();
 
 // This block will process a request if the current network or current site objects
@@ -127,10 +93,4 @@
 // Define upload directory constants.
     ms_upload_constants();
 
-    /**
-     * Fires after the current site and network have been detected and loaded
-     * in multisite's bootstrap.
-     *
-     * @since 4.6.0
-     */
     do_action('ms_loaded');

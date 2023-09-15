@@ -1,11 +1,4 @@
 <?php
-    /**
-     * Build Network Administration Menu.
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.1.0
-     */
 
     /* translators: Network menu item. */
     $menu[2] = [

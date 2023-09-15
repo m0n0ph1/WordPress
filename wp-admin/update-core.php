@@ -1,12 +1,5 @@
 <?php
-    /**
-     * Update Core administration panel.
-     *
-     * @package    WordPress
-     * @subpackage Administration
-     */
 
-    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
     wp_enqueue_style('plugin-install');
@@ -25,17 +18,6 @@
         wp_die(__('Sorry, you are not allowed to update this site.'));
     }
 
-    /**
-     * Lists available core updates.
-     *
-     * @param object  $update
-     *
-     * @global string $wp_local_package Locale code of the package.
-     * @global wpdb   $wpdb             WordPress database abstraction object.
-     *
-     * @since 2.7.0
-     *
-     */
     function list_core_update($update)
     {
         global $wp_local_package, $wpdb;
@@ -195,11 +177,6 @@
         echo '</form>';
     }
 
-    /**
-     * Display dismissed updates.
-     *
-     * @since 2.7.0
-     */
     function dismissed_updates()
     {
         $dismissed = get_core_updates([
@@ -240,11 +217,6 @@
         }
     }
 
-    /**
-     * Display upgrade WordPress for downloading latest or upgrading automatically form.
-     *
-     * @since 2.7.0
-     */
     function core_upgrade_preamble()
     {
         $updates = get_core_updates();
@@ -298,11 +270,6 @@
         dismissed_updates();
     }
 
-    /**
-     * Display WordPress auto-updates settings.
-     *
-     * @since 5.6.0
-     */
     function core_auto_updates_settings()
     {
         if(isset($_GET['core-major-auto-updates-saved']))
@@ -391,11 +358,10 @@
             $can_set_update_option = false;
         }
 
-        /** This filter is documented in wp-admin/includes/class-core-upgrader.php */
         $upgrade_dev = apply_filters('allow_dev_auto_core_updates', $upgrade_dev);
-        /** This filter is documented in wp-admin/includes/class-core-upgrader.php */
+
         $upgrade_minor = apply_filters('allow_minor_auto_core_updates', $upgrade_minor);
-        /** This filter is documented in wp-admin/includes/class-core-upgrader.php */
+
         $upgrade_major = apply_filters('allow_major_auto_core_updates', $upgrade_major);
 
         $auto_update_settings = [
@@ -453,27 +419,10 @@
         </p>
 
         <?php
-        /**
-         * Fires after the major core auto-update settings.
-         *
-         * @param array $auto_update_settings {
-         *                                    Array of core auto-update settings.
-         *
-         * @type bool   $dev                  Whether to enable automatic updates for development versions.
-         * @type bool   $minor                Whether to enable minor automatic core updates.
-         * @type bool   $major                Whether to enable major automatic core updates.
-         *                                    }
-         * @since 5.6.0
-         *
-         */
+
         do_action('after_core_auto_updates_settings', $auto_update_settings);
     }
 
-    /**
-     * Display the upgrade plugins form.
-     *
-     * @since 2.9.0
-     */
     function list_plugin_updates()
     {
         $wp_version = get_bloginfo('version');
@@ -660,11 +609,6 @@
         <?php
     }
 
-    /**
-     * Display the upgrade themes form.
-     *
-     * @since 2.9.0
-     */
     function list_theme_updates()
     {
         $themes = get_theme_updates();
@@ -838,11 +782,6 @@
         <?php
     }
 
-    /**
-     * Display the update translations form.
-     *
-     * @since 3.7.0
-     */
     function list_translation_updates()
     {
         $updates = wp_get_translation_updates();
@@ -869,16 +808,6 @@
         <?php
     }
 
-    /**
-     * Upgrades WordPress core display.
-     *
-     * @param bool                $reinstall
-     *
-     * @global WP_Filesystem_Base $wp_filesystem WordPress filesystem subclass.
-     *
-     * @since 2.7.0
-     *
-     */
     function do_core_upgrade($reinstall = false)
     {
         global $wp_filesystem;
@@ -983,11 +912,6 @@
         <?php
     }
 
-    /**
-     * Dismiss a core update.
-     *
-     * @since 2.7.0
-     */
     function do_dismiss_core_update()
     {
         $version = isset($_POST['version']) ? $_POST['version'] : false;
@@ -1002,11 +926,6 @@
         exit;
     }
 
-    /**
-     * Undismiss a core update.
-     *
-     * @since 2.7.0
-     */
     function do_undismiss_core_update()
     {
         $version = isset($_POST['version']) ? $_POST['version'] : false;
@@ -1153,11 +1072,7 @@
             list_translation_updates();
         }
 
-        /**
-         * Fires after the core, plugin, and theme update tables.
-         *
-         * @since 2.9.0
-         */
+        
         do_action( 'core_upgrade_preamble' );
         echo '</div>';
 
@@ -1341,14 +1256,6 @@
         wp_redirect( $redirect_url );
         exit;
     } else {
-        /**
-         * Fires for each custom update action on the WordPress Updates screen.
-         *
-         * The dynamic portion of the hook name, `$action`, refers to the
-         * passed update action. The hook fires in lieu of all available
-         * default update actions.
-         *
-         * @since 3.2.0
-         */
+        
         do_action( "update-core-custom_{$action}" );  // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
     }

@@ -1,7 +1,5 @@
 <?php
-    /**
-     * About page with large image and buttons
-     */
+
     return [
         'title' => __('About page with large image and buttons', 'twentytwentytwo'),
         'categories' => ['pages', 'buttons'],

@@ -5,37 +5,13 @@
         return;
     }
 
-    /**
-     * Class ParagonIE_Sodium_Core_ChaCha20
-     */
     class ParagonIE_Sodium_Core_ChaCha20 extends ParagonIE_Sodium_Core_Util
     {
-        /**
-         * @param int    $len
-         * @param string $nonce
-         * @param string $key
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function stream($len = 64, $nonce = '', $key = '')
         {
             return self::encryptBytes(new ParagonIE_Sodium_Core_ChaCha20_Ctx($key, $nonce), str_repeat("\x00", $len));
         }
 
-        /**
-         * @param ParagonIE_Sodium_Core_ChaCha20_Ctx $ctx
-         * @param string                             $message
-         *
-         * @return string
-         * @throws TypeError
-         * @throws SodiumException
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function encryptBytes(
             ParagonIE_Sodium_Core_ChaCha20_Ctx $ctx, $message = ''
         ) {
@@ -146,37 +122,37 @@
                 x14 = PLUS(x14, j14);
                 x15 = PLUS(x15, j15);
                 */
-                /** @var int $x0 */
+
                 $x0 = ($x0 & 0xffffffff) + $j0;
-                /** @var int $x1 */
+
                 $x1 = ($x1 & 0xffffffff) + $j1;
-                /** @var int $x2 */
+
                 $x2 = ($x2 & 0xffffffff) + $j2;
-                /** @var int $x3 */
+
                 $x3 = ($x3 & 0xffffffff) + $j3;
-                /** @var int $x4 */
+
                 $x4 = ($x4 & 0xffffffff) + $j4;
-                /** @var int $x5 */
+
                 $x5 = ($x5 & 0xffffffff) + $j5;
-                /** @var int $x6 */
+
                 $x6 = ($x6 & 0xffffffff) + $j6;
-                /** @var int $x7 */
+
                 $x7 = ($x7 & 0xffffffff) + $j7;
-                /** @var int $x8 */
+
                 $x8 = ($x8 & 0xffffffff) + $j8;
-                /** @var int $x9 */
+
                 $x9 = ($x9 & 0xffffffff) + $j9;
-                /** @var int $x10 */
+
                 $x10 = ($x10 & 0xffffffff) + $j10;
-                /** @var int $x11 */
+
                 $x11 = ($x11 & 0xffffffff) + $j11;
-                /** @var int $x12 */
+
                 $x12 = ($x12 & 0xffffffff) + $j12;
-                /** @var int $x13 */
+
                 $x13 = ($x13 & 0xffffffff) + $j13;
-                /** @var int $x14 */
+
                 $x14 = ($x14 & 0xffffffff) + $j14;
-                /** @var int $x15 */
+
                 $x15 = ($x15 & 0xffffffff) + $j15;
 
                 /*
@@ -270,53 +246,31 @@
             return $c;
         }
 
-        /**
-         * The ChaCha20 quarter round function. Works on four 32-bit integers.
-         *
-         * @param int $a
-         * @param int $b
-         * @param int $c
-         * @param int $d
-         *
-         * @return array<int, int>
-         * @internal You should not use this directly from another application
-         *
-         */
         protected static function quarterRound($a, $b, $c, $d)
         {
             # a = PLUS(a,b); d = ROTATE(XOR(d,a),16);
-            /** @var int $a */
+
             $a = ($a + $b) & 0xffffffff;
             $d = self::rotate($d ^ $a, 16);
 
             # c = PLUS(c,d); b = ROTATE(XOR(b,c),12);
-            /** @var int $c */
+
             $c = ($c + $d) & 0xffffffff;
             $b = self::rotate($b ^ $c, 12);
 
             # a = PLUS(a,b); d = ROTATE(XOR(d,a), 8);
-            /** @var int $a */
+
             $a = ($a + $b) & 0xffffffff;
             $d = self::rotate($d ^ $a, 8);
 
             # c = PLUS(c,d); b = ROTATE(XOR(b,c), 7);
-            /** @var int $c */
+
             $c = ($c + $d) & 0xffffffff;
             $b = self::rotate($b ^ $c, 7);
 
             return [(int) $a, (int) $b, (int) $c, (int) $d];
         }
 
-        /**
-         * Bitwise left rotation
-         *
-         * @param int $v
-         * @param int $n
-         *
-         * @return int
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function rotate($v, $n)
         {
             $v &= 0xffffffff;
@@ -325,51 +279,16 @@
             return (int) (0xffffffff & (($v << $n) | ($v >> (32 - $n))));
         }
 
-        /**
-         * @param int    $len
-         * @param string $nonce
-         * @param string $key
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ietfStream($len, $nonce = '', $key = '')
         {
             return self::encryptBytes(new ParagonIE_Sodium_Core_ChaCha20_IetfCtx($key, $nonce), str_repeat("\x00", $len));
         }
 
-        /**
-         * @param string $message
-         * @param string $nonce
-         * @param string $key
-         * @param string $ic
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function ietfStreamXorIc($message, $nonce = '', $key = '', $ic = '')
         {
             return self::encryptBytes(new ParagonIE_Sodium_Core_ChaCha20_IetfCtx($key, $nonce, $ic), $message);
         }
 
-        /**
-         * @param string $message
-         * @param string $nonce
-         * @param string $key
-         * @param string $ic
-         *
-         * @return string
-         * @throws SodiumException
-         * @throws TypeError
-         * @internal You should not use this directly from another application
-         *
-         */
         public static function streamXorIc($message, $nonce = '', $key = '', $ic = '')
         {
             return self::encryptBytes(new ParagonIE_Sodium_Core_ChaCha20_Ctx($key, $nonce, $ic), $message);

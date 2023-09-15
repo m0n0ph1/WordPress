@@ -1,16 +1,7 @@
 <?php
-    /**
-     * Add Site Administration Screen
-     *
-     * @package    WordPress
-     * @subpackage Multisite
-     * @since      3.1.0
-     */
 
-    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
 
-    /** WordPress Translation Installation API */
     require_once ABSPATH.'wp-admin/includes/translation-install.php';
 
     if(! current_user_can('create_sites'))
@@ -118,14 +109,7 @@
         $user_id = email_exists($email);
         if(! $user_id)
         { // Create a new user with a random password.
-            /**
-             * Fires immediately before a new user is created via the network site-new.php page.
-             *
-             * @param string $email Email of the non-existent user.
-             *
-             * @since 4.5.0
-             *
-             */
+
             do_action('pre_network_site_new_created_user', $email);
 
             $user_id = username_exists($domain);
@@ -140,14 +124,6 @@
                 wp_die(__('There was an error creating the user.'));
             }
 
-            /**
-             * Fires after a new user has been created via the network site-new.php page.
-             *
-             * @param int $user_id ID of the newly created user.
-             *
-             * @since 4.4.0
-             *
-             */
             do_action('network_site_new_created_user', $user_id);
         }
 
@@ -328,11 +304,7 @@
             </table>
 
             <?php
-                /**
-                 * Fires at the end of the new site form in network admin.
-                 *
-                 * @since 4.5.0
-                 */
+
                 do_action('network_site_new_form');
 
                 submit_button(__('Add Site'), 'primary', 'add-site');
