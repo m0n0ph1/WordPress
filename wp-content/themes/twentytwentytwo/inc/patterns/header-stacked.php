@@ -1,12 +1,12 @@
 <?php
-/**
- * Logo and navigation header block pattern
- */
-return array(
-	'title'      => __( 'Logo and navigation header', 'twentytwentytwo' ),
-	'categories' => array( 'header' ),
-	'blockTypes' => array( 'core/template-part/header' ),
-	'content'    => '<!-- wp:group {"align":"full","layout":{"inherit":true}} -->
+    /**
+     * Logo and navigation header block pattern
+     */
+    return [
+        'title' => __('Logo and navigation header', 'twentytwentytwo'),
+        'categories' => ['header'],
+        'blockTypes' => ['core/template-part/header'],
+        'content' => '<!-- wp:group {"align":"full","layout":{"inherit":true}} -->
 					<div class="wp-block-group alignfull"><!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"bottom":"var(--wp--custom--spacing--large, 8rem)","top":"var(--wp--custom--spacing--small, 1.25rem)"}}}} -->
 					<div class="wp-block-group alignwide" style="padding-top:var(--wp--custom--spacing--small, 1.25rem);padding-bottom:var(--wp--custom--spacing--large, 8rem)"><!-- wp:site-logo {"align":"center","width":128} /-->
 
@@ -25,4 +25,4 @@ return array(
 					<!-- /wp:navigation --></div>
 					<!-- /wp:group --></div>
 					<!-- /wp:group -->',
-);
+    ];

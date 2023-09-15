@@ -10,7 +10,7 @@
 .colors-dark input[type="button"],
 .colors-dark input[type="submit"],
 .colors-dark .entry-footer .edit-link a.post-edit-link {
-	background-color: #fff;
+    background-color: #fff;
 }
 
 .colors-dark a:hover,
@@ -69,7 +69,7 @@
 .colors-dark .widget .widget-title a:hover,
 .colors-dark .widget ul li a:focus,
 .colors-dark .widget ul li a:hover {
-	color: #fff;
+    color: #fff;
 }
 
 .colors-dark .entry-content a:focus,
@@ -126,8 +126,8 @@
 .colors-dark .widget .widget-title a:hover,
 .colors-dark .widget ul li a:focus,
 .colors-dark .widget ul li a:hover {
-	-webkit-box-shadow: inset 0 0 0 rgba(255, 255, 255, 0), 0 3px 0 rgba(255, 255, 255, 1); /* Equivalant to #fff */
-	box-shadow: inset 0 0 0 rgba(255, 255, 255, 0), 0 3px 0 rgba(255, 255, 255, 1); /* Equivalant to #fff */
+    -webkit-box-shadow: inset 0 0 0 rgba(255, 255, 255, 0), 0 3px 0 rgba(255, 255, 255, 1); /* Equivalant to #fff */
+    box-shadow: inset 0 0 0 rgba(255, 255, 255, 0), 0 3px 0 rgba(255, 255, 255, 1); /* Equivalant to #fff */
 }
 
 .colors-dark .entry-content a,
@@ -137,8 +137,8 @@
 .colors-dark .site-footer .widget-area a,
 .colors-dark .posts-navigation a,
 .colors-dark .widget_authors a strong {
-	-webkit-box-shadow: inset 0 -1px 0 rgba(240, 240, 240, 1); /* Equivalant to #f0f0f0 */
-	box-shadow: inset 0 -1px 0 rgba(240, 240, 240, 1); /* Equivalant to #f0f0f0 */
+    -webkit-box-shadow: inset 0 -1px 0 rgba(240, 240, 240, 1); /* Equivalant to #f0f0f0 */
+    box-shadow: inset 0 -1px 0 rgba(240, 240, 240, 1); /* Equivalant to #f0f0f0 */
 }
 
 body.colors-dark,
@@ -157,24 +157,24 @@ body.colors-dark,
 .colors-dark .format-quote blockquote,
 .colors-dark .nav-title,
 .colors-dark .comment-body {
-	color: #eee;
+    color: #eee;
 }
 
 /* Placeholder text color -- selectors need to be separate to work. */
 .colors-dark ::-webkit-input-placeholder {
-	color: #ddd;
+    color: #ddd;
 }
 
 .colors-dark :-moz-placeholder {
-	color: #ddd;
+    color: #ddd;
 }
 
 .colors-dark ::-moz-placeholder {
-	color: #ddd;
+    color: #ddd;
 }
 
 .colors-dark :-ms-input-placeholder {
-	color: #ddd;
+    color: #ddd;
 }
 
 .colors-dark input[type="text"]:focus,
@@ -194,7 +194,7 @@ body.colors-dark,
 .colors-dark input[type="color"]:focus,
 .colors-dark textarea:focus,
 .bypostauthor > .comment-body > .comment-meta > .comment-author .avatar {
-	border-color: #eee;
+    border-color: #eee;
 }
 
 .colors-dark input[type="text"]:focus,
@@ -238,7 +238,7 @@ body.colors-dark,
 .colors-dark.archive .entry-meta a.post-edit-link,
 .colors-dark.search .entry-meta a.post-edit-link,
 .colors-custom .twentyseventeen-panel .recent-posts .entry-header .edit-link {
-	color: #ddd;
+    color: #ddd;
 }
 
 .colors-dark h2,
@@ -266,12 +266,12 @@ body.colors-dark,
 .colors-dark .taxonomy-description,
 .colors-dark .site-info a,
 .colors-dark .wp-caption {
-	color: #ccc;
+    color: #ccc;
 }
 
 .colors-dark abbr,
 .colors-dark acronym {
-	border-bottom-color: #ccc;
+    border-bottom-color: #ccc;
 }
 
 .colors-dark h5,
@@ -286,7 +286,7 @@ body.colors-dark,
 .colors-dark .page-numbers.current,
 .colors-dark .page-links .page-number,
 .colors-dark .site-description {
-	color: #bbb;
+    color: #bbb;
 }
 
 .colors-dark :not( .mejs-button ) > button:hover,
@@ -301,18 +301,18 @@ body.colors-dark,
 .colors-dark .next.page-numbers:hover,
 .colors-dark .entry-footer .edit-link a.post-edit-link:focus,
 .colors-dark .entry-footer .edit-link a.post-edit-link:hover {
-	background: #bbb;
+    background: #bbb;
 }
 
 .colors-dark .social-navigation a:hover,
 .colors-dark .social-navigation a:focus {
-	background: #999;
-	color: #222;
+    background: #999;
+    color: #222;
 }
 
 .colors-dark .entry-footer .cat-links .icon,
 .colors-dark .entry-footer .tags-links .icon {
-	color: #666;
+    color: #666;
 }
 
 .colors-dark button.secondary:hover,
@@ -327,7 +327,7 @@ body.colors-dark,
 .colors-dark input[type="submit"].secondary:focus,
 .colors-dark .social-navigation a,
 .colors-dark hr {
-	background: #555;
+    background: #555;
 }
 
 .colors-dark input[type="text"],
@@ -354,7 +354,7 @@ body.colors-dark,
 .colors-dark .widget.widget_tag_cloud a:focus,
 .colors-dark .wp_widget_tag_cloud a:hover,
 .colors-dark .wp_widget_tag_cloud a:focus {
-	border-color: #555;
+    border-color: #555;
 }
 
 .colors-dark button.secondary,
@@ -364,22 +364,22 @@ body.colors-dark,
 .colors-dark input[type="submit"].secondary,
 .colors-dark .prev.page-numbers,
 .colors-dark .next.page-numbers {
-	background-color: #444;
+    background-color: #444;
 }
 
 .colors-dark .widget .tagcloud a,
 .colors-dark .widget.widget_tag_cloud a,
 .colors-dark .wp_widget_tag_cloud a {
-	border-color: #444;
+    border-color: #444;
 }
 
 .colors-dark.twentyseventeen-front-page article:not(.has-post-thumbnail):not(:first-child),
 .colors-dark .widget ul li {
-	border-top-color: #444;
+    border-top-color: #444;
 }
 
 .colors-dark .widget ul li {
-	border-bottom-color: #444;
+    border-bottom-color: #444;
 }
 
 .colors-dark pre,
@@ -403,12 +403,12 @@ body.colors-dark,
 .colors-dark textarea,
 .colors-dark select,
 .colors-dark fieldset {
-	background: #333;
+    background: #333;
 }
 
 .colors-dark tr,
 .colors-dark thead th {
-	border-color: #333;
+    border-color: #333;
 }
 
 .colors-dark .navigation-top,
@@ -417,7 +417,7 @@ body.colors-dark,
 .colors-dark .comment-navigation,
 .colors-dark .entry-footer,
 .colors-dark .site-footer {
-	border-top-color: #333;
+    border-top-color: #333;
 }
 
 .colors-dark .single-featured-image-header,
@@ -425,12 +425,12 @@ body.colors-dark,
 .colors-dark .main-navigation li,
 .colors-dark .entry-footer,
 .colors-dark #comments {
-	border-bottom-color: #333;
+    border-bottom-color: #333;
 }
 
 .colors-dark .site-header,
 .colors-dark .single-featured-image-header {
-	background-color: #262626;
+    background-color: #262626;
 }
 
 .colors-dark button,
@@ -440,14 +440,14 @@ body.colors-dark,
 .colors-dark .prev.page-numbers:hover,
 .colors-dark .next.page-numbers:focus,
 .colors-dark .next.page-numbers:hover {
-	color: #222;
+    color: #222;
 }
 
 body.colors-dark,
 .colors-dark .site-content-contain,
 .colors-dark .navigation-top,
 .colors-dark .main-navigation ul {
-	background: #222;
+    background: #222;
 }
 
 .colors-dark .entry-title a,
@@ -474,20 +474,20 @@ body.colors-dark,
 .colors-dark .widget ul li a,
 .colors-dark .site-footer .widget-area ul li a,
 .colors-dark .site-info a {
-	-webkit-box-shadow: inset 0 -1px 0 rgba(34, 34, 34, 1); /* Equivalant to #222 */
-	box-shadow: inset 0 -1px 0 rgba(34, 34, 34, 1); /* Equivalant to #222 */
+    -webkit-box-shadow: inset 0 -1px 0 rgba(34, 34, 34, 1); /* Equivalant to #222 */
+    box-shadow: inset 0 -1px 0 rgba(34, 34, 34, 1); /* Equivalant to #222 */
 }
 
 /* Fixes linked images */
 .colors-dark .entry-content a img,
 .colors-dark .comment-content a img,
 .colors-dark .widget a img {
-	-webkit-box-shadow: 0 0 0 8px #222;
-	box-shadow: 0 0 0 8px #222;
+    -webkit-box-shadow: 0 0 0 8px #222;
+    box-shadow: 0 0 0 8px #222;
 }
 
 .colors-dark .entry-footer .edit-link a.post-edit-link {
-	color: #000;
+    color: #000;
 }
 
 .colors-dark .menu-toggle,
@@ -499,7 +499,7 @@ body.colors-dark,
 .colors-dark .menu-scroll-down,
 .colors-dark .menu-scroll-down:hover,
 .colors-dark .menu-scroll-down:focus {
-	background-color: transparent;
+    background-color: transparent;
 }
 
 .colors-dark .gallery-item a,
@@ -516,51 +516,51 @@ body.colors-dark,
 .colors-dark .wp_widget_tag_cloud a:hover,
 .colors-dark .entry-footer .edit-link a.post-edit-link:focus,
 .colors-dark .entry-footer .edit-link a.post-edit-link:hover {
-	-webkit-box-shadow: none;
-	box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }
 
 @media screen and (min-width: 48em) {
 
-	.colors-dark .nav-links .nav-previous .nav-title .icon,
-	.colors-dark .nav-links .nav-next .nav-title .icon {
-		color: #eee;
-	}
+    .colors-dark .nav-links .nav-previous .nav-title .icon,
+    .colors-dark .nav-links .nav-next .nav-title .icon {
+        color: #eee;
+    }
 
-	.colors-dark .main-navigation li li:hover,
-	.colors-dark .main-navigation li li.focus {
-		background: #999;
-	}
+    .colors-dark .main-navigation li li:hover,
+    .colors-dark .main-navigation li li.focus {
+        background: #999;
+    }
 
-	.colors-dark .menu-scroll-down {
-		color: #999;
-	}
+    .colors-dark .menu-scroll-down {
+        color: #999;
+    }
 
-	.colors-dark .main-navigation ul ul {
-		border-color: #333;
-		background: #222;
-	}
+    .colors-dark .main-navigation ul ul {
+        border-color: #333;
+        background: #222;
+    }
 
-	.colors-dark .main-navigation ul li.menu-item-has-children:before,
-	.colors-dark .main-navigation ul li.page_item_has_children:before {
-		border-bottom-color: #333;
-	}
+    .colors-dark .main-navigation ul li.menu-item-has-children:before,
+    .colors-dark .main-navigation ul li.page_item_has_children:before {
+        border-bottom-color: #333;
+    }
 
-	.main-navigation ul li.menu-item-has-children:after,
-	.main-navigation ul li.page_item_has_children:after {
-		border-bottom-color: #222;
-	}
+    .main-navigation ul li.menu-item-has-children:after,
+    .main-navigation ul li.page_item_has_children:after {
+        border-bottom-color: #222;
+    }
 
-	.colors-dark .main-navigation li li.focus > a,
-	.colors-dark .main-navigation li li:focus > a,
-	.colors-dark .main-navigation li li:hover > a,
-	.colors-dark .main-navigation li li a:hover,
-	.colors-dark .main-navigation li li a:focus,
-	.colors-dark .main-navigation li li.current_page_item a:hover,
-	.colors-dark .main-navigation li li.current-menu-item a:hover,
-	.colors-dark .main-navigation li li.current_page_item a:focus,
-	.colors-dark .main-navigation li li.current-menu-item a:focus {
-		color: #222;
-	}
+    .colors-dark .main-navigation li li.focus > a,
+    .colors-dark .main-navigation li li:focus > a,
+    .colors-dark .main-navigation li li:hover > a,
+    .colors-dark .main-navigation li li a:hover,
+    .colors-dark .main-navigation li li a:focus,
+    .colors-dark .main-navigation li li.current_page_item a:hover,
+    .colors-dark .main-navigation li li.current-menu-item a:hover,
+    .colors-dark .main-navigation li li.current_page_item a:focus,
+    .colors-dark .main-navigation li li.current-menu-item a:focus {
+        color: #222;
+    }
 
 }

@@ -13,30 +13,30 @@
 //>>docs: http://api.jqueryui.com/transfer-effect/
 //>>demos: http://jqueryui.com/effect/
 
-( function( factory ) {
-	"use strict";
+(function (factory) {
+    'use strict';
 
-	if ( typeof define === "function" && define.amd ) {
+    if (typeof define === 'function' && define.amd) {
 
-		// AMD. Register as an anonymous module.
-		define( [
-			"jquery",
-			"./effect"
-		], factory );
-	} else {
+        // AMD. Register as an anonymous module.
+        define([
+            'jquery',
+            './effect'
+        ], factory);
+    } else {
 
-		// Browser globals
-		factory( jQuery );
-	}
-} )( function( $ ) {
-"use strict";
+        // Browser globals
+        factory(jQuery);
+    }
+})(function ($) {
+    'use strict';
 
-var effect;
-if ( $.uiBackCompat !== false ) {
-	effect = $.effects.define( "transfer", function( options, done ) {
-		$( this ).transfer( options, done );
-	} );
-}
-return effect;
+    var effect;
+    if ($.uiBackCompat !== false) {
+        effect = $.effects.define('transfer', function (options, done) {
+            $(this).transfer(options, done);
+        });
+    }
+    return effect;
 
-} );
+});

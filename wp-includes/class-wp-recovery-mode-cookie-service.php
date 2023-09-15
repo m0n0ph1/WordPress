@@ -1,247 +1,277 @@
 <?php
-/**
- * Error Protection API: WP_Recovery_Mode_Cookie_Service class
- *
- * @package WordPress
- * @since 5.2.0
- */
+    /**
+     * Error Protection API: WP_Recovery_Mode_Cookie_Service class
+     *
+     * @package WordPress
+     * @since   5.2.0
+     */
 
-/**
- * Core class used to set, validate, and clear cookies that identify a Recovery Mode session.
- *
- * @since 5.2.0
- */
-#[AllowDynamicProperties]
-final class WP_Recovery_Mode_Cookie_Service {
+    /**
+     * Core class used to set, validate, and clear cookies that identify a Recovery Mode session.
+     *
+     * @since 5.2.0
+     */
+    #[AllowDynamicProperties]
+    final class WP_Recovery_Mode_Cookie_Service
+    {
+        /**
+         * Checks whether the recovery mode cookie is set.
+         *
+         * @return bool True if the cookie is set, false otherwise.
+         * @since 5.2.0
+         *
+         */
+        public function is_cookie_set()
+        {
+            return ! empty($_COOKIE[RECOVERY_MODE_COOKIE]);
+        }
 
-	/**
-	 * Checks whether the recovery mode cookie is set.
-	 *
-	 * @since 5.2.0
-	 *
-	 * @return bool True if the cookie is set, false otherwise.
-	 */
-	public function is_cookie_set() {
-		return ! empty( $_COOKIE[ RECOVERY_MODE_COOKIE ] );
-	}
+        /**
+         * Sets the recovery mode cookie.
+         *
+         * This must be immediately followed by exiting the request.
+         *
+         * @since 5.2.0
+         */
+        public function set_cookie()
+        {
+            $value = $this->generate_cookie();
 
-	/**
-	 * Sets the recovery mode cookie.
-	 *
-	 * This must be immediately followed by exiting the request.
-	 *
-	 * @since 5.2.0
-	 */
-	public function set_cookie() {
+            /**
+             * Filters the length of time a Recovery Mode cookie is valid for.
+             *
+             * @param int $length Length in seconds.
+             *
+             * @since 5.2.0
+             *
+             */
+            $length = apply_filters('recovery_mode_cookie_length', WEEK_IN_SECONDS);
 
-		$value = $this->generate_cookie();
+            $expire = time() + $length;
 
-		/**
-		 * Filters the length of time a Recovery Mode cookie is valid for.
-		 *
-		 * @since 5.2.0
-		 *
-		 * @param int $length Length in seconds.
-		 */
-		$length = apply_filters( 'recovery_mode_cookie_length', WEEK_IN_SECONDS );
+            setcookie(RECOVERY_MODE_COOKIE, $value, $expire, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
 
-		$expire = time() + $length;
+            if(COOKIEPATH !== SITECOOKIEPATH)
+            {
+                setcookie(RECOVERY_MODE_COOKIE, $value, $expire, SITECOOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
+            }
+        }
 
-		setcookie( RECOVERY_MODE_COOKIE, $value, $expire, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+        /**
+         * Generates the recovery mode cookie value.
+         *
+         * The cookie is a base64 encoded string with the following format:
+         *
+         * recovery_mode|iat|rand|signature
+         *
+         * Where "recovery_mode" is a constant string,
+         * iat is the time the cookie was generated at,
+         * rand is a randomly generated password that is also used as a session identifier
+         * and signature is an hmac of the preceding 3 parts.
+         *
+         * @return string Generated cookie content.
+         * @since 5.2.0
+         *
+         */
+        private function generate_cookie()
+        {
+            $to_sign = sprintf('recovery_mode|%s|%s', time(), wp_generate_password(20, false));
+            $signed = $this->recovery_mode_hash($to_sign);
 
-		if ( COOKIEPATH !== SITECOOKIEPATH ) {
-			setcookie( RECOVERY_MODE_COOKIE, $value, $expire, SITECOOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
-		}
-	}
+            return base64_encode(sprintf('%s|%s', $to_sign, $signed));
+        }
 
-	/**
-	 * Clears the recovery mode cookie.
-	 *
-	 * @since 5.2.0
-	 */
-	public function clear_cookie() {
-		setcookie( RECOVERY_MODE_COOKIE, ' ', time() - YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
-		setcookie( RECOVERY_MODE_COOKIE, ' ', time() - YEAR_IN_SECONDS, SITECOOKIEPATH, COOKIE_DOMAIN );
-	}
+        /**
+         * Gets a form of `wp_hash()` specific to Recovery Mode.
+         *
+         * We cannot use `wp_hash()` because it is defined in `pluggable.php` which is not loaded until after plugins
+         * are loaded, which is too late to verify the recovery mode cookie.
+         *
+         * This tries to use the `AUTH` salts first, but if they aren't valid specific salts will be generated and
+         * stored.
+         *
+         * @param string $data Data to hash.
+         *
+         * @return string|false The hashed $data, or false on failure.
+         * @since 5.2.0
+         *
+         */
+        private function recovery_mode_hash($data)
+        {
+            $default_keys = array_unique([
+                                             'put your unique phrase here',
+                                             /*
+                                              * translators: This string should only be translated if wp-config-sample.php is localized.
+                                              * You can check the localized release package or
+                                              * https://i18n.svn.wordpress.org/<locale code>/branches/<wp version>/dist/wp-config-sample.php
+                                              */ __('put your unique phrase here'),
+                                         ]);
 
-	/**
-	 * Validates the recovery mode cookie.
-	 *
-	 * @since 5.2.0
-	 *
-	 * @param string $cookie Optionally specify the cookie string.
-	 *                       If omitted, it will be retrieved from the super global.
-	 * @return true|WP_Error True on success, error object on failure.
-	 */
-	public function validate_cookie( $cookie = '' ) {
+            if(! defined('AUTH_KEY') || in_array(AUTH_KEY, $default_keys, true))
+            {
+                $auth_key = get_site_option('recovery_mode_auth_key');
 
-		if ( ! $cookie ) {
-			if ( empty( $_COOKIE[ RECOVERY_MODE_COOKIE ] ) ) {
-				return new WP_Error( 'no_cookie', __( 'No cookie present.' ) );
-			}
+                if(! $auth_key)
+                {
+                    if(! function_exists('wp_generate_password'))
+                    {
+                        require_once ABSPATH.WPINC.'/pluggable.php';
+                    }
 
-			$cookie = $_COOKIE[ RECOVERY_MODE_COOKIE ];
-		}
+                    $auth_key = wp_generate_password(64, true, true);
+                    update_site_option('recovery_mode_auth_key', $auth_key);
+                }
+            }
+            else
+            {
+                $auth_key = AUTH_KEY;
+            }
 
-		$parts = $this->parse_cookie( $cookie );
+            if(! defined('AUTH_SALT') || in_array(AUTH_SALT, $default_keys, true) || AUTH_SALT === $auth_key)
+            {
+                $auth_salt = get_site_option('recovery_mode_auth_salt');
 
-		if ( is_wp_error( $parts ) ) {
-			return $parts;
-		}
+                if(! $auth_salt)
+                {
+                    if(! function_exists('wp_generate_password'))
+                    {
+                        require_once ABSPATH.WPINC.'/pluggable.php';
+                    }
 
-		list( , $created_at, $random, $signature ) = $parts;
+                    $auth_salt = wp_generate_password(64, true, true);
+                    update_site_option('recovery_mode_auth_salt', $auth_salt);
+                }
+            }
+            else
+            {
+                $auth_salt = AUTH_SALT;
+            }
 
-		if ( ! ctype_digit( $created_at ) ) {
-			return new WP_Error( 'invalid_created_at', __( 'Invalid cookie format.' ) );
-		}
+            $secret = $auth_key.$auth_salt;
 
-		/** This filter is documented in wp-includes/class-wp-recovery-mode-cookie-service.php */
-		$length = apply_filters( 'recovery_mode_cookie_length', WEEK_IN_SECONDS );
+            return hash_hmac('sha1', $data, $secret);
+        }
 
-		if ( time() > $created_at + $length ) {
-			return new WP_Error( 'expired', __( 'Cookie expired.' ) );
-		}
+        /**
+         * Clears the recovery mode cookie.
+         *
+         * @since 5.2.0
+         */
+        public function clear_cookie()
+        {
+            setcookie(RECOVERY_MODE_COOKIE, ' ', time() - YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN);
+            setcookie(RECOVERY_MODE_COOKIE, ' ', time() - YEAR_IN_SECONDS, SITECOOKIEPATH, COOKIE_DOMAIN);
+        }
 
-		$to_sign = sprintf( 'recovery_mode|%s|%s', $created_at, $random );
-		$hashed  = $this->recovery_mode_hash( $to_sign );
+        /**
+         * Validates the recovery mode cookie.
+         *
+         * @param string $cookie Optionally specify the cookie string.
+         *                       If omitted, it will be retrieved from the super global.
+         *
+         * @return true|WP_Error True on success, error object on failure.
+         * @since 5.2.0
+         *
+         */
+        public function validate_cookie($cookie = '')
+        {
+            if(! $cookie)
+            {
+                if(empty($_COOKIE[RECOVERY_MODE_COOKIE]))
+                {
+                    return new WP_Error('no_cookie', __('No cookie present.'));
+                }
 
-		if ( ! hash_equals( $signature, $hashed ) ) {
-			return new WP_Error( 'signature_mismatch', __( 'Invalid cookie.' ) );
-		}
+                $cookie = $_COOKIE[RECOVERY_MODE_COOKIE];
+            }
 
-		return true;
-	}
+            $parts = $this->parse_cookie($cookie);
 
-	/**
-	 * Gets the session identifier from the cookie.
-	 *
-	 * The cookie should be validated before calling this API.
-	 *
-	 * @since 5.2.0
-	 *
-	 * @param string $cookie Optionally specify the cookie string.
-	 *                       If omitted, it will be retrieved from the super global.
-	 * @return string|WP_Error Session ID on success, or error object on failure.
-	 */
-	public function get_session_id_from_cookie( $cookie = '' ) {
-		if ( ! $cookie ) {
-			if ( empty( $_COOKIE[ RECOVERY_MODE_COOKIE ] ) ) {
-				return new WP_Error( 'no_cookie', __( 'No cookie present.' ) );
-			}
+            if(is_wp_error($parts))
+            {
+                return $parts;
+            }
 
-			$cookie = $_COOKIE[ RECOVERY_MODE_COOKIE ];
-		}
+            [, $created_at, $random, $signature] = $parts;
 
-		$parts = $this->parse_cookie( $cookie );
-		if ( is_wp_error( $parts ) ) {
-			return $parts;
-		}
+            if(! ctype_digit($created_at))
+            {
+                return new WP_Error('invalid_created_at', __('Invalid cookie format.'));
+            }
 
-		list( , , $random ) = $parts;
+            /** This filter is documented in wp-includes/class-wp-recovery-mode-cookie-service.php */
+            $length = apply_filters('recovery_mode_cookie_length', WEEK_IN_SECONDS);
 
-		return sha1( $random );
-	}
+            if(time() > $created_at + $length)
+            {
+                return new WP_Error('expired', __('Cookie expired.'));
+            }
 
-	/**
-	 * Parses the cookie into its four parts.
-	 *
-	 * @since 5.2.0
-	 *
-	 * @param string $cookie Cookie content.
-	 * @return array|WP_Error Cookie parts array, or error object on failure.
-	 */
-	private function parse_cookie( $cookie ) {
-		$cookie = base64_decode( $cookie );
-		$parts  = explode( '|', $cookie );
+            $to_sign = sprintf('recovery_mode|%s|%s', $created_at, $random);
+            $hashed = $this->recovery_mode_hash($to_sign);
 
-		if ( 4 !== count( $parts ) ) {
-			return new WP_Error( 'invalid_format', __( 'Invalid cookie format.' ) );
-		}
+            if(! hash_equals($signature, $hashed))
+            {
+                return new WP_Error('signature_mismatch', __('Invalid cookie.'));
+            }
 
-		return $parts;
-	}
+            return true;
+        }
 
-	/**
-	 * Generates the recovery mode cookie value.
-	 *
-	 * The cookie is a base64 encoded string with the following format:
-	 *
-	 * recovery_mode|iat|rand|signature
-	 *
-	 * Where "recovery_mode" is a constant string,
-	 * iat is the time the cookie was generated at,
-	 * rand is a randomly generated password that is also used as a session identifier
-	 * and signature is an hmac of the preceding 3 parts.
-	 *
-	 * @since 5.2.0
-	 *
-	 * @return string Generated cookie content.
-	 */
-	private function generate_cookie() {
-		$to_sign = sprintf( 'recovery_mode|%s|%s', time(), wp_generate_password( 20, false ) );
-		$signed  = $this->recovery_mode_hash( $to_sign );
+        /**
+         * Parses the cookie into its four parts.
+         *
+         * @param string $cookie Cookie content.
+         *
+         * @return array|WP_Error Cookie parts array, or error object on failure.
+         * @since 5.2.0
+         *
+         */
+        private function parse_cookie($cookie)
+        {
+            $cookie = base64_decode($cookie);
+            $parts = explode('|', $cookie);
 
-		return base64_encode( sprintf( '%s|%s', $to_sign, $signed ) );
-	}
+            if(4 !== count($parts))
+            {
+                return new WP_Error('invalid_format', __('Invalid cookie format.'));
+            }
 
-	/**
-	 * Gets a form of `wp_hash()` specific to Recovery Mode.
-	 *
-	 * We cannot use `wp_hash()` because it is defined in `pluggable.php` which is not loaded until after plugins are loaded,
-	 * which is too late to verify the recovery mode cookie.
-	 *
-	 * This tries to use the `AUTH` salts first, but if they aren't valid specific salts will be generated and stored.
-	 *
-	 * @since 5.2.0
-	 *
-	 * @param string $data Data to hash.
-	 * @return string|false The hashed $data, or false on failure.
-	 */
-	private function recovery_mode_hash( $data ) {
-		$default_keys = array_unique(
-			array(
-				'put your unique phrase here',
-				/*
-				 * translators: This string should only be translated if wp-config-sample.php is localized.
-				 * You can check the localized release package or
-				 * https://i18n.svn.wordpress.org/<locale code>/branches/<wp version>/dist/wp-config-sample.php
-				 */
-				__( 'put your unique phrase here' ),
-			)
-		);
+            return $parts;
+        }
 
-		if ( ! defined( 'AUTH_KEY' ) || in_array( AUTH_KEY, $default_keys, true ) ) {
-			$auth_key = get_site_option( 'recovery_mode_auth_key' );
+        /**
+         * Gets the session identifier from the cookie.
+         *
+         * The cookie should be validated before calling this API.
+         *
+         * @param string $cookie Optionally specify the cookie string.
+         *                       If omitted, it will be retrieved from the super global.
+         *
+         * @return string|WP_Error Session ID on success, or error object on failure.
+         * @since 5.2.0
+         *
+         */
+        public function get_session_id_from_cookie($cookie = '')
+        {
+            if(! $cookie)
+            {
+                if(empty($_COOKIE[RECOVERY_MODE_COOKIE]))
+                {
+                    return new WP_Error('no_cookie', __('No cookie present.'));
+                }
 
-			if ( ! $auth_key ) {
-				if ( ! function_exists( 'wp_generate_password' ) ) {
-					require_once ABSPATH . WPINC . '/pluggable.php';
-				}
+                $cookie = $_COOKIE[RECOVERY_MODE_COOKIE];
+            }
 
-				$auth_key = wp_generate_password( 64, true, true );
-				update_site_option( 'recovery_mode_auth_key', $auth_key );
-			}
-		} else {
-			$auth_key = AUTH_KEY;
-		}
+            $parts = $this->parse_cookie($cookie);
+            if(is_wp_error($parts))
+            {
+                return $parts;
+            }
 
-		if ( ! defined( 'AUTH_SALT' ) || in_array( AUTH_SALT, $default_keys, true ) || AUTH_SALT === $auth_key ) {
-			$auth_salt = get_site_option( 'recovery_mode_auth_salt' );
+            [, , $random] = $parts;
 
-			if ( ! $auth_salt ) {
-				if ( ! function_exists( 'wp_generate_password' ) ) {
-					require_once ABSPATH . WPINC . '/pluggable.php';
-				}
-
-				$auth_salt = wp_generate_password( 64, true, true );
-				update_site_option( 'recovery_mode_auth_salt', $auth_salt );
-			}
-		} else {
-			$auth_salt = AUTH_SALT;
-		}
-
-		$secret = $auth_key . $auth_salt;
-
-		return hash_hmac( 'sha1', $data, $secret );
-	}
-}
+            return sha1($random);
+        }
+    }

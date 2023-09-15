@@ -1,12 +1,12 @@
 <?php
-/**
- * Irregular grid of posts block pattern
- */
-return array(
-	'title'      => __( 'Irregular grid of posts', 'twentytwentytwo' ),
-	'categories' => array( 'query' ),
-	'blockTypes' => array( 'core/query' ),
-	'content'    => '<!-- wp:group {"align":"wide"} -->
+    /**
+     * Irregular grid of posts block pattern
+     */
+    return [
+        'title' => __('Irregular grid of posts', 'twentytwentytwo'),
+        'categories' => ['query'],
+        'blockTypes' => ['core/query'],
+        'content' => '<!-- wp:group {"align":"wide"} -->
 					<div class="wp-block-group alignwide"><!-- wp:columns {"align":"wide"} -->
 					<div class="wp-block-columns alignwide"><!-- wp:column -->
 					<div class="wp-block-column"><!-- wp:query {"query":{"offset":0,"postType":"post","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":"1"},"displayLayout":{"type":"list","columns":3},"align":"wide","layout":{"inherit":true}} -->
@@ -167,4 +167,4 @@ return array(
 					<!-- /wp:column --></div>
 					<!-- /wp:columns --></div>
 					<!-- /wp:group -->',
-);
+    ];

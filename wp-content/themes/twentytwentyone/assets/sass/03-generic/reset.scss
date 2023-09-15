@@ -26,10 +26,10 @@ h3,
 h4,
 h5,
 h6 {
-	padding: 0;
-	margin: 0;
-	-moz-osx-font-smoothing: grayscale;
-	-webkit-font-smoothing: antialiased;
+  padding: 0;
+  margin: 0;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
 }
 
 /**
@@ -40,12 +40,12 @@ h6 {
 
 html {
 
-	/* Apply border-box across the entire page. */
-	box-sizing: border-box;
+  /* Apply border-box across the entire page. */
+  box-sizing: border-box;
 
-	// HTML resets
-	font-family: var(--global--font-secondary);
-	line-height: var(--global--line-height-body);
+  // HTML resets
+  font-family: var(--global--font-secondary);
+  line-height: var(--global--line-height-body);
 }
 
 /**
@@ -53,23 +53,23 @@ html {
  */
 * {
 
-	&,
-	&::before,
-	&::after {
-		box-sizing: inherit;
-	}
+  &,
+  &::before,
+  &::after {
+    box-sizing: inherit;
+  }
 }
 
 // body resets
 body {
-	font-size: var(--global--font-size-base);
-	font-weight: normal;
-	color: var(--global--color-primary);
-	text-align: left;
-	background-color: var(--global--color-background);
+  font-size: var(--global--font-size-base);
+  font-weight: normal;
+  color: var(--global--color-primary);
+  text-align: left;
+  background-color: var(--global--color-background);
 }
 
 
 button {
-	cursor: pointer;
+  cursor: pointer;
 }

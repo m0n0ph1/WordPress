@@ -2,52 +2,53 @@
 
 #colophon {
 
-	.widget-area,
-	.site-info {
-		margin: calc(2 * #{$size__spacing-unit}) $size__spacing-unit;
+  .widget-area,
+  .site-info {
+    margin: calc(2 * #{$size__spacing-unit}) $size__spacing-unit;
 
-		@include media(tablet) {
-			margin: calc(3 * #{$size__spacing-unit}) $size__site-margins;
-		}
-	}
+    @include media(tablet) {
+      margin: calc(3 * #{$size__spacing-unit}) $size__site-margins;
+    }
+  }
 
-	.widget-column {
-		display: flex;
-		flex-wrap: wrap;
-		.widget {
-			-webkit-hyphens: auto;
-			-moz-hyphens: auto;
-			-ms-hyphens: auto;
-			hyphens: auto;
-			width: 100%;
-			word-wrap: break-word;
-			@include media(desktop) {
-				margin-right: calc(3 * #{$size__spacing-unit});
-				width: calc(50% - (3 * #{$size__spacing-unit}));
-			}
-		}
-	}
+  .widget-column {
+    display: flex;
+    flex-wrap: wrap;
 
-	.site-info {
-		color: $color__text-light;
-		-webkit-hyphens: auto;
-		-moz-hyphens: auto;
-		-ms-hyphens: auto;
-		hyphens: auto;
-		word-wrap: break-word;
+    .widget {
+      -webkit-hyphens: auto;
+      -moz-hyphens: auto;
+      -ms-hyphens: auto;
+      hyphens: auto;
+      width: 100%;
+      word-wrap: break-word;
+      @include media(desktop) {
+        margin-right: calc(3 * #{$size__spacing-unit});
+        width: calc(50% - (3 * #{$size__spacing-unit}));
+      }
+    }
+  }
 
-		a {
-			color: inherit;
+  .site-info {
+    color: $color__text-light;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    word-wrap: break-word;
 
-			&:hover {
-				text-decoration: none;
-				color: $color__link;
-			}
-		}
+    a {
+      color: inherit;
 
-		.imprint,
-		.privacy-policy-link {
-			margin-right: $size__spacing-unit;
-		}
-	}
+      &:hover {
+        text-decoration: none;
+        color: $color__link;
+      }
+    }
+
+    .imprint,
+    .privacy-policy-link {
+      margin-right: $size__spacing-unit;
+    }
+  }
 }

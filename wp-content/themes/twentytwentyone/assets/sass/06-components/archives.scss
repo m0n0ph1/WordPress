@@ -1,68 +1,68 @@
 .page-title {
-	font-size: var(--global--font-size-page-title);
+  font-size: var(--global--font-size-page-title);
 }
 
 h1.page-title,
 h2.page-title {
-	font-weight: var(--heading--font-weight-page-title);
+  font-weight: var(--heading--font-weight-page-title);
 }
 
 h1.page-title {
-	line-height: var(--heading--line-height-h1);
+  line-height: var(--heading--line-height-h1);
 }
 
 .page-header {
-	border-bottom: 3px solid var(--global--color-border);
-	padding-bottom: calc(2 * var(--global--spacing-vertical));
+  border-bottom: 3px solid var(--global--color-border);
+  padding-bottom: calc(2 * var(--global--spacing-vertical));
 }
 
 .archive,
 .search,
 .blog {
 
-	.content-area {
+  .content-area {
 
-		.format-aside,
-		.format-status,
-		.format-link {
+    .format-aside,
+    .format-status,
+    .format-link {
 
-			.entry-content {
-				font-size: var(--global--font-size-lg);
-			}
-		}
+      .entry-content {
+        font-size: var(--global--font-size-lg);
+      }
+    }
 
-	}
+  }
 
-	.format-image,
-	.format-gallery,
-	.format-video {
+  .format-image,
+  .format-gallery,
+  .format-video {
 
-		.entry-content {
-			margin-top: calc(2 * var(--global--spacing-vertical));
-		}
-	}
+    .entry-content {
+      margin-top: calc(2 * var(--global--spacing-vertical));
+    }
+  }
 
-	.entry-footer {
+  .entry-footer {
 
-		.cat-links,
-		.tags-links {
-			display: block;
-		}
-	}
+    .cat-links,
+    .tags-links {
+      display: block;
+    }
+  }
 
-	&.logged-in {
+  &.logged-in {
 
-		.entry-footer {
+    .entry-footer {
 
-			.posted-on {
-				margin-right: calc(0.5 * var(--global--spacing-unit));
-			}
-		}
-	}
+      .posted-on {
+        margin-right: calc(0.5 * var(--global--spacing-unit));
+      }
+    }
+  }
 }
 
 .archive-description {
-	margin-top: var(--global--spacing-vertical);
-	font-size: var(--global--font-size-xl);
-	line-height: var(--global--line-height-heading);
+  margin-top: var(--global--spacing-vertical);
+  font-size: var(--global--font-size-xl);
+  line-height: var(--global--line-height-heading);
 }

@@ -11,20 +11,20 @@
  * This makes sure zxcvbn isn't blocking loading the page as it is a big
  * library. The source for zxcvbn is read from the _zxcvbnSettings global.
  */
-(function() {
-  var async_load = function() {
-    var first, s;
-    s = document.createElement('script');
-    s.src = _zxcvbnSettings.src;
-    s.type = 'text/javascript';
-    s.async = true;
-    first = document.getElementsByTagName('script')[0];
-    return first.parentNode.insertBefore(s, first);
-  };
+(function () {
+    var async_load = function () {
+        var first, s;
+        s = document.createElement('script');
+        s.src = _zxcvbnSettings.src;
+        s.type = 'text/javascript';
+        s.async = true;
+        first = document.getElementsByTagName('script')[0];
+        return first.parentNode.insertBefore(s, first);
+    };
 
-  if (window.attachEvent != null) {
-    window.attachEvent('onload', async_load);
-  } else {
-    window.addEventListener('load', async_load, false);
-  }
+    if (window.attachEvent != null) {
+        window.attachEvent('onload', async_load);
+    } else {
+        window.addEventListener('load', async_load, false);
+    }
 }).call(this);

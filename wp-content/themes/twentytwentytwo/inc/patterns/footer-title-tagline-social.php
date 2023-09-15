@@ -1,12 +1,12 @@
 <?php
-/**
- * Footer with title, tagline, and social links on a dark background
- */
-return array(
-	'title'      => __( 'Footer with title, tagline, and social links on a dark background', 'twentytwentytwo' ),
-	'categories' => array( 'footer' ),
-	'blockTypes' => array( 'core/template-part/footer' ),
-	'content'    => '<!-- wp:group {"align":"full","style":{"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"foreground","textColor":"background","layout":{"inherit":true}} -->
+    /**
+     * Footer with title, tagline, and social links on a dark background
+     */
+    return [
+        'title' => __('Footer with title, tagline, and social links on a dark background', 'twentytwentytwo'),
+        'categories' => ['footer'],
+        'blockTypes' => ['core/template-part/footer'],
+        'content' => '<!-- wp:group {"align":"full","style":{"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"foreground","textColor":"background","layout":{"inherit":true}} -->
 					<div class="wp-block-group alignfull has-background-color has-foreground-background-color has-text-color has-background has-link-color"><!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"4rem","bottom":"4rem"}}},"layout":{"type":"flex","justifyContent":"space-between"}} -->
 					<div class="wp-block-group alignwide" style="padding-top:4rem;padding-bottom:4rem"><!-- wp:group -->
 					<div class="wp-block-group"><!-- wp:site-title {"style":{"spacing":{"margin":{"top":"0px","bottom":"0px"}},"typography":{"textTransform":"uppercase"}}} /-->
@@ -23,4 +23,4 @@ return array(
 					<!-- /wp:social-links --></div>
 					<!-- /wp:group --></div>
 					<!-- /wp:group -->',
-);
+    ];
