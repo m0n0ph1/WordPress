@@ -1,11 +1,24 @@
 <?php
-
+    /**
+     * Template Name: Showcase Template
+     *
+     * Description: A Page Template that showcases Sticky Posts, Asides, and Blog Posts.
+     *
+     * The showcase template in Twenty Eleven consists of a featured posts section using sticky posts,
+     * another recent posts area (with the latest post shown in full and the rest as a list)
+     * and a left sidebar holding aside posts.
+     *
+     * We are creating two queries to fetch the proper posts and a custom widget for the sidebar.
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 1.0
+     */
     // Enqueue showcase script for the slider.
     wp_enqueue_script('twentyeleven-showcase', get_template_directory_uri().'/js/showcase.js', ['jquery'], '20211130', [
         'in_footer' => false, // Because involves header.
         'strategy' => 'defer',
     ]);
-
     get_header(); ?>
 
 <div id="primary" class="showcase">
@@ -37,29 +50,23 @@
              * We limit the featured posts at ten.
              */
             $sticky = get_option('sticky_posts');
-
             // Proceed only if sticky posts exist.
             if(! empty($sticky)) :
-
                 $featured_args = [
                     'post__in' => $sticky,
                     'post_status' => 'publish',
                     'posts_per_page' => 10,
                     'no_found_rows' => true,
                 ];
-
                 // The Featured Posts query.
                 $featured = new WP_Query($featured_args);
-
                 // Proceed only if published posts exist.
                 if($featured->have_posts()) :
-
                     /*
                     * We will need to count featured posts starting from zero
                     * to create the slider navigation.
                     */
                     $counter_slider = 0;
-
                     // Compatibility with versions of WordPress prior to 3.4.
                     if(function_exists('get_custom_header'))
                     {
@@ -78,27 +85,22 @@
                             // Let's roll.
                             while($featured->have_posts()) :
                                 $featured->the_post();
-
                                 // Increase the counter.
                                 ++$counter_slider;
-
                                 /*
                                 * We're going to add a class to our featured post for featured images.
                                 * By default it will have the feature-text class.
                                 */
                                 $feature_class = 'feature-text';
-
                                 if(has_post_thumbnail())
                                 {
                                     // ...but if it has a featured image let's add some class.
                                     $feature_class = 'feature-image small';
-
                                     // Hang on. Let's check this here image out.
                                     $image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), [
                                         $header_image_width,
                                         $header_image_width,
                                     ]);
-
                                     // Is it bigger than or equal to our header?
                                     if($image[1] >= $header_image_width)
                                     {
@@ -126,7 +128,6 @@
                                             {
                                                 $thumbnail_size = 'small-feature';
                                             }
-
                                             /* translators: %s: Post title. */
                                             $title = sprintf(__('Permalink to %s', 'twentyeleven'), the_title_attribute('echo=0'));
                                             ?>
@@ -147,13 +148,10 @@
                                 <nav class="feature-slider">
                                     <ul>
                                         <?php
-
                                             // Reset the counter so that we end up with matching elements.
                                             $counter_slider = 0;
-
                                             // Begin from zero.
                                             rewind_posts();
-
                                             // Let's roll again.
                                             while($featured->have_posts()) :
                                                 $featured->the_post();
@@ -166,7 +164,6 @@
                                                 {
                                                     $class = '';
                                                 }
-
                                                 /* translators: %s: Post title. */
                                                 $title = sprintf(__('Featuring: %s', 'twentyeleven'), the_title_attribute('echo=0'));
                                                 ?>
@@ -191,7 +188,6 @@
             <h1 class="showcase-heading"><?php _e('Recent Posts', 'twentyeleven'); ?></h1>
 
             <?php
-
                 // Display our recent posts, showing full content for the very latest, ignoring Aside posts.
                 $recent_args = [
                     'order' => 'DESC',
@@ -211,24 +207,17 @@
                     ],
                     'no_found_rows' => true,
                 ];
-
                 // Our new query for the Recent Posts section.
                 $recent = new WP_Query($recent_args);
-
                 // The first Recent post is displayed normally.
                 if($recent->have_posts()) :
                     $recent->the_post();
-
                     // Set $more to 0 in order to only get the first part of the post.
                     global $more;
                     $more = 0;
-
                     get_template_part('content', get_post_format());
-
                     echo '<ol class="other-recent-posts">';
-
                 endif;
-
                 // For all other recent posts, just display the title and comment status.
                 while($recent->have_posts()) :
                     $recent->the_post();
@@ -243,7 +232,6 @@
 
                 <?php
                 endwhile;
-
                 // If we had some posts, close the <ol>.
                 if($recent->post_count > 0)
                 {

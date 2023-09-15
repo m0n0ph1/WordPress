@@ -1,5 +1,12 @@
 <?php
-
+    /**
+     * Displays header site branding
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Seventeen
+     * @since      Twenty Seventeen 1.0
+     * @version    1.0
+     */
 ?>
 <div class="site-branding">
     <div class="wrap">
@@ -17,7 +24,6 @@
 
             <?php
                 $description = get_bloginfo('description', 'display');
-
                 if($description || is_customize_preview()) :
                     ?>
                     <p class="site-description"><?php echo $description; ?></p>

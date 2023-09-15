@@ -1,20 +1,55 @@
 <?php
+    /**
+     * REST API: WP_REST_Site_Health_Controller class
+     *
+     * @package    WordPress
+     * @subpackage REST_API
+     * @since      5.6.0
+     */
 
+    /**
+     * Core class for interacting with Site Health tests.
+     *
+     * @since 5.6.0
+     *
+     * @see   WP_REST_Controller
+     */
     class WP_REST_Site_Health_Controller extends WP_REST_Controller
     {
+        /**
+         * An instance of the site health class.
+         *
+         * @since 5.6.0
+         *
+         * @var WP_Site_Health
+         */
         private $site_health;
 
+        /**
+         * Site Health controller constructor.
+         *
+         * @param WP_Site_Health $site_health An instance of the site health class.
+         *
+         * @since 5.6.0
+         *
+         */
         public function __construct($site_health)
         {
             $this->namespace = 'wp-site-health/v1';
             $this->rest_base = 'tests';
-
             $this->site_health = $site_health;
         }
 
+        /**
+         * Registers API routes.
+         *
+         * @since 5.6.0
+         * @since 6.1.0 Adds page-cache async test.
+         *
+         * @see   register_rest_route()
+         */
         public function register_routes()
         {
-            parent::register_routes();
             register_rest_route($this->namespace, sprintf('/%s/%s', $this->rest_base, 'background-updates'), [
                 [
                     'methods' => 'GET',
@@ -26,7 +61,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             register_rest_route($this->namespace, sprintf('/%s/%s', $this->rest_base, 'loopback-requests'), [
                 [
                     'methods' => 'GET',
@@ -38,7 +72,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             register_rest_route($this->namespace, sprintf('/%s/%s', $this->rest_base, 'https-status'), [
                 [
                     'methods' => 'GET',
@@ -50,7 +83,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             register_rest_route($this->namespace, sprintf('/%s/%s', $this->rest_base, 'dotorg-communication'), [
                 [
                     'methods' => 'GET',
@@ -62,7 +94,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             register_rest_route($this->namespace, sprintf('/%s/%s', $this->rest_base, 'authorization-header'), [
                 [
                     'methods' => 'GET',
@@ -74,7 +105,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             register_rest_route($this->namespace, sprintf('/%s', 'directory-sizes'), [
                 'methods' => 'GET',
                 'callback' => [$this, 'get_directory_sizes'],
@@ -83,7 +113,6 @@
                     return $this->validate_request_permission('directory_sizes') && ! is_multisite();
                 },
             ]);
-
             register_rest_route($this->namespace, sprintf('/%s/%s', $this->rest_base, 'page-cache'), [
                 [
                     'methods' => 'GET',
@@ -96,15 +125,39 @@
             ]);
         }
 
+        /**
+         * Validates if the current user can request this REST endpoint.
+         *
+         * @param string $check The endpoint check being ran.
+         *
+         * @return bool
+         * @since 5.6.0
+         *
+         */
         protected function validate_request_permission($check)
         {
             $default_capability = 'view_site_health_checks';
-
+            /**
+             * Filters the capability needed to run a given Site Health check.
+             *
+             * @param string $default_capability The default capability required for this check.
+             * @param string $check              The Site Health check being performed.
+             *
+             * @since 5.6.0
+             *
+             */
             $capability = apply_filters("site_health_test_rest_capability_{$check}", $default_capability, $check);
 
             return current_user_can($capability);
         }
 
+        /**
+         * Checks if background updates work as expected.
+         *
+         * @return array
+         * @since 5.6.0
+         *
+         */
         public function test_background_updates()
         {
             $this->load_admin_textdomain();
@@ -112,6 +165,15 @@
             return $this->site_health->get_test_background_updates();
         }
 
+        /**
+         * Loads the admin textdomain for Site Health tests.
+         *
+         * The {@see WP_Site_Health} class is defined in WP-Admin, while the REST API operates in a front-end context.
+         * This means that the translations for Site Health won't be loaded by default in
+         * {@see load_default_textdomain()}.
+         *
+         * @since 5.6.0
+         */
         protected function load_admin_textdomain()
         {
             // Accounts for inner REST API requests in the admin.
@@ -122,6 +184,13 @@
             }
         }
 
+        /**
+         * Checks that the site can reach the WordPress.org API.
+         *
+         * @return array
+         * @since 5.6.0
+         *
+         */
         public function test_dotorg_communication()
         {
             $this->load_admin_textdomain();
@@ -129,6 +198,13 @@
             return $this->site_health->get_test_dotorg_communication();
         }
 
+        /**
+         * Checks that loopbacks can be performed.
+         *
+         * @return array
+         * @since 5.6.0
+         *
+         */
         public function test_loopback_requests()
         {
             $this->load_admin_textdomain();
@@ -136,6 +212,13 @@
             return $this->site_health->get_test_loopback_requests();
         }
 
+        /**
+         * Checks that the site's frontend can be accessed over HTTPS.
+         *
+         * @return array
+         * @since 5.7.0
+         *
+         */
         public function test_https_status()
         {
             $this->load_admin_textdomain();
@@ -143,6 +226,13 @@
             return $this->site_health->get_test_https_status();
         }
 
+        /**
+         * Checks that the authorization header is valid.
+         *
+         * @return array
+         * @since 5.6.0
+         *
+         */
         public function test_authorization_header()
         {
             $this->load_admin_textdomain();
@@ -150,6 +240,13 @@
             return $this->site_health->get_test_authorization_header();
         }
 
+        /**
+         * Checks that full page cache is active.
+         *
+         * @return array The test result.
+         * @since 6.1.0
+         *
+         */
         public function test_page_cache()
         {
             $this->load_admin_textdomain();
@@ -157,23 +254,26 @@
             return $this->site_health->get_test_page_cache();
         }
 
+        /**
+         * Gets the current directory sizes for this install.
+         *
+         * @return array|WP_Error
+         * @since 5.6.0
+         *
+         */
         public function get_directory_sizes()
         {
             if(! class_exists('WP_Debug_Data'))
             {
                 require_once ABSPATH.'wp-admin/includes/class-wp-debug-data.php';
             }
-
             $this->load_admin_textdomain();
-
             $sizes_data = WP_Debug_Data::get_sizes();
             $all_sizes = ['raw' => 0];
-
             foreach($sizes_data as $name => $value)
             {
                 $name = sanitize_text_field($name);
                 $data = [];
-
                 if(isset($value['size']))
                 {
                     if(is_string($value['size']))
@@ -185,7 +285,6 @@
                         $data['size'] = (int) $value['size'];
                     }
                 }
-
                 if(isset($value['debug']))
                 {
                     if(is_string($value['debug']))
@@ -197,15 +296,12 @@
                         $data['debug'] = (int) $value['debug'];
                     }
                 }
-
                 if(! empty($value['raw']))
                 {
                     $data['raw'] = (int) $value['raw'];
                 }
-
                 $all_sizes[$name] = $data;
             }
-
             if(isset($all_sizes['total_size']['debug']) && 'not available' === $all_sizes['total_size']['debug'])
             {
                 return new WP_Error('not_available', __('Directory sizes could not be returned.'), ['status' => 500]);
@@ -214,13 +310,19 @@
             return $all_sizes;
         }
 
+        /**
+         * Gets the schema for each site health test.
+         *
+         * @return array The test schema.
+         * @since 5.6.0
+         *
+         */
         public function get_item_schema()
         {
             if($this->schema)
             {
                 return $this->schema;
             }
-
             $this->schema = [
                 '$schema' => 'http://json-schema.org/draft-04/schema#',
                 'title' => 'wp-site-health-test',

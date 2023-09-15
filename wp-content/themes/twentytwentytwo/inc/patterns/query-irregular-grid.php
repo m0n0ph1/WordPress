@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Irregular grid of posts block pattern
+     */
     return [
         'title' => __('Irregular grid of posts', 'twentytwentytwo'),
         'categories' => ['query'],

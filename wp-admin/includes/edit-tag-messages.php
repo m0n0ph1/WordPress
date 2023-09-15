@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Edit Tags Administration: Messages
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     * @since      4.4.0
+     */
     $messages = [];
 // 0 = unused. Messages start at index 1.
     $messages['_item'] = [
@@ -11,7 +17,6 @@
         5 => __('Item not updated.'),
         6 => __('Items deleted.'),
     ];
-
     $messages['category'] = [
         0 => '',
         1 => __('Category added.'),
@@ -21,7 +26,6 @@
         5 => __('Category not updated.'),
         6 => __('Categories deleted.'),
     ];
-
     $messages['post_tag'] = [
         0 => '',
         1 => __('Tag added.'),
@@ -31,9 +35,15 @@
         5 => __('Tag not updated.'),
         6 => __('Tags deleted.'),
     ];
-
+    /**
+     * Filters the messages displayed when a tag is updated.
+     *
+     * @param array[] $messages Array of arrays of messages to be displayed, keyed by taxonomy name.
+     *
+     * @since 3.7.0
+     *
+     */
     $messages = apply_filters('term_updated_messages', $messages);
-
     $message = false;
     if(isset($_REQUEST['message']) && (int) $_REQUEST['message'])
     {

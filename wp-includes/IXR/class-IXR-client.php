@@ -1,65 +1,83 @@
 <?php
 
+    /**
+     * IXR_Client
+     *
+     * @package IXR
+     * @since   1.5.0
+     *
+     */
     class IXR_Client
     {
-        public $server;
+        var $server;
 
-        public $port;
+        var $port;
 
-        public $path;
+        var $path;
 
-        public $useragent;
+        var $useragent;
 
-        public $response;
+        var $response;
 
-        public $message = false;
+        var $message = false;
 
-        public $debug = false;
+        var $debug = false;
 
-        public $timeout;
+        var $timeout;
 
-        public $headers = [];
+        var $headers = [];
 
         // Storage place for an error message
-        public $error = false;
+        var $error = false;
 
+        /**
+         * PHP4 constructor.
+         */
         public function IXR_Client($server, $path = false, $port = 80, $timeout = 15)
         {
-            $this->__construct($server, $path, $port, $timeout);
+            self::__construct($server, $path, $port, $timeout);
         }
 
-        public function __construct($server, $path = false, $port = 80, $timeout = 15)
+        /**
+         * PHP5 constructor.
+         */
+        function __construct($server, $path = false, $port = 80, $timeout = 15)
         {
-            if($path)
-            {
-                $this->server = $server;
-                $this->path = $path;
-                $this->port = $port;
-            }
-            else
+            if(! $path)
             {
                 // Assume we have been given a URL instead
                 $bits = parse_url($server);
                 $this->server = $bits['host'];
                 $this->port = isset($bits['port']) ? $bits['port'] : 80;
                 $this->path = isset($bits['path']) ? $bits['path'] : '/';
-
                 // Make absolutely sure we have a path
                 if(! $this->path)
                 {
                     $this->path = '/';
                 }
-
                 if(! empty($bits['query']))
                 {
                     $this->path .= '?'.$bits['query'];
                 }
             }
+            else
+            {
+                $this->server = $server;
+                $this->path = $path;
+                $this->port = $port;
+            }
             $this->useragent = 'The Incutio XML-RPC PHP Library';
             $this->timeout = $timeout;
         }
 
-        public function query(...$args)
+        /**
+         * @return bool
+         * @since 5.5.0 Formalized the existing `...$args` parameter by adding it
+         *              to the function signature.
+         *
+         * @since 1.5.0
+         */
+        function query(...$args)
         {
             $method = array_shift($args);
             $request = new IXR_Request($method, $args);
@@ -67,27 +85,22 @@
             $xml = $request->getXml();
             $r = "\r\n";
             $request = "POST {$this->path} HTTP/1.0$r";
-
             // Merged from WP #8145 - allow custom headers
             $this->headers['Host'] = $this->server;
             $this->headers['Content-Type'] = 'text/xml';
             $this->headers['User-Agent'] = $this->useragent;
             $this->headers['Content-Length'] = $length;
-
             foreach($this->headers as $header => $value)
             {
                 $request .= "{$header}: {$value}{$r}";
             }
             $request .= $r;
-
             $request .= $xml;
-
             // Now send the request
             if($this->debug)
             {
                 echo '<pre class="ixr_request">'.htmlspecialchars($request)."\n</pre>\n\n";
             }
-
             if($this->timeout)
             {
                 $fp = @fsockopen($this->server, $this->port, $errno, $errstr, $this->timeout);
@@ -102,7 +115,7 @@
 
                 return false;
             }
-            fwrite($fp, $request);
+            fputs($fp, $request);
             $contents = '';
             $debugContents = '';
             $gotFirstLine = false;
@@ -139,7 +152,6 @@
             {
                 echo '<pre class="ixr_response">'.htmlspecialchars($debugContents)."\n</pre>\n\n";
             }
-
             // Now parse what we've got back
             $this->message = new IXR_Message($contents);
             if(! $this->message->parse())
@@ -149,7 +161,6 @@
 
                 return false;
             }
-
             // Is the message a fault?
             if($this->message->messageType == 'fault')
             {
@@ -162,23 +173,23 @@
             return true;
         }
 
-        public function getResponse()
+        function getResponse()
         {
             // methodResponses can only have one param - return that
             return $this->message->params[0];
         }
 
-        public function isError()
+        function isError()
         {
             return (is_object($this->error));
         }
 
-        public function getErrorCode()
+        function getErrorCode()
         {
             return $this->error->code;
         }
 
-        public function getErrorMessage()
+        function getErrorMessage()
         {
             return $this->error->message;
         }

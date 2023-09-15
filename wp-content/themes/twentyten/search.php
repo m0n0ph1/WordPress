@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Template for displaying Search Results pages
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Ten
+     * @since      Twenty Ten 1.0
+     */
     get_header(); ?>
 
 <div id="container">

@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Template for displaying Author Archive pages
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Ten
+     * @since      Twenty Ten 1.0
+     */
     get_header(); ?>
 
 <div id="container">
@@ -34,7 +40,14 @@
                 <div id="entry-author-info">
                     <div id="author-avatar">
                         <?php
-
+                            /**
+                             * Filters the Twenty Ten author bio avatar size.
+                             *
+                             * @param int The height and width avatar dimensions in pixels. Default 60.
+                             *
+                             * @since Twenty Ten 1.0
+                             *
+                             */
                             $author_bio_avatar_size = apply_filters('twentyten_author_bio_avatar_size', 60);
                             echo get_avatar(get_the_author_meta('user_email'), $author_bio_avatar_size);
                         ?>
@@ -58,7 +71,6 @@
              * That way we can run the loop properly, in full.
              */
             rewind_posts();
-
             /*
              * Run the loop for the author archive page to output the authors posts
              * If you want to overload this in a child theme then include a file

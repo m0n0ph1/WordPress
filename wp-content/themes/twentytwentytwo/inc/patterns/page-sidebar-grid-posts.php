@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Grid of posts with left sidebar block pattern
+     */
     return [
         'title' => __('Grid of posts with left sidebar', 'twentytwentytwo'),
         'categories' => ['pages'],

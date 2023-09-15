@@ -1,5 +1,9 @@
 <?php
-
+    /**
+     * Query: Offset.
+     *
+     * @package WordPress
+     */
     return [
         'title' => _x('Offset', 'Block pattern title'),
         'blockTypes' => ['core/query'],

@@ -1,10 +1,20 @@
 <?php
-
+    /**
+     * Server-side rendering of the `core/categories` block.
+     *
+     * @package WordPress
+     */
+    /**
+     * Renders the `core/categories` block on server.
+     *
+     * @param array $attributes The block attributes.
+     *
+     * @return string Returns the categories list/dropdown markup.
+     */
     function render_block_core_categories($attributes)
     {
         static $block_id = 0;
         ++$block_id;
-
         $args = [
             'echo' => false,
             'hierarchical' => ! empty($attributes['showHierarchy']),
@@ -17,7 +27,6 @@
         {
             $args['parent'] = 0;
         }
-
         if(! empty($attributes['displayAsDropdown']))
         {
             $id = 'wp-block-categories-'.$block_id;
@@ -26,7 +35,6 @@
             $wrapper_markup = '<div %1$s><label class="screen-reader-text" for="'.esc_attr($id).'">'.__('Categories').'</label>%2$s</div>';
             $items_markup = wp_dropdown_categories($args);
             $type = 'dropdown';
-
             if(! is_admin())
             {
                 // Inject the dropdown script immediately after the select dropdown.
@@ -39,12 +47,18 @@
             $items_markup = wp_list_categories($args);
             $type = 'list';
         }
-
         $wrapper_attributes = get_block_wrapper_attributes(['class' => "wp-block-categories-{$type}"]);
 
         return sprintf($wrapper_markup, $wrapper_attributes, $items_markup);
     }
 
+    /**
+     * Generates the inline script for a categories dropdown field.
+     *
+     * @param string $dropdown_id ID of the dropdown field.
+     *
+     * @return string Returns the dropdown onChange redirection script.
+     */
     function build_dropdown_script_block_core_categories($dropdown_id)
     {
         ob_start();
@@ -68,6 +82,9 @@
         return ob_get_clean();
     }
 
+    /**
+     * Registers the `core/categories` block on server.
+     */
     function register_block_core_categories()
     {
         register_block_type_from_metadata(__DIR__.'/categories', [

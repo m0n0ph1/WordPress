@@ -1,5 +1,15 @@
 <?php
-
+    /**
+     * Sets a custom slug when creating auto-draft template parts.
+     *
+     * This is only needed for auto-drafts created by the regular WP editor.
+     * If this page is to be removed, this will not be necessary.
+     *
+     * @param int $post_id Post ID.
+     *
+     * @since 5.9.0
+     *
+     */
     function wp_set_unique_slug_on_create_template_part($post_id)
     {
         $post = get_post($post_id);
@@ -7,15 +17,13 @@
         {
             return;
         }
-
         if(! $post->post_name)
         {
             wp_update_post([
                                'ID' => $post_id,
-                               'post_name' => 'custom_slug_'.uniqid('', true),
+                               'post_name' => 'custom_slug_'.uniqid(),
                            ]);
         }
-
         $terms = get_the_terms($post_id, 'wp_theme');
         if(! is_array($terms) || ! count($terms))
         {
@@ -23,18 +31,31 @@
         }
     }
 
+    /**
+     * Generates a unique slug for templates.
+     *
+     * @access private
+     *
+     * @param string $override_slug The filtered value of the slug (starts as `null` from apply_filter).
+     * @param string $slug          The original/un-filtered slug (post_name).
+     * @param int    $post_id       Post ID.
+     * @param string $post_status   No uniqueness checks are made if the post is still draft or pending.
+     * @param string $post_type     Post type.
+     *
+     * @return string The original, desired slug.
+     * @since  5.8.0
+     *
+     */
     function wp_filter_wp_template_unique_post_slug($override_slug, $slug, $post_id, $post_status, $post_type)
     {
         if('wp_template' !== $post_type && 'wp_template_part' !== $post_type)
         {
             return $override_slug;
         }
-
         if(! $override_slug)
         {
             $override_slug = $slug;
         }
-
         /*
          * Template slugs must be unique within the same theme.
          * TODO - Figure out how to update this to work for a multi-theme environment.
@@ -48,7 +69,6 @@
         {
             $theme = $terms[0]->name;
         }
-
         $check_query_args = [
             'post_name__in' => [$override_slug],
             'post_type' => $post_type,
@@ -65,7 +85,6 @@
         ];
         $check_query = new WP_Query($check_query_args);
         $posts = $check_query->posts;
-
         if(count($posts) > 0)
         {
             $suffix = 2;
@@ -84,20 +103,33 @@
         return $override_slug;
     }
 
+    /**
+     * Prints the skip-link script & styles.
+     *
+     * @access private
+     * @since  5.8.0
+     *
+     * @global string $_wp_current_template_content
+     */
     function the_block_template_skip_link()
     {
         global $_wp_current_template_content;
-
         // Early exit if not a block theme.
+        if(! current_theme_supports('block-templates'))
+        {
+            return;
+        }
         // Early exit if not a block template.
-        if(! current_theme_supports('block-templates') || ! $_wp_current_template_content)
+        if(! $_wp_current_template_content)
         {
             return;
         }
         ?>
 
         <?php
-        ?>
+        /**
+         * Print the skip-link styles.
+         */ ?>
         <style id="skip-link-styles">
             .skip-link.screen-reader-text {
                 border: 0;
@@ -130,7 +162,9 @@
             }
         </style>
         <?php
-        ?>
+        /**
+         * Print the skip-link script.
+         */ ?>
         <script>
             (function () {
                 var skipLinkTarget = document.querySelector('main'),
@@ -174,6 +208,12 @@
         <?php
     }
 
+    /**
+     * Enables the block templates (editor mode) for themes with theme.json by default.
+     *
+     * @access private
+     * @since  5.8.0
+     */
     function wp_enable_block_templates()
     {
         if(wp_is_block_theme() || wp_theme_has_theme_json())

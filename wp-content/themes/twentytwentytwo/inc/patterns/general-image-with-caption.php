@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Image with caption block pattern
+     */
     return [
         'title' => __('Image with caption', 'twentytwentytwo'),
         'categories' => ['featured', 'columns', 'gallery'],

@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Template for displaying image attachments
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 1.0
+     */
     get_header(); ?>
 
 <div id="primary" class="image-attachment">
@@ -56,7 +62,6 @@
                                             break;
                                         }
                                     }
-
                                     // If there is more than 1 attachment in a gallery...
                                     if(count($attachments) > 1)
                                     {
@@ -82,7 +87,14 @@
                                    title="<?php the_title_attribute(); ?>"
                                    rel="attachment">
                                     <?php
-
+                                        /**
+                                         * Filters the Twenty Eleven default attachment size.
+                                         *
+                                         * @param int The height and width attachment size dimensions in pixels. Default 848.
+                                         *
+                                         * @since Twenty Eleven 1.0
+                                         *
+                                         */
                                         $attachment_size = apply_filters('twentyeleven_attachment_size', 848);
                                         // Filterable image width with 1024px limit for image height.
                                         echo wp_get_attachment_image($post->ID, [$attachment_size, 1024]);

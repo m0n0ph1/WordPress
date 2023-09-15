@@ -1,5 +1,13 @@
 <?php
-
+    /**
+     * The template for displaying image attachments
+     *
+     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Thirteen
+     * @since      Twenty Thirteen 1.0
+     */
     get_header(); ?>
 
 <div id="primary" class="content-area">
@@ -25,12 +33,9 @@
                                 {
                                     $published_text = '<span class="attachment-meta"><time class="entry-date" datetime="%1$s">%2$s</time></span>';
                                 }
-
                                 printf($published_text, esc_attr(get_the_date('c')), esc_html(get_the_date()), esc_url(get_permalink($post->post_parent)), esc_attr(strip_tags($post_title)), $post_title);
-
                                 $metadata = wp_get_attachment_metadata();
                                 printf('<span class="attachment-meta full-size-link"><a href="%1$s" title="%2$s">%3$s (%4$s &times; %5$s)</a></span>', esc_url(wp_get_attachment_url()), esc_attr__('Link to full-size image', 'twentythirteen'), __('Full resolution', 'twentythirteen'), $metadata['width'], $metadata['height']);
-
                                 edit_post_link(__('Edit', 'twentythirteen'), '<span class="edit-link">', '</span>');
                             ?>
                         </div><!-- .entry-meta -->

@@ -1,11 +1,43 @@
 <?php
+    /**
+     * Widget API: WP_Media_Widget class
+     *
+     * @package    WordPress
+     * @subpackage Widgets
+     * @since      4.8.0
+     */
 
+    /**
+     * Core class that implements a media widget.
+     *
+     * @since 4.8.0
+     *
+     * @see   WP_Widget
+     */
     abstract class WP_Widget_Media extends WP_Widget
     {
+        /**
+         * The default widget description.
+         *
+         * @since 6.0.0
+         * @var string
+         */
         protected static $default_description = '';
 
+        /**
+         * The default localized strings used by the widget.
+         *
+         * @since 6.0.0
+         * @var string[]
+         */
         protected static $l10n_defaults = [];
 
+        /**
+         * Translation labels.
+         *
+         * @since 4.8.0
+         * @var array
+         */
         public $l10n = [
             'add_to_widget' => '',
             'replace_media' => '',
@@ -17,8 +49,27 @@
             'add_media' => '',
         ];
 
+        /**
+         * Whether or not the widget has been registered yet.
+         *
+         * @since 4.8.1
+         * @var bool
+         */
         protected $registered = false;
 
+        /**
+         * Constructor.
+         *
+         * @param string $id_base         Base ID for the widget, lowercase and unique.
+         * @param string $name            Name for the widget displayed on the configuration page.
+         * @param array  $widget_options  Optional. Widget options. See wp_register_sidebar_widget() for
+         *                                information on accepted arguments. Default empty array.
+         * @param array  $control_options Optional. Widget control options. See wp_register_widget_control()
+         *                                for information on accepted arguments. Default empty array.
+         *
+         * @since 4.8.0
+         *
+         */
         public function __construct($id_base, $name, $widget_options = [], $control_options = [])
         {
             $widget_opts = wp_parse_args($widget_options, [
@@ -27,33 +78,42 @@
                 'show_instance_in_rest' => true,
                 'mime_type' => '',
             ]);
-
             $control_opts = wp_parse_args($control_options, []);
-
             $this->l10n = array_merge(self::get_l10n_defaults(), array_filter($this->l10n));
-
             parent::__construct($id_base, $name, $widget_opts, $control_opts);
         }
 
+        /**
+         * Returns the default description of the widget.
+         *
+         * @return string
+         * @since 6.0.0
+         *
+         */
         protected static function get_default_description()
         {
             if(self::$default_description)
             {
                 return self::$default_description;
             }
-
             self::$default_description = __('A media item.');
 
             return self::$default_description;
         }
 
+        /**
+         * Returns the default localized strings used by the widget.
+         *
+         * @return (string|array)[]
+         * @since 6.0.0
+         *
+         */
         protected static function get_l10n_defaults()
         {
             if(! empty(self::$l10n_defaults))
             {
                 return self::$l10n_defaults;
             }
-
             self::$l10n_defaults = [
                 'no_media_selected' => __('No media selected'),
                 'add_media' => _x('Add Media', 'label for button in the media widget'),
@@ -70,12 +130,26 @@
             return self::$l10n_defaults;
         }
 
+        /**
+         * Resets the cache for the default labels.
+         *
+         * @since 6.0.0
+         */
         public static function reset_default_labels()
         {
             self::$default_description = '';
             self::$l10n_defaults = [];
         }
 
+        /**
+         * Add hooks while registering all widget instances of this widget class.
+         *
+         * @param int $number Optional. The unique order number of this widget instance
+         *                    compared to other instances of the same class. Default -1.
+         *
+         * @since 4.8.0
+         *
+         */
         public function _register_one($number = -1)
         {
             parent::_register_one($number);
@@ -84,27 +158,33 @@
                 return;
             }
             $this->registered = true;
-
             /*
              * Note that the widgets component in the customizer will also do
              * the 'admin_print_scripts-widgets.php' action in WP_Customize_Widgets::print_scripts().
              */
             add_action('admin_print_scripts-widgets.php', [$this, 'enqueue_admin_scripts']);
-
             if($this->is_preview())
             {
                 add_action('wp_enqueue_scripts', [$this, 'enqueue_preview_scripts']);
             }
-
             /*
              * Note that the widgets component in the customizer will also do
              * the 'admin_footer-widgets.php' action in WP_Customize_Widgets::print_footer_scripts().
              */
             add_action('admin_footer-widgets.php', [$this, 'render_control_template_scripts']);
-
             add_filter('display_media_states', [$this, 'display_media_state'], 10, 2);
         }
 
+        /**
+         * Determine if the supplied attachment is for a valid attachment post with the specified MIME type.
+         *
+         * @param int|WP_Post $attachment Attachment post ID or object.
+         * @param string      $mime_type  MIME type.
+         *
+         * @return bool Is matching MIME type.
+         * @since 4.8.0
+         *
+         */
         public function is_attachment_with_mime_type($attachment, $mime_type)
         {
             if(empty($attachment))
@@ -112,7 +192,11 @@
                 return false;
             }
             $attachment = get_post($attachment);
-            if(! $attachment || 'attachment' !== $attachment->post_type)
+            if(! $attachment)
+            {
+                return false;
+            }
+            if('attachment' !== $attachment->post_type)
             {
                 return false;
             }
@@ -120,6 +204,17 @@
             return wp_attachment_is($mime_type, $attachment);
         }
 
+        /**
+         * Sanitize a token list string, such as used in HTML rel and class attributes.
+         *
+         * @param string|array $tokens List of tokens separated by spaces, or an array of tokens.
+         *
+         * @return string Sanitized token string list.
+         * @link  https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList
+         * @since 4.8.0
+         *
+         * @link  http://w3c.github.io/html/infrastructure.html#space-separated-tokens
+         */
         public function sanitize_token_list($tokens)
         {
             if(is_string($tokens))
@@ -132,33 +227,58 @@
             return implode(' ', $tokens);
         }
 
+        /**
+         * Displays the widget on the front-end.
+         *
+         * @param array $args     Display arguments including before_title, after_title, before_widget, and after_widget.
+         * @param array $instance Saved setting from the database.
+         *
+         * @since 4.8.0
+         *
+         * @see   WP_Widget::widget()
+         *
+         */
         public function widget($args, $instance)
         {
-            parent::widget($args, $instance);
             $instance = wp_parse_args($instance, wp_list_pluck($this->get_instance_schema(), 'default'));
-
             // Short-circuit if no media is selected.
             if(! $this->has_content($instance))
             {
                 return;
             }
-
             echo $args['before_widget'];
-
+            /** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
             $title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
-
             if($title)
             {
                 echo $args['before_title'].$title.$args['after_title'];
             }
-
+            /**
+             * Filters the media widget instance prior to rendering the media.
+             *
+             * @param array           $instance Instance data.
+             * @param array           $args     Widget args.
+             * @param WP_Widget_Media $widget   Widget object.
+             *
+             * @since 4.8.0
+             *
+             */
             $instance = apply_filters("widget_{$this->id_base}_instance", $instance, $args, $this);
-
             $this->render_media($instance);
-
             echo $args['after_widget'];
         }
 
+        /**
+         * Get schema for properties of a widget instance (item).
+         *
+         * @return array Schema for properties.
+         * @see   WP_REST_Controller::get_item_schema()
+         * @see   WP_REST_Controller::get_additional_fields()
+         * @link  https://core.trac.wordpress.org/ticket/35574
+         *
+         * @since 4.8.0
+         *
+         */
         public function get_instance_schema()
         {
             $schema = [
@@ -183,19 +303,60 @@
                     'should_preview_update' => false,
                 ],
             ];
-
+            /**
+             * Filters the media widget instance schema to add additional properties.
+             *
+             * @param array           $schema Instance schema.
+             * @param WP_Widget_Media $widget Widget object.
+             *
+             * @since 4.9.0
+             *
+             */
             $schema = apply_filters("widget_{$this->id_base}_instance_schema", $schema, $this);
 
             return $schema;
         }
 
+        /**
+         * Whether the widget has content to show.
+         *
+         * @param array $instance Widget instance props.
+         *
+         * @return bool Whether widget has content.
+         * @since 4.8.0
+         *
+         */
         protected function has_content($instance)
         {
             return ($instance['attachment_id'] && 'attachment' === get_post_type($instance['attachment_id'])) || $instance['url'];
         }
 
+        /**
+         * Render the media on the frontend.
+         *
+         * @param array $instance Widget instance props.
+         *
+         * @since 4.8.0
+         *
+         */
         abstract public function render_media($instance);
 
+        /**
+         * Sanitizes the widget form values as they are saved.
+         *
+         * @param array $new_instance Values just sent to be saved.
+         * @param array $old_instance Previously saved values from database.
+         *
+         * @return array Updated safe values to be saved.
+         * @see   WP_REST_Request::has_valid_params()
+         * @see   WP_REST_Request::sanitize_params()
+         *
+         * @since 4.8.0
+         * @since 5.9.0 Renamed `$instance` to `$old_instance` to match parent class
+         *              for PHP 8 named parameter support.
+         *
+         * @see   WP_Widget::update()
+         */
         public function update($new_instance, $old_instance)
         {
             $schema = $this->get_instance_schema();
@@ -206,7 +367,6 @@
                     continue;
                 }
                 $value = $new_instance[$field];
-
                 /*
                  * Workaround for rest_validate_value_from_schema() due to the fact that
                  * rest_is_boolean( '' ) === false, while rest_is_boolean( '1' ) is true.
@@ -215,20 +375,16 @@
                 {
                     $value = false;
                 }
-
                 if(true !== rest_validate_value_from_schema($value, $field_schema, $field))
                 {
                     continue;
                 }
-
                 $value = rest_sanitize_value_from_schema($value, $field_schema);
-
                 // @codeCoverageIgnoreStart
                 if(is_wp_error($value))
                 {
                     continue; // Handle case when rest_sanitize_value_from_schema() ever returns WP_Error as its phpdoc @return tag indicates.
                 }
-
                 // @codeCoverageIgnoreEnd
                 if(isset($field_schema['sanitize_callback']))
                 {
@@ -244,12 +400,22 @@
             return $old_instance;
         }
 
+        /**
+         * Outputs the settings update form.
+         *
+         * Note that the widget UI itself is rendered with JavaScript via `MediaWidgetControl#render()`.
+         *
+         * @param array $instance Current settings.
+         *
+         * @see   \WP_Widget_Media::render_control_template_scripts() Where the JS template is located.
+         *
+         * @since 4.8.0
+         *
+         */
         final public function form($instance)
         {
-            parent::form($instance);
             $instance_schema = $this->get_instance_schema();
             $instance = wp_array_slice_assoc(wp_parse_args((array) $instance, wp_list_pluck($instance_schema, 'default')), array_keys($instance_schema));
-
             foreach($instance as $name => $value) : ?>
                 <input
                         type="hidden"
@@ -263,13 +429,22 @@
             endforeach;
         }
 
+        /**
+         * Filters the default media display states for items in the Media list table.
+         *
+         * @param array   $states An array of media states.
+         * @param WP_Post $post   The current attachment object.
+         *
+         * @return array
+         * @since 4.8.0
+         *
+         */
         public function display_media_state($states, $post = null)
         {
             if(! $post)
             {
                 $post = get_post();
             }
-
             // Count how many times this attachment is used in widgets.
             $use_count = 0;
             foreach($this->get_settings() as $instance)
@@ -279,7 +454,6 @@
                     ++$use_count;
                 }
             }
-
             if(1 === $use_count)
             {
                 $states[] = $this->l10n['media_library_state_single'];
@@ -292,14 +466,34 @@
             return $states;
         }
 
+        /**
+         * Enqueue preview scripts.
+         *
+         * These scripts normally are enqueued just-in-time when a widget is rendered.
+         * In the customizer, however, widgets can be dynamically added and rendered via
+         * selective refresh, and so it is important to unconditionally enqueue them in
+         * case a widget does get added.
+         *
+         * @since 4.8.0
+         */
         public function enqueue_preview_scripts() {}
 
+        /**
+         * Loads the required scripts and styles for the widget control.
+         *
+         * @since 4.8.0
+         */
         public function enqueue_admin_scripts()
         {
             wp_enqueue_media();
             wp_enqueue_script('media-widgets');
         }
 
+        /**
+         * Render form template scripts.
+         *
+         * @since 4.8.0
+         */
         public function render_control_template_scripts()
         {
             ?>

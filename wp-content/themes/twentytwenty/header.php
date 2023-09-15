@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * Header file for the Twenty Twenty WordPress default theme.
+ *
+ * @link       https://developer.wordpress.org/themes/basics/template-files/#template-partials
+ *
+ * @package    WordPress
+ * @subpackage Twenty_Twenty
+ * @since      Twenty Twenty 1.0
+ */
 
 ?><!DOCTYPE html>
 
@@ -29,10 +37,8 @@
         <div class="header-titles-wrapper">
 
             <?php
-
                 // Check whether the header search is activated in the customizer.
                 $enable_header_search = get_theme_mod('enable_header_search', true);
-
                 if(true === $enable_header_search)
                 {
                     ?>
@@ -57,7 +63,6 @@
                 <?php
                     // Site title or logo.
                     twentytwenty_site_logo();
-
                     // Site description.
                     twentytwenty_site_description();
                 ?>
@@ -117,7 +122,6 @@
 
                     <?php
                 }
-
                 if(true === $enable_header_search || has_nav_menu('expanded'))
                 {
                     ?>
@@ -148,7 +152,6 @@
 
                                 <?php
                             }
-
                             if(true === $enable_header_search)
                             {
                                 ?>

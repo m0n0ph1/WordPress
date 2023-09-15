@@ -1,5 +1,18 @@
 <?php
-
+    /**
+     * The loop that displays an attachment
+     *
+     * The loop displays the posts and the post content. See
+     * https://developer.wordpress.org/themes/basics/the-loop/ to understand it and
+     * https://developer.wordpress.org/themes/basics/template-tags/ to understand
+     * the tags used in it.
+     *
+     * This can be overridden in child themes with loop-attachment.php.
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Ten
+     * @since      Twenty Ten 1.2
+     */
 ?>
 
 <?php
@@ -65,7 +78,6 @@
                                         break;
                                     }
                                 }
-
                                 // If there is more than 1 image attachment in a gallery...
                                 if(count($attachments) > 1)
                                 {
@@ -91,9 +103,23 @@
                                                          title="<?php the_title_attribute(); ?>"
                                                          rel="attachment">
                                         <?php
-
+                                            /**
+                                             * Filters the Twenty Ten default attachment width.
+                                             *
+                                             * @param int The default attachment width in pixels. Default 900.
+                                             *
+                                             * @since Twenty Ten 1.0
+                                             *
+                                             */
                                             $attachment_width = apply_filters('twentyten_attachment_size', 900);
-
+                                            /**
+                                             * Filters the Twenty Ten default attachment height.
+                                             *
+                                             * @param int The default attachment height in pixels. Default 900.
+                                             *
+                                             * @since Twenty Ten 1.0
+                                             *
+                                             */
                                             $attachment_height = apply_filters('twentyten_attachment_height', 900);
                                             // Filterable image width with, essentially, no limit for image height.
                                             echo wp_get_attachment_image($post->ID, [

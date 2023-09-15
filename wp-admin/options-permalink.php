@@ -1,58 +1,51 @@
 <?php
-
+    /**
+     * Permalink Settings Administration Screen.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
     if(! current_user_can('manage_options'))
     {
         wp_die(__('Sorry, you are not allowed to manage options for this site.'));
     }
-
     // Used in the HTML title tag.
     $title = __('Permalink Settings');
     $parent_file = 'options-general.php';
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => '<p>'.__('Permalinks are the permanent URLs to your individual pages and blog posts, as well as your category and tag archives. A permalink is the web address used to link to your content. The URL to each post should be permanent, and never change &#8212; hence the name permalink.').'</p>'.'<p>'.__('This screen allows you to choose your permalink structure. You can choose from common settings or create custom URL structures.').'</p>'.'<p>'.__('You must click the Save Changes button at the bottom of the screen for new settings to take effect.').'</p>',
                                        ]);
-
     get_current_screen()->add_help_tab([
                                            'id' => 'permalink-settings',
                                            'title' => __('Permalink Settings'),
                                            'content' => '<p>'.__('Permalinks can contain useful information, such as the post date, title, or other elements. You can choose from any of the suggested permalink formats, or you can craft your own if you select Custom Structure.').'</p>'.'<p>'.sprintf(/* translators: %s: Percent sign (%). */ __('If you pick an option other than Plain, your general URL path with structure tags (terms surrounded by %s) will also appear in the custom structure field and your path can be further modified there.'), '<code>%</code>').'</p>'.'<p>'.sprintf(/* translators: 1: %category%, 2: %tag% */ __('When you assign multiple categories or tags to a post, only one can show up in the permalink: the lowest numbered category. This applies if your custom structure includes %1$s or %2$s.'), '<code>%category%</code>', '<code>%tag%</code>').'</p>'.'<p>'.__('You must click the Save Changes button at the bottom of the screen for new settings to take effect.').'</p>',
                                        ]);
-
     get_current_screen()->add_help_tab([
                                            'id' => 'custom-structures',
                                            'title' => __('Custom Structures'),
                                            'content' => '<p>'.__('The Optional fields let you customize the &#8220;category&#8221; and &#8220;tag&#8221; base names that will appear in archive URLs. For example, the page listing all posts in the &#8220;Uncategorized&#8221; category could be <code>/topics/uncategorized</code> instead of <code>/category/uncategorized</code>.').'</p>'.'<p>'.__('You must click the Save Changes button at the bottom of the screen for new settings to take effect.').'</p>',
                                        ]);
-
     $help_sidebar_content = '<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/settings-permalinks-screen/">Documentation on Permalinks Settings</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/customize-permalinks/">Documentation on Using Permalinks</a>').'</p>';
-
     if($is_nginx)
     {
         $help_sidebar_content .= '<p>'.__('<a href="https://wordpress.org/documentation/article/nginx/">Documentation on Nginx configuration</a>.').'</p>';
     }
-
     $help_sidebar_content .= '<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>';
-
     get_current_screen()->set_help_sidebar($help_sidebar_content);
     unset($help_sidebar_content);
-
     $home_path = get_home_path();
     $iis7_permalinks = iis7_supports_permalinks();
     $permalink_structure = get_option('permalink_structure');
-
     $index_php_prefix = '';
     $blog_prefix = '';
-
     if(! got_url_rewrite())
     {
         $index_php_prefix = '/index.php';
     }
-
     /*
      * In a subdirectory configuration of multisite, the `/blog` prefix is used by
      * default on the main site to avoid collisions with other sites created on that
@@ -63,17 +56,13 @@
     {
         $blog_prefix = '/blog';
     }
-
     $category_base = get_option('category_base');
     $tag_base = get_option('tag_base');
-
     $structure_updated = false;
     $htaccess_update_required = false;
-
     if(isset($_POST['permalink_structure']) || isset($_POST['category_base']))
     {
         check_admin_referer('update-permalink');
-
         if(isset($_POST['permalink_structure']))
         {
             if(isset($_POST['selection']) && 'custom' !== $_POST['selection'])
@@ -84,11 +73,9 @@
             {
                 $permalink_structure = $_POST['permalink_structure'];
             }
-
             if(! empty($permalink_structure))
             {
                 $permalink_structure = preg_replace('#/+#', '/', '/'.str_replace('#', '', $permalink_structure));
-
                 if($index_php_prefix && $blog_prefix)
                 {
                     $permalink_structure = $index_php_prefix.preg_replace('#^/?index\.php#', '', $permalink_structure);
@@ -98,39 +85,29 @@
                     $permalink_structure = $blog_prefix.$permalink_structure;
                 }
             }
-
             $permalink_structure = sanitize_option('permalink_structure', $permalink_structure);
-
             $wp_rewrite->set_permalink_structure($permalink_structure);
-
             $structure_updated = true;
         }
-
         if(isset($_POST['category_base']))
         {
             $category_base = $_POST['category_base'];
-
             if(! empty($category_base))
             {
                 $category_base = $blog_prefix.preg_replace('#/+#', '/', '/'.str_replace('#', '', $category_base));
             }
-
             $wp_rewrite->set_category_base($category_base);
         }
-
         if(isset($_POST['tag_base']))
         {
             $tag_base = $_POST['tag_base'];
-
             if(! empty($tag_base))
             {
                 $tag_base = $blog_prefix.preg_replace('#/+#', '/', '/'.str_replace('#', '', $tag_base));
             }
-
             $wp_rewrite->set_tag_base($tag_base);
         }
     }
-
     if($iis7_permalinks)
     {
         if((! file_exists($home_path.'web.config') && win_is_writable($home_path)) || win_is_writable($home_path.'web.config'))
@@ -157,28 +134,24 @@
             $writable = false;
             $existing_rules = array_filter(extract_from_markers($home_path.'.htaccess', 'WordPress'));
             $new_rules = array_filter(explode("\n", $wp_rewrite->mod_rewrite_rules()));
-
             $htaccess_update_required = ($new_rules !== $existing_rules);
         }
     }
-
     $using_index_permalinks = $wp_rewrite->using_index_permalinks();
-
     if($structure_updated)
     {
         $message = __('Permalink structure updated.');
-
         if(! is_multisite() && $permalink_structure && ! $using_index_permalinks)
         {
             if($iis7_permalinks)
             {
-                if($writable)
+                if(! $writable)
                 {
-                    $message = sprintf(/* translators: %s: web.config */ __('Permalink structure updated. Remove write access on %s file now!'), '<code>web.config</code>');
+                    $message = sprintf(/* translators: %s: web.config */ __('You should update your %s file now.'), '<code>web.config</code>');
                 }
                 else
                 {
-                    $message = sprintf(/* translators: %s: web.config */ __('You should update your %s file now.'), '<code>web.config</code>');
+                    $message = sprintf(/* translators: %s: web.config */ __('Permalink structure updated. Remove write access on %s file now!'), '<code>web.config</code>');
                 }
             }
             elseif(! $is_nginx && $htaccess_update_required && ! $writable)
@@ -186,20 +159,15 @@
                 $message = sprintf(/* translators: %s: .htaccess */ __('You should update your %s file now.'), '<code>.htaccess</code>');
             }
         }
-
         if(! get_settings_errors())
         {
             add_settings_error('general', 'settings_updated', $message, 'success');
         }
-
         set_transient('settings_errors', get_settings_errors(), 30); // 30 seconds.
-
         wp_redirect(admin_url('options-permalink.php?settings-updated=true'));
         exit;
     }
-
     flush_rewrite_rules();
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
 <div class="wrap">
@@ -221,9 +189,7 @@
                 $category_base = preg_replace('|^/?blog|', '', $category_base);
                 $tag_base = preg_replace('|^/?blog|', '', $tag_base);
             }
-
             $url_base = home_url($blog_prefix.$index_php_prefix);
-
             $default_structures = [
                 [
                     'id' => 'plain',
@@ -256,9 +222,7 @@
                     'example' => $url_base.'/'._x('sample-post', 'sample permalink structure').'/',
                 ],
             ];
-
             $default_structure_values = wp_list_pluck($default_structures, 'value');
-
             $available_tags = [
                 /* translators: %s: Permalink structure tag. */
                 'year' => __('%s (The year of the post, four digits, for example 2004.)'),
@@ -281,9 +245,15 @@
                 /* translators: %s: Permalink structure tag. */
                 'author' => __('%s (A sanitized version of the author name.)'),
             ];
-
+            /**
+             * Filters the list of available permalink structure tags on the Permalinks settings page.
+             *
+             * @param string[] $available_tags An array of key => value pairs of available permalink structure tags.
+             *
+             * @since 4.9.0
+             *
+             */
             $available_tags = apply_filters('available_permalink_structure_tags', $available_tags);
-
             /* translators: %s: Permalink structure tag. */
             $tag_added = __('%s added to permalink structure');
             /* translators: %s: Permalink structure tag. */

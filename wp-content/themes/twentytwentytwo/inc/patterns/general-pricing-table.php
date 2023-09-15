@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Pricing table block pattern
+     */
     return [
         'title' => __('Pricing table', 'twentytwentytwo'),
         'categories' => ['featured', 'columns', 'buttons'],

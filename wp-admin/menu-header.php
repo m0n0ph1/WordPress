@@ -1,22 +1,71 @@
 <?php
-
+    /**
+     * Displays Administration Menu.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /**
+     * The current page.
+     *
+     * @global string $self
+     */
     $self = preg_replace('|^.*/wp-admin/network/|i', '', $_SERVER['PHP_SELF']);
     $self = preg_replace('|^.*/wp-admin/|i', '', $self);
     $self = preg_replace('|^.*/plugins/|i', '', $self);
     $self = preg_replace('|^.*/mu-plugins/|i', '', $self);
-
+    /**
+     * For when admin-header is included from within a function.
+     *
+     * @global array  $menu
+     * @global array  $submenu
+     * @global string $parent_file
+     * @global string $submenu_file
+     */
     global $menu, $submenu, $parent_file, $submenu_file;
-
+    /**
+     * Filters the parent file of an admin menu sub-menu item.
+     *
+     * Allows plugins to move sub-menu items around.
+     *
+     * @param string $parent_file The parent file.
+     *
+     * @since MU (3.0.0)
+     *
+     */
     $parent_file = apply_filters('parent_file', $parent_file);
-
+    /**
+     * Filters the file of an admin menu sub-menu item.
+     *
+     * @param string $submenu_file The submenu file.
+     * @param string $parent_file  The submenu item's parent file.
+     *
+     * @since 4.4.0
+     *
+     */
     $submenu_file = apply_filters('submenu_file', $submenu_file, $parent_file);
-
     get_admin_page_parent();
-
+    /**
+     * Display menu.
+     *
+     * @access private
+     *
+     * @param array   $menu
+     * @param array   $submenu
+     * @param bool    $submenu_as_parent
+     *
+     * @global string $submenu_file
+     * @global string $plugin_page
+     * @global string $typenow The post type of the current screen.
+     *
+     * @since  2.7.0
+     *
+     * @global string $self
+     * @global string $parent_file
+     */
     function _wp_menu_output($menu, $submenu, $submenu_as_parent = true)
     {
         global $self, $parent_file, $submenu_file, $plugin_page, $typenow;
-
         $first = true;
         // 0 = menu_title, 1 = capability, 2 = menu_slug, 3 = page_title, 4 = classes, 5 = hookname, 6 = icon_url.
         foreach($menu as $key => $item)
@@ -26,20 +75,17 @@
             $aria_attributes = '';
             $aria_hidden = '';
             $is_separator = false;
-
             if($first)
             {
                 $class[] = 'wp-first-item';
                 $first = false;
             }
-
             $submenu_items = [];
             if(! empty($submenu[$item[2]]))
             {
                 $class[] = 'wp-has-submenu';
                 $submenu_items = $submenu[$item[2]];
             }
-
             if(($parent_file && $item[2] === $parent_file) || (empty($typenow) && $self === $item[2]))
             {
                 if(! empty($submenu_items))
@@ -60,23 +106,19 @@
                     $aria_attributes .= 'aria-haspopup="true"';
                 }
             }
-
             if(! empty($item[4]))
             {
                 $class[] = esc_attr($item[4]);
             }
-
             $class = $class ? ' class="'.implode(' ', $class).'"' : '';
             $id = ! empty($item[5]) ? ' id="'.preg_replace('|[^a-zA-Z0-9_:.]|', '-', $item[5]).'"' : '';
             $img = '';
             $img_style = '';
             $img_class = ' dashicons-before';
-
             if(str_contains($class, 'wp-menu-separator'))
             {
                 $is_separator = true;
             }
-
             /*
              * If the string 'none' (previously 'div') is passed instead of a URL, don't output
              * the default menu image so an icon can be added to div.wp-menu-image as background
@@ -86,7 +128,6 @@
             if(! empty($item[6]))
             {
                 $img = '<img src="'.esc_url($item[6]).'" alt="" />';
-
                 if('none' === $item[6] || 'div' === $item[6])
                 {
                     $img = '<br />';
@@ -105,17 +146,13 @@
                 }
             }
             $arrow = '<div class="wp-menu-arrow"><div></div></div>';
-
             $title = wptexturize($item[0]);
-
             // Hide separators from screen readers.
             if($is_separator)
             {
                 $aria_hidden = ' aria-hidden="true"';
             }
-
             echo "\n\t<li$class$id$aria_hidden>";
-
             if($is_separator)
             {
                 echo '<div class="separator"></div>';
@@ -126,12 +163,10 @@
                 $menu_hook = get_plugin_page_hook($submenu_items[0][2], $item[2]);
                 $menu_file = $submenu_items[0][2];
                 $pos = strpos($menu_file, '?');
-
                 if(false !== $pos)
                 {
                     $menu_file = substr($menu_file, 0, $pos);
                 }
-
                 if(! empty($menu_hook) || (('index.php' !== $submenu_items[0][2]) && file_exists(WP_PLUGIN_DIR."/$menu_file") && ! file_exists(ABSPATH."/wp-admin/$menu_file")))
                 {
                     $admin_is_parent = true;
@@ -147,12 +182,10 @@
                 $menu_hook = get_plugin_page_hook($item[2], 'admin.php');
                 $menu_file = $item[2];
                 $pos = strpos($menu_file, '?');
-
                 if(false !== $pos)
                 {
                     $menu_file = substr($menu_file, 0, $pos);
                 }
-
                 if(! empty($menu_hook) || (('index.php' !== $item[2]) && file_exists(WP_PLUGIN_DIR."/$menu_file") && ! file_exists(ABSPATH."/wp-admin/$menu_file")))
                 {
                     $admin_is_parent = true;
@@ -163,14 +196,11 @@
                     echo "\n\t<a href='{$item[2]}'$class $aria_attributes>$arrow<div class='wp-menu-image$img_class'$img_style aria-hidden='true'>$img</div><div class='wp-menu-name'>{$item[0]}</div></a>";
                 }
             }
-
             if(! empty($submenu_items))
             {
                 echo "\n\t<ul class='wp-submenu wp-submenu-wrap'>";
                 echo "<li class='wp-submenu-head' aria-hidden='true'>{$item[0]}</li>";
-
                 $first = true;
-
                 // 0 = menu_title, 1 = capability, 2 = menu_slug, 3 = page_title, 4 = classes.
                 foreach($submenu_items as $sub_key => $sub_item)
                 {
@@ -178,27 +208,21 @@
                     {
                         continue;
                     }
-
                     $class = [];
                     $aria_attributes = '';
-
                     if($first)
                     {
                         $class[] = 'wp-first-item';
                         $first = false;
                     }
-
                     $menu_file = $item[2];
                     $pos = strpos($menu_file, '?');
-
                     if(false !== $pos)
                     {
                         $menu_file = substr($menu_file, 0, $pos);
                     }
-
                     // Handle current for post_type=post|page|foo pages, which won't match $self.
                     $self_type = ! empty($typenow) ? $self.'?post_type='.$typenow : 'nothing';
-
                     if(isset($submenu_file))
                     {
                         if($submenu_file === $sub_item[2])
@@ -216,14 +240,11 @@
                         $class[] = 'current';
                         $aria_attributes .= ' aria-current="page"';
                     }
-
                     if(! empty($sub_item[4]))
                     {
                         $class[] = esc_attr($sub_item[4]);
                     }
-
                     $class = $class ? ' class="'.implode(' ', $class).'"' : '';
-
                     $menu_hook = get_plugin_page_hook($sub_item[2], $item[2]);
                     $sub_file = $sub_item[2];
                     $pos = strpos($sub_file, '?');
@@ -231,9 +252,7 @@
                     {
                         $sub_file = substr($sub_file, 0, $pos);
                     }
-
                     $title = wptexturize($sub_item[0]);
-
                     if(! empty($menu_hook) || (('index.php' !== $sub_item[2]) && file_exists(WP_PLUGIN_DIR."/$sub_file") && ! file_exists(ABSPATH."/wp-admin/$sub_file")))
                     {
                         // If admin.php is the current page or if the parent exists as a file in the plugins or admin directory.
@@ -245,7 +264,6 @@
                         {
                             $sub_item_url = add_query_arg(['page' => $sub_item[2]], 'admin.php');
                         }
-
                         $sub_item_url = esc_url($sub_item_url);
                         echo "<li$class><a href='$sub_item_url'$class$aria_attributes>$title</a></li>";
                     }
@@ -258,7 +276,6 @@
             }
             echo '</li>';
         }
-
         echo '<li id="collapse-menu" class="hide-if-no-js">'.'<button type="button" id="collapse-button" aria-label="'.esc_attr__('Collapse Main menu').'" aria-expanded="true">'.'<span class="collapse-button-icon" aria-hidden="true"></span>'.'<span class="collapse-button-label">'.__('Collapse menu').'</span>'.'</button></li>';
     }
 
@@ -272,11 +289,13 @@
         <ul id="adminmenu">
 
             <?php
-
                 _wp_menu_output($menu, $submenu);
-
+                /**
+                 * Fires after the admin menu has been output.
+                 *
+                 * @since 2.5.0
+                 */
                 do_action('adminmenu');
-
             ?>
         </ul>
     </div>

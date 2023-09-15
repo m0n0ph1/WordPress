@@ -1,12 +1,26 @@
 <?php
-
     if(class_exists('ParagonIE_Sodium_Core_X25519', false))
     {
         return;
     }
 
-    abstract class X25519 extends ParagonIE_Sodium_Core_Curve25519
+    /**
+     * Class ParagonIE_Sodium_Core_X25519
+     */
+    abstract class ParagonIE_Sodium_Core_X25519 extends ParagonIE_Sodium_Core_Curve25519
     {
+        /**
+         * @param string $n
+         * @param string $p
+         *
+         * @return string
+         * @throws SodiumException
+         * @throws TypeError
+         * @internal You should not use this directly from another application
+         *
+         * Inline comments preceded by # are from libsodium's ref10 code.
+         *
+         */
         public static function crypto_scalarmult_curve25519_ref10($n, $p)
         {
             # for (i = 0;i < 32;++i) e[i] = n[i];
@@ -26,16 +40,14 @@
             $x3 = self::fe_copy($x1);
             # fe_1(z3);
             $z3 = self::fe_1();
-
             # swap = 0;
-
+            /** @var int $swap */
             $swap = 0;
-
             # for (pos = 254;pos >= 0;--pos) {
             for($pos = 254; $pos >= 0; --$pos)
             {
                 # b = e[pos / 8] >> (pos & 7);
-
+                /** @var int $b */
                 $b = self::chrToInt($e[(int) floor($pos / 8)]) >> ($pos & 7);
                 # b &= 1;
                 $b &= 1;
@@ -51,65 +63,45 @@
                 $tmp0 = self::fe_sub($x3, $z3);
                 # fe_sub(tmp1,x2,z2);
                 $tmp1 = self::fe_sub($x2, $z2);
-
                 # fe_add(x2,x2,z2);
                 $x2 = self::fe_add($x2, $z2);
-
                 # fe_add(z2,x3,z3);
                 $z2 = self::fe_add($x3, $z3);
-
                 # fe_mul(z3,tmp0,x2);
                 $z3 = self::fe_mul($tmp0, $x2);
-
                 # fe_mul(z2,z2,tmp1);
                 $z2 = self::fe_mul($z2, $tmp1);
-
                 # fe_sq(tmp0,tmp1);
                 $tmp0 = self::fe_sq($tmp1);
-
                 # fe_sq(tmp1,x2);
                 $tmp1 = self::fe_sq($x2);
-
                 # fe_add(x3,z3,z2);
                 $x3 = self::fe_add($z3, $z2);
-
                 # fe_sub(z2,z3,z2);
                 $z2 = self::fe_sub($z3, $z2);
-
                 # fe_mul(x2,tmp1,tmp0);
                 $x2 = self::fe_mul($tmp1, $tmp0);
-
                 # fe_sub(tmp1,tmp1,tmp0);
                 $tmp1 = self::fe_sub($tmp1, $tmp0);
-
                 # fe_sq(z2,z2);
                 $z2 = self::fe_sq($z2);
-
                 # fe_mul121666(z3,tmp1);
                 $z3 = self::fe_mul121666($tmp1);
-
                 # fe_sq(x3,x3);
                 $x3 = self::fe_sq($x3);
-
                 # fe_add(tmp0,tmp0,z3);
                 $tmp0 = self::fe_add($tmp0, $z3);
-
                 # fe_mul(z3,x1,z2);
                 $z3 = self::fe_mul($x1, $z2);
-
                 # fe_mul(z2,tmp1,tmp0);
                 $z2 = self::fe_mul($tmp1, $tmp0);
             }
-
             # fe_cswap(x2,x3,swap);
             self::fe_cswap($x2, $x3, $swap);
-
             # fe_cswap(z2,z3,swap);
             self::fe_cswap($z2, $z3, $swap);
-
             # fe_invert(z2,z2);
             $z2 = self::fe_invert($z2);
-
             # fe_mul(x2,x2,z2);
             $x2 = self::fe_mul($x2, $z2);
 
@@ -117,6 +109,18 @@
             return self::fe_tobytes($x2);
         }
 
+        /**
+         * Alters the objects passed to this method in place.
+         *
+         * @param ParagonIE_Sodium_Core_Curve25519_Fe $f
+         * @param ParagonIE_Sodium_Core_Curve25519_Fe $g
+         * @param int                                 $b
+         *
+         * @return void
+         * @psalm-suppress MixedAssignment
+         * @internal       You should not use this directly from another application
+         *
+         */
         public static function fe_cswap(
             ParagonIE_Sodium_Core_Curve25519_Fe $f, ParagonIE_Sodium_Core_Curve25519_Fe $g, $b = 0
         ) {
@@ -173,6 +177,13 @@
             $g[9] = $g9 ^ $x9;
         }
 
+        /**
+         * @param ParagonIE_Sodium_Core_Curve25519_Fe $f
+         *
+         * @return ParagonIE_Sodium_Core_Curve25519_Fe
+         * @internal You should not use this directly from another application
+         *
+         */
         public static function fe_mul121666(ParagonIE_Sodium_Core_Curve25519_Fe $f)
         {
             $h = [
@@ -187,47 +198,46 @@
                 self::mul((int) $f[8], 121666, 17),
                 self::mul((int) $f[9], 121666, 17)
             ];
-
+            /** @var int $carry9 */
             $carry9 = ($h[9] + (1 << 24)) >> 25;
             $h[0] += self::mul($carry9, 19, 5);
             $h[9] -= $carry9 << 25;
-
+            /** @var int $carry1 */
             $carry1 = ($h[1] + (1 << 24)) >> 25;
             $h[2] += $carry1;
             $h[1] -= $carry1 << 25;
-
+            /** @var int $carry3 */
             $carry3 = ($h[3] + (1 << 24)) >> 25;
             $h[4] += $carry3;
             $h[3] -= $carry3 << 25;
-
+            /** @var int $carry5 */
             $carry5 = ($h[5] + (1 << 24)) >> 25;
             $h[6] += $carry5;
             $h[5] -= $carry5 << 25;
-
+            /** @var int $carry7 */
             $carry7 = ($h[7] + (1 << 24)) >> 25;
             $h[8] += $carry7;
             $h[7] -= $carry7 << 25;
-
+            /** @var int $carry0 */
             $carry0 = ($h[0] + (1 << 25)) >> 26;
             $h[1] += $carry0;
             $h[0] -= $carry0 << 26;
-
+            /** @var int $carry2 */
             $carry2 = ($h[2] + (1 << 25)) >> 26;
             $h[3] += $carry2;
             $h[2] -= $carry2 << 26;
-
+            /** @var int $carry4 */
             $carry4 = ($h[4] + (1 << 25)) >> 26;
             $h[5] += $carry4;
             $h[4] -= $carry4 << 26;
-
+            /** @var int $carry6 */
             $carry6 = ($h[6] + (1 << 25)) >> 26;
             $h[7] += $carry6;
             $h[6] -= $carry6 << 26;
-
+            /** @var int $carry8 */
             $carry8 = ($h[8] + (1 << 25)) >> 26;
             $h[9] += $carry8;
             $h[8] -= $carry8 << 26;
-
             foreach($h as $i => $value)
             {
                 $h[$i] = (int) $value;
@@ -236,18 +246,24 @@
             return ParagonIE_Sodium_Core_Curve25519_Fe::fromArray($h);
         }
 
+        /**
+         * @param string $n
+         *
+         * @return string
+         * @throws SodiumException
+         * @throws TypeError
+         * @internal You should not use this directly from another application
+         *
+         */
         public static function crypto_scalarmult_curve25519_ref10_base($n)
         {
             # for (i = 0;i < 32;++i) e[i] = n[i];
             $e = ''.$n;
-
             # e[0] &= 248;
             $e[0] = self::intToChr(self::chrToInt($e[0]) & 248);
-
             # e[31] &= 127;
             # e[31] |= 64;
             $e[31] = self::intToChr((self::chrToInt($e[31]) & 127) | 64);
-
             $A = self::ge_scalarmult_base($e);
             if(! ($A->Y instanceof ParagonIE_Sodium_Core_Curve25519_Fe) || ! ($A->Z instanceof ParagonIE_Sodium_Core_Curve25519_Fe))
             {
@@ -258,6 +274,14 @@
             return self::fe_tobytes($pk);
         }
 
+        /**
+         * @param ParagonIE_Sodium_Core_Curve25519_Fe $edwardsY
+         * @param ParagonIE_Sodium_Core_Curve25519_Fe $edwardsZ
+         *
+         * @return ParagonIE_Sodium_Core_Curve25519_Fe
+         * @internal You should not use this directly from another application
+         *
+         */
         public static function edwards_to_montgomery(
             ParagonIE_Sodium_Core_Curve25519_Fe $edwardsY, ParagonIE_Sodium_Core_Curve25519_Fe $edwardsZ
         ) {

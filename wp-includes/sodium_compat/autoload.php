@@ -1,9 +1,15 @@
 <?php
-
     if(PHP_VERSION_ID < 70000)
     {
         if(! is_callable('sodiumCompatAutoloader'))
         {
+            /**
+             * Sodium_Compat autoloader.
+             *
+             * @param string $class Class name to be autoloaded.
+             *
+             * @return bool         Stop autoloading?
+             */
             function sodiumCompatAutoloader($class)
             {
                 $namespace = 'ParagonIE_Sodium_';
@@ -14,10 +20,8 @@
                     // no, move to the next registered autoloader
                     return false;
                 }
-
                 // Get the relative class name
                 $relative_class = substr($class, $len);
-
                 // Replace the namespace prefix with the base directory, replace namespace
                 // separators with directory separators in the relative class name, append
                 // with .php
@@ -41,13 +45,11 @@
     {
         require_once dirname(__FILE__).'/autoload-php7.php';
     }
-
     /* Explicitly, always load the Compat class: */
     if(! class_exists('ParagonIE_Sodium_Compat', false))
     {
         require_once dirname(__FILE__).'/src/Compat.php';
     }
-
     if(! class_exists('SodiumException', false))
     {
         require_once dirname(__FILE__).'/src/SodiumException.php';

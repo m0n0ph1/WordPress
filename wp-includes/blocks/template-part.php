@@ -1,13 +1,22 @@
 <?php
-
+    /**
+     * Server-side rendering of the `core/template-part` block.
+     *
+     * @package WordPress
+     */
+    /**
+     * Renders the `core/template-part` block on the server.
+     *
+     * @param array $attributes The block attributes.
+     *
+     * @return string The render.
+     */
     function render_block_core_template_part($attributes)
     {
         static $seen_ids = [];
-
         $template_part_id = null;
         $content = null;
         $area = WP_TEMPLATE_PART_AREA_UNCATEGORIZED;
-
         if(isset($attributes['slug']) && isset($attributes['theme']) && get_stylesheet() === $attributes['theme'])
         {
             $template_part_id = $attributes['theme'].'//'.$attributes['slug'];
@@ -38,7 +47,17 @@
                 {
                     $area = $area_terms[0]->name;
                 }
-
+                /**
+                 * Fires when a block template part is loaded from a template post stored in the database.
+                 *
+                 * @param string  $template_part_id   The requested template part namespaced to the theme.
+                 * @param array   $attributes         The block attributes.
+                 * @param WP_Post $template_part_post The template part post object.
+                 * @param string  $content            The template part content.
+                 *
+                 * @since 5.9.0
+                 *
+                 */
                 do_action('render_block_core_template_part_post', $template_part_id, $attributes, $template_part_post, $content);
             }
             else
@@ -60,22 +79,40 @@
                         }
                     }
                 }
-
                 if('' !== $content && null !== $content)
                 {
+                    /**
+                     * Fires when a block template part is loaded from a template part in the theme.
+                     *
+                     * @param string $template_part_id        The requested template part namespaced to the theme.
+                     * @param array  $attributes              The block attributes.
+                     * @param string $template_part_file_path Absolute path to the template path.
+                     * @param string $content                 The template part content.
+                     *
+                     * @since 5.9.0
+                     *
+                     */
                     do_action('render_block_core_template_part_file', $template_part_id, $attributes, $template_part_file_path, $content);
                 }
                 else
                 {
+                    /**
+                     * Fires when a requested block template part does not exist in the database nor in the theme.
+                     *
+                     * @param string $template_part_id        The requested template part namespaced to the theme.
+                     * @param array  $attributes              The block attributes.
+                     * @param string $template_part_file_path Absolute path to the not found template path.
+                     *
+                     * @since 5.9.0
+                     *
+                     */
                     do_action('render_block_core_template_part_none', $template_part_id, $attributes, $template_part_file_path);
                 }
             }
         }
-
         // WP_DEBUG_DISPLAY must only be honored when WP_DEBUG. This precedent
         // is set in `wp_debug_mode()`.
         $is_debug = WP_DEBUG && WP_DEBUG_DISPLAY;
-
         if(is_null($content) && $is_debug)
         {
             if(! isset($attributes['slug']))
@@ -86,17 +123,11 @@
 
             return sprintf(/* translators: %s: Template part slug. */ __('Template part has been deleted or is unavailable: %s'), $attributes['slug']);
         }
-
         if(isset($seen_ids[$template_part_id]))
         {
-            if($is_debug)
-            {
-                return __('[block rendering halted]');
-            }
-
-            return '';
+            return $is_debug ? // translators: Visible only in the front end, this warning takes the place of a faulty block.
+                __('[block rendering halted]') : '';
         }
-
         // Look up area definition.
         $area_definition = null;
         $defined_areas = get_allowed_block_template_part_areas();
@@ -108,13 +139,11 @@
                 break;
             }
         }
-
         // If $area is not allowed, set it back to the uncategorized default.
         if(! $area_definition)
         {
             $area = WP_TEMPLATE_PART_AREA_UNCATEGORIZED;
         }
-
         // Run through the actions that are typically taken on the_content.
         $content = shortcode_unautop($content);
         $content = do_shortcode($content);
@@ -124,11 +153,9 @@
         $content = wptexturize($content);
         $content = convert_smilies($content);
         $content = wp_filter_content_tags($content, "template_part_{$area}");
-
         // Handle embeds for block template parts.
         global $wp_embed;
         $content = $wp_embed->autoembed($content);
-
         if(empty($attributes['tagName']))
         {
             $area_tag = 'div';
@@ -147,11 +174,17 @@
         return "<$html_tag $wrapper_attributes>".str_replace(']]>', ']]&gt;', $content)."</$html_tag>";
     }
 
+    /**
+     * Returns an array of area variation objects for the template part block.
+     *
+     * @param array $instance_variations The variations for instances.
+     *
+     * @return array Array containing the block variation objects.
+     */
     function build_template_part_block_area_variations($instance_variations)
     {
         $variations = [];
         $defined_areas = get_allowed_block_template_part_areas();
-
         foreach($defined_areas as $area)
         {
             if('uncategorized' !== $area['area'])
@@ -165,9 +198,7 @@
                         break;
                     }
                 }
-
                 $scope = $has_instance_for_area ? [] : ['inserter'];
-
                 $variations[] = [
                     'name' => 'area_'.$area['area'],
                     'title' => $area['label'],
@@ -184,6 +215,11 @@
         return $variations;
     }
 
+    /**
+     * Returns an array of instance variation objects for the template part block
+     *
+     * @return array Array containing the block variation objects.
+     */
     function build_template_part_block_instance_variations()
     {
         // Block themes are unavailable during installation.
@@ -191,20 +227,16 @@
         {
             return [];
         }
-
         if(! current_theme_supports('block-templates') && ! current_theme_supports('block-template-parts'))
         {
             return [];
         }
-
         $variations = [];
         $template_parts = get_block_templates([
                                                   'post_type' => 'wp_template_part',
                                               ], 'wp_template_part');
-
         $defined_areas = get_allowed_block_template_part_areas();
         $icon_by_area = array_combine(array_column($defined_areas, 'area'), array_column($defined_areas, 'icon'));
-
         foreach($template_parts as $template_part)
         {
             $variations[] = [
@@ -235,6 +267,11 @@
         return $variations;
     }
 
+    /**
+     * Returns an array of all template part block variations.
+     *
+     * @return array Array containing the block variation objects.
+     */
     function build_template_part_block_variations()
     {
         $instance_variations = build_template_part_block_instance_variations();
@@ -243,6 +280,9 @@
         return array_merge($area_variations, $instance_variations);
     }
 
+    /**
+     * Registers the `core/template-part` block on the server.
+     */
     function register_block_core_template_part()
     {
         register_block_type_from_metadata(__DIR__.'/template-part', [

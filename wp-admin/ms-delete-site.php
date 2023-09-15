@@ -1,17 +1,20 @@
 <?php
-
+    /**
+     * Multisite delete site panel.
+     *
+     * @package    WordPress
+     * @subpackage Multisite
+     * @since      3.0.0
+     */
     require_once __DIR__.'/admin.php';
-
     if(! is_multisite())
     {
         wp_die(__('Multisite support is not enabled.'));
     }
-
     if(! current_user_can('delete_site'))
     {
         wp_die(__('Sorry, you are not allowed to delete this site.'));
     }
-
     if(isset($_GET['h']) && '' !== $_GET['h'] && false !== get_option('delete_blog_hash'))
     {
         if(hash_equals(get_option('delete_blog_hash'), $_GET['h']))
@@ -24,30 +27,21 @@
             wp_die(__('Sorry, the link you clicked is stale. Please select another option.'));
         }
     }
-
     $blog = get_site();
     $user = wp_get_current_user();
-
 // Used in the HTML title tag.
     $title = __('Delete Site');
     $parent_file = 'tools.php';
-
     require_once ABSPATH.'wp-admin/admin-header.php';
-
     echo '<div class="wrap">';
     echo '<h1>'.esc_html($title).'</h1>';
-
     if(isset($_POST['action']) && 'deleteblog' === $_POST['action'] && isset($_POST['confirmdelete']) && '1' === $_POST['confirmdelete'])
     {
         check_admin_referer('delete-blog');
-
         $hash = wp_generate_password(20, false);
         update_option('delete_blog_hash', $hash);
-
         $url_delete = esc_url(admin_url('ms-delete-site.php?h='.$hash));
-
         $switched_locale = switch_to_locale(get_locale());
-
         /* translators: Do not translate USERNAME, URL_DELETE, SITENAME, SITEURL: those are placeholders. */
         $content = __(
             "Howdy ###USERNAME###,
@@ -66,20 +60,20 @@ Thank you for using the site,
 All at ###SITENAME###
 ###SITEURL###"
         );
-
+        /**
+         * Filters the text for the email sent to the site admin when a request to delete a site in a Multisite network is submitted.
+         *
+         * @param string $content The email text.
+         *
+         * @since 3.0.0
+         *
+         */
         $content = apply_filters('delete_site_email_content', $content);
-
-        $content = str_replace(array('###USERNAME###', '###URL_DELETE###'), array(
-            $user->user_login,
-            $url_delete
-        ),                     $content);
-        $content = str_replace(array('###SITENAME###', '###SITEURL###'), array(
-            get_network()->site_name,
-            network_home_url()
-        ),                     $content);
-
+        $content = str_replace('###USERNAME###', $user->user_login, $content);
+        $content = str_replace('###URL_DELETE###', $url_delete, $content);
+        $content = str_replace('###SITENAME###', get_network()->site_name, $content);
+        $content = str_replace('###SITEURL###', network_home_url(), $content);
         wp_mail(get_option('admin_email'), sprintf(/* translators: %s: Site title. */ __('[%s] Delete My Site'), wp_specialchars_decode(get_option('blogname'))), $content);
-
         if($switched_locale)
         {
             restore_previous_locale();
@@ -114,5 +108,4 @@ All at ###SITENAME###
         <?php
     }
     echo '</div>';
-
     require_once ABSPATH.'wp-admin/admin-footer.php';

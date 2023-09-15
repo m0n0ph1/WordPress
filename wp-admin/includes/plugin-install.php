@@ -1,44 +1,154 @@
-<?php /** @noinspection ALL */
-    /** @noinspection ALL */
-    /** @noinspection ALL */
-    /** @noinspection ALL */
-    /** @noinspection ALL */
-    /** @noinspection ALL */
-
+<?php
+    /**
+     * WordPress Plugin Install Administration API
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /**
+     * Retrieves plugin installer pages from the WordPress.org Plugins API.
+     *
+     * It is possible for a plugin to override the Plugin API result with three
+     * filters. Assume this is for plugins, which can extend on the Plugin Info to
+     * offer more choices. This is very powerful and must be used with care when
+     * overriding the filters.
+     *
+     * The first filter, {@see 'plugins_api_args'}, is for the args and gives the action
+     * as the second parameter. The hook for {@see 'plugins_api_args'} must ensure that
+     * an object is returned.
+     *
+     * The second filter, {@see 'plugins_api'}, allows a plugin to override the WordPress.org
+     * Plugin Installation API entirely. If `$action` is 'query_plugins' or 'plugin_information',
+     * an object MUST be passed. If `$action` is 'hot_tags' or 'hot_categories', an array MUST
+     * be passed.
+     *
+     * Finally, the third filter, {@see 'plugins_api_result'}, makes it possible to filter the
+     * response object or array, depending on the `$action` type.
+     *
+     * Supported arguments per action:
+     *
+     * | Argument Name        | query_plugins | plugin_information | hot_tags | hot_categories |
+     * | -------------------- | :-----------: | :----------------: | :------: | :------------: |
+     * | `$slug`              | No            |  Yes               | No       | No             |
+     * | `$per_page`          | Yes           |  No                | No       | No             |
+     * | `$page`              | Yes           |  No                | No       | No             |
+     * | `$number`            | No            |  No                | Yes      | Yes            |
+     * | `$search`            | Yes           |  No                | No       | No             |
+     * | `$tag`               | Yes           |  No                | No       | No             |
+     * | `$author`            | Yes           |  No                | No       | No             |
+     * | `$user`              | Yes           |  No                | No       | No             |
+     * | `$browse`            | Yes           |  No                | No       | No             |
+     * | `$locale`            | Yes           |  Yes               | No       | No             |
+     * | `$installed_plugins` | Yes           |  No                | No       | No             |
+     * | `$is_ssl`            | Yes           |  Yes               | No       | No             |
+     * | `$fields`            | Yes           |  Yes               | No       | No             |
+     *
+     * @param string       $action            API action to perform: 'query_plugins', 'plugin_information',
+     *                                        'hot_tags' or 'hot_categories'.
+     * @param array|object $args              {
+     *                                        Optional. Array or object of arguments to serialize for the Plugin Info API.
+     *
+     * @type string        $slug              The plugin slug. Default empty.
+     * @type int           $per_page          Number of plugins per page. Default 24.
+     * @type int           $page              Number of current page. Default 1.
+     * @type int           $number            Number of tags or categories to be queried.
+     * @type string        $search            A search term. Default empty.
+     * @type string        $tag               Tag to filter plugins. Default empty.
+     * @type string        $author            Username of an plugin author to filter plugins. Default empty.
+     * @type string        $user              Username to query for their favorites. Default empty.
+     * @type string        $browse            Browse view: 'popular', 'new', 'beta', 'recommended'.
+     * @type string        $locale            Locale to provide context-sensitive results. Default is the value
+     *                                        of get_locale().
+     * @type string        $installed_plugins Installed plugins to provide context-sensitive results.
+     * @type bool          $is_ssl            Whether links should be returned with https or not. Default false.
+     * @type array         $fields            {
+     *                                        Array of fields which should or should not be returned.
+     *
+     * @type bool          $short_description Whether to return the plugin short description. Default true.
+     * @type bool          $description       Whether to return the plugin full description. Default false.
+     * @type bool          $sections          Whether to return the plugin readme sections: description, installation,
+     *                                        FAQ, screenshots, other notes, and changelog. Default false.
+     * @type bool          $tested            Whether to return the 'Compatible up to' value. Default true.
+     * @type bool          $requires          Whether to return the required WordPress version. Default true.
+     * @type bool          $requires_php      Whether to return the required PHP version. Default true.
+     * @type bool          $rating            Whether to return the rating in percent and total number of ratings.
+     *                                        Default true.
+     * @type bool          $ratings           Whether to return the number of rating for each star (1-5). Default true.
+     * @type bool          $downloaded        Whether to return the download count. Default true.
+     * @type bool          $downloadlink      Whether to return the download link for the package. Default true.
+     * @type bool          $last_updated      Whether to return the date of the last update. Default true.
+     * @type bool          $added             Whether to return the date when the plugin was added to the wordpress.org
+     *                                        repository. Default true.
+     * @type bool          $tags              Whether to return the assigned tags. Default true.
+     * @type bool          $compatibility     Whether to return the WordPress compatibility list. Default true.
+     * @type bool          $homepage          Whether to return the plugin homepage link. Default true.
+     * @type bool          $versions          Whether to return the list of all available versions. Default false.
+     * @type bool          $donate_link       Whether to return the donation link. Default true.
+     * @type bool          $reviews           Whether to return the plugin reviews. Default false.
+     * @type bool          $banners           Whether to return the banner images links. Default false.
+     * @type bool          $icons             Whether to return the icon links. Default false.
+     * @type bool          $active_installs   Whether to return the number of active installations. Default false.
+     * @type bool          $group             Whether to return the assigned group. Default false.
+     * @type bool          $contributors      Whether to return the list of contributors. Default false.
+     *                                        }
+     *                                        }
+     * @return object|array|WP_Error Response object or array on success, WP_Error on failure. See the
+     *                                        {@link https://developer.wordpress.org/reference/functions/plugins_api/ function reference article}
+     *                                        for more information on the make-up of possible return values depending on the value of `$action`.
+     * @since 2.7.0
+     *
+     */
     function plugins_api($action, $args = [])
     {
         // Include an unmodified $wp_version.
         require ABSPATH.WPINC.'/version.php';
-
         if(is_array($args))
         {
             $args = (object) $args;
         }
-
-        if('query_plugins' === $action && ! isset($args->per_page))
+        if('query_plugins' === $action)
         {
-            /** @noinspection NativeMemberUsageInspection */
-            $args->per_page = 24;
+            if(! isset($args->per_page))
+            {
+                $args->per_page = 24;
+            }
         }
-
-        /** @noinspection NativeMemberUsageInspection */
         if(! isset($args->locale))
         {
-            /** @noinspection NativeMemberUsageInspection */
             $args->locale = get_user_locale();
         }
-
-        /** @noinspection NativeMemberUsageInspection */
         if(! isset($args->wp_version))
         {
-            /** @noinspection NativeMemberUsageInspection */
             $args->wp_version = substr($wp_version, 0, 3); // x.y
         }
-
+        /**
+         * Filters the WordPress.org Plugin Installation API arguments.
+         *
+         * Important: An object MUST be returned to this filter.
+         *
+         * @param object $args   Plugin API arguments.
+         * @param string $action The type of information being requested from the Plugin Installation API.
+         *
+         * @since 2.7.0
+         *
+         */
         $args = apply_filters('plugins_api_args', $args, $action);
-
+        /**
+         * Filters the response for the current WordPress.org Plugin Installation API request.
+         *
+         * Returning a non-false value will effectively short-circuit the WordPress.org API request.
+         *
+         * If `$action` is 'query_plugins' or 'plugin_information', an object MUST be passed.
+         * If `$action` is 'hot_tags' or 'hot_categories', an array should be passed.
+         *
+         * @param false|object|array $result The result object or array. Default false.
+         * @param string             $action The type of information being requested from the Plugin Installation API.
+         * @param object             $args   Plugin API arguments.
+         *
+         * @since 2.7.0
+         *
+         */
         $res = apply_filters('plugins_api', false, $action, $args);
-
         if(false === $res)
         {
             $url = 'http://api.wordpress.org/plugins/info/1.2/';
@@ -46,30 +156,25 @@
                                      'action' => $action,
                                      'request' => $args,
                                  ], $url);
-
             $http_url = $url;
             $ssl = wp_http_supports(['ssl']);
             if($ssl)
             {
                 $url = set_url_scheme($url, 'https');
             }
-
             $http_args = [
                 'timeout' => 15,
                 'user-agent' => 'WordPress/'.$wp_version.'; '.home_url('/'),
             ];
             $request = wp_remote_get($url, $http_args);
-
             if($ssl && is_wp_error($request))
             {
                 if(! wp_is_json_request())
                 {
                     trigger_error(sprintf(/* translators: %s: Support forums URL. */ __('An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.'), __('https://wordpress.org/support/forums/')).' '.__('(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)'), headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE);
                 }
-
                 $request = wp_remote_get($http_url, $http_args);
             }
-
             if(is_wp_error($request))
             {
                 $res = new WP_Error('plugins_api_failed', sprintf(/* translators: %s: Support forums URL. */ __('An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.'), __('https://wordpress.org/support/forums/')), $request->get_error_message());
@@ -86,7 +191,6 @@
                 {
                     $res = new WP_Error('plugins_api_failed', sprintf(/* translators: %s: Support forums URL. */ __('An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.'), __('https://wordpress.org/support/forums/')), wp_remote_retrieve_body($request));
                 }
-
                 if(isset($res->error))
                 {
                     $res = new WP_Error('plugins_api_failed', $res->error);
@@ -98,9 +202,28 @@
             $res->external = true;
         }
 
+        /**
+         * Filters the Plugin Installation API response results.
+         *
+         * @param object|WP_Error $res    Response object or WP_Error.
+         * @param string          $action The type of information being requested from the Plugin Installation API.
+         * @param object          $args   Plugin API arguments.
+         *
+         * @since 2.7.0
+         *
+         */
         return apply_filters('plugins_api_result', $res, $action, $args);
     }
 
+    /**
+     * Retrieves popular WordPress plugin tags.
+     *
+     * @param array $args
+     *
+     * @return array|WP_Error
+     * @since 2.7.0
+     *
+     */
     function install_popular_tags($args = [])
     {
         $key = md5(serialize($args));
@@ -109,19 +232,21 @@
         {
             return $tags;
         }
-
         $tags = plugins_api('hot_tags', $args);
-
         if(is_wp_error($tags))
         {
             return $tags;
         }
-
         set_site_transient('poptags_'.$key, $tags, 3 * HOUR_IN_SECONDS);
 
         return $tags;
     }
 
+    /**
+     * Displays the Featured tab of Add Plugins screen.
+     *
+     * @since 2.7.0
+     */
     function install_dashboard()
     {
         display_plugins_table();
@@ -131,9 +256,7 @@
         <h2><?php _e('Popular tags'); ?></h2>
         <p><?php _e('You may also browse based on the most popular tags in the Plugin Directory:'); ?></p>
         <?php
-
         $api_tags = install_popular_tags();
-
         echo '<p class="popular-tags">';
         if(is_wp_error($api_tags))
         {
@@ -163,6 +286,15 @@
         echo '</p><br class="clear" /></div>';
     }
 
+    /**
+     * Displays a search form for searching plugins.
+     *
+     * @param bool $deprecated Not used.
+     *
+     * @since 4.6.0 The `$type_selector` parameter was deprecated.
+     *
+     * @since 2.7.0
+     */
     function install_search_form($deprecated = true)
     {
         $type = isset($_REQUEST['type']) ? wp_unslash($_REQUEST['type']) : 'term';
@@ -198,6 +330,11 @@
         <?php
     }
 
+    /**
+     * Displays a form to upload plugins from zip files.
+     *
+     * @since 2.8.0
+     */
     function install_plugins_upload()
     {
         ?>
@@ -221,6 +358,11 @@
         <?php
     }
 
+    /**
+     * Shows a username form for the favorites page.
+     *
+     * @since 3.5.0
+     */
     function install_plugins_favorites_form()
     {
         $user = get_user_option('wporg_favorites');
@@ -242,10 +384,16 @@
         <?php
     }
 
+    /**
+     * Displays plugin content based on plugin list.
+     *
+     * @since 2.7.0
+     *
+     * @global WP_List_Table $wp_list_table
+     */
     function display_plugins_table()
     {
         global $wp_list_table;
-
         switch(current_filter())
         {
             case 'install_plugins_beta':
@@ -271,6 +419,24 @@
         <?php
     }
 
+    /**
+     * Determines the status we can perform on a plugin.
+     *
+     * @param array|object $api     Data about the plugin retrieved from the API.
+     * @param bool         $loop    Optional. Disable further loops. Default false.
+     *
+     * @return array {
+     *     Plugin installation status data.
+     *
+     * @type string        $status  Status of a plugin. Could be one of 'install', 'update_available', 'latest_installed' or
+     *                              'newer_installed'.
+     * @type string        $url     Plugin installation URL.
+     * @type string        $version The most recent version of the plugin.
+     * @type string        $file    Plugin filename relative to the plugins directory.
+     *                              }
+     * @since 3.0.0
+     *
+     */
     function install_plugin_install_status($api, $loop = false)
     {
         // This function is called recursively, $loop prevents further loops.
@@ -278,13 +444,11 @@
         {
             $api = (object) $api;
         }
-
         // Default to a "new" plugin.
         $status = 'install';
         $url = false;
         $update_file = false;
         $version = '';
-
         /*
          * Check to see if this plugin is known to be installed,
          * and has an update awaiting it.
@@ -307,7 +471,6 @@
                 }
             }
         }
-
         if('install' === $status)
         {
             if(is_dir(WP_PLUGIN_DIR.'/'.$api->slug))
@@ -328,7 +491,6 @@
                      * Could have issues for multiple plugins in one directory if they share different version numbers.
                      */
                     $key = reset($key);
-
                     $update_file = $api->slug.'/'.$key;
                     if(version_compare($api->version, $installed_plugin[$key]['Version'], '='))
                     {
@@ -365,30 +527,32 @@
         {
             $url .= '&amp;from='.urlencode(wp_unslash($_GET['from']));
         }
-
         $file = $update_file;
 
         return compact('status', 'url', 'version', 'file');
     }
 
+    /**
+     * Displays plugin information in dialog box form.
+     *
+     * @since 2.7.0
+     *
+     * @global string $tab
+     */
     function install_plugin_information()
     {
         global $tab;
-
         if(empty($_REQUEST['plugin']))
         {
             return;
         }
-
         $api = plugins_api('plugin_information', [
             'slug' => wp_unslash($_REQUEST['plugin']),
         ]);
-
         if(is_wp_error($api))
         {
             wp_die($api);
         }
-
         $plugins_allowedtags = [
             'a' => [
                 'href' => [],
@@ -421,7 +585,6 @@
             ],
             'blockquote' => ['cite' => true],
         ];
-
         $plugins_section_titles = [
             'description' => _x('Description', 'Plugin installer section title'),
             'installation' => _x('Installation', 'Plugin installer section title'),
@@ -431,13 +594,11 @@
             'reviews' => _x('Reviews', 'Plugin installer section title'),
             'other_notes' => _x('Other Notes', 'Plugin installer section title'),
         ];
-
         // Sanitize HTML.
         foreach((array) $api->sections as $section_name => $content)
         {
             $api->sections[$section_name] = wp_kses($content, $plugins_allowedtags);
         }
-
         foreach(['version', 'author', 'requires', 'tested', 'homepage', 'downloaded', 'slug'] as $key)
         {
             if(isset($api->$key))
@@ -445,9 +606,7 @@
                 $api->$key = wp_kses($api->$key, $plugins_allowedtags);
             }
         }
-
         $_tab = esc_attr($tab);
-
         // Default to the Description tab, Do not translate, API returns English.
         $section = isset($_REQUEST['section']) ? wp_unslash($_REQUEST['section']) : 'description';
         if(empty($section) || ! isset($api->sections[$section]))
@@ -455,11 +614,8 @@
             $section_titles = array_keys((array) $api->sections);
             $section = reset($section_titles);
         }
-
         iframe_header(__('Plugin Installation'));
-
         $_with_banner = '';
-
         if(! empty($api->banners) && (! empty($api->banners['low']) || ! empty($api->banners['high'])))
         {
             $_with_banner = 'with-banner';
@@ -479,18 +635,15 @@
             </style>
             <?php
         }
-
         echo '<div id="plugin-information-scrollable">';
         echo "<div id='{$_tab}-title' class='{$_with_banner}'><div class='vignette'></div><h2>{$api->name}</h2></div>";
         echo "<div id='{$_tab}-tabs' class='{$_with_banner}'>\n";
-
         foreach((array) $api->sections as $section_name => $content)
         {
             if('reviews' === $section_name && (empty($api->ratings) || 0 === array_sum((array) $api->ratings)))
             {
                 continue;
             }
-
             if(isset($plugins_section_titles[$section_name]))
             {
                 $title = $plugins_section_titles[$section_name];
@@ -499,7 +652,6 @@
             {
                 $title = ucwords(str_replace('_', ' ', $section_name));
             }
-
             $class = ($section_name === $section) ? ' class="current"' : '';
             $href = add_query_arg([
                                       'tab' => $tab,
@@ -509,9 +661,7 @@
             $san_section = esc_attr($section_name);
             echo "\t<a name='$san_section' href='$href' $class>$title</a>\n";
         }
-
         echo "</div>\n";
-
         ?>
     <div id="<?php echo $_tab; ?>-content" class='<?php echo $_with_banner; ?>'>
         <div class="fyi">
@@ -613,7 +763,6 @@
                 </p>
                 <?php
             }
-
                 if(! empty($api->ratings) && array_sum((array) $api->ratings) > 0)
                 {
                     ?>
@@ -655,10 +804,8 @@
                                     $contrib_name = $contrib_username;
                                 }
                                 $contrib_name = esc_html($contrib_name);
-
                                 $contrib_profile = esc_url($contrib_details['profile']);
                                 $contrib_avatar = esc_url(add_query_arg('s', '36', $contrib_details['avatar']));
-
                                 echo "<li><a href='{$contrib_profile}' target='_blank'><img src='{$contrib_avatar}' width='18' height='18' alt='' />{$contrib_name}</a></li>";
                             }
                         ?>
@@ -673,16 +820,13 @@
         <?php
         $requires_php = isset($api->requires_php) ? $api->requires_php : null;
         $requires_wp = isset($api->requires) ? $api->requires : null;
-
         $compatible_php = is_php_version_compatible($requires_php);
         $compatible_wp = is_wp_version_compatible($requires_wp);
         $tested_wp = (empty($api->tested) || version_compare(get_bloginfo('version'), $api->tested, '<='));
-
         if(! $compatible_php)
         {
             $compatible_php_notice_message = '<p>';
             $compatible_php_notice_message .= __('<strong>Error:</strong> This plugin <strong>requires a newer version of PHP</strong>.');
-
             if(current_user_can('update_php'))
             {
                 $compatible_php_notice_message .= sprintf(/* translators: %s: URL to Update PHP page. */ ' '.__('<a href="%s" target="_blank">Click here to learn more about updating PHP</a>.'), esc_url(wp_get_update_php_url())).wp_update_php_annotation('</p><p><em>', '</em>', false);
@@ -691,14 +835,12 @@
             {
                 $compatible_php_notice_message .= '</p>';
             }
-
             wp_admin_notice($compatible_php_notice_message, [
                 'type' => 'error',
                 'additional_classes' => ['notice-alt'],
                 'paragraph_wrap' => false,
             ]);
         }
-
         if(! $tested_wp)
         {
             wp_admin_notice(__('<strong>Warning:</strong> This plugin <strong>has not been tested</strong> with your current version of WordPress.'), [
@@ -713,22 +855,17 @@
             {
                 $compatible_wp_notice_message .= sprintf(/* translators: %s: URL to WordPress Updates screen. */ ' '.__('<a href="%s" target="_parent">Click here to update WordPress</a>.'), esc_url(self_admin_url('update-core.php')));
             }
-
             wp_admin_notice($compatible_wp_notice_message, [
                 'type' => 'error',
                 'additional_classes' => ['notice-alt'],
             ]);
         }
-
         foreach((array) $api->sections as $section_name => $content)
         {
             $content = links_add_base_url($content, 'https://wordpress.org/plugins/'.$api->slug.'/');
             $content = links_add_target($content, '_blank');
-
             $san_section = esc_attr($section_name);
-
             $display = ($section_name === $section) ? 'block' : 'none';
-
             echo "\t<div id='section-{$san_section}' class='section' style='display: {$display};'>\n";
             echo $content;
             echo "\t</div>\n";
@@ -777,7 +914,6 @@
             }
         }
         echo "</div>\n";
-
         iframe_footer();
         exit;
     }

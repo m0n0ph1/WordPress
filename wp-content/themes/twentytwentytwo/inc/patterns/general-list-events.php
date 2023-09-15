@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * List of events block pattern
+     */
     return [
         'title' => __('List of events', 'twentytwentytwo'),
         'categories' => ['featured', 'text'],

@@ -1,32 +1,31 @@
 <?php
-
+    /**
+     * Theme file editor administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
     if(is_multisite() && ! is_network_admin())
     {
         wp_redirect(network_admin_url('theme-editor.php'));
         exit;
     }
-
     if(! current_user_can('edit_themes'))
     {
         wp_die('<p>'.__('Sorry, you are not allowed to edit templates for this site.').'</p>');
     }
-
 // Used in the HTML title tag.
     $title = __('Edit Themes');
     $parent_file = 'themes.php';
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => '<p>'.__('You can use the theme file editor to edit the individual CSS and PHP files which make up your theme.').'</p>'.'<p>'.__('Begin by choosing a theme to edit from the dropdown menu and clicking the Select button. A list then appears of the theme&#8217;s template files. Clicking once on any file name causes the file to appear in the large Editor box.').'</p>'.'<p>'.__('For PHP files, you can use the documentation dropdown to select from functions recognized in that file. Look Up takes you to a web page with reference material about that particular function.').'</p>'.'<p id="editor-keyboard-trap-help-1">'.__('When using a keyboard to navigate:').'</p>'.'<ul>'.'<li id="editor-keyboard-trap-help-2">'.__('In the editing area, the Tab key enters a tab character.').'</li>'.'<li id="editor-keyboard-trap-help-3">'.__('To move away from this area, press the Esc key followed by the Tab key.').'</li>'.'<li id="editor-keyboard-trap-help-4">'.__('Screen reader users: when in forms mode, you may need to press the Esc key twice.').'</li>'.'</ul>'.'<p>'.__('After typing in your edits, click Update File.').'</p>'.'<p>'.__('<strong>Advice:</strong> Think very carefully about your site crashing if you are live-editing the theme currently in use.').'</p>'.'<p>'.sprintf(/* translators: %s: Link to documentation on child themes. */ __('Upgrading to a newer version of the same theme will override changes made here. To avoid this, consider creating a <a href="%s">child theme</a> instead.'), __('https://developer.wordpress.org/themes/advanced-topics/child-themes/')).'</p>'.(is_network_admin() ? '<p>'.__('Any edits to files from this screen will be reflected on all sites in the network.').'</p>' : ''),
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://developer.wordpress.org/themes/">Documentation on Theme Development</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/appearance-theme-file-editor-screen/">Documentation on Editing Themes</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/editing-files/">Documentation on Editing Files</a>').'</p>'.'<p>'.__('<a href="https://developer.wordpress.org/themes/basics/template-tags/">Documentation on Template Tags</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     wp_reset_vars(['action', 'error', 'file', 'theme']);
-
     if($theme)
     {
         $stylesheet = $theme;
@@ -35,24 +34,18 @@
     {
         $stylesheet = get_stylesheet();
     }
-
     $theme = wp_get_theme($stylesheet);
-
     if(! $theme->exists())
     {
         wp_die(__('The requested theme does not exist.'));
     }
-
     if($theme->errors() && 'theme_no_stylesheet' === $theme->errors()->get_error_code())
     {
         wp_die(__('The requested theme does not exist.').' '.$theme->errors()->get_error_message());
     }
-
     $allowed_files = [];
     $style_files = [];
-
     $file_types = wp_get_theme_file_editable_extensions($theme);
-
     foreach($file_types as $type)
     {
         switch($type)
@@ -70,7 +63,6 @@
                 break;
         }
     }
-
 // Move functions.php and style.css to the top.
     if(isset($allowed_files['functions.php']))
     {
@@ -80,7 +72,6 @@
     {
         $allowed_files = ['style.css' => $allowed_files['style.css']] + $allowed_files;
     }
-
     if(empty($file))
     {
         $relative_file = 'style.css';
@@ -91,13 +82,10 @@
         $relative_file = wp_unslash($file);
         $file = $theme->get_stylesheet_directory().'/'.$relative_file;
     }
-
     validate_file_to_edit($file, $allowed_files);
-
 // Handle fallback editing of file when JavaScript is not available.
     $edit_error = null;
     $posted_content = null;
-
     if('POST' === $_SERVER['REQUEST_METHOD'])
     {
         $r = wp_edit_theme_plugin_file(wp_unslash($_POST));
@@ -121,23 +109,18 @@
             exit;
         }
     }
-
     $settings = [
         'codeEditor' => wp_enqueue_code_editor(compact('file')),
     ];
     wp_enqueue_script('wp-theme-plugin-editor');
     wp_add_inline_script('wp-theme-plugin-editor', sprintf('jQuery( function( $ ) { wp.themePluginEditor.init( $( "#template" ), %s ); } )', wp_json_encode($settings)));
     wp_add_inline_script('wp-theme-plugin-editor', 'wp.themePluginEditor.themeOrPlugin = "theme";');
-
     require_once ABSPATH.'wp-admin/admin-header.php';
-
     update_recently_edited($file);
-
     if(! is_file($file))
     {
         $error = true;
     }
-
     $content = '';
     if(! empty($posted_content))
     {
@@ -147,28 +130,22 @@
     {
         $f = fopen($file, 'r');
         $content = fread($f, filesize($file));
-
         if(str_ends_with($file, '.php'))
         {
             $functions = wp_doc_link_parse($content);
-
             if(! empty($functions))
             {
                 $docs_select = '<select name="docs-list" id="docs-list">';
                 $docs_select .= '<option value="">'.esc_html__('Function Name&hellip;').'</option>';
-
                 foreach($functions as $function)
                 {
                     $docs_select .= '<option value="'.esc_attr($function).'">'.esc_html($function).'()</option>';
                 }
-
                 $docs_select .= '</select>';
             }
         }
-
         $content = esc_textarea($content);
     }
-
     $file_description = get_file_description($relative_file);
     $file_show = array_search($file, array_filter($allowed_files), true);
     $description = esc_html($file_description);
@@ -199,7 +176,6 @@
                     'id' => 'message',
                 ]);
             }
-
             if(preg_match('/\.css$/', $file) && ! wp_is_block_theme() && current_user_can('customize'))
             {
                 $message = '<p><strong>'.__('Did you know?').'</strong></p><p>'.sprintf(/* translators: %s: Link to Custom CSS section in the Customizer. */ __('There is no need to change your CSS here &mdash; you can edit and live preview CSS changes in the <a href="%s">built-in CSS editor</a>.'), esc_url(add_query_arg('autofocus[section]', 'custom_css', admin_url('customize.php')))).'</p>';
@@ -233,7 +209,6 @@
                                 {
                                     continue;
                                 }
-
                                 $selected = ($a_stylesheet === $stylesheet) ? ' selected="selected"' : '';
                                 echo "\n\t".'<option value="'.esc_attr($a_stylesheet).'"'.$selected.'>'.$a_theme->display('Name').'</option>';
                             }
@@ -357,9 +332,7 @@
     {
         // Get a back URL.
         $referer = wp_get_referer();
-
         $excluded_referer_basenames = ['theme-editor.php', 'wp-login.php'];
-
         $return_url = admin_url('/');
         if($referer)
         {
@@ -402,5 +375,4 @@
         </div>
         <?php
     } // Editor warning notice.
-
     require_once ABSPATH.'wp-admin/admin-footer.php';

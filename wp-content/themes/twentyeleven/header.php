@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * Header template for the theme
+ *
+ * Displays all of the <head> section and everything up till <div id="main">.
+ *
+ * @package    WordPress
+ * @subpackage Twenty_Eleven
+ * @since      Twenty Eleven 1.0
+ */
 ?><!DOCTYPE html>
 <!--[if IE 6]>
 <html id="ie6" <?php language_attributes(); ?>>
@@ -20,26 +28,21 @@
         <?php
             // Print the <title> tag based on what is being viewed.
             global $page, $paged;
-
             wp_title('|', true, 'right');
-
             // Add the site name.
             bloginfo('name');
-
             // Add the site description for the home/front page.
             $site_description = get_bloginfo('description', 'display');
             if($site_description && (is_home() || is_front_page()))
             {
                 echo " | $site_description";
             }
-
             // Add a page number if necessary:
             if(($paged >= 2 || $page >= 2) && ! is_404())
             {
                 /* translators: %s: Page number. */
                 echo esc_html(' | '.sprintf(__('Page %s', 'twentyeleven'), max($paged, $page)));
             }
-
         ?>
     </title>
     <link rel="profile" href="https://gmpg.org/xfn/11"/>
@@ -60,7 +63,6 @@
         {
             wp_enqueue_script('comment-reply');
         }
-
         /*
          * Always have wp_head() just before the closing </head>
          * tag of your theme, or you will break many plugins, which

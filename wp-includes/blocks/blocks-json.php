@@ -1756,9 +1756,7 @@
         'attributes' => [
             'images' => [
                 'type' => 'array',
-                'default' => [
-
-                ],
+                'default' => [],
                 'source' => 'query',
                 'selector' => '.blocks-gallery-item',
                 'query' => [
@@ -1805,15 +1803,11 @@
                 'items' => [
                     'type' => 'number'
                 ],
-                'default' => [
-
-                ]
+                'default' => []
             ],
             'shortCodeTransforms' => [
                 'type' => 'array',
-                'default' => [
-
-                ],
+                'default' => [],
                 'items' => [
                     'type' => 'object'
                 ]
@@ -4260,15 +4254,11 @@
                     'orderBy' => 'date',
                     'author' => '',
                     'search' => '',
-                    'exclude' => [
-
-                    ],
+                    'exclude' => [],
                     'sticky' => '',
                     'inherit' => true,
                     'taxQuery' => null,
-                    'parents' => [
-
-                    ]
+                    'parents' => []
                 ]
             ],
             'tagName' => [
@@ -4828,9 +4818,7 @@
             ],
             'query' => [
                 'type' => 'object',
-                'default' => [
-
-                ]
+                'default' => []
             ],
             'buttonBehavior' => [
                 'type' => 'string',
@@ -5048,9 +5036,7 @@
                 'type' => 'string'
             ]
         ],
-        'example' => [
-
-        ],
+        'example' => [],
         'supports' => [
             'align' => [
                 'wide',
@@ -5369,17 +5355,13 @@
             ],
             'head' => [
                 'type' => 'array',
-                'default' => [
-
-                ],
+                'default' => [],
                 'source' => 'query',
                 'selector' => 'thead tr',
                 'query' => [
                     'cells' => [
                         'type' => 'array',
-                        'default' => [
-
-                        ],
+                        'default' => [],
                         'source' => 'query',
                         'selector' => 'td,th',
                         'query' => [
@@ -5418,17 +5400,13 @@
             ],
             'body' => [
                 'type' => 'array',
-                'default' => [
-
-                ],
+                'default' => [],
                 'source' => 'query',
                 'selector' => 'tbody tr',
                 'query' => [
                     'cells' => [
                         'type' => 'array',
-                        'default' => [
-
-                        ],
+                        'default' => [],
                         'source' => 'query',
                         'selector' => 'td,th',
                         'query' => [
@@ -5467,17 +5445,13 @@
             ],
             'foot' => [
                 'type' => 'array',
-                'default' => [
-
-                ],
+                'default' => [],
                 'source' => 'query',
                 'selector' => 'tfoot tr',
                 'query' => [
                     'cells' => [
                         'type' => 'array',
-                        'default' => [
-
-                        ],
+                        'default' => [],
                         'source' => 'query',
                         'selector' => 'td,th',
                         'query' => [
@@ -5730,12 +5704,8 @@
                     ]
                 ],
                 'default' => [
-                    [
-
-                    ],
-                    [
-
-                    ]
+                    [],
+                    []
                 ]
             ],
             'columns' => [
@@ -5898,9 +5868,7 @@
                 'items' => [
                     'type' => 'object'
                 ],
-                'default' => [
-
-                ]
+                'default' => []
             ]
         ],
         'supports' => [

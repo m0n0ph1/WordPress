@@ -1,10 +1,24 @@
 <?php
-
+    /**
+     * Block Patterns
+     *
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern/
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern_category/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Nineteen
+     * @since      Twenty Nineteen 1.8
+     */
+    /**
+     * Register Block Pattern Category.
+     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentynineteen', ['label' => esc_html__('Twenty Nineteen', 'twentynineteen')]);
     }
-
+    /**
+     * Register Block Patterns.
+     */
     if(function_exists('register_block_pattern'))
     {
         // About.
@@ -25,7 +39,6 @@
                 '<!-- /wp:buttons -->',
             ]),
         ]);
-
         // Get In Touch.
         register_block_pattern('twentynineteen/get-in-touch', [
             'title' => esc_html__('Get In Touch', 'twentynineteen'),
@@ -53,7 +66,6 @@
                 '<!-- /wp:buttons -->',
             ]),
         ]);
-
         // Services.
         register_block_pattern('twentynineteen/services', [
             'title' => esc_html__('Services', 'twentynineteen'),
@@ -100,7 +112,6 @@
                 '<!-- /wp:columns -->',
             ]),
         ]);
-
         // Team.
         register_block_pattern('twentynineteen/team', [
             'title' => esc_html__('Team', 'twentynineteen'),
@@ -128,7 +139,6 @@
                 '<!-- /wp:media-text -->',
             ]),
         ]);
-
         // What We Do.
         register_block_pattern('twentynineteen/what-we-do', [
             'title' => esc_html__('What We Do', 'twentynineteen'),

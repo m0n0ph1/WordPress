@@ -1,12 +1,9 @@
 <?php
-
     require_once dirname(dirname(__FILE__)).'/autoload.php';
-
     if(PHP_VERSION_ID < 50300)
     {
         return;
     }
-
     /*
      * This file is just for convenience, to allow developers to reduce verbosity when
      * they add this project to their libraries.
@@ -35,10 +32,8 @@
             // no, move to the next registered autoloader
             return false;
         }
-
         // Get the relative class name
         $relative_class = substr($class, $len);
-
         // Replace the namespace prefix with the base directory, replace namespace
         // separators with directory separators in the relative class name, append
         // with .php

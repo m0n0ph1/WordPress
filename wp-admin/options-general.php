@@ -1,39 +1,36 @@
 <?php
-
+    /**
+     * General settings administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
+    /** WordPress Translation Installation API */
     require_once ABSPATH.'wp-admin/includes/translation-install.php';
-
     if(! current_user_can('manage_options'))
     {
         wp_die(__('Sorry, you are not allowed to manage options for this site.'));
     }
-
     // Used in the HTML title tag.
     $title = __('General Settings');
     $parent_file = 'options-general.php';
     /* translators: Date and time format for exact current time, mainly about timezones, see https://www.php.net/manual/datetime.format.php */
     $timezone_format = _x('Y-m-d H:i:s', 'timezone date format');
-
     add_action('admin_head', 'options_general_add_js');
-
     $options_help = '<p>'.__('The fields on this screen determine some of the basics of your site setup.').'</p>'.'<p>'.__('Most themes show the site title at the top of every page, in the title bar of the browser, and as the identifying name for syndicated feeds. Many themes also show the tagline.').'</p>';
-
     if(! is_multisite())
     {
         $options_help .= '<p>'.__('Two terms you will want to know are the WordPress URL and the site URL. The WordPress URL is where the core WordPress installation files are, and the site URL is the address a visitor uses in the browser to go to your site.').'</p>'.'<p>'.sprintf(/* translators: %s: Documentation URL. */ __('Though the terms refer to two different concepts, in practice, they can be the same address or different. For example, you can have the core WordPress installation files in the root directory (<code>https://example.com</code>), in which case the two URLs would be the same. Or the <a href="%s">WordPress files can be in a subdirectory</a> (<code>https://example.com/wordpress</code>). In that case, the WordPress URL and the site URL would be different.'), __('https://wordpress.org/documentation/article/giving-wordpress-its-own-directory/')).'</p>'.'<p>'.sprintf(/* translators: 1: http://, 2: https:// */ __('Both WordPress URL and site URL can start with either %1$s or %2$s. A URL starting with %2$s requires an SSL certificate, so be sure that you have one before changing to %2$s. With %2$s, a padlock will appear next to the address in the browser address bar. Both %2$s and the padlock signal that your site meets some basic security requirements, which can build trust with your visitors and with search engines.'), '<code>http://</code>', '<code>https://</code>').'</p>'.'<p>'.__('If you want site visitors to be able to register themselves, check the membership box. If you want the site administrator to register every new user, leave the box unchecked. In either case, you can set a default user role for all new users.').'</p>';
     }
-
     $options_help .= '<p>'.__('You can set the language, and WordPress will automatically download and install the translation files (available if your filesystem is writable).').'</p>'.'<p>'.__('UTC means Coordinated Universal Time.').'</p>'.'<p>'.__('You must click the Save Changes button at the bottom of the screen for new settings to take effect.').'</p>';
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => $options_help,
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/settings-general-screen/">Documentation on General Settings</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
 
@@ -55,15 +52,15 @@
             </tr>
 
             <?php
-                if(is_multisite())
-                {
-                    /* translators: %s: Network title. */
-                    $sample_tagline = sprintf(__('Just another %s site'), get_network()->site_name);
-                }
-                else
+                if(! is_multisite())
                 {
                     /* translators: Site tagline. */
                     $sample_tagline = __('Just another WordPress site');
+                }
+                else
+                {
+                    /* translators: %s: Network title. */
+                    $sample_tagline = sprintf(__('Just another %s site'), get_network()->site_name);
                 }
                 $tagline_description = sprintf(/* translators: %s: Site tagline example. */ __('In a few words, explain what this site is about. Example: &#8220;%s.&#8221;'), $sample_tagline);
             ?>
@@ -178,7 +175,6 @@
 
                 <?php
             }
-
                 $languages = get_available_languages();
                 $translations = wp_get_available_translations();
                 if(! is_multisite() && defined('WPLANG') && '' !== WPLANG && 'en_US' !== WPLANG && ! in_array(WPLANG, $languages, true))
@@ -198,7 +194,6 @@
                                 {
                                     $locale = '';
                                 }
-
                                 wp_dropdown_languages([
                                                           'name' => 'WPLANG',
                                                           'id' => 'WPLANG',
@@ -207,7 +202,6 @@
                                                           'translations' => $translations,
                                                           'show_available_translations' => current_user_can('install_languages') && wp_can_install_language_pack(),
                                                       ]);
-
                                 // Add note about deprecated WPLANG constant.
                                 if(defined('WPLANG') && ('' !== WPLANG) && WPLANG !== $locale)
                                 {
@@ -223,15 +217,12 @@
                 <?php
                     $current_offset = get_option('gmt_offset');
                     $tzstring = get_option('timezone_string');
-
                     $check_zone_info = true;
-
                     // Remove old Etc mappings. Fallback to gmt_offset.
                     if(str_contains($tzstring, 'Etc/GMT'))
                     {
                         $tzstring = '';
                     }
-
                     if(empty($tzstring))
                     { // Create a UTC+- zone if no timezone string exists.
                         $check_zone_info = false;
@@ -248,7 +239,6 @@
                             $tzstring = 'UTC+'.$current_offset;
                         }
                     }
-
                 ?>
                 <th scope="row"><label for="timezone_string"><?php _e('Timezone'); ?></label></th>
                 <td>
@@ -284,7 +274,6 @@
 	<?php
         $now = new DateTime('now', new DateTimeZone($tzstring));
         $dst = (bool) $now->format('I');
-
         if($dst)
         {
             _e('This timezone is currently in daylight saving time.');
@@ -299,7 +288,6 @@
         if(in_array($tzstring, timezone_identifiers_list(DateTimeZone::ALL_WITH_BC), true))
         {
             $transitions = timezone_transitions_get(timezone_open($tzstring), time());
-
             // 0 index is the state at current time, 1 index is the next transition, if any.
             if(! empty($transitions[1]))
             {
@@ -332,7 +320,15 @@
         ?>
 	</span></legend>
                         <?php
-
+                            /**
+                             * Filters the default date formats.
+                             *
+                             * @param string[] $default_date_formats Array of default date formats.
+                             *
+                             * @since 4.0.0 Added ISO date standard YYYY-MM-DD format.
+                             *
+                             * @since 2.7.0
+                             */
                             $date_formats = array_unique(
                                 apply_filters('date_formats', [
                                     __('F j, Y'),
@@ -341,9 +337,7 @@
                                     'd/m/Y',
                                 ])
                             );
-
                             $custom = true;
-
                             foreach($date_formats as $format)
                             {
                                 echo "\t<label><input type='radio' name='date_format' value='".esc_attr($format)."'";
@@ -354,7 +348,6 @@
                                 }
                                 echo ' /> <span class="date-time-text format-i18n">'.date_i18n($format).'</span><code>'.esc_html($format)."</code></label><br />\n";
                             }
-
                             echo '<label><input type="radio" name="date_format" id="date_format_custom_radio" value="\c\u\s\t\o\m"';
                             checked($custom);
                             echo '/> <span class="date-time-text date-time-custom-text">'.__('Custom:').'<span class="screen-reader-text"> './* translators: Hidden accessibility text. */
@@ -375,11 +368,16 @@
         ?>
 	</span></legend>
                         <?php
-
+                            /**
+                             * Filters the default time formats.
+                             *
+                             * @param string[] $default_time_formats Array of default time formats.
+                             *
+                             * @since 2.7.0
+                             *
+                             */
                             $time_formats = array_unique(apply_filters('time_formats', [__('g:i a'), 'g:i A', 'H:i']));
-
                             $custom = true;
-
                             foreach($time_formats as $format)
                             {
                                 echo "\t<label><input type='radio' name='time_format' value='".esc_attr($format)."'";
@@ -390,13 +388,11 @@
                                 }
                                 echo ' /> <span class="date-time-text format-i18n">'.date_i18n($format).'</span><code>'.esc_html($format)."</code></label><br />\n";
                             }
-
                             echo '<label><input type="radio" name="time_format" id="time_format_custom_radio" value="\c\u\s\t\o\m"';
                             checked($custom);
                             echo '/> <span class="date-time-text date-time-custom-text">'.__('Custom:').'<span class="screen-reader-text"> './* translators: Hidden accessibility text. */
                                 __('enter a custom time format in the following field').'</span></span></label>'.'<label for="time_format_custom" class="screen-reader-text">'./* translators: Hidden accessibility text. */
                                 __('Custom time format:').'</label>'.'<input type="text" name="time_format_custom" id="time_format_custom" value="'.esc_attr(get_option('time_format')).'" class="small-text" />'.'<br />'.'<p><strong>'.__('Preview:').'</strong> <span class="example">'.date_i18n(get_option('time_format')).'</span>'."<span class='spinner'></span>\n".'</p>';
-
                             echo "\t<p class='date-time-doc'>".__('<a href="https://wordpress.org/documentation/article/customize-date-and-time-format/">Documentation on date and time formatting</a>.')."</p>\n";
                         ?>
                     </fieldset>
@@ -406,9 +402,10 @@
                 <th scope="row"><label for="start_of_week"><?php _e('Week Starts On'); ?></label></th>
                 <td><select name="start_of_week" id="start_of_week">
                         <?php
-
+                            /**
+                             * @global WP_Locale $wp_locale WordPress date and time locale object.
+                             */
                             global $wp_locale;
-
                             for($day_index = 0; $day_index <= 6; $day_index++) :
                                 $selected = (get_option('start_of_week') == $day_index) ? 'selected="selected"' : '';
                                 echo "\n\t<option value='".esc_attr($day_index)."' $selected>".$wp_locale->get_weekday($day_index).'</option>';

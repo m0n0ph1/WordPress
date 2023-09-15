@@ -1,15 +1,17 @@
 <?php
-
+    /**
+     * Credits administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
     require_once __DIR__.'/includes/credits.php';
-
 // Used in the HTML title tag.
     $title = __('Credits');
-
     [$display_version] = explode('-', get_bloginfo('version'));
-
     require_once ABSPATH.'wp-admin/admin-header.php';
-
     $credits = wp_credits();
 ?>
     <div class="wrap about__container">
@@ -39,10 +41,12 @@
 
         <div class="about__section has-1-column has-gutters">
             <div class="column aligncenter">
-                <?php if($credits) : ?>
+                <?php if(! $credits) : ?>
 
                     <p>
-                        <?php _e('Want to see your name in lights on this page?'); ?>
+                        <?php
+                            printf(/* translators: 1: https://wordpress.org/about/ */ __('WordPress is created by a <a href="%1$s">worldwide team</a> of passionate individuals.'), __('https://wordpress.org/about/'));
+                        ?>
                         <br/>
                         <a href="<?php echo esc_url(__('https://make.wordpress.org/contribute/')); ?>"><?php _e('Get involved in WordPress.'); ?></a>
                     </p>
@@ -50,9 +54,7 @@
                 <?php else : ?>
 
                     <p>
-                        <?php
-                            printf(/* translators: 1: https://wordpress.org/about/ */ __('WordPress is created by a <a href="%1$s">worldwide team</a> of passionate individuals.'), __('https://wordpress.org/about/'));
-                        ?>
+                        <?php _e('Want to see your name in lights on this page?'); ?>
                         <br/>
                         <a href="<?php echo esc_url(__('https://make.wordpress.org/contribute/')); ?>"><?php _e('Get involved in WordPress.'); ?></a>
                     </p>
@@ -111,11 +113,9 @@
         </div>
     </div>
 <?php
-
     require_once ABSPATH.'wp-admin/admin-footer.php';
 
     return;
-
 // These are strings returned by the API that we want to be translatable.
     __('Project Leaders');
     /* translators: %s: The current WordPress version number. */

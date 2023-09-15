@@ -1,13 +1,16 @@
 <?php
-
+    /**
+     * About This Version administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
 // Used in the HTML title tag.
     /* translators: Page title of the About WordPress page in the admin. */
     $title = _x('About', 'page title');
-
     [$display_version] = explode('-', get_bloginfo('version'));
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
     <div class="wrap about__container">
@@ -363,7 +366,6 @@
                 {
                     printf('<a href="%1$s">%2$s</a> | ', esc_url(self_admin_url('update-core.php')), is_multisite() ? __('Go to Updates') : __('Go to Dashboard &rarr; Updates'));
                 }
-
                 printf('<a href="%1$s">%2$s</a>', esc_url(self_admin_url()), is_blog_admin() ? __('Go to Dashboard &rarr; Home') : __('Go to Dashboard'));
             ?>
         </div>
@@ -372,44 +374,31 @@
 <?php require_once ABSPATH.'wp-admin/admin-footer.php'; ?>
 
 <?php
-
 // These are strings we may use to describe maintenance/security releases, where we aim for no new strings.
     return;
-
     __('Maintenance Release');
     __('Maintenance Releases');
-
     __('Security Release');
     __('Security Releases');
-
     __('Maintenance and Security Release');
     __('Maintenance and Security Releases');
-
     /* translators: %s: WordPress version number. */
     __('<strong>Version %s</strong> addressed one security issue.');
     /* translators: %s: WordPress version number. */
     __('<strong>Version %s</strong> addressed some security issues.');
-
     /* translators: 1: WordPress version number, 2: Plural number of bugs. */
     _n_noop('<strong>Version %1$s</strong> addressed %2$s bug.', '<strong>Version %1$s</strong> addressed %2$s bugs.');
-
     /* translators: 1: WordPress version number, 2: Plural number of bugs. Singular security issue. */
     _n_noop('<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug.', '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs.');
-
     /* translators: 1: WordPress version number, 2: Plural number of bugs. More than one security issue. */
     _n_noop('<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.', '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.');
-
     /* translators: %s: Documentation URL. */
     __('For more information, see <a href="%s">the release notes</a>.');
-
     /* translators: 1: WordPress version number, 2: Link to update WordPress */
     __('Important! Your version of WordPress (%1$s) is no longer supported, you will not receive any security updates for your website. To keep your site secure, please <a href="%2$s">update to the latest version of WordPress</a>.');
-
     /* translators: 1: WordPress version number, 2: Link to update WordPress */
     __('Important! Your version of WordPress (%1$s) will stop receiving security updates in the near future. To keep your site secure, please <a href="%2$s">update to the latest version of WordPress</a>.');
-
     /* translators: %s: The major version of WordPress for this branch. */
     __('This is the final release of WordPress %s');
-
     /* translators: The localized WordPress download URL. */
     __('https://wordpress.org/download/');

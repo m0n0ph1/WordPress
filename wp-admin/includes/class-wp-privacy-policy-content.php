@@ -1,47 +1,80 @@
 <?php
+    /**
+     * WP_Privacy_Policy_Content class.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     * @since      4.9.6
+     */
 
     #[AllowDynamicProperties]
     final class WP_Privacy_Policy_Content
     {
         private static $policy_content = [];
 
+        /**
+         * Constructor
+         *
+         * @since 4.9.6
+         */
         private function __construct() {}
 
+        /**
+         * Adds content to the postbox shown when editing the privacy policy.
+         *
+         * Plugins and themes should suggest text for inclusion in the site's privacy policy.
+         * The suggested text should contain information about any functionality that affects user privacy,
+         * and will be shown in the Suggested Privacy Policy Content postbox.
+         *
+         * Intended for use from `wp_add_privacy_policy_content()`.
+         *
+         * @param string $plugin_name The name of the plugin or theme that is suggesting content for the site's privacy
+         *                            policy.
+         * @param string $policy_text The suggested content for inclusion in the policy.
+         *
+         * @since 4.9.6
+         *
+         */
         public static function add($plugin_name, $policy_text)
         {
             if(empty($plugin_name) || empty($policy_text))
             {
                 return;
             }
-
-            $data = compact('plugin_name', 'policy_text');
-
+            $data = [
+                'plugin_name' => $plugin_name,
+                'policy_text' => $policy_text,
+            ];
             if(! in_array($data, self::$policy_content, true))
             {
                 self::$policy_content[] = $data;
             }
         }
 
+        /**
+         * Performs a quick check to determine whether any privacy info has changed.
+         *
+         * @since 4.9.6
+         */
         public static function text_change_check()
         {
             $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
-
             // The site doesn't have a privacy policy.
-            if(empty($policy_page_id) || ! current_user_can('edit_post', $policy_page_id))
+            if(empty($policy_page_id))
             {
                 return false;
             }
-
+            if(! current_user_can('edit_post', $policy_page_id))
+            {
+                return false;
+            }
             $old = (array) get_post_meta($policy_page_id, '_wp_suggested_privacy_policy_content');
-
             // Updates are not relevant if the user has not reviewed any suggestions yet.
             if(empty($old))
             {
                 return false;
             }
-
             $cached = get_option('_wp_suggested_policy_text_has_changed');
-
             /*
              * When this function is called before `admin_init`, `self::$policy_content`
              * has not been populated yet, so use the cached result from the last
@@ -51,9 +84,7 @@
             {
                 return 'changed' === $cached;
             }
-
             $new = self::$policy_content;
-
             // Remove the extra values added to the meta.
             foreach($old as $key => $data)
             {
@@ -62,17 +93,14 @@
                     unset($old[$key]);
                     continue;
                 }
-
                 $old[$key] = [
                     'plugin_name' => $data['plugin_name'],
                     'policy_text' => $data['policy_text'],
                 ];
             }
-
             // Normalize the order of texts, to facilitate comparison.
             sort($old);
             sort($new);
-
             /*
              * The == operator (equal, not identical) was used intentionally.
              * See https://www.php.net/manual/en/language.operators.array.php
@@ -90,7 +118,6 @@
             {
                 $state = 'not-changed';
             }
-
             // Cache the result for use before `admin_init` (see above).
             if($cached !== $state)
             {
@@ -100,15 +127,18 @@
             return 'changed' === $state;
         }
 
+        /**
+         * Outputs a warning when some privacy info has changed.
+         *
+         * @since 4.9.6
+         */
         public static function policy_text_changed_notice()
         {
             $screen = get_current_screen()->id;
-
             if('privacy' !== $screen)
             {
                 return;
             }
-
             ?>
             <div class="policy-text-updated notice notice-warning is-dismissible">
                 <p>
@@ -120,20 +150,26 @@
             <?php
         }
 
+        /**
+         * Updates the cached policy info when the policy page is updated.
+         *
+         * @param int $post_id The ID of the updated post.
+         *
+         * @since  4.9.6
+         * @access private
+         *
+         */
         public static function _policy_page_updated($post_id)
         {
             $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
-
             if(! $policy_page_id || $policy_page_id !== (int) $post_id)
             {
                 return;
             }
-
             // Remove updated|removed status.
             $old = (array) get_post_meta($policy_page_id, '_wp_suggested_privacy_policy_content');
             $done = [];
             $update_cache = false;
-
             foreach($old as $old_key => $old_data)
             {
                 if(! empty($old_data['removed']))
@@ -142,7 +178,6 @@
                     $update_cache = true;
                     continue;
                 }
-
                 if(! empty($old_data['updated']))
                 {
                     // 'updated' is now 'added'.
@@ -158,7 +193,6 @@
                     $done[] = $old_data;
                 }
             }
-
             if($update_cache)
             {
                 delete_post_meta($policy_page_id, '_wp_suggested_privacy_policy_content');
@@ -170,6 +204,17 @@
             }
         }
 
+        /**
+         * Adds a notice with a link to the guide when editing the privacy policy page.
+         *
+         * @param WP_Post|null $post The currently edited post. Default null.
+         *
+         * @since 5.0.0 The `$post` parameter was made optional.
+         *
+         * @global WP_Post     $post Global post object.
+         *
+         * @since 4.9.6
+         */
         public static function notice($post = null)
         {
             if(is_null($post))
@@ -180,28 +225,30 @@
             {
                 $post = get_post($post);
             }
-
-            if(! ($post instanceof WP_Post) || ! current_user_can('manage_privacy_options'))
+            if(! ($post instanceof WP_Post))
             {
                 return;
             }
-
+            if(! current_user_can('manage_privacy_options'))
+            {
+                return;
+            }
             $current_screen = get_current_screen();
             $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
-
             if('post' !== $current_screen->base || $policy_page_id !== $post->ID)
             {
                 return;
             }
-
             $message = __('Need help putting together your new Privacy Policy page? Check out our guide for recommendations on what content to include, along with policies suggested by your plugins and theme.');
             $url = esc_url(admin_url('options-privacy.php?tab=policyguide'));
             $label = __('View Privacy Policy Guide.');
-
             if(get_current_screen()->is_block_editor())
             {
                 wp_enqueue_script('wp-notices');
-                $action = compact('url', 'label');
+                $action = [
+                    'url' => $url,
+                    'label' => $label,
+                ];
                 wp_add_inline_script('wp-notices', sprintf('wp.data.dispatch( "core/notices" ).createWarningNotice( "%s", { actions: [ %s ], isDismissible: false } )', $message, wp_json_encode($action)), 'after');
             }
             else
@@ -214,25 +261,27 @@
             }
         }
 
+        /**
+         * Outputs the privacy policy guide together with content from the theme and plugins.
+         *
+         * @since 4.9.6
+         */
         public static function privacy_policy_guide()
         {
             $content_array = self::get_suggested_policy_text();
             $content = '';
             $date_format = __('F j, Y');
-
             foreach($content_array as $section)
             {
                 $class = '';
                 $meta = '';
                 $removed = '';
-
                 if(! empty($section['removed']))
                 {
                     $badge_class = ' red';
                     $date = date_i18n($date_format, $section['removed']);
                     /* translators: %s: Date of plugin deactivation. */
                     $badge_title = sprintf(__('Removed %s.'), $date);
-
                     /* translators: %s: Date of plugin deactivation. */
                     $removed = sprintf(__('You deactivated this plugin on %s and may no longer need this policy.'), $date);
                     $removed = wp_get_admin_notice($removed, [
@@ -247,9 +296,7 @@
                     /* translators: %s: Date of privacy policy text update. */
                     $badge_title = sprintf(__('Updated %s.'), $date);
                 }
-
                 $plugin_name = esc_html($section['plugin_name']);
-
                 $sanitized_policy_name = sanitize_title_with_dashes($plugin_name);
                 ?>
                 <h4 class="privacy-settings-accordion-heading">
@@ -290,6 +337,15 @@
             }
         }
 
+        /**
+         * Checks for updated, added or removed privacy policy information from plugins.
+         *
+         * Caches the current info in post_meta of the policy page.
+         *
+         * @return array The privacy policy text/information added by core and plugins.
+         * @since 4.9.6
+         *
+         */
         public static function get_suggested_policy_text()
         {
             $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
@@ -298,19 +354,16 @@
             $update_cache = false;
             $new = self::$policy_content;
             $old = [];
-
             if($policy_page_id)
             {
                 $old = (array) get_post_meta($policy_page_id, '_wp_suggested_privacy_policy_content');
             }
-
             // Check for no-changes and updates.
             foreach($new as $new_key => $new_data)
             {
                 foreach($old as $old_key => $old_data)
                 {
                     $found = false;
-
                     if($new_data['policy_text'] === $old_data['policy_text'])
                     {
                         // Use the new plugin name in case it was changed, translated, etc.
@@ -319,7 +372,6 @@
                             $old_data['plugin_name'] = $new_data['plugin_name'];
                             $update_cache = true;
                         }
-
                         // A plugin was re-activated.
                         if(! empty($old_data['removed']))
                         {
@@ -327,7 +379,6 @@
                             $old_data['added'] = $time;
                             $update_cache = true;
                         }
-
                         $checked[] = $old_data;
                         $found = true;
                     }
@@ -342,7 +393,6 @@
                         $found = true;
                         $update_cache = true;
                     }
-
                     if($found)
                     {
                         unset($new[$new_key], $old[$old_key]);
@@ -350,7 +400,6 @@
                     }
                 }
             }
-
             if(! empty($new))
             {
                 // A plugin was activated.
@@ -364,7 +413,6 @@
                 }
                 $update_cache = true;
             }
-
             if(! empty($old))
             {
                 // A plugin was deactivated.
@@ -377,13 +425,11 @@
                             'policy_text' => $old_data['policy_text'],
                             'removed' => $time,
                         ];
-
                         $checked[] = $data;
                     }
                 }
                 $update_cache = true;
             }
-
             if($update_cache && $policy_page_id)
             {
                 delete_post_meta($policy_page_id, '_wp_suggested_privacy_policy_content');
@@ -397,27 +443,40 @@
             return $checked;
         }
 
+        /**
+         * Adds the suggested privacy policy text to the policy postbox.
+         *
+         * @since 4.9.6
+         */
         public static function add_suggested_content()
         {
             $content = self::get_default_content(false, false);
             wp_add_privacy_policy_content(__('WordPress'), $content);
         }
 
+        /**
+         * Returns the default suggested privacy policy content.
+         *
+         * @param bool $description Whether to include the descriptions under the section headings. Default false.
+         * @param bool $blocks      Whether to format the content for the block editor. Default true.
+         *
+         * @return string The default policy content.
+         * @since 5.0.0 Added the `$blocks` parameter.
+         *
+         * @since 4.9.6
+         */
         public static function get_default_content($description = false, $blocks = true)
         {
             $suggested_text = '<strong class="privacy-policy-tutorial">'.__('Suggested text:').' </strong>';
             $content = '';
             $strings = [];
-
             // Start of the suggested privacy policy text.
             if($description)
             {
                 $strings[] = '<div class="wp-suggested-text">';
             }
-
             /* translators: Default privacy policy heading. */
             $strings[] = '<h2>'.__('Who we are').'</h2>';
-
             if($description)
             {
                 /* translators: Privacy policy tutorial. */
@@ -430,7 +489,6 @@
                 /* translators: Default privacy policy text. %s: Site URL. */
                 $strings[] = '<p>'.$suggested_text.sprintf(__('Our website address is: %s.'), get_bloginfo('url', 'display')).'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -446,10 +504,8 @@
                 /* translators: Privacy policy tutorial. */
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('By default WordPress does not collect any personal data about visitors, and only collects the data shown on the User Profile screen from registered users. However some of your plugins may collect personal data. You should add the relevant information below.').'</p>';
             }
-
             /* translators: Default privacy policy heading. */
             $strings[] = '<h2>'.__('Comments').'</h2>';
-
             if($description)
             {
                 /* translators: Privacy policy tutorial. */
@@ -462,10 +518,8 @@
                 /* translators: Default privacy policy text. */
                 $strings[] = '<p>'.__('An anonymized string created from your email address (also called a hash) may be provided to the Gravatar service to see if you are using it. The Gravatar service privacy policy is available here: https://automattic.com/privacy/. After approval of your comment, your profile picture is visible to the public in the context of your comment.').'</p>';
             }
-
             /* translators: Default privacy policy heading. */
             $strings[] = '<h2>'.__('Media').'</h2>';
-
             if($description)
             {
                 /* translators: Privacy policy tutorial. */
@@ -476,7 +530,6 @@
                 /* translators: Default privacy policy text. */
                 $strings[] = '<p>'.$suggested_text.__('If you upload images to the website, you should avoid uploading images with embedded location data (EXIF GPS) included. Visitors to the website can download and extract any location data from images on the website.').'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -484,10 +537,8 @@
                 /* translators: Privacy policy tutorial. */
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('By default, WordPress does not include a contact form. If you use a contact form plugin, use this subsection to note what personal data is captured when someone submits a contact form, and how long you keep it. For example, you may note that you keep contact form submissions for a certain period for customer service purposes, but you do not use the information submitted through them for marketing purposes.').'</p>';
             }
-
             /* translators: Default privacy policy heading. */
             $strings[] = '<h2>'.__('Cookies').'</h2>';
-
             if($description)
             {
                 /* translators: Privacy policy tutorial. */
@@ -504,7 +555,6 @@
                 /* translators: Default privacy policy text. */
                 $strings[] = '<p>'.__('If you edit or publish an article, an additional cookie will be saved in your browser. This cookie includes no personal data and simply indicates the post ID of the article you just edited. It expires after 1 day.').'</p>';
             }
-
             if(! $description)
             {
                 /* translators: Default privacy policy heading. */
@@ -514,7 +564,6 @@
                 /* translators: Default privacy policy text. */
                 $strings[] = '<p>'.__('These websites may collect data about you, use cookies, embed additional third-party tracking, and monitor your interaction with that embedded content, including tracking your interaction with the embedded content if you have an account and are logged in to that website.').'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -524,10 +573,8 @@
                 /* translators: Privacy policy tutorial. */
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('By default WordPress does not collect any analytics data. However, many web hosting accounts collect some anonymous analytics data. You may also have installed a WordPress plugin that provides analytics services. In that case, add information from that plugin here.').'</p>';
             }
-
             /* translators: Default privacy policy heading. */
             $strings[] = '<h2>'.__('Who we share your data with').'</h2>';
-
             if($description)
             {
                 /* translators: Privacy policy tutorial. */
@@ -540,10 +587,8 @@
                 /* translators: Default privacy policy text. */
                 $strings[] = '<p>'.$suggested_text.__('If you request a password reset, your IP address will be included in the reset email.').'</p>';
             }
-
             /* translators: Default privacy policy heading. */
             $strings[] = '<h2>'.__('How long we retain your data').'</h2>';
-
             if($description)
             {
                 /* translators: Privacy policy tutorial. */
@@ -556,10 +601,8 @@
                 /* translators: Default privacy policy text. */
                 $strings[] = '<p>'.__('For users that register on our website (if any), we also store the personal information they provide in their user profile. All users can see, edit, or delete their personal information at any time (except they cannot change their username). Website administrators can also see and edit that information.').'</p>';
             }
-
             /* translators: Default privacy policy heading. */
             $strings[] = '<h2>'.__('What rights you have over your data').'</h2>';
-
             if($description)
             {
                 /* translators: Privacy policy tutorial. */
@@ -570,10 +613,8 @@
                 /* translators: Default privacy policy text. */
                 $strings[] = '<p>'.$suggested_text.__('If you have an account on this site, or have left comments, you can request to receive an exported file of the personal data we hold about you, including any data you have provided to us. You can also request that we erase any personal data we hold about you. This does not include any data we are obliged to keep for administrative, legal, or security purposes.').'</p>';
             }
-
             /* translators: Default privacy policy heading. */
             $strings[] = '<h2>'.__('Where your data is sent').'</h2>';
-
             if($description)
             {
                 /* translators: Privacy policy tutorial. */
@@ -586,7 +627,6 @@
                 /* translators: Default privacy policy text. */
                 $strings[] = '<p>'.$suggested_text.__('Visitor comments may be checked through an automated spam detection service.').'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -594,7 +634,6 @@
                 /* translators: Privacy policy tutorial. */
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('In this section you should provide a contact method for privacy-specific concerns. If you are required to have a Data Protection Officer, list their name and full contact details here as well.').'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -602,7 +641,6 @@
                 /* translators: Privacy policy tutorial. */
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('If you use your site for commercial purposes and you engage in more complex collection or processing of personal data, you should note the following information in your privacy policy in addition to the information we have already discussed.').'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -610,7 +648,6 @@
                 /* translators: Privacy policy tutorial. */
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('In this section you should explain what measures you have taken to protect your users&#8217; data. This could include technical measures such as encryption; security measures such as two factor authentication; and measures such as staff training in data protection. If you have carried out a Privacy Impact Assessment, you can mention it here too.').'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -618,7 +655,6 @@
                 /* translators: Privacy policy tutorial. */
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('In this section you should explain what procedures you have in place to deal with data breaches, either potential or real, such as internal reporting systems, contact mechanisms, or bug bounties.').'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -626,7 +662,6 @@
                 /* translators: Privacy policy tutorial. */
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('If your web site receives data about users from third parties, including advertisers, this information must be included within the section of your privacy policy dealing with third party data.').'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -634,7 +669,6 @@
                 /* translators: Privacy policy tutorial. */
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('If your web site provides a service which includes automated decision making - for example, allowing customers to apply for credit, or aggregating their data into an advertising profile - you must note that this is taking place, and include information about how that information is used, what decisions are made with that aggregated data, and what rights users have over decisions made without human intervention.').'</p>';
             }
-
             if($description)
             {
                 /* translators: Default privacy policy heading. */
@@ -643,7 +677,6 @@
                 $strings[] = '<p class="privacy-policy-tutorial">'.__('If you are a member of a regulated industry, or if you are subject to additional privacy laws, you may be required to disclose that information here.').'</p>';
                 $strings[] = '</div>';
             }
-
             if($blocks)
             {
                 foreach($strings as $key => $string)
@@ -652,18 +685,28 @@
                     {
                         $strings[$key] = '<!-- wp:paragraph -->'.$string.'<!-- /wp:paragraph -->';
                     }
-
                     if(str_starts_with($string, '<h2>'))
                     {
                         $strings[$key] = '<!-- wp:heading -->'.$string.'<!-- /wp:heading -->';
                     }
                 }
             }
-
             $content = implode('', $strings);
-
             // End of the suggested privacy policy text.
 
+            /**
+             * Filters the default content suggested for inclusion in a privacy policy.
+             *
+             * @param string   $content     The default policy content.
+             * @param string[] $strings     An array of privacy policy content strings.
+             * @param bool     $description Whether policy descriptions should be included.
+             * @param bool     $blocks      Whether the content should be formatted for the block editor.
+             *
+             * @since      5.0.0 Added the `$strings`, `$description`, and `$blocks` parameters.
+             * @deprecated 5.7.0 Use wp_add_privacy_policy_content() instead.
+             *
+             * @since      4.9.6
+             */
             return apply_filters_deprecated('wp_get_default_privacy_policy_content', [
                 $content,
                 $strings,

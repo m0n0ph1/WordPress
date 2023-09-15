@@ -1,18 +1,98 @@
 <?php
+    /**
+     * SimplePie
+     *
+     * A PHP-Based RSS and Atom Feed Framework.
+     * Takes the hard work out of managing a complete RSS/Atom solution.
+     *
+     * Copyright (c) 2004-2016, Ryan Parman, Sam Sneddon, Ryan McCue, and contributors
+     * All rights reserved.
+     *
+     * Redistribution and use in source and binary forms, with or without modification, are
+     * permitted provided that the following conditions are met:
+     *
+     *    * Redistributions of source code must retain the above copyright notice, this list of
+     *      conditions and the following disclaimer.
+     *
+     *    * Redistributions in binary form must reproduce the above copyright notice, this list
+     *      of conditions and the following disclaimer in the documentation and/or other materials
+     *      provided with the distribution.
+     *
+     *    * Neither the name of the SimplePie Team nor the names of its contributors may be used
+     *      to endorse or promote products derived from this software without specific prior
+     *      written permission.
+     *
+     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+     * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+     * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS
+     * AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+     * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+     * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+     * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+     * POSSIBILITY OF SUCH DAMAGE.
+     *
+     * @package   SimplePie
+     * @copyright 2004-2016 Ryan Parman, Sam Sneddon, Ryan McCue
+     * @author    Ryan Parman
+     * @author    Sam Sneddon
+     * @author    Ryan McCue
+     * @link      http://simplepie.org/ SimplePie
+     * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
+     */
 
-    class Entities
+    /**
+     * Decode HTML Entities
+     *
+     * This implements HTML5 as of revision 967 (2007-06-28)
+     *
+     * @deprecated Use DOMDocument instead!
+     * @package    SimplePie
+     */
+    class SimplePie_Decode_HTML_Entities
     {
-        public $data = '';
+        /**
+         * Data to be parsed
+         *
+         * @access private
+         * @var string
+         */
+        var $data = '';
 
-        public $consumed = '';
+        /**
+         * Currently consumed bytes
+         *
+         * @access private
+         * @var string
+         */
+        var $consumed = '';
 
-        public $position = 0;
+        /**
+         * Position of the current byte being parsed
+         *
+         * @access private
+         * @var int
+         */
+        var $position = 0;
 
+        /**
+         * Create an instance of the class with the input data
+         *
+         * @access public
+         *
+         * @param string $data Input data
+         */
         public function __construct($data)
         {
             $this->data = $data;
         }
 
+        /**
+         * Parse the input data
+         *
+         * @access public
+         * @return string Output data
+         */
         public function parse()
         {
             while(($this->position = strpos($this->data, '&', $this->position)) !== false)
@@ -25,6 +105,12 @@
             return $this->data;
         }
 
+        /**
+         * Consume the next byte
+         *
+         * @access private
+         * @return mixed The next byte, or false, if there is no more data
+         */
         public function consume()
         {
             if(isset($this->data[$this->position]))
@@ -37,6 +123,11 @@
             return false;
         }
 
+        /**
+         * Decode an entity
+         *
+         * @access private
+         */
         public function entity()
         {
             switch($this->consume())
@@ -50,7 +141,6 @@
                 case "\x26":
                 case false:
                     break;
-
                 case "\x23":
                     switch($this->consume())
                     {
@@ -59,14 +149,12 @@
                             $range = '0123456789ABCDEFabcdef';
                             $hex = true;
                             break;
-
                         default:
                             $range = '0123456789';
                             $hex = false;
                             $this->unconsume();
                             break;
                     }
-
                     if($codepoint = $this->consume_range($range))
                     {
                         static $windows_1252_specials = [
@@ -104,7 +192,6 @@
                             0x9E => "\xC5\xBE",
                             0x9F => "\xC5\xB8"
                         ];
-
                         if($hex)
                         {
                             $codepoint = hexdec($codepoint);
@@ -113,7 +200,6 @@
                         {
                             $codepoint = intval($codepoint);
                         }
-
                         if(isset($windows_1252_specials[$codepoint]))
                         {
                             $replacement = $windows_1252_specials[$codepoint];
@@ -122,18 +208,15 @@
                         {
                             $replacement = SimplePie_Misc::codepoint_to_utf8($codepoint);
                         }
-
                         if(! in_array($this->consume(), [';', false], true))
                         {
                             $this->unconsume();
                         }
-
                         $consumed_length = strlen($this->consumed);
                         $this->data = substr_replace($this->data, $replacement, $this->position - $consumed_length, $consumed_length);
                         $this->position += strlen($replacement) - $consumed_length;
                     }
                     break;
-
                 default:
                     static $entities = [
                         'Aacute' => "\xC3\x81",
@@ -503,7 +586,6 @@
                         'zwj;' => "\xE2\x80\x8D",
                         'zwnj;' => "\xE2\x80\x8C"
                     ];
-
                     for($i = 0, $match = null; $i < 9 && $this->consume() !== false; $i++)
                     {
                         $consumed = substr($this->consumed, 1);
@@ -512,7 +594,6 @@
                             $match = $consumed;
                         }
                     }
-
                     if($match !== null)
                     {
                         $this->data = substr_replace($this->data, $entities[$match], $this->position - strlen($consumed) - 1, strlen($match) + 1);
@@ -522,12 +603,26 @@
             }
         }
 
+        /**
+         * Unconsume one byte
+         *
+         * @access private
+         */
         public function unconsume()
         {
             $this->consumed = substr($this->consumed, 0, -1);
             $this->position--;
         }
 
+        /**
+         * Consume a range of characters
+         *
+         * @access private
+         *
+         * @param string $chars Characters to consume
+         *
+         * @return mixed A series of characters that match the range, or false
+         */
         public function consume_range($chars)
         {
             if($len = strspn($this->data, $chars, $this->position))

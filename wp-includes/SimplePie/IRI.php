@@ -1,21 +1,114 @@
 <?php
+    /**
+     * SimplePie
+     *
+     * A PHP-Based RSS and Atom Feed Framework.
+     * Takes the hard work out of managing a complete RSS/Atom solution.
+     *
+     * Copyright (c) 2004-2016, Ryan Parman, Sam Sneddon, Ryan McCue, and contributors
+     * All rights reserved.
+     *
+     * Redistribution and use in source and binary forms, with or without modification, are
+     * permitted provided that the following conditions are met:
+     *
+     *    * Redistributions of source code must retain the above copyright notice, this list of
+     *      conditions and the following disclaimer.
+     *
+     *    * Redistributions in binary form must reproduce the above copyright notice, this list
+     *      of conditions and the following disclaimer in the documentation and/or other materials
+     *      provided with the distribution.
+     *
+     *    * Neither the name of the SimplePie Team nor the names of its contributors may be used
+     *      to endorse or promote products derived from this software without specific prior
+     *      written permission.
+     *
+     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+     * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+     * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS
+     * AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+     * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+     * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+     * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+     * POSSIBILITY OF SUCH DAMAGE.
+     *
+     * @package   SimplePie
+     * @copyright 2004-2016 Ryan Parman, Sam Sneddon, Ryan McCue
+     * @author    Ryan Parman
+     * @author    Sam Sneddon
+     * @author    Ryan McCue
+     * @link      http://simplepie.org/ SimplePie
+     * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
+     */
 
-    class IRI
+    /**
+     * IRI parser/serialiser/normaliser
+     *
+     * @package    SimplePie
+     * @subpackage HTTP
+     * @author     Sam Sneddon
+     * @author     Steve Minutillo
+     * @author     Ryan McCue
+     * @copyright  2007-2012 Sam Sneddon, Steve Minutillo, Ryan McCue
+     * @license    http://www.opensource.org/licenses/bsd-license.php
+     */
+    class SimplePie_IRI
     {
+        /**
+         * Scheme
+         *
+         * @var string
+         */
         protected $scheme = null;
 
+        /**
+         * User Information
+         *
+         * @var string
+         */
         protected $iuserinfo = null;
 
+        /**
+         * ihost
+         *
+         * @var string
+         */
         protected $ihost = null;
 
+        /**
+         * Port
+         *
+         * @var string
+         */
         protected $port = null;
 
+        /**
+         * ipath
+         *
+         * @var string
+         */
         protected $ipath = '';
 
+        /**
+         * iquery
+         *
+         * @var string
+         */
         protected $iquery = null;
 
+        /**
+         * ifragment
+         *
+         * @var string
+         */
         protected $ifragment = null;
 
+        /**
+         * Normalization database
+         *
+         * Each key is the scheme, each value is an array with each key as the IRI
+         * part and value as the default value for that part.
+         */
         protected $normalization = [
             'acap' => [
                 'port' => 674
@@ -36,11 +129,24 @@
             ],
         ];
 
+        /**
+         * Create a new IRI object, from a specified string
+         *
+         * @param string $iri
+         */
         public function __construct($iri = null)
         {
             $this->set_iri($iri);
         }
 
+        /**
+         * Set the entire IRI. Returns true on success, false on failure (if there
+         * are any invalid characters).
+         *
+         * @param string $iri
+         *
+         * @return bool
+         */
         public function set_iri($iri, $clear_cache = false)
         {
             static $cache;
@@ -54,7 +160,6 @@
             {
                 $cache = [];
             }
-
             if($iri === null)
             {
                 return true;
@@ -74,15 +179,12 @@
 
                 return $return;
             }
-
             $parsed = $this->parse_iri((string) $iri);
             if(! $parsed)
             {
                 return false;
             }
-
             $return = $this->set_scheme($parsed['scheme']) && $this->set_authority($parsed['authority']) && $this->set_path($parsed['path']) && $this->set_query($parsed['query']) && $this->set_fragment($parsed['fragment']);
-
             $cache[$iri] = [
                 $this->scheme,
                 $this->iuserinfo,
@@ -97,6 +199,13 @@
             return $return;
         }
 
+        /**
+         * Parse an IRI into scheme/authority/path/query/fragment segments
+         *
+         * @param string $iri
+         *
+         * @return array
+         */
         protected function parse_iri($iri)
         {
             $iri = trim($iri, "\x20\x09\x0A\x0C\x0D");
@@ -130,26 +239,42 @@
             return false;
         }
 
+        /**
+         * Set the scheme. Returns true on success, false on failure (if there are
+         * any invalid characters).
+         *
+         * @param string $scheme
+         *
+         * @return bool
+         */
         public function set_scheme($scheme)
         {
             if($scheme === null)
             {
                 $this->scheme = null;
             }
-            elseif(preg_match('/^[A-Za-z][0-9A-Za-z+\-.]*$/', $scheme))
-            {
-                $this->scheme = strtolower($scheme);
-            }
-            else
+            elseif(! preg_match('/^[A-Za-z][0-9A-Za-z+\-.]*$/', $scheme))
             {
                 $this->scheme = null;
 
                 return false;
             }
+            else
+            {
+                $this->scheme = strtolower($scheme);
+            }
 
             return true;
         }
 
+        /**
+         * Set the authority. Returns true on success, false on failure (if there are
+         * any invalid characters).
+         *
+         * @param string $authority
+         *
+         * @return bool
+         */
         public function set_authority($authority, $clear_cache = false)
         {
             static $cache;
@@ -163,7 +288,6 @@
             {
                 $cache = [];
             }
-
             if($authority === null)
             {
                 $this->iuserinfo = null;
@@ -183,7 +307,6 @@
 
                 return $return;
             }
-
             $remaining = $authority;
             if(($iuserinfo_end = strrpos($remaining, '@')) !== false)
             {
@@ -206,9 +329,7 @@
             {
                 $port = null;
             }
-
             $return = $this->set_userinfo($iuserinfo) && $this->set_host($remaining) && $this->set_port($port);
-
             $cache[$authority] = [
                 $this->iuserinfo,
                 $this->ihost,
@@ -219,6 +340,13 @@
             return $return;
         }
 
+        /**
+         * Set the iuserinfo.
+         *
+         * @param string $iuserinfo
+         *
+         * @return bool
+         */
         public function set_userinfo($iuserinfo)
         {
             if($iuserinfo === null)
@@ -234,6 +362,16 @@
             return true;
         }
 
+        /**
+         * Replace invalid character with percent encoding
+         *
+         * @param string $string      Input string
+         * @param string $extra_chars Valid characters not in iunreserved or
+         *                            iprivate (this is ASCII-only)
+         * @param bool   $iprivate    Allow iprivate
+         *
+         * @return string
+         */
         protected function replace_invalid_with_pct_encoding($string, $extra_chars, $iprivate = false)
         {
             // Normalize as many pct-encoded sections as possible
@@ -241,27 +379,21 @@
                 $this,
                 'remove_iunreserved_percent_encoded'
             ],                              $string);
-
             // Replace invalid percent characters
             $string = preg_replace('/%(?![A-Fa-f0-9]{2})/', '%25', $string);
-
             // Add unreserved and % to $extra_chars (the latter is safe because all
             // pct-encoded sections are now valid).
             $extra_chars .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~%';
-
             // Now replace any bytes that aren't allowed with their pct-encoded versions
             $position = 0;
             $strlen = strlen($string);
             while(($position += strspn($string, $extra_chars, $position)) < $strlen)
             {
                 $value = ord($string[$position]);
-
                 // Start position
                 $start = $position;
-
                 // By default we are valid
                 $valid = true;
-
                 // No one byte sequences are valid due to the while.
                 // Two byte sequence:
                 if(($value & 0xE0) === 0xC0)
@@ -288,7 +420,6 @@
                     $length = 1;
                     $remaining = 0;
                 }
-
                 if($remaining)
                 {
                     if($position + $length <= $strlen)
@@ -296,7 +427,6 @@
                         for($position++; $remaining; $position++)
                         {
                             $value = ord($string[$position]);
-
                             // Check that the byte is valid, then add it to the character:
                             if(($value & 0xC0) === 0x80)
                             {
@@ -316,7 +446,6 @@
                         $valid = false;
                     }
                 }
-
                 // Percent encode anything invalid or not in ucschar
                 if(// Invalid sequences
                     ! $valid // Non-shortest form sequences are invalid
@@ -333,7 +462,6 @@
                     {
                         $position--;
                     }
-
                     for($j = $start; $j <= $position; $j++)
                     {
                         $string = substr_replace($string, sprintf('%%%02X', ord($string[$j])), $j, 1);
@@ -375,6 +503,14 @@
             }
         }
 
+        /**
+         * Set the ihost. Returns true on success, false on failure (if there are
+         * any invalid characters).
+         *
+         * @param string $ihost
+         *
+         * @return bool
+         */
         public function set_host($ihost)
         {
             if($ihost === null)
@@ -383,7 +519,7 @@
 
                 return true;
             }
-            elseif(strpos($ihost, '[') === 0 && substr($ihost, -1) === ']')
+            elseif(substr($ihost, 0, 1) === '[' && substr($ihost, -1) === ']')
             {
                 if(SimplePie_Net_IPv6::check_ipv6(substr($ihost, 1, -1)))
                 {
@@ -399,7 +535,6 @@
             else
             {
                 $ihost = $this->replace_invalid_with_pct_encoding($ihost, '!$&\'()*+,;=');
-
                 // Lowercase, but ignore pct-encoded sections (as they should
                 // remain uppercase). This must be done after the previous step
                 // as that can add unescaped characters.
@@ -417,15 +552,21 @@
                         $position++;
                     }
                 }
-
                 $this->ihost = $ihost;
             }
-
             $this->scheme_normalization();
 
             return true;
         }
 
+        /**
+         * Set the port. Returns true on success, false on failure (if there are
+         * any invalid characters).
+         *
+         * @param string $port
+         *
+         * @return bool
+         */
         public function set_port($port)
         {
             if($port === null)
@@ -441,12 +582,18 @@
 
                 return true;
             }
-
             $this->port = null;
 
             return false;
         }
 
+        /**
+         * Set the ipath.
+         *
+         * @param string $ipath
+         *
+         * @return bool
+         */
         public function set_path($ipath, $clear_cache = false)
         {
             static $cache;
@@ -460,9 +607,7 @@
             {
                 $cache = [];
             }
-
             $ipath = (string) $ipath;
-
             if(isset($cache[$ipath]))
             {
                 $this->ipath = $cache[$ipath][(int) ($this->scheme !== null)];
@@ -471,31 +616,36 @@
             {
                 $valid = $this->replace_invalid_with_pct_encoding($ipath, '!$&\'()*+,;=@:/');
                 $removed = $this->remove_dot_segments($valid);
-
                 $cache[$ipath] = [$valid, $removed];
                 $this->ipath = ($this->scheme !== null) ? $removed : $valid;
             }
-
             $this->scheme_normalization();
 
             return true;
         }
 
+        /**
+         * Remove dot segments from a path
+         *
+         * @param string $input
+         *
+         * @return string
+         */
         protected function remove_dot_segments($input)
         {
             $output = '';
             while(strpos($input, './') !== false || strpos($input, '/.') !== false || $input === '.' || $input === '..')
             {
                 // A: If the input buffer begins with a prefix of "../" or "./", then remove that prefix from the input buffer; otherwise,
-                if(strncmp($input, '../', 3) === 0)
+                if(strpos($input, '../') === 0)
                 {
                     $input = substr($input, 3);
                 }
-                elseif(strncmp($input, './', 2) === 0)
+                elseif(strpos($input, './') === 0)
                 {
                     $input = substr($input, 2);
                 } // B: if the input buffer begins with a prefix of "/./" or "/.", where "." is a complete path segment, then replace that prefix with "/" in the input buffer; otherwise,
-                elseif(strncmp($input, '/./', 3) === 0)
+                elseif(strpos($input, '/./') === 0)
                 {
                     $input = substr($input, 2);
                 }
@@ -503,7 +653,7 @@
                 {
                     $input = '/';
                 } // C: if the input buffer begins with a prefix of "/../" or "/..", where ".." is a complete path segment, then replace that prefix with "/" in the input buffer and remove the last segment and its preceding "/" (if any) from the output buffer; otherwise,
-                elseif(strncmp($input, '/../', 4) === 0)
+                elseif(strpos($input, '/../') === 0)
                 {
                     $input = substr($input, 3);
                     $output = substr_replace($output, '', strrpos($output, '/'));
@@ -532,6 +682,13 @@
             return $output.$input;
         }
 
+        /**
+         * Set the iquery.
+         *
+         * @param string $iquery
+         *
+         * @return bool
+         */
         public function set_query($iquery)
         {
             if($iquery === null)
@@ -547,6 +704,13 @@
             return true;
         }
 
+        /**
+         * Set the ifragment.
+         *
+         * @param string $ifragment
+         *
+         * @return bool
+         */
         public function set_fragment($ifragment)
         {
             if($ifragment === null)
@@ -562,6 +726,16 @@
             return true;
         }
 
+        /**
+         * Create a new IRI object by resolving a relative IRI
+         *
+         * Returns false if $base is not absolute, otherwise an IRI.
+         *
+         * @param IRI|string $base     (Absolute) Base IRI
+         * @param IRI|string $relative Relative IRI
+         *
+         * @return IRI|false
+         */
         public static function absolutize($base, $relative)
         {
             if(! ($relative instanceof SimplePie_IRI))
@@ -648,24 +822,27 @@
             }
         }
 
+        /**
+         * Check if the object represents a valid IRI. This needs to be done on each
+         * call as some things change depending on another part of the IRI.
+         *
+         * @return bool
+         */
         public function is_valid()
         {
             if($this->ipath === '')
             {
                 return true;
             }
-
             $isauthority = $this->iuserinfo !== null || $this->ihost !== null || $this->port !== null;
             if($isauthority && $this->ipath[0] === '/')
             {
                 return true;
             }
-
-            if(! $isauthority && (strpos($this->ipath, '//') === 0))
+            if(! $isauthority && (substr($this->ipath, 0, 2) === '//'))
             {
                 return false;
             }
-
             // Relative urls cannot have a colon in the first path segment (and the
             // slashes themselves are not included so skip the first character).
             if(! $this->scheme && ! $isauthority && strpos($this->ipath, ':') !== false && strpos($this->ipath, '/', 1) !== false && strpos($this->ipath, ':') < strpos($this->ipath, '/', 1))
@@ -676,13 +853,17 @@
             return true;
         }
 
+        /**
+         * Get the complete IRI
+         *
+         * @return string
+         */
         public function get_iri()
         {
             if(! $this->is_valid())
             {
                 return false;
             }
-
             $iri = '';
             if($this->scheme !== null)
             {
@@ -712,6 +893,11 @@
             return $iri;
         }
 
+        /**
+         * Get the complete iauthority
+         *
+         * @return string
+         */
         protected function get_iauthority()
         {
             if($this->iuserinfo !== null || $this->ihost !== null || $this->port !== null)
@@ -736,17 +922,28 @@
             return null;
         }
 
+        /**
+         * Return the entire IRI when you try and read the object as a string
+         *
+         * @return string
+         */
         public function __toString()
         {
             return $this->get_iri();
         }
 
+        /**
+         * Overload __get() to provide access via properties
+         *
+         * @param string $name Property name
+         *
+         * @return mixed
+         */
         public function __get($name)
         {
             // isset() returns false for null, we don't want to do that
             // Also why we use array_key_exists below instead of isset()
             $props = get_object_vars($this);
-
             if($name === 'iri' || $name === 'uri' || $name === 'iauthority' || $name === 'authority')
             {
                 $return = $this->{"get_$name"}();
@@ -770,7 +967,6 @@
                 trigger_error('Undefined property: '.get_class($this).'::'.$name, E_USER_NOTICE);
                 $return = null;
             }
-
             if($return === null && isset($this->normalization[$this->scheme][$name]))
             {
                 return $this->normalization[$this->scheme][$name];
@@ -779,6 +975,12 @@
             return $return;
         }
 
+        /**
+         * Overload __set() to provide access via properties
+         *
+         * @param string $name  Property name
+         * @param mixed  $value Property value
+         */
         public function __set($name, $value)
         {
             if(method_exists($this, 'set_'.$name))
@@ -791,11 +993,23 @@
             }
         }
 
+        /**
+         * Overload __isset() to provide access via properties
+         *
+         * @param string $name Property name
+         *
+         * @return bool
+         */
         public function __isset($name)
         {
             return method_exists($this, 'get_'.$name) || isset($this->$name);
         }
 
+        /**
+         * Overload __unset() to provide access via properties
+         *
+         * @param string $name Property name
+         */
         public function __unset($name)
         {
             if(method_exists($this, 'set_'.$name))
@@ -804,6 +1018,9 @@
             }
         }
 
+        /**
+         * Clean up
+         */
         public function __destruct()
         {
             $this->set_iri(null, true);
@@ -811,11 +1028,21 @@
             $this->set_authority(null, true);
         }
 
+        /**
+         * Get the complete URI
+         *
+         * @return string
+         */
         public function get_uri()
         {
             return $this->to_uri($this->get_iri());
         }
 
+        /**
+         * Convert an IRI to a URI (or parts thereof)
+         *
+         * @return string
+         */
         public function to_uri($string)
         {
             static $non_ascii;
@@ -823,7 +1050,6 @@
             {
                 $non_ascii = implode('', range("\x80", "\xFF"));
             }
-
             $position = 0;
             $strlen = strlen($string);
             while(($position += strcspn($string, $non_ascii, $position)) < $strlen)
@@ -836,47 +1062,37 @@
             return $string;
         }
 
+        /**
+         * Callback function for preg_replace_callback.
+         *
+         * Removes sequences of percent encoded bytes that represent UTF-8
+         * encoded characters in iunreserved
+         *
+         * @param array $match PCRE match
+         *
+         * @return string Replacement
+         */
         protected function remove_iunreserved_percent_encoded($match)
         {
             // As we just have valid percent encoded sequences we can just explode
             // and ignore the first member of the returned array (an empty string).
             $bytes = explode('%', $match[0]);
-
             // Initialize the new string (this is what will be returned) and that
             // there are no bytes remaining in the current sequence (unsurprising
             // at the first byte!).
             $string = '';
             $remaining = 0;
-
             // Loop over each and every byte, and set $value to its value
             for($i = 1, $len = count($bytes); $i < $len; $i++)
             {
                 $value = hexdec($bytes[$i]);
-
                 // If we're the first byte of sequence:
-                if($remaining)
-                {
-                    // Check that the byte is valid, then add it to the character:
-                    if(($value & 0xC0) === 0x80)
-                    {
-                        $remaining--;
-                        $character |= ($value & 0x3F) << ($remaining * 6);
-                    } // If it is invalid, count the sequence as invalid and reprocess the current byte as the start of a sequence:
-                    else
-                    {
-                        $valid = false;
-                        $remaining = 0;
-                        $i--;
-                    }
-                } // Continuation byte:
-                else
+                if(! $remaining)
                 {
                     // Start position
                     $start = $i;
-
                     // By default we are valid
                     $valid = true;
-
                     // One byte sequence:
                     if($value <= 0x7F)
                     {
@@ -906,8 +1122,22 @@
                         $valid = false;
                         $remaining = 0;
                     }
+                } // Continuation byte:
+                else
+                {
+                    // Check that the byte is valid, then add it to the character:
+                    if(($value & 0xC0) === 0x80)
+                    {
+                        $remaining--;
+                        $character |= ($value & 0x3F) << ($remaining * 6);
+                    } // If it is invalid, count the sequence as invalid and reprocess the current byte as the start of a sequence:
+                    else
+                    {
+                        $valid = false;
+                        $remaining = 0;
+                        $i--;
+                    }
                 }
-
                 // If we've reached the end of the current byte sequence, append it to Unicode::$data
                 if(! $remaining)
                 {
@@ -934,7 +1164,6 @@
                     }
                 }
             }
-
             // If we have any bytes left over they are invalid (i.e., we are
             // mid-way through a multi-byte sequence)
             if($remaining)
@@ -948,6 +1177,11 @@
             return $string;
         }
 
+        /**
+         * Get the complete authority
+         *
+         * @return string
+         */
         protected function get_authority()
         {
             $iauthority = $this->get_iauthority();

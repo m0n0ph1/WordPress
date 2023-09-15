@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * About page on solid color background
+     */
     return [
         'title' => __('About page on solid color background', 'twentytwentytwo'),
         'categories' => ['pages'],

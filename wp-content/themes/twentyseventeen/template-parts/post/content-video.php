@@ -1,5 +1,14 @@
 <?php
-
+    /**
+     * Template part for displaying video posts
+     *
+     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Seventeen
+     * @since      Twenty Seventeen 1.0
+     * @version    1.2
+     */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -25,7 +34,6 @@
                 }
                 echo '</div><!-- .entry-meta -->';
             }
-
             if(is_single())
             {
                 the_title('<h1 class="entry-title">', '</h1>');
@@ -44,7 +52,6 @@
     <?php
         $content = apply_filters('the_content', get_the_content());
         $video = false;
-
         // Only get video from the content if a playlist isn't present.
         if(! str_contains($content, 'wp-playlist-script'))
         {
@@ -63,20 +70,22 @@
     <div class="entry-content">
 
         <?php
-            if(! is_single() && ! empty($video))
+            if(! is_single())
             {
-                foreach($video as $video_html)
+                // If not a single post, highlight the video file.
+                if(! empty($video))
                 {
-                    echo '<div class="entry-video">';
-                    echo $video_html;
-                    echo '</div>';
+                    foreach($video as $video_html)
+                    {
+                        echo '<div class="entry-video">';
+                        echo $video_html;
+                        echo '</div>';
+                    }
                 }
             }
-
             if(is_single() || empty($video))
             {
                 the_content(sprintf(/* translators: %s: Post title. Only visible to screen readers. */ __('Continue reading<span class="screen-reader-text"> "%s"</span>', 'twentyseventeen'), get_the_title()));
-
                 wp_link_pages([
                                   'before' => '<div class="page-links">'.__('Pages:', 'twentyseventeen'),
                                   'after' => '</div>',

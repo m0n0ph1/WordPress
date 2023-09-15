@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * The template for displaying content in the single.php template
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 1.0
+     */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -26,9 +32,7 @@
     <footer class="entry-meta">
         <?php
             $categories_list = get_the_category_list(wp_get_list_item_separator());
-
             $tags_list = get_the_tag_list('', wp_get_list_item_separator());
-
             if($tags_list && ! is_wp_error($tags_list))
             {
                 /* translators: 1: Categories list, 2: Tag list, 3: Permalink, 4: Post title, 5: Author name, 6: Author URL. */
@@ -44,7 +48,6 @@
                 /* translators: 1: Categories list, 2: Tag list, 3: Permalink, 4: Post title, 5: Author name, 6: Author URL. */
                 $utility_text = __('This entry was posted by <a href="%6$s">%5$s</a>. Bookmark the <a href="%3$s" title="Permalink to %4$s" rel="bookmark">permalink</a>.', 'twentyeleven');
             }
-
             printf($utility_text, $categories_list, $tags_list, esc_url(get_permalink()), the_title_attribute('echo=0'), get_the_author(), esc_url(get_author_posts_url(get_the_author_meta('ID'))));
         ?>
 
@@ -57,7 +60,7 @@
                 <div id="author-info">
                     <div id="author-avatar">
                         <?php
-
+                            /** This filter is documented in author.php */
                             $author_bio_avatar_size = apply_filters('twentyeleven_author_bio_avatar_size', 68);
                             echo get_avatar(get_the_author_meta('user_email'), $author_bio_avatar_size);
                         ?>

@@ -1,9 +1,23 @@
 <?php
-
+    /**
+     * WordPress Network Administration API.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     * @since      4.4.0
+     */
+    /**
+     * Check for an existing network.
+     *
+     * @return string|false Base domain if network exists, otherwise false.
+     * @global wpdb $wpdb WordPress database abstraction object.
+     *
+     * @since 3.0.0
+     *
+     */
     function network_domain_check()
     {
         global $wpdb;
-
         $sql = $wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($wpdb->site));
         if($wpdb->get_var($sql))
         {
@@ -13,27 +27,52 @@
         return false;
     }
 
+    /**
+     * Allow subdomain installation
+     *
+     * @return bool Whether subdomain installation is allowed
+     * @since 3.0.0
+     */
     function allow_subdomain_install()
     {
         $domain = preg_replace('|https?://([^/]+)|', '$1', get_option('home'));
+        if(parse_url(get_option('home'), PHP_URL_PATH) || 'localhost' === $domain || preg_match('|^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$|', $domain))
+        {
+            return false;
+        }
 
-        return ! (parse_url(get_option('home'), PHP_URL_PATH) || 'localhost' === $domain || preg_match('|^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$|', $domain));
+        return true;
     }
 
+    /**
+     * Allow subdirectory installation.
+     *
+     * @return bool Whether subdirectory installation is allowed
+     * @global wpdb $wpdb WordPress database abstraction object.
+     *
+     * @since 3.0.0
+     *
+     */
     function allow_subdirectory_install()
     {
         global $wpdb;
-
+        /**
+         * Filters whether to enable the subdirectory installation feature in Multisite.
+         *
+         * @param bool $allow Whether to enable the subdirectory installation feature in Multisite.
+         *                    Default false.
+         *
+         * @since 3.0.0
+         *
+         */
         if(apply_filters('allow_subdirectory_install', false))
         {
             return true;
         }
-
         if(defined('ALLOW_SUBDIRECTORY_INSTALL') && ALLOW_SUBDIRECTORY_INSTALL)
         {
             return true;
         }
-
         $post = $wpdb->get_row("SELECT ID FROM $wpdb->posts WHERE post_date < DATE_SUB(NOW(), INTERVAL 1 MONTH) AND post_status = 'publish'");
         if(empty($post))
         {
@@ -43,6 +82,12 @@
         return false;
     }
 
+    /**
+     * Get base domain of network.
+     *
+     * @return string Base domain.
+     * @since 3.0.0
+     */
     function get_clean_basedomain()
     {
         $existing_domain = network_domain_check();
@@ -60,10 +105,23 @@
         return $domain;
     }
 
+    /**
+     * Prints step 1 for Network installation process.
+     *
+     * @param false|WP_Error $errors Optional. Error object. Default false.
+     *
+     * @since 3.0.0
+     *
+     * @global bool          $is_apache
+     *
+     * @todo  Realistically, step 1 should be a welcome screen explaining what a Network is and such.
+     *       Navigating to Tools > Network should not be a sudden "Welcome to a new install process!
+     *       Fill this out and click here." See also contextual help todo.
+     *
+     */
     function network_step1($errors = false)
     {
         global $is_apache;
-
         if(defined('DO_NOT_UPGRADE_GLOBAL_TABLES'))
         {
             echo '<div class="error"><p><strong>'.__('Error:').'</strong> '.sprintf(/* translators: %s: DO_NOT_UPGRADE_GLOBAL_TABLES */ __('The constant %s cannot be defined when creating a network.'), '<code>DO_NOT_UPGRADE_GLOBAL_TABLES</code>').'</p></div>';
@@ -71,7 +129,6 @@
             require_once ABSPATH.'wp-admin/admin-footer.php';
             die();
         }
-
         $active_plugins = get_option('active_plugins');
         if(! empty($active_plugins))
         {
@@ -81,7 +138,6 @@
             require_once ABSPATH.'wp-admin/admin-footer.php';
             die();
         }
-
         $hostname = get_clean_basedomain();
         $has_ports = strstr($hostname, ':');
         if((false !== $has_ports && ! in_array($has_ports, [':80', ':443'], true)))
@@ -93,11 +149,8 @@
             require_once ABSPATH.'wp-admin/admin-footer.php';
             die();
         }
-
         echo '<form method="post">';
-
         wp_nonce_field('install-network-1');
-
         $error_codes = [];
         if(is_wp_error($errors))
         {
@@ -109,7 +162,6 @@
             echo '</div>';
             $error_codes = $errors->get_error_codes();
         }
-
         if(! empty($_POST['sitename']) && ! in_array('empty_sitename', $error_codes, true))
         {
             $site_name = $_POST['sitename'];
@@ -119,7 +171,6 @@
             /* translators: %s: Default network title. */
             $site_name = sprintf(__('%s Sites'), get_option('blogname'));
         }
-
         if(! empty($_POST['email']) && ! in_array('invalid_email', $error_codes, true))
         {
             $admin_email = $_POST['email'];
@@ -132,7 +183,6 @@
         <p><?php _e('Welcome to the Network installation process!'); ?></p>
         <p><?php _e('Fill in the information below and you&#8217;ll be on your way to creating a network of WordPress sites. Configuration files will be created in the next step.'); ?></p>
         <?php
-
         if(isset($_POST['subdomain_install']))
         {
             $subdomain_install = (bool) $_POST['subdomain_install'];
@@ -141,7 +191,11 @@
         { // Assume nothing.
             $subdomain_install = true;
         }
-        elseif(allow_subdirectory_install())
+        elseif(! allow_subdirectory_install())
+        {
+            $subdomain_install = true;
+        }
+        else
         {
             $subdomain_install = false;
             $got_mod_rewrite = got_mod_rewrite();
@@ -157,7 +211,6 @@
                 printf(/* translators: %s: mod_rewrite */ __('It looks like the Apache %s module is not installed.'), '<code>mod_rewrite</code>');
                 echo '</p>';
             }
-
             if($got_mod_rewrite || $is_apache)
             { // Protect against mod_rewrite mimicry (but ! Apache).
                 echo '<p>';
@@ -165,11 +218,6 @@
                 echo '</p></div>';
             }
         }
-        else
-        {
-            $subdomain_install = true;
-        }
-
         if(allow_subdomain_install() && allow_subdirectory_install()) :
             ?>
             <h3><?php esc_html_e('Addresses of Sites in your Network'); ?></h3>
@@ -206,12 +254,10 @@
 
         <?php
         endif;
-
         if(WP_CONTENT_DIR !== ABSPATH.'wp-content' && (allow_subdirectory_install() || ! allow_subdomain_install()))
         {
             echo '<div class="error inline"><p><strong>'.__('Warning:').'</strong> '.__('Subdirectory networks may not be fully compatible with custom wp-content directories.').'</p></div>';
         }
-
         $is_www = str_starts_with($hostname, 'www.');
         if($is_www) :
             ?>
@@ -312,10 +358,20 @@
         <?php
     }
 
+    /**
+     * Prints step 2 for Network installation process.
+     *
+     * @param false|WP_Error $errors   Optional. Error object. Default false.
+     *
+     * @global wpdb          $wpdb     WordPress database abstraction object.
+     * @global bool          $is_nginx Whether the server software is Nginx or something else.
+     *
+     * @since 3.0.0
+     *
+     */
     function network_step2($errors = false)
     {
         global $wpdb, $is_nginx;
-
         $hostname = get_clean_basedomain();
         $slashed_home = trailingslashit(get_option('home'));
         $base = parse_url($slashed_home, PHP_URL_PATH);
@@ -324,20 +380,17 @@
         $home_path = str_starts_with($abspath_fix, $document_root_fix) ? $document_root_fix.$base : get_home_path();
         $wp_siteurl_subdir = preg_replace('#^'.preg_quote($home_path, '#').'#', '', $abspath_fix);
         $rewrite_base = ! empty($wp_siteurl_subdir) ? ltrim(trailingslashit($wp_siteurl_subdir), '/') : '';
-
         $location_of_wp_config = $abspath_fix;
         if(! file_exists(ABSPATH.'wp-config.php') && file_exists(dirname(ABSPATH).'/wp-config.php'))
         {
             $location_of_wp_config = dirname($abspath_fix);
         }
         $location_of_wp_config = trailingslashit($location_of_wp_config);
-
         // Wildcard DNS message.
         if(is_wp_error($errors))
         {
             echo '<div class="error">'.$errors->get_error_message().'</div>';
         }
-
         if($_POST)
         {
             if(allow_subdomain_install())
@@ -369,11 +422,9 @@
                 <?php
             }
         }
-
         $subdir_match = $subdomain_install ? '' : '([_0-9a-zA-Z-]+/)?';
         $subdir_replacement_01 = $subdomain_install ? '' : '$1';
         $subdir_replacement_12 = $subdomain_install ? '$1' : '$2';
-
         if($_POST || ! is_multisite())
         {
             ?>
@@ -385,7 +436,6 @@
                 'type' => 'warning',
                 'additional_classes' => ['inline'],
             ];
-
             if(file_exists($home_path.'.htaccess'))
             {
                 $notice_message .= sprintf(/* translators: 1: wp-config.php, 2: .htaccess */ __('You should back up your existing %1$s and %2$s files.'), '<code>wp-config.php</code>', '<code>.htaccess</code>');
@@ -398,7 +448,6 @@
             {
                 $notice_message .= sprintf(/* translators: %s: wp-config.php */ __('You should back up your existing %s file.'), '<code>wp-config.php</code>');
             }
-
             wp_admin_notice($notice_message, $notice_args);
         }
         ?>
@@ -449,7 +498,6 @@ define( 'BLOG_ID_CURRENT_SITE', 1 );
                         unset($keys_salts[$c]);
                     }
                 }
-
                 if(! empty($keys_salts))
                 {
                     $keys_salts_str = '';
@@ -503,7 +551,6 @@ define( 'BLOG_ID_CURRENT_SITE', 1 );
             $iis_subdir_match = ltrim($base, '/').$subdir_match;
             $iis_rewrite_base = ltrim($base, '/').$rewrite_base;
             $iis_subdir_replacement = $subdomain_install ? '' : '{R:1}';
-
             $web_config_file = '<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <system.webServer>
@@ -551,7 +598,6 @@ define( 'BLOG_ID_CURRENT_SITE', 1 );
     </system.webServer>
 </configuration>
 ';
-
             echo '<li><p id="network-webconfig-rules-description">';
             printf(/* translators: 1: File name (.htaccess or web.config), 2: File path. */ __('Add the following to your %1$s file in %2$s, <strong>replacing</strong> other WordPress rules:'), '<code>web.config</code>', '<code>'.$home_path.'</code>');
             echo '</p>';
@@ -576,20 +622,16 @@ define( 'BLOG_ID_CURRENT_SITE', 1 );
 
         <?php
         elseif($is_nginx) : // End iis7_supports_permalinks(). Link to Nginx documentation instead:
-
             echo '<li><p>';
             printf(/* translators: %s: Documentation URL. */ __('It seems your network is running with Nginx web server. <a href="%s">Learn more about further configuration</a>.'), __('https://wordpress.org/documentation/article/nginx/'));
             echo '</p></li>';
-
         else : // End $is_nginx. Construct an .htaccess file instead:
-
             $ms_files_rewriting = '';
             if(is_multisite() && get_site_option('ms_files_rewriting'))
             {
                 $ms_files_rewriting = "\n# uploaded files\nRewriteRule ^";
                 $ms_files_rewriting .= $subdir_match."files/(.+) {$rewrite_base}".WPINC."/ms-files.php?file={$subdir_replacement_12} [L]"."\n";
             }
-
             $htaccess_file = <<<EOF
 RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -607,7 +649,6 @@ RewriteRule ^{$subdir_match}(.*\.php)$ {$rewrite_base}$subdir_replacement_12 [L]
 RewriteRule . index.php [L]
 
 EOF;
-
             echo '<li><p id="network-htaccess-rules-description">';
             printf(/* translators: 1: File name (.htaccess or web.config), 2: File path. */ __('Add the following to your %1$s file in %2$s, <strong>replacing</strong> other WordPress rules:'), '<code>.htaccess</code>', '<code>'.$home_path.'</code>');
             echo '</p>';
@@ -632,7 +673,6 @@ EOF;
 
         <?php
         endif; // End IIS/Nginx/Apache code branches.
-
         if(! is_multisite())
         {
             ?>

@@ -1,64 +1,55 @@
 <?php
-
+    /**
+     * Edit Site Themes Administration Screen
+     *
+     * @package    WordPress
+     * @subpackage Multisite
+     * @since      3.1.0
+     */
+    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
     if(! current_user_can('manage_sites'))
     {
         wp_die(__('Sorry, you are not allowed to manage themes for this site.'));
     }
-
     get_current_screen()->add_help_tab(get_site_screen_help_tab_args());
     get_current_screen()->set_help_sidebar(get_site_screen_help_sidebar_content());
-
     get_current_screen()->set_screen_reader_content([
                                                         'heading_views' => __('Filter site themes list'),
                                                         'heading_pagination' => __('Site themes list navigation'),
                                                         'heading_list' => __('Site themes list'),
                                                     ]);
-
     $wp_list_table = _get_list_table('WP_MS_Themes_List_Table');
-
     $action = $wp_list_table->current_action();
-
     $s = isset($_REQUEST['s']) ? $_REQUEST['s'] : '';
-
     // Clean up request URI from temporary args for screen options/paging uri's to work as expected.
     $temp_args = ['enabled', 'disabled', 'error'];
     $_SERVER['REQUEST_URI'] = remove_query_arg($temp_args, $_SERVER['REQUEST_URI']);
     $referer = remove_query_arg($temp_args, wp_get_referer());
-
     if(! empty($_REQUEST['paged']))
     {
         $referer = add_query_arg('paged', (int) $_REQUEST['paged'], $referer);
     }
-
     $id = isset($_REQUEST['id']) ? (int) $_REQUEST['id'] : 0;
-
     if(! $id)
     {
         wp_die(__('Invalid site ID.'));
     }
-
     $wp_list_table->prepare_items();
-
     $details = get_site($id);
     if(! $details)
     {
         wp_die(__('The requested site does not exist.'));
     }
-
     if(! can_edit_network($details->site_id))
     {
         wp_die(__('Sorry, you are not allowed to access this page.'), 403);
     }
-
     $is_main_site = is_main_site($id);
-
     if($action)
     {
         switch_to_blog($id);
         $allowed_themes = get_option('allowedthemes');
-
         switch($action)
         {
             case 'enable':
@@ -66,13 +57,13 @@
                 $theme = $_GET['theme'];
                 $action = 'enabled';
                 $n = 1;
-                if($allowed_themes)
+                if(! $allowed_themes)
                 {
-                    $allowed_themes[$theme] = true;
+                    $allowed_themes = [$theme => true];
                 }
                 else
                 {
-                    $allowed_themes = [$theme => true];
+                    $allowed_themes[$theme] = true;
                 }
                 break;
             case 'disable':
@@ -80,13 +71,13 @@
                 $theme = $_GET['theme'];
                 $action = 'disabled';
                 $n = 1;
-                if($allowed_themes)
+                if(! $allowed_themes)
                 {
-                    unset($allowed_themes[$theme]);
+                    $allowed_themes = [];
                 }
                 else
                 {
-                    $allowed_themes = [];
+                    unset($allowed_themes[$theme]);
                 }
                 break;
             case 'enable-selected':
@@ -132,7 +123,22 @@
                     $themes = (array) $_POST['checked'];
                     $n = count($themes);
                     $screen = get_current_screen()->id;
-
+                    /**
+                     * Fires when a custom bulk action should be handled.
+                     *
+                     * The redirect link should be modified with success or failure feedback
+                     * from the action to be used to display feedback to the user.
+                     *
+                     * The dynamic portion of the hook name, `$screen`, refers to the current screen ID.
+                     *
+                     * @param string $redirect_url The redirect URL.
+                     * @param string $action       The action being taken.
+                     * @param array  $items        The items to take the action on.
+                     * @param int    $site_id      The site ID.
+                     *
+                     * @since 4.7.0
+                     *
+                     */
                     $referer = apply_filters("handle_network_bulk_actions-{$screen}", $referer, $action, $themes, $id); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                 }
                 else
@@ -141,10 +147,8 @@
                     $n = 'none';
                 }
         }
-
         update_option('allowedthemes', $allowed_themes);
         restore_current_blog();
-
         wp_safe_redirect(
             add_query_arg([
                               'id' => $id,
@@ -153,23 +157,18 @@
         );
         exit;
     }
-
     if(isset($_GET['action']) && 'update-site' === $_GET['action'])
     {
         wp_safe_redirect($referer);
         exit;
     }
-
     add_thickbox();
     add_screen_option('per_page');
-
     // Used in the HTML title tag.
     /* translators: %s: Site title. */
     $title = sprintf(__('Edit Site: %s'), esc_html($details->blogname));
-
     $parent_file = 'sites.php';
     $submenu_file = 'sites.php';
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
 
@@ -178,12 +177,10 @@
     <p class="edit-site-actions"><a href="<?php echo esc_url(get_home_url($id, '/')); ?>"><?php _e('Visit'); ?></a> | <a
                 href="<?php echo esc_url(get_admin_url($id)); ?>"><?php _e('Dashboard'); ?></a></p>
     <?php
-
         network_edit_site_nav([
                                   'blog_id' => $id,
                                   'selected' => 'site-themes',
                               ]);
-
         if(isset($_GET['enabled']))
         {
             $enabled = absint($_GET['enabled']);
@@ -196,7 +193,6 @@
                 /* translators: %s: Number of themes. */
                 $message = _n('%s theme enabled.', '%s themes enabled.', $enabled);
             }
-
             wp_admin_notice(sprintf($message, number_format_i18n($enabled)), [
                 'type' => 'success',
                 'dismissible' => true,
@@ -215,7 +211,6 @@
                 /* translators: %s: Number of themes. */
                 $message = _n('%s theme disabled.', '%s themes disabled.', $disabled);
             }
-
             wp_admin_notice(sprintf($message, number_format_i18n($disabled)), [
                 'type' => 'success',
                 'dismissible' => true,

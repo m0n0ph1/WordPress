@@ -1,16 +1,41 @@
 <?php
+    /**
+     * REST API: WP_REST_Menu_Locations_Controller class
+     *
+     * @package    WordPress
+     * @subpackage REST_API
+     * @since      5.9.0
+     */
 
+    /**
+     * Core class used to access menu locations via the REST API.
+     *
+     * @since 5.9.0
+     *
+     * @see   WP_REST_Controller
+     */
     class WP_REST_Menu_Locations_Controller extends WP_REST_Controller
     {
+        /**
+         * Menu Locations Constructor.
+         *
+         * @since 5.9.0
+         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'menu-locations';
         }
 
+        /**
+         * Registers the routes for the objects of the controller.
+         *
+         * @since 5.9.0
+         *
+         * @see   register_rest_route()
+         */
         public function register_routes()
         {
-            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -20,7 +45,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             register_rest_route($this->namespace, '/'.$this->rest_base.'/(?P<location>[\w-]+)', [
                 'args' => [
                     'location' => [
@@ -40,6 +64,13 @@
             ]);
         }
 
+        /**
+         * Retrieves the query params for collections.
+         *
+         * @return array Collection parameters.
+         * @since 5.9.0
+         *
+         */
         public function get_collection_params()
         {
             return [
@@ -47,6 +78,15 @@
             ];
         }
 
+        /**
+         * Checks whether a given request has permission to read menu locations.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_Error|bool True if the request has read access, WP_Error object otherwise.
+         * @since 5.9.0
+         *
+         */
         public function get_items_permissions_check($request)
         {
             if(! current_user_can('edit_theme_options'))
@@ -57,16 +97,23 @@
             return true;
         }
 
+        /**
+         * Retrieves all menu locations, depending on user context.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_Error|WP_REST_Response Response object on success, or WP_Error object on failure.
+         * @since 5.9.0
+         *
+         */
         public function get_items($request)
         {
             $data = [];
-
             foreach(get_registered_nav_menus() as $name => $description)
             {
                 $location = new stdClass();
                 $location->name = $name;
                 $location->description = $description;
-
                 $location = $this->prepare_item_for_response($location, $request);
                 $data[$name] = $this->prepare_response_for_collection($location);
             }
@@ -74,50 +121,70 @@
             return rest_ensure_response($data);
         }
 
+        /**
+         * Prepares a menu location object for serialization.
+         *
+         * @param stdClass        $item    Post status data.
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response Menu location data.
+         * @since 5.9.0
+         *
+         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
             $location = $item;
-
             $locations = get_nav_menu_locations();
             $menu = isset($locations[$location->name]) ? $locations[$location->name] : 0;
-
             $fields = $this->get_fields_for_response($request);
             $data = [];
-
             if(rest_is_field_included('name', $fields))
             {
                 $data['name'] = $location->name;
             }
-
             if(rest_is_field_included('description', $fields))
             {
                 $data['description'] = $location->description;
             }
-
             if(rest_is_field_included('menu', $fields))
             {
                 $data['menu'] = (int) $menu;
             }
-
             $context = ! empty($request['context']) ? $request['context'] : 'view';
             $data = $this->add_additional_fields_to_object($data, $request);
             $data = $this->filter_response_by_context($data, $context);
-
             $response = rest_ensure_response($data);
-
             if(rest_is_field_included('_links', $fields) || rest_is_field_included('_embedded', $fields))
             {
                 $response->add_links($this->prepare_links($location));
             }
 
+            /**
+             * Filters menu location data returned from the REST API.
+             *
+             * @param WP_REST_Response $response The response object.
+             * @param object           $location The original location object.
+             * @param WP_REST_Request  $request  Request used to generate the response.
+             *
+             * @since 5.9.0
+             *
+             */
             return apply_filters('rest_prepare_menu_location', $response, $location, $request);
         }
 
+        /**
+         * Prepares links for the request.
+         *
+         * @param stdClass $location Menu location.
+         *
+         * @return array Links for the given menu location.
+         * @since 5.9.0
+         *
+         */
         protected function prepare_links($location)
         {
             $base = sprintf('%s/%s', $this->namespace, $this->rest_base);
-
             // Entity meta.
             $links = [
                 'self' => [
@@ -127,7 +194,6 @@
                     'href' => rest_url($base),
                 ],
             ];
-
             $locations = get_nav_menu_locations();
             $menu = isset($locations[$location->name]) ? $locations[$location->name] : 0;
             if($menu)
@@ -136,7 +202,6 @@
                 if($path)
                 {
                     $url = rest_url($path);
-
                     $links['https://api.w.org/menu'][] = [
                         'href' => $url,
                         'embeddable' => true,
@@ -147,6 +212,15 @@
             return $links;
         }
 
+        /**
+         * Checks if a given request has access to read a menu location.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
+         * @since 5.9.0
+         *
+         */
         public function get_item_permissions_check($request)
         {
             if(! current_user_can('edit_theme_options'))
@@ -157,6 +231,15 @@
             return true;
         }
 
+        /**
+         * Retrieves a specific menu location.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_Error|WP_REST_Response Response object on success, or WP_Error object on failure.
+         * @since 5.9.0
+         *
+         */
         public function get_item($request)
         {
             $registered_menus = get_registered_nav_menus();
@@ -164,23 +247,27 @@
             {
                 return new WP_Error('rest_menu_location_invalid', __('Invalid menu location.'), ['status' => 404]);
             }
-
             $location = new stdClass();
             $location->name = $request['location'];
             $location->description = $registered_menus[$location->name];
-
             $data = $this->prepare_item_for_response($location, $request);
 
             return rest_ensure_response($data);
         }
 
+        /**
+         * Retrieves the menu location's schema, conforming to JSON Schema.
+         *
+         * @return array Item schema data.
+         * @since 5.9.0
+         *
+         */
         public function get_item_schema()
         {
             if($this->schema)
             {
                 return $this->add_additional_fields_schema($this->schema);
             }
-
             $this->schema = [
                 '$schema' => 'http://json-schema.org/draft-04/schema#',
                 'title' => 'menu-location',

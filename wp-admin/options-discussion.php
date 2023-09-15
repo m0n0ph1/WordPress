@@ -1,26 +1,26 @@
 <?php
-
+    /**
+     * Discussion settings administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
     if(! current_user_can('manage_options'))
     {
         wp_die(__('Sorry, you are not allowed to manage options for this site.'));
     }
-
     // Used in the HTML title tag.
     $title = __('Discussion Settings');
     $parent_file = 'options-general.php';
-
     add_action('admin_print_footer_scripts', 'options_discussion_add_js');
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => '<p>'.__('This screen provides many options for controlling the management and display of comments and links to your posts/pages. So many, in fact, they will not all fit here! :) Use the documentation links to get information on what each discussion setting does.').'</p>'.'<p>'.__('You must click the Save Changes button at the bottom of the screen for new settings to take effect.').'</p>',
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/settings-discussion-screen/">Documentation on Discussion Settings</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
 
@@ -124,9 +124,15 @@
                                    id="thread_comments"
                                    value="1" <?php checked('1', get_option('thread_comments')); ?> />
                             <?php
-
+                                /**
+                                 * Filters the maximum depth of threaded/nested comments.
+                                 *
+                                 * @param int $max_depth The maximum depth of threaded comments. Default 10.
+                                 *
+                                 * @since 2.7.0
+                                 *
+                                 */
                                 $maxdeep = (int) apply_filters('thread_comments_depth_max', 10);
-
                                 $thread_comments_depth = '</label> <label for="thread_comments_depth"><select name="thread_comments_depth" id="thread_comments_depth">';
                                 for($i = 2; $i <= $maxdeep; $i++)
                                 {
@@ -138,10 +144,8 @@
                                     $thread_comments_depth .= ">$i</option>";
                                 }
                                 $thread_comments_depth .= '</select>';
-
                                 /* translators: %s: Number of levels. */
                                 printf(__('Enable threaded (nested) comments %s levels deep'), $thread_comments_depth);
-
                             ?>
                         </label>
                         <br/>
@@ -166,7 +170,6 @@
                         <br/>
                         <label for="comment_order">
                             <?php
-
                                 $comment_order = '<select name="comment_order" id="comment_order"><option value="asc"';
                                 if('asc' === get_option('comment_order'))
                                 {
@@ -178,10 +181,8 @@
                                     $comment_order .= ' selected="selected"';
                                 }
                                 $comment_order .= '>'.__('newer').'</option></select>';
-
                                 /* translators: %s: Form field control for 'older' or 'newer' comments. */
                                 printf(__('Comments should be displayed with the %s comments at the top of each page'), $comment_order);
-
                             ?>
                         </label>
                     </fieldset>
@@ -299,7 +300,6 @@
 
         <?php
             // The above would be a good place to link to the documentation on the Gravatar functions, for putting it in themes. Anything like that?
-
             $show_avatars = get_option('show_avatars');
             $show_avatars_class = '';
             if(! $show_avatars)
@@ -379,14 +379,22 @@
                                 'retro' => __('Retro (Generated)'),
                                 'robohash' => __('RoboHash (Generated)'),
                             ];
-
+                            /**
+                             * Filters the default avatars.
+                             *
+                             * Avatars are stored in key/value pairs, where the key is option value,
+                             * and the name is the displayed avatar name.
+                             *
+                             * @param string[] $avatar_defaults Associative array of default avatars.
+                             *
+                             * @since 2.6.0
+                             *
+                             */
                             $avatar_defaults = apply_filters('avatar_defaults', $avatar_defaults);
                             $default = get_option('avatar_default', 'mystery');
                             $avatar_list = '';
-
                             // Force avatars on to display these choices.
                             add_filter('pre_option_show_avatars', '__return_true', 100);
-
                             foreach($avatar_defaults as $default_key => $default_name)
                             {
                                 $selected = ($default === $default_key) ? 'checked="checked" ' : '';
@@ -395,9 +403,15 @@
                                 $avatar_list .= ' '.$default_name.'</label>';
                                 $avatar_list .= '<br />';
                             }
-
                             remove_filter('pre_option_show_avatars', '__return_true', 100);
-
+                            /**
+                             * Filters the HTML output of the default avatar list.
+                             *
+                             * @param string $avatar_list HTML markup of the avatar list.
+                             *
+                             * @since 2.6.0
+                             *
+                             */
                             echo apply_filters('default_avatar_select', $avatar_list);
                         ?>
 

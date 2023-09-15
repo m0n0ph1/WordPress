@@ -1,4 +1,14 @@
 <?php
+    /**
+     * Autoloader for Requests for PHP.
+     *
+     * Include this file if you'd like to avoid having to create your own autoloader.
+     *
+     * @package Requests
+     * @since   2.0.0
+     *
+     * @codeCoverageIgnore
+     */
 
     namespace WpOrg\Requests;
 
@@ -10,15 +20,29 @@
      */
     if(class_exists('WpOrg\Requests\Autoload') === false)
     {
+        /**
+         * Autoloader for Requests for PHP.
+         *
+         * This autoloader supports the PSR-4 based Requests 2.0.0 classes in a case-sensitive manner
+         * as the most common server OS-es are case-sensitive and the file names are in mixed case.
+         *
+         * For the PSR-0 Requests 1.x BC-layer, requested classes will be treated case-insensitively.
+         *
+         * @package Requests
+         */
         final class Autoload
         {
+            /**
+             * List of the old PSR-0 class names in lowercase as keys with their PSR-4 case-sensitive name as a value.
+             *
+             * @var array
+             */
             private static $deprecated_classes = [
                 // Interfaces.
                 'requests_auth' => '\WpOrg\Requests\Auth',
                 'requests_hooker' => '\WpOrg\Requests\HookManager',
                 'requests_proxy' => '\WpOrg\Requests\Proxy',
                 'requests_transport' => '\WpOrg\Requests\Transport',
-
                 // Classes.
                 'requests_cookie' => '\WpOrg\Requests\Cookie',
                 'requests_exception' => '\WpOrg\Requests\Exception',
@@ -75,6 +99,20 @@
                 'requests_exception_http_unknown' => '\WpOrg\Requests\Exception\Http\StatusUnknown',
             ];
 
+            /**
+             * Register the autoloader.
+             *
+             * Note: the autoloader is *prepended* in the autoload queue.
+             * This is done to ensure that the Requests 2.0 autoloader takes precedence
+             * over a potentially (dependency-registered) Requests 1.x autoloader.
+             *
+             * @return void
+             * @internal This method contains a safeguard against the autoloader being
+             * registered multiple times. This safeguard uses a global constant to
+             * (hopefully/in most cases) still function correctly, even if the
+             * class would be renamed.
+             *
+             */
             public static function register()
             {
                 if(defined('REQUESTS_AUTOLOAD_REGISTERED') === false)
@@ -84,18 +122,22 @@
                 }
             }
 
+            /**
+             * Autoloader.
+             *
+             * @param string $class_name Name of the class name to load.
+             *
+             * @return bool Whether a class was loaded or not.
+             */
             public static function load($class_name)
             {
                 // Check that the class starts with "Requests" (PSR-0) or "WpOrg\Requests" (PSR-4).
                 $psr_4_prefix_pos = strpos($class_name, 'WpOrg\\Requests\\');
-
-                if(strncasecmp($class_name, 'Requests', 8) !== 0 && $psr_4_prefix_pos !== 0)
+                if(stripos($class_name, 'Requests') !== 0 && $psr_4_prefix_pos !== 0)
                 {
                     return false;
                 }
-
                 $class_lower = strtolower($class_name);
-
                 if($class_lower === 'requests')
                 {
                     // Reference to the original PSR-0 Requests class.
@@ -104,16 +146,14 @@
                 elseif($psr_4_prefix_pos === 0)
                 {
                     // PSR-4 classname.
-                    $file = __DIR__.'/'.str_replace('\\', '/', substr($class_name, 15)).'.php';
+                    $file = __DIR__.'/'.strtr(substr($class_name, 15), '\\', '/').'.php';
                 }
-
                 if(isset($file) && file_exists($file))
                 {
                     include $file;
 
                     return true;
                 }
-
                 /*
                  * Okay, so the class starts with "Requests", but we couldn't find the file.
                  * If this is one of the deprecated/renamed PSR-0 classes being requested,
@@ -131,7 +171,6 @@
                     {
                         // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
                         trigger_error('The PSR-0 `Requests_...` class names in the Requests library are deprecated.'.' Switch to the PSR-4 `WpOrg\Requests\...` class names at your earliest convenience.', E_USER_DEPRECATED);
-
                         // Prevent the deprecation notice from being thrown twice.
                         if(! defined('REQUESTS_SILENCE_PSR0_DEPRECATIONS'))
                         {

@@ -1,30 +1,82 @@
 <?php
+    /**
+     * Base WordPress Filesystem
+     *
+     * @package    WordPress
+     * @subpackage Filesystem
+     */
 
+    /**
+     * Base WordPress Filesystem class which Filesystem implementations extend.
+     *
+     * @since 2.5.0
+     */
     #[AllowDynamicProperties]
     class WP_Filesystem_Base
     {
+        /**
+         * Whether to display debug data for the connection.
+         *
+         * @since 2.5.0
+         * @var bool
+         */
         public $verbose = false;
 
+        /**
+         * Cached list of local filepaths to mapped remote filepaths.
+         *
+         * @since 2.7.0
+         * @var array
+         */
         public $cache = [];
 
+        /**
+         * The Access method of the current connection, Set automatically.
+         *
+         * @since 2.5.0
+         * @var string
+         */
         public $method = '';
 
+        /**
+         * @var WP_Error
+         */
         public $errors = null;
 
+        /**
+         */
         public $options = [];
 
+        /**
+         * Returns the path on the remote filesystem of WP_CONTENT_DIR.
+         *
+         * @return string The location of the remote path.
+         * @since 2.7.0
+         *
+         */
         public function wp_content_dir()
         {
             return $this->find_folder(WP_CONTENT_DIR);
         }
 
+        /**
+         * Locates a folder on the remote filesystem.
+         *
+         * Assumes that on Windows systems, Stripping off the Drive
+         * letter is OK Sanitizes \\ to / in Windows filepaths.
+         *
+         * @param string $folder the folder to locate.
+         *
+         * @return string|false The location of the remote path, false on failure.
+         * @since 2.7.0
+         *
+         */
         public function find_folder($folder)
         {
             if(isset($this->cache[$folder]))
             {
                 return $this->cache[$folder];
             }
-
             if(stripos($this->method, 'ftp') !== false)
             {
                 $constant_overrides = [
@@ -33,7 +85,6 @@
                     'FTP_PLUGIN_DIR' => WP_PLUGIN_DIR,
                     'FTP_LANG_DIR' => WP_LANG_DIR,
                 ];
-
                 // Direct matches ( folder = CONSTANT/ ).
                 foreach($constant_overrides as $constant => $dir)
                 {
@@ -41,13 +92,11 @@
                     {
                         continue;
                     }
-
                     if($folder === $dir)
                     {
                         return trailingslashit(constant($constant));
                     }
                 }
-
                 // Prefix matches ( folder = CONSTANT/subdir ),
                 foreach($constant_overrides as $constant => $dir)
                 {
@@ -55,12 +104,10 @@
                     {
                         continue;
                     }
-
                     if(0 === stripos($folder, $dir))
                     { // $folder starts with $dir.
                         $potential_folder = preg_replace('#^'.preg_quote($dir, '#').'/#i', trailingslashit(constant($constant)), $folder);
                         $potential_folder = trailingslashit($potential_folder);
-
                         if($this->is_dir($potential_folder))
                         {
                             $this->cache[$folder] = $potential_folder;
@@ -76,15 +123,12 @@
 
                 return trailingslashit($folder);
             }
-
             $folder = preg_replace('|^([a-z]{1}):|i', '', $folder); // Strip out Windows drive letter if it's there.
             $folder = str_replace('\\', '/', $folder); // Windows path sanitisation.
-
             if(isset($this->cache[$folder]))
             {
                 return $this->cache[$folder];
             }
-
             if($this->exists($folder))
             { // Folder exists at that absolute path.
                 $folder = trailingslashit($folder);
@@ -92,9 +136,7 @@
 
                 return $folder;
             }
-
             $return = $this->search_for_folder($folder);
-
             if($return)
             {
                 $this->cache[$folder] = $return;
@@ -103,45 +145,72 @@
             return $return;
         }
 
+        /**
+         * Checks if resource is a directory.
+         *
+         * @param string $path Directory path.
+         *
+         * @return bool Whether $path is a directory.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function is_dir($path)
         {
             return false;
         }
 
+        /**
+         * Checks if a file or directory exists.
+         *
+         * @param string $path Path to file or directory.
+         *
+         * @return bool Whether $path exists or not.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function exists($path)
         {
             return false;
         }
 
+        /**
+         * Locates a folder on the remote filesystem.
+         *
+         * Expects Windows sanitized path.
+         *
+         * @param string $folder The folder to locate.
+         * @param string $base   The folder to start searching from.
+         * @param bool   $loop   If the function has recursed. Internal use only.
+         *
+         * @return string|false The location of the remote path, false to cease looping.
+         * @since 2.7.0
+         *
+         */
         public function search_for_folder($folder, $base = '.', $loop = false)
         {
             if(empty($base) || '.' === $base)
             {
                 $base = trailingslashit($this->cwd());
             }
-
             $folder = untrailingslashit($folder);
-
             if($this->verbose)
             {
                 /* translators: 1: Folder to locate, 2: Folder to start searching from. */
                 printf("\n".__('Looking for %1$s in %2$s')."<br />\n", $folder, $base);
             }
-
             $folder_parts = explode('/', $folder);
             $folder_part_keys = array_keys($folder_parts);
             $last_index = array_pop($folder_part_keys);
             $last_path = $folder_parts[$last_index];
-
             $files = $this->dirlist($base);
-
             foreach($folder_parts as $index => $key)
             {
                 if($index === $last_index)
                 {
                     continue; // We want this to be caught by the next code block.
                 }
-
                 /*
                  * Working from /home/ to /user/ to /wordpress/ see if that file exists within
                  * the current folder, If it's found, change into it and follow through looking
@@ -153,24 +222,20 @@
                 {
                     // Let's try that folder:
                     $newdir = trailingslashit(path_join($base, $key));
-
                     if($this->verbose)
                     {
                         /* translators: %s: Directory name. */
                         printf("\n".__('Changing to %s')."<br />\n", $newdir);
                     }
-
                     // Only search for the remaining path tokens in the directory, not the full path again.
                     $newfolder = implode('/', array_slice($folder_parts, $index + 1));
                     $ret = $this->search_for_folder($newfolder, $newdir, $loop);
-
                     if($ret)
                     {
                         return $ret;
                     }
                 }
             }
-
             /*
              * Only check this as a last resort, to prevent locating the incorrect install.
              * All above procedures will fail quickly if this is the right branch to take.
@@ -185,7 +250,6 @@
 
                 return trailingslashit($base.$last_path);
             }
-
             /*
              * Prevent this function from looping again.
              * No need to proceed if we've just searched in `/`.
@@ -203,25 +267,86 @@
             return $this->search_for_folder($folder, '/', true);
         }
 
+        /**
+         * Gets the current working directory.
+         *
+         * @return string|false The current working directory on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function cwd()
         {
             return false;
         }
 
+        /**
+         * Gets details for files in a directory or a specific file.
+         *
+         * @param string          $path                Path to directory or file.
+         * @param bool            $include_hidden      Optional. Whether to include details of hidden ("." prefixed) files.
+         *                                             Default true.
+         * @param bool            $recursive           Optional. Whether to recursively include file details in nested directories.
+         *                                             Default false.
+         *
+         * @return array|false {
+         *     Array of arrays containing file information. False if unable to list directory contents.
+         *
+         * @type array $0... {
+         *                                             Array of file information. Note that some elements may not be available on all filesystems.
+         *
+         * @type string           $name                Name of the file or directory.
+         * @type string           $perms               *nix representation of permissions.
+         * @type string           $permsn              Octal representation of permissions.
+         * @type int|string|false $number              File number. May be a numeric string. False if not available.
+         * @type string|false     $owner               Owner name or ID, or false if not available.
+         * @type string|false     $group               File permissions group, or false if not available.
+         * @type int|string|false $size                Size of file in bytes. May be a numeric string.
+         *                                             False if not available.
+         * @type int|string|false $lastmodunix         Last modified unix timestamp. May be a numeric string.
+         *                                             False if not available.
+         * @type string|false     $lastmod             Last modified month (3 letters) and day (without leading 0), or
+         *                                             false if not available.
+         * @type string|false     $time                Last modified time, or false if not available.
+         * @type string           $type                Type of resource. 'f' for file, 'd' for directory, 'l' for link.
+         * @type array|false      $files               If a directory and `$recursive` is true, contains another array of
+         *                                             files. False if unable to list directory contents.
+         *                                             }
+         *                                             }
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function dirlist($path, $include_hidden = true, $recursive = false)
         {
             return false;
         }
 
+        /**
+         * Returns the path on the remote filesystem of WP_PLUGIN_DIR.
+         *
+         * @return string The location of the remote path.
+         * @since 2.7.0
+         *
+         */
         public function wp_plugins_dir()
         {
             return $this->find_folder(WP_PLUGIN_DIR);
         }
 
+        /**
+         * Returns the path on the remote filesystem of the Themes Directory.
+         *
+         * @param string|false $theme Optional. The theme stylesheet or template for the directory.
+         *                            Default false.
+         *
+         * @return string The location of the remote path.
+         * @since 2.7.0
+         *
+         */
         public function wp_themes_dir($theme = false)
         {
             $theme_root = get_theme_root($theme);
-
             // Account for relative theme roots.
             if('/themes' === $theme_root || ! is_dir($theme_root))
             {
@@ -231,11 +356,34 @@
             return $this->find_folder($theme_root);
         }
 
+        /**
+         * Returns the path on the remote filesystem of WP_LANG_DIR.
+         *
+         * @return string The location of the remote path.
+         * @since 3.2.0
+         *
+         */
         public function wp_lang_dir()
         {
             return $this->find_folder(WP_LANG_DIR);
         }
 
+        /**
+         * Locates a folder on the remote filesystem.
+         *
+         * @param string $base    Optional. The folder to start searching from. Default '.'.
+         * @param bool   $verbose Optional. True to display debug information. Default false.
+         *
+         * @return string The location of the remote path.
+         * @since      2.5.0
+         * @deprecated 2.7.0 use WP_Filesystem_Base::abspath() or WP_Filesystem_Base::wp_*_dir() instead.
+         * @see        WP_Filesystem_Base::abspath()
+         * @see        WP_Filesystem_Base::wp_content_dir()
+         * @see        WP_Filesystem_Base::wp_plugins_dir()
+         * @see        WP_Filesystem_Base::wp_themes_dir()
+         * @see        WP_Filesystem_Base::wp_lang_dir()
+         *
+         */
         public function find_base_dir($base = '.', $verbose = false)
         {
             _deprecated_function(__FUNCTION__, '2.7.0', 'WP_Filesystem_Base::abspath() or WP_Filesystem_Base::wp_*_dir()');
@@ -244,10 +392,16 @@
             return $this->abspath();
         }
 
+        /**
+         * Returns the path on the remote filesystem of ABSPATH.
+         *
+         * @return string The location of the remote path.
+         * @since 2.7.0
+         *
+         */
         public function abspath()
         {
             $folder = $this->find_folder(ABSPATH);
-
             /*
              * Perhaps the FTP folder is rooted at the WordPress install.
              * Check for wp-includes folder in root. Could have some false positives, but rare.
@@ -260,6 +414,22 @@
             return $folder;
         }
 
+        /**
+         * Locates a folder on the remote filesystem.
+         *
+         * @param string $base    Optional. The folder to start searching from. Default '.'.
+         * @param bool   $verbose Optional. True to display debug information. Default false.
+         *
+         * @return string The location of the remote path.
+         * @since      2.5.0
+         * @deprecated 2.7.0 use WP_Filesystem_Base::abspath() or WP_Filesystem_Base::wp_*_dir() methods instead.
+         * @see        WP_Filesystem_Base::abspath()
+         * @see        WP_Filesystem_Base::wp_content_dir()
+         * @see        WP_Filesystem_Base::wp_plugins_dir()
+         * @see        WP_Filesystem_Base::wp_themes_dir()
+         * @see        WP_Filesystem_Base::wp_lang_dir()
+         *
+         */
         public function get_base_dir($base = '.', $verbose = false)
         {
             _deprecated_function(__FUNCTION__, '2.7.0', 'WP_Filesystem_Base::abspath() or WP_Filesystem_Base::wp_*_dir()');
@@ -268,10 +438,22 @@
             return $this->abspath();
         }
 
+        /**
+         * Returns the *nix-style file permissions for a file.
+         *
+         * From the PHP documentation page for fileperms().
+         *
+         * @link  https://www.php.net/manual/en/function.fileperms.php
+         *
+         * @since 2.5.0
+         *
+         * @param string $file String filename.
+         *
+         * @return string The *nix-style representation of permissions.
+         */
         public function gethchmod($file)
         {
             $perms = intval($this->getchmod($file), 8);
-
             if(($perms & 0xC000) === 0xC000)
             { // Socket.
                 $info = 's';
@@ -304,17 +486,14 @@
             { // Unknown.
                 $info = 'u';
             }
-
             // Owner.
             $info .= (($perms & 0x0100) ? 'r' : '-');
             $info .= (($perms & 0x0080) ? 'w' : '-');
             $info .= (($perms & 0x0040) ? (($perms & 0x0800) ? 's' : 'x') : (($perms & 0x0800) ? 'S' : '-'));
-
             // Group.
             $info .= (($perms & 0x0020) ? 'r' : '-');
             $info .= (($perms & 0x0010) ? 'w' : '-');
             $info .= (($perms & 0x0008) ? (($perms & 0x0400) ? 's' : 'x') : (($perms & 0x0400) ? 'S' : '-'));
-
             // World.
             $info .= (($perms & 0x0004) ? 'r' : '-');
             $info .= (($perms & 0x0002) ? 'w' : '-');
@@ -323,27 +502,47 @@
             return $info;
         }
 
+        /**
+         * Gets the permissions of the specified file or filepath in their octal format.
+         *
+         * @param string $file Path to the file.
+         *
+         * @return string Mode of the file (the last 3 digits).
+         * @since 2.5.0
+         *
+         */
         public function getchmod($file)
         {
             return '777';
         }
 
+        /**
+         * Converts *nix-style file permissions to an octal number.
+         *
+         * Converts '-rw-r--r--' to 0644
+         * From "info at rvgate dot nl"'s comment on the PHP documentation for chmod()
+         *
+         * @link  https://www.php.net/manual/en/function.chmod.php#49614
+         *
+         * @since 2.5.0
+         *
+         * @param string $mode string The *nix-style file permissions.
+         *
+         * @return string Octal representation of permissions.
+         */
         public function getnumchmodfromh($mode)
         {
             $realmode = '';
             $legal = ['', 'w', 'r', 'x', '-'];
             $attarray = preg_split('//', $mode);
-
-            foreach($attarray as $iValue)
+            for($i = 0, $c = count($attarray); $i < $c; $i++)
             {
-                $key = array_search($iValue, $legal, true);
-
+                $key = array_search($attarray[$i], $legal, true);
                 if($key)
                 {
                     $realmode .= $legal[$key];
                 }
             }
-
             $mode = str_pad($realmode, 10, '-', STR_PAD_LEFT);
             $trans = [
                 '-' => '0',
@@ -352,7 +551,6 @@
                 'x' => '1',
             ];
             $mode = strtr($mode, $trans);
-
             $newmode = $mode[0];
             $newmode .= $mode[1] + $mode[2] + $mode[3];
             $newmode .= $mode[4] + $mode[5] + $mode[6];
@@ -361,116 +559,383 @@
             return $newmode;
         }
 
+        /**
+         * Determines if the string provided contains binary characters.
+         *
+         * @param string $text String to test against.
+         *
+         * @return bool True if string is binary, false otherwise.
+         * @since 2.7.0
+         *
+         */
         public function is_binary($text)
         {
             return (bool) preg_match('|[^\x20-\x7E]|', $text); // chr(32)..chr(127)
         }
 
+        /**
+         * Changes the owner of a file or directory.
+         *
+         * Default behavior is to do nothing, override this in your subclass, if desired.
+         *
+         * @param string     $file      Path to the file or directory.
+         * @param string|int $owner     A user name or number.
+         * @param bool       $recursive Optional. If set to true, changes file owner recursively.
+         *                              Default false.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         *
+         */
         public function chown($file, $owner, $recursive = false)
         {
             return false;
         }
 
+        /**
+         * Connects filesystem.
+         *
+         * @return bool True on success, false on failure (always true for WP_Filesystem_Direct).
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function connect()
         {
             return true;
         }
 
+        /**
+         * Reads entire file into a string.
+         *
+         * @param string $file Name of the file to read.
+         *
+         * @return string|false Read data on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function get_contents($file)
         {
             return false;
         }
 
+        /**
+         * Reads entire file into an array.
+         *
+         * @param string $file Path to the file.
+         *
+         * @return array|false File contents in an array on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function get_contents_array($file)
         {
             return false;
         }
 
+        /**
+         * Writes a string to a file.
+         *
+         * @param string    $file     Remote path to the file where to write the data.
+         * @param string    $contents The data to write.
+         * @param int|false $mode     Optional. The file permissions as octal number, usually 0644.
+         *                            Default false.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function put_contents($file, $contents, $mode = false)
         {
             return false;
         }
 
+        /**
+         * Changes current directory.
+         *
+         * @param string $dir The new current directory.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function chdir($dir)
         {
             return false;
         }
 
+        /**
+         * Changes the file group.
+         *
+         * @param string     $file      Path to the file.
+         * @param string|int $group     A group name or number.
+         * @param bool       $recursive Optional. If set to true, changes file group recursively.
+         *                              Default false.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function chgrp($file, $group, $recursive = false)
         {
             return false;
         }
 
+        /**
+         * Changes filesystem permissions.
+         *
+         * @param string    $file      Path to the file.
+         * @param int|false $mode      Optional. The permissions as octal number, usually 0644 for files,
+         *                             0755 for directories. Default false.
+         * @param bool      $recursive Optional. If set to true, changes file permissions recursively.
+         *                             Default false.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function chmod($file, $mode = false, $recursive = false)
         {
             return false;
         }
 
+        /**
+         * Gets the file owner.
+         *
+         * @param string $file Path to the file.
+         *
+         * @return string|false Username of the owner on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function owner($file)
         {
             return false;
         }
 
+        /**
+         * Gets the file's group.
+         *
+         * @param string $file Path to the file.
+         *
+         * @return string|false The group on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function group($file)
         {
             return false;
         }
 
+        /**
+         * Copies a file.
+         *
+         * @param string    $source      Path to the source file.
+         * @param string    $destination Path to the destination file.
+         * @param bool      $overwrite   Optional. Whether to overwrite the destination file if it exists.
+         *                               Default false.
+         * @param int|false $mode        Optional. The permissions as octal number, usually 0644 for files,
+         *                               0755 for dirs. Default false.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function copy($source, $destination, $overwrite = false, $mode = false)
         {
             return false;
         }
 
+        /**
+         * Moves a file.
+         *
+         * @param string $source      Path to the source file.
+         * @param string $destination Path to the destination file.
+         * @param bool   $overwrite   Optional. Whether to overwrite the destination file if it exists.
+         *                            Default false.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function move($source, $destination, $overwrite = false)
         {
             return false;
         }
 
+        /**
+         * Deletes a file or directory.
+         *
+         * @param string       $file      Path to the file or directory.
+         * @param bool         $recursive Optional. If set to true, deletes files and folders recursively.
+         *                                Default false.
+         * @param string|false $type      Type of resource. 'f' for file, 'd' for directory.
+         *                                Default false.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function delete($file, $recursive = false, $type = false)
         {
             return false;
         }
 
+        /**
+         * Checks if resource is a file.
+         *
+         * @param string $file File path.
+         *
+         * @return bool Whether $file is a file.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function is_file($file)
         {
             return false;
         }
 
+        /**
+         * Checks if a file is readable.
+         *
+         * @param string $file Path to file.
+         *
+         * @return bool Whether $file is readable.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function is_readable($file)
         {
             return false;
         }
 
+        /**
+         * Checks if a file or directory is writable.
+         *
+         * @param string $path Path to file or directory.
+         *
+         * @return bool Whether $path is writable.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function is_writable($path)
         {
             return false;
         }
 
+        /**
+         * Gets the file's last access time.
+         *
+         * @param string $file Path to file.
+         *
+         * @return int|false Unix timestamp representing last access time, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function atime($file)
         {
             return false;
         }
 
+        /**
+         * Gets the file modification time.
+         *
+         * @param string $file Path to file.
+         *
+         * @return int|false Unix timestamp representing modification time, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function mtime($file)
         {
             return false;
         }
 
+        /**
+         * Gets the file size (in bytes).
+         *
+         * @param string $file Path to file.
+         *
+         * @return int|false Size of the file in bytes on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function size($file)
         {
             return false;
         }
 
+        /**
+         * Sets the access and modification times of a file.
+         *
+         * Note: If $file doesn't exist, it will be created.
+         *
+         * @param string $file  Path to file.
+         * @param int    $time  Optional. Modified time to set for file.
+         *                      Default 0.
+         * @param int    $atime Optional. Access time to set for file.
+         *                      Default 0.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function touch($file, $time = 0, $atime = 0)
         {
             return false;
         }
 
+        /**
+         * Creates a directory.
+         *
+         * @param string           $path  Path for new directory.
+         * @param int|false        $chmod Optional. The permissions as octal number (or false to skip chmod).
+         *                                Default false.
+         * @param string|int|false $chown Optional. A user name or number (or false to skip chown).
+         *                                Default false.
+         * @param string|int|false $chgrp Optional. A group name or number (or false to skip chgrp).
+         *                                Default false.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function mkdir($path, $chmod = false, $chown = false, $chgrp = false)
         {
             return false;
         }
 
+        /**
+         * Deletes a directory.
+         *
+         * @param string $path      Path to directory.
+         * @param bool   $recursive Optional. Whether to recursively remove files/directories.
+         *                          Default false.
+         *
+         * @return bool True on success, false on failure.
+         * @since 2.5.0
+         * @abstract
+         *
+         */
         public function rmdir($path, $recursive = false)
         {
             return false;

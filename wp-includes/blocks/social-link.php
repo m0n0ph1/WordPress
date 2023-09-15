@@ -1,44 +1,58 @@
 <?php
-
+    /**
+     * Server-side rendering of the `core/social-link` blocks.
+     *
+     * @package WordPress
+     */
+    /**
+     * Renders the `core/social-link` block on server.
+     *
+     * @param Array    $attributes The block attributes.
+     * @param String   $content    InnerBlocks content of the Block.
+     * @param WP_Block $block      Block object.
+     *
+     * @return string Rendered HTML of the referenced block.
+     */
     function render_block_core_social_link($attributes, $content, $block)
     {
         $open_in_new_tab = isset($block->context['openInNewTab']) ? $block->context['openInNewTab'] : false;
-
         $service = (isset($attributes['service'])) ? $attributes['service'] : 'Icon';
         $url = (isset($attributes['url'])) ? $attributes['url'] : false;
         $label = (isset($attributes['label'])) ? $attributes['label'] : block_core_social_link_get_name($service);
         $rel = (isset($attributes['rel'])) ? $attributes['rel'] : '';
         $show_labels = array_key_exists('showLabels', $block->context) ? $block->context['showLabels'] : false;
-
         // Don't render a link if there is no URL set.
         if(! $url)
         {
             return '';
         }
-
+        /**
+         * Prepend emails with `mailto:` if not set.
+         * The `is_email` returns false for emails with schema.
+         */
         if(is_email($url))
         {
             $url = 'mailto:'.$url;
         }
-
+        /**
+         * Prepend URL with https:// if it doesn't appear to contain a scheme
+         * and it's not a relative link starting with //.
+         */
         if(! parse_url($url, PHP_URL_SCHEME) && ! str_starts_with($url, '//'))
         {
             $url = 'https://'.$url;
         }
-
         $icon = block_core_social_link_get_icon($service);
         $wrapper_attributes = get_block_wrapper_attributes([
                                                                'class' => 'wp-social-link wp-social-link-'.$service.block_core_social_link_get_color_classes($block->context),
                                                                'style' => block_core_social_link_get_color_styles($block->context),
                                                            ]);
-
         $link = '<li '.$wrapper_attributes.'>';
         $link .= '<a href="'.esc_url($url).'" class="wp-block-social-link-anchor">';
         $link .= $icon;
         $link .= '<span class="wp-block-social-link-label'.($show_labels ? '' : ' screen-reader-text').'">';
         $link .= esc_html($label);
         $link .= '</span></a></li>';
-
         $processor = new WP_HTML_Tag_Processor($link);
         $processor->next_tag('a');
         if($open_in_new_tab)
@@ -54,6 +68,9 @@
         return $processor->get_updated_html();
     }
 
+    /**
+     * Registers the `core/social-link` blocks.
+     */
     function register_block_core_social_link()
     {
         register_block_type_from_metadata(__DIR__.'/social-link', [
@@ -62,7 +79,13 @@
     }
 
     add_action('init', 'register_block_core_social_link');
-
+    /**
+     * Returns the SVG for social link.
+     *
+     * @param string $service The service icon.
+     *
+     * @return string SVG Element for service icon.
+     */
     function block_core_social_link_get_icon($service)
     {
         $services = block_core_social_link_services();
@@ -74,6 +97,13 @@
         return $services['share']['icon'];
     }
 
+    /**
+     * Returns the brand name for social link.
+     *
+     * @param string $service The service icon.
+     *
+     * @return string Brand label.
+     */
     function block_core_social_link_get_name($service)
     {
         $services = block_core_social_link_services();
@@ -85,6 +115,14 @@
         return $services['share']['name'];
     }
 
+    /**
+     * Returns the SVG for social link.
+     *
+     * @param string $service The service slug to extract data from.
+     * @param string $field   The field ('name', 'icon', etc) to extract for a service.
+     *
+     * @return array|string
+     */
     function block_core_social_link_services($service = '', $field = '')
     {
         $services_data = [
@@ -265,7 +303,6 @@
                 'icon' => '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 11.8l6.1-4.5c.1.4.4.7.9.7h2c.6 0 1-.4 1-1V5c0-.6-.4-1-1-1h-2c-.6 0-1 .4-1 1v.4l-6.4 4.8c-.2-.1-.4-.2-.6-.2H6c-.6 0-1 .4-1 1v2c0 .6.4 1 1 1h2c.2 0 .4-.1.6-.2l6.4 4.8v.4c0 .6.4 1 1 1h2c.6 0 1-.4 1-1v-2c0-.6-.4-1-1-1h-2c-.5 0-.8.3-.9.7L9 12.2v-.4z"/></svg>',
             ],
         ];
-
         if(! empty($service) && ! empty($field) && isset($services_data[$service]) && ('icon' === $field || 'name' === $field))
         {
             return $services_data[$service][$field];
@@ -278,15 +315,20 @@
         return $services_data;
     }
 
+    /**
+     * Returns CSS styles for icon and icon background colors.
+     *
+     * @param array $context Block context passed to Social Link.
+     *
+     * @return string Inline CSS styles for link's icon and background colors.
+     */
     function block_core_social_link_get_color_styles($context)
     {
         $styles = [];
-
         if(array_key_exists('iconColorValue', $context))
         {
             $styles[] = 'color: '.$context['iconColorValue'].'; ';
         }
-
         if(array_key_exists('iconBackgroundColorValue', $context))
         {
             $styles[] = 'background-color: '.$context['iconBackgroundColorValue'].'; ';
@@ -295,15 +337,20 @@
         return implode('', $styles);
     }
 
+    /**
+     * Returns CSS classes for icon and icon background colors.
+     *
+     * @param array $context Block context passed to Social Sharing Link.
+     *
+     * @return string CSS classes for link's icon and background colors.
+     */
     function block_core_social_link_get_color_classes($context)
     {
         $classes = [];
-
         if(array_key_exists('iconColor', $context))
         {
             $classes[] = 'has-'.$context['iconColor'].'-color';
         }
-
         if(array_key_exists('iconBackgroundColor', $context))
         {
             $classes[] = 'has-'.$context['iconBackgroundColor'].'-background-color';

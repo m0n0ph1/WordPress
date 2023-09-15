@@ -1,8 +1,13 @@
 <?php
-
+    /**
+     * Class for a set of entries for translation and their associated headers
+     *
+     * @version    $Id: translations.php 1157 2015-11-20 04:30:11Z dd32 $
+     * @package    pomo
+     * @subpackage translations
+     */
     require_once __DIR__.'/plural-forms.php';
     require_once __DIR__.'/entry.php';
-
     if(! class_exists('Translations', false)) :
         #[AllowDynamicProperties]
         class Translations
@@ -11,6 +16,13 @@
 
             public $headers = [];
 
+            /**
+             * Add entry to the PO structure
+             *
+             * @param array|Translation_Entry $entry
+             *
+             * @return bool true on success, false if the entry doesn't have a key
+             */
             public function add_entry($entry)
             {
                 if(is_array($entry))
@@ -27,6 +39,11 @@
                 return true;
             }
 
+            /**
+             * @param array|Translation_Entry $entry
+             *
+             * @return bool
+             */
             public function add_entry_or_merge($entry)
             {
                 if(is_array($entry))
@@ -50,11 +67,24 @@
                 return true;
             }
 
+            /**
+             * Sets $header PO header to $value
+             *
+             * If the header already exists, it will be overwritten
+             *
+             * TODO: this should be out of this class, it is gettext specific
+             *
+             * @param string $header header name, without trailing :
+             * @param string $value  header value, without trailing \n
+             */
             public function set_header($header, $value)
             {
                 $this->headers[$header] = $value;
             }
 
+            /**
+             * @param array $headers
+             */
             public function set_headers($headers)
             {
                 foreach($headers as $header => $value)
@@ -63,59 +93,78 @@
                 }
             }
 
+            /**
+             * @param string $header
+             */
             public function get_header($header)
             {
-                if(isset($this->headers[$header]))
-                {
-                    return $this->headers[$header];
-                }
-
-                return false;
+                return isset($this->headers[$header]) ? $this->headers[$header] : false;
             }
 
+            /**
+             * @param Translation_Entry $entry
+             */
             public function translate_entry(&$entry)
             {
                 $key = $entry->key();
 
-                if(isset($this->entries[$key]))
-                {
-                    return $this->entries[$key];
-                }
-
-                return false;
+                return isset($this->entries[$key]) ? $this->entries[$key] : false;
             }
 
+            /**
+             * @param string $singular
+             * @param string $context
+             *
+             * @return string
+             */
             public function translate($singular, $context = null)
             {
-                $entry = new Translation_Entry(compact('singular', 'context'));
+                $entry = new Translation_Entry([
+                                                   'singular' => $singular,
+                                                   'context' => $context,
+                                               ]);
                 $translated = $this->translate_entry($entry);
 
-                if($translated && ! empty($translated->translations))
-                {
-                    return $translated->translations[0];
-                }
-
-                return $singular;
+                return ($translated && ! empty($translated->translations)) ? $translated->translations[0] : $singular;
             }
 
+            /**
+             * Given the number of items, returns the 0-based index of the plural form to use
+             *
+             * Here, in the base Translations class, the common logic for English is implemented:
+             *  0 if there is one element, 1 otherwise
+             *
+             * This function should be overridden by the subclasses. For example MO/PO can derive the logic
+             * from their headers.
+             *
+             * @param int $count number of items
+             */
             public function select_plural_form($count)
             {
-                if(1 === (int) $count)
-                {
-                    return 0;
-                }
-
-                return 1;
+                return 1 === (int) $count ? 0 : 1;
             }
 
+            /**
+             * @return int
+             */
             public function get_plural_forms_count()
             {
                 return 2;
             }
 
+            /**
+             * @param string $singular
+             * @param string $plural
+             * @param int    $count
+             * @param string $context
+             */
             public function translate_plural($singular, $plural, $count, $context = null)
             {
-                $entry = new Translation_Entry(compact('singular', 'plural', 'context'));
+                $entry = new Translation_Entry([
+                                                   'singular' => $singular,
+                                                   'plural' => $plural,
+                                                   'context' => $context,
+                                               ]);
                 $translated = $this->translate_entry($entry);
                 $index = $this->select_plural_form($count);
                 $total_plural_forms = $this->get_plural_forms_count();
@@ -125,15 +174,15 @@
                 }
                 else
                 {
-                    if(1 === (int) $count)
-                    {
-                        return $singular;
-                    }
-
-                    return $plural;
+                    return 1 === (int) $count ? $singular : $plural;
                 }
             }
 
+            /**
+             * Merge $other in the current object.
+             *
+             * @param Object $other Another Translation object, whose translations will be merged in this one (passed by reference).
+             */
             public function merge_with(&$other)
             {
                 foreach($other->entries as $entry)
@@ -142,17 +191,20 @@
                 }
             }
 
+            /**
+             * @param object $other
+             */
             public function merge_originals_with(&$other)
             {
                 foreach($other->entries as $entry)
                 {
-                    if(isset($this->entries[$entry->key()]))
+                    if(! isset($this->entries[$entry->key()]))
                     {
-                        $this->entries[$entry->key()]->merge_with($entry);
+                        $this->entries[$entry->key()] = $entry;
                     }
                     else
                     {
-                        $this->entries[$entry->key()] = $entry;
+                        $this->entries[$entry->key()]->merge_with($entry);
                     }
                 }
             }
@@ -160,10 +212,28 @@
 
         class Gettext_Translations extends Translations
         {
+            /**
+             * Number of plural forms.
+             *
+             * @var int
+             */
             public $_nplurals;
 
+            /**
+             * Callback to retrieve the plural form.
+             *
+             * @var callable
+             */
             public $_gettext_select_plural_form;
 
+            /**
+             * The gettext implementation of select_plural_form.
+             *
+             * It lives in this class, because there are more than one descendand, which will use it and
+             * they can't share it effectively.
+             *
+             * @param int $count
+             */
             public function gettext_select_plural_form($count)
             {
                 if(! isset($this->_gettext_select_plural_form) || is_null($this->_gettext_select_plural_form))
@@ -179,6 +249,11 @@
                 return call_user_func($this->_gettext_select_plural_form, $count);
             }
 
+            /**
+             * @param string $header
+             *
+             * @return array
+             */
             public function nplurals_and_expression_from_header($header)
             {
                 if(preg_match('/^\s*nplurals\s*=\s*(\d+)\s*;\s+plural\s*=\s*(.+)$/', $header, $matches))
@@ -194,6 +269,13 @@
                 }
             }
 
+            /**
+             * Makes a function, which will return the right translation index, according to the
+             * plural forms header
+             *
+             * @param int    $nplurals
+             * @param string $expression
+             */
             public function make_plural_form_function($nplurals, $expression)
             {
                 try
@@ -209,12 +291,20 @@
                 }
             }
 
+            /**
+             * Adds parentheses to the inner parts of ternary operators in
+             * plural expressions, because PHP evaluates ternary oerators from left to right
+             *
+             * @param string $expression the expression without parentheses
+             *
+             * @return string the expression with parentheses added
+             */
             public function parenthesize_plural_exression($expression)
             {
                 $expression .= ';';
                 $res = '';
                 $depth = 0;
-                for($i = 0, $iMax = strlen($expression); $i < $iMax; ++$i)
+                for($i = 0; $i < strlen($expression); ++$i)
                 {
                     $char = $expression[$i];
                     switch($char)
@@ -238,6 +328,11 @@
                 return rtrim($res, ';');
             }
 
+            /**
+             * @param string $translation
+             *
+             * @return array
+             */
             public function make_headers($translation)
             {
                 $headers = [];
@@ -257,6 +352,10 @@
                 return $headers;
             }
 
+            /**
+             * @param string $header
+             * @param string $value
+             */
             public function set_header($header, $value)
             {
                 parent::set_header($header, $value);
@@ -272,9 +371,10 @@
             }
         }
     endif;
-
     if(! class_exists('NOOP_Translations', false)) :
-
+        /**
+         * Provides the same interface as Translations, but doesn't do anything
+         */
         #[AllowDynamicProperties]
         class NOOP_Translations
         {
@@ -287,50 +387,78 @@
                 return true;
             }
 
+            /**
+             * @param string $header
+             * @param string $value
+             */
             public function set_header($header, $value) {}
 
+            /**
+             * @param array $headers
+             */
             public function set_headers($headers) {}
 
+            /**
+             * @param string $header
+             *
+             * @return false
+             */
             public function get_header($header)
             {
                 return false;
             }
 
+            /**
+             * @param Translation_Entry $entry
+             *
+             * @return false
+             */
             public function translate_entry(&$entry)
             {
                 return false;
             }
 
+            /**
+             * @param string $singular
+             * @param string $context
+             */
             public function translate($singular, $context = null)
             {
                 return $singular;
             }
 
+            /**
+             * @param int $count
+             *
+             * @return bool
+             */
             public function select_plural_form($count)
             {
-                if(1 === (int) $count)
-                {
-                    return 0;
-                }
-
-                return 1;
+                return 1 === (int) $count ? 0 : 1;
             }
 
+            /**
+             * @return int
+             */
             public function get_plural_forms_count()
             {
                 return 2;
             }
 
+            /**
+             * @param string $singular
+             * @param string $plural
+             * @param int    $count
+             * @param string $context
+             */
             public function translate_plural($singular, $plural, $count, $context = null)
             {
-                if(1 === (int) $count)
-                {
-                    return $singular;
-                }
-
-                return $plural;
+                return 1 === (int) $count ? $singular : $plural;
             }
 
+            /**
+             * @param object $other
+             */
             public function merge_with(&$other) {}
         }
     endif;

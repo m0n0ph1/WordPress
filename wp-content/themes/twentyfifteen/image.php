@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * The template for displaying image attachments
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Fifteen
+     * @since      Twenty Fifteen 1.0
+     */
     get_header(); ?>
 
 <div id="primary" class="content-area">
@@ -28,9 +34,15 @@
 
                         <div class="entry-attachment">
                             <?php
-
+                                /**
+                                 * Filters the default Twenty Fifteen image attachment size.
+                                 *
+                                 * @param string $image_size Image size. Default 'large'.
+                                 *
+                                 * @since Twenty Fifteen 1.0
+                                 *
+                                 */
                                 $image_size = apply_filters('twentyfifteen_attachment_size', 'large');
-
                                 echo wp_get_attachment_image(get_the_ID(), $image_size);
                             ?>
 
@@ -68,12 +80,10 @@
                 if(comments_open() || get_comments_number()) :
                     comments_template();
                 endif;
-
                 // Previous/next post navigation.
                 the_post_navigation([
                                         'prev_text' => _x('<span class="meta-nav">Published in</span><span class="post-title">%title</span>', 'Parent post link', 'twentyfifteen'),
                                     ]);
-
                 // End the loop.
             endwhile;
         ?>

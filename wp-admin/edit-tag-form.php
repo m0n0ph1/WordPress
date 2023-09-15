@@ -1,32 +1,79 @@
 <?php
-
+    /**
+     * Edit tag form for inclusion in administration panels.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
 // Don't load directly.
     if(! defined('ABSPATH'))
     {
         die('-1');
     }
-
 // Back compat hooks.
     if('category' === $taxonomy)
     {
+        /**
+         * Fires before the Edit Category form.
+         *
+         * @param WP_Term $tag Current category term object.
+         *
+         * @deprecated 3.0.0 Use {@see '{$taxonomy}_pre_edit_form'} instead.
+         *
+         * @since      2.1.0
+         */
         do_action_deprecated('edit_category_form_pre', [$tag], '3.0.0', '{$taxonomy}_pre_edit_form');
     }
     elseif('link_category' === $taxonomy)
     {
+        /**
+         * Fires before the Edit Link Category form.
+         *
+         * @param WP_Term $tag Current link category term object.
+         *
+         * @deprecated 3.0.0 Use {@see '{$taxonomy}_pre_edit_form'} instead.
+         *
+         * @since      2.3.0
+         */
         do_action_deprecated('edit_link_category_form_pre', [$tag], '3.0.0', '{$taxonomy}_pre_edit_form');
     }
     else
     {
+        /**
+         * Fires before the Edit Tag form.
+         *
+         * @param WP_Term $tag Current tag term object.
+         *
+         * @deprecated 3.0.0 Use {@see '{$taxonomy}_pre_edit_form'} instead.
+         *
+         * @since      2.5.0
+         */
         do_action_deprecated('edit_tag_form_pre', [$tag], '3.0.0', '{$taxonomy}_pre_edit_form');
     }
-
+    /**
+     * Use with caution, see https://developer.wordpress.org/reference/functions/wp_reset_vars/
+     */
     wp_reset_vars(['wp_http_referer']);
-
     $wp_http_referer = remove_query_arg(['action', 'message', 'tag_ID'], $wp_http_referer);
-
 // Also used by Edit Tags.
     require_once ABSPATH.'wp-admin/includes/edit-tag-messages.php';
-
+    /**
+     * Fires before the Edit Term form for all taxonomies.
+     *
+     * The dynamic portion of the hook name, `$taxonomy`, refers to
+     * the taxonomy slug.
+     *
+     * Possible hook names include:
+     *
+     *  - `category_pre_edit_form`
+     *  - `post_tag_pre_edit_form`
+     *
+     * @param WP_Term $tag      Current taxonomy term object.
+     * @param string  $taxonomy Current $taxonomy slug.
+     *
+     * @since 3.0.0
+     *
+     */
     do_action("{$taxonomy}_pre_edit_form", $tag, $taxonomy); ?>
 
     <div class="wrap">
@@ -34,7 +81,6 @@
 
         <?php
             $class = (isset($msg) && 5 === $msg) ? 'error' : 'success';
-
             if($message)
             {
                 $message = '<p><strong>'.$message.'</strong></p>';
@@ -54,7 +100,18 @@
 
         <form name="edittag" id="edittag" method="post" action="edit-tags.php" class="validate"
             <?php
-
+                /**
+                 * Fires inside the Edit Term form tag.
+                 *
+                 * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
+                 *
+                 * Possible hook names include:
+                 *
+                 *  - `category_term_edit_form_tag`
+                 *  - `post_tag_term_edit_form_tag`
+                 *
+                 * @since 3.7.0
+                 */
                 do_action("{$taxonomy}_term_edit_form_tag");
             ?>
         >
@@ -64,9 +121,25 @@
             <?php
                 wp_original_referer_field(true, 'previous');
                 wp_nonce_field('update-tag_'.$tag_ID);
-
+                /**
+                 * Fires at the beginning of the Edit Term form.
+                 *
+                 * At this point, the required hidden fields and nonces have already been output.
+                 *
+                 * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
+                 *
+                 * Possible hook names include:
+                 *
+                 *  - `category_term_edit_form_top`
+                 *  - `post_tag_term_edit_form_top`
+                 *
+                 * @param WP_Term $tag      Current taxonomy term object.
+                 * @param string  $taxonomy Current $taxonomy slug.
+                 *
+                 * @since 4.5.0
+                 *
+                 */
                 do_action("{$taxonomy}_term_edit_form_top", $tag, $taxonomy);
-
                 $tag_name_value = '';
                 if(isset($tag->name))
                 {
@@ -89,7 +162,20 @@
                 <tr class="form-field term-slug-wrap">
                     <th scope="row"><label for="slug"><?php _e('Slug'); ?></label></th>
                     <?php
-
+                        /**
+                         * Filters the editable slug for a post or term.
+                         *
+                         * Note: This is a multi-use hook in that it is leveraged both for editable
+                         * post URIs and term slugs.
+                         *
+                         * @param string          $slug The editable slug. Will be either a term slug or post URI depending
+                         *                              upon the context in which it is evaluated.
+                         * @param WP_Term|WP_Post $tag  Term or post object.
+                         *
+                         * @since 2.6.0
+                         * @since 4.4.0 The `$tag` parameter was added.
+                         *
+                         */
                         $slug = isset($tag->slug) ? apply_filters('editable_slug', $tag->slug, $tag) : '';
                     ?>
                     <td><input name="slug"
@@ -119,7 +205,7 @@
                                     'show_option_none' => __('None'),
                                     'aria_describedby' => 'parent-description',
                                 ];
-
+                                /** This filter is documented in wp-admin/edit-tags.php */
                                 $dropdown_args = apply_filters('taxonomy_parent_dropdown_args', $dropdown_args, $taxonomy, 'edit');
                                 wp_dropdown_categories($dropdown_args);
                             ?>
@@ -148,17 +234,60 @@
                     // Back compat hooks.
                     if('category' === $taxonomy)
                     {
+                        /**
+                         * Fires after the Edit Category form fields are displayed.
+                         *
+                         * @param WP_Term $tag Current category term object.
+                         *
+                         * @deprecated 3.0.0 Use {@see '{$taxonomy}_edit_form_fields'} instead.
+                         *
+                         * @since      2.9.0
+                         */
                         do_action_deprecated('edit_category_form_fields', [$tag], '3.0.0', '{$taxonomy}_edit_form_fields');
                     }
                     elseif('link_category' === $taxonomy)
                     {
+                        /**
+                         * Fires after the Edit Link Category form fields are displayed.
+                         *
+                         * @param WP_Term $tag Current link category term object.
+                         *
+                         * @deprecated 3.0.0 Use {@see '{$taxonomy}_edit_form_fields'} instead.
+                         *
+                         * @since      2.9.0
+                         */
                         do_action_deprecated('edit_link_category_form_fields', [$tag], '3.0.0', '{$taxonomy}_edit_form_fields');
                     }
                     else
                     {
+                        /**
+                         * Fires after the Edit Tag form fields are displayed.
+                         *
+                         * @param WP_Term $tag Current tag term object.
+                         *
+                         * @deprecated 3.0.0 Use {@see '{$taxonomy}_edit_form_fields'} instead.
+                         *
+                         * @since      2.9.0
+                         */
                         do_action_deprecated('edit_tag_form_fields', [$tag], '3.0.0', '{$taxonomy}_edit_form_fields');
                     }
-
+                    /**
+                     * Fires after the Edit Term form fields are displayed.
+                     *
+                     * The dynamic portion of the hook name, `$taxonomy`, refers to
+                     * the taxonomy slug.
+                     *
+                     * Possible hook names include:
+                     *
+                     *  - `category_edit_form_fields`
+                     *  - `post_tag_edit_form_fields`
+                     *
+                     * @param WP_Term $tag      Current taxonomy term object.
+                     * @param string  $taxonomy Current taxonomy slug.
+                     *
+                     * @since 3.0.0
+                     *
+                     */
                     do_action("{$taxonomy}_edit_form_fields", $tag, $taxonomy);
                 ?>
             </table>
@@ -166,17 +295,43 @@
                 // Back compat hooks.
                 if('category' === $taxonomy)
                 {
+                    /** This action is documented in wp-admin/edit-tags.php */
                     do_action_deprecated('edit_category_form', [$tag], '3.0.0', '{$taxonomy}_add_form');
                 }
                 elseif('link_category' === $taxonomy)
                 {
+                    /** This action is documented in wp-admin/edit-tags.php */
                     do_action_deprecated('edit_link_category_form', [$tag], '3.0.0', '{$taxonomy}_add_form');
                 }
                 else
                 {
+                    /**
+                     * Fires at the end of the Edit Term form.
+                     *
+                     * @param WP_Term $tag Current taxonomy term object.
+                     *
+                     * @deprecated 3.0.0 Use {@see '{$taxonomy}_edit_form'} instead.
+                     *
+                     * @since      2.5.0
+                     */
                     do_action_deprecated('edit_tag_form', [$tag], '3.0.0', '{$taxonomy}_edit_form');
                 }
-
+                /**
+                 * Fires at the end of the Edit Term form for all taxonomies.
+                 *
+                 * The dynamic portion of the hook name, `$taxonomy`, refers to the taxonomy slug.
+                 *
+                 * Possible hook names include:
+                 *
+                 *  - `category_edit_form`
+                 *  - `post_tag_edit_form`
+                 *
+                 * @param WP_Term $tag      Current taxonomy term object.
+                 * @param string  $taxonomy Current taxonomy slug.
+                 *
+                 * @since 3.0.0
+                 *
+                 */
                 do_action("{$taxonomy}_edit_form", $tag, $taxonomy);
             ?>
 

@@ -1,29 +1,89 @@
 <?php
+    /**
+     * Customize API: WP_Customize_Custom_CSS_Setting class
+     *
+     * This handles validation, sanitization and saving of the value.
+     *
+     * @package    WordPress
+     * @subpackage Customize
+     * @since      4.7.0
+     */
 
+    /**
+     * Custom Setting to handle WP Custom CSS.
+     *
+     * @since 4.7.0
+     *
+     * @see   WP_Customize_Setting
+     */
     final class WP_Customize_Custom_CSS_Setting extends WP_Customize_Setting
     {
+        /**
+         * The setting type.
+         *
+         * @since 4.7.0
+         * @var string
+         */
         public $type = 'custom_css';
 
+        /**
+         * Setting Transport
+         *
+         * @since 4.7.0
+         * @var string
+         */
         public $transport = 'postMessage';
 
+        /**
+         * Capability required to edit this setting.
+         *
+         * @since 4.7.0
+         * @var string
+         */
         public $capability = 'edit_css';
 
+        /**
+         * Stylesheet
+         *
+         * @since 4.7.0
+         * @var string
+         */
         public $stylesheet = '';
 
+        /**
+         * WP_Customize_Custom_CSS_Setting constructor.
+         *
+         * @param WP_Customize_Manager $manager Customizer bootstrap instance.
+         * @param string               $id      A specific ID of the setting.
+         *                                      Can be a theme mod or option name.
+         * @param array                $args    Setting arguments.
+         *
+         * @throws Exception If the setting ID does not match the pattern `custom_css[$stylesheet]`.
+         *
+         * @since 4.7.0
+         *
+         */
         public function __construct($manager, $id, $args = [])
         {
             parent::__construct($manager, $id, $args);
             if('custom_css' !== $this->id_data['base'])
             {
-                throw new \RuntimeException('Expected custom_css id_base.');
+                throw new Exception('Expected custom_css id_base.');
             }
             if(1 !== count($this->id_data['keys']) || empty($this->id_data['keys'][0]))
             {
-                throw new \RuntimeException('Expected single stylesheet key.');
+                throw new Exception('Expected single stylesheet key.');
             }
             $this->stylesheet = $this->id_data['keys'][0];
         }
 
+        /**
+         * Add filter to preview post value.
+         *
+         * @return bool False when preview short-circuits due no change needing to be previewed.
+         * @since 4.7.9
+         *
+         */
         public function preview()
         {
             if($this->is_previewed)
@@ -36,6 +96,20 @@
             return true;
         }
 
+        /**
+         * Filters `wp_get_custom_css` for applying the customized value.
+         *
+         * This is used in the preview when `wp_get_custom_css()` is called for rendering the styles.
+         *
+         * @param string $css        Original CSS.
+         * @param string $stylesheet Current stylesheet.
+         *
+         * @return string CSS.
+         * @see   wp_get_custom_css()
+         *
+         * @since 4.7.0
+         *
+         */
         public function filter_previewed_wp_get_custom_css($css, $stylesheet)
         {
             if($stylesheet === $this->stylesheet)
@@ -50,6 +124,15 @@
             return $css;
         }
 
+        /**
+         * Fetch the value of the setting. Will return the previewed value when `preview()` is called.
+         *
+         * @return string
+         * @see   WP_Customize_Setting::value()
+         *
+         * @since 4.7.0
+         *
+         */
         public function value()
         {
             if($this->is_previewed)
@@ -71,24 +154,35 @@
             {
                 $value = $this->default;
             }
-
+            /** This filter is documented in wp-includes/class-wp-customize-setting.php */
             $value = apply_filters("customize_value_{$id_base}", $value, $this);
 
             return $value;
         }
 
+        /**
+         * Validate a received value for being valid CSS.
+         *
+         * Checks for imbalanced braces, brackets, and comments.
+         * Notifications are rendered when the customizer state is saved.
+         *
+         * @param string $value CSS to validate.
+         *
+         * @return true|WP_Error True if the input was validated, otherwise WP_Error.
+         * @since 5.9.0 Renamed `$css` to `$value` for PHP 8 named parameter support.
+         *
+         * @since 4.7.0
+         * @since 4.9.0 Checking for balanced characters has been moved client-side via linting in code editor.
+         */
         public function validate($value)
         {
             // Restores the more descriptive, specific name for use within this method.
             $css = $value;
-
             $validity = new WP_Error();
-
             if(preg_match('#</?\w+#', $css))
             {
                 $validity->add('illegal_markup', __('Markup is not allowed in CSS.'));
             }
-
             if(! $validity->has_errors())
             {
                 $validity = parent::validate($css);
@@ -97,26 +191,32 @@
             return $validity;
         }
 
+        /**
+         * Store the CSS setting value in the custom_css custom post type for the stylesheet.
+         *
+         * @param string $value CSS to update.
+         *
+         * @return int|false The post ID or false if the value could not be saved.
+         * @since 4.7.0
+         * @since 5.9.0 Renamed `$css` to `$value` for PHP 8 named parameter support.
+         *
+         */
         public function update($value)
         {
             // Restores the more descriptive, specific name for use within this method.
             $css = $value;
-
             if(empty($css))
             {
                 $css = '';
             }
-
             $r = wp_update_custom_css_post($css, [
                 'stylesheet' => $this->stylesheet,
             ]);
-
             if($r instanceof WP_Error)
             {
                 return false;
             }
             $post_id = $r->ID;
-
             // Cache post ID in theme mod for performance to avoid additional DB query.
             if($this->manager->get_stylesheet() === $this->stylesheet)
             {

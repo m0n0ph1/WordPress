@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Text-only header with green background block pattern
+     */
     return [
         'title' => __('Text-only header with background', 'twentytwentytwo'),
         'categories' => ['header'],

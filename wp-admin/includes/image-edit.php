@@ -1,5 +1,20 @@
 <?php
-
+    /**
+     * WordPress Image Editor
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /**
+     * Loads the WP image-editing interface.
+     *
+     * @param int          $post_id Attachment post ID.
+     * @param false|object $msg     Optional. Message to display for image editor updates or errors.
+     *                              Default false.
+     *
+     * @since 2.9.0
+     *
+     */
     function wp_image_editor($post_id, $msg = false)
     {
         $nonce = wp_create_nonce("image_editor-$post_id");
@@ -7,7 +22,6 @@
         $thumb = image_get_intermediate_size($post_id, 'thumbnail');
         $sub_sizes = isset($meta['sizes']) && is_array($meta['sizes']);
         $note = '';
-
         if(isset($meta['width'], $meta['height']))
         {
             $big = max($meta['width'], $meta['height']);
@@ -16,17 +30,13 @@
         {
             die(__('Image data does not exist. Please re-upload the image.'));
         }
-
         $sizer = $big > 600 ? 600 / $big : 1;
-
         $backup_sizes = get_post_meta($post_id, '_wp_attachment_backup_sizes', true);
         $can_restore = false;
-
         if(! empty($backup_sizes) && isset($backup_sizes['full-orig'], $meta['file']))
         {
             $can_restore = wp_basename($meta['file']) !== $backup_sizes['full-orig']['file'];
         }
-
         if($msg)
         {
             if(isset($msg->error))
@@ -38,9 +48,15 @@
                 $note = "<div class='notice notice-success' tabindex='-1' role='alert'><p>$msg->msg</p></div>";
             }
         }
-
+        /**
+         * Shows the settings in the Image Editor that allow selecting to edit only the thumbnail of an image.
+         *
+         * @param bool $show Whether to show the settings in the Image Editor. Default false.
+         *
+         * @since 6.3.0
+         *
+         */
         $edit_thumbnails_separately = (bool) apply_filters('image_edit_thumbnails_separately', false);
-
         ?>
         <div class="imgedit-wrap wp-clearfix">
             <div id="imgedit-panel-<?php echo $post_id; ?>">
@@ -151,7 +167,7 @@
                             <div class="imgedit-crop-grid"></div>
                             <img id="image-preview-<?php echo $post_id; ?>"
                                  onload="imageEdit.imgLoaded('<?php echo $post_id; ?>')"
-                                 src="<?php echo esc_url(admin_url('admin-ajax.php', 'relative')).'?action=imgedit-preview&amp;_ajax_nonce='.$nonce.'&amp;postid='.$post_id.'&amp;rand='.random_int(1, 99999); ?>"
+                                 src="<?php echo esc_url(admin_url('admin-ajax.php', 'relative')).'?action=imgedit-preview&amp;_ajax_nonce='.$nonce.'&amp;postid='.$post_id.'&amp;rand='.rand(1, 99999); ?>"
                                  alt=""/>
                         </div>
                     </div>
@@ -474,12 +490,31 @@
         <?php
     }
 
+    /**
+     * Streams image in WP_Image_Editor to browser.
+     *
+     * @param WP_Image_Editor $image         The image editor instance.
+     * @param string          $mime_type     The mime type of the image.
+     * @param int             $attachment_id The image's attachment post ID.
+     *
+     * @return bool True on success, false on failure.
+     * @since 2.9.0
+     *
+     */
     function wp_stream_image($image, $mime_type, $attachment_id)
     {
         if($image instanceof WP_Image_Editor)
         {
+            /**
+             * Filters the WP_Image_Editor instance for the image to be streamed to the browser.
+             *
+             * @param WP_Image_Editor $image         The image editor instance.
+             * @param int             $attachment_id The attachment post ID.
+             *
+             * @since 3.5.0
+             *
+             */
             $image = apply_filters('image_editor_save_pre', $image, $attachment_id);
-
             if(is_wp_error($image->stream($mime_type)))
             {
                 return false;
@@ -491,12 +526,20 @@
         {
             /* translators: 1: $image, 2: WP_Image_Editor */
             _deprecated_argument(__FUNCTION__, '3.5.0', sprintf(__('%1$s needs to be a %2$s object.'), '$image', 'WP_Image_Editor'));
-
+            /**
+             * Filters the GD image resource to be streamed to the browser.
+             *
+             * @param resource|GdImage $image         Image resource to be streamed.
+             * @param int              $attachment_id The attachment post ID.
+             *
+             * @since      2.9.0
+             * @deprecated 3.5.0 Use {@see 'image_editor_save_pre'} instead.
+             *
+             */
             $image = apply_filters_deprecated('image_save_pre', [
                 $image,
                 $attachment_id
             ],                                '3.5.0', 'image_editor_save_pre');
-
             switch($mime_type)
             {
                 case 'image/jpeg':
@@ -526,14 +569,54 @@
         }
     }
 
+    /**
+     * Saves image to file.
+     *
+     * @param string          $filename  Name of the file to be saved.
+     * @param WP_Image_Editor $image     The image editor instance.
+     * @param string          $mime_type The mime type of the image.
+     * @param int             $post_id   Attachment post ID.
+     *
+     * @return array|WP_Error|bool {
+     *     Array on success or WP_Error if the file failed to save.
+     *     When called with a deprecated value for the `$image` parameter,
+     *     i.e. a non-`WP_Image_Editor` image resource or `GdImage` instance,
+     *     the function will return true on success, false on failure.
+     *
+     * @type string           $path      Path to the image file.
+     * @type string           $file      Name of the image file.
+     * @type int              $width     Image width.
+     * @type int              $height    Image height.
+     * @type string           $mime      -type The mime type of the image.
+     * @type int              $filesize  File size of the image.
+     *                                   }
+     * @since 6.0.0 The `$filesize` value was added to the returned array.
+     *
+     * @since 2.9.0
+     * @since 3.5.0 The `$image` parameter expects a `WP_Image_Editor` instance.
+     */
     function wp_save_image_file($filename, $image, $mime_type, $post_id)
     {
         if($image instanceof WP_Image_Editor)
         {
+            /** This filter is documented in wp-admin/includes/image-edit.php */
             $image = apply_filters('image_editor_save_pre', $image, $post_id);
-
+            /**
+             * Filters whether to skip saving the image file.
+             *
+             * Returning a non-null value will short-circuit the save method,
+             * returning that value instead.
+             *
+             * @param bool|null       $override  Value to return instead of saving. Default null.
+             * @param string          $filename  Name of the file to be saved.
+             * @param WP_Image_Editor $image     The image editor instance.
+             * @param string          $mime_type The mime type of the image.
+             * @param int             $post_id   Attachment post ID.
+             *
+             * @since 3.5.0
+             *
+             */
             $saved = apply_filters('wp_save_image_editor_file', null, $filename, $image, $mime_type, $post_id);
-
             if(null !== $saved)
             {
                 return $saved;
@@ -545,9 +628,24 @@
         {
             /* translators: 1: $image, 2: WP_Image_Editor */
             _deprecated_argument(__FUNCTION__, '3.5.0', sprintf(__('%1$s needs to be a %2$s object.'), '$image', 'WP_Image_Editor'));
-
+            /** This filter is documented in wp-admin/includes/image-edit.php */
             $image = apply_filters_deprecated('image_save_pre', [$image, $post_id], '3.5.0', 'image_editor_save_pre');
-
+            /**
+             * Filters whether to skip saving the image file.
+             *
+             * Returning a non-null value will short-circuit the save method,
+             * returning that value instead.
+             *
+             * @param bool|null        $override  Value to return instead of saving. Default null.
+             * @param string           $filename  Name of the file to be saved.
+             * @param resource|GdImage $image     Image resource or GdImage instance.
+             * @param string           $mime_type The mime type of the image.
+             * @param int              $post_id   Attachment post ID.
+             *
+             * @deprecated 3.5.0 Use {@see 'wp_save_image_editor_file'} instead.
+             *
+             * @since      2.9.0
+             */
             $saved = apply_filters_deprecated('wp_save_image_file', [
                 null,
                 $filename,
@@ -555,16 +653,14 @@
                 $mime_type,
                 $post_id,
             ],                                '3.5.0', 'wp_save_image_editor_file');
-
             if(null !== $saved)
             {
                 return $saved;
             }
-
             switch($mime_type)
             {
                 case 'image/jpeg':
-                    return imagejpeg($image, $filename, apply_filters('jpeg_quality', 90, 'edit_image'));
+                    /** This filter is documented in wp-includes/class-wp-image-editor.php */ return imagejpeg($image, $filename, apply_filters('jpeg_quality', 90, 'edit_image'));
                 case 'image/png':
                     return imagepng($image, $filename);
                 case 'image/gif':
@@ -582,26 +678,43 @@
         }
     }
 
+    /**
+     * Image preview ratio. Internal use only.
+     *
+     * @param int $w Image width in pixels.
+     * @param int $h Image height in pixels.
+     *
+     * @return float|int Image preview ratio.
+     * @ignore
+     * @since 2.9.0
+     *
+     */
     function _image_get_preview_ratio($w, $h)
     {
         $max = max($w, $h);
 
-        if($max > 600)
-        {
-            return 600 / $max;
-        }
-
-        return 1;
+        return $max > 600 ? (600 / $max) : 1;
     }
 
+    /**
+     * Returns an image resource. Internal use only.
+     *
+     * @param resource|GdImage $img   Image resource.
+     * @param float|int        $angle Image rotation angle, in degrees.
+     *
+     * @return resource|GdImage|false GD image resource or GdImage instance, false otherwise.
+     * @ignore
+     * @since      2.9.0
+     * @deprecated 3.5.0 Use WP_Image_Editor::rotate()
+     * @see        WP_Image_Editor::rotate()
+     *
+     */
     function _rotate_image_resource($img, $angle)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'WP_Image_Editor::rotate()');
-
         if(function_exists('imagerotate'))
         {
             $rotated = imagerotate($img, $angle, 0);
-
             if(is_gd_image($rotated))
             {
                 imagedestroy($img);
@@ -612,21 +725,32 @@
         return $img;
     }
 
+    /**
+     * Flips an image resource. Internal use only.
+     *
+     * @param resource|GdImage $img  Image resource or GdImage instance.
+     * @param bool             $horz Whether to flip horizontally.
+     * @param bool             $vert Whether to flip vertically.
+     *
+     * @return resource|GdImage (maybe) flipped image resource or GdImage instance.
+     * @since      2.9.0
+     * @deprecated 3.5.0 Use WP_Image_Editor::flip()
+     * @see        WP_Image_Editor::flip()
+     *
+     * @ignore
+     */
     function _flip_image_resource($img, $horz, $vert)
     {
         _deprecated_function(__FUNCTION__, '3.5.0', 'WP_Image_Editor::flip()');
-
         $w = imagesx($img);
         $h = imagesy($img);
         $dst = wp_imagecreatetruecolor($w, $h);
-
         if(is_gd_image($dst))
         {
             $sx = $vert ? ($w - 1) : 0;
             $sy = $horz ? ($h - 1) : 0;
             $sw = $vert ? -$w : $w;
             $sh = $horz ? -$h : $h;
-
             if(imagecopyresampled($dst, $img, 0, 0, $sx, $sy, $w, $h, $sw, $sh))
             {
                 imagedestroy($img);
@@ -637,19 +761,45 @@
         return $img;
     }
 
+    /**
+     * Crops an image resource. Internal use only.
+     *
+     * @param resource|GdImage $img Image resource or GdImage instance.
+     * @param float            $x   Source point x-coordinate.
+     * @param float            $y   Source point y-coordinate.
+     * @param float            $w   Source width.
+     * @param float            $h   Source height.
+     *
+     * @return resource|GdImage (maybe) cropped image resource or GdImage instance.
+     * @since 2.9.0
+     *
+     * @ignore
+     */
     function _crop_image_resource($img, $x, $y, $w, $h)
     {
         $dst = wp_imagecreatetruecolor($w, $h);
-
-        if(is_gd_image($dst) && imagecopy($dst, $img, 0, 0, $x, $y, $w, $h))
+        if(is_gd_image($dst))
         {
-            imagedestroy($img);
-            $img = $dst;
+            if(imagecopy($dst, $img, 0, 0, $x, $y, $w, $h))
+            {
+                imagedestroy($img);
+                $img = $dst;
+            }
         }
 
         return $img;
     }
 
+    /**
+     * Performs group of changes on Editor specified.
+     *
+     * @param WP_Image_Editor $image   WP_Image_Editor instance.
+     * @param array           $changes Array of change operations.
+     *
+     * @return WP_Image_Editor WP_Image_Editor instance with changes applied.
+     * @since 2.9.0
+     *
+     */
     function image_edit_apply_changes($image, $changes)
     {
         if(is_gd_image($image))
@@ -657,12 +807,10 @@
             /* translators: 1: $image, 2: WP_Image_Editor */
             _deprecated_argument(__FUNCTION__, '3.5.0', sprintf(__('%1$s needs to be a %2$s object.'), '$image', 'WP_Image_Editor'));
         }
-
         if(! is_array($changes))
         {
             return $image;
         }
-
         // Expand change operations.
         foreach($changes as $key => $obj)
         {
@@ -684,19 +832,15 @@
                 $obj->sel = $obj->c;
                 unset($obj->c);
             }
-
             $changes[$key] = $obj;
         }
-
         // Combine operations.
         if(count($changes) > 1)
         {
             $filtered = [$changes[0]];
-
             for($i = 0, $j = 1, $c = count($changes); $j < $c; $j++)
             {
                 $combined = false;
-
                 if($filtered[$i]->type === $changes[$j]->type)
                 {
                     switch($filtered[$i]->type)
@@ -711,30 +855,45 @@
                             break;
                     }
                 }
-
                 if(! $combined)
                 {
                     $filtered[++$i] = $changes[$j];
                 }
             }
-
             $changes = $filtered;
             unset($filtered);
         }
-
         // Image resource before applying the changes.
         if($image instanceof WP_Image_Editor)
         {
+            /**
+             * Filters the WP_Image_Editor instance before applying changes to the image.
+             *
+             * @param WP_Image_Editor $image   WP_Image_Editor instance.
+             * @param array           $changes Array of change operations.
+             *
+             * @since 3.5.0
+             *
+             */
             $image = apply_filters('wp_image_editor_before_change', $image, $changes);
         }
         elseif(is_gd_image($image))
         {
+            /**
+             * Filters the GD image resource before applying changes to the image.
+             *
+             * @param resource|GdImage $image   GD image resource or GdImage instance.
+             * @param array            $changes Array of change operations.
+             *
+             * @since      2.9.0
+             * @deprecated 3.5.0 Use {@see 'wp_image_editor_before_change'} instead.
+             *
+             */
             $image = apply_filters_deprecated('image_edit_before_change', [
                 $image,
                 $changes,
             ],                                '3.5.0', 'wp_image_editor_before_change');
         }
-
         foreach($changes as $operation)
         {
             switch($operation->type)
@@ -767,13 +926,11 @@
                     break;
                 case 'crop':
                     $sel = $operation->sel;
-
                     if($image instanceof WP_Image_Editor)
                     {
                         $size = $image->get_size();
                         $w = $size['width'];
                         $h = $size['height'];
-
                         $scale = 1 / _image_get_preview_ratio($w, $h); // Discard preview scaling.
                         $image->crop($sel->x * $scale, $sel->y * $scale, $sel->w * $scale, $sel->h * $scale);
                     }
@@ -789,34 +946,37 @@
         return $image;
     }
 
+    /**
+     * Streams image in post to browser, along with enqueued changes
+     * in `$_REQUEST['history']`.
+     *
+     * @param int $post_id Attachment post ID.
+     *
+     * @return bool True on success, false on failure.
+     * @since 2.9.0
+     *
+     */
     function stream_preview_image($post_id)
     {
         $post = get_post($post_id);
-
         wp_raise_memory_limit('admin');
-
         $img = wp_get_image_editor(_load_image_to_edit_path($post_id));
-
         if(is_wp_error($img))
         {
             return false;
         }
-
         $changes = ! empty($_REQUEST['history']) ? json_decode(wp_unslash($_REQUEST['history'])) : null;
         if($changes)
         {
             $img = image_edit_apply_changes($img, $changes);
         }
-
         // Scale the image.
         $size = $img->get_size();
         $w = $size['width'];
         $h = $size['height'];
-
         $ratio = _image_get_preview_ratio($w, $h);
         $w2 = max(1, $w * $ratio);
         $h2 = max(1, $h * $ratio);
-
         if(is_wp_error($img->resize($w2, $h2)))
         {
             return false;
@@ -825,6 +985,15 @@
         return wp_stream_image($img, $post->post_mime_type, $post_id);
     }
 
+    /**
+     * Restores the metadata for a given attachment.
+     *
+     * @param int $post_id Attachment post ID.
+     *
+     * @return stdClass Image restoration message object.
+     * @since 2.9.0
+     *
+     */
     function wp_restore_image($post_id)
     {
         $meta = wp_get_attachment_metadata($post_id);
@@ -833,22 +1002,18 @@
         $old_backup_sizes = $backup_sizes;
         $restored = false;
         $msg = new stdClass();
-
         if(! is_array($backup_sizes))
         {
             $msg->error = __('Cannot load image metadata.');
 
             return $msg;
         }
-
         $parts = pathinfo($file);
-        $suffix = time().random_int(100, 999);
+        $suffix = time().rand(100, 999);
         $default_sizes = get_intermediate_image_sizes();
-
         if(isset($backup_sizes['full-orig']) && is_array($backup_sizes['full-orig']))
         {
             $data = $backup_sizes['full-orig'];
-
             if($parts['basename'] !== $data['file'])
             {
                 if(defined('IMAGE_EDIT_OVERWRITE') && IMAGE_EDIT_OVERWRITE)
@@ -868,21 +1033,17 @@
                     ];
                 }
             }
-
             $restored_file = path_join($parts['dirname'], $data['file']);
             $restored = update_attached_file($post_id, $restored_file);
-
             $meta['file'] = _wp_relative_upload_path($restored_file);
             $meta['width'] = $data['width'];
             $meta['height'] = $data['height'];
         }
-
         foreach($default_sizes as $default_size)
         {
             if(isset($backup_sizes["$default_size-orig"]))
             {
                 $data = $backup_sizes["$default_size-orig"];
-
                 if(isset($meta['sizes'][$default_size]) && $meta['sizes'][$default_size]['file'] !== $data['file'])
                 {
                     if(defined('IMAGE_EDIT_OVERWRITE') && IMAGE_EDIT_OVERWRITE)
@@ -899,7 +1060,6 @@
                         $backup_sizes["$default_size-{$suffix}"] = $meta['sizes'][$default_size];
                     }
                 }
-
                 $meta['sizes'][$default_size] = $data;
             }
             else
@@ -907,80 +1067,83 @@
                 unset($meta['sizes'][$default_size]);
             }
         }
-
         if(! wp_update_attachment_metadata($post_id, $meta) || ($old_backup_sizes !== $backup_sizes && ! update_post_meta($post_id, '_wp_attachment_backup_sizes', $backup_sizes)))
         {
             $msg->error = __('Cannot save image metadata.');
 
             return $msg;
         }
-
-        if($restored)
+        if(! $restored)
+        {
+            $msg->error = __('Image metadata is inconsistent.');
+        }
+        else
         {
             $msg->msg = __('Image restored successfully.');
-
             if(defined('IMAGE_EDIT_OVERWRITE') && IMAGE_EDIT_OVERWRITE)
             {
                 delete_post_meta($post_id, '_wp_attachment_backup_sizes');
             }
         }
-        else
-        {
-            $msg->error = __('Image metadata is inconsistent.');
-        }
 
         return $msg;
     }
 
+    /**
+     * Saves image to post, along with enqueued changes
+     * in `$_REQUEST['history']`.
+     *
+     * @param int $post_id Attachment post ID.
+     *
+     * @return stdClass
+     * @since 2.9.0
+     *
+     */
     function wp_save_image($post_id)
     {
         $_wp_additional_image_sizes = wp_get_additional_image_sizes();
-
         $return = new stdClass();
         $success = false;
         $delete = false;
         $scaled = false;
         $nocrop = false;
         $post = get_post($post_id);
-
         $img = wp_get_image_editor(_load_image_to_edit_path($post_id, 'full'));
-
         if(is_wp_error($img))
         {
             $return->error = esc_js(__('Unable to create new image.'));
 
             return $return;
         }
-
         $full_width = ! empty($_REQUEST['fwidth']) ? (int) $_REQUEST['fwidth'] : 0;
         $full_height = ! empty($_REQUEST['fheight']) ? (int) $_REQUEST['fheight'] : 0;
         $target = ! empty($_REQUEST['target']) ? preg_replace('/[^a-z0-9_-]+/i', '', $_REQUEST['target']) : '';
         $scale = ! empty($_REQUEST['do']) && 'scale' === $_REQUEST['do'];
-
+        /** This filter is documented in wp-admin/includes/image-edit.php */
         $edit_thumbnails_separately = (bool) apply_filters('image_edit_thumbnails_separately', false);
-
         if($scale)
         {
             $size = $img->get_size();
             $original_width = $size['width'];
             $original_height = $size['height'];
-
             if($full_width > $original_width || $full_height > $original_height)
             {
                 $return->error = esc_js(__('Images cannot be scaled to a size larger than the original.'));
 
                 return $return;
             }
-
             if($full_width > 0 && $full_height > 0)
             {
                 // Check if it has roughly the same w / h ratio.
                 $diff = round($original_width / $original_height, 2) - round($full_width / $full_height, 2);
-                if(-0.1 < $diff && $diff < 0.1 && $img->resize($full_width, $full_height))
+                if(-0.1 < $diff && $diff < 0.1)
                 {
-                    $scaled = true;
+                    // Scale the full size image.
+                    if($img->resize($full_width, $full_height))
+                    {
+                        $scaled = true;
+                    }
                 }
-
                 if(! $scaled)
                 {
                     $return->error = esc_js(__('Error while saving the scaled image. Please reload the page and try again.'));
@@ -1003,31 +1166,25 @@
 
             return $return;
         }
-
         $meta = wp_get_attachment_metadata($post_id);
         $backup_sizes = get_post_meta($post->ID, '_wp_attachment_backup_sizes', true);
-
         if(! is_array($meta))
         {
             $return->error = esc_js(__('Image data does not exist. Please re-upload the image.'));
 
             return $return;
         }
-
         if(! is_array($backup_sizes))
         {
             $backup_sizes = [];
         }
-
         // Generate new filename.
         $path = get_attached_file($post_id);
-
         $basename = pathinfo($path, PATHINFO_BASENAME);
         $dirname = pathinfo($path, PATHINFO_DIRNAME);
         $ext = pathinfo($path, PATHINFO_EXTENSION);
         $filename = pathinfo($path, PATHINFO_FILENAME);
-        $suffix = time().random_int(100, 999);
-
+        $suffix = time().rand(100, 999);
         if(defined('IMAGE_EDIT_OVERWRITE') && IMAGE_EDIT_OVERWRITE && isset($backup_sizes['full-orig']) && $backup_sizes['full-orig']['file'] !== $basename)
         {
             if($edit_thumbnails_separately && 'thumbnail' === $target)
@@ -1047,7 +1204,6 @@
                 $filename .= "-e{$suffix}";
                 $new_filename = "{$filename}.{$ext}";
                 $new_path = "{$dirname}/$new_filename";
-
                 if(file_exists($new_path))
                 {
                     ++$suffix;
@@ -1058,7 +1214,6 @@
                 }
             }
         }
-
         // Save the full-size file, also needed to create sub-sizes.
         if(! wp_save_image_file($new_path, $img, $post->post_mime_type, $post_id))
         {
@@ -1066,11 +1221,9 @@
 
             return $return;
         }
-
         if('nothumb' === $target || 'all' === $target || 'full' === $target || $scaled)
         {
             $tag = false;
-
             if(isset($backup_sizes['full-orig']))
             {
                 if((! defined('IMAGE_EDIT_OVERWRITE') || ! IMAGE_EDIT_OVERWRITE) && $backup_sizes['full-orig']['file'] !== $basename)
@@ -1082,7 +1235,6 @@
             {
                 $tag = 'full-orig';
             }
-
             if($tag)
             {
                 $backup_sizes[$tag] = [
@@ -1091,25 +1243,19 @@
                     'file' => $basename,
                 ];
             }
-
             $success = ($path === $new_path) || update_attached_file($post_id, $new_path);
-
             $meta['file'] = _wp_relative_upload_path($new_path);
-
             $size = $img->get_size();
             $meta['width'] = $size['width'];
             $meta['height'] = $size['height'];
-
             if($success && ('nothumb' === $target || 'all' === $target))
             {
                 $sizes = get_intermediate_image_sizes();
-
                 if($edit_thumbnails_separately && 'nothumb' === $target)
                 {
                     $sizes = array_diff($sizes, ['thumbnail']);
                 }
             }
-
             $return->fw = $meta['width'];
             $return->fh = $meta['height'];
         }
@@ -1120,7 +1266,6 @@
             $delete = true;
             $nocrop = true;
         }
-
         /*
          * We need to remove any existing resized image files because
          * a new crop or rotate could generate different sizes (and hence, filenames),
@@ -1138,15 +1283,12 @@
                 }
             }
         }
-
         if(isset($sizes))
         {
             $_sizes = [];
-
             foreach($sizes as $size)
             {
                 $tag = false;
-
                 if(isset($meta['sizes'][$size]))
                 {
                     if(isset($backup_sizes["$size-orig"]))
@@ -1160,13 +1302,11 @@
                     {
                         $tag = "$size-orig";
                     }
-
                     if($tag)
                     {
                         $backup_sizes[$tag] = $meta['sizes'][$size];
                     }
                 }
-
                 if(isset($_wp_additional_image_sizes[$size]))
                 {
                     $width = (int) $_wp_additional_image_sizes[$size]['width'];
@@ -1179,33 +1319,30 @@
                     $width = get_option("{$size}_size_w");
                     $crop = ($nocrop) ? false : get_option("{$size}_crop");
                 }
-
-                $_sizes[$size] = compact('width', 'height', 'crop');
+                $_sizes[$size] = [
+                    'width' => $width,
+                    'height' => $height,
+                    'crop' => $crop,
+                ];
             }
-
             $meta['sizes'] = array_merge($meta['sizes'], $img->multi_resize($_sizes));
         }
-
         unset($img);
-
         if($success)
         {
             wp_update_attachment_metadata($post_id, $meta);
             update_post_meta($post_id, '_wp_attachment_backup_sizes', $backup_sizes);
-
             if('thumbnail' === $target || 'all' === $target || 'full' === $target)
             {
                 // Check if it's an image edit from attachment edit screen.
                 if(! empty($_REQUEST['context']) && 'edit-attachment' === $_REQUEST['context'])
                 {
                     $thumb_url = wp_get_attachment_image_src($post_id, [900, 600], true);
-
                     $return->thumbnail = $thumb_url[0];
                 }
                 else
                 {
                     $file_url = wp_get_attachment_url($post_id);
-
                     if(! empty($meta['sizes']['thumbnail']))
                     {
                         $thumb = $meta['sizes']['thumbnail'];
@@ -1222,12 +1359,10 @@
         {
             $delete = true;
         }
-
         if($delete)
         {
             wp_delete_file($new_path);
         }
-
         $return->msg = esc_js(__('Image saved'));
 
         return $return;

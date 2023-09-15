@@ -1,18 +1,29 @@
 <?php
-
+    /**
+     * Server-side rendering of the `core/query-pagination-next` block.
+     *
+     * @package WordPress
+     */
+    /**
+     * Renders the `core/query-pagination-next` block on the server.
+     *
+     * @param array    $attributes Block attributes.
+     * @param string   $content    Block default content.
+     * @param WP_Block $block      Block instance.
+     *
+     * @return string Returns the next posts link for the query pagination.
+     */
     function render_block_core_query_pagination_next($attributes, $content, $block)
     {
         $page_key = isset($block->context['queryId']) ? 'query-'.$block->context['queryId'].'-page' : 'query-page';
         $page = empty($_GET[$page_key]) ? 1 : (int) $_GET[$page_key];
         $max_page = isset($block->context['query']['pages']) ? (int) $block->context['query']['pages'] : 0;
-
         $wrapper_attributes = get_block_wrapper_attributes();
         $show_label = isset($block->context['showLabel']) ? (bool) $block->context['showLabel'] : true;
         $default_label = __('Next Page');
         $label_text = isset($attributes['label']) && ! empty($attributes['label']) ? esc_html($attributes['label']) : $default_label;
         $label = $show_label ? $label_text : '';
         $pagination_arrow = get_query_pagination_arrow($block, true);
-
         if(! $label)
         {
             $wrapper_attributes .= ' aria-label="'.$label_text.'"';
@@ -22,7 +33,6 @@
             $label .= $pagination_arrow;
         }
         $content = '';
-
         // Check if the pagination is for Query that inherits the global context.
         if(isset($block->context['query']['inherit']) && $block->context['query']['inherit'])
         {
@@ -55,6 +65,9 @@
         return $content;
     }
 
+    /**
+     * Registers the `core/query-pagination-next` block on the server.
+     */
     function register_block_core_query_pagination_next()
     {
         register_block_type_from_metadata(__DIR__.'/query-pagination-next', [

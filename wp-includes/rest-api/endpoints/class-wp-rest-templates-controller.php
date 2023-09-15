@@ -1,9 +1,37 @@
 <?php
+    /**
+     * REST API: WP_REST_Templates_Controller class
+     *
+     * @package    WordPress
+     * @subpackage REST_API
+     * @since      5.8.0
+     */
 
+    /**
+     * Base Templates REST API Controller.
+     *
+     * @since 5.8.0
+     *
+     * @see   WP_REST_Controller
+     */
     class WP_REST_Templates_Controller extends WP_REST_Controller
     {
+        /**
+         * Post type.
+         *
+         * @since 5.8.0
+         * @var string
+         */
         protected $post_type;
 
+        /**
+         * Constructor.
+         *
+         * @param string $post_type Post type.
+         *
+         * @since 5.8.0
+         *
+         */
         public function __construct($post_type)
         {
             $this->post_type = $post_type;
@@ -12,10 +40,15 @@
             $this->namespace = ! empty($obj->rest_namespace) ? $obj->rest_namespace : 'wp/v2';
         }
 
+        /**
+         * Registers the controllers routes.
+         *
+         * @since 5.8.0
+         * @since 6.1.0 Endpoint for fallback template content.
+         */
         public function register_routes()
         {
             // Lists all templates.
-            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -31,7 +64,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             // Get fallback template content.
             register_rest_route($this->namespace, '/'.$this->rest_base.'/lookup', [
                 [
@@ -55,7 +87,6 @@
                     ],
                 ],
             ]);
-
             // Lists/updates a single template based on the given id.
             register_rest_route(
                 $this->namespace, // The route.
@@ -104,6 +135,14 @@
             );
         }
 
+        /**
+         * Retrieves the query params for the posts collection.
+         *
+         * @return array Collection parameters.
+         * @since 5.9.0 Added `'area'` and `'post_type'`.
+         *
+         * @since 5.8.0
+         */
         public function get_collection_params()
         {
             return [
@@ -123,42 +162,57 @@
             ];
         }
 
+        /**
+         * Returns the fallback template for the given slug.
+         *
+         * @param WP_REST_Request $request The request instance.
+         *
+         * @return WP_REST_Response|WP_Error
+         * @since 6.1.0
+         * @since 6.3.0 Ignore empty templates.
+         *
+         */
         public function get_template_fallback($request)
         {
             $hierarchy = get_template_hierarchy($request['slug'], $request['is_custom'], $request['template_prefix']);
-
             do
             {
                 $fallback_template = resolve_block_template($request['slug'], $hierarchy, '');
                 array_shift($hierarchy);
             }
             while(! empty($hierarchy) && empty($fallback_template->content));
-
             $response = $this->prepare_item_for_response($fallback_template, $request);
 
             return rest_ensure_response($response);
         }
 
+        /**
+         * Prepare a single template output for response
+         *
+         * @param WP_Block_Template $item    Template instance.
+         * @param WP_REST_Request   $request Request object.
+         *
+         * @return WP_REST_Response Response object.
+         * @since 5.8.0
+         * @since 5.9.0 Renamed `$template` to `$item` to match parent class for PHP 8 named parameter support.
+         * @since 6.3.0 Added `modified` property to the response.
+         *
+         */
         public function prepare_item_for_response($item, $request)
         { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
             // Restores the more descriptive, specific name for use within this method.
             $template = $item;
-
             $fields = $this->get_fields_for_response($request);
-
             // Base fields for every template.
             $data = [];
-
             if(rest_is_field_included('id', $fields))
             {
                 $data['id'] = $template->id;
             }
-
             if(rest_is_field_included('theme', $fields))
             {
                 $data['theme'] = $template->theme;
             }
-
             if(rest_is_field_included('content', $fields))
             {
                 $data['content'] = [];
@@ -167,51 +221,43 @@
             {
                 $data['content']['raw'] = $template->content;
             }
-
             if(rest_is_field_included('content.block_version', $fields))
             {
                 $data['content']['block_version'] = block_version($template->content);
             }
-
             if(rest_is_field_included('slug', $fields))
             {
                 $data['slug'] = $template->slug;
             }
-
             if(rest_is_field_included('source', $fields))
             {
                 $data['source'] = $template->source;
             }
-
             if(rest_is_field_included('origin', $fields))
             {
                 $data['origin'] = $template->origin;
             }
-
             if(rest_is_field_included('type', $fields))
             {
                 $data['type'] = $template->type;
             }
-
             if(rest_is_field_included('description', $fields))
             {
                 $data['description'] = $template->description;
             }
-
             if(rest_is_field_included('title', $fields))
             {
                 $data['title'] = [];
             }
-
             if(rest_is_field_included('title.raw', $fields))
             {
                 $data['title']['raw'] = $template->title;
             }
-
             if(rest_is_field_included('title.rendered', $fields))
             {
                 if($template->wp_id)
                 {
+                    /** This filter is documented in wp-includes/post-template.php */
                     $data['title']['rendered'] = apply_filters('the_title', $template->title, $template->wp_id);
                 }
                 else
@@ -219,49 +265,39 @@
                     $data['title']['rendered'] = $template->title;
                 }
             }
-
             if(rest_is_field_included('status', $fields))
             {
                 $data['status'] = $template->status;
             }
-
             if(rest_is_field_included('wp_id', $fields))
             {
                 $data['wp_id'] = (int) $template->wp_id;
             }
-
             if(rest_is_field_included('has_theme_file', $fields))
             {
                 $data['has_theme_file'] = (bool) $template->has_theme_file;
             }
-
             if(rest_is_field_included('is_custom', $fields) && 'wp_template' === $template->type)
             {
                 $data['is_custom'] = $template->is_custom;
             }
-
             if(rest_is_field_included('author', $fields))
             {
                 $data['author'] = (int) $template->author;
             }
-
             if(rest_is_field_included('area', $fields) && 'wp_template_part' === $template->type)
             {
                 $data['area'] = $template->area;
             }
-
             if(rest_is_field_included('modified', $fields))
             {
                 $data['modified'] = mysql_to_rfc3339($template->modified);
             }
-
             $context = ! empty($request['context']) ? $request['context'] : 'view';
             $data = $this->add_additional_fields_to_object($data, $request);
             $data = $this->filter_response_by_context($data, $context);
-
             // Wrap the data in a response object.
             $response = rest_ensure_response($data);
-
             if(rest_is_field_included('_links', $fields) || rest_is_field_included('_embedded', $fields))
             {
                 $links = $this->prepare_links($template->id);
@@ -280,6 +316,15 @@
             return $response;
         }
 
+        /**
+         * Prepares links for the request.
+         *
+         * @param integer $id ID.
+         *
+         * @return array Links for the given post.
+         * @since 5.8.0
+         *
+         */
         protected function prepare_links($id)
         {
             $links = [
@@ -297,17 +342,21 @@
             return $links;
         }
 
+        /**
+         * Get the link relations available for the post and current user.
+         *
+         * @return string[] List of link relations.
+         * @since 5.8.0
+         *
+         */
         protected function get_available_actions()
         {
             $rels = [];
-
             $post_type = get_post_type_object($this->post_type);
-
             if(current_user_can($post_type->cap->publish_posts))
             {
                 $rels[] = 'https://api.w.org/action-publish';
             }
-
             if(current_user_can('unfiltered_html'))
             {
                 $rels[] = 'https://api.w.org/action-unfiltered-html';
@@ -316,16 +365,31 @@
             return $rels;
         }
 
+        /**
+         * Requesting this endpoint for a template like 'twentytwentytwo//home'
+         * requires using a path like /wp/v2/templates/twentytwentytwo//home. There
+         * are special cases when WordPress routing corrects the name to contain
+         * only a single slash like 'twentytwentytwo/home'.
+         *
+         * This method doubles the last slash if it's not already doubled. It relies
+         * on the template ID format {theme_name}//{template_slug} and the fact that
+         * slugs cannot contain slashes.
+         *
+         * @param string $id Template ID.
+         *
+         * @return string Sanitized template ID.
+         * @since 5.9.0
+         * @see   https://core.trac.wordpress.org/ticket/54507
+         *
+         */
         public function _sanitize_template_id($id)
         {
             $id = urldecode($id);
-
             $last_slash_pos = strrpos($id, '/');
             if(false === $last_slash_pos)
             {
                 return $id;
             }
-
             $is_double_slashed = substr($id, $last_slash_pos - 1, 1) === '/';
             if($is_double_slashed)
             {
@@ -335,11 +399,29 @@
             return (substr($id, 0, $last_slash_pos).'/'.substr($id, $last_slash_pos));
         }
 
+        /**
+         * Checks if a given request has access to read templates.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         public function get_items_permissions_check($request)
         {
             return $this->permissions_check($request);
         }
 
+        /**
+         * Checks if the user has permissions to make the request.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         protected function permissions_check($request)
         {
             /*
@@ -356,6 +438,15 @@
             return true;
         }
 
+        /**
+         * Returns a list of templates.
+         *
+         * @param WP_REST_Request $request The request instance.
+         *
+         * @return WP_REST_Response
+         * @since 5.8.0
+         *
+         */
         public function get_items($request)
         {
             $query = [];
@@ -371,7 +462,6 @@
             {
                 $query['post_type'] = $request['post_type'];
             }
-
             $templates = [];
             foreach(get_block_templates($query, $this->post_type) as $template)
             {
@@ -382,11 +472,29 @@
             return rest_ensure_response($templates);
         }
 
+        /**
+         * Checks if a given request has access to read a single template.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         public function get_item_permissions_check($request)
         {
             return $this->permissions_check($request);
         }
 
+        /**
+         * Returns the given template
+         *
+         * @param WP_REST_Request $request The request instance.
+         *
+         * @return WP_REST_Response|WP_Error
+         * @since 5.8.0
+         *
+         */
         public function get_item($request)
         {
             if(isset($request['source']) && 'theme' === $request['source'])
@@ -397,7 +505,6 @@
             {
                 $template = get_block_template($request['id'], $this->post_type);
             }
-
             if(! $template)
             {
                 return new WP_Error('rest_template_not_found', __('No templates exist with that id.'), ['status' => 404]);
@@ -406,11 +513,29 @@
             return $this->prepare_item_for_response($template, $request);
         }
 
+        /**
+         * Checks if a given request has access to write a single template.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has write access for the item, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         public function update_item_permissions_check($request)
         {
             return $this->permissions_check($request);
         }
 
+        /**
+         * Updates a single template.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+         * @since 5.8.0
+         *
+         */
         public function update_item($request)
         {
             $template = get_block_template($request['id'], $this->post_type);
@@ -418,27 +543,21 @@
             {
                 return new WP_Error('rest_template_not_found', __('No templates exist with that id.'), ['status' => 404]);
             }
-
             $post_before = get_post($template->wp_id);
-
             if(isset($request['source']) && 'theme' === $request['source'])
             {
                 wp_delete_post($template->wp_id, true);
                 $request->set_param('context', 'edit');
-
                 $template = get_block_template($request['id'], $this->post_type);
                 $response = $this->prepare_item_for_response($template, $request);
 
                 return rest_ensure_response($response);
             }
-
             $changes = $this->prepare_item_for_database($request);
-
             if(is_wp_error($changes))
             {
                 return $changes;
             }
-
             if('custom' === $template->source)
             {
                 $update = true;
@@ -450,7 +569,6 @@
                 $post_before = null;
                 $result = wp_insert_post(wp_slash((array) $changes), false);
             }
-
             if(is_wp_error($result))
             {
                 if('db_update_error' === $result->get_error_code())
@@ -464,27 +582,31 @@
 
                 return $result;
             }
-
             $template = get_block_template($request['id'], $this->post_type);
             $fields_update = $this->update_additional_fields_for_object($template, $request);
             if(is_wp_error($fields_update))
             {
                 return $fields_update;
             }
-
             $request->set_param('context', 'edit');
-
             $post = get_post($template->wp_id);
-
+            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php */
             do_action("rest_after_insert_{$this->post_type}", $post, $request, false);
-
             wp_after_insert_post($post, $update, $post_before);
-
             $response = $this->prepare_item_for_response($template, $request);
 
             return rest_ensure_response($response);
         }
 
+        /**
+         * Prepares a single template for create or update.
+         *
+         * @param WP_REST_Request $request Request object.
+         *
+         * @return stdClass Changes to pass to wp_update_post.
+         * @since 5.8.0
+         *
+         */
         protected function prepare_item_for_database($request)
         {
             $template = $request['id'] ? get_block_template($request['id'], $this->post_type) : null;
@@ -553,14 +675,12 @@
             {
                 $changes->post_excerpt = $template->description;
             }
-
             if('wp_template' === $this->post_type && isset($request['is_wp_suggestion']))
             {
                 $changes->meta_input = wp_parse_args([
                                                          'is_wp_suggestion' => $request['is_wp_suggestion'],
                                                      ], $changes->meta_input = []);
             }
-
             if('wp_template_part' === $this->post_type)
             {
                 if(isset($request['area']))
@@ -576,41 +696,53 @@
                     $changes->tax_input['wp_template_part_area'] = WP_TEMPLATE_PART_AREA_UNCATEGORIZED;
                 }
             }
-
             if(! empty($request['author']))
             {
                 $post_author = (int) $request['author'];
-
                 if(get_current_user_id() !== $post_author)
                 {
                     $user_obj = get_userdata($post_author);
-
                     if(! $user_obj)
                     {
                         return new WP_Error('rest_invalid_author', __('Invalid author ID.'), ['status' => 400]);
                     }
                 }
-
                 $changes->post_author = $post_author;
             }
 
             return $changes;
         }
 
+        /**
+         * Checks if a given request has access to create a template.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has access to create items, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         public function create_item_permissions_check($request)
         {
             return $this->permissions_check($request);
         }
 
+        /**
+         * Creates a single template.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+         * @since 5.8.0
+         *
+         */
         public function create_item($request)
         {
             $prepared_post = $this->prepare_item_for_database($request);
-
             if(is_wp_error($prepared_post))
             {
                 return $prepared_post;
             }
-
             $prepared_post->post_name = $request['slug'];
             $post_id = wp_insert_post(wp_slash((array) $prepared_post), true);
             if(is_wp_error($post_id))
@@ -639,25 +771,40 @@
             {
                 return $fields_update;
             }
-
+            /** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php */
             do_action("rest_after_insert_{$this->post_type}", $post, $request, true);
-
             wp_after_insert_post($post, false, null);
-
             $response = $this->prepare_item_for_response($template, $request);
             $response = rest_ensure_response($response);
-
             $response->set_status(201);
             $response->header('Location', rest_url(sprintf('%s/%s/%s', $this->namespace, $this->rest_base, $template->id)));
 
             return $response;
         }
 
+        /**
+         * Checks if a given request has access to delete a single template.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has delete access for the item, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         public function delete_item_permissions_check($request)
         {
             return $this->permissions_check($request);
         }
 
+        /**
+         * Deletes a single template.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+         * @since 5.8.0
+         *
+         */
         public function delete_item($request)
         {
             $template = get_block_template($request['id'], $this->post_type);
@@ -669,12 +816,9 @@
             {
                 return new WP_Error('rest_invalid_template', __('Templates based on theme files can\'t be removed.'), ['status' => 400]);
             }
-
             $id = $template->wp_id;
             $force = (bool) $request['force'];
-
             $request->set_param('context', 'edit');
-
             // If we're forcing, then delete permanently.
             if($force)
             {
@@ -693,7 +837,6 @@
                 {
                     return new WP_Error('rest_template_already_trashed', __('The template has already been deleted.'), ['status' => 410]);
                 }
-
                 /*
                  * (Note that internally this falls through to `wp_delete_post()`
                  * if the Trash is disabled.)
@@ -702,7 +845,6 @@
                 $template->status = 'trash';
                 $response = $this->prepare_item_for_response($template, $request);
             }
-
             if(! $result)
             {
                 return new WP_Error('rest_cannot_delete', __('The template cannot be deleted.'), ['status' => 500]);
@@ -711,13 +853,20 @@
             return $response;
         }
 
+        /**
+         * Retrieves the block type' schema, conforming to JSON Schema.
+         *
+         * @return array Item schema data.
+         * @since 5.9.0 Added `'area'`.
+         *
+         * @since 5.8.0
+         */
         public function get_item_schema()
         {
             if($this->schema)
             {
                 return $this->add_additional_fields_schema($this->schema);
             }
-
             $schema = [
                 '$schema' => 'http://json-schema.org/draft-04/schema#',
                 'title' => $this->post_type,
@@ -836,7 +985,6 @@
                     ],
                 ],
             ];
-
             if('wp_template' === $this->post_type)
             {
                 $schema['properties']['is_custom'] = [
@@ -846,7 +994,6 @@
                     'readonly' => true,
                 ];
             }
-
             if('wp_template_part' === $this->post_type)
             {
                 $schema['properties']['area'] = [
@@ -855,7 +1002,6 @@
                     'context' => ['embed', 'view', 'edit'],
                 ];
             }
-
             $this->schema = $schema;
 
             return $this->add_additional_fields_schema($this->schema);

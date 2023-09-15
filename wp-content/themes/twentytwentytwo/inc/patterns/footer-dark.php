@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Dark footer with title and citation
+     */
     return [
         'title' => __('Dark footer with title and citation', 'twentytwentytwo'),
         'categories' => ['footer'],

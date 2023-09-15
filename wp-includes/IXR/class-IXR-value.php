@@ -1,17 +1,29 @@
 <?php
 
+    /**
+     * IXR_Value
+     *
+     * @package IXR
+     * @since   1.5.0
+     */
     class IXR_Value
     {
-        public $data;
+        var $data;
 
-        public $type;
+        var $type;
 
+        /**
+         * PHP4 constructor.
+         */
         public function IXR_Value($data, $type = false)
         {
-            $this->__construct($data, $type);
+            self::__construct($data, $type);
         }
 
-        public function __construct($data, $type = false)
+        /**
+         * PHP5 constructor.
+         */
+        function __construct($data, $type = false)
         {
             $this->data = $data;
             if(! $type)
@@ -29,28 +41,27 @@
             }
             if($type == 'array')
             {
-                foreach($this->data as $i => $iValue)
+                for($i = 0, $j = count($this->data); $i < $j; $i++)
                 {
                     $this->data[$i] = new IXR_Value($this->data[$i]);
                 }
             }
         }
 
-        public function calculateType()
+        function calculateType()
         {
             if($this->data === true || $this->data === false)
             {
                 return 'boolean';
             }
-            if(is_int($this->data))
+            if(is_integer($this->data))
             {
                 return 'int';
             }
-            if(is_float($this->data))
+            if(is_double($this->data))
             {
                 return 'double';
             }
-
             // Deal with IXR object types base64 and date
             if(is_object($this->data) && is_a($this->data, 'IXR_Date'))
             {
@@ -60,7 +71,6 @@
             {
                 return 'base64';
             }
-
             // If it is a normal PHP object convert it in to a struct
             if(is_object($this->data))
             {
@@ -72,7 +82,6 @@
             {
                 return 'string';
             }
-
             // We have an array - is it an array or a struct?
             if($this->isStruct($this->data))
             {
@@ -84,7 +93,14 @@
             }
         }
 
-        public function isStruct($array)
+        /**
+         * Checks whether or not the supplied array is a struct or not
+         *
+         * @param array $array
+         *
+         * @return bool
+         */
+        function isStruct($array)
         {
             $expected = 0;
             foreach($array as $key => $value)
@@ -99,7 +115,7 @@
             return false;
         }
 
-        public function getXml()
+        function getXml()
         {
             // Return XML for this value
             switch($this->type)

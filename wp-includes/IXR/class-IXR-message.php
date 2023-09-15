@@ -1,48 +1,61 @@
 <?php
 
+    /**
+     * IXR_MESSAGE
+     *
+     * @package IXR
+     * @since   1.5.0
+     *
+     */
     class IXR_Message
     {
-        public $message = false;
+        var $message = false;
 
-        public $messageType = false;  // methodCall / methodResponse / fault
+        var $messageType = false;  // methodCall / methodResponse / fault
 
-        public $faultCode = false;
+        var $faultCode = false;
 
-        public $faultString = false;
+        var $faultString = false;
 
-        public $methodName = '';
+        var $methodName = '';
 
-        public $params = [];
+        var $params = [];
 
         // Current variable stacks
-        public $_arraystructs = [];   // The stack used to keep track of the current array/struct
+        var $_arraystructs = [];   // The stack used to keep track of the current array/struct
 
-        public $_arraystructstypes = []; // Stack keeping track of if things are structs or array
+        var $_arraystructstypes = []; // Stack keeping track of if things are structs or array
 
-        public $_currentStructName = [];  // A stack as well
+        var $_currentStructName = [];  // A stack as well
 
-        public $_param;
+        var $_param;
 
-        public $_value;
+        var $_value;
 
-        public $_currentTag;
+        var $_currentTag;
 
-        public $_currentTagContents;
+        var $_currentTagContents;
 
         // The XML parser
-        public $_parser;
+        var $_parser;
 
+        /**
+         * PHP4 constructor.
+         */
         public function IXR_Message($message)
         {
-            $this->__construct($message);
+            self::__construct($message);
         }
 
-        public function __construct($message)
+        /**
+         * PHP5 constructor.
+         */
+        function __construct($message)
         {
             $this->message =& $message;
         }
 
-        public function parse()
+        function parse()
         {
             if(! function_exists('xml_parser_create'))
             {
@@ -50,7 +63,6 @@
 
                 return false;
             }
-
             // first remove the XML declaration
             // merged from WP #10698 - this method avoids the RAM usage of preg_replace on very large messages
             $header = preg_replace('/<\?xml.*?\?'.'>/s', '', substr($this->message, 0, 100), 1);
@@ -59,7 +71,6 @@
             {
                 return false;
             }
-
             // Then remove the DOCTYPE
             $header = preg_replace('/^<!DOCTYPE[^>]*+>/i', '', substr($this->message, 0, 200), 1);
             $this->message = trim(substr_replace($this->message, $header, 0, 200));
@@ -67,31 +78,34 @@
             {
                 return false;
             }
-
             // Check that the root tag is valid
             $root_tag = substr($this->message, 0, strcspn(substr($this->message, 0, 20), "> \t\r\n"));
-            if(
-                '<!DOCTYPE' === strtoupper($root_tag) || ! in_array($root_tag, [
-                    '<methodCall',
-                    '<methodResponse',
-                    '<fault'
-                ])
-            )
+            if('<!DOCTYPE' === strtoupper($root_tag))
             {
                 return false;
             }
-
+            if(! in_array($root_tag, ['<methodCall', '<methodResponse', '<fault']))
+            {
+                return false;
+            }
             // Bail if there are too many elements to parse
             $element_limit = 30000;
             if(function_exists('apply_filters'))
             {
+                /**
+                 * Filters the number of elements to parse in an XML-RPC response.
+                 *
+                 * @param int $element_limit Default elements limit.
+                 *
+                 * @since 4.0.0
+                 *
+                 */
                 $element_limit = apply_filters('xmlrpc_element_limit', $element_limit);
             }
             if($element_limit && 2 * $element_limit < substr_count($this->message, '<'))
             {
                 return false;
             }
-
             $this->_parser = xml_parser_create();
             // Set XML parser to take the case of tags in to account
             xml_parser_set_option($this->_parser, XML_OPTION_CASE_FOLDING, false);
@@ -99,24 +113,26 @@
             xml_set_object($this->_parser, $this);
             xml_set_element_handler($this->_parser, 'tag_open', 'tag_close');
             xml_set_character_data_handler($this->_parser, 'cdata');
-
             // 256Kb, parse in chunks to avoid the RAM usage on very large messages
             $chunk_size = 262144;
-
+            /**
+             * Filters the chunk size that can be used to parse an XML-RPC response message.
+             *
+             * @param int $chunk_size Chunk size to parse in bytes.
+             *
+             * @since 4.4.0
+             *
+             */
             $chunk_size = apply_filters('xmlrpc_chunk_parsing_size', $chunk_size);
-
             $final = false;
-
             do
             {
                 if(strlen($this->message) <= $chunk_size)
                 {
                     $final = true;
                 }
-
                 $part = substr($this->message, 0, $chunk_size);
                 $this->message = substr($this->message, $chunk_size);
-
                 if(! xml_parse($this->_parser, $part, $final))
                 {
                     xml_parser_free($this->_parser);
@@ -124,17 +140,14 @@
 
                     return false;
                 }
-
                 if($final)
                 {
                     break;
                 }
             }
             while(true);
-
             xml_parser_free($this->_parser);
             unset($this->_parser);
-
             // Grab the error messages, if any
             if($this->messageType == 'fault')
             {
@@ -145,7 +158,7 @@
             return true;
         }
 
-        public function tag_open($parser, $tag, $attr)
+        function tag_open($parser, $tag, $attr)
         {
             $this->_currentTagContents = '';
             $this->_currentTag = $tag;
@@ -167,12 +180,12 @@
             }
         }
 
-        public function cdata($parser, $cdata)
+        function cdata($parser, $cdata)
         {
             $this->_currentTagContents .= $cdata;
         }
 
-        public function tag_close($parser, $tag)
+        function tag_close($parser, $tag)
         {
             $valueFlag = false;
             switch($tag)
@@ -226,7 +239,6 @@
                     $this->methodName = trim($this->_currentTagContents);
                     break;
             }
-
             if($valueFlag)
             {
                 if(count($this->_arraystructs) > 0)

@@ -1,5 +1,13 @@
 <?php
-
+    /**
+     * Translation API: Continent and city translations for timezone selection
+     *
+     * This file is not included anywhere. It exists solely for use by xgettext.
+     *
+     * @package    WordPress
+     * @subpackage i18n
+     * @since      2.8.0
+     */
     __('Africa', 'continents-cities');
     __('Abidjan', 'continents-cities');
     __('Accra', 'continents-cities');
@@ -55,7 +63,6 @@
     __('Tripoli', 'continents-cities');
     __('Tunis', 'continents-cities');
     __('Windhoek', 'continents-cities');
-
     __('America', 'continents-cities');
     __('Adak', 'continents-cities');
     __('Anchorage', 'continents-cities');
@@ -221,7 +228,6 @@
     __('Winnipeg', 'continents-cities');
     __('Yakutat', 'continents-cities');
     __('Yellowknife', 'continents-cities');
-
     __('Antarctica', 'continents-cities');
     __('Casey', 'continents-cities');
     __('Davis', 'continents-cities');
@@ -235,10 +241,8 @@
     __('Syowa', 'continents-cities');
     __('Troll', 'continents-cities');
     __('Vostok', 'continents-cities');
-
     __('Arctic', 'continents-cities');
     __('Longyearbyen', 'continents-cities');
-
     __('Asia', 'continents-cities');
     __('Aden', 'continents-cities');
     __('Almaty', 'continents-cities');
@@ -338,7 +342,6 @@
     __('Yangon', 'continents-cities');
     __('Yekaterinburg', 'continents-cities');
     __('Yerevan', 'continents-cities');
-
     __('Atlantic', 'continents-cities');
     __('Azores', 'continents-cities');
     __('Bermuda', 'continents-cities');
@@ -352,7 +355,6 @@
     __('South Georgia', 'continents-cities');
     __('St Helena', 'continents-cities');
     __('Stanley', 'continents-cities');
-
     __('Australia', 'continents-cities');
     __('ACT', 'continents-cities');
     __('Adelaide', 'continents-cities');
@@ -377,7 +379,6 @@
     __('Victoria', 'continents-cities');
     __('West', 'continents-cities');
     __('Yancowinna', 'continents-cities');
-
     __('Etc', 'continents-cities');
     __('GMT', 'continents-cities');
     __('GMT+0', 'continents-cities');
@@ -414,7 +415,6 @@
     __('UTC', 'continents-cities');
     __('Universal', 'continents-cities');
     __('Zulu', 'continents-cities');
-
     __('Europe', 'continents-cities');
     __('Amsterdam', 'continents-cities');
     __('Andorra', 'continents-cities');
@@ -479,7 +479,6 @@
     __('Zagreb', 'continents-cities');
     __('Zaporozhye', 'continents-cities');
     __('Zurich', 'continents-cities');
-
     __('Indian', 'continents-cities');
     __('Antananarivo', 'continents-cities');
     __('Chagos', 'continents-cities');
@@ -492,7 +491,6 @@
     __('Mauritius', 'continents-cities');
     __('Mayotte', 'continents-cities');
     __('Reunion', 'continents-cities');
-
     __('Pacific', 'continents-cities');
     __('Apia', 'continents-cities');
     __('Auckland', 'continents-cities');

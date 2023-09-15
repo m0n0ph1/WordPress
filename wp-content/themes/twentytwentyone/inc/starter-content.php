@@ -1,10 +1,26 @@
 <?php
-
+    /**
+     * Twenty Twenty-One Starter Content
+     *
+     * @link       https://make.wordpress.org/core/2016/11/30/starter-content-for-themes-in-4-7/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty_One
+     * @since      Twenty Twenty-One 1.0
+     */
+    /**
+     * Function to return the array of starter content for the theme.
+     *
+     * Passes it through the `twenty_twenty_one_starter_content` filter before returning.
+     *
+     * @return array A filtered array of args for the starter_content.
+     * @since Twenty Twenty-One 1.0
+     *
+     */
     function twenty_twenty_one_get_starter_content()
     {
         // Define and register starter content to showcase the theme on new sites.
         $starter_content = [
-
             // Specify the core-defined pages to create and add custom thumbnails to some of them.
             'posts' => [
                 'front' => [
@@ -121,14 +137,12 @@
                 'contact',
                 'blog',
             ],
-
             // Default to a static front page and assign the front and posts pages.
             'options' => [
                 'show_on_front' => 'page',
                 'page_on_front' => '{{front}}',
                 'page_for_posts' => '{{blog}}',
             ],
-
             // Set up nav menus for each of the two areas registered in the theme.
             'nav_menus' => [
                 // Assign a menu to the "primary" location.
@@ -142,7 +156,6 @@
                         'page_contact',
                     ],
                 ],
-
                 // Assign a menu to the "footer" location.
                 'footer' => [
                     'name' => esc_html__('Secondary menu', 'twentytwentyone'),
@@ -156,5 +169,13 @@
             ],
         ];
 
+        /**
+         * Filters the array of starter content.
+         *
+         * @param array $starter_content Array of starter content.
+         *
+         * @since Twenty Twenty-One 1.0
+         *
+         */
         return apply_filters('twenty_twenty_one_starter_content', $starter_content);
     }

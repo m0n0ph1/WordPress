@@ -1,24 +1,37 @@
 <?php
-
+    /**
+     * Retrieves and creates the wp-config.php file.
+     *
+     * The permissions for the base directory must allow for writing files in order
+     * for the wp-config.php to be created using this page.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /**
+     * We are installing.
+     */
     define('WP_INSTALLING', true);
-
+    /**
+     * We are blissfully unaware of anything.
+     */
     define('WP_SETUP_CONFIG', true);
-
+    /**
+     * Disable error reporting
+     *
+     * Set this to error_reporting( -1 ) for debugging
+     */
     error_reporting(0);
-
     if(! defined('ABSPATH'))
     {
         define('ABSPATH', dirname(__DIR__).'/');
     }
-
     require ABSPATH.'wp-settings.php';
-
+    /** Load WordPress Administration Upgrade API */
     require_once ABSPATH.'wp-admin/includes/upgrade.php';
-
+    /** Load WordPress Translation Installation API */
     require_once ABSPATH.'wp-admin/includes/translation-install.php';
-
     nocache_headers();
-
     // Support wp-config-sample.php one level up, for the develop repo.
     if(file_exists(ABSPATH.'wp-config-sample.php'))
     {
@@ -32,21 +45,26 @@
     {
         wp_die(sprintf(/* translators: %s: wp-config-sample.php */ __('Sorry, I need a %s file to work from. Please re-upload this file to your WordPress installation.'), '<code>wp-config-sample.php</code>'));
     }
-
     // Check if wp-config.php has been created.
     if(file_exists(ABSPATH.'wp-config.php'))
     {
         wp_die('<p>'.sprintf(/* translators: 1: wp-config.php, 2: install.php */ __('The file %1$s already exists. If you need to reset any of the configuration items in this file, please delete it first. You may try <a href="%2$s">installing now</a>.'), '<code>wp-config.php</code>', 'install.php').'</p>', 409);
     }
-
     // Check if wp-config.php exists above the root directory but is not part of another installation.
     if(@file_exists(ABSPATH.'../wp-config.php') && ! @file_exists(ABSPATH.'../wp-settings.php'))
     {
         wp_die('<p>'.sprintf(/* translators: 1: wp-config.php, 2: install.php */ __('The file %1$s already exists one level above your WordPress installation. If you need to reset any of the configuration items in this file, please delete it first. You may try <a href="%2$s">installing now</a>.'), '<code>wp-config.php</code>', 'install.php').'</p>', 409);
     }
-
     $step = isset($_GET['step']) ? (int) $_GET['step'] : -1;
-
+    /**
+     * Display setup wp-config.php file header.
+     *
+     * @param string|string[] $body_classes Class attribute values for the body tag.
+     *
+     * @since 2.3.0
+     *
+     * @ignore
+     */
     function setup_config_display_header($body_classes = [])
     {
     $body_classes = (array) $body_classes;
@@ -57,7 +75,6 @@
         $body_classes[] = 'rtl';
         $dir_attr = ' dir="rtl"';
     }
-
     header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html>
@@ -73,7 +90,6 @@
 <p id="logo"><?php _e('WordPress'); ?></p>
 <?php
     } // End function setup_config_display_header();
-
     $language = '';
     if(! empty($_REQUEST['language']))
     {
@@ -83,7 +99,6 @@
     {
         $language = $GLOBALS['wp_local_package'];
     }
-
     switch($step)
     {
         case -1:
@@ -100,9 +115,7 @@
                     break;
                 }
             }
-
         // Deliberately fall through if we can't reach the translations API.
-
     case 0:
         if(! empty($language))
         {
@@ -158,13 +171,10 @@
         </p>
     <?php
         break;
-
         case 1:
         load_default_textdomain($language);
         $GLOBALS['wp_locale'] = new WP_Locale();
-
         setup_config_display_header();
-
         $autofocus = wp_is_mobile() ? '' : ' autofocus';
     ?>
         <h1 class="screen-reader-text">
@@ -264,24 +274,20 @@
     <?php
         wp_print_scripts('password-toggle');
         break;
-
         case 2:
         load_default_textdomain($language);
         $GLOBALS['wp_locale'] = new WP_Locale();
-
         $dbname = trim(wp_unslash($_POST['dbname']));
         $uname = trim(wp_unslash($_POST['uname']));
         $pwd = trim(wp_unslash($_POST['pwd']));
         $dbhost = trim(wp_unslash($_POST['dbhost']));
         $prefix = trim(wp_unslash($_POST['prefix']));
-
         $step_1 = 'setup-config.php?step=1';
         $install = 'install.php';
         if(isset($_REQUEST['noapi']))
         {
             $step_1 .= '&amp;noapi';
         }
-
         if(! empty($language))
         {
             $step_1 .= '&amp;language='.$language;
@@ -291,52 +297,46 @@
         {
             $install .= '?language=en_US';
         }
-
         $tryagain_link = '</p><p class="step"><a href="'.$step_1.'" onclick="javascript:history.go(-1);return false;" class="button button-large">'.__('Try Again').'</a>';
-
         if(empty($prefix))
         {
             wp_die(__('<strong>Error:</strong> "Table Prefix" must not be empty.').$tryagain_link);
         }
-
         // Validate $prefix: it can only contain letters, numbers and underscores.
         if(preg_match('|[^a-z0-9_]|i', $prefix))
         {
             wp_die(__('<strong>Error:</strong> "Table Prefix" can only contain numbers, letters, and underscores.').$tryagain_link);
         }
-
         // Test the DB connection.
-
+        /**#@+
+         *
+         * @ignore
+         */
         define('DB_NAME', $dbname);
         define('DB_USER', $uname);
         define('DB_PASSWORD', $pwd);
         define('DB_HOST', $dbhost);
-
+        /**#@-*/
         // Re-construct $wpdb with these new values.
         unset($wpdb);
         require_wp_db();
-
         /*
         * The wpdb constructor bails when WP_SETUP_CONFIG is set, so we must
         * fire this manually. We'll fail here if the values are no good.
         */
         $wpdb->db_connect();
-
         if(! empty($wpdb->error))
         {
             wp_die($wpdb->error->get_error_message().$tryagain_link);
         }
-
         $errors = $wpdb->suppress_errors();
         $wpdb->query("SELECT $prefix");
         $wpdb->suppress_errors($errors);
-
         if(! $wpdb->last_error)
         {
             // MySQL was able to parse the prefix as a value, which we don't want. Bail.
             wp_die(__('<strong>Error:</strong> "Table Prefix" is invalid.'));
         }
-
         // Generate keys and salts using secure CSPRNG; fallback to API if enabled; further fallback to original wp_generate_password().
         try
         {
@@ -355,12 +355,10 @@
         catch(Exception $ex)
         {
             $no_api = isset($_POST['noapi']);
-
             if(! $no_api)
             {
                 $secret_keys = wp_remote_get('https://api.wordpress.org/secret-key/1.1/salt/');
             }
-
             if($no_api || is_wp_error($secret_keys))
             {
                 $secret_keys = [];
@@ -378,7 +376,6 @@
                 }
             }
         }
-
         $key = 0;
         foreach($config_file as $line_num => $line)
         {
@@ -387,15 +384,12 @@
                 $config_file[$line_num] = '$table_prefix = \''.addcslashes($prefix, "\\'")."';\r\n";
                 continue;
             }
-
             if(! preg_match('/^define\(\s*\'([A-Z_]+)\',([ ]+)/', $line, $match))
             {
                 continue;
             }
-
             $constant = $match[1];
             $padding = $match[2];
-
             switch($constant)
             {
                 case 'DB_NAME':
@@ -423,68 +417,7 @@
             }
         }
         unset($line);
-
-        if(is_writable(ABSPATH)) :
-        if(file_exists(ABSPATH.'wp-config-sample.php'))
-        {
-            $path_to_wp_config = ABSPATH.'wp-config.php';
-        }
-        else
-        {
-            $path_to_wp_config = dirname(ABSPATH).'/wp-config.php';
-        }
-
-        $error_message = '';
-        $handle = fopen($path_to_wp_config, 'w');
-        /*
-         * Why check for the absence of false instead of checking for resource with is_resource()?
-         * To future-proof the check for when fopen returns object instead of resource, i.e. a known
-         * change coming in PHP.
-         */
-        if(false !== $handle)
-        {
-            foreach($config_file as $line)
-            {
-                fwrite($handle, $line);
-            }
-            fclose($handle);
-        }
-        else
-        {
-            $wp_config_perms = fileperms($path_to_wp_config);
-            if(! empty($wp_config_perms) && ! is_writable($path_to_wp_config))
-            {
-                $error_message = sprintf(/* translators: 1: wp-config.php, 2: Documentation URL. */ __('You need to make the file %1$s writable before you can save your changes. See <a href="%2$s">Changing File Permissions</a> for more information.'), '<code>wp-config.php</code>', __('https://wordpress.org/documentation/article/changing-file-permissions/'));
-            }
-            else
-            {
-                $error_message = sprintf(/* translators: %s: wp-config.php */ __('Unable to write to %s file.'), '<code>wp-config.php</code>');
-            }
-        }
-
-        chmod($path_to_wp_config, 0666);
-        setup_config_display_header();
-
-        if(false !== $handle) :
-    ?>
-        <h1 class="screen-reader-text">
-            <?php
-                /* translators: Hidden accessibility text. */
-                _e('Successful database connection');
-            ?>
-        </h1>
-        <p><?php _e('All right, sparky! You&#8217;ve made it through this part of the installation. WordPress can now communicate with your database. If you are ready, time now to&hellip;'); ?></p>
-
-        <p class="step"><a href="<?php echo $install; ?>"
-                           class="button button-large"><?php _e('Run the installation'); ?></a></p>
-    <?php else :
-        printf('<p>%s</p>', $error_message);
-    endif;
-        else :
-        /*
-         * If this file doesn't exist, then we are using the wp-config-sample.php
-         * file one level up, which is for the develop repo.
-         */
+        if(! is_writable(ABSPATH)) :
         setup_config_display_header();
     ?>
         <p>
@@ -497,9 +430,7 @@
             <?php
                 /* translators: %s: wp-config.php */
                 printf(__('You can create the %s file manually and paste the following text into it.'), '<code>wp-config.php</code>');
-
                 $config_text = '';
-
                 foreach($config_file as $line)
                 {
                     $config_text .= htmlentities($line, ENT_COMPAT, 'UTF-8');
@@ -531,6 +462,63 @@
             })();
         </script>
     <?php
+        else :
+        /*
+         * If this file doesn't exist, then we are using the wp-config-sample.php
+         * file one level up, which is for the develop repo.
+         */
+        if(file_exists(ABSPATH.'wp-config-sample.php'))
+        {
+            $path_to_wp_config = ABSPATH.'wp-config.php';
+        }
+        else
+        {
+            $path_to_wp_config = dirname(ABSPATH).'/wp-config.php';
+        }
+        $error_message = '';
+        $handle = fopen($path_to_wp_config, 'w');
+        /*
+         * Why check for the absence of false instead of checking for resource with is_resource()?
+         * To future-proof the check for when fopen returns object instead of resource, i.e. a known
+         * change coming in PHP.
+         */
+        if(false !== $handle)
+        {
+            foreach($config_file as $line)
+            {
+                fwrite($handle, $line);
+            }
+            fclose($handle);
+        }
+        else
+        {
+            $wp_config_perms = fileperms($path_to_wp_config);
+            if(! empty($wp_config_perms) && ! is_writable($path_to_wp_config))
+            {
+                $error_message = sprintf(/* translators: 1: wp-config.php, 2: Documentation URL. */ __('You need to make the file %1$s writable before you can save your changes. See <a href="%2$s">Changing File Permissions</a> for more information.'), '<code>wp-config.php</code>', __('https://wordpress.org/documentation/article/changing-file-permissions/'));
+            }
+            else
+            {
+                $error_message = sprintf(/* translators: %s: wp-config.php */ __('Unable to write to %s file.'), '<code>wp-config.php</code>');
+            }
+        }
+        chmod($path_to_wp_config, 0666);
+        setup_config_display_header();
+        if(false !== $handle) :
+    ?>
+        <h1 class="screen-reader-text">
+            <?php
+                /* translators: Hidden accessibility text. */
+                _e('Successful database connection');
+            ?>
+        </h1>
+        <p><?php _e('All right, sparky! You&#8217;ve made it through this part of the installation. WordPress can now communicate with your database. If you are ready, time now to&hellip;'); ?></p>
+
+        <p class="step"><a href="<?php echo $install; ?>"
+                           class="button button-large"><?php _e('Run the installation'); ?></a></p>
+    <?php else :
+        printf('<p>%s</p>', $error_message);
+    endif;
     endif;
         break;
     } // End of the steps switch.

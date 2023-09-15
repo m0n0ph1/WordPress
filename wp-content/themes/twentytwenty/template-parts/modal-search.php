@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Displays the search icon and modal
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty
+     * @since      Twenty Twenty 1.0
+     */
 ?>
 <div class="search-modal cover-modal header-footer-group"
      data-modal-target-string=".search-modal"

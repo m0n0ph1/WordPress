@@ -8,11 +8,10 @@
 // Please see readme.txt for more information                  //
 //                                                            ///
 /////////////////////////////////////////////////////////////////
-
 // define a constant rather than looking up every time it is needed
     if(! defined('GETID3_OS_ISWINDOWS'))
     {
-        define('GETID3_OS_ISWINDOWS', (strncasecmp(PHP_OS, 'WIN', 3) === 0));
+        define('GETID3_OS_ISWINDOWS', (stripos(PHP_OS, 'WIN') === 0));
     }
 // Get base path of getID3() - ONCE
     if(! defined('GETID3_INCLUDEPATH'))
@@ -23,7 +22,6 @@
     { // PHP5.3 adds ENT_IGNORE, PHP5.4 adds ENT_SUBSTITUTE
         define('ENT_SUBSTITUTE', (defined('ENT_IGNORE') ? ENT_IGNORE : 8));
     }
-
     /*
     https://www.getid3.org/phpBB3/viewtopic.php?t=2114
     If you are running into a the problem where filenames with special characters are being handled
@@ -31,7 +29,6 @@
     and you are passing in the filename in UTF8 (typically via a HTML form), try uncommenting this line:
     */
 // setlocale(LC_CTYPE, 'en_US.UTF-8');
-
 // attempt to define temp dir as something flexible but reliable
     $temp_dir = ini_get('upload_tmp_dir');
     if($temp_dir && (! is_dir($temp_dir) || ! is_readable($temp_dir)))
@@ -86,120 +83,322 @@
     unset($open_basedir, $temp_dir);
 
 // End: Defines
-
     class getID3
     {
         /*
          * Settings
          */
+        const VERSION = '1.9.22-202207161647';
 
-        public const VERSION = '1.9.22-202207161647';
+        const FREAD_BUFFER_SIZE = 32768;
 
-        public const FREAD_BUFFER_SIZE = 32768;
-
-        public const ATTACHMENTS_NONE = false;
+        const ATTACHMENTS_NONE = false;
 
         /*
          * Optional tag checks - disable for speed.
          */
-        public const ATTACHMENTS_INLINE = true;
+        const ATTACHMENTS_INLINE = true;
 
+        /**
+         * CASE SENSITIVE! - i.e. (must be supported by iconv()). Examples:  ISO-8859-1  UTF-8  UTF-16  UTF-16BE
+         *
+         * @var string
+         */
         public $encoding = 'UTF-8';
 
+        /**
+         * Should always be 'ISO-8859-1', but some tags may be written in other encodings such as 'EUC-CN' or 'CP1252'
+         *
+         * @var string
+         */
         public $encoding_id3v1 = 'ISO-8859-1';
 
+        /**
+         * ID3v1 should always be 'ISO-8859-1', but some tags may be written in other encodings such as 'Windows-1251'
+         * or 'KOI8-R'. If true attempt to detect these encodings, but may return incorrect values for some tags
+         * actually in ISO-8859-1 encoding
+         *
+         * @var bool
+         */
         public $encoding_id3v1_autodetect = false;
 
+        /**
+         * Read and process ID3v1 tags
+         *
+         * @var bool
+         */
         public $option_tag_id3v1 = true;
 
+        /**
+         * Read and process ID3v2 tags
+         *
+         * @var bool
+         */
         public $option_tag_id3v2 = true;
 
         /*
          * Optional tag/comment calculations
          */
-
+        /**
+         * Read and process Lyrics3 tags
+         *
+         * @var bool
+         */
         public $option_tag_lyrics3 = true;
 
         /*
          * Optional handling of embedded attachments (e.g. images)
          */
-
+        /**
+         * Read and process APE tags
+         *
+         * @var bool
+         */
         public $option_tag_apetag = true;
 
         /*
          * Optional calculations
          */
-
+        /**
+         * Copy tags to root key 'tags' and encode to $this->encoding
+         *
+         * @var bool
+         */
         public $option_tags_process = true;
 
+        /**
+         * Copy tags to root key 'tags_html' properly translated from various encodings to HTML entities
+         *
+         * @var bool
+         */
         public $option_tags_html = true;
 
+        /**
+         * Calculate additional info such as bitrate, channelmode etc
+         *
+         * @var bool
+         */
         public $option_extra_info = true;
 
+        /**
+         * Defaults to true (ATTACHMENTS_INLINE) for backward compatibility
+         *
+         * @var bool|string
+         */
         public $option_save_attachments = true;
 
+        /**
+         * Get MD5 sum of data part - slow
+         *
+         * @var bool
+         */
         public $option_md5_data = false;
 
         // module-specific options
 
+        /**
+         * Use MD5 of source file if available - only FLAC and OptimFROG
+         *
+         * @var bool
+         */
         public $option_md5_data_source = false;
 
+        /**
+         * Get SHA1 sum of data part - slow
+         *
+         * @var bool
+         */
         public $option_sha1_data = false;
 
+        /**
+         * Check whether file is larger than 2GB and thus not supported by 32-bit PHP (null: auto-detect based on
+         * PHP_INT_MAX)
+         *
+         * @var bool|null
+         */
         public $option_max_2gb_check;
 
+        /**
+         * Read buffer size in bytes
+         *
+         * @var int
+         */
         public $option_fread_buffer_size = 32768;
 
+        /** archive.rar
+         * if true use PHP RarArchive extension, if false (non-extension parsing not yet written in getID3)
+         *
+         * @var bool
+         */
         public $options_archive_rar_use_php_rar_extension = true;
 
+        /** archive.gzip
+         * Optional file list - disable for speed.
+         * Decode gzipped files, if possible, and parse recursively (.tar.gz for example).
+         *
+         * @var bool
+         */
         public $options_archive_gzip_parse_contents = false;
 
+        /** audio.midi
+         * if false only parse most basic information, much faster for some files but may be inaccurate
+         *
+         * @var bool
+         */
         public $options_audio_midi_scanwholefile = true;
 
+        /** audio.mp3
+         * Forces getID3() to scan the file byte-by-byte and log all the valid audio frame headers - extremely slow,
+         * unrecommended, but may provide data from otherwise-unusable files.
+         *
+         * @var bool
+         */
         public $options_audio_mp3_allow_bruteforce = false;
 
+        /** audio.mp3
+         * number of frames to scan to determine if MPEG-audio sequence is valid
+         * Lower this number to 5-20 for faster scanning
+         * Increase this number to 50+ for most accurate detection of valid VBR/CBR mpeg-audio streams
+         *
+         * @var int
+         */
         public $options_audio_mp3_mp3_valid_check_frames = 50;
 
+        /** audio.wavpack
+         * Avoid scanning all frames (break after finding ID_RIFF_HEADER and ID_CONFIG_BLOCK,
+         * significantly faster for very large files but other data may be missed
+         *
+         * @var bool
+         */
         public $options_audio_wavpack_quick_parsing = false;
 
+        /** audio-video.flv
+         * Break out of the loop if too many frames have been scanned; only scan this
+         * many if meta frame does not contain useful duration.
+         *
+         * @var int
+         */
         public $options_audiovideo_flv_max_frames = 100000;
 
+        /** audio-video.matroska
+         * If true, do not return information about CLUSTER chunks, since there's a lot of them
+         * and they're not usually useful [default: TRUE].
+         *
+         * @var bool
+         */
         public $options_audiovideo_matroska_hide_clusters = true;
 
+        /** audio-video.matroska
+         * True to parse the whole file, not only header [default: FALSE].
+         *
+         * @var bool
+         */
         public $options_audiovideo_matroska_parse_whole_file = false;
 
+        /** audio-video.quicktime
+         * return all parsed data from all atoms if true, otherwise just returned parsed metadata
+         *
+         * @var bool
+         */
         public $options_audiovideo_quicktime_ReturnAtomData = false;
 
+        /** audio-video.quicktime
+         * return all parsed data from all atoms if true, otherwise just returned parsed metadata
+         *
+         * @var bool
+         */
         public $options_audiovideo_quicktime_ParseAllPossibleAtoms = false;
 
+        /** audio-video.swf
+         * return all parsed tags if true, otherwise do not return tags not parsed by getID3
+         *
+         * @var bool
+         */
         public $options_audiovideo_swf_ReturnAllTagData = false;
 
+        /** graphic.bmp
+         * return BMP palette
+         *
+         * @var bool
+         */
         public $options_graphic_bmp_ExtractPalette = false;
 
         // Public variables
 
+        /** graphic.bmp
+         * return image data
+         *
+         * @var bool
+         */
         public $options_graphic_bmp_ExtractData = false;
 
+        /** graphic.png
+         * If data chunk is larger than this do not read it completely (getID3 only needs the first
+         * few dozen bytes for parsing).
+         *
+         * @var int
+         */
         public $options_graphic_png_max_data_bytes = 10000000;
 
+        /** misc.pdf
+         * return full details of PDF Cross-Reference Table (XREF)
+         *
+         * @var bool
+         */
         public $options_misc_pdf_returnXREF = false;
 
+        /** misc.torrent
+         * Assume all .torrent files are less than 1MB and just read entire thing into memory for easy processing.
+         * Override this value if you need to process files larger than 1MB
+         *
+         * @var int
+         */
         public $options_misc_torrent_max_torrent_filesize = 1048576;
 
+        /**
+         * Filename of file being analysed.
+         *
+         * @var string
+         */
         public $filename;
 
+        /**
+         * Filepointer to file being analysed.
+         *
+         * @var resource
+         */
         public $fp;
 
+        /**
+         * Result array.
+         *
+         * @var array
+         */
         public $info;
 
+        /**
+         * @var string
+         */
         public $tempdir = GETID3_TEMP_DIR;
 
+        /**
+         * @var int
+         */
         public $memory_limit = 0;
 
+        /**
+         * @var string
+         */
         protected $startup_error = '';
 
+        /**
+         * @var string
+         */
         protected $startup_warning = '';
 
+        /**
+         * @throws getid3_exception
+         */
         public function __construct()
         {
             // Check for PHP version
@@ -210,7 +409,6 @@
 
                 return;
             }
-
             // Check memory
             $memoryLimit = ini_get('memory_limit');
             if(preg_match('#([0-9]+) ?M#i', $memoryLimit, $matches))
@@ -224,7 +422,6 @@
                 $memoryLimit = $matches[1] * 1073741824;
             }
             $this->memory_limit = $memoryLimit;
-
             if($this->memory_limit <= 0)
             {
                 // memory limits probably disabled
@@ -237,13 +434,11 @@
             {
                 $this->startup_warning .= 'PHP has less than 12MB available memory and might run out if all modules are loaded. Increase memory_limit in php.ini'."\n";
             }
-
             // Check safe_mode off
             if(preg_match('#(1|ON)#i', ini_get('safe_mode')))
             { // phpcs:ignore PHPCompatibility.IniDirectives.RemovedIniDirectives.safe_modeDeprecatedRemoved
                 $this->warning('WARNING: Safe mode is on, shorten support disabled, md5data/sha1data for ogg vorbis disabled, ogg vorbos/flac tag writing disabled.');
             }
-
             // phpcs:ignore PHPCompatibility.IniDirectives.RemovedIniDirectives.mbstring_func_overloadDeprecated
             if(($mbstring_func_overload = (int) ini_get('mbstring.func_overload')) && ($mbstring_func_overload & 0x02))
             {
@@ -253,33 +448,37 @@
                 // phpcs:ignore PHPCompatibility.IniDirectives.RemovedIniDirectives.mbstring_func_overloadDeprecated
                 $this->startup_error .= 'WARNING: php.ini contains "mbstring.func_overload = '.ini_get('mbstring.func_overload').'", getID3 cannot run with this setting (bitmask 2 (string functions) cannot be set). Recommended to disable entirely.'."\n";
             }
-
             // check for magic quotes in PHP < 7.4.0 (when these functions became deprecated)
-            if(PHP_VERSION_ID < 70400)
+            if(version_compare(PHP_VERSION, '7.4.0', '<'))
             {
                 // Check for magic_quotes_runtime
-                if(function_exists('get_magic_quotes_runtime') && get_magic_quotes_runtime())
+                if(function_exists('get_magic_quotes_runtime'))
                 {
-                    $this->startup_error .= 'magic_quotes_runtime must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_runtime(0) and set_magic_quotes_runtime(1).'."\n";
+                    // phpcs:ignore PHPCompatibility.FunctionUse.RemovedFunctions.get_magic_quotes_runtimeDeprecated
+                    if(get_magic_quotes_runtime())
+                    {
+                        $this->startup_error .= 'magic_quotes_runtime must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_runtime(0) and set_magic_quotes_runtime(1).'."\n";
+                    }
                 }
                 // Check for magic_quotes_gpc
-                if(function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc())
+                if(function_exists('get_magic_quotes_gpc'))
                 {
-                    $this->startup_error .= 'magic_quotes_gpc must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_gpc(0) and set_magic_quotes_gpc(1).'."\n";
+                    // phpcs:ignore PHPCompatibility.FunctionUse.RemovedFunctions.get_magic_quotes_gpcDeprecated
+                    if(get_magic_quotes_gpc())
+                    {
+                        $this->startup_error .= 'magic_quotes_gpc must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_gpc(0) and set_magic_quotes_gpc(1).'."\n";
+                    }
                 }
             }
-
             // Load support library
             if(! include_once(GETID3_INCLUDEPATH.'getid3.lib.php'))
             {
                 $this->startup_error .= 'getid3.lib.php is missing or corrupt'."\n";
             }
-
             if($this->option_max_2gb_check === null)
             {
                 $this->option_max_2gb_check = (PHP_INT_MAX <= 2147483647);
             }
-
             // Needed for Windows only:
             // Define locations of helper applications for Shorten, VorbisComment, MetaFLAC
             //   as well as other helper functions such as head, etc
@@ -289,7 +488,6 @@
             if(GETID3_OS_ISWINDOWS && ! defined('GETID3_HELPERAPPSDIR'))
             {
                 $helperappsdir = GETID3_INCLUDEPATH.'..'.DIRECTORY_SEPARATOR.'helperapps'; // must not have any space in this path
-
                 if(! is_dir($helperappsdir))
                 {
                     $this->startup_warning .= '"'.$helperappsdir.'" cannot be defined as GETID3_HELPERAPPSDIR because it does not exist'."\n";
@@ -313,7 +511,7 @@
                                     if(preg_match('#^([0-9/]{10}) +([0-9:]{4,5}( [AP]M)?) +(<DIR>|[0-9,]+) +([^ ]{0,11}) +(.+)$#', $line, $matches))
                                     {
                                         [$dummy, $date, $time, $ampm, $filesize, $shortname, $filename] = $matches;
-                                        if((strtoupper($filesize) == '<DIR>') && (strtolower($filename) === strtolower($value)))
+                                        if((strtoupper($filesize) == '<DIR>') && (strtolower($filename) == strtolower($value)))
                                         {
                                             $value = $shortname;
                                         }
@@ -331,7 +529,6 @@
                 }
                 define('GETID3_HELPERAPPSDIR', $helperappsdir.DIRECTORY_SEPARATOR);
             }
-
             if(! empty($this->startup_error))
             {
                 echo $this->startup_error;
@@ -339,6 +536,13 @@
             }
         }
 
+        /**
+         * Warning handling.
+         *
+         * @param string $message
+         *
+         * @return bool
+         */
         public function warning($message)
         {
             $this->info['warning'][] = $message;
@@ -346,6 +550,11 @@
             return true;
         }
 
+        /**
+         * @param string $filename
+         *
+         * @return bool
+         */
         public static function is_writable($filename)
         {
             $ret = is_writable($filename);
@@ -358,11 +567,19 @@
             return $ret;
         }
 
+        /**
+         * @return int
+         */
         public function fread_buffer_size()
         {
             return $this->option_fread_buffer_size;
         }
 
+        /**
+         * @param array $optArray
+         *
+         * @return bool
+         */
         public function setOption($optArray)
         {
             if(! is_array($optArray) || empty($optArray))
@@ -381,6 +598,16 @@
             return true;
         }
 
+        /**
+         * analyze file
+         *
+         * @param string   $filename
+         * @param int      $filesize
+         * @param string   $original_filename
+         * @param resource $fp
+         *
+         * @return array
+         */
         public function analyze($filename, $filesize = null, $original_filename = '', $fp = null)
         {
             try
@@ -389,7 +616,6 @@
                 {
                     return $this->info;
                 }
-
                 // Handle tags
                 foreach(
                     [
@@ -427,13 +653,12 @@
                         $this->info['avdataend'] = min($this->info['avdataend'], $this->info[$tag_key]['tag_offset_start']);
                     }
                 }
-
                 // ID3v2 detection (NOT parsing), even if ($this->option_tag_id3v2 == false) done to make fileformat easier
                 if(! $this->option_tag_id3v2)
                 {
                     fseek($this->fp, 0);
                     $header = fread($this->fp, 10);
-                    if((strpos($header, 'ID3') === 0) && (strlen($header) == 10))
+                    if((substr($header, 0, 3) == 'ID3') && (strlen($header) == 10))
                     {
                         $this->info['id3v2']['header'] = true;
                         $this->info['id3v2']['majorversion'] = ord($header[3]);
@@ -441,14 +666,11 @@
                         $this->info['avdataoffset'] += getid3_lib::BigEndian2Int(substr($header, 6, 4), 1) + 10; // length of ID3v2 tag in 10-byte header doesn't include 10-byte header length
                     }
                 }
-
                 // read 32 kb file data
                 fseek($this->fp, $this->info['avdataoffset']);
                 $formattest = fread($this->fp, 32774);
-
                 // determine format
                 $determined_format = $this->GetFileFormat($formattest, ($original_filename ? $original_filename : $filename));
-
                 // unable to determine file format
                 if(! $determined_format)
                 {
@@ -456,7 +678,6 @@
 
                     return $this->error('unable to determine file format');
                 }
-
                 // check for illegal ID3 tags
                 if(isset($determined_format['fail_id3']) && (in_array('id3v1', $this->info['tags']) || in_array('id3v2', $this->info['tags'])))
                 {
@@ -471,7 +692,6 @@
                         $this->warning('ID3 tags not allowed on this file type.');
                     }
                 }
-
                 // check for illegal APE tags
                 if(isset($determined_format['fail_ape']) && in_array('ape', $this->info['tags']))
                 {
@@ -486,10 +706,8 @@
                         $this->warning('APE tags not allowed on this file type.');
                     }
                 }
-
                 // set mime type
                 $this->info['mime_type'] = $determined_format['mime_type'];
-
                 // supported format signature pattern detected, but module deleted
                 if(! file_exists(GETID3_INCLUDEPATH.$determined_format['include']))
                 {
@@ -497,7 +715,6 @@
 
                     return $this->error('Format not supported, module "'.$determined_format['include'].'" was removed.');
                 }
-
                 // module requires mb_convert_encoding/iconv support
                 // Check encoding/iconv support
                 if(
@@ -522,10 +739,8 @@
 
                     return $this->error($errormessage);
                 }
-
                 // include module
                 include_once(GETID3_INCLUDEPATH.$determined_format['include']);
-
                 // instantiate module class
                 $class_name = 'getid3_'.$determined_format['module'];
                 if(! class_exists($class_name))
@@ -533,7 +748,6 @@
                     return $this->error('Format not supported, module "'.$determined_format['include'].'" is corrupt.');
                 }
                 $class = new $class_name($this);
-
                 // set module-specific options
                 foreach(get_object_vars($this) as $getid3_object_vars_key => $getid3_object_vars_value)
                 {
@@ -547,19 +761,15 @@
                         }
                     }
                 }
-
                 $class->Analyze();
                 unset($class);
-
                 // close file
                 fclose($this->fp);
-
                 // process all tags - copy to 'tags' and convert charsets
                 if($this->option_tags_process)
                 {
                     $this->HandleAllTags();
                 }
-
                 // perform more calculations
                 if($this->option_extra_info)
                 {
@@ -569,7 +779,6 @@
                     $this->CalculateReplayGain();
                     $this->ProcessAudioStreams();
                 }
-
                 // get the MD5 sum of the audio/video portion of the file - without ID3/APE/Lyrics3/etc header/footer tags
                 if($this->option_md5_data)
                 {
@@ -579,13 +788,11 @@
                         $this->getHashdata('md5');
                     }
                 }
-
                 // get the SHA1 sum of the audio/video portion of the file - without ID3/APE/Lyrics3/etc header/footer tags
                 if($this->option_sha1_data)
                 {
                     $this->getHashdata('sha1');
                 }
-
                 // remove undesired keys
                 $this->CleanUp();
             }
@@ -598,6 +805,15 @@
             return $this->info;
         }
 
+        /**
+         * @param string   $filename
+         * @param int      $filesize
+         * @param resource $fp
+         *
+         * @return bool
+         *
+         * @throws getid3_exception
+         */
         public function openfile($filename, $filesize = null, $fp = null)
         {
             try
@@ -613,22 +829,18 @@
                         $this->warning($startup_warning);
                     }
                 }
-
                 // init result array and set parameters
                 $this->filename = $filename;
                 $this->info = [];
                 $this->info['GETID3_VERSION'] = $this->version();
                 $this->info['php_memory_limit'] = (($this->memory_limit > 0) ? $this->memory_limit : false);
-
                 // remote files not supported
                 if(preg_match('#^(ht|f)tps?://#', $filename))
                 {
                     throw new getid3_exception('Remote files are not supported - please copy the file locally first');
                 }
-
                 $filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
                 //$filename = preg_replace('#(?<!gs:)('.preg_quote(DIRECTORY_SEPARATOR).'{2,})#', DIRECTORY_SEPARATOR, $filename);
-
                 // open local file
                 // if (is_readable($filename) && is_file($filename) && ($this->fp = fopen($filename, 'rb'))) { // see https://www.getid3.org/phpBB3/viewtopic.php?t=1720
                 if(($fp != null) && ((get_resource_type($fp) == 'file') || (get_resource_type($fp) == 'stream')))
@@ -660,7 +872,6 @@
                     }
                     throw new getid3_exception('Could not open "'.$filename.'" ('.implode('; ', $errormessagelist).')');
                 }
-
                 $this->info['filesize'] = (! is_null($filesize) ? $filesize : filesize($filename));
                 // set redundant parameters - might be needed in some include file
                 // filenames / filepaths in getID3 are always expressed with forward slashes (unix-style) for both Windows and other to try and minimize confusion
@@ -668,7 +879,6 @@
                 $this->info['filepath'] = str_replace('\\', '/', realpath(dirname($filename)));
                 $this->info['filename'] = getid3_lib::mb_basename($filename);
                 $this->info['filenamepath'] = $this->info['filepath'].'/'.$this->info['filename'];
-
                 // set more parameters
                 $this->info['avdataoffset'] = 0;
                 $this->info['avdataend'] = $this->info['filesize'];
@@ -680,7 +890,6 @@
                 $this->info['warning'] = [];           // filled in later, unset if not used
                 $this->info['comments'] = [];           // filled in later, unset if not used
                 $this->info['encoding'] = $this->encoding;   // required by id3v2 and iso modules - can be unset at the end if desired
-
                 // option_max_2gb_check
                 if($this->option_max_2gb_check)
                 {
@@ -691,7 +900,6 @@
                     if(($fseek < 0) || (($this->info['filesize'] != 0) && (ftell($this->fp) == 0)) || ($this->info['filesize'] < 0) || (ftell($this->fp) < 0))
                     {
                         $real_filesize = getid3_lib::getFileSizeSyscall($this->info['filenamepath']);
-
                         if($real_filesize === false)
                         {
                             unset($this->info['filesize']);
@@ -719,11 +927,21 @@
             return false;
         }
 
+        /**
+         * @return string
+         */
         public function version()
         {
             return self::VERSION;
         }
 
+        /**
+         * Error handling.
+         *
+         * @param string $message
+         *
+         * @return array
+         */
         public function error($message)
         {
             $this->CleanUp();
@@ -736,6 +954,9 @@
             return $this->info;
         }
 
+        /**
+         * @return bool
+         */
         private function CleanUp()
         {
             // remove possible empty keys
@@ -751,7 +972,6 @@
                     unset($this->info['video'][$key]);
                 }
             }
-
             // remove empty root keys
             if(! empty($this->info))
             {
@@ -763,7 +983,6 @@
                     }
                 }
             }
-
             // remove meaningless entries from unknown-format files
             if(empty($this->info['fileformat']))
             {
@@ -776,7 +995,6 @@
                     unset($this->info['avdataend']);
                 }
             }
-
             // remove possible duplicated identical entries
             if(! empty($this->info['error']))
             {
@@ -786,13 +1004,19 @@
             {
                 $this->info['warning'] = array_values(array_unique($this->info['warning']));
             }
-
             // remove "global variable" type keys
             unset($this->info['php_memory_limit']);
 
             return true;
         }
 
+        /**
+         * @param string $name
+         *
+         * @return bool
+         *
+         * @throws getid3_exception
+         */
         public function include_module($name)
         {
             // if (!file_exists($this->include_path.'module.'.$name.'.php')) {
@@ -805,13 +1029,18 @@
             return true;
         }
 
+        /**
+         * @param string $filedata
+         * @param string $filename
+         *
+         * @return mixed|false
+         */
         public function GetFileFormat(&$filedata, $filename = '')
         {
             // this function will determine the format of a file based on usually
             // the first 2-4 bytes of the file (8 bytes for PNG, 16 bytes for JPG,
             // and in the case of ISO CD image, 6 bytes offset 32kb from the start
             // of the file).
-
             // Identify file format - loop through $format_info and detect with reg expr
             foreach($this->GetFileFormatArray() as $format_name => $info)
             {
@@ -824,7 +1053,6 @@
                     return $info;
                 }
             }
-
             if(preg_match('#\\.mp[123a]$#i', $filename))
             {
                 // Too many mp3 encoders on the market put garbage in front of mpeg files
@@ -860,15 +1088,18 @@
             return false;
         }
 
+        /**
+         * Return array containing information about all supported formats.
+         *
+         * @return array
+         */
         public function GetFileFormatArray()
         {
             static $format_info = [];
             if(empty($format_info))
             {
                 $format_info = [
-
                     // Audio formats
-
                     // AC-3   - audio      - Dolby AC-3 / Dolby Digital
                     'ac3' => [
                         'pattern' => '^\\x0B\\x77',
@@ -876,7 +1107,6 @@
                         'module' => 'ac3',
                         'mime_type' => 'audio/ac3',
                     ],
-
                     // AAC  - audio       - Advanced Audio Coding (AAC) - ADIF format
                     'adif' => [
                         'pattern' => '^ADIF',
@@ -885,7 +1115,6 @@
                         'mime_type' => 'audio/aac',
                         'fail_ape' => 'WARNING',
                     ],
-
                     /*
                                     // AA   - audio       - Audible Audiobook
                                     'aa'   => array(
@@ -903,7 +1132,6 @@
                         'mime_type' => 'audio/aac',
                         'fail_ape' => 'WARNING',
                     ],
-
                     // AU   - audio       - NeXT/Sun AUdio (AU)
                     'au' => [
                         'pattern' => '^\\.snd',
@@ -911,7 +1139,6 @@
                         'module' => 'au',
                         'mime_type' => 'audio/basic',
                     ],
-
                     // AMR  - audio       - Adaptive Multi Rate
                     'amr' => [
                         'pattern' => '^\\x23\\x21AMR\\x0A', // #!AMR[0A]
@@ -919,7 +1146,6 @@
                         'module' => 'amr',
                         'mime_type' => 'audio/amr',
                     ],
-
                     // AVR  - audio       - Audio Visual Research
                     'avr' => [
                         'pattern' => '^2BIT',
@@ -927,7 +1153,6 @@
                         'module' => 'avr',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // BONK - audio       - Bonk v0.9+
                     'bonk' => [
                         'pattern' => '^\\x00(BONK|INFO|META| ID3)',
@@ -935,7 +1160,6 @@
                         'module' => 'bonk',
                         'mime_type' => 'audio/xmms-bonk',
                     ],
-
                     // DSF  - audio       - Direct Stream Digital (DSD) Storage Facility files (DSF) - https://en.wikipedia.org/wiki/Direct_Stream_Digital
                     'dsf' => [
                         'pattern' => '^DSD ',  // including trailing space: 44 53 44 20
@@ -943,7 +1167,6 @@
                         'module' => 'dsf',
                         'mime_type' => 'audio/dsd',
                     ],
-
                     // DSS  - audio       - Digital Speech Standard
                     'dss' => [
                         'pattern' => '^[\\x02-\\x08]ds[s2]',
@@ -951,7 +1174,6 @@
                         'module' => 'dss',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // DSDIFF - audio     - Direct Stream Digital Interchange File Format
                     'dsdiff' => [
                         'pattern' => '^FRM8',
@@ -959,7 +1181,6 @@
                         'module' => 'dsdiff',
                         'mime_type' => 'audio/dsd',
                     ],
-
                     // DTS  - audio       - Dolby Theatre System
                     'dts' => [
                         'pattern' => '^\\x7F\\xFE\\x80\\x01',
@@ -967,7 +1188,6 @@
                         'module' => 'dts',
                         'mime_type' => 'audio/dts',
                     ],
-
                     // FLAC - audio       - Free Lossless Audio Codec
                     'flac' => [
                         'pattern' => '^fLaC',
@@ -975,7 +1195,6 @@
                         'module' => 'flac',
                         'mime_type' => 'audio/flac',
                     ],
-
                     // LA   - audio       - Lossless Audio (LA)
                     'la' => [
                         'pattern' => '^LA0[2-4]',
@@ -983,7 +1202,6 @@
                         'module' => 'la',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // LPAC - audio       - Lossless Predictive Audio Compression (LPAC)
                     'lpac' => [
                         'pattern' => '^LPAC',
@@ -991,7 +1209,6 @@
                         'module' => 'lpac',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // MIDI - audio       - MIDI (Musical Instrument Digital Interface)
                     'midi' => [
                         'pattern' => '^MThd',
@@ -999,7 +1216,6 @@
                         'module' => 'midi',
                         'mime_type' => 'audio/midi',
                     ],
-
                     // MAC  - audio       - Monkey's Audio Compressor
                     'mac' => [
                         'pattern' => '^MAC ',
@@ -1007,7 +1223,6 @@
                         'module' => 'monkey',
                         'mime_type' => 'audio/x-monkeys-audio',
                     ],
-
                     // MOD  - audio       - MODule (SoundTracker)
                     'mod' => [
                         //'pattern'   => '^.{1080}(M\\.K\\.|M!K!|FLT4|FLT8|[5-9]CHN|[1-3][0-9]CH)', // has been known to produce false matches in random files (e.g. JPEGs), leave out until more precise matching available
@@ -1017,7 +1232,6 @@
                         'option' => 'mod',
                         'mime_type' => 'audio/mod',
                     ],
-
                     // MOD  - audio       - MODule (Impulse Tracker)
                     'it' => [
                         'pattern' => '^IMPM',
@@ -1026,7 +1240,6 @@
                         //'option'    => 'it',
                         'mime_type' => 'audio/it',
                     ],
-
                     // MOD  - audio       - MODule (eXtended Module, various sub-formats)
                     'xm' => [
                         'pattern' => '^Extended Module',
@@ -1035,7 +1248,6 @@
                         //'option'    => 'xm',
                         'mime_type' => 'audio/xm',
                     ],
-
                     // MOD  - audio       - MODule (ScreamTracker)
                     's3m' => [
                         'pattern' => '^.{44}SCRM',
@@ -1044,7 +1256,6 @@
                         //'option'    => 's3m',
                         'mime_type' => 'audio/s3m',
                     ],
-
                     // MPC  - audio       - Musepack / MPEGplus
                     'mpc' => [
                         'pattern' => '^(MPCK|MP\\+)',
@@ -1052,7 +1263,6 @@
                         'module' => 'mpc',
                         'mime_type' => 'audio/x-musepack',
                     ],
-
                     // MP3  - audio       - MPEG-audio Layer 3 (very similar to AAC-ADTS)
                     'mp3' => [
                         'pattern' => '^\\xFF[\\xE2-\\xE7\\xF2-\\xF7\\xFA-\\xFF][\\x00-\\x0B\\x10-\\x1B\\x20-\\x2B\\x30-\\x3B\\x40-\\x4B\\x50-\\x5B\\x60-\\x6B\\x70-\\x7B\\x80-\\x8B\\x90-\\x9B\\xA0-\\xAB\\xB0-\\xBB\\xC0-\\xCB\\xD0-\\xDB\\xE0-\\xEB\\xF0-\\xFB]',
@@ -1060,7 +1270,6 @@
                         'module' => 'mp3',
                         'mime_type' => 'audio/mpeg',
                     ],
-
                     // OFR  - audio       - OptimFROG
                     'ofr' => [
                         'pattern' => '^(\\*RIFF|OFR)',
@@ -1068,7 +1277,6 @@
                         'module' => 'optimfrog',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // RKAU - audio       - RKive AUdio compressor
                     'rkau' => [
                         'pattern' => '^RKA',
@@ -1076,7 +1284,6 @@
                         'module' => 'rkau',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // SHN  - audio       - Shorten
                     'shn' => [
                         'pattern' => '^ajkg',
@@ -1086,7 +1293,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // TAK  - audio       - Tom's lossless Audio Kompressor
                     'tak' => [
                         'pattern' => '^tBaK',
@@ -1094,7 +1300,6 @@
                         'module' => 'tak',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // TTA  - audio       - TTA Lossless Audio Compressor (http://tta.corecodec.org)
                     'tta' => [
                         'pattern' => '^TTA',  // could also be '^TTA(\\x01|\\x02|\\x03|2|1)'
@@ -1102,7 +1307,6 @@
                         'module' => 'tta',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // VOC  - audio       - Creative Voice (VOC)
                     'voc' => [
                         'pattern' => '^Creative Voice File',
@@ -1110,7 +1314,6 @@
                         'module' => 'voc',
                         'mime_type' => 'audio/voc',
                     ],
-
                     // VQF  - audio       - transform-domain weighted interleave Vector Quantization Format (VQF)
                     'vqf' => [
                         'pattern' => '^TWIN',
@@ -1118,7 +1321,6 @@
                         'module' => 'vqf',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // WV  - audio        - WavPack (v4.0+)
                     'wv' => [
                         'pattern' => '^wvpk',
@@ -1126,9 +1328,7 @@
                         'module' => 'wavpack',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // Audio-Video formats
-
                     // ASF  - audio/video - Advanced Streaming Format, Windows Media Video, Windows Media Audio
                     'asf' => [
                         'pattern' => '^\\x30\\x26\\xB2\\x75\\x8E\\x66\\xCF\\x11\\xA6\\xD9\\x00\\xAA\\x00\\x62\\xCE\\x6C',
@@ -1137,7 +1337,6 @@
                         'mime_type' => 'video/x-ms-asf',
                         'iconv_req' => false,
                     ],
-
                     // BINK - audio/video - Bink / Smacker
                     'bink' => [
                         'pattern' => '^(BIK|SMK)',
@@ -1145,7 +1344,6 @@
                         'module' => 'bink',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // FLV  - audio/video - FLash Video
                     'flv' => [
                         'pattern' => '^FLV[\\x01]',
@@ -1153,7 +1351,6 @@
                         'module' => 'flv',
                         'mime_type' => 'video/x-flv',
                     ],
-
                     // IVF - audio/video - IVF
                     'ivf' => [
                         'pattern' => '^DKIF',
@@ -1161,7 +1358,6 @@
                         'module' => 'ivf',
                         'mime_type' => 'video/x-ivf',
                     ],
-
                     // MKAV - audio/video - Mastroka
                     'matroska' => [
                         'pattern' => '^\\x1A\\x45\\xDF\\xA3',
@@ -1169,7 +1365,6 @@
                         'module' => 'matroska',
                         'mime_type' => 'video/x-matroska', // may also be audio/x-matroska
                     ],
-
                     // MPEG - audio/video - MPEG (Moving Pictures Experts Group)
                     'mpeg' => [
                         'pattern' => '^\\x00\\x00\\x01[\\xB3\\xBA]',
@@ -1177,7 +1372,6 @@
                         'module' => 'mpeg',
                         'mime_type' => 'video/mpeg',
                     ],
-
                     // NSV  - audio/video - Nullsoft Streaming Video (NSV)
                     'nsv' => [
                         'pattern' => '^NSV[sf]',
@@ -1185,7 +1379,6 @@
                         'module' => 'nsv',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                     // Ogg  - audio/video - Ogg (Ogg-Vorbis, Ogg-FLAC, Speex, Ogg-Theora(*), Ogg-Tarkin(*))
                     'ogg' => [
                         'pattern' => '^OggS',
@@ -1195,7 +1388,6 @@
                         'fail_id3' => 'WARNING',
                         'fail_ape' => 'WARNING',
                     ],
-
                     // QT   - audio/video - Quicktime
                     'quicktime' => [
                         'pattern' => '^.{4}(cmov|free|ftyp|mdat|moov|pnot|skip|wide)',
@@ -1203,7 +1395,6 @@
                         'module' => 'quicktime',
                         'mime_type' => 'video/quicktime',
                     ],
-
                     // RIFF - audio/video - Resource Interchange File Format (RIFF) / WAV / AVI / CD-audio / SDSS = renamed variant used by SmartSound QuickTracks (www.smartsound.com) / FORM = Audio Interchange File Format (AIFF)
                     'riff' => [
                         'pattern' => '^(RIFF|SDSS|FORM)',
@@ -1212,7 +1403,6 @@
                         'mime_type' => 'audio/wav',
                         'fail_ape' => 'WARNING',
                     ],
-
                     // Real - audio/video - RealAudio, RealVideo
                     'real' => [
                         'pattern' => '^\\.(RMF|ra)',
@@ -1220,7 +1410,6 @@
                         'module' => 'real',
                         'mime_type' => 'audio/x-realaudio',
                     ],
-
                     // SWF - audio/video - ShockWave Flash
                     'swf' => [
                         'pattern' => '^(F|C)WS',
@@ -1228,7 +1417,6 @@
                         'module' => 'swf',
                         'mime_type' => 'application/x-shockwave-flash',
                     ],
-
                     // TS - audio/video - MPEG-2 Transport Stream
                     'ts' => [
                         'pattern' => '^(\\x47.{187}){10,}',
@@ -1237,7 +1425,6 @@
                         'module' => 'ts',
                         'mime_type' => 'video/MP2T',
                     ],
-
                     // WTV - audio/video - Windows Recorded TV Show
                     'wtv' => [
                         'pattern' => '^\\xB7\\xD8\\x00\\x20\\x37\\x49\\xDA\\x11\\xA6\\x4E\\x00\\x07\\xE9\\x5E\\xAD\\x8D',
@@ -1245,9 +1432,7 @@
                         'module' => 'wtv',
                         'mime_type' => 'video/x-ms-wtv',
                     ],
-
                     // Still-Image formats
-
                     // BMP  - still image - Bitmap (Windows, OS/2; uncompressed, RLE8, RLE4)
                     'bmp' => [
                         'pattern' => '^BM',
@@ -1257,7 +1442,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // GIF  - still image - Graphics Interchange Format
                     'gif' => [
                         'pattern' => '^GIF',
@@ -1267,7 +1451,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // JPEG - still image - Joint Photographic Experts Group (JPEG)
                     'jpg' => [
                         'pattern' => '^\\xFF\\xD8\\xFF',
@@ -1277,7 +1460,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // PCD  - still image - Kodak Photo CD
                     'pcd' => [
                         'pattern' => '^.{2048}PCD_IPI\\x00',
@@ -1287,7 +1469,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // PNG  - still image - Portable Network Graphics (PNG)
                     'png' => [
                         'pattern' => '^\\x89\\x50\\x4E\\x47\\x0D\\x0A\\x1A\\x0A',
@@ -1297,7 +1478,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // SVG  - still image - Scalable Vector Graphics (SVG)
                     'svg' => [
                         'pattern' => '(<!DOCTYPE svg PUBLIC |xmlns="http://www\\.w3\\.org/2000/svg")',
@@ -1307,7 +1487,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // TIFF - still image - Tagged Information File Format (TIFF)
                     'tiff' => [
                         'pattern' => '^(II\\x2A\\x00|MM\\x00\\x2A)',
@@ -1317,7 +1496,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // EFAX - still image - eFax (TIFF derivative)
                     'efax' => [
                         'pattern' => '^\\xDC\\xFE',
@@ -1327,9 +1505,7 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // Data formats
-
                     // ISO  - data        - International Standards Organization (ISO) CD-ROM Image
                     'iso' => [
                         'pattern' => '^.{32769}CD001',
@@ -1340,7 +1516,6 @@
                         'fail_ape' => 'ERROR',
                         'iconv_req' => false,
                     ],
-
                     // HPK  - data        - HPK compressed data
                     'hpk' => [
                         'pattern' => '^BPUL',
@@ -1350,7 +1525,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // RAR  - data        - RAR compressed data
                     'rar' => [
                         'pattern' => '^Rar\\!',
@@ -1360,7 +1534,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // SZIP - audio/data  - SZIP compressed data
                     'szip' => [
                         'pattern' => '^SZ\\x0A\\x04',
@@ -1370,7 +1543,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // TAR  - data        - TAR compressed data
                     'tar' => [
                         'pattern' => '^.{100}[0-9\\x20]{7}\\x00[0-9\\x20]{7}\\x00[0-9\\x20]{7}\\x00[0-9\\x20\\x00]{12}[0-9\\x20\\x00]{12}',
@@ -1380,7 +1552,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // GZIP  - data        - GZIP compressed data
                     'gz' => [
                         'pattern' => '^\\x1F\\x8B\\x08',
@@ -1390,7 +1561,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // ZIP  - data         - ZIP compressed data
                     'zip' => [
                         'pattern' => '^PK\\x03\\x04',
@@ -1400,7 +1570,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // XZ   - data         - XZ compressed data
                     'xz' => [
                         'pattern' => '^\\xFD7zXZ\\x00',
@@ -1410,9 +1579,7 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // Misc other formats
-
                     // PAR2 - data        - Parity Volume Set Specification 2.0
                     'par2' => [
                         'pattern' => '^PAR2\\x00PKT',
@@ -1422,7 +1589,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // PDF  - data        - Portable Document Format
                     'pdf' => [
                         'pattern' => '^\\x25PDF',
@@ -1432,7 +1598,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // MSOFFICE  - data   - ZIP compressed data
                     'msoffice' => [
                         'pattern' => '^\\xD0\\xCF\\x11\\xE0\\xA1\\xB1\\x1A\\xE1',
@@ -1443,7 +1608,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // TORRENT             - .torrent
                     'torrent' => [
                         'pattern' => '^(d8\\:announce|d7\\:comment)',
@@ -1453,7 +1617,6 @@
                         'fail_id3' => 'ERROR',
                         'fail_ape' => 'ERROR',
                     ],
-
                     // CUE  - data       - CUEsheet (index to single-file disc images)
                     'cue' => [
                         'pattern' => '',
@@ -1462,13 +1625,15 @@
                         'module' => 'cue',
                         'mime_type' => 'application/octet-stream',
                     ],
-
                 ];
             }
 
             return $format_info;
         }
 
+        /**
+         * @return bool
+         */
         public function HandleAllTags()
         {
             // key name => array (tag name, character encoding)
@@ -1500,18 +1665,15 @@
                     'dsdiff' => ['dsdiff', 'ISO-8859-1'],
                 ];
             }
-
             // loop through comments array
             foreach($tags as $comment_name => $tagname_encoding_array)
             {
                 [$tag_name, $encoding] = $tagname_encoding_array;
-
                 // fill in default encoding type if not already present
                 if(isset($this->info[$comment_name]) && ! isset($this->info[$comment_name]['encoding']))
                 {
                     $this->info[$comment_name]['encoding'] = $encoding;
                 }
-
                 // copy comments if key name set
                 if(! empty($this->info[$comment_name]['comments']))
                 {
@@ -1525,13 +1687,13 @@
                             }
                             if(isset($value) && $value !== "")
                             {
-                                if(is_numeric($key))
+                                if(! is_numeric($key))
                                 {
-                                    $this->info['tags'][trim($tag_name)][trim($tag_key)][] = $value;
+                                    $this->info['tags'][trim($tag_name)][trim($tag_key)][$key] = $value;
                                 }
                                 else
                                 {
-                                    $this->info['tags'][trim($tag_name)][trim($tag_key)][$key] = $value;
+                                    $this->info['tags'][trim($tag_name)][trim($tag_key)][] = $value;
                                 }
                             }
                         }
@@ -1541,15 +1703,12 @@
                             unset($this->info[$comment_name]['comments'][$tag_key]);
                         }
                     }
-
                     if(! isset($this->info['tags'][$tag_name]))
                     {
                         // comments are set but contain nothing but empty strings, so skip
                         continue;
                     }
-
                     $this->CharConvert($this->info['tags'][$tag_name], $this->info[$comment_name]['encoding']);           // only copy gets converted!
-
                     if($this->option_tags_html)
                     {
                         foreach($this->info['tags'][$tag_name] as $tag_key => $valuearray)
@@ -1565,7 +1724,6 @@
                     }
                 }
             }
-
             // pictures can take up a lot of space, and we don't need multiple copies of them; let there be a single copy in [comments][picture], and not elsewhere
             if(! empty($this->info['tags']))
             {
@@ -1628,6 +1786,12 @@
             return true;
         }
 
+        /**
+         * Converts array to $encoding charset from $this->encoding.
+         *
+         * @param array  $array
+         * @param string $encoding
+         */
         public function CharConvert(&$array, $encoding)
         {
             // identical encoding - end here
@@ -1635,7 +1799,6 @@
             {
                 return;
             }
-
             // loop thru array
             foreach($array as $key => $value)
             {
@@ -1666,7 +1829,6 @@
             {
                 $this->info['audio']['channelmode'] = 'stereo';
             }
-
             // Calculate combined bitrate - audio + video
             $CombinedBitrate = 0;
             $CombinedBitrate += (isset($this->info['audio']['bitrate']) ? $this->info['audio']['bitrate'] : 0);
@@ -1680,25 +1842,30 @@
             //	// should not set overall bitrate and playtime from audio bitrate only
             //	unset($this->info['bitrate']);
             //}
-
             // video bitrate undetermined, but calculable
             if(isset($this->info['video']['dataformat']) && $this->info['video']['dataformat'] && (! isset($this->info['video']['bitrate']) || ($this->info['video']['bitrate'] == 0)))
             {
                 // if video bitrate not set
-                if(isset($this->info['audio']['bitrate']) && ($this->info['audio']['bitrate'] > 0) && ($this->info['audio']['bitrate'] == $this->info['bitrate']) && isset($this->info['playtime_seconds']) && ($this->info['playtime_seconds'] > 0))
+                if(isset($this->info['audio']['bitrate']) && ($this->info['audio']['bitrate'] > 0) && ($this->info['audio']['bitrate'] == $this->info['bitrate']))
                 {
-                    // AND if AV data offset start/end is known
-                    // THEN we can calculate the video bitrate
-                    $this->info['bitrate'] = round((($this->info['avdataend'] - $this->info['avdataoffset']) * 8) / $this->info['playtime_seconds']);
-                    $this->info['video']['bitrate'] = $this->info['bitrate'] - $this->info['audio']['bitrate'];
+                    // AND if audio bitrate is set to same as overall bitrate
+                    if(isset($this->info['playtime_seconds']) && ($this->info['playtime_seconds'] > 0))
+                    {
+                        // AND if playtime is set
+                        if(isset($this->info['avdataend']) && isset($this->info['avdataoffset']))
+                        {
+                            // AND if AV data offset start/end is known
+                            // THEN we can calculate the video bitrate
+                            $this->info['bitrate'] = round((($this->info['avdataend'] - $this->info['avdataoffset']) * 8) / $this->info['playtime_seconds']);
+                            $this->info['video']['bitrate'] = $this->info['bitrate'] - $this->info['audio']['bitrate'];
+                        }
+                    }
                 }
             }
-
             if((! isset($this->info['playtime_seconds']) || ($this->info['playtime_seconds'] <= 0)) && ! empty($this->info['bitrate']))
             {
                 $this->info['playtime_seconds'] = (($this->info['avdataend'] - $this->info['avdataoffset']) * 8) / $this->info['bitrate'];
             }
-
             if(! isset($this->info['bitrate']) && ! empty($this->info['playtime_seconds']))
             {
                 $this->info['bitrate'] = (($this->info['avdataend'] - $this->info['avdataoffset']) * 8) / $this->info['playtime_seconds'];
@@ -1716,7 +1883,6 @@
                     $this->info['video']['bitrate'] = $this->info['bitrate'];
                 }
             }
-
             // Set playtime string
             if(! empty($this->info['playtime_seconds']) && empty($this->info['playtime_string']))
             {
@@ -1724,13 +1890,23 @@
             }
         }
 
+        /**
+         * @return bool
+         */
         public function CalculateCompressionRatioVideo()
         {
-            if(empty($this->info['video']) || empty($this->info['video']['resolution_x']) || empty($this->info['video']['resolution_y']) || empty($this->info['video']['bits_per_sample']))
+            if(empty($this->info['video']))
             {
                 return false;
             }
-
+            if(empty($this->info['video']['resolution_x']) || empty($this->info['video']['resolution_y']))
+            {
+                return false;
+            }
+            if(empty($this->info['video']['bits_per_sample']))
+            {
+                return false;
+            }
             switch($this->info['video']['dataformat'])
             {
                 case 'bmp':
@@ -1743,7 +1919,6 @@
                     $PlaytimeSeconds = 1;
                     $BitrateCompressed = $this->info['filesize'] * 8;
                     break;
-
                 default:
                     if(! empty($this->info['video']['frame_rate']))
                     {
@@ -1772,12 +1947,14 @@
                     break;
             }
             $BitrateUncompressed = $this->info['video']['resolution_x'] * $this->info['video']['resolution_y'] * $this->info['video']['bits_per_sample'] * $FrameRate;
-
             $this->info['video']['compression_ratio'] = $BitrateCompressed / $BitrateUncompressed;
 
             return true;
         }
 
+        /**
+         * @return bool
+         */
         public function CalculateCompressionRatioAudio()
         {
             if(empty($this->info['audio']['bitrate']) || empty($this->info['audio']['channels']) || empty($this->info['audio']['sample_rate']) || ! is_numeric($this->info['audio']['sample_rate']))
@@ -1785,7 +1962,6 @@
                 return false;
             }
             $this->info['audio']['compression_ratio'] = $this->info['audio']['bitrate'] / ($this->info['audio']['channels'] * $this->info['audio']['sample_rate'] * (! empty($this->info['audio']['bits_per_sample']) ? $this->info['audio']['bits_per_sample'] : 16));
-
             if(! empty($this->info['audio']['streams']))
             {
                 foreach($this->info['audio']['streams'] as $streamnumber => $streamdata)
@@ -1800,6 +1976,9 @@
             return true;
         }
 
+        /**
+         * @return bool
+         */
         public function CalculateReplayGain()
         {
             if(isset($this->info['replay_gain']))
@@ -1816,7 +1995,6 @@
                 {
                     $this->info['replay_gain']['album']['volume'] = $this->info['replay_gain']['reference_volume'] - $this->info['replay_gain']['album']['adjustment'];
                 }
-
                 if(isset($this->info['replay_gain']['track']['peak']))
                 {
                     $this->info['replay_gain']['track']['max_noclip_gain'] = 0 - getid3_lib::RGADamplitude2dB($this->info['replay_gain']['track']['peak']);
@@ -1830,6 +2008,9 @@
             return true;
         }
 
+        /**
+         * @return bool
+         */
         public function ProcessAudioStreams()
         {
             if(! empty($this->info['audio']['bitrate']) || ! empty($this->info['audio']['channels']) || ! empty($this->info['audio']['sample_rate']))
@@ -1849,6 +2030,11 @@
             return true;
         }
 
+        /**
+         * @param string $algorithm
+         *
+         * @return array|bool
+         */
         public function getHashdata($algorithm)
         {
             switch($algorithm)
@@ -1856,11 +2042,9 @@
                 case 'md5':
                 case 'sha1':
                     break;
-
                 default:
                     return $this->error('bad algorithm "'.$algorithm.'" in getHashdata()');
             }
-
             if(! empty($this->info['fileformat']) && ! empty($this->info['dataformat']) && ($this->info['fileformat'] == 'ogg') && ($this->info['audio']['dataformat'] == 'vorbis'))
             {
                 // We cannot get an identical md5_data value for Ogg files where the comments
@@ -1876,11 +2060,9 @@
                 // comments larger than 1 page, because the below method simply MD5's the
                 // whole file with the comments stripped, not just the portion after the
                 // comments block (which is the standard getID3() method.
-
                 // The above-mentioned problem of comments spanning multiple pages and changing
                 // page sequence numbers likely happens for OggSpeex and OggFLAC as well, but
                 // currently vorbiscomment only works on OggVorbis files.
-
                 // phpcs:ignore PHPCompatibility.IniDirectives.RemovedIniDirectives.safe_modeDeprecatedRemoved
                 if(preg_match('#(1|ON)#i', ini_get('safe_mode')))
                 {
@@ -1891,15 +2073,12 @@
                 {
                     // Prevent user from aborting script
                     $old_abort = ignore_user_abort(true);
-
                     // Create empty file
                     $empty = tempnam(GETID3_TEMP_DIR, 'getID3');
                     touch($empty);
-
                     // Use vorbiscomment to make temp file without comments
                     $temp = tempnam(GETID3_TEMP_DIR, 'getID3');
                     $file = $this->info['filenamepath'];
-
                     if(GETID3_OS_ISWINDOWS)
                     {
                         if(file_exists(GETID3_HELPERAPPSDIR.'vorbiscomment.exe'))
@@ -1917,7 +2096,6 @@
                         $commandline = 'vorbiscomment -w -c '.escapeshellarg($empty).' '.escapeshellarg($file).' '.escapeshellarg($temp).' 2>&1';
                         $VorbisCommentError = `$commandline`;
                     }
-
                     if(! empty($VorbisCommentError))
                     {
                         $this->warning('Failed making system call to vorbiscomment(.exe) - '.$algorithm.'_data will be incorrect. If vorbiscomment is unavailable, please download from http://www.vorbis.com/download.psp and put in the getID3() directory. Error returned: '.$VorbisCommentError);
@@ -1931,17 +2109,14 @@
                             case 'md5':
                                 $this->info[$algorithm.'_data'] = md5_file($temp);
                                 break;
-
                             case 'sha1':
                                 $this->info[$algorithm.'_data'] = sha1_file($temp);
                                 break;
                         }
                     }
-
                     // Clean up
                     unlink($empty);
                     unlink($temp);
-
                     // Reset abort setting
                     ignore_user_abort($old_abort);
                 }
@@ -1961,7 +2136,6 @@
                         case 'md5':
                             $this->info[$algorithm.'_data'] = md5_file($this->info['filenamepath']);
                             break;
-
                         case 'sha1':
                             $this->info[$algorithm.'_data'] = sha1_file($this->info['filenamepath']);
                             break;
@@ -1972,11 +2146,22 @@
             return true;
         }
 
+        /**
+         * Calls getid3_lib::CopyTagsToComments() but passes in the option_tags_html setting from this instance of
+         * getID3
+         *
+         * @param array $ThisFileInfo
+         *
+         * @return bool
+         */
         public function CopyTagsToComments(&$ThisFileInfo)
         {
             return getid3_lib::CopyTagsToComments($ThisFileInfo, $this->option_tags_html);
         }
 
+        /**
+         * @return string|bool
+         */
         public function getid3_tempnam()
         {
             return tempnam($this->tempdir, 'gI3');
@@ -1985,55 +2170,88 @@
 
     abstract class getid3_handler
     {
+        /**
+         * @var getID3
+         */
         protected $getid3;                       // pointer
 
+        /**
+         * Analyzing filepointer or string.
+         *
+         * @var bool
+         */
         protected $data_string_flag = false;
 
+        /**
+         * String to analyze.
+         *
+         * @var string
+         */
         protected $data_string = '';
 
+        /**
+         * Seek position in string.
+         *
+         * @var int
+         */
         protected $data_string_position = 0;
 
+        /**
+         * String length.
+         *
+         * @var int
+         */
         protected $data_string_length = 0;
 
+        /**
+         * @var string
+         */
         private $dependency_to;
 
+        /**
+         * getid3_handler constructor.
+         *
+         * @param getID3 $getid3
+         * @param string $call_module
+         */
         public function __construct(getID3 $getid3, $call_module = null)
         {
             $this->getid3 = $getid3;
-
             if($call_module)
             {
                 $this->dependency_to = str_replace('getid3_', '', $call_module);
             }
         }
 
+        /**
+         * Analyze from string instead.
+         *
+         * @param string $string
+         */
         public function AnalyzeString($string)
         {
             // Enter string mode
             $this->setStringMode($string);
-
             // Save info
             $saved_avdataoffset = $this->getid3->info['avdataoffset'];
             $saved_avdataend = $this->getid3->info['avdataend'];
             $saved_filesize = (isset($this->getid3->info['filesize']) ? $this->getid3->info['filesize'] : null); // may be not set if called as dependency without openfile() call
-
             // Reset some info
             $this->getid3->info['avdataoffset'] = 0;
-            $this->getid3->info['filesize'] = $this->data_string_length;
-            $this->getid3->info['avdataend'] = $this->getid3->info['filesize'];
-
+            $this->getid3->info['avdataend'] = $this->getid3->info['filesize'] = $this->data_string_length;
             // Analyze
             $this->Analyze();
-
             // Restore some info
             $this->getid3->info['avdataoffset'] = $saved_avdataoffset;
             $this->getid3->info['avdataend'] = $saved_avdataend;
             $this->getid3->info['filesize'] = $saved_filesize;
-
             // Exit string mode
             $this->data_string_flag = false;
         }
 
+        /**
+         * @param string $string
+         */
         public function setStringMode($string)
         {
             $this->data_string_flag = true;
@@ -2041,14 +2259,62 @@
             $this->data_string_length = strlen($string);
         }
 
+        /**
+         * Analyze from file pointer.
+         *
+         * @return bool
+         */
         abstract public function Analyze();
 
+        /**
+         * @param int $bytes
+         *
+         * @returis->data_s
+         * $this->data_string_position = $bytes;
+         * break;
+         *
+         * case SEEK_CUR:
+         * $this->data_string_position += $bytes;
+         * break;
+         *
+         * case SEEK_END:
+         * $this->data_string_position = $this->data_string_length + $bytes;
+         * break;
+         * }
+         *
+         * return 0; // fseek returns 0 on success
+         * }
+         *
+         * $pos = $bytes;
+         * if ($whence == SEEK_CUR) {
+         * $pos = $this->ftell() + $bytes;
+         * } elseif ($whence == SEEK_END) {
+         * $pos = $this->getid3->info['filesize'] + $bytes;
+         * }
+         * if (!getid3_lib::intValueSupported($pos)) {
+         * throw new getid3_exception('cannot fseek(' . $pos . ') because beyond PHP filesystem limit', 10);
+         * }
+         *
+         * // https://github.com/JamesHeinrich/getID3/issues/327
+         * $result = fseek($this->getid3->fp, $bytes, $whence);
+         * if ($result !== 0) { // fseek returns 0 on success
+         * throw new getid3_exception('cannot fseek(' . $pos . '). resource/stream does not appear to support seeking',
+         * 10);
+         * }
+         *
+         * return $result;
+         * }
+         *
+         * /**
+         * @return string|false
+         *
+         * @throws getid3_exception
+         */
         protected function fgets()
         {
             // must be able to handle CR/LF/CRLF but not read more than one lineend
             $buffer = ''; // final string we will return
             $prevchar = ''; // save previously-read c_SET:
-
             n string | false *
          * @throws getid3_exception */
         protected function fread($bytes)
@@ -2073,7 +2339,6 @@ tring, $this->data_string_position - $bytes, $bytes);
             {
                 throw new getid3_exception('cannot fread('.$bytes.' from '.$this->ftell().') because beyond PHP filesystem limit', 10);
             }
-
             // return fread($this->getid3->fp, $bytes);
             /*
             * https://www.getid3.org/phpBB3/viewtopic.php?t=1930
@@ -2100,7 +2365,14 @@ tring, $this->data_string_position - $bytes, $bytes);
             return $contents;
         }
 
-        
+        /**
+         * @param int $bytes
+         * @param int $whence
+         *
+         * @return int
+         *
+         * @throws getid3_exception
+         */
         protected function fseek($bytes, $whence = SEEK_SET) {
             if($this->data_string_flag)
             {
@@ -2110,8 +2382,61 @@ tring, $this->data_string_position - $bytes, $bytes);
 
 
         }
-
-                protected
+                /**
+                 * @param string $name
+                 * @param int    $offset
+                 * @param int    $length
+                 * @param string $image_mime
+                 *
+                 * @return string|nullction erro
+                 * or end-of-line checking
+                 * if ($this->data_string_flag) {
+                 * while (true) {
+                 * $thischar = substr($this->data_string, $this->data_string_position++, 1);
+                 * if (($prevchar == "\r") && ($thischar != "\n")) {
+                 * // read one byte too many, back up
+                 * $this->data_string_position--;
+                 * break;
+                 * }
+                 * $buffer .= $thischar;
+                 * if ($thischar == "\n") {
+                 * break;
+                 * }
+                 * if ($this->data_string_position >= $this->data_string_length) {
+                 * // EOF
+                 * break;
+                 * }
+                 * $prevchar = $thischar;
+                 * }
+                 * } else {
+                 * // Ideally we would just use PHP's fgets() function, however...
+                 * // it does not behave consistently with regards to mixed line endings, may be system-dependent
+                 * // and breaks entirely when given a file with mixed \r vs \n vs \r\n line endings (e.g. some PDFs)
+                 * //return fgets($this->getid3->fp);
+                 * while (true) {
+                 * $thischar = fgetc($this->getid3->fp);
+                 * if (($prevchar == "\r") && ($thischar != "\n")) {
+                 * // read one byte too many, back up
+                 * fseek($this->getid3->fp, -1, SEEK_CUR);
+                 * break;
+                 * }
+                 * $buffer .= $thischar;
+                 * if ($thischar == "\n") {
+                 * break;
+                 * }
+                 * if (feof($this->getid3->fp)) {
+                 * break;
+                 * }
+                 * $prevchar = $thischar;
+                 * }
+                 * }
+                 *
+                 * return $buffer;
+                 * }
+                 *
+                 * /**
+                 * @return bool
+                 */ protected
                 function feof()
                 {
                     if($this->data_string_flag)
@@ -2122,12 +2447,21 @@ tring, $this->data_string_position - $bytes, $bytes);
                     return feof($this->getid3->fp);
                 }
 
+                /**
+                 * @param string      prot
+                 *
+                 * @return bool
+                 */
                 final protected function isDependencyFor($module)
             {
                 return $this->dependency_to == $module;
             }
 
-        
+        /**
+         * @param string $text
+         *
+         * @return bool
+         */
         protected funng for now
                             r($text){$this->getid3->info['error'][] = $text;
 
@@ -2136,7 +2470,11 @@ tring, $this->data_string_position - $bytes, $bytes);
             }
         }
 
-        
+        /**
+         * @param string $text
+         *
+         * @return bool
+         */
 
 
 ected function warning($text)
@@ -2144,7 +2482,9 @@ ected function warning($text)
                 return $this->getid3->warning($text);
             }
 
-        
+        /**
+         * @param string $text
+         */
         protected function notice($text)
             {
                 // does nothiime = null
@@ -2161,7 +2501,6 @@ ected function warning($text)
                     if($this->getid3->option_save_attachments === getID3::ATTACHMENTS_NONE)
                     {
                         $attachment = null; // do not set any
-
                         // extract to return array
                     }
                     elseif($this->getid3->option_save_attachments === getID3::ATTACHMENTS_INLINE)
@@ -2170,7 +2509,7 @@ ected function warning($text)
                         $attachment = $this->fread($length); // get whole data in one pass, till it is anyway stored in memory
                         if($attachment === false || strlen($attachment) != $length)
                         {
-                            throw new \RuntimeException('failed to read attachment data');
+                            throw new Exception('failed to read attachment data');
                         }
                         // assume directory path is given
                     }
@@ -2185,16 +2524,14 @@ ected function warning($text)
                         );
                         if(! is_dir($dir) || ! getID3::is_writable($dir))
                         { // check supplied directory
-                            throw new \RuntimeException('supplied path ('.$dir.') does not exist, or is not writable');
+                            throw new Exception('supplied path ('.$dir.') does not exist, or is not writable');
                         }
                         $dest = $dir.DIRECTORY_SEPARATOR.$name.($image_mime ? '.'.getid3_lib::ImageExtFromMime($image_mime) : '');
-
                         // create dest file
                         if(($fp_dest = fopen($dest, 'wb')) == false)
                         {
-                            throw new \RuntimeException('failed to create file '.$dest);
+                            throw new Exception('failed to create file '.$dest);
                         }
-
                         // copy data
                         $this->fseek($offset);
                         $buffersize = ($this->data_string_flag ? $length : $this->getid3->fread_buffer_size());
@@ -2203,11 +2540,10 @@ ected function warning($text)
                         {
                             if(($buffer = $this->fread(min($buffersize, $bytesleft))) === false || ($byteswritten = fwrite($fp_dest, $buffer)) === false || ($byteswritten === 0))
                             {
-                                throw new \RuntimeException($buffer === false ? 'not enough data to read' : 'failed to write to destination file, may be not enough disk space');
+                                throw new Exception($buffer === false ? 'not enough data to read' : 'failed to write to destination file, may be not enough disk space');
                             }
                             $bytesleft -= $byteswritten;
                         }
-
                         fclose($fp_dest);
                         $attachment = $dest;
                     }
@@ -2219,17 +2555,14 @@ ected function warning($text)
                     {
                         fclose($fp_dest);
                     }
-
                     if(isset($dest) && file_exists($dest))
                     {
                         unlink($dest);
                     }
-
                     // do not set any is case of error
                     $attachment = null;
                     $this->warning('Failed to extract attachment '.$name.': '.$e->getMessage());
                 }
-
                 // seek to the end of attachment
                 $this->fseek($offset + $length);
 
@@ -2244,7 +2577,9 @@ ected function warning($text)
         public $message;
     }
 
-        
+        /**
+         * @return int|bool
+         */
         protected function ftell()
             {
                 if($this->data_string_flag)

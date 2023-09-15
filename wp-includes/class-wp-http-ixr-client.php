@@ -1,23 +1,30 @@
 <?php
 
+    /**
+     * WP_HTTP_IXR_Client
+     *
+     * @package WordPress
+     * @since   3.1.0
+     */
     #[AllowDynamicProperties]
     class WP_HTTP_IXR_Client extends IXR_Client
     {
         public $scheme;
 
+        /**
+         * @var IXR_Error
+         */
         public $error;
 
+        /**
+         * @param string       $server
+         * @param string|false $path
+         * @param int|false    $port
+         * @param int          $timeout
+         */
         public function __construct($server, $path = false, $port = false, $timeout = 15)
         {
-            parent::__construct($server, $path, $port, $timeout);
-            if($path)
-            {
-                $this->scheme = 'http';
-                $this->server = $server;
-                $this->path = $path;
-                $this->port = $port;
-            }
-            else
+            if(! $path)
             {
                 // Assume we have been given a URL instead.
                 $bits = parse_url($server);
@@ -25,28 +32,39 @@
                 $this->server = $bits['host'];
                 $this->port = isset($bits['port']) ? $bits['port'] : $port;
                 $this->path = ! empty($bits['path']) ? $bits['path'] : '/';
-
                 // Make absolutely sure we have a path.
                 if(! $this->path)
                 {
                     $this->path = '/';
                 }
-
                 if(! empty($bits['query']))
                 {
                     $this->path .= '?'.$bits['query'];
                 }
             }
+            else
+            {
+                $this->scheme = 'http';
+                $this->server = $server;
+                $this->path = $path;
+                $this->port = $port;
+            }
             $this->useragent = 'The Incutio XML-RPC PHP Library';
             $this->timeout = $timeout;
         }
 
+        /**
+         * @return bool
+         * @since 5.5.0 Formalized the existing `...$args` parameter by adding it
+         *              to the function signature.
+         *
+         * @since 3.1.0
+         */
         public function query(...$args)
         {
             $method = array_shift($args);
             $request = new IXR_Request($method, $args);
             $xml = $request->getXml();
-
             $port = $this->port ? ":$this->port" : '';
             $url = $this->scheme.'://'.$this->server.$port.$this->path;
             $args = [
@@ -54,28 +72,30 @@
                 'user-agent' => $this->useragent,
                 'body' => $xml,
             ];
-
             // Merge Custom headers ala #8145.
             foreach($this->headers as $header => $value)
             {
                 $args['headers'][$header] = $value;
             }
-
+            /**
+             * Filters the headers collection to be sent to the XML-RPC server.
+             *
+             * @param string[] $headers Associative array of headers to be sent.
+             *
+             * @since 4.4.0
+             *
+             */
             $args['headers'] = apply_filters('wp_http_ixr_client_headers', $args['headers']);
-
             if(false !== $this->timeout)
             {
                 $args['timeout'] = $this->timeout;
             }
-
             // Now send the request.
             if($this->debug)
             {
                 echo '<pre class="ixr_request">'.htmlspecialchars($xml)."\n</pre>\n\n";
             }
-
             $response = wp_remote_post($url, $args);
-
             if(is_wp_error($response))
             {
                 $errno = $response->get_error_code();
@@ -84,19 +104,16 @@
 
                 return false;
             }
-
             if(200 !== wp_remote_retrieve_response_code($response))
             {
                 $this->error = new IXR_Error(-32301, 'transport error - HTTP status code was not 200 ('.wp_remote_retrieve_response_code($response).')');
 
                 return false;
             }
-
             if($this->debug)
             {
                 echo '<pre class="ixr_response">'.htmlspecialchars(wp_remote_retrieve_body($response))."\n</pre>\n\n";
             }
-
             // Now parse what we've got back.
             $this->message = new IXR_Message(wp_remote_retrieve_body($response));
             if(! $this->message->parse())
@@ -106,7 +123,6 @@
 
                 return false;
             }
-
             // Is the message a fault?
             if('fault' === $this->message->messageType)
             {

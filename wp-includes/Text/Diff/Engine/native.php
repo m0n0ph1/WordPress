@@ -1,6 +1,33 @@
 <?php
 
-    class native
+    /**
+     * Class used internally by Text_Diff to actually compute the diffs.
+     *
+     * This class is implemented using native PHP code.
+     *
+     * The algorithm used here is mostly lifted from the perl module
+     * Algorithm::Diff (version 1.06) by Ned Konz, which is available at:
+     * https://cpan.metacpan.org/authors/id/N/NE/NEDKONZ/Algorithm-Diff-1.06.zip
+     *
+     * More ideas are taken from: http://www.ics.uci.edu/~eppstein/161/960229.html
+     *
+     * Some ideas (and a bit of code) are taken from analyze.c, of GNU
+     * diffutils-2.7, which can be found at:
+     * ftp://gnudist.gnu.org/pub/gnu/diffutils/diffutils-2.7.tar.gz
+     *
+     * Some ideas (subdivision by NCHUNKS > 2, and some optimizations) are from
+     * Geoffrey T. Dairiki <dairiki@dairiki.org>. The original PHP version of this
+     * code was written by him, and is used/adapted with his permission.
+     *
+     * Copyright 2004-2010 The Horde Project (http://www.horde.org/)
+     *
+     * See the enclosed file COPYING for license information (LGPL). If you did
+     * not receive this file, see https://opensource.org/license/lgpl-2-1/.
+     *
+     * @author  Geoffrey T. Dairiki <dairiki@dairiki.org>
+     * @package Text_Diff
+     */
+    class Text_Diff_Engine_native
     {
         public $xchanged;
 
@@ -20,24 +47,18 @@
 
         public $lcs;
 
-        public function diff($from_lines, $to_lines)
+        function diff($from_lines, $to_lines)
         {
             array_walk($from_lines, ['Text_Diff', 'trimNewlines']);
             array_walk($to_lines, ['Text_Diff', 'trimNewlines']);
-
             $n_from = count($from_lines);
             $n_to = count($to_lines);
-
-            $this->ychanged = [];
-            $this->xchanged = $this->ychanged;
-            $this->yv = [];
-            $this->xv = $this->yv;
-            $this->yind = [];
-            $this->xind = $this->yind;
+            $this->xchanged = $this->ychanged = [];
+            $this->xv = $this->yv = [];
+            $this->xind = $this->yind = [];
             unset($this->seq);
             unset($this->in_seq);
             unset($this->lcs);
-
             // Skip leading common lines.
             for($skip = 0; $skip < $n_from && $skip < $n_to; $skip++)
             {
@@ -45,10 +66,8 @@
                 {
                     break;
                 }
-                $this->ychanged[$skip] = false;
-                $this->xchanged[$skip] = false;
+                $this->xchanged[$skip] = $this->ychanged[$skip] = false;
             }
-
             // Skip trailing common lines.
             $xi = $n_from;
             $yi = $n_to;
@@ -58,10 +77,8 @@
                 {
                     break;
                 }
-                $this->ychanged[$yi] = false;
-                $this->xchanged[$xi] = false;
+                $this->xchanged[$xi] = $this->ychanged[$yi] = false;
             }
-
             // Ignore lines which do not exist in both files.
             for($xi = $skip; $xi < $n_from - $endskip; $xi++)
             {
@@ -88,23 +105,18 @@
                 $this->xv[] = $line;
                 $this->xind[] = $xi;
             }
-
             // Find the LCS.
             $this->_compareseq(0, count($this->xv), 0, count($this->yv));
-
             // Merge edits when possible.
             $this->_shiftBoundaries($from_lines, $this->xchanged, $this->ychanged);
             $this->_shiftBoundaries($to_lines, $this->ychanged, $this->xchanged);
-
             // Compute the edit operations.
             $edits = [];
-            $yi = 0;
-            $xi = 0;
+            $xi = $yi = 0;
             while($xi < $n_from || $yi < $n_to)
             {
                 assert($yi < $n_to || $this->xchanged[$xi]);
                 assert($xi < $n_from || $this->ychanged[$yi]);
-
                 // Skip matching "snake".
                 $copy = [];
                 while($xi < $n_from && $yi < $n_to && ! $this->xchanged[$xi] && ! $this->ychanged[$yi])
@@ -116,20 +128,17 @@
                 {
                     $edits[] = new Text_Diff_Op_copy($copy);
                 }
-
                 // Find deletes & adds.
                 $delete = [];
                 while($xi < $n_from && $this->xchanged[$xi])
                 {
                     $delete[] = $from_lines[$xi++];
                 }
-
                 $add = [];
                 while($yi < $n_to && $this->ychanged[$yi])
                 {
                     $add[] = $to_lines[$yi++];
                 }
-
                 if($delete && $add)
                 {
                     $edits[] = new Text_Diff_Op_change($delete, $add);
@@ -147,7 +156,19 @@
             return $edits;
         }
 
-        public function _compareseq($xoff, $xlim, $yoff, $ylim)
+        /**
+         * Finds LCS of two sequences.
+         *
+         * The results are recorded in the vectors $this->{x,y}changed[], by
+         * storing a 1 in the element for each line that is an insertion or
+         * deletion (ie. is not in the LCS).
+         *
+         * The subsequence of file 0 is (XOFF, XLIM) and likewise for file 1.
+         *
+         * Note that XLIM, YLIM are exclusive bounds.  All line numbers are
+         * origin-0 and discarded lines are not counted.
+         */
+        function _compareseq($xoff, $xlim, $yoff, $ylim)
         {
             /* Slide down the bottom initial diagonal. */
             while($xoff < $xlim && $yoff < $ylim && $this->xv[$xoff] == $this->yv[$yoff])
@@ -155,14 +176,12 @@
                 ++$xoff;
                 ++$yoff;
             }
-
             /* Slide up the top initial diagonal. */
             while($xlim > $xoff && $ylim > $yoff && $this->xv[$xlim - 1] == $this->yv[$ylim - 1])
             {
                 --$xlim;
                 --$ylim;
             }
-
             if($xoff == $xlim || $yoff == $ylim)
             {
                 $lcs = 0;
@@ -175,7 +194,6 @@
                 $nchunks = min(7, $xlim - $xoff, $ylim - $yoff) + 1;
                 [$lcs, $seps] = $this->_diag($xoff, $xlim, $yoff, $ylim, $nchunks);
             }
-
             if($lcs == 0)
             {
                 /* X and Y sequences have no common subsequence: mark all
@@ -202,10 +220,25 @@
             }
         }
 
-        public function _diag($xoff, $xlim, $yoff, $ylim, $nchunks)
+        /**
+         * Divides the Largest Common Subsequence (LCS) of the sequences (XOFF,
+         * XLIM) and (YOFF, YLIM) into NCHUNKS approximately equally sized
+         * segments.
+         *
+         * Returns (LCS, PTS).  LCS is the length of the LCS. PTS is an array of
+         * NCHUNKS+1 (X, Y) indexes giving the diving points between sub
+         * sequences.  The first sub-sequence is contained in (X0, X1), (Y0, Y1),
+         * the second in (X1, X2), (Y1, Y2) and so on.  Note that (X0, Y0) ==
+         * (XOFF, YOFF) and (X[NCHUNKS], Y[NCHUNKS]) == (XLIM, YLIM).
+         *
+         * This function assumes that the first lines of the specified portions of
+         * the two files do not match, and likewise that the last lines do not
+         * match.  The caller must trim matching lines from the beginning and end
+         * of the portions it is going to specify.
+         */
+        function _diag($xoff, $xlim, $yoff, $ylim, $nchunks)
         {
             $flip = false;
-
             if($xlim - $xoff > $ylim - $yoff)
             {
                 /* Things seems faster (I'm not sure I understand why) when the
@@ -213,7 +246,6 @@
                 $flip = true;
                 [$xoff, $xlim, $yoff, $ylim] = [$yoff, $ylim, $xoff, $xlim];
             }
-
             if($flip)
             {
                 for($i = $ylim - 1; $i >= $yoff; $i--)
@@ -228,12 +260,10 @@
                     $ymatches[$this->yv[$i]][] = $i;
                 }
             }
-
             $this->lcs = 0;
             $this->seq[0] = $yoff - 1;
             $this->in_seq = [];
             $ymids[0] = [];
-
             $numer = $xlim - $xoff + $nchunks - 1;
             $x = $xoff;
             for($chunk = 0; $chunk < $nchunks; $chunk++)
@@ -245,7 +275,6 @@
                         $ymids[$i][$chunk - 1] = $this->seq[$i];
                     }
                 }
-
                 $x1 = $xoff + (int) (($numer + ($xlim - $xoff) * $chunk) / $nchunks);
                 for(; $x < $x1; $x++)
                 {
@@ -288,7 +317,6 @@
                     }
                 }
             }
-
             $seps[] = $flip ? [$yoff, $xoff] : [$xoff, $yoff];
             $ymid = $ymids[$this->lcs];
             for($n = 0; $n < $nchunks - 1; $n++)
@@ -302,7 +330,7 @@
             return [$this->lcs, $seps];
         }
 
-        public function _lcsPos($ypos)
+        function _lcsPos($ypos)
         {
             $end = $this->lcs;
             if($end == 0 || $ypos > $this->seq[$end])
@@ -312,7 +340,6 @@
 
                 return $this->lcs;
             }
-
             $beg = 1;
             while($beg < $end)
             {
@@ -326,9 +353,7 @@
                     $end = $mid;
                 }
             }
-
             assert($ypos != $this->seq[$end]);
-
             $this->in_seq[$this->seq[$end]] = false;
             $this->seq[$end] = $ypos;
             $this->in_seq[$ypos] = 1;
@@ -336,15 +361,25 @@
             return $end;
         }
 
-        public function _shiftBoundaries($lines, &$changed, $other_changed)
+        /**
+         * Adjusts inserts/deletes of identical lines to join changes as much as
+         * possible.
+         *
+         * We do something when a run of changed lines include a line at one end
+         * and has an excluded, identical line at the other.  We are free to
+         * choose which identical line is included.  `compareseq' usually chooses
+         * the one at the beginning, but usually it is cleaner to consider the
+         * following identical line to be the "change".
+         *
+         * This is extracted verbatim from analyze.c (GNU diffutils-2.7).
+         */
+        function _shiftBoundaries($lines, &$changed, $other_changed)
         {
             $i = 0;
             $j = 0;
-
-            assert(count($lines) === count($changed));
+            assert(count($lines) == count($changed));
             $len = count($lines);
             $other_len = count($other_changed);
-
             while(1)
             {
                 /* Scan forward to find the beginning of another run of
@@ -362,7 +397,6 @@
                 {
                     $j++;
                 }
-
                 while($i < $len && ! $changed[$i])
                 {
                     assert($j < $other_len && ! $other_changed[$j]);
@@ -373,26 +407,21 @@
                         $j++;
                     }
                 }
-
                 if($i == $len)
                 {
                     break;
                 }
-
                 $start = $i;
-
                 /* Find the end of this run of changes. */
                 while(++$i < $len && $changed[$i])
                 {
                     continue;
                 }
-
                 do
                 {
                     /* Record the length of this run of changes, so that we can
                      * later determine whether the run has grown. */
                     $runlength = $i - $start;
-
                     /* Move the changed region back, so long as the previous
                      * unchanged line matches the last changed one.  This merges
                      * with previous changed regions. */
@@ -411,13 +440,11 @@
                         }
                         assert($j >= 0 && ! $other_changed[$j]);
                     }
-
                     /* Set CORRESPONDING to the end of the changed run, at the
                      * last point where it corresponds to a changed run in the
                      * other file. CORRESPONDING == LEN means no such point has
                      * been found. */
                     $corresponding = $j < $other_len ? $i : $len;
-
                     /* Move the changed region forward, so long as the first
                      * changed line matches the following unchanged one.  This
                      * merges with following changed regions.  Do this second, so
@@ -431,7 +458,6 @@
                         {
                             $i++;
                         }
-
                         assert($j < $other_len && ! $other_changed[$j]);
                         $j++;
                         if($j < $other_len && $other_changed[$j])
@@ -445,7 +471,6 @@
                     }
                 }
                 while($runlength != $i - $start);
-
                 /* If possible, move the fully-merged run of changes back to a
                  * corresponding run in the other file. */
                 while($corresponding < $i)

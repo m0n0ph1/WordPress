@@ -1,16 +1,42 @@
 <?php
+    /**
+     * Block Pattern Directory REST API: WP_REST_Pattern_Directory_Controller class
+     *
+     * @package    WordPress
+     * @subpackage REST_API
+     * @since      5.8.0
+     */
 
+    /**
+     * Controller which provides REST endpoint for block patterns.
+     *
+     * This simply proxies the endpoint at http://api.wordpress.org/patterns/1.0/. That isn't necessary for
+     * functionality, but is desired for privacy. It prevents api.wordpress.org from knowing the user's IP address.
+     *
+     * @since 5.8.0
+     *
+     * @see   WP_REST_Controller
+     */
     class WP_REST_Pattern_Directory_Controller extends WP_REST_Controller
     {
+        /**
+         * Constructs the controller.
+         *
+         * @since 5.8.0
+         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'pattern-directory';
         }
 
+        /**
+         * Registers the necessary REST API routes.
+         *
+         * @since 5.8.0
+         */
         public function register_routes()
         {
-            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base.'/patterns', [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -22,43 +48,44 @@
             ]);
         }
 
+        /**
+         * Retrieves the search parameters for the block pattern's collection.
+         *
+         * @return array Collection parameters.
+         * @since 6.2.0 Added 'per_page', 'page', 'offset', 'order', and 'orderby' to request.
+         *
+         * @since 5.8.0
+         */
         public function get_collection_params()
         {
             $query_params = parent::get_collection_params();
-
             $query_params['per_page']['default'] = 100;
             $query_params['search']['minLength'] = 1;
             $query_params['context']['default'] = 'view';
-
             $query_params['category'] = [
                 'description' => __('Limit results to those matching a category ID.'),
                 'type' => 'integer',
                 'minimum' => 1,
             ];
-
             $query_params['keyword'] = [
                 'description' => __('Limit results to those matching a keyword ID.'),
                 'type' => 'integer',
                 'minimum' => 1,
             ];
-
             $query_params['slug'] = [
                 'description' => __('Limit results to those matching a pattern (slug).'),
                 'type' => 'array',
             ];
-
             $query_params['offset'] = [
                 'description' => __('Offset the result set by a specific number of items.'),
                 'type' => 'integer',
             ];
-
             $query_params['order'] = [
                 'description' => __('Order sort attribute ascending or descending.'),
                 'type' => 'string',
                 'default' => 'desc',
                 'enum' => ['asc', 'desc'],
             ];
-
             $query_params['orderby'] = [
                 'description' => __('Sort collection by post attribute.'),
                 'type' => 'string',
@@ -78,16 +105,32 @@
                 ],
             ];
 
+            /**
+             * Filter collection parameters for the block pattern directory controller.
+             *
+             * @param array $query_params JSON Schema-formatted collection parameters.
+             *
+             * @since 5.8.0
+             *
+             */
             return apply_filters('rest_pattern_directory_collection_params', $query_params);
         }
 
+        /**
+         * Checks whether a given request has permission to view the local block pattern directory.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has permission, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         public function get_items_permissions_check($request)
         {
             if(current_user_can('edit_posts'))
             {
                 return true;
             }
-
             foreach(get_post_types(['show_in_rest' => true], 'objects') as $post_type)
             {
                 if(current_user_can($post_type->cap->edit_posts))
@@ -99,6 +142,17 @@
             return new WP_Error('rest_pattern_directory_cannot_view', __('Sorry, you are not allowed to browse the local block pattern directory.'), ['status' => rest_authorization_required_code()]);
         }
 
+        /**
+         * Search and retrieve block patterns metadata
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+         * @since 6.2.0 Added 'per_page', 'page', 'offset', 'order', and 'orderby' to request.
+         *
+         * @since 5.8.0
+         * @since 6.0.0 Added 'slug' to request.
+         */
         public function get_items($request)
         {
             /*
@@ -107,7 +161,6 @@
              * obscuring the version, which can cause invalid requests.
              */
             require ABSPATH.WPINC.'/version.php';
-
             $valid_query_args = [
                 'offset' => true,
                 'order' => true,
@@ -118,22 +171,17 @@
                 'slug' => true,
             ];
             $query_args = array_intersect_key($request->get_params(), $valid_query_args);
-
             $query_args['locale'] = get_user_locale();
             $query_args['wp-version'] = $wp_version; // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable -- it's defined in `version.php` above.
             $query_args['pattern-categories'] = isset($request['category']) ? $request['category'] : false;
             $query_args['pattern-keywords'] = isset($request['keyword']) ? $request['keyword'] : false;
-
             $query_args = array_filter($query_args);
-
             $transient_key = $this->get_transient_key($query_args);
-
             /*
              * Use network-wide transient to improve performance. The locale is the only site
              * configuration that affects the response, and it's included in the transient key.
              */
             $raw_patterns = get_site_transient($transient_key);
-
             if(! $raw_patterns)
             {
                 $api_url = 'http://api.wordpress.org/patterns/1.0/?'.build_query($query_args);
@@ -141,7 +189,6 @@
                 {
                     $api_url = set_url_scheme($api_url, 'https');
                 }
-
                 /*
                  * Default to a short TTL, to mitigate cache stampedes on high-traffic sites.
                  * This assumes that most errors will be short-lived, e.g., packet loss that causes the
@@ -152,36 +199,31 @@
                 $cache_ttl = 5;
                 $wporg_response = wp_remote_get($api_url);
                 $raw_patterns = json_decode(wp_remote_retrieve_body($wporg_response));
-
                 if(is_wp_error($wporg_response))
                 {
                     $raw_patterns = $wporg_response;
                 }
-                elseif(is_array($raw_patterns))
-                {
-                    // Response has valid data.
-                    $cache_ttl = HOUR_IN_SECONDS;
-                }
-                else
+                elseif(! is_array($raw_patterns))
                 {
                     // HTTP request succeeded, but response data is invalid.
                     $raw_patterns = new WP_Error('pattern_api_failed', sprintf(/* translators: %s: Support forums URL. */ __('An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.'), __('https://wordpress.org/support/forums/')), [
                         'response' => wp_remote_retrieve_body($wporg_response),
                     ]);
                 }
-
+                else
+                {
+                    // Response has valid data.
+                    $cache_ttl = HOUR_IN_SECONDS;
+                }
                 set_site_transient($transient_key, $raw_patterns, $cache_ttl);
             }
-
             if(is_wp_error($raw_patterns))
             {
                 $raw_patterns->add_data(['status' => 500]);
 
                 return $raw_patterns;
             }
-
             $response = [];
-
             if($raw_patterns)
             {
                 foreach($raw_patterns as $pattern)
@@ -199,7 +241,6 @@
             {
                 // This is an additional precaution because the "sort" function expects an array.
                 $query_args['slug'] = wp_parse_list($query_args['slug']);
-
                 // Empty arrays should not affect the transient key.
                 if(empty($query_args['slug']))
                 {
@@ -215,11 +256,21 @@
             return 'wp_remote_block_patterns_'.md5(serialize($query_args));
         }
 
+        /**
+         * Prepare a raw block pattern before it gets output in a REST API response.
+         *
+         * @param object          $item    Raw pattern from api.wordpress.org, before any changes.
+         * @param WP_REST_Request $request Request object.
+         *
+         * @return WP_REST_Response
+         * @since 5.9.0 Renamed `$raw_pattern` to `$item` to match parent class for PHP 8 named parameter support.
+         *
+         * @since 5.8.0
+         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
             $raw_pattern = $item;
-
             $prepared_pattern = [
                 'id' => absint($raw_pattern->id),
                 'title' => sanitize_text_field($raw_pattern->title->rendered),
@@ -230,11 +281,19 @@
                 'viewport_width' => absint($raw_pattern->meta->wpop_viewport_width),
                 'block_types' => array_map('sanitize_text_field', $raw_pattern->meta->wpop_block_types),
             ];
-
             $prepared_pattern = $this->add_additional_fields_to_object($prepared_pattern, $request);
-
             $response = new WP_REST_Response($prepared_pattern);
 
+            /**
+             * Filters the REST API response for a block pattern.
+             *
+             * @param WP_REST_Response $response    The response object.
+             * @param object           $raw_pattern The unprepared block pattern.
+             * @param WP_REST_Request  $request     The request object.
+             *
+             * @since 5.8.0
+             *
+             */
             return apply_filters('rest_prepare_block_pattern', $response, $raw_pattern, $request);
         }
 
@@ -252,14 +311,20 @@
          * @param array $query_args Query arguments to generate a transient key from.
          * @return string Transient key.
          */
-
+        /**
+         * Retrieves the block pattern's schema, conforming to JSON Schema.
+         *
+         * @return array Item schema data.
+         * @since 6.2.0 Added `'block_types'` to schema.
+         *
+         * @since 5.8.0
+         */
         public function get_item_schema()
         {
             if($this->schema)
             {
                 return $this->add_additional_fields_schema($this->schema);
             }
-
             $this->schema = [
                 '$schema' => 'http://json-schema.org/draft-04/schema#',
                 'title' => 'pattern-directory-item',
@@ -271,21 +336,18 @@
                         'minimum' => 1,
                         'context' => ['view', 'edit', 'embed'],
                     ],
-
                     'title' => [
                         'description' => __('The pattern title, in human readable format.'),
                         'type' => 'string',
                         'minLength' => 1,
                         'context' => ['view', 'edit', 'embed'],
                     ],
-
                     'content' => [
                         'description' => __('The pattern content.'),
                         'type' => 'string',
                         'minLength' => 1,
                         'context' => ['view', 'edit', 'embed'],
                     ],
-
                     'categories' => [
                         'description' => __("The pattern's category slugs."),
                         'type' => 'array',
@@ -293,7 +355,6 @@
                         'items' => ['type' => 'string'],
                         'context' => ['view', 'edit', 'embed'],
                     ],
-
                     'keywords' => [
                         'description' => __("The pattern's keywords."),
                         'type' => 'array',
@@ -301,20 +362,17 @@
                         'items' => ['type' => 'string'],
                         'context' => ['view', 'edit', 'embed'],
                     ],
-
                     'description' => [
                         'description' => __('A description of the pattern.'),
                         'type' => 'string',
                         'minLength' => 1,
                         'context' => ['view', 'edit', 'embed'],
                     ],
-
                     'viewport_width' => [
                         'description' => __('The preferred width of the viewport when previewing a pattern, in pixels.'),
                         'type' => 'integer',
                         'context' => ['view', 'edit', 'embed'],
                     ],
-
                     'block_types' => [
                         'description' => __('The block types which can use this pattern.'),
                         'type' => 'array',

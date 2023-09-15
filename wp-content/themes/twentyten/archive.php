@@ -1,5 +1,16 @@
 <?php
-
+    /**
+     * Template for displaying Archive pages
+     *
+     * Used to display archive-type pages if nothing more specific matches a query.
+     * For example, puts together date-based pages if no date.php file exists.
+     *
+     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Ten
+     * @since      Twenty Ten 1.0
+     */
     get_header(); ?>
 
 <div id="container">
@@ -50,7 +61,6 @@
              * That way we can run the loop properly, in full.
              */
             rewind_posts();
-
             /*
              * Run the loop for the archives page to output the posts.
              * If you want to overload this in a child theme then include a file

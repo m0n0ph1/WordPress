@@ -1,11 +1,42 @@
 <?php
+    /**
+     * REST API: WP_REST_Block_Types_Controller class
+     *
+     * @package    WordPress
+     * @subpackage REST_API
+     * @since      5.5.0
+     */
 
+    /**
+     * Core class used to access block types via the REST API.
+     *
+     * @since 5.5.0
+     *
+     * @see   WP_REST_Controller
+     */
     class WP_REST_Block_Types_Controller extends WP_REST_Controller
     {
+        /**
+         * Instance of WP_Block_Type_Registry.
+         *
+         * @since 5.5.0
+         * @var WP_Block_Type_Registry
+         */
         protected $block_registry;
 
+        /**
+         * Instance of WP_Block_Styles_Registry.
+         *
+         * @since 5.5.0
+         * @var WP_Block_Styles_Registry
+         */
         protected $style_registry;
 
+        /**
+         * Constructor.
+         *
+         * @since 5.5.0
+         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
@@ -14,9 +45,15 @@
             $this->style_registry = WP_Block_Styles_Registry::get_instance();
         }
 
+        /**
+         * Registers the routes for block types.
+         *
+         * @since 5.5.0
+         *
+         * @see   register_rest_route()
+         */
         public function register_routes()
         {
-            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -26,7 +63,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             register_rest_route($this->namespace, '/'.$this->rest_base.'/(?P<namespace>[a-zA-Z0-9_-]+)', [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -36,7 +72,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             register_rest_route($this->namespace, '/'.$this->rest_base.'/(?P<namespace>[a-zA-Z0-9_-]+)/(?P<name>[a-zA-Z0-9_-]+)', [
                 'args' => [
                     'name' => [
@@ -60,6 +95,13 @@
             ]);
         }
 
+        /**
+         * Retrieves the query params for collections.
+         *
+         * @return array Collection parameters.
+         * @since 5.5.0
+         *
+         */
         public function get_collection_params()
         {
             return [
@@ -71,11 +113,27 @@
             ];
         }
 
+        /**
+         * Checks whether a given request has permission to read post block types.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+         * @since 5.5.0
+         *
+         */
         public function get_items_permissions_check($request)
         {
             return $this->check_read_permission();
         }
 
+        /**
+         * Checks whether a given block type should be visible.
+         *
+         * @return true|WP_Error True if the block type is visible, WP_Error otherwise.
+         * @since 5.5.0
+         *
+         */
         protected function check_read_permission()
         {
             if(current_user_can('edit_posts'))
@@ -93,11 +151,19 @@
             return new WP_Error('rest_block_type_cannot_view', __('Sorry, you are not allowed to manage block types.'), ['status' => rest_authorization_required_code()]);
         }
 
+        /**
+         * Retrieves all post block types, depending on user context.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+         * @since 5.5.0
+         *
+         */
         public function get_items($request)
         {
             $data = [];
             $block_types = $this->block_registry->get_all_registered();
-
             // Retrieve the list of registered collection query parameters.
             $registered = $this->get_collection_params();
             $namespace = '';
@@ -105,13 +171,11 @@
             {
                 $namespace = $request['namespace'];
             }
-
             foreach($block_types as $slug => $obj)
             {
                 if($namespace)
                 {
                     [$block_namespace] = explode('/', $obj->name);
-
                     if($namespace !== $block_namespace)
                     {
                         continue;
@@ -124,24 +188,32 @@
             return rest_ensure_response($data);
         }
 
+        /**
+         * Prepares a block type object for serialization.
+         *
+         * @param WP_Block_Type   $item    Block type data.
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response Block type data.
+         * @since 5.5.0
+         * @since 5.9.0 Renamed `$block_type` to `$item` to match parent class for PHP 8 named parameter support.
+         * @since 6.3.0 Added `selectors` field.
+         *
+         */
         public function prepare_item_for_response($item, $request)
         {
             // Restores the more descriptive, specific name for use within this method.
             $block_type = $item;
-
             $fields = $this->get_fields_for_response($request);
             $data = [];
-
             if(rest_is_field_included('attributes', $fields))
             {
                 $data['attributes'] = $block_type->get_attributes();
             }
-
             if(rest_is_field_included('is_dynamic', $fields))
             {
                 $data['is_dynamic'] = $block_type->is_dynamic();
             }
-
             $schema = $this->get_item_schema();
             // Fields deprecated in WordPress 6.1, but left in the schema for backwards compatibility.
             $deprecated_fields = [
@@ -200,7 +272,6 @@
                     $data[$extra_field] = rest_sanitize_value_from_schema($field, $schema['properties'][$extra_field]);
                 }
             }
-
             if(rest_is_field_included('styles', $fields))
             {
                 $styles = $this->style_registry->get_registered_styles_for_block($block_type->name);
@@ -208,28 +279,44 @@
                 $data['styles'] = wp_parse_args($styles, $data['styles']);
                 $data['styles'] = array_filter($data['styles']);
             }
-
             $context = ! empty($request['context']) ? $request['context'] : 'view';
             $data = $this->add_additional_fields_to_object($data, $request);
             $data = $this->filter_response_by_context($data, $context);
-
             $response = rest_ensure_response($data);
-
             if(rest_is_field_included('_links', $fields) || rest_is_field_included('_embedded', $fields))
             {
                 $response->add_links($this->prepare_links($block_type));
             }
 
+            /**
+             * Filters a block type returned from the REST API.
+             *
+             * Allows modification of the block type data right before it is returned.
+             *
+             * @param WP_REST_Response $response   The response object.
+             * @param WP_Block_Type    $block_type The original block type object.
+             * @param WP_REST_Request  $request    Request used to generate the response.
+             *
+             * @since 5.5.0
+             *
+             */
             return apply_filters('rest_prepare_block_type', $response, $block_type, $request);
         }
 
+        /**
+         * Retrieves the block type' schema, conforming to JSON Schema.
+         *
+         * @return array Item schema data.
+         * @since 6.3.0 Added `selectors` field.
+         *
+         * @since 5.5.0
+         */
         public function get_item_schema()
         {
             if($this->schema)
             {
                 return $this->add_additional_fields_schema($this->schema);
             }
-
             // rest_validate_value_from_schema doesn't understand $refs, pull out reused definitions for readability.
             $inner_blocks_definition = [
                 'description' => __('The list of inner blocks used in the example.'),
@@ -252,7 +339,6 @@
                     ],
                 ],
             ];
-
             $example_definition = [
                 'description' => __('Block example.'),
                 'type' => ['object', 'null'],
@@ -267,7 +353,6 @@
                 'context' => ['embed', 'view', 'edit'],
                 'readonly' => true,
             ];
-
             $keywords_definition = [
                 'description' => __('Block keywords.'),
                 'type' => 'array',
@@ -278,7 +363,6 @@
                 'context' => ['embed', 'view', 'edit'],
                 'readonly' => true,
             ];
-
             $icon_definition = [
                 'description' => __('Icon of block type.'),
                 'type' => ['string', 'null'],
@@ -286,7 +370,6 @@
                 'context' => ['embed', 'view', 'edit'],
                 'readonly' => true,
             ];
-
             $category_definition = [
                 'description' => __('Block category.'),
                 'type' => ['string', 'null'],
@@ -294,7 +377,6 @@
                 'context' => ['embed', 'view', 'edit'],
                 'readonly' => true,
             ];
-
             $this->schema = [
                 '$schema' => 'http://json-schema.org/draft-04/schema#',
                 'title' => 'block-type',
@@ -560,7 +642,6 @@
                     ],
                 ],
             ];
-
             // Properties deprecated in WordPress 6.1, but left in the schema for backwards compatibility.
             $deprecated_properties = [
                 'editor_script' => [
@@ -604,10 +685,18 @@
             return $this->add_additional_fields_schema($this->schema);
         }
 
+        /**
+         * Prepares links for the request.
+         *
+         * @param WP_Block_Type $block_type Block type data.
+         *
+         * @return array Links for the given block type.
+         * @since 5.5.0
+         *
+         */
         protected function prepare_links($block_type)
         {
             [$namespace] = explode('/', $block_type->name);
-
             $links = [
                 'collection' => [
                     'href' => rest_url(sprintf('%s/%s', $this->namespace, $this->rest_base)),
@@ -619,7 +708,6 @@
                     'href' => rest_url(sprintf('%s/%s/%s', $this->namespace, $this->rest_base, $namespace)),
                 ],
             ];
-
             if($block_type->is_dynamic())
             {
                 $links['https://api.w.org/render-block'] = [
@@ -630,6 +718,15 @@
             return $links;
         }
 
+        /**
+         * Checks if a given request has access to read a block type.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
+         * @since 5.5.0
+         *
+         */
         public function get_item_permissions_check($request)
         {
             $check = $this->check_read_permission();
@@ -647,6 +744,15 @@
             return true;
         }
 
+        /**
+         * Get the block, if the name is valid.
+         *
+         * @param string $name Block name.
+         *
+         * @return WP_Block_Type|WP_Error Block type object if name is valid, WP_Error otherwise.
+         * @since 5.5.0
+         *
+         */
         protected function get_block($name)
         {
             $block_type = $this->block_registry->get_registered($name);
@@ -658,6 +764,15 @@
             return $block_type;
         }
 
+        /**
+         * Retrieves a specific block type.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+         * @since 5.5.0
+         *
+         */
         public function get_item($request)
         {
             $block_name = sprintf('%s/%s', $request['namespace'], $request['name']);

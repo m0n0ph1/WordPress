@@ -1,5 +1,12 @@
 <?php
-
+    /**
+     * Template for displaying search forms in Twenty Seventeen
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Seventeen
+     * @since      Twenty Seventeen 1.0
+     * @version    1.0
+     */
 ?>
 
 <?php $unique_id = esc_attr(twentyseventeen_unique_id('search-form-')); ?>

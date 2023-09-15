@@ -1,7 +1,26 @@
 <?php
+    /**
+     * Widget API: WP_Widget_Pages class
+     *
+     * @package    WordPress
+     * @subpackage Widgets
+     * @since      4.4.0
+     */
 
+    /**
+     * Core class used to implement a Pages widget.
+     *
+     * @since 2.8.0
+     *
+     * @see   WP_Widget
+     */
     class WP_Widget_Pages extends WP_Widget
     {
+        /**
+         * Sets up a new Pages widget instance.
+         *
+         * @since 2.8.0
+         */
         public function __construct()
         {
             $widget_ops = [
@@ -13,31 +32,56 @@
             parent::__construct('pages', __('Pages'), $widget_ops);
         }
 
+        /**
+         * Outputs the content for the current Pages widget instance.
+         *
+         * @param array $args     Display arguments including 'before_title', 'after_title',
+         *                        'before_widget', and 'after_widget'.
+         * @param array $instance Settings for the current Pages widget instance.
+         *
+         * @since 2.8.0
+         *
+         */
         public function widget($args, $instance)
         {
-            parent::widget($args, $instance);
             $default_title = __('Pages');
             $title = ! empty($instance['title']) ? $instance['title'] : $default_title;
-
+            /**
+             * Filters the widget title.
+             *
+             * @param string $title    The widget title. Default 'Pages'.
+             * @param array  $instance Array of settings for the current widget.
+             * @param mixed  $id_base  The widget ID.
+             *
+             * @since 2.6.0
+             *
+             */
             $title = apply_filters('widget_title', $title, $instance, $this->id_base);
-
             $sortby = empty($instance['sortby']) ? 'menu_order' : $instance['sortby'];
             $exclude = empty($instance['exclude']) ? '' : $instance['exclude'];
-
             if('menu_order' === $sortby)
             {
                 $sortby = 'menu_order, post_title';
             }
-
             $output = wp_list_pages(
-                apply_filters('widget_pages_args', [
+            /**
+             * Filters the arguments for the Pages widget.
+             *
+             * @param array $args     An array of arguments to retrieve the pages list.
+             * @param array $instance Array of settings for the current widget.
+             *
+             * @see   wp_list_pages()
+             *
+             * @since 2.8.0
+             * @since 4.9.0 Added the `$instance` parameter.
+             *
+             */ apply_filters('widget_pages_args', [
                     'title_li' => '',
                     'echo' => 0,
                     'sort_column' => $sortby,
                     'exclude' => $exclude,
                 ],            $instance)
             );
-
             if(! empty($output))
             {
                 echo $args['before_widget'];
@@ -45,11 +89,9 @@
                 {
                     echo $args['before_title'].$title.$args['after_title'];
                 }
-
                 $format = current_theme_supports('html5', 'navigation-widgets') ? 'html5' : 'xhtml';
-
+                /** This filter is documented in wp-includes/widgets/class-wp-nav-menu-widget.php */
                 $format = apply_filters('navigation_widgets_format', $format);
-
                 if('html5' === $format)
                 {
                     // The title may be filtered: Strip out HTML and make sure the aria-label is never empty.
@@ -68,11 +110,21 @@
                 {
                     echo '</nav>';
                 }
-
                 echo $args['after_widget'];
             }
         }
 
+        /**
+         * Handles updating settings for the current Pages widget instance.
+         *
+         * @param array $new_instance New settings for this instance as input by the user via
+         *                            WP_Widget::form().
+         * @param array $old_instance Old settings for this instance.
+         *
+         * @return array Updated settings to save.
+         * @since 2.8.0
+         *
+         */
         public function update($new_instance, $old_instance)
         {
             $instance = $old_instance;
@@ -85,16 +137,22 @@
             {
                 $instance['sortby'] = 'menu_order';
             }
-
             $instance['exclude'] = sanitize_text_field($new_instance['exclude']);
 
             return $instance;
         }
 
+        /**
+         * Outputs the settings form for the Pages widget.
+         *
+         * @param array $instance Current settings.
+         *
+         * @since 2.8.0
+         *
+         */
         public function form($instance)
         {
             // Defaults.
-            parent::form($instance);
             $instance = wp_parse_args((array) $instance, [
                 'sortby' => 'post_title',
                 'title' => '',

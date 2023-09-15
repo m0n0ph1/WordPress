@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * The template for displaying image attachments
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Nineteen
+     * @since      Twenty Nineteen 1.0
+     */
     get_header();
 ?>
 
@@ -22,9 +28,15 @@
 
                             <figure class="entry-attachment wp-block-image">
                                 <?php
-
+                                    /**
+                                     * Filters the default twentynineteen image attachment size.
+                                     *
+                                     * @param string $image_size Image size. Default 'large'.
+                                     *
+                                     * @since Twenty Sixteen 1.0
+                                     *
+                                     */
                                     $image_size = apply_filters('twentynineteen_attachment_size', 'full');
-
                                     echo wp_get_attachment_image(get_the_ID(), $image_size);
                                 ?>
 
@@ -66,13 +78,11 @@
                     the_post_navigation([
                                             'prev_text' => _x('<span class="meta-nav">Published in</span><br><span class="post-title">%title</span>', 'Parent post link', 'twentynineteen'),
                                         ]);
-
                     // If comments are open or we have at least one comment, load up the comment template.
                     if(comments_open() || get_comments_number())
                     {
                         comments_template();
                     }
-
                     // End the loop.
                 endwhile;
             ?>

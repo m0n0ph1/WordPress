@@ -1,14 +1,33 @@
 <?php
+    /**
+     * Widget API: WP_Widget_Media_Gallery class
+     *
+     * @package    WordPress
+     * @subpackage Widgets
+     * @since      4.9.0
+     */
 
+    /**
+     * Core class that implements a gallery widget.
+     *
+     * @since 4.9.0
+     *
+     * @see   WP_Widget_Media
+     * @see   WP_Widget
+     */
     class WP_Widget_Media_Gallery extends WP_Widget_Media
     {
+        /**
+         * Constructor.
+         *
+         * @since 4.9.0
+         */
         public function __construct()
         {
             parent::__construct('media_gallery', __('Gallery'), [
                 'description' => __('Displays an image gallery.'),
                 'mime_type' => 'image',
             ]);
-
             $this->l10n = array_merge($this->l10n, [
                 'no_media_selected' => __('No images selected'),
                 'add_media' => _x('Add Images', 'label for button in the gallery widget; should not be longer than ~13 characters long'),
@@ -17,24 +36,40 @@
             ]);
         }
 
+        /**
+         * Render the media on the frontend.
+         *
+         * @param array $instance Widget instance props.
+         *
+         * @since 4.9.0
+         *
+         */
         public function render_media($instance)
         {
             $instance = array_merge(wp_list_pluck($this->get_instance_schema(), 'default'), $instance);
-
             $shortcode_atts = array_merge($instance, [
                 'link' => $instance['link_type'],
             ]);
-
             // @codeCoverageIgnoreStart
             if($instance['orderby_random'])
             {
                 $shortcode_atts['orderby'] = 'rand';
             }
-
             // @codeCoverageIgnoreEnd
             echo gallery_shortcode($shortcode_atts);
         }
 
+        /**
+         * Get schema for properties of a widget instance (item).
+         *
+         * @return array Schema for properties.
+         * @see   WP_REST_Controller::get_item_schema()
+         * @see   WP_REST_Controller::get_additional_fields()
+         * @link  https://core.trac.wordpress.org/ticket/35574
+         *
+         * @since 4.9.0
+         *
+         */
         public function get_instance_schema()
         {
             $schema = [
@@ -78,19 +113,22 @@
                     'should_preview_update' => false,
                 ],
             ];
-
+            /** This filter is documented in wp-includes/widgets/class-wp-widget-media.php */
             $schema = apply_filters("widget_{$this->id_base}_instance_schema", $schema, $this);
 
             return $schema;
         }
 
+        /**
+         * Loads the required media files for the media manager and scripts for media widgets.
+         *
+         * @since 4.9.0
+         */
         public function enqueue_admin_scripts()
         {
             parent::enqueue_admin_scripts();
-
             $handle = 'media-gallery-widget';
             wp_enqueue_script($handle);
-
             $exported_schema = [];
             foreach($this->get_instance_schema() as $field => $field_schema)
             {
@@ -106,7 +144,6 @@
                 ]);
             }
             wp_add_inline_script($handle, sprintf('wp.mediaWidgets.modelConstructors[ %s ].prototype.schema = %s;', wp_json_encode($this->id_base), wp_json_encode($exported_schema)));
-
             wp_add_inline_script(
                 $handle, sprintf(
                            '
@@ -117,6 +154,11 @@
             );
         }
 
+        /**
+         * Render form template scripts.
+         *
+         * @since 4.9.0
+         */
         public function render_control_template_scripts()
         {
             parent::render_control_template_scripts();
@@ -174,6 +216,16 @@
             <?php
         }
 
+        /**
+         * Whether the widget has content to show.
+         *
+         * @param array $instance Widget instance props.
+         *
+         * @return bool Whether widget has content.
+         * @since  4.9.0
+         * @access protected
+         *
+         */
         protected function has_content($instance)
         {
             if(! empty($instance['ids']))

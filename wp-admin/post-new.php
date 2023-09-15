@@ -1,9 +1,18 @@
 <?php
-
+    /**
+     * New Post Administration Screen.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
+    /**
+     * @global string  $post_type
+     * @global object  $post_type_object
+     * @global WP_Post $post Global post object.
+     */
     global $post_type, $post_type_object, $post;
-
     if(! isset($_GET['post_type']))
     {
         $post_type = 'post';
@@ -17,7 +26,6 @@
         wp_die(__('Invalid post type.'));
     }
     $post_type_object = get_post_type_object($post_type);
-
     if('post' === $post_type)
     {
         $parent_file = 'edit.php';
@@ -56,19 +64,15 @@
             $parent_file = "edit.php?post_type=$post_type";
         }
     }
-
     $title = $post_type_object->labels->add_new_item;
-
     $editing = true;
-
     if(! current_user_can($post_type_object->cap->edit_posts) || ! current_user_can($post_type_object->cap->create_posts))
     {
         wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to create posts as this user.').'</p>', 403);
     }
-
     $post = get_default_post_to_edit($post_type, true);
     $post_ID = $post->ID;
-
+    /** This filter is documented in wp-admin/post.php */
     if(apply_filters('replace_editor', false, $post) !== true)
     {
         if(use_block_editor_for_post($post))
@@ -87,5 +91,4 @@
         $current_screen = get_current_screen();
         $current_screen->is_block_editor(false);
     }
-
     require_once ABSPATH.'wp-admin/admin-footer.php';

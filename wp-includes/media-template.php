@@ -1,5 +1,17 @@
 <?php
-
+    /**
+     * WordPress media templates.
+     *
+     * @package    WordPress
+     * @subpackage Media
+     * @since      3.5.0
+     */
+    /**
+     * Outputs the markup for an audio tag to be used in an Underscore template
+     * when data.model is passed.
+     *
+     * @since 3.9.0
+     */
     function wp_underscore_audio_template()
     {
         $audio_types = wp_get_audio_extensions();
@@ -37,6 +49,12 @@
         <?php
     }
 
+    /**
+     * Outputs the markup for a video tag to be used in an Underscore template
+     * when data.model is passed.
+     *
+     * @since 3.9.0
+     */
     function wp_underscore_video_template()
     {
         $video_types = wp_get_video_extensions();
@@ -137,10 +155,14 @@
         <?php
     }
 
+    /**
+     * Prints the templates used in the media manager.
+     *
+     * @since 3.5.0
+     */
     function wp_print_media_templates()
     {
         $class = 'media-modal wp-core-ui';
-
         $alt_text_description = sprintf(/* translators: 1: Link to tutorial, 2: Additional link attributes, 3: Accessibility text. */ __('<a href="%1$s" %2$s>Learn how to describe the purpose of the image%3$s</a>. Leave empty if the image is purely decorative.'), esc_url('https://www.w3.org/WAI/tutorials/images/decision-tree'), 'target="_blank" rel="noopener"', sprintf('<span class="screen-reader-text"> %s</span>', /* translators: Hidden accessibility text. */ __('(opens in a new tab)')));
         ?>
 
@@ -231,7 +253,7 @@
                     <div class="upload-ui">
                         <h2 class="upload-instructions"><?php _e('Upload Limit Exceeded'); ?></h2>
                         <?php
-
+                            /** This action is documented in wp-admin/includes/media.php */
                             do_action('upload_ui_over_quota');
                         ?>
                     </div>
@@ -248,21 +270,21 @@
 
                     <div class="post-upload-ui" id="post-upload-info">
                         <?php
-
+                            /** This action is documented in wp-admin/includes/media.php */
                             do_action('pre-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-
+                            /** This action is documented in wp-admin/includes/media.php */
                             do_action('pre-plupload-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-
                             if(10 === remove_action('post-plupload-upload-ui', 'media_upload_flash_bypass'))
                             {
+                                /** This action is documented in wp-admin/includes/media.php */
                                 do_action('post-plupload-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                                 add_action('post-plupload-upload-ui', 'media_upload_flash_bypass');
                             }
                             else
                             {
+                                /** This action is documented in wp-admin/includes/media.php */
                                 do_action('post-plupload-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                             }
-
                             $max_upload_size = wp_max_upload_size();
                             if(! $max_upload_size)
                             {
@@ -286,7 +308,7 @@
                         <# } #>
 
                         <?php
-
+                            /** This action is documented in wp-admin/includes/media.php */
                             do_action('post-upload-ui'); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                         ?>
                     </div>
@@ -957,14 +979,13 @@
 						data-user-setting="imgsize"
 					<# } #>>
 					<?php
-
+                        /** This filter is documented in wp-admin/includes/media.php */
                         $sizes = apply_filters('image_size_names_choose', [
                             'thumbnail' => __('Thumbnail'),
                             'medium' => __('Medium'),
                             'large' => __('Large'),
                             'full' => __('Full Size'),
                         ]);
-
                         foreach($sizes as $value => $name) :
                             ?>
                             <#
@@ -1036,14 +1057,13 @@
 				<# } #>
 				>
 				<?php
-
+                    /** This filter is documented in wp-admin/includes/media.php */
                     $size_names = apply_filters('image_size_names_choose', [
                         'thumbnail' => __('Thumbnail'),
                         'medium' => __('Medium'),
                         'large' => __('Large'),
                         'full' => __('Full Size'),
                     ]);
-
                     foreach($size_names as $size => $label) :
                         ?>
                         <option value="<?php echo esc_attr($size); ?>">
@@ -1126,7 +1146,7 @@
             <p class="description" id="alt-text-description"><?php echo $alt_text_description; ?></p>
 
             <?php
-
+                /** This filter is documented in wp-admin/includes/media.php */
                 if(! apply_filters('disable_captions', '')) :
                     ?>
                     <span class="setting caption">
@@ -1195,7 +1215,7 @@
                         <p class="description" id="alt-text-description"><?php echo $alt_text_description; ?></p>
 
                         <?php
-
+                            /** This filter is documented in wp-admin/includes/media.php */
                             if(! apply_filters('disable_captions', '')) :
                                 ?>
                                 <span class="setting caption">
@@ -1236,14 +1256,13 @@
 										data-user-setting="imgsize"
 									<# } #>>
 									<?php
-
+                                        /** This filter is documented in wp-admin/includes/media.php */
                                         $sizes = apply_filters('image_size_names_choose', [
                                             'thumbnail' => __('Thumbnail'),
                                             'medium' => __('Medium'),
                                             'large' => __('Large'),
                                             'full' => __('Full Size'),
                                         ]);
-
                                         foreach($sizes as $value => $name) :
                                             ?>
                                             <#
@@ -1424,7 +1443,6 @@
 				</span>
                     <# } #>
                     <?php
-
                         foreach($audio_types as $type) :
                             ?>
                             <# if ( ! _.isEmpty( data.model.<?php echo $type; ?> ) ) {
@@ -1702,6 +1720,10 @@
         </script>
 
         <?php
-
+        /**
+         * Fires when the custom Backbone media templates are printed.
+         *
+         * @since 3.5.0
+         */
         do_action('print_media_templates');
     }

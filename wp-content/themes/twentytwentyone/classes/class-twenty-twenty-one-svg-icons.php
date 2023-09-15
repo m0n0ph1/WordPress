@@ -1,7 +1,33 @@
 <?php
+    /**
+     * SVG Icons class
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty_One
+     * @since      Twenty Twenty-One 1.0
+     */
 
+    /**
+     * This class is in charge of displaying SVG icons across the site.
+     *
+     * Place each <svg> source on its own array key, without adding either
+     * the `width` or `height` attributes, since these are added dynamically,
+     * before rendering the SVG code.
+     *
+     * All icons are assumed to have equal width and height, hence the option
+     * to only specify a `$size` parameter in the svg methods.
+     *
+     * @since Twenty Twenty-One 1.0
+     */
     class Twenty_Twenty_One_SVG_Icons
     {
+        /**
+         * User Interface icons – svg sources.
+         *
+         * @since Twenty Twenty-One 1.0
+         *
+         * @var array
+         */
         protected static $icons = [
             'arrow_right' => '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="m4 13v-2h12l-4-4 1-2 7 7-7 7-1-2 4-4z" fill="currentColor"/></svg>',
             'arrow_left' => '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 13v-2H8l4-4-1-2-7 7 7 7 1-2-4-4z" fill="currentColor"/></svg>',
@@ -11,6 +37,13 @@
             'minus' => '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 11h12v2H6z" fill="currentColor"/></svg>',
         ];
 
+        /**
+         * Social Icons – svg sources.
+         *
+         * @since Twenty Twenty-One 1.0
+         *
+         * @var array
+         */
         protected static $social_icons = [
             '500px' => '<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M6.94026,15.1412c.00437.01213.108.29862.168.44064a6.55008,6.55008,0,1,0,6.03191-9.09557,6.68654,6.68654,0,0,0-2.58357.51467A8.53914,8.53914,0,0,0,8.21268,8.61344L8.209,8.61725V3.22948l9.0504-.00008c.32934-.0036.32934-.46353.32934-.61466s0-.61091-.33035-.61467L7.47248,2a.43.43,0,0,0-.43131.42692v7.58355c0,.24466.30476.42131.58793.4819.553.11812.68074-.05864.81617-.2457l.018-.02481A10.52673,10.52673,0,0,1,9.32258,9.258a5.35268,5.35268,0,1,1,7.58985,7.54976,5.417,5.417,0,0,1-3.80867,1.56365,5.17483,5.17483,0,0,1-2.69822-.74478l.00342-4.61111a2.79372,2.79372,0,0,1,.71372-1.78792,2.61611,2.61611,0,0,1,1.98282-.89477,2.75683,2.75683,0,0,1,1.95525.79477,2.66867,2.66867,0,0,1,.79656,1.909,2.724,2.724,0,0,1-2.75849,2.748,4.94651,4.94651,0,0,1-.86254-.13719c-.31234-.093-.44519.34058-.48892.48349-.16811.54966.08453.65862.13687.67489a3.75751,3.75751,0,0,0,1.25234.18375,3.94634,3.94634,0,1,0-2.82444-6.742,3.67478,3.67478,0,0,0-1.13028,2.584l-.00041.02323c-.0035.11667-.00579,2.881-.00644,3.78811l-.00407-.00451a6.18521,6.18521,0,0,1-1.0851-1.86092c-.10544-.27856-.34358-.22925-.66857-.12917-.14192.04372-.57386.17677-.47833.489Zm4.65165-1.08338a.51346.51346,0,0,0,.19513.31818l.02276.022a.52945.52945,0,0,0,.3517.18416.24242.24242,0,0,0,.16577-.0611c.05473-.05082.67382-.67812.73287-.738l.69041.68819a.28978.28978,0,0,0,.21437.11032.53239.53239,0,0,0,.35708-.19486c.29792-.30419.14885-.46821.07676-.54751l-.69954-.69975.72952-.73469c.16-.17311.01874-.35708-.12218-.498-.20461-.20461-.402-.25742-.52855-.14083l-.7254.72665-.73354-.73375a.20128.20128,0,0,0-.14179-.05695.54135.54135,0,0,0-.34379.19648c-.22561.22555-.274.38149-.15656.5059l.73374.7315-.72942.73072A.26589.26589,0,0,0,11.59191,14.05782Zm1.59866-9.915A8.86081,8.86081,0,0,0,9.854,4.776a.26169.26169,0,0,0-.16938.22759.92978.92978,0,0,0,.08619.42094c.05682.14524.20779.531.50006.41955a8.40969,8.40969,0,0,1,2.91968-.55484,7.87875,7.87875,0,0,1,3.086.62286,8.61817,8.61817,0,0,1,2.30562,1.49315.2781.2781,0,0,0,.18318.07586c.15529,0,.30425-.15253.43167-.29551.21268-.23861.35873-.4369.1492-.63538a8.50425,8.50425,0,0,0-2.62312-1.694A9.0177,9.0177,0,0,0,13.19058,4.14283ZM19.50945,18.6236h0a.93171.93171,0,0,0-.36642-.25406.26589.26589,0,0,0-.27613.06613l-.06943.06929A7.90606,7.90606,0,0,1,7.60639,18.505a7.57284,7.57284,0,0,1-1.696-2.51537,8.58715,8.58715,0,0,1-.5147-1.77754l-.00871-.04864c-.04939-.25873-.28755-.27684-.62981-.22448-.14234.02178-.5755.088-.53426.39969l.001.00712a9.08807,9.08807,0,0,0,15.406,4.99094c.00193-.00192.04753-.04718.0725-.07436C19.79425,19.16234,19.87422,18.98728,19.50945,18.6236Z"></path></svg>',
             'amazon' => '<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M13.582,8.182C11.934,8.367,9.78,8.49,8.238,9.166c-1.781,0.769-3.03,2.337-3.03,4.644 c0,2.953,1.86,4.429,4.253,4.429c2.02,0,3.125-0.477,4.685-2.065c0.516,0.747,0.685,1.109,1.629,1.894 c0.212,0.114,0.483,0.103,0.672-0.066l0.006,0.006c0.567-0.505,1.599-1.401,2.18-1.888c0.231-0.188,0.19-0.496,0.009-0.754 c-0.52-0.718-1.072-1.303-1.072-2.634V8.305c0-1.876,0.133-3.599-1.249-4.891C15.23,2.369,13.422,2,12.04,2 C9.336,2,6.318,3.01,5.686,6.351C5.618,6.706,5.877,6.893,6.109,6.945l2.754,0.298C9.121,7.23,9.308,6.977,9.357,6.72 c0.236-1.151,1.2-1.706,2.284-1.706c0.584,0,1.249,0.215,1.595,0.738c0.398,0.584,0.346,1.384,0.346,2.061V8.182z M13.049,14.088 c-0.451,0.8-1.169,1.291-1.967,1.291c-1.09,0-1.728-0.83-1.728-2.061c0-2.42,2.171-2.86,4.227-2.86v0.615 C13.582,12.181,13.608,13.104,13.049,14.088z M20.683,19.339C18.329,21.076,14.917,22,11.979,22c-4.118,0-7.826-1.522-10.632-4.057 c-0.22-0.199-0.024-0.471,0.241-0.317c3.027,1.762,6.771,2.823,10.639,2.823c2.608,0,5.476-0.541,8.115-1.66 C20.739,18.62,21.072,19.051,20.683,19.339z M21.336,21.043c-0.194,0.163-0.379,0.076-0.293-0.139 c0.284-0.71,0.92-2.298,0.619-2.684c-0.301-0.386-1.99-0.183-2.749-0.092c-0.23,0.027-0.266-0.173-0.059-0.319 c1.348-0.946,3.555-0.673,3.811-0.356C22.925,17.773,22.599,19.986,21.336,21.043z"></path></svg>',
@@ -52,6 +85,16 @@
             'youtube' => '<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M21.8,8.001c0,0-0.195-1.378-0.795-1.985c-0.76-0.797-1.613-0.801-2.004-0.847c-2.799-0.202-6.997-0.202-6.997-0.202 h-0.009c0,0-4.198,0-6.997,0.202C4.608,5.216,3.756,5.22,2.995,6.016C2.395,6.623,2.2,8.001,2.2,8.001S2,9.62,2,11.238v1.517 c0,1.618,0.2,3.237,0.2,3.237s0.195,1.378,0.795,1.985c0.761,0.797,1.76,0.771,2.205,0.855c1.6,0.153,6.8,0.201,6.8,0.201 s4.203-0.006,7.001-0.209c0.391-0.047,1.243-0.051,2.004-0.847c0.6-0.607,0.795-1.985,0.795-1.985s0.2-1.618,0.2-3.237v-1.517 C22,9.62,21.8,8.001,21.8,8.001z M9.935,14.594l-0.001-5.62l5.404,2.82L9.935,14.594z"></path></svg>',
         ];
 
+        /**
+         * Social Icons – domain mappings.
+         *
+         * By default, each Icon ID is matched against a .com TLD. To override this behavior,
+         * specify all the domains it covers (including the .com TLD too, if applicable).
+         *
+         * @since Twenty Twenty-One 1.0
+         *
+         * @var array
+         */
         protected static $social_icons_map = [
             'amazon' => [
                 'amazon.com',
@@ -108,18 +151,45 @@
             ],
         ];
 
+        /**
+         * Detects the social network from a URL and returns the SVG code for its icon.
+         *
+         * @static
+         *
+         * @param string $uri  Social link.
+         * @param int    $size The icon-size in pixels.
+         *
+         * @return string|null
+         * @since Twenty Twenty-One 1.0
+         *
+         */
         public static function get_social_link_svg($uri, $size)
         {
             static $regex_map; // Only compute regex map once, for performance.
-
             if(! isset($regex_map))
             {
                 $regex_map = [];
-
+                /**
+                 * Filters Twenty Twenty-Ones's array of domain mappings for social icons.
+                 *
+                 * By default, each Icon ID is matched against a .com TLD. To override this behavior,
+                 * specify all the domains it covers (including the .com TLD too, if applicable).
+                 *
+                 * @param array $social_icons_map Array of default social icons.
+                 *
+                 * @since Twenty Twenty-One 1.0
+                 *
+                 */
                 $map = apply_filters('twenty_twenty_one_social_icons_map', self::$social_icons_map);
-
+                /**
+                 * Filters Twenty Twenty-One's array of social icons.
+                 *
+                 * @param array $social_icons Array of default social icons.
+                 *
+                 * @since Twenty Twenty-One 1.0
+                 *
+                 */
                 $social_icons = apply_filters('twenty_twenty_one_svg_icons_social', self::$social_icons);
-
                 foreach(array_keys($social_icons) as $icon)
                 {
                     $domains = array_key_exists($icon, $map) ? $map[$icon] : [sprintf('%s.com', $icon)];
@@ -139,6 +209,19 @@
             return null;
         }
 
+        /**
+         * Gets the SVG code for a given icon.
+         *
+         * @static
+         *
+         * @param string $group The icon group.
+         * @param string $icon  The icon.
+         * @param int    $size  The icon-size in pixels.
+         *
+         * @return string
+         * @since Twenty Twenty-One 1.0
+         *
+         */
         public static function get_svg($group, $icon, $size)
         {
             if('ui' === $group)
@@ -153,14 +236,22 @@
             {
                 $arr = [];
             }
-
+            /**
+             * Filters Twenty Twenty-Ones's array of icons.
+             *
+             * The dynamic portion of the hook name, `$group`, refers to
+             * the name of the group of icons, either "ui" or "social".
+             *
+             * @param array $arr Array of icons.
+             *
+             * @since Twenty Twenty-One 1.0
+             *
+             */
             $arr = apply_filters("twenty_twenty_one_svg_icons_{$group}", $arr);
-
             $svg = '';
             if(array_key_exists($icon, $arr))
             {
                 $repl = sprintf('<svg class="svg-icon" width="%d" height="%d" aria-hidden="true" role="img" focusable="false" ', $size, $size);
-
                 $svg = preg_replace('/^<svg /', $repl, trim($arr[$icon])); // Add extra attributes to SVG code.
             }
 

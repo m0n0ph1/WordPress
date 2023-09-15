@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * The template for displaying the header
+ *
+ * Displays all of the head element and everything up until the "site-content" div.
+ *
+ * @package    WordPress
+ * @subpackage Twenty_Fifteen
+ * @since      Twenty Fifteen 1.0
+ */
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?> class="no-js">
 <head>
@@ -25,7 +33,6 @@
             <div class="site-branding">
                 <?php
                     twentyfifteen_the_custom_logo();
-
                     if(is_front_page() && is_home()) :
                         ?>
                         <h1 class="site-title"><a href="<?php echo esc_url(home_url('/')); ?>"
@@ -35,7 +42,6 @@
                                                  rel="home"><?php bloginfo('name'); ?></a></p>
                     <?php
                     endif;
-
                     $description = get_bloginfo('description', 'display');
                     if($description || is_customize_preview()) :
                         ?>

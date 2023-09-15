@@ -1,25 +1,24 @@
 <?php
-
+    /**
+     * Confirms that the activation key that is sent in an email after a user signs
+     * up for a new site matches the key for that user and then displays confirmation.
+     *
+     * @package WordPress
+     */
     define('WP_INSTALLING', true);
-
+    /** Sets up the WordPress Environment. */
     require __DIR__.'/wp-load.php';
-
     require __DIR__.'/wp-blog-header.php';
-
     if(! is_multisite())
     {
         wp_redirect(wp_registration_url());
         die();
     }
-
     $valid_error_codes = ['already_active', 'blog_taken'];
-
     [$activate_path] = explode('?', wp_unslash($_SERVER['REQUEST_URI']));
     $activate_cookie = 'wp-activate-'.COOKIEHASH;
-
     $key = '';
     $result = null;
-
     if(isset($_GET['key']) && isset($_POST['key']) && $_GET['key'] !== $_POST['key'])
     {
         wp_die(__('A key value mismatch has been detected. Please follow the link provided in your activation email.'), __('An error occurred during the activation'), 400);
@@ -32,11 +31,9 @@
     {
         $key = $_POST['key'];
     }
-
     if($key)
     {
         $redirect_url = remove_query_arg('key');
-
         if(remove_query_arg(false) !== $redirect_url)
         {
             setcookie($activate_cookie, $key, 0, $activate_path, COOKIE_DOMAIN, is_ssl(), true);
@@ -48,14 +45,12 @@
             $result = wpmu_activate_signup($key);
         }
     }
-
     if(null === $result && isset($_COOKIE[$activate_cookie]))
     {
         $key = $_COOKIE[$activate_cookie];
         $result = wpmu_activate_signup($key);
         setcookie($activate_cookie, ' ', time() - YEAR_IN_SECONDS, $activate_path, COOKIE_DOMAIN, is_ssl(), true);
     }
-
     if(null === $result || (is_wp_error($result) && 'invalid_key' === $result->get_error_code()))
     {
         status_header(404);
@@ -63,32 +58,49 @@
     elseif(is_wp_error($result))
     {
         $error_code = $result->get_error_code();
-
         if(! in_array($error_code, $valid_error_codes, true))
         {
             status_header(400);
         }
     }
-
     nocache_headers();
-
     if(is_object($wp_object_cache))
     {
         $wp_object_cache->cache_enabled = false;
     }
-
 // Fix for page title.
     $wp_query->is_404 = false;
-
+    /**
+     * Fires before the Site Activation page is loaded.
+     *
+     * @since 3.0.0
+     */
     do_action('activate_header');
-
+    /**
+     * Adds an action hook specific to this page.
+     *
+     * Fires on {@see 'wp_head'}.
+     *
+     * @since MU (3.0.0)
+     */
     function do_activate_header()
     {
+        /**
+         * Fires within the `<head>` section of the Site Activation page.
+         *
+         * Fires on the {@see 'wp_head'} action.
+         *
+         * @since 3.0.0
+         */
         do_action('activate_wp_head');
     }
 
     add_action('wp_head', 'do_activate_header');
-
+    /**
+     * Loads styles specific to this page.
+     *
+     * @since MU (3.0.0)
+     */
     function wpmu_activate_stylesheet()
     {
         ?>
@@ -129,15 +141,35 @@
     add_action('wp_head', 'wpmu_activate_stylesheet');
     add_action('wp_head', 'wp_strict_cross_origin_referrer');
     add_filter('wp_robots', 'wp_robots_sensitive_page');
-
     get_header('wp-activate');
-
     $blog_details = get_site();
 ?>
 
     <div id="signup-content" class="widecolumn">
         <div class="wp-activate-container">
-            <?php if($key)
+            <?php if(! $key) { ?>
+
+                <h2><?php _e('Activation Key Required'); ?></h2>
+                <form name="activateform"
+                      id="activateform"
+                      method="post"
+                      action="<?php echo network_site_url($blog_details->path.'wp-activate.php'); ?>">
+                    <p>
+                        <label for="key"><?php _e('Activation Key:'); ?></label>
+                        <br/><input type="text" name="key" id="key" value="" size="50" autofocus="autofocus"/>
+                    </p>
+                    <p class="submit">
+                        <input id="submit"
+                               type="submit"
+                               name="Submit"
+                               class="submit"
+                               value="<?php esc_attr_e('Activate'); ?>"/>
+                    </p>
+                </form>
+
+                <?php
+            }
+            else
             {
                 if(is_wp_error($result) && in_array($result->get_error_code(), $valid_error_codes, true))
                 {
@@ -198,29 +230,6 @@
                     <?php
                     endif;
                 }
-            }
-            else
-            { ?>
-
-                <h2><?php _e('Activation Key Required'); ?></h2>
-                <form name="activateform"
-                      id="activateform"
-                      method="post"
-                      action="<?php echo network_site_url($blog_details->path.'wp-activate.php'); ?>">
-                    <p>
-                        <label for="key"><?php _e('Activation Key:'); ?></label>
-                        <br/><input type="text" name="key" id="key" value="" size="50" autofocus="autofocus"/>
-                    </p>
-                    <p class="submit">
-                        <input id="submit"
-                               type="submit"
-                               name="Submit"
-                               class="submit"
-                               value="<?php esc_attr_e('Activate'); ?>"/>
-                    </p>
-                </form>
-
-                <?php
             }
             ?>
         </div>

@@ -1,10 +1,24 @@
 <?php
-
+    /**
+     * Block Patterns
+     *
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern/
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern_category/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Thirteen
+     * @since      Twenty Thirteen 3.4
+     */
+    /**
+     * Register Block Pattern Category.
+     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentythirteen', ['label' => esc_html__('Twenty Thirteen', 'twentythirteen')]);
     }
-
+    /**
+     * Register Block Patterns.
+     */
     if(function_exists('register_block_pattern'))
     {
         // Decorative Gallery.
@@ -17,7 +31,6 @@
 			<!-- /wp:gallery --></div></div>
 			<!-- /wp:cover -->',
         ]);
-
         // Informational Section.
         register_block_pattern('twentythirteen/informational-section', [
             'title' => esc_html__('Informational Section', 'twentythirteen'),
@@ -38,7 +51,6 @@
 			<!-- /wp:buttons --></div></div>
 			<!-- /wp:media-text -->',
         ]);
-
         // Decorative Columns.
         register_block_pattern('twentythirteen/decorative-columns', [
             'title' => esc_html__('Decorative Columns', 'twentythirteen'),
@@ -69,7 +81,6 @@
 			<!-- /wp:column --></div>
 			<!-- /wp:columns -->',
         ]);
-
         // Callout Quote.
         register_block_pattern('twentythirteen/callout-quote', [
             'title' => esc_html__('Callout Quote', 'twentythirteen'),
@@ -89,7 +100,6 @@
 			<!-- /wp:column --></div>
 			<!-- /wp:columns -->',
         ]);
-
         // Big Quote.
         register_block_pattern('twentythirteen/big-quote', [
             'title' => esc_html__('Big Quote', 'twentythirteen'),
@@ -105,7 +115,6 @@
 			<!-- /wp:quote --></div></div>
 			<!-- /wp:cover -->',
         ]);
-
         // Informational List.
         register_block_pattern('twentythirteen/informational-list', [
             'title' => esc_html__('Informational List', 'twentythirteen'),

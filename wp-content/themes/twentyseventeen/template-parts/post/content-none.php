@@ -1,5 +1,14 @@
 <?php
-
+    /**
+     * Template part for displaying a message that posts cannot be found
+     *
+     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Seventeen
+     * @since      Twenty Seventeen 1.0
+     * @version    1.0
+     */
 ?>
 
 <section class="no-results not-found">
@@ -23,7 +32,6 @@
                 <p><?php _e('It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help.', 'twentyseventeen'); ?></p>
                 <?php
                 get_search_form();
-
             endif;
         ?>
     </div><!-- .page-content -->

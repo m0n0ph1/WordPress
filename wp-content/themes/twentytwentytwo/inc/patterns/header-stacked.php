@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Logo and navigation header block pattern
+     */
     return [
         'title' => __('Logo and navigation header', 'twentytwentytwo'),
         'categories' => ['header'],

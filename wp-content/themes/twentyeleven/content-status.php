@@ -1,5 +1,15 @@
 <?php
-
+    /**
+     * Template for displaying posts in the Status Post Format
+     *
+     * Used on index and archive pages
+     *
+     * @link       https://wordpress.org/documentation/article/post-formats/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 1.0
+     */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -24,7 +34,14 @@
         <div class="entry-content">
             <div class="avatar">
                 <?php
-
+                    /**
+                     * Filters the Twenty Eleven status avatar size.
+                     *
+                     * @param int The height and width avatar dimensions in pixels. Default 65.
+                     *
+                     * @since Twenty Eleven 1.0
+                     *
+                     */
                     echo get_avatar(get_the_author_meta('ID'), apply_filters('twentyeleven_status_avatar', 65));
                 ?>
             </div>

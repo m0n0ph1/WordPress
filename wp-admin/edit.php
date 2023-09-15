@@ -1,42 +1,48 @@
 <?php
-
+    /**
+     * Edit Posts Administration Screen.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
+    /**
+     * @global string $typenow The post type of the current screen.
+     */
     global $typenow;
-
     if(! $typenow)
     {
         wp_die(__('Invalid post type.'));
     }
-
     if(! in_array($typenow, get_post_types(['show_ui' => true]), true))
     {
         wp_die(__('Sorry, you are not allowed to edit posts in this post type.'));
     }
-
-    if('attachment' === $typenow && wp_redirect(admin_url('upload.php')))
+    if('attachment' === $typenow)
     {
-        exit;
+        if(wp_redirect(admin_url('upload.php')))
+        {
+            exit;
+        }
     }
-
+    /**
+     * @global string       $post_type
+     * @global WP_Post_Type $post_type_object
+     */
     global $post_type, $post_type_object;
-
     $post_type = $typenow;
     $post_type_object = get_post_type_object($post_type);
-
     if(! $post_type_object)
     {
         wp_die(__('Invalid post type.'));
     }
-
     if(! current_user_can($post_type_object->cap->edit_posts))
     {
         wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to edit posts in this post type.').'</p>', 403);
     }
-
     $wp_list_table = _get_list_table('WP_Posts_List_Table');
     $pagenum = $wp_list_table->get_pagenum();
-
 // Back-compat for viewing comments of an entry.
     foreach(['p', 'attachment_id', 'page_id'] as $_redirect)
     {
@@ -47,7 +53,6 @@
         }
     }
     unset($_redirect);
-
     if('post' !== $post_type)
     {
         $parent_file = "edit.php?post_type=$post_type";
@@ -60,13 +65,10 @@
         $submenu_file = 'edit.php';
         $post_new_file = 'post-new.php';
     }
-
     $doaction = $wp_list_table->current_action();
-
     if($doaction)
     {
         check_admin_referer('bulk-posts');
-
         $sendback = remove_query_arg(['trashed', 'untrashed', 'deleted', 'locked', 'ids'], wp_get_referer());
         if(! $sendback)
         {
@@ -77,9 +79,7 @@
         {
             $sendback = admin_url($post_new_file);
         }
-
         $post_ids = [];
-
         if('delete_all' === $doaction)
         {
             // Prepare for deletion of all posts with a specified post status (i.e. Empty Trash).
@@ -87,8 +87,10 @@
             // Validate the post status exists.
             if(get_post_status_object($post_status))
             {
+                /**
+                 * @global wpdb $wpdb WordPress database abstraction object.
+                 */
                 global $wpdb;
-
                 $post_ids = $wpdb->get_col($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_type=%s AND post_status = %s", $post_type, $post_status));
             }
             $doaction = 'delete';
@@ -105,40 +107,33 @@
         {
             $post_ids = array_map('intval', $_REQUEST['post']);
         }
-
         if(empty($post_ids))
         {
             wp_redirect($sendback);
             exit;
         }
-
         switch($doaction)
         {
             case 'trash':
                 $trashed = 0;
                 $locked = 0;
-
                 foreach((array) $post_ids as $post_id)
                 {
                     if(! current_user_can('delete_post', $post_id))
                     {
                         wp_die(__('Sorry, you are not allowed to move this item to the Trash.'));
                     }
-
                     if(wp_check_post_lock($post_id))
                     {
                         ++$locked;
                         continue;
                     }
-
                     if(! wp_trash_post($post_id))
                     {
                         wp_die(__('Error in moving the item to Trash.'));
                     }
-
                     ++$trashed;
                 }
-
                 $sendback = add_query_arg([
                                               'trashed' => $trashed,
                                               'ids' => implode(',', $post_ids),
@@ -147,42 +142,34 @@
                 break;
             case 'untrash':
                 $untrashed = 0;
-
                 if(isset($_GET['doaction']) && ('undo' === $_GET['doaction']))
                 {
                     add_filter('wp_untrash_post_status', 'wp_untrash_post_set_previous_status', 10, 3);
                 }
-
                 foreach((array) $post_ids as $post_id)
                 {
                     if(! current_user_can('delete_post', $post_id))
                     {
                         wp_die(__('Sorry, you are not allowed to restore this item from the Trash.'));
                     }
-
                     if(! wp_untrash_post($post_id))
                     {
                         wp_die(__('Error in restoring the item from Trash.'));
                     }
-
                     ++$untrashed;
                 }
                 $sendback = add_query_arg('untrashed', $untrashed, $sendback);
-
                 remove_filter('wp_untrash_post_status', 'wp_untrash_post_set_previous_status', 10);
-
                 break;
             case 'delete':
                 $deleted = 0;
                 foreach((array) $post_ids as $post_id)
                 {
                     $post_del = get_post($post_id);
-
                     if(! current_user_can('delete_post', $post_id))
                     {
                         wp_die(__('Sorry, you are not allowed to delete this item.'));
                     }
-
                     if('attachment' === $post_del->post_type)
                     {
                         if(! wp_delete_attachment($post_id))
@@ -205,7 +192,6 @@
                 if(isset($_REQUEST['bulk_edit']))
                 {
                     $done = bulk_edit_posts($_REQUEST);
-
                     if(is_array($done))
                     {
                         $done['updated'] = count($done['updated']);
@@ -217,11 +203,25 @@
                 break;
             default:
                 $screen = get_current_screen()->id;
-
+                /**
+                 * Fires when a custom bulk action should be handled.
+                 *
+                 * The redirect link should be modified with success or failure feedback
+                 * from the action to be used to display feedback to the user.
+                 *
+                 * The dynamic portion of the hook name, `$screen`, refers to the current screen ID.
+                 *
+                 * @param string $sendback The redirect URL.
+                 * @param string $doaction The action being taken.
+                 * @param array  $items    The items to take the action on. Accepts an array of IDs of posts,
+                 *                         comments, terms, links, plugins, attachments, or users.
+                 *
+                 * @since 4.7.0
+                 *
+                 */
                 $sendback = apply_filters("handle_bulk_actions-{$screen}", $sendback, $doaction, $post_ids); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
                 break;
         }
-
         $sendback = remove_query_arg([
                                          'action',
                                          'action2',
@@ -234,7 +234,6 @@
                                          'bulk_edit',
                                          'post_view',
                                      ], $sendback);
-
         wp_redirect($sendback);
         exit;
     }
@@ -243,21 +242,16 @@
         wp_redirect(remove_query_arg(['_wp_http_referer', '_wpnonce'], wp_unslash($_SERVER['REQUEST_URI'])));
         exit;
     }
-
     $wp_list_table->prepare_items();
-
     wp_enqueue_script('inline-edit-post');
     wp_enqueue_script('heartbeat');
-
     if('wp_block' === $post_type)
     {
         wp_enqueue_script('wp-list-reusable-blocks');
         wp_enqueue_style('wp-list-reusable-blocks');
     }
-
 // Used in the HTML title tag.
     $title = $post_type_object->labels->name;
-
     if('post' === $post_type)
     {
         get_current_screen()->add_help_tab([
@@ -280,7 +274,6 @@
                                                'title' => __('Bulk actions'),
                                                'content' => '<p>'.__('You can also edit or move multiple posts to the Trash at once. Select the posts you want to act on using the checkboxes, then select the action you want to take from the Bulk actions menu and click Apply.').'</p>'.'<p>'.sprintf(/* translators: %s: The dismiss dashicon used for buttons that dismiss or remove. */ __('When using Bulk Edit, you can change the metadata (categories, author, etc.) for all selected posts at once. To remove a post from the grouping, just click the %s<span class="screen-reader-text">remove</span> button next to its name in the Bulk Edit area that appears.'), '<span class="dashicons dashicons-dismiss" aria-hidden="true" style="font-size: 16px; width: 16px; vertical-align: middle;"></span>').'</p>',
                                            ]);
-
         get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/posts-screen/">Documentation on Managing Posts</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
     }
     elseif('page' === $post_type)
@@ -295,21 +288,17 @@
                                                'title' => __('Managing Pages'),
                                                'content' => '<p>'.__('Managing pages is very similar to managing posts, and the screens can be customized in the same way.').'</p>'.'<p>'.__('You can also perform the same types of actions, including narrowing the list by using the filters, acting on a page using the action links that appear when you hover over a row, or using the Bulk actions menu to edit the metadata for multiple pages at once.').'</p>',
                                            ]);
-
         get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/pages-screen/">Documentation on Managing Pages</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
     }
-
     get_current_screen()->set_screen_reader_content([
                                                         'heading_views' => $post_type_object->labels->filter_items_list,
                                                         'heading_pagination' => $post_type_object->labels->items_list_navigation,
                                                         'heading_list' => $post_type_object->labels->items_list,
                                                     ]);
-
     add_screen_option('per_page', [
         'default' => 20,
         'option' => 'edit_'.$post_type.'_per_page',
     ]);
-
     $bulk_counts = [
         'updated' => isset($_REQUEST['updated']) ? absint($_REQUEST['updated']) : 0,
         'locked' => isset($_REQUEST['locked']) ? absint($_REQUEST['locked']) : 0,
@@ -317,7 +306,6 @@
         'trashed' => isset($_REQUEST['trashed']) ? absint($_REQUEST['trashed']) : 0,
         'untrashed' => isset($_REQUEST['untrashed']) ? absint($_REQUEST['untrashed']) : 0,
     ];
-
     $bulk_messages = [];
     $bulk_messages['post'] = [
         /* translators: %s: Number of posts. */
@@ -355,10 +343,20 @@
         /* translators: %s: Number of blocks. */
         'untrashed' => _n('%s block restored from the Trash.', '%s blocks restored from the Trash.', $bulk_counts['untrashed']),
     ];
-
+    /**
+     * Filters the bulk action updated messages.
+     *
+     * By default, custom post types use the messages for the 'post' post type.
+     *
+     * @param array[] $bulk_messages Arrays of messages, each keyed by the corresponding post type. Messages are
+     *                               keyed with 'updated', 'locked', 'deleted', 'trashed', and 'untrashed'.
+     * @param int[]   $bulk_counts   Array of item counts for each message, used to build internationalized strings.
+     *
+     * @since 3.7.0
+     *
+     */
     $bulk_messages = apply_filters('bulk_post_updated_messages', $bulk_messages, $bulk_counts);
     $bulk_counts = array_filter($bulk_counts);
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
     <div class="wrap">
@@ -373,7 +371,6 @@
             {
                 echo ' <a href="'.esc_url(admin_url($post_new_file)).'" class="page-title-action">'.esc_html($post_type_object->labels->add_new).'</a>';
             }
-
             if(isset($_REQUEST['s']) && strlen($_REQUEST['s']))
             {
                 echo '<span class="subtitle">';
@@ -397,25 +394,20 @@
                 {
                     $messages[] = sprintf($bulk_messages['post'][$message], number_format_i18n($count));
                 }
-
                 if('trashed' === $message && isset($_REQUEST['ids']))
                 {
                     $ids = preg_replace('/[^0-9,]/', '', $_REQUEST['ids']);
-
                     $messages[] = sprintf('<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url("edit.php?post_type=$post_type&doaction=undo&action=untrash&ids=$ids", 'bulk-posts')), __('Undo'));
                 }
-
                 if('untrashed' === $message && isset($_REQUEST['ids']))
                 {
                     $ids = explode(',', $_REQUEST['ids']);
-
                     if(1 === count($ids) && current_user_can('edit_post', $ids[0]))
                     {
                         $messages[] = sprintf('<a href="%1$s">%2$s</a>', esc_url(get_edit_post_link($ids[0])), esc_html(get_post_type_object(get_post_type($ids[0]))->labels->edit_item));
                     }
                 }
             }
-
             if($messages)
             {
                 wp_admin_notice(implode(' ', $messages), [
@@ -425,7 +417,6 @@
                 ]);
             }
             unset($messages);
-
             $_SERVER['REQUEST_URI'] = remove_query_arg([
                                                            'locked',
                                                            'skipped',

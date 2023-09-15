@@ -1,36 +1,86 @@
 <?php
+    /**
+     * SimplePie
+     *
+     * A PHP-Based RSS and Atom Feed Framework.
+     * Takes the hard work out of managing a complete RSS/Atom solution.
+     *
+     * Copyright (c) 2004-2016, Ryan Parman, Sam Sneddon, Ryan McCue, and contributors
+     * All rights reserved.
+     *
+     * Redistribution and use in source and binary forms, with or without modification, are
+     * permitted provided that the following conditions are met:
+     *
+     *    * Redistributions of source code must retain the above copyright notice, this list of
+     *      conditions and the following disclaimer.
+     *
+     *    * Redistributions in binary form must reproduce the above copyright notice, this list
+     *      of conditions and the following disclaimer in the documentation and/or other materials
+     *      provided with the distribution.
+     *
+     *    * Neither the name of the SimplePie Team nor the names of its contributors may be used
+     *      to endorse or promote products derived from this software without specific prior
+     *      written permission.
+     *
+     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+     * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+     * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS
+     * AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+     * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+     * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+     * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+     * POSSIBILITY OF SUCH DAMAGE.
+     *
+     * @package   SimplePie
+     * @copyright 2004-2016 Ryan Parman, Sam Sneddon, Ryan McCue
+     * @author    Ryan Parman
+     * @author    Sam Sneddon
+     * @author    Ryan McCue
+     * @link      http://simplepie.org/ SimplePie
+     * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
+     */
 
-    class Parser
+    /**
+     * Parses XML into something sane
+     *
+     *
+     * This class can be overloaded with {@see SimplePie::set_parser_class()}
+     *
+     * @package    SimplePie
+     * @subpackage Parsing
+     */
+    class SimplePie_Parser
     {
-        public $error_code;
+        var $error_code;
 
-        public $error_string;
+        var $error_string;
 
-        public $current_line;
+        var $current_line;
 
-        public $current_column;
+        var $current_column;
 
-        public $current_byte;
+        var $current_byte;
 
-        public $separator = ' ';
+        var $separator = ' ';
 
-        public $namespace = [''];
+        var $namespace = [''];
 
-        public $element = [''];
+        var $element = [''];
 
-        public $xml_base = [''];
+        var $xml_base = [''];
 
-        public $xml_base_explicit = [false];
+        var $xml_base_explicit = [false];
 
-        public $xml_lang = [''];
+        var $xml_lang = [''];
 
-        public $data = [];
+        var $data = [];
 
-        public $datas = [[]];
+        var $datas = [[]];
 
-        public $current_xhtml_construct = -1;
+        var $current_xhtml_construct = -1;
 
-        public $encoding;
+        var $encoding;
 
         protected $registry;
 
@@ -55,7 +105,6 @@
                     return $this->parse_microformats($data, $url);
                 }
             }
-
             // Use UTF-8 if we get passed US-ASCII, as every US-ASCII character is a UTF-8 character
             if(strtoupper($encoding) === 'US-ASCII')
             {
@@ -65,31 +114,29 @@
             {
                 $this->encoding = $encoding;
             }
-
             // Strip BOM:
             // UTF-32 Big Endian BOM
-            if(strpos($data, "\x00\x00\xFE\xFF") === 0)
+            if(substr($data, 0, 4) === "\x00\x00\xFE\xFF")
             {
                 $data = substr($data, 4);
             } // UTF-32 Little Endian BOM
-            elseif(strpos($data, "\xFF\xFE\x00\x00") === 0)
+            elseif(substr($data, 0, 4) === "\xFF\xFE\x00\x00")
             {
                 $data = substr($data, 4);
             } // UTF-16 Big Endian BOM
-            elseif(strpos($data, "\xFE\xFF") === 0)
+            elseif(substr($data, 0, 2) === "\xFE\xFF")
             {
                 $data = substr($data, 2);
             } // UTF-16 Little Endian BOM
-            elseif(strpos($data, "\xFF\xFE") === 0)
+            elseif(substr($data, 0, 2) === "\xFF\xFE")
             {
                 $data = substr($data, 2);
             } // UTF-8 BOM
-            elseif(strpos($data, "\xEF\xBB\xBF") === 0)
+            elseif(substr($data, 0, 3) === "\xEF\xBB\xBF")
             {
                 $data = substr($data, 3);
             }
-
-            if(strpos($data, '<?xml') === 0 && strspn(substr($data, 5, 1), "\x09\x0A\x0D\x20") && ($pos = strpos($data, '?>')) !== false)
+            if(substr($data, 0, 5) === '<?xml' && strspn(substr($data, 5, 1), "\x09\x0A\x0D\x20") && ($pos = strpos($data, '?>')) !== false)
             {
                 $declaration = $this->registry->create('XML_Declaration_Parser', [substr($data, 5, $pos - 5)]);
                 if($declaration->parse())
@@ -104,9 +151,7 @@
                     return false;
                 }
             }
-
             $return = true;
-
             static $xml_is_sane = null;
             if($xml_is_sane === null)
             {
@@ -115,7 +160,6 @@
                 xml_parser_free($parser_check);
                 $xml_is_sane = isset($values[0]['value']);
             }
-
             // Create the parser
             if($xml_is_sane)
             {
@@ -125,7 +169,6 @@
                 xml_set_object($xml, $this);
                 xml_set_character_data_handler($xml, 'cdata');
                 xml_set_element_handler($xml, 'tag_open', 'tag_close');
-
                 // Parse!
                 $wrapper = @is_writable(sys_get_temp_dir()) ? 'php://temp' : 'php://memory';
                 if(($stream = fopen($wrapper, 'r+')) && fwrite($stream, $data) && rewind($stream))
@@ -149,7 +192,6 @@
                 {
                     $return = false;
                 }
-
                 $this->current_line = xml_get_current_line_number($xml);
                 $this->current_column = xml_get_current_column_number($xml);
                 $this->current_byte = xml_get_current_byte_index($xml);
@@ -157,7 +199,6 @@
 
                 return $return;
             }
-
             libxml_clear_errors();
             $xml = new XMLReader();
             $xml->xml($data);
@@ -206,7 +247,6 @@
                         }
                         break;
                     case constant('XMLReader::TEXT'):
-
                     case constant('XMLReader::CDATA'):
                         $this->cdata(null, $xml->value);
                         break;
@@ -293,9 +333,9 @@
                     $entries = $mf['items'];
                 }
             }
-            foreach($entries as $iValue)
+            for($i = 0; $i < count($entries); $i++)
             {
-                $entry = $iValue;
+                $entry = $entries[$i];
                 if(in_array('h-entry', $entry['type']))
                 {
                     $item = [];
@@ -334,9 +374,13 @@
                         // If it's plain text it can also be a url that should be followed to
                         // get the actual h-card.
                         $author = isset($entry['properties']['author'][0]) ? $entry['properties']['author'][0] : $feed_author;
-                        if(is_string($author))
+                        if(! is_string($author))
                         {
-                            if(strncmp($author, 'http', 4) === 0)
+                            $author = $this->parse_hcard($author);
+                        }
+                        else
+                        {
+                            if(strpos($author, 'http') === 0)
                             {
                                 if(isset($author_cache[$author]))
                                 {
@@ -367,10 +411,6 @@
                                 }
                             }
                         }
-                        else
-                        {
-                            $author = $this->parse_hcard($author);
-                        }
                         $item['author'] = [['data' => $author]];
                     }
                     if(isset($entry['properties']['photo'][0]))
@@ -382,9 +422,9 @@
                             $content = $entry['properties']['content'][0]['html'];
                         }
                         $photo_list = [];
-                        foreach($entry['properties']['photo'] as $jValue)
+                        for($j = 0; $j < count($entry['properties']['photo']); $j++)
                         {
-                            $photo = $jValue;
+                            $photo = $entry['properties']['photo'][$j];
                             if(! empty($photo) && strpos($content, $photo) === false)
                             {
                                 $photo_list[] = $photo;
@@ -398,10 +438,10 @@
                         {
                             $image_set_id = preg_replace('/[[:^alnum:]]/', '', $photo_list[0]);
                             $description = '<p>';
-                            foreach($photo_list as $j => $jValue)
+                            for($j = 0; $j < $count; $j++)
                             {
                                 $hidden = $j === 0 ? '' : 'class="hidden" ';
-                                $description .= '<a href="'.$jValue.'" '.$hidden.'data-lightbox="image-set-'.$image_set_id.'">'.'<img src="'.$jValue.'"></a>';
+                                $description .= '<a href="'.$photo_list[$j].'" '.$hidden.'data-lightbox="image-set-'.$image_set_id.'">'.'<img src="'.$photo_list[$j].'"></a>';
                             }
                             $description .= '<br><b>'.$count.' photos</b></p>';
                         }
@@ -570,12 +610,7 @@
                 }
             }
 
-            if(isset($data['value']))
-            {
-                return $data['value'];
-            }
-
-            return '';
+            return isset($data['value']) ? $data['value'] : '';
         }
 
         private function declare_html_entities()
@@ -616,7 +651,6 @@
                 $this->data =& $this->datas[count($this->datas) - 1];
                 array_pop($this->datas);
             }
-
             array_pop($this->element);
             array_pop($this->namespace);
             array_pop($this->xml_base);
@@ -627,14 +661,12 @@
         public function tag_open($parser, $tag, $attributes)
         {
             [$this->namespace[], $this->element[]] = $this->split_ns($tag);
-
             $attribs = [];
             foreach($attributes as $name => $value)
             {
                 [$attrib_namespace, $attribute] = $this->split_ns($name);
                 $attribs[$attrib_namespace][$attribute] = $value;
             }
-
             if(isset($attribs[SIMPLEPIE_NAMESPACE_XML]['base']))
             {
                 $base = $this->registry->call('Misc', 'absolutize_url', [
@@ -652,7 +684,6 @@
                 $this->xml_base[] = end($this->xml_base);
                 $this->xml_base_explicit[] = end($this->xml_base_explicit);
             }
-
             if(isset($attribs[SIMPLEPIE_NAMESPACE_XML]['lang']))
             {
                 $this->xml_lang[] = $attribs[SIMPLEPIE_NAMESPACE_XML]['lang'];
@@ -661,7 +692,6 @@
             {
                 $this->xml_lang[] = end($this->xml_lang);
             }
-
             if($this->current_xhtml_construct >= 0)
             {
                 $this->current_xhtml_construct++;
@@ -704,7 +734,7 @@
                             'info',
                             'title',
                             'content'
-                        ]) && isset($attribs['']['type']) && $attribs['']['type'] === 'xhtml') || (end($this->namespace) === SIMPLEPIE_NAMESPACE_RSS_20 && end($this->element) == 'title') || (end($this->namespace) === SIMPLEPIE_NAMESPACE_RSS_090 && end($this->element) == 'title') || (end($this->namespace) === SIMPLEPIE_NAMESPACE_RSS_10 && end($this->element) == 'title')
+                        ]) && isset($attribs['']['type']) && $attribs['']['type'] === 'xhtml') || (end($this->namespace) === SIMPLEPIE_NAMESPACE_RSS_20 && in_array(end($this->element), ['title'])) || (end($this->namespace) === SIMPLEPIE_NAMESPACE_RSS_090 && in_array(end($this->element), ['title'])) || (end($this->namespace) === SIMPLEPIE_NAMESPACE_RSS_10 && in_array(end($this->element), ['title']))
                 )
                 {
                     $this->current_xhtml_construct = 0;
@@ -730,7 +760,6 @@
                     {
                         $namespace = SIMPLEPIE_NAMESPACE_ITUNES;
                     }
-
                     // Normalize the Media RSS namespaces
                     if($namespace === SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG || $namespace === SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG2 || $namespace === SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG3 || $namespace === SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG4 || $namespace === SIMPLEPIE_NAMESPACE_MEDIARSS_WRONG5)
                     {

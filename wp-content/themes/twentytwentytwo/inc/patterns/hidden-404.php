@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * 404 content.
+     */
     return [
         'title' => __('404 content', 'twentytwentytwo'),
         'inserter' => false,

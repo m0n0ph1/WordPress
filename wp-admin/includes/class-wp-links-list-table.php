@@ -1,7 +1,31 @@
 <?php
+    /**
+     * List Table API: WP_Links_List_Table class
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     * @since      3.1.0
+     */
 
+    /**
+     * Core class used to implement displaying links in a list table.
+     *
+     * @since 3.1.0
+     *
+     * @see   WP_List_Table
+     */
     class WP_Links_List_Table extends WP_List_Table
     {
+        /**
+         * Constructor.
+         *
+         * @param array $args An associative array of arguments.
+         *
+         * @see   WP_List_Table::__construct() for more information on default arguments.
+         *
+         * @since 3.1.0
+         *
+         */
         public function __construct($args = [])
         {
             parent::__construct([
@@ -10,24 +34,28 @@
                                 ]);
         }
 
+        /**
+         * @return bool
+         */
         public function ajax_user_can()
         {
-            parent::ajax_user_can();
             return current_user_can('manage_links');
         }
 
+        /**
+         * @global int    $cat_id
+         * @global string $s
+         * @global string $orderby
+         * @global string $order
+         */
         public function prepare_items()
         {
-            global parent::prepare_items();
-            $cat_id, $s, $orderby, $order;
-
+            global $cat_id, $s, $orderby, $order;
             wp_reset_vars(['action', 'cat_id', 'link_id', 'orderby', 'order', 's']);
-
             $args = [
                 'hide_invisible' => 0,
                 'hide_empty' => 0,
             ];
-
             if('all' !== $cat_id)
             {
                 $args['category'] = $cat_id;
@@ -44,19 +72,21 @@
             {
                 $args['order'] = $order;
             }
-
             $this->items = get_bookmarks($args);
         }
 
+        /**
+         */
         public function no_items()
         {
-            parent::no_items();
             _e('No links found.');
         }
 
+        /**
+         * @return string[] Array of column titles keyed by their column name.
+         */
         public function get_columns()
         {
-            parent::get_columns();
             return [
                 'cb' => '<input type="checkbox" />',
                 'name' => _x('Name', 'link name'),
@@ -68,11 +98,19 @@
             ];
         }
 
+        /**
+         * Handles the checkbox column output.
+         *
+         * @param object $item The current link object.
+         *
+         * @since 5.9.0 Renamed `$link` to `$item` to match parent class for PHP 8 named parameter support.
+         *
+         * @since 4.3.0
+         */
         public function column_cb($item)
         {
             // Restores the more descriptive, specific name for use within this method.
             $link = $item;
-
             ?>
             <label class="label-covers-full-cell" for="cb-select-<?php echo $link->link_id; ?>">
 			<span class="screen-reader-text">
@@ -89,22 +127,47 @@
             <?php
         }
 
+        /**
+         * Handles the link name column output.
+         *
+         * @param object $link The current link object.
+         *
+         * @since 4.3.0
+         *
+         */
         public function column_name($link)
         {
             $edit_link = get_edit_bookmark_link($link);
             printf('<strong><a class="row-title" href="%s" aria-label="%s">%s</a></strong>', $edit_link, /* translators: %s: Link name. */ esc_attr(sprintf(__('Edit &#8220;%s&#8221;'), $link->link_name)), $link->link_name);
         }
 
+        /**
+         * Handles the link URL column output.
+         *
+         * @param object $link The current link object.
+         *
+         * @since 4.3.0
+         *
+         */
         public function column_url($link)
         {
             $short_url = url_shorten($link->link_url);
             echo "<a href='$link->link_url'>$short_url</a>";
         }
 
+        /**
+         * Handles the link categories column output.
+         *
+         * @param object $link The current link object.
+         *
+         * @global int   $cat_id
+         *
+         * @since 4.3.0
+         *
+         */
         public function column_categories($link)
         {
             global $cat_id;
-
             $cat_names = [];
             foreach($link->link_category as $category)
             {
@@ -123,11 +186,27 @@
             echo implode(', ', $cat_names);
         }
 
+        /**
+         * Handles the link relation column output.
+         *
+         * @param object $link The current link object.
+         *
+         * @since 4.3.0
+         *
+         */
         public function column_rel($link)
         {
             echo empty($link->link_rel) ? '<br />' : $link->link_rel;
         }
 
+        /**
+         * Handles the link visibility column output.
+         *
+         * @param object $link The current link object.
+         *
+         * @since 4.3.0
+         *
+         */
         public function column_visible($link)
         {
             if('Y' === $link->link_visible)
@@ -140,22 +219,47 @@
             }
         }
 
+        /**
+         * Handles the link rating column output.
+         *
+         * @param object $link The current link object.
+         *
+         * @since 4.3.0
+         *
+         */
         public function column_rating($link)
         {
             echo $link->link_rating;
         }
 
+        /**
+         * Handles the default column output.
+         *
+         * @param object $item        Link object.
+         * @param string $column_name Current column name.
+         *
+         * @since 4.3.0
+         * @since 5.9.0 Renamed `$link` to `$item` to match parent class for PHP 8 named parameter support.
+         *
+         */
         public function column_default($item, $column_name)
         {
             // Restores the more descriptive, specific name for use within this method.
             $link = $item;
-
+            /**
+             * Fires for each registered custom link column.
+             *
+             * @param string $column_name Name of the custom column.
+             * @param int    $link_id     Link ID.
+             *
+             * @since 2.1.0
+             *
+             */
             do_action('manage_link_custom_column', $column_name, $link->link_id);
         }
 
         public function display_rows()
         {
-            parent::display_rows();
             foreach($this->items as $link)
             {
                 $link = sanitize_bookmark($link);
@@ -169,6 +273,9 @@
             }
         }
 
+        /**
+         * @return array
+         */
         protected function get_bulk_actions()
         {
             $actions = [];
@@ -177,10 +284,14 @@
             return $actions;
         }
 
+        /**
+         * @param string $which
+         *
+         * @global int   $cat_id
+         */
         protected function extra_tablenav($which)
         {
             global $cat_id;
-
             if('top' !== $which)
             {
                 return;
@@ -198,17 +309,17 @@
                         'show_count' => 0,
                         'orderby' => 'name',
                     ];
-
                     echo '<label class="screen-reader-text" for="cat_id">'.get_taxonomy('link_category')->labels->filter_by_item.'</label>';
-
                     wp_dropdown_categories($dropdown_options);
-
                     submit_button(__('Filter'), '', 'filter_action', false, ['id' => 'post-query-submit']);
                 ?>
             </div>
             <?php
         }
 
+        /**
+         * @return array
+         */
         protected function get_sortable_columns()
         {
             return [
@@ -219,24 +330,40 @@
             ];
         }
 
+        /**
+         * Gets the name of the default primary column.
+         *
+         * @return string Name of the default primary column, in this case, 'name'.
+         * @since 4.3.0
+         *
+         */
         protected function get_default_primary_column_name()
         {
-            parent::get_default_primary_column_name();
             return 'name';
         }
 
+        /**
+         * Generates and displays row action links.
+         *
+         * @param object $item        Link being acted upon.
+         * @param string $column_name Current column name.
+         * @param string $primary     Primary column name.
+         *
+         * @return string Row actions output for links, or an empty string
+         *                if the current column is not the primary column.
+         * @since 4.3.0
+         * @since 5.9.0 Renamed `$link` to `$item` to match parent class for PHP 8 named parameter support.
+         *
+         */
         protected function handle_row_actions($item, $column_name, $primary)
         {
             if($primary !== $column_name)
             {
                 return '';
             }
-
             // Restores the more descriptive, specific name for use within this method.
             $link = $item;
-
             $edit_link = get_edit_bookmark_link($link);
-
             $actions = [];
             $actions['edit'] = '<a href="'.$edit_link.'">'.__('Edit').'</a>';
             $actions['delete'] = sprintf('<a class="submitdelete" href="%s" onclick="return confirm( \'%s\' );">%s</a>', wp_nonce_url("link.php?action=delete&amp;link_id=$link->link_id", 'delete-bookmark_'.$link->link_id), /* translators: %s: Link name. */ esc_js(sprintf(__("You are about to delete this link '%s'\n  'Cancel' to stop, 'OK' to delete."), $link->link_name)), __('Delete'));

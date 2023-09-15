@@ -1,10 +1,24 @@
 <?php
-
+    /**
+     * Block Patterns
+     *
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern/
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern_category/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty
+     * @since      Twenty Twenty 1.6
+     */
+    /**
+     * Register Block Pattern Category.
+     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentytwenty', ['label' => esc_html__('Twenty Twenty', 'twentytwenty')]);
     }
-
+    /**
+     * Register Block Patterns.
+     */
     if(function_exists('register_block_pattern'))
     {
         // Call to Action.
@@ -28,7 +42,6 @@
                 '<!-- /wp:group -->',
             ]),
         ]);
-
         // Double Call to Action.
         register_block_pattern('twentytwenty/double-call-to-action', [
             'title' => esc_html__('Double Call to Action', 'twentytwenty'),
@@ -69,7 +82,6 @@
                 '<!-- /wp:columns -->',
             ]),
         ]);
-
         // Event Details.
         register_block_pattern('twentytwenty/event-details', [
             'title' => esc_html__('Event Details', 'twentytwenty'),
@@ -97,7 +109,6 @@
                 '<!-- /wp:group -->',
             ]),
         ]);
-
         // Featured Content.
         register_block_pattern('twentytwenty/featured-content', [
             'title' => esc_html__('Featured Content', 'twentytwenty'),
@@ -136,7 +147,6 @@
                 '<!-- /wp:columns -->',
             ]),
         ]);
-
         // Introduction.
         register_block_pattern('twentytwenty/introduction', [
             'title' => esc_html__('Introduction', 'twentytwenty'),

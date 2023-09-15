@@ -1,25 +1,25 @@
 <?php
-
+    /**
+     * Import WordPress Administration Screen
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
     define('WP_LOAD_IMPORTERS', true);
-
+    /** Load WordPress Bootstrap */
     require_once __DIR__.'/admin.php';
-
     if(! current_user_can('import'))
     {
         wp_die(__('Sorry, you are not allowed to import content into this site.'));
     }
-
 // Used in the HTML title tag.
     $title = __('Import');
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => '<p>'.__('This screen lists links to plugins to import data from blogging/content management platforms. Choose the platform you want to import from, and click Install Now when you are prompted in the popup window. If your platform is not listed, click the link to search the plugin directory for other importer plugins to see if there is one for your platform.').'</p>'.'<p>'.__('In previous versions of WordPress, all importers were built-in. They have been turned into plugins since most people only use them once or infrequently.').'</p>',
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/tools-import-screen/">Documentation on Import</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums">Support</a>').'</p>');
-
     if(current_user_can('install_plugins'))
     {
         // List of popular importer plugins from the WordPress.org API.
@@ -29,7 +29,6 @@
     {
         $popular_importers = [];
     }
-
 // Detect and redirect invalid importers like 'movabletype', which is registered as 'mt'.
     if(! empty($_GET['invalid']) && isset($popular_importers[$_GET['invalid']]))
     {
@@ -41,11 +40,9 @@
         }
         unset($importer_id);
     }
-
     add_thickbox();
     wp_enqueue_script('plugin-install');
     wp_enqueue_script('updates');
-
     require_once ABSPATH.'wp-admin/admin-header.php';
     $parent_file = 'tools.php';
 ?>
@@ -67,7 +64,6 @@
         <?php
             // Registered (already installed) importers. They're stored in the global $wp_importers.
             $importers = get_importers();
-
             // If a popular importer is not registered, create a dummy registration that links to the plugin installer.
             foreach($popular_importers as $pop_importer => $pop_data)
             {
@@ -79,7 +75,6 @@
                 {
                     continue;
                 }
-
                 // Fill the array of registered (already installed) importers with data of the popular importers from the WordPress.org API.
                 $importers[$pop_data['importer-id']] = [
                     $pop_data['name'],
@@ -87,7 +82,6 @@
                     'install' => $pop_data['plugin-slug'],
                 ];
             }
-
             if(empty($importers))
             {
                 echo '<p>'.__('No importers are available.').'</p>'; // TODO: Make more helpful.
@@ -104,11 +98,9 @@
                             $plugin_slug = '';
                             $action = '';
                             $is_plugin_installed = false;
-
                             if(isset($data['install']))
                             {
                                 $plugin_slug = $data['install'];
-
                                 if(file_exists(WP_PLUGIN_DIR.'/'.$plugin_slug))
                                 {
                                     // Looks like an importer is installed, but not active.
@@ -125,11 +117,9 @@
                                                           ], admin_url('plugins.php')), 'activate-plugin_'.$plugin_file
                                         );
                                         $action = sprintf('<a href="%s" aria-label="%s">%s</a>', esc_url($url), /* translators: %s: Importer name. */ esc_attr(sprintf(__('Run %s'), $data[0])), __('Run Importer'));
-
                                         $is_plugin_installed = true;
                                     }
                                 }
-
                                 if(empty($action))
                                 {
                                     if(is_main_site())
@@ -155,10 +145,8 @@
                                                          'import' => $importer_id,
                                                      ], self_admin_url('admin.php'));
                                 $action = sprintf('<a href="%1$s" aria-label="%2$s">%3$s</a>', esc_url($url), /* translators: %s: Importer name. */ esc_attr(sprintf(__('Run %s'), $data[0])), __('Run Importer'));
-
                                 $is_plugin_installed = true;
                             }
-
                             if(! $is_plugin_installed && is_main_site())
                             {
                                 $url = add_query_arg([
@@ -171,7 +159,6 @@
                                                      ], network_admin_url('plugin-install.php'));
                                 $action .= sprintf(' | <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">%3$s</a>', esc_url($url), /* translators: %s: Importer name. */ esc_attr(sprintf(__('More information about %s'), $data[0])), __('Details'));
                             }
-
                             echo "
 			<tr class='importer-item'>
 				<td class='import-system'>
@@ -187,7 +174,6 @@
                 </table>
                 <?php
             }
-
             if(current_user_can('install_plugins'))
             {
                 echo '<p>'.sprintf(/* translators: %s: URL to Add Plugins screen. */ __('If the importer you need is not listed, <a href="%s">search the plugin directory</a> to see if an importer is available.'), esc_url(network_admin_url('plugin-install.php?tab=search&type=tag&s=importer'))).'</p>';
@@ -199,5 +185,4 @@
 <?php
     wp_print_request_filesystem_credentials_modal();
     wp_print_admin_notice_templates();
-
     require_once ABSPATH.'wp-admin/admin-footer.php';

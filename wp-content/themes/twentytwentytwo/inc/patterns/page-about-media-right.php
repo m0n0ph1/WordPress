@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * About page with media on the right
+     */
     return [
         'title' => __('About page with media on the right', 'twentytwentytwo'),
         'categories' => ['pages'],

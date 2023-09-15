@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Template for displaying Category Archive pages
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Ten
+     * @since      Twenty Ten 1.0
+     */
     get_header(); ?>
 
 <div id="container">
@@ -17,7 +23,6 @@
             {
                 echo '<div class="archive-meta">'.$category_description.'</div>';
             }
-
             /*
              * Run the loop for the category page to output the posts.
              * If you want to overload this in a child theme then include a file

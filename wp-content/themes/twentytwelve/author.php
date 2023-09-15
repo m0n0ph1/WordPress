@@ -1,5 +1,15 @@
 <?php
-
+    /**
+     * The template for displaying Author Archive pages
+     *
+     * Used to display archive-type pages for posts by an author.
+     *
+     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twelve
+     * @since      Twenty Twelve 1.0
+     */
     get_header(); ?>
 
 <section id="primary" class="site-content">
@@ -45,7 +55,14 @@
                 <div class="author-info">
                     <div class="author-avatar">
                         <?php
-
+                            /**
+                             * Filters the author bio avatar size.
+                             *
+                             * @param int $size The height and width of the avatar in pixels.
+                             *
+                             * @since Twenty Twelve 1.0
+                             *
+                             */
                             $author_bio_avatar_size = apply_filters('twentytwelve_author_bio_avatar_size', 68);
                             echo get_avatar(get_the_author_meta('user_email'), $author_bio_avatar_size);
                         ?>

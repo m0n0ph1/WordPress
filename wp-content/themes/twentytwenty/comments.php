@@ -1,5 +1,12 @@
 <?php
-
+    /**
+     * The template file for displaying the comments and comment form for the
+     * Twenty Twenty theme.
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty
+     * @since      Twenty Twenty 1.0
+     */
     /*
      * If the current post is protected by a password and
      * the visitor has not yet entered the password we will
@@ -9,7 +16,6 @@
     {
         return;
     }
-
     if($comments)
     {
         ?>
@@ -37,7 +43,6 @@
                         {
                             printf(/* translators: 1: Number of comments, 2: Post title. */ _nx('%1$s reply on &ldquo;%2$s&rdquo;', '%1$s replies on &ldquo;%2$s&rdquo;', $comments_number, 'comments title', 'twentytwenty'), number_format_i18n($comments_number), get_the_title());
                         }
-
                     ?>
                 </h2><!-- .comments-title -->
 
@@ -51,7 +56,6 @@
                                          'avatar_size' => 120,
                                          'style' => 'div',
                                      ]);
-
                     $comment_pagination = paginate_comments_links([
                                                                       'echo' => false,
                                                                       'end_size' => 0,
@@ -59,11 +63,9 @@
                                                                       'next_text' => __('Newer Comments', 'twentytwenty').' <span aria-hidden="true">&rarr;</span>',
                                                                       'prev_text' => '<span aria-hidden="true">&larr;</span> '.__('Older Comments', 'twentytwenty'),
                                                                   ]);
-
                     if($comment_pagination)
                     {
                         $pagination_classes = '';
-
                         // If we're only showing the "Next" link, add a class indicating so.
                         if(! str_contains($comment_pagination, 'prev page-numbers'))
                         {
@@ -87,14 +89,12 @@
 
         <?php
     }
-
     if(comments_open() || pings_open())
     {
         if($comments)
         {
             echo '<hr class="styled-separator is-style-wide" aria-hidden="true" />';
         }
-
         comment_form([
                          'class_form' => 'section-inner thin max-percentage',
                          'title_reply_before' => '<h2 id="reply-title" class="comment-reply-title">',
@@ -107,7 +107,6 @@
         {
             echo '<hr class="styled-separator is-style-wide" aria-hidden="true" />';
         }
-
         ?>
 
         <div class="comment-respond" id="respond">

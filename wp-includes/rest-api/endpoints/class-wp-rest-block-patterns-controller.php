@@ -1,24 +1,59 @@
 <?php
+    /**
+     * REST API: WP_REST_Block_Patterns_Controller class
+     *
+     * @package    WordPress
+     * @subpackage REST_API
+     * @since      6.0.0
+     */
 
+    /**
+     * Core class used to access block patterns via the REST API.
+     *
+     * @since 6.0.0
+     *
+     * @see   WP_REST_Controller
+     */
     class WP_REST_Block_Patterns_Controller extends WP_REST_Controller
     {
+        /**
+         * An array that maps old categories names to new ones.
+         *
+         * @since 6.2.0
+         * @var array
+         */
         protected static $categories_migration = [
             'buttons' => 'call-to-action',
             'columns' => 'text',
             'query' => 'posts',
         ];
 
+        /**
+         * Defines whether remote patterns should be loaded.
+         *
+         * @since 6.0.0
+         * @var bool
+         */
         private $remote_patterns_loaded;
 
+        /**
+         * Constructs the controller.
+         *
+         * @since 6.0.0
+         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'block-patterns/patterns';
         }
 
+        /**
+         * Registers the routes for the objects of the controller.
+         *
+         * @since 6.0.0
+         */
         public function register_routes()
         {
-            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -29,13 +64,21 @@
             ]);
         }
 
+        /**
+         * Checks whether a given request has permission to read block patterns.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+         * @since 6.0.0
+         *
+         */
         public function get_items_permissions_check($request)
         {
             if(current_user_can('edit_posts'))
             {
                 return true;
             }
-
             foreach(get_post_types(['show_in_rest' => true], 'objects') as $post_type)
             {
                 if(current_user_can($post_type->cap->edit_posts))
@@ -47,6 +90,16 @@
             return new WP_Error('rest_cannot_view', __('Sorry, you are not allowed to view the registered block patterns.'), ['status' => rest_authorization_required_code()]);
         }
 
+        /**
+         * Retrieves all block patterns.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+         * @since 6.0.0
+         * @since 6.2.0 Added migration for old core pattern categories to the new ones.
+         *
+         */
         public function get_items($request)
         {
             if(! $this->remote_patterns_loaded)
@@ -55,10 +108,8 @@
                 _load_remote_block_patterns(); // Patterns with the `core` keyword.
                 _load_remote_featured_patterns(); // Patterns in the `featured` category.
                 _register_remote_theme_patterns(); // Patterns requested by current theme.
-
                 $this->remote_patterns_loaded = true;
             }
-
             $response = [];
             $patterns = WP_Block_Patterns_Registry::get_instance()->get_all_registered();
             foreach($patterns as $pattern)
@@ -71,6 +122,18 @@
             return rest_ensure_response($response);
         }
 
+        /**
+         * Migrates old core pattern categories to the new categories.
+         *
+         * Core pattern categories are revamped. Migration is needed to ensure
+         * backwards compatibility.
+         *
+         * @param array $pattern Raw pattern as registered, before applying any changes.
+         *
+         * @return array Migrated pattern.
+         * @since 6.2.0
+         *
+         */
         protected function migrate_pattern_categories($pattern)
         {
             // No categories to migrate.
@@ -78,7 +141,6 @@
             {
                 return $pattern;
             }
-
             foreach($pattern['categories'] as $index => $category)
             {
                 // If the category exists as a key, then it needs migration.
@@ -91,6 +153,17 @@
             return $pattern;
         }
 
+        /**
+         * Prepare a raw block pattern before it gets output in a REST API response.
+         *
+         * @param array           $item    Raw pattern as registered, before any changes.
+         * @param WP_REST_Request $request Request object.
+         *
+         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+         * @since 6.3.0 Added `source` property.
+         *
+         * @since 6.0.0
+         */
         public function prepare_item_for_response($item, $request)
         {
             $fields = $this->get_fields_for_response($request);
@@ -116,7 +189,6 @@
                     $data[$rest_key] = $item[$item_key];
                 }
             }
-
             $context = ! empty($request['context']) ? $request['context'] : 'view';
             $data = $this->add_additional_fields_to_object($data, $request);
             $data = $this->filter_response_by_context($data, $context);
@@ -124,13 +196,20 @@
             return rest_ensure_response($data);
         }
 
+        /**
+         * Retrieves the block pattern schema, conforming to JSON Schema.
+         *
+         * @return array Item schema data.
+         * @since 6.3.0 Added `source` property.
+         *
+         * @since 6.0.0
+         */
         public function get_item_schema()
         {
             if($this->schema)
             {
                 return $this->add_additional_fields_schema($this->schema);
             }
-
             $schema = [
                 '$schema' => 'http://json-schema.org/draft-04/schema#',
                 'title' => 'block-pattern',
@@ -218,7 +297,6 @@
                     ],
                 ],
             ];
-
             $this->schema = $schema;
 
             return $this->add_additional_fields_schema($this->schema);

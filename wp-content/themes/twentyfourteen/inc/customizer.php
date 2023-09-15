@@ -1,12 +1,25 @@
 <?php
-
+    /**
+     * Twenty Fourteen Customizer support
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Fourteen
+     * @since      Twenty Fourteen 1.0
+     */
+    /**
+     * Implement Customizer additions and adjustments.
+     *
+     * @param WP_Customize_Manager $wp_customize Customizer object.
+     *
+     * @since Twenty Fourteen 1.0
+     *
+     */
     function twentyfourteen_customize_register($wp_customize)
     {
         // Add postMessage support for site title and description.
         $wp_customize->get_setting('blogname')->transport = 'postMessage';
         $wp_customize->get_setting('blogdescription')->transport = 'postMessage';
         $wp_customize->get_setting('header_textcolor')->transport = 'postMessage';
-
         if(isset($wp_customize->selective_refresh))
         {
             $wp_customize->selective_refresh->add_partial('blogname', [
@@ -20,13 +33,10 @@
                 'render_callback' => 'twentyfourteen_customize_partial_blogdescription',
             ]);
         }
-
         // Rename the label to "Site Title Color" because this only affects the site title in this theme.
         $wp_customize->get_control('header_textcolor')->label = __('Site Title Color', 'twentyfourteen');
-
         // Rename the label to "Display Site Title & Tagline" in order to make this option extra clear.
         $wp_customize->get_control('display_header_text')->label = __('Display Site Title &amp; Tagline', 'twentyfourteen');
-
         // Add custom description to Colors and Background controls or sections.
         if(property_exists($wp_customize->get_control('background_color'), 'description'))
         {
@@ -38,7 +48,6 @@
             $wp_customize->get_section('colors')->description = __('Background may only be visible on wide screens.', 'twentyfourteen');
             $wp_customize->get_section('background_image')->description = __('Background may only be visible on wide screens.', 'twentyfourteen');
         }
-
         // Add the featured content section in case it's not already there.
         $wp_customize->add_section('featured_content', [
             'title' => __('Featured Content', 'twentyfourteen'),
@@ -46,13 +55,11 @@
             'priority' => 130,
             'active_callback' => 'is_front_page',
         ]);
-
         // Add the featured content layout setting and control.
         $wp_customize->add_setting('featured_content_layout', [
             'default' => 'grid',
             'sanitize_callback' => 'twentyfourteen_sanitize_layout',
         ]);
-
         $wp_customize->add_control('featured_content_layout', [
             'label' => __('Layout', 'twentyfourteen'),
             'section' => 'featured_content',
@@ -65,17 +72,43 @@
     }
 
     add_action('customize_register', 'twentyfourteen_customize_register');
-
+    /**
+     * Render the site title for the selective refresh partial.
+     *
+     * @return void
+     * @see   twentyfourteen_customize_register()
+     *
+     * @since Twenty Fourteen 1.7
+     *
+     */
     function twentyfourteen_customize_partial_blogname()
     {
         bloginfo('name');
     }
 
+    /**
+     * Render the site tagline for the selective refresh partial.
+     *
+     * @return void
+     * @see   twentyfourteen_customize_register()
+     *
+     * @since Twenty Fourteen 1.7
+     *
+     */
     function twentyfourteen_customize_partial_blogdescription()
     {
         bloginfo('description');
     }
 
+    /**
+     * Sanitize the Featured Content layout value.
+     *
+     * @param string $layout Layout type.
+     *
+     * @return string Filtered layout type (grid|slider).
+     * @since Twenty Fourteen 1.0
+     *
+     */
     function twentyfourteen_sanitize_layout($layout)
     {
         if(! in_array($layout, ['grid', 'slider'], true))
@@ -86,20 +119,28 @@
         return $layout;
     }
 
+    /**
+     * Bind JS handlers to make Customizer preview reload changes asynchronously.
+     *
+     * @since Twenty Fourteen 1.0
+     */
     function twentyfourteen_customize_preview_js()
     {
         wp_enqueue_script('twentyfourteen_customizer', get_template_directory_uri().'/js/customizer.js', ['customize-preview'], '20141015', ['in_footer' => true]);
     }
 
     add_action('customize_preview_init', 'twentyfourteen_customize_preview_js');
-
+    /**
+     * Add contextual help to the Themes and Post edit screens.
+     *
+     * @since Twenty Fourteen 1.0
+     */
     function twentyfourteen_contextual_help()
     {
         if('admin_head-edit.php' === current_filter() && 'post' !== $GLOBALS['typenow'])
         {
             return;
         }
-
         get_current_screen()->add_help_tab([
                                                'id' => 'twentyfourteen',
                                                'title' => __('Twenty Fourteen', 'twentyfourteen'),

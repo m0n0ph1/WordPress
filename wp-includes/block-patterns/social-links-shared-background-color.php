@@ -1,5 +1,9 @@
 <?php
-
+    /**
+     * Social links with a shared background color.
+     *
+     * @package WordPress
+     */
     return [
         'title' => _x('Social links with a shared background color', 'Block pattern title'),
         'categories' => ['buttons'],

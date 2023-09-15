@@ -1,5 +1,15 @@
 <?php
-
+    /**
+     * Template for displaying posts in the Aside Post Format
+     *
+     * Used on index and archive pages.
+     *
+     * @link       https://wordpress.org/documentation/article/post-formats/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 1.0
+     */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>

@@ -1,8 +1,33 @@
 <?php
+    /**
+     * PemFTP - An Ftp implementation in pure PHP
+     *
+     * @package   PemFTP
+     * @since     2.5.0
+     *
+     * @version   1.0
+     * @copyright Alexey Dotsenko
+     * @author    Alexey Dotsenko
+     * @link      https://www.phpclasses.org/package/1743-PHP-FTP-client-in-pure-PHP.html
+     * @license   LGPL https://opensource.org/licenses/lgpl-license.html
+     */
 
+    /**
+     * Socket Based FTP implementation
+     *
+     * @package    PemFTP
+     * @subpackage Socket
+     * @since      2.5.0
+     *
+     * @version    1.0
+     * @copyright  Alexey Dotsenko
+     * @author     Alexey Dotsenko
+     * @link       https://www.phpclasses.org/package/1743-PHP-FTP-client-in-pure-PHP.html
+     * @license    LGPL https://opensource.org/licenses/lgpl-license.html
+     */
     class ftp_sockets extends ftp_base
     {
-        public function __construct($verb = false, $le = false)
+        function __construct($verb = false, $le = false)
         {
             parent::__construct(true, $verb, $le);
         }
@@ -10,8 +35,7 @@
 // <!-- --------------------------------------------------------------------------------------- -->
 // <!--       Private functions                                                                 -->
 // <!-- --------------------------------------------------------------------------------------- -->
-
-        public function _connect($host, $port)
+        function _connect($host, $port)
         {
             $this->SendMSG("Creating socket");
             if(! ($sock = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP)))
@@ -37,7 +61,7 @@
             return $sock;
         }
 
-        public function _settimeout($sock)
+        function _settimeout($sock)
         {
             if(! @socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, ["sec" => $this->_timeout, "usec" => 0]))
             {
@@ -57,7 +81,7 @@
             return true;
         }
 
-        public function _data_prepare($mode = FTP_ASCII)
+        function _data_prepare($mode = FTP_ASCII)
         {
             if(! $this->_settype($mode))
             {
@@ -95,16 +119,16 @@
                 $this->_datahost = $ip_port[0].".".$ip_port[1].".".$ip_port[2].".".$ip_port[3];
                 $this->_dataport = (((int) $ip_port[4]) << 8) + ((int) $ip_port[5]);
                 $this->SendMSG("Connecting to ".$this->_datahost.":".$this->_dataport);
-                if(@socket_connect($this->_ftp_data_sock, $this->_datahost, $this->_dataport))
-                {
-                    $this->_ftp_temp_sock = $this->_ftp_data_sock;
-                }
-                else
+                if(! @socket_connect($this->_ftp_data_sock, $this->_datahost, $this->_dataport))
                 {
                     $this->PushError("_data_prepare", "socket_connect", socket_strerror(socket_last_error($this->_ftp_data_sock)));
                     $this->_data_close();
 
                     return false;
+                }
+                else
+                {
+                    $this->_ftp_temp_sock = $this->_ftp_data_sock;
                 }
             }
             else
@@ -154,7 +178,7 @@
             return true;
         }
 
-        public function _data_close()
+        function _data_close()
         {
             @socket_close($this->_ftp_temp_sock);
             @socket_close($this->_ftp_data_sock);
@@ -163,7 +187,7 @@
             return true;
         }
 
-        public function _exec($cmd, $fnction = "_exec")
+        function _exec($cmd, $fnction = "_exec")
         {
             if(! $this->_ready)
             {
@@ -191,7 +215,7 @@
             return true;
         }
 
-        public function _readmsg($fnction = "_readmsg")
+        function _readmsg($fnction = "_readmsg")
         {
             if(! $this->_connected)
             {
@@ -206,16 +230,15 @@
             do
             {
                 $tmp = @socket_read($this->_ftp_control_sock, 4096, PHP_BINARY_READ);
-                if($tmp !== false)
+                if($tmp === false)
                 {
-                    $this->_message .= $tmp;
-                    $go = ! preg_match("/^([0-9]{3})(-.+\\1)? [^".CRLF."]+".CRLF."$/Us", $this->_message, $regs);
+                    $go = $result = false;
+                    $this->PushError($fnction, 'Read failed', socket_strerror(socket_last_error($this->_ftp_control_sock)));
                 }
                 else
                 {
-                    $result = false;
-                    $go = false;
-                    $this->PushError($fnction, 'Read failed', socket_strerror(socket_last_error($this->_ftp_control_sock)));
+                    $this->_message .= $tmp;
+                    $go = ! preg_match("/^([0-9]{3})(-.+\\1)? [^".CRLF."]+".CRLF."$/Us", $this->_message, $regs);
                 }
             }
             while($go);
@@ -228,7 +251,7 @@
             return $result;
         }
 
-        public function _data_read($mode = FTP_ASCII, $fp = null)
+        function _data_read($mode = FTP_ASCII, $fp = null)
         {
             $NewLine = $this->_eol_code[$this->OS_local];
             if(is_resource($fp))
@@ -251,7 +274,6 @@
                     return false;
                 }
             }
-
             while(($block = @socket_read($this->_ftp_temp_sock, $this->_ftp_buff_size, PHP_BINARY_READ)) !== false)
             {
                 if($block === "")
@@ -275,7 +297,7 @@
             return $out;
         }
 
-        public function _data_write($mode = FTP_ASCII, $fp = null)
+        function _data_write($mode = FTP_ASCII, $fp = null)
         {
             $NewLine = $this->_eol_code[$this->OS_local];
             if(is_resource($fp))
@@ -317,7 +339,7 @@
             return true;
         }
 
-        public function _data_write_block($mode, $block)
+        function _data_write_block($mode, $block)
         {
             if($mode != FTP_BINARY)
             {
@@ -339,7 +361,7 @@
             return true;
         }
 
-        public function _quit()
+        function _quit()
         {
             if($this->_connected)
             {

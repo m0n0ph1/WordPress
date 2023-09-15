@@ -1,5 +1,4 @@
 <?php
-
 /////////////////////////////////////////////////////////////////
 /// getID3() by James Heinrich <info@getid3.org>               //
 //  available at https://github.com/JamesHeinrich/getID3       //
@@ -13,16 +12,24 @@
 // dependencies: NONE                                          //
 //                                                             //
 /////////////////////////////////////////////////////////////////
-
     if(! defined('GETID3_INCLUDEPATH'))
     { // prevent path-exposing attacks that access modules directly on public webservers
         exit;
     }
 
-    class module extends getid3_handler
+    /**
+     * @tutorial http://wiki.multimedia.cx/index.php?title=DTS
+     */
+    class getid3_dts extends getid3_handler
     {
-        public const syncword = "\x7F\xFE\x80\x01";
+        /**
+         * Default DTS syncword used in native .cpt or .dts formats.
+         */
+        const syncword = "\x7F\xFE\x80\x01";
 
+        /**
+         * Possible syncwords indicating bitstream encoding.
+         */
         public static $syncwords = [
             0 => "\x7F\xFE\x80\x01",  // raw big-endian
             1 => "\xFE\x7F\x01\x80",  // raw little-endian
@@ -30,16 +37,20 @@
             3 => "\xFF\x1F\x00\xE8"
         ];
 
+        /**
+         * @var int
+         */
         private $readBinDataOffset = 0; // 14-bit little-endian
 
+        /**
+         * @return bool
+         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
             $info['fileformat'] = 'dts';
-
             $this->fseek($info['avdataoffset']);
             $DTSheader = $this->fread(20); // we only need 2 words magic + 6 words frame header, but these words may be normal 16-bit words OR 14-bit words with 2 highest bits set to zero, so 8 words can be either 8*16/8 = 16 bytes OR 8*16*(16/14)/8 = 18.3 bytes
-
             // check syncword
             $sync = substr($DTSheader, 0, 4);
             if(($encoding = array_search($sync, self::$syncwords)) !== false)
@@ -59,10 +70,9 @@
 
                 return $this->error('Expecting "'.implode('| ', array_map('getid3_lib::PrintHexBytes', self::$syncwords)).'" at offset '.$info['avdataoffset'].', found "'.getid3_lib::PrintHexBytes($sync).'"');
             }
-
             // decode header
             $fhBS = '';
-            for($word_offset = 0, $word_offsetMax = strlen($DTSheader); $word_offset <= $word_offsetMax; $word_offset += 2)
+            for($word_offset = 0; $word_offset <= strlen($DTSheader); $word_offset += 2)
             {
                 switch($encoding)
                 {
@@ -80,7 +90,6 @@
                         break;
                 }
             }
-
             $info['dts']['raw']['frame_type'] = $this->readBinData($fhBS, 1);
             $info['dts']['raw']['deficit_samples'] = $this->readBinData($fhBS, 5);
             $info['dts']['flags']['crc_present'] = (bool) $this->readBinData($fhBS, 1);
@@ -111,16 +120,14 @@
             $info['dts']['flags']['front_sum_diff'] = (bool) $this->readBinData($fhBS, 1);
             $info['dts']['flags']['surround_sum_diff'] = (bool) $this->readBinData($fhBS, 1);
             $info['dts']['raw']['dialog_normalization'] = $this->readBinData($fhBS, 4);
-
             $info['dts']['bitrate'] = self::bitrateLookup($info['dts']['raw']['bitrate']);
             $info['dts']['bits_per_sample'] = self::bitPerSampleLookup($info['dts']['raw']['bits_per_sample']);
             $info['dts']['sample_rate'] = self::sampleRateLookup($info['dts']['raw']['sample_frequency']);
             $info['dts']['dialog_normalization'] = self::dialogNormalization($info['dts']['raw']['dialog_normalization'], $info['dts']['raw']['encoder_soft_version']);
-            $info['dts']['flags']['lossless'] = ($info['dts']['raw']['bitrate'] == 31);
+            $info['dts']['flags']['lossless'] = (($info['dts']['raw']['bitrate'] == 31) ? true : false);
             $info['dts']['bitrate_mode'] = (($info['dts']['raw']['bitrate'] == 30) ? 'vbr' : 'cbr');
             $info['dts']['channels'] = self::numChannelsLookup($info['dts']['raw']['channel_arrangement']);
             $info['dts']['channel_arrangement'] = self::channelArrangementLookup($info['dts']['raw']['channel_arrangement']);
-
             $info['audio']['dataformat'] = 'dts';
             $info['audio']['lossless'] = $info['dts']['flags']['lossless'];
             $info['audio']['bitrate_mode'] = $info['dts']['bitrate_mode'];
@@ -141,6 +148,12 @@
             return true;
         }
 
+        /**
+         * @param string $bin
+         * @param int    $length
+         *
+         * @return int
+         */
         private function readBinData($bin, $length)
         {
             $data = substr($bin, $this->readBinDataOffset, $length);
@@ -149,6 +162,11 @@
             return bindec($data);
         }
 
+        /**
+         * @param int $index
+         *
+         * @return int|string|false
+         */
         public static function bitrateLookup($index)
         {
             static $lookup = [
@@ -189,6 +207,11 @@
             return (isset($lookup[$index]) ? $lookup[$index] : false);
         }
 
+        /**
+         * @param int $index
+         *
+         * @return int|false
+         */
         public static function bitPerSampleLookup($index)
         {
             static $lookup = [
@@ -201,6 +224,11 @@
             return (isset($lookup[$index]) ? $lookup[$index] : false);
         }
 
+        /**
+         * @param int $index
+         *
+         * @return int|string|false
+         */
         public static function sampleRateLookup($index)
         {
             static $lookup = [
@@ -225,6 +253,12 @@
             return (isset($lookup[$index]) ? $lookup[$index] : false);
         }
 
+        /**
+         * @param int $index
+         * @param int $version
+         *
+         * @return int|false
+         */
         public static function dialogNormalization($index, $version)
         {
             switch($version)
@@ -238,6 +272,11 @@
             return false;
         }
 
+        /**
+         * @param int $index
+         *
+         * @return int|false
+         */
         public static function numChannelsLookup($index)
         {
             switch($index)
@@ -271,6 +310,11 @@
             return false;
         }
 
+        /**
+         * @param int $index
+         *
+         * @return string
+         */
         public static function channelArrangementLookup($index)
         {
             static $lookup = [

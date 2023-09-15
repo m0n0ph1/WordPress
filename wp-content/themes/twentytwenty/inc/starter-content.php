@@ -1,5 +1,22 @@
 <?php
-
+    /**
+     * Twenty Twenty Starter Content
+     *
+     * @link       https://make.wordpress.org/core/2016/11/30/starter-content-for-themes-in-4-7/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty
+     * @since      Twenty Twenty 1.0
+     */
+    /**
+     * Function to return the array of starter content for the theme.
+     *
+     * Passes it through the `twentytwenty_starter_content` filter before returning.
+     *
+     * @return array A filtered array of args for the starter_content.
+     * @since Twenty Twenty 1.0
+     *
+     */
     function twentytwenty_get_starter_content()
     {
         // Define and register starter content to showcase the theme on new sites.
@@ -14,7 +31,6 @@
                     'text_business_info',
                 ],
             ],
-
             // Create the custom image attachments used as post thumbnails for pages.
             'attachments' => [
                 'image-opening' => [
@@ -22,7 +38,6 @@
                     'file' => 'assets/images/2020-landscape-1.png', // URL relative to the template directory.
                 ],
             ],
-
             // Specify the core-defined pages to create and add custom thumbnails to some of them.
             'posts' => [
                 'front' => [
@@ -141,14 +156,12 @@
                 'contact',
                 'blog',
             ],
-
             // Default to a static front page and assign the front and posts pages.
             'options' => [
                 'show_on_front' => 'page',
                 'page_on_front' => '{{front}}',
                 'page_for_posts' => '{{blog}}',
             ],
-
             // Set up nav menus for each of the two areas registered in the theme.
             'nav_menus' => [
                 // Assign a menu to the "primary" location.
@@ -187,5 +200,13 @@
             ],
         ];
 
+        /**
+         * Filters Twenty Twenty array of starter content.
+         *
+         * @param array $starter_content Array of starter content.
+         *
+         * @since Twenty Twenty 1.0
+         *
+         */
         return apply_filters('twentytwenty_starter_content', $starter_content);
     }

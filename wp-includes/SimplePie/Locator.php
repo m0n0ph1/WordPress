@@ -1,34 +1,83 @@
 <?php
+    /**
+     * SimplePie
+     *
+     * A PHP-Based RSS and Atom Feed Framework.
+     * Takes the hard work out of managing a complete RSS/Atom solution.
+     *
+     * Copyright (c) 2004-2016, Ryan Parman, Sam Sneddon, Ryan McCue, and contributors
+     * All rights reserved.
+     *
+     * Redistribution and use in source and binary forms, with or without modification, are
+     * permitted provided that the following conditions are met:
+     *
+     *    * Redistributions of source code must retain the above copyright notice, this list of
+     *      conditions and the following disclaimer.
+     *
+     *    * Redistributions in binary form must reproduce the above copyright notice, this list
+     *      of conditions and the following disclaimer in the documentation and/or other materials
+     *      provided with the distribution.
+     *
+     *    * Neither the name of the SimplePie Team nor the names of its contributors may be used
+     *      to endorse or promote products derived from this software without specific prior
+     *      written permission.
+     *
+     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+     * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+     * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS
+     * AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+     * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+     * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+     * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+     * POSSIBILITY OF SUCH DAMAGE.
+     *
+     * @package   SimplePie
+     * @copyright 2004-2016 Ryan Parman, Sam Sneddon, Ryan McCue
+     * @author    Ryan Parman
+     * @author    Sam Sneddon
+     * @author    Ryan McCue
+     * @link      http://simplepie.org/ SimplePie
+     * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
+     */
 
-    class Locator
+    /**
+     * Used for feed auto-discovery
+     *
+     *
+     * This class can be overloaded with {@see SimplePie::set_locator_class()}
+     *
+     * @package SimplePie
+     */
+    class SimplePie_Locator
     {
-        public $useragent;
+        var $useragent;
 
-        public $timeout;
+        var $timeout;
 
-        public $file;
+        var $file;
 
-        public $local = [];
+        var $local = [];
 
-        public $elsewhere = [];
+        var $elsewhere = [];
 
-        public $cached_entities = [];
+        var $cached_entities = [];
 
-        public $http_base;
+        var $http_base;
 
-        public $base;
+        var $base;
 
-        public $base_location = 0;
+        var $base_location = 0;
 
-        public $checked_feeds = 0;
+        var $checked_feeds = 0;
 
-        public $max_checked_feeds = 10;
+        var $max_checked_feeds = 10;
 
-        public $force_fsockopen = false;
+        var $force_fsockopen = false;
 
-        public $curl_options = [];
+        var $curl_options = [];
 
-        public $dom;
+        var $dom;
 
         protected $registry;
 
@@ -41,11 +90,9 @@
             $this->max_checked_feeds = $max_checked_feeds;
             $this->force_fsockopen = $force_fsockopen;
             $this->curl_options = $curl_options;
-
             if(class_exists('DOMDocument') && $this->file->body != '')
             {
                 $this->dom = new DOMDocument();
-
                 set_error_handler(['SimplePie_Misc', 'silence_errors']);
                 try
                 {
@@ -74,7 +121,6 @@
             {
                 return $this->file;
             }
-
             if($this->file->method & SIMPLEPIE_FILE_SOURCE_REMOTE)
             {
                 $sniffer = $this->registry->create('Content_Type_Sniffer', [$this->file]);
@@ -83,34 +129,28 @@
                     return null;
                 }
             }
-
             if($type & ~SIMPLEPIE_LOCATOR_NONE)
             {
                 $this->get_base();
             }
-
             if($type & SIMPLEPIE_LOCATOR_AUTODISCOVERY && $working = $this->autodiscovery())
             {
                 return $working[0];
             }
-
             if($type & (SIMPLEPIE_LOCATOR_LOCAL_EXTENSION | SIMPLEPIE_LOCATOR_LOCAL_BODY | SIMPLEPIE_LOCATOR_REMOTE_EXTENSION | SIMPLEPIE_LOCATOR_REMOTE_BODY) && $this->get_links())
             {
                 if($type & SIMPLEPIE_LOCATOR_LOCAL_EXTENSION && $working = $this->extension($this->local))
                 {
                     return $working[0];
                 }
-
                 if($type & SIMPLEPIE_LOCATOR_LOCAL_BODY && $working = $this->body($this->local))
                 {
                     return $working[0];
                 }
-
                 if($type & SIMPLEPIE_LOCATOR_REMOTE_EXTENSION && $working = $this->extension($this->elsewhere))
                 {
                     return $working[0];
                 }
-
                 if($type & SIMPLEPIE_LOCATOR_REMOTE_BODY && $working = $this->body($this->elsewhere))
                 {
                     return $working[0];
@@ -187,7 +227,6 @@
             $feeds = array_merge($feeds, $this->search_elements_by_tag('link', $done, $feeds));
             $feeds = array_merge($feeds, $this->search_elements_by_tag('a', $done, $feeds));
             $feeds = array_merge($feeds, $this->search_elements_by_tag('area', $done, $feeds));
-
             if(! empty($feeds))
             {
                 return array_values($feeds);
@@ -202,7 +241,6 @@
             {
                 throw new SimplePie_Exception('DOMDocument not found, unable to use locator');
             }
-
             $links = $this->dom->getElementsByTagName($name);
             foreach($links as $link)
             {
@@ -214,7 +252,6 @@
                 {
                     $rel = array_unique($this->registry->call('Misc', 'space_separated_tokens', [strtolower($link->getAttribute('rel'))]));
                     $line = method_exists($link, 'getLineNo') ? $link->getLineNo() : 1;
-
                     if($this->base_location < $line)
                     {
                         $href = $this->registry->call('Misc', 'absolutize_url', [
@@ -233,7 +270,6 @@
                     {
                         continue;
                     }
-
                     if(
                         ! in_array($href, $done) && in_array('feed', $rel) || (in_array('alternate', $rel) && ! in_array('stylesheet', $rel) && $link->hasAttribute('type') && in_array(strtolower($this->registry->call('Misc', 'parse_mime', [$link->getAttribute('type')])), [
                                 'text/html',
@@ -273,7 +309,6 @@
             {
                 throw new SimplePie_Exception('DOMDocument not found, unable to use locator');
             }
-
             $links = $this->dom->getElementsByTagName('a');
             foreach($links as $link)
             {
@@ -301,9 +336,7 @@
                         {
                             continue;
                         }
-
                         $current = $this->registry->call('Misc', 'parse_url', [$this->file->url]);
-
                         if($parsed['authority'] === '' || $parsed['authority'] === $current['authority'])
                         {
                             $this->local[] = $href;
@@ -336,7 +369,6 @@
                 if(in_array(strtolower(strrchr($value, '.')), ['.rss', '.rdf', '.atom', '.xml']))
                 {
                     $this->checked_feeds++;
-
                     $headers = [
                         'Accept' => 'application/atom+xml, application/rss+xml, application/rdf+xml;q=0.9, application/xml;q=0.8, text/xml;q=0.8, text/html;q=0.7, unknown/unknown;q=0.1, application/unknown;q=0.1, */*;q=0.1',
                     ];
@@ -410,7 +442,6 @@
             {
                 throw new SimplePie_Exception('DOMXpath not found, unable to use '.'get_rel_link');
             }
-
             $xpath = new DOMXpath($this->dom);
             $query = '//a[@rel and @href] | //link[@rel and @href]';
             foreach($xpath->query($query) as $link)

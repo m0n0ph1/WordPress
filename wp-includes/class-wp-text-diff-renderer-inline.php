@@ -1,8 +1,30 @@
 <?php
+    /**
+     * Diff API: WP_Text_Diff_Renderer_inline class
+     *
+     * @package    WordPress
+     * @subpackage Diff
+     * @since      4.7.0
+     */
 
+    /**
+     * Better word splitting than the PEAR package provides.
+     *
+     * @since 2.6.0
+     * @uses  Text_Diff_Renderer_inline Extends
+     */
     #[AllowDynamicProperties]
     class WP_Text_Diff_Renderer_inline extends Text_Diff_Renderer_inline
     {
+        /**
+         * @param string $string
+         * @param string $newlineEscape
+         *
+         * @return string
+         * @since 2.6.0
+         *
+         * @ignore
+         */
         public function _splitOnWords($string, $newlineEscape = "\n")
         { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.stringFound
             $string = str_replace("\0", '', $string);

@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * The template part for displaying content
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Sixteen
+     * @since      Twenty Sixteen 1.0
+     */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -18,7 +24,6 @@
     <div class="entry-content">
         <?php
             the_content(sprintf(/* translators: %s: Post title. Only visible to screen readers. */ __('Continue reading<span class="screen-reader-text"> "%s"</span>', 'twentysixteen'), get_the_title()));
-
             wp_link_pages([
                               'before' => '<div class="page-links"><span class="page-links-title">'.__('Pages:', 'twentysixteen').'</span>',
                               'after' => '</div>',

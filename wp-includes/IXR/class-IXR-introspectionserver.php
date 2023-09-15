@@ -1,19 +1,30 @@
 <?php
 
+    /**
+     * IXR_IntrospectionServer
+     *
+     * @package IXR
+     * @since   1.5.0
+     */
     class IXR_IntrospectionServer extends IXR_Server
     {
-        public $signatures;
+        var $signatures;
 
-        public $help;
+        var $help;
 
+        /**
+         * PHP4 constructor.
+         */
         public function IXR_IntrospectionServer()
         {
-            $this->__construct();
+            self::__construct();
         }
 
-        public function __construct()
+        /**
+         * PHP5 constructor.
+         */
+        function __construct()
         {
-            parent::__construct(null, null, null);
             $this->setCallbacks();
             $this->setCapabilities();
             $this->capabilities['introspection'] = [
@@ -32,21 +43,20 @@
             ],                 'Returns a documentation string for the specified method');
         }
 
-        public function addCallback($method, $callback, $args, $help)
+        function addCallback($method, $callback, $args, $help)
         {
             $this->callbacks[$method] = $callback;
             $this->signatures[$method] = $args;
             $this->help[$method] = $help;
         }
 
-        public function call($methodname, $args)
+        function call($methodname, $args)
         {
             // Make sure it's in an array
             if($args && ! is_array($args))
             {
                 $args = [$args];
             }
-
             // Over-rides default call method, adds signature check
             if(! $this->hasMethod($methodname))
             {
@@ -55,13 +65,11 @@
             $method = $this->callbacks[$methodname];
             $signature = $this->signatures[$methodname];
             $returnType = array_shift($signature);
-
             // Check the number of arguments
-            if(count($args) !== count($signature))
+            if(count($args) != count($signature))
             {
                 return new IXR_Error(-32602, 'server error. wrong number of method parameters');
             }
-
             // Check the argument types
             $ok = true;
             $argsbackup = $args;
@@ -116,7 +124,7 @@
             return parent::call($methodname, $argsbackup);
         }
 
-        public function methodSignature($method)
+        function methodSignature($method)
         {
             if(! $this->hasMethod($method))
             {
@@ -160,7 +168,7 @@
             return $return;
         }
 
-        public function methodHelp($method)
+        function methodHelp($method)
         {
             return $this->help[$method];
         }

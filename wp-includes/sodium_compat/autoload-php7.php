@@ -6,7 +6,6 @@
     {
         return;
     }
-
     spl_autoload_register(function($class)
     {
         $namespace = 'ParagonIE_Sodium_';
@@ -17,10 +16,8 @@
             // no, move to the next registered autoloader
             return false;
         }
-
         // Get the relative class name
         $relative_class = substr($class, $len);
-
         // Replace the namespace prefix with the base directory, replace namespace
         // separators with directory separators in the relative class name, append
         // with .php

@@ -1,41 +1,38 @@
 <?php
-
+    /**
+     * Edit Site Settings Administration Screen
+     *
+     * @package    WordPress
+     * @subpackage Multisite
+     * @since      3.1.0
+     */
+    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
     if(! current_user_can('manage_sites'))
     {
         wp_die(__('Sorry, you are not allowed to edit this site.'));
     }
-
     get_current_screen()->add_help_tab(get_site_screen_help_tab_args());
     get_current_screen()->set_help_sidebar(get_site_screen_help_sidebar_content());
-
     $id = isset($_REQUEST['id']) ? (int) $_REQUEST['id'] : 0;
-
     if(! $id)
     {
         wp_die(__('Invalid site ID.'));
     }
-
     $details = get_site($id);
     if(! $details)
     {
         wp_die(__('The requested site does not exist.'));
     }
-
     if(! can_edit_network($details->site_id))
     {
         wp_die(__('Sorry, you are not allowed to access this page.'), 403);
     }
-
     $is_main_site = is_main_site($id);
-
     if(isset($_REQUEST['action']) && 'update-site' === $_REQUEST['action'] && is_array($_POST['option']))
     {
         check_admin_referer('edit-site');
-
         switch_to_blog($id);
-
         $skip_options = ['allowedthemes']; // Don't update these options since they are handled elsewhere in the form.
         foreach((array) $_POST['option'] as $key => $val)
         {
@@ -47,9 +44,16 @@
             }
             update_option($key, $val);
         }
-
+        /**
+         * Fires after the site options are updated.
+         *
+         * @param int $id The ID of the site being updated.
+         *
+         * @since 4.4.0 Added `$id` parameter.
+         *
+         * @since 3.0.0
+         */
         do_action('wpmu_update_blog_options', $id);
-
         restore_current_blog();
         wp_redirect(
             add_query_arg([
@@ -59,7 +63,6 @@
         );
         exit;
     }
-
     if(isset($_GET['update']))
     {
         $messages = [];
@@ -68,16 +71,12 @@
             $messages[] = __('Site options updated.');
         }
     }
-
 // Used in the HTML title tag.
     /* translators: %s: Site title. */
     $title = sprintf(__('Edit Site: %s'), esc_html($details->blogname));
-
     $parent_file = 'sites.php';
     $submenu_file = 'sites.php';
-
     require_once ABSPATH.'wp-admin/admin-header.php';
-
 ?>
 
     <div class="wrap">
@@ -86,12 +85,10 @@
             | <a href="<?php echo esc_url(get_admin_url($id)); ?>"><?php _e('Dashboard'); ?></a></p>
 
         <?php
-
             network_edit_site_nav([
                                       'blog_id' => $id,
                                       'selected' => 'site-settings',
                                   ]);
-
             if(! empty($messages))
             {
                 $notice_args = [
@@ -99,7 +96,6 @@
                     'dismissible' => true,
                     'id' => 'message',
                 ];
-
                 foreach($messages as $msg)
                 {
                     wp_admin_notice($msg, $notice_args);
@@ -117,17 +113,14 @@
 			AND option_name NOT LIKE %s";
                     $query = $wpdb->prepare($sql, $wpdb->esc_like('_').'%', '%'.$wpdb->esc_like('user_roles'));
                     $options = $wpdb->get_results($query);
-
                     foreach($options as $option)
                     {
                         if('default_role' === $option->option_name)
                         {
                             $editblog_default_role = $option->option_value;
                         }
-
                         $disabled = false;
                         $class = 'all-options';
-
                         if(is_serialized($option->option_value))
                         {
                             if(is_serialized_string($option->option_value))
@@ -141,7 +134,6 @@
                                 $class = 'all-options disabled';
                             }
                         }
-
                         if(str_contains($option->option_value, "\n"))
                         {
                             ?>
@@ -185,7 +177,14 @@
                             <?php
                         }
                     } // End foreach.
-
+                    /**
+                     * Fires at the end of the Edit Site form, before the submit button.
+                     *
+                     * @param int $id Site ID.
+                     *
+                     * @since 3.0.0
+                     *
+                     */
                     do_action('wpmueditblogaction', $id);
                 ?>
             </table>

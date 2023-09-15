@@ -1,24 +1,28 @@
 <?php
-
+    /**
+     * Edit Comments Administration Screen.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
     if(! current_user_can('edit_posts'))
     {
         wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to edit comments.').'</p>', 403);
     }
-
     $wp_list_table = _get_list_table('WP_Comments_List_Table');
     $pagenum = $wp_list_table->get_pagenum();
-
     $doaction = $wp_list_table->current_action();
-
     if($doaction)
     {
         check_admin_referer('bulk-comments');
-
         if('delete_all' === $doaction && ! empty($_REQUEST['pagegen_timestamp']))
         {
+            /**
+             * @global wpdb $wpdb WordPress database abstraction object.
+             */
             global $wpdb;
-
             $comment_status = wp_unslash($_REQUEST['comment_status']);
             $delete_time = wp_unslash($_REQUEST['pagegen_timestamp']);
             $comment_ids = $wpdb->get_col(
@@ -43,7 +47,6 @@
             wp_safe_redirect(wp_get_referer());
             exit;
         }
-
         $approved = 0;
         $unapproved = 0;
         $spammed = 0;
@@ -51,7 +54,6 @@
         $trashed = 0;
         $untrashed = 0;
         $deleted = 0;
-
         $redirect_to = remove_query_arg([
                                             'trashed',
                                             'untrashed',
@@ -63,16 +65,13 @@
                                             'ids',
                                         ], wp_get_referer());
         $redirect_to = add_query_arg('paged', $pagenum, $redirect_to);
-
         wp_defer_comment_counting(true);
-
         foreach($comment_ids as $comment_id)
         { // Check the permissions on each.
             if(! current_user_can('edit_comment', $comment_id))
             {
                 continue;
             }
-
             switch($doaction)
             {
                 case 'approve':
@@ -105,16 +104,13 @@
                     break;
             }
         }
-
         if(! in_array($doaction, ['approve', 'unapprove', 'spam', 'unspam', 'trash', 'delete'], true))
         {
             $screen = get_current_screen()->id;
-
+            /** This action is documented in wp-admin/edit.php */
             $redirect_to = apply_filters("handle_bulk_actions-{$screen}", $redirect_to, $doaction, $comment_ids); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
         }
-
         wp_defer_comment_counting(false);
-
         if($approved)
         {
             $redirect_to = add_query_arg('approved', $approved, $redirect_to);
@@ -147,7 +143,6 @@
         {
             $redirect_to = add_query_arg('ids', implode(',', $comment_ids), $redirect_to);
         }
-
         wp_safe_redirect($redirect_to);
         exit;
     }
@@ -156,19 +151,17 @@
         wp_redirect(remove_query_arg(['_wp_http_referer', '_wpnonce'], wp_unslash($_SERVER['REQUEST_URI'])));
         exit;
     }
-
     $wp_list_table->prepare_items();
-
     wp_enqueue_script('admin-comments');
     enqueue_comment_hotkeys_js();
-
+    /**
+     * @global int $post_id
+     */
     global $post_id;
-
     if($post_id)
     {
         $comments_count = wp_count_comments($post_id);
         $draft_or_post_title = wp_html_excerpt(_draft_or_post_title($post_id), 50, '&hellip;');
-
         if($comments_count->moderated > 0)
         {
             // Used in the HTML title tag.
@@ -183,7 +176,6 @@
     else
     {
         $comments_count = wp_count_comments();
-
         if($comments_count->moderated > 0)
         {
             // Used in the HTML title tag.
@@ -195,9 +187,7 @@
             $title = __('Comments');
         }
     }
-
     add_screen_option('per_page');
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
@@ -208,15 +198,12 @@
                                            'title' => __('Moderating Comments'),
                                            'content' => '<p>'.__('A red bar on the left means the comment is waiting for you to moderate it.').'</p>'.'<p>'.__('In the <strong>Author</strong> column, in addition to the author&#8217;s name, email address, and site URL, the commenter&#8217;s IP address is shown. Clicking on this link will show you all the comments made from this IP address.').'</p>'.'<p>'.__('In the <strong>Comment</strong> column, hovering over any comment gives you options to approve, reply (and approve), quick edit, edit, spam mark, or trash that comment.').'</p>'.'<p>'.__('In the <strong>In response to</strong> column, there are three elements. The text is the name of the post that inspired the comment, and links to the post editor for that entry. The View Post link leads to that post on your live site. The small bubble with the number in it shows the number of approved comments that post has received. If there are pending comments, a red notification circle with the number of pending comments is displayed. Clicking the notification circle will filter the comments screen to show only pending comments on that post.').'</p>'.'<p>'.__('In the <strong>Submitted on</strong> column, the date and time the comment was left on your site appears. Clicking on the date/time link will take you to that comment on your live site.').'</p>'.'<p>'.__('Many people take advantage of keyboard shortcuts to moderate their comments more quickly. Use the link to the side to learn more.').'</p>',
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/comments-screen/">Documentation on Comments</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/understand-comment-spam/">Documentation on Comment Spam</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/keyboard-shortcuts-classic-editor/#keyboard-shortcuts-for-comments">Documentation on Keyboard Shortcuts</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     get_current_screen()->set_screen_reader_content([
                                                         'heading_views' => __('Filter comments list'),
                                                         'heading_pagination' => __('Comments list navigation'),
                                                         'heading_list' => __('Comments list'),
                                                     ]);
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
 
@@ -238,13 +225,11 @@
         if($post_id)
         {
             $post_type_object = get_post_type_object(get_post_type($post_id));
-
             if($post_type_object)
             {
                 printf('<a href="%1$s" class="comments-view-item-link">%2$s</a>', get_permalink($post_id), $post_type_object->labels->view_item);
             }
         }
-
         if(isset($_REQUEST['s']) && strlen($_REQUEST['s']))
         {
             echo '<span class="subtitle">';
@@ -274,7 +259,6 @@
                 echo '<div id="moderated" class="error"><p>'.$error_msg.'</p></div>';
             }
         }
-
         if(isset($_REQUEST['approved']) || isset($_REQUEST['deleted']) || isset($_REQUEST['trashed']) || isset($_REQUEST['untrashed']) || isset($_REQUEST['spammed']) || isset($_REQUEST['unspammed']) || isset($_REQUEST['same']))
         {
             $approved = isset($_REQUEST['approved']) ? (int) $_REQUEST['approved'] : 0;
@@ -284,43 +268,34 @@
             $spammed = isset($_REQUEST['spammed']) ? (int) $_REQUEST['spammed'] : 0;
             $unspammed = isset($_REQUEST['unspammed']) ? (int) $_REQUEST['unspammed'] : 0;
             $same = isset($_REQUEST['same']) ? (int) $_REQUEST['same'] : 0;
-
             if($approved > 0 || $deleted > 0 || $trashed > 0 || $untrashed > 0 || $spammed > 0 || $unspammed > 0 || $same > 0)
             {
                 if($approved > 0)
                 {
                     $messages[] = sprintf(/* translators: %s: Number of comments. */ _n('%s comment approved.', '%s comments approved.', $approved), $approved);
                 }
-
                 if($spammed > 0)
                 {
                     $ids = isset($_REQUEST['ids']) ? $_REQUEST['ids'] : 0;
-
                     $messages[] = sprintf(/* translators: %s: Number of comments. */ _n('%s comment marked as spam.', '%s comments marked as spam.', $spammed), $spammed).sprintf(' <a href="%1$s">%2$s</a><br />', esc_url(wp_nonce_url("edit-comments.php?doaction=undo&action=unspam&ids=$ids", 'bulk-comments')), __('Undo'));
                 }
-
                 if($unspammed > 0)
                 {
                     $messages[] = sprintf(/* translators: %s: Number of comments. */ _n('%s comment restored from the spam.', '%s comments restored from the spam.', $unspammed), $unspammed);
                 }
-
                 if($trashed > 0)
                 {
                     $ids = isset($_REQUEST['ids']) ? $_REQUEST['ids'] : 0;
-
                     $messages[] = sprintf(/* translators: %s: Number of comments. */ _n('%s comment moved to the Trash.', '%s comments moved to the Trash.', $trashed), $trashed).sprintf(' <a href="%1$s">%2$s</a><br />', esc_url(wp_nonce_url("edit-comments.php?doaction=undo&action=untrash&ids=$ids", 'bulk-comments')), __('Undo'));
                 }
-
                 if($untrashed > 0)
                 {
                     $messages[] = sprintf(/* translators: %s: Number of comments. */ _n('%s comment restored from the Trash.', '%s comments restored from the Trash.', $untrashed), $untrashed);
                 }
-
                 if($deleted > 0)
                 {
                     $messages[] = sprintf(/* translators: %s: Number of comments. */ _n('%s comment permanently deleted.', '%s comments permanently deleted.', $deleted), $deleted);
                 }
-
                 if($same > 0)
                 {
                     $comment = get_comment($same);
@@ -340,7 +315,6 @@
                         }
                     }
                 }
-
                 wp_admin_notice(implode("<br />\n", $messages), [
                     'id' => 'moderated',
                     'additional_classes' => ['updated'],

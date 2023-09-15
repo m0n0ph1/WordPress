@@ -1,27 +1,39 @@
 <?php
 
+    /**
+     * IXR_Date
+     *
+     * @package IXR
+     * @since   1.5.0
+     */
     class IXR_Date
     {
-        public $year;
+        var $year;
 
-        public $month;
+        var $month;
 
-        public $day;
+        var $day;
 
-        public $hour;
+        var $hour;
 
-        public $minute;
+        var $minute;
 
-        public $second;
+        var $second;
 
-        public $timezone;
+        var $timezone;
 
+        /**
+         * PHP4 constructor.
+         */
         public function IXR_Date($time)
         {
-            $this->__construct($time);
+            self::__construct($time);
         }
 
-        public function __construct($time)
+        /**
+         * PHP5 constructor.
+         */
+        function __construct($time)
         {
             // $time can be a PHP timestamp or an ISO one
             if(is_numeric($time))
@@ -34,7 +46,7 @@
             }
         }
 
-        public function parseTimestamp($timestamp)
+        function parseTimestamp($timestamp)
         {
             $this->year = gmdate('Y', $timestamp);
             $this->month = gmdate('m', $timestamp);
@@ -45,7 +57,7 @@
             $this->timezone = '';
         }
 
-        public function parseIso($iso)
+        function parseIso($iso)
         {
             $this->year = substr($iso, 0, 4);
             $this->month = substr($iso, 4, 2);
@@ -56,17 +68,17 @@
             $this->timezone = substr($iso, 17);
         }
 
-        public function getXml()
+        function getXml()
         {
             return '<dateTime.iso8601>'.$this->getIso().'</dateTime.iso8601>';
         }
 
-        public function getIso()
+        function getIso()
         {
             return $this->year.$this->month.$this->day.'T'.$this->hour.':'.$this->minute.':'.$this->second.$this->timezone;
         }
 
-        public function getTimestamp()
+        function getTimestamp()
         {
             return mktime($this->hour, $this->minute, $this->second, $this->month, $this->day, $this->year);
         }

@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Divider with image and color (light) block pattern
+     */
     return [
         'title' => __('Divider with image and color (light)', 'twentytwentytwo'),
         'categories' => ['featured'],

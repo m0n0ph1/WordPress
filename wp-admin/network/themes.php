@@ -1,19 +1,21 @@
 <?php
-
+    /**
+     * Multisite themes administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Multisite
+     * @since      3.1.0
+     */
+    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
     if(! current_user_can('manage_network_themes'))
     {
         wp_die(__('Sorry, you are not allowed to manage network themes.'));
     }
-
     $wp_list_table = _get_list_table('WP_MS_Themes_List_Table');
     $pagenum = $wp_list_table->get_pagenum();
-
     $action = $wp_list_table->current_action();
-
     $s = isset($_REQUEST['s']) ? $_REQUEST['s'] : '';
-
 // Clean up request URI from temporary args for screen options/paging uri's to work as expected.
     $temp_args = [
         'enabled',
@@ -23,10 +25,8 @@
         'enabled-auto-update',
         'disabled-auto-update',
     ];
-
     $_SERVER['REQUEST_URI'] = remove_query_arg($temp_args, $_SERVER['REQUEST_URI']);
     $referer = remove_query_arg($temp_args, wp_get_referer());
-
     if($action)
     {
         switch($action)
@@ -34,13 +34,13 @@
             case 'enable':
                 check_admin_referer('enable-theme_'.$_GET['theme']);
                 WP_Theme::network_enable_theme($_GET['theme']);
-                if(str_contains($referer, '/network/themes.php'))
+                if(! str_contains($referer, '/network/themes.php'))
                 {
-                    wp_safe_redirect(add_query_arg('enabled', 1, $referer));
+                    wp_redirect(network_admin_url('themes.php?enabled=1'));
                 }
                 else
                 {
-                    wp_redirect(network_admin_url('themes.php?enabled=1'));
+                    wp_safe_redirect(add_query_arg('enabled', 1, $referer));
                 }
                 exit;
             case 'disable':
@@ -72,7 +72,6 @@
                 exit;
             case 'update-selected':
                 check_admin_referer('bulk-themes');
-
                 if(isset($_GET['themes']))
                 {
                     $themes = explode(',', $_GET['themes']);
@@ -85,19 +84,14 @@
                 {
                     $themes = [];
                 }
-
                 // Used in the HTML title tag.
                 $title = __('Update Themes');
                 $parent_file = 'themes.php';
-
                 require_once ABSPATH.'wp-admin/admin-header.php';
-
                 echo '<div class="wrap">';
                 echo '<h1>'.esc_html($title).'</h1>';
-
                 $url = self_admin_url('update.php?action=update-selected-themes&amp;themes='.urlencode(implode(',', $themes)));
                 $url = wp_nonce_url($url, 'bulk-update-themes');
-
                 echo "<iframe src='$url' style='width: 100%; height:100%; min-height:850px;'></iframe>";
                 echo '</div>';
                 require_once ABSPATH.'wp-admin/admin-footer.php';
@@ -107,35 +101,26 @@
                 {
                     wp_die(__('Sorry, you are not allowed to delete themes for this site.'));
                 }
-
                 check_admin_referer('bulk-themes');
-
                 $themes = isset($_REQUEST['checked']) ? (array) $_REQUEST['checked'] : [];
-
                 if(empty($themes))
                 {
                     wp_safe_redirect(add_query_arg('error', 'none', $referer));
                     exit;
                 }
-
                 $themes = array_diff($themes, [get_option('stylesheet'), get_option('template')]);
-
                 if(empty($themes))
                 {
                     wp_safe_redirect(add_query_arg('error', 'main', $referer));
                     exit;
                 }
-
                 $theme_info = [];
                 foreach($themes as $key => $theme)
                 {
                     $theme_info[$theme] = wp_get_theme($theme);
                 }
-
                 require ABSPATH.'wp-admin/update.php';
-
                 $parent_file = 'themes.php';
-
                 if(! isset($_REQUEST['verify-delete']))
                 {
                     wp_enqueue_script('jquery');
@@ -175,14 +160,11 @@
                             <input type="hidden" name="verify-delete" value="1"/>
                             <input type="hidden" name="action" value="delete-selected"/>
                             <?php
-
                                 foreach((array) $themes as $theme)
                                 {
                                     echo '<input type="hidden" name="checked[]" value="'.esc_attr($theme).'" />';
                                 }
-
                                 wp_nonce_field('bulk-themes');
-
                                 if(1 === $themes_to_delete)
                                 {
                                     submit_button(__('Yes, delete this theme'), '', 'submit', false);
@@ -191,7 +173,6 @@
                                 {
                                     submit_button(__('Yes, delete these themes'), '', 'submit', false);
                                 }
-
                             ?>
                         </form>
                         <?php $referer = wp_get_referer(); ?>
@@ -202,11 +183,9 @@
                         </form>
                     </div>
                     <?php
-
                     require_once ABSPATH.'wp-admin/admin-footer.php';
                     exit;
                 } // End if verify-delete.
-
                 foreach($themes as $theme)
                 {
                     $delete_result = delete_theme(
@@ -220,7 +199,6 @@
                               )
                     );
                 }
-
                 $paged = ($_REQUEST['paged']) ? $_REQUEST['paged'] : 1;
                 wp_redirect(
                     add_query_arg([
@@ -238,7 +216,6 @@
                 {
                     wp_die(__('Sorry, you are not allowed to change themes automatic update settings.'));
                 }
-
                 if('enable-auto-update' === $action || 'disable-auto-update' === $action)
                 {
                     check_admin_referer('updates');
@@ -251,12 +228,9 @@
                         wp_safe_redirect(add_query_arg('error', 'none', $referer));
                         exit;
                     }
-
                     check_admin_referer('bulk-themes');
                 }
-
                 $auto_updates = (array) get_site_option('auto_update_themes', []);
-
                 if('enable-auto-update' === $action)
                 {
                     $auto_updates[] = $_GET['theme'];
@@ -272,7 +246,6 @@
                 {
                     // Bulk enable/disable.
                     $themes = (array) wp_unslash($_POST['checked']);
-
                     if('enable-auto-update-selected' === $action)
                     {
                         $auto_updates = array_merge($auto_updates, $themes);
@@ -285,14 +258,10 @@
                         $referer = add_query_arg('disabled-auto-update', count($themes), $referer);
                     }
                 }
-
                 $all_items = wp_get_themes();
-
                 // Remove themes that don't exist or have been deleted since the option was last updated.
                 $auto_updates = array_intersect($auto_updates, array_keys($all_items));
-
                 update_site_option('auto_update_themes', $auto_updates);
-
                 wp_safe_redirect($referer);
                 exit;
             default:
@@ -303,28 +272,21 @@
                     exit;
                 }
                 check_admin_referer('bulk-themes');
-
+                /** This action is documented in wp-admin/network/site-themes.php */
                 $referer = apply_filters('handle_network_bulk_actions-'.get_current_screen()->id, $referer, $action, $themes); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-
                 wp_safe_redirect($referer);
                 exit;
         }
     }
-
     $wp_list_table->prepare_items();
-
     add_thickbox();
-
     add_screen_option('per_page');
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => '<p>'.__('This screen enables and disables the inclusion of themes available to choose in the Appearance menu for each site. It does not activate or deactivate which theme a site is currently using.').'</p>'.'<p>'.__('If the network admin disables a theme that is in use, it can still remain selected on that site. If another theme is chosen, the disabled theme will not appear in the site&#8217;s Appearance > Themes screen.').'</p>'.'<p>'.__('Themes can be enabled on a site by site basis by the network admin on the Edit Site screen (which has a Themes tab); get there via the Edit action link on the All Sites screen. Only network admins are able to install or edit themes.').'</p>',
                                        ]);
-
     $help_sidebar_autoupdates = '';
-
     if(current_user_can('update_themes') && wp_is_auto_update_enabled_for_type('theme'))
     {
         get_current_screen()->add_help_tab([
@@ -332,27 +294,20 @@
                                                'title' => __('Auto-updates'),
                                                'content' => '<p>'.__('Auto-updates can be enabled or disabled for each individual theme. Themes with auto-updates enabled will display the estimated date of the next auto-update. Auto-updates depends on the WP-Cron task scheduling system.').'</p>'.'<p>'.__('Please note: Third-party themes and plugins, or custom code, may override WordPress scheduling.').'</p>',
                                            ]);
-
         $help_sidebar_autoupdates = '<p>'.__('<a href="https://wordpress.org/documentation/article/plugins-themes-auto-updates/">Documentation on Auto-updates</a>').'</p>';
     }
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://codex.wordpress.org/Network_Admin_Themes_Screen">Documentation on Network Themes</a>').'</p>'.$help_sidebar_autoupdates.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     get_current_screen()->set_screen_reader_content([
                                                         'heading_views' => __('Filter themes list'),
                                                         'heading_pagination' => __('Themes list navigation'),
                                                         'heading_list' => __('Themes list'),
                                                     ]);
-
 // Used in the HTML title tag.
     $title = __('Themes');
     $parent_file = 'themes.php';
-
     wp_enqueue_script('updates');
     wp_enqueue_script('theme-preview');
-
     require_once ABSPATH.'wp-admin/admin-header.php';
-
 ?>
 
     <div class="wrap">
@@ -376,7 +331,6 @@
         <?php
             $message = '';
             $type = 'success';
-
             if(isset($_GET['enabled']))
             {
                 $enabled = absint($_GET['enabled']);
@@ -447,7 +401,6 @@
                 $message = __('You cannot delete a theme while it is active on the main site.');
                 $type = 'error';
             }
-
             if('' !== $message)
             {
                 wp_admin_notice($message, [
@@ -464,7 +417,6 @@
 
         <?php
             $wp_list_table->views();
-
             if('broken' === $status)
             {
                 echo '<p class="clear">'.__('The following themes are installed but incomplete.').'</p>';
@@ -484,5 +436,4 @@
     wp_print_request_filesystem_credentials_modal();
     wp_print_admin_notice_templates();
     wp_print_update_row_templates();
-
     require_once ABSPATH.'wp-admin/admin-footer.php';

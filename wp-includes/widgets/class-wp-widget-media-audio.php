@@ -1,14 +1,33 @@
 <?php
+    /**
+     * Widget API: WP_Widget_Media_Audio class
+     *
+     * @package    WordPress
+     * @subpackage Widgets
+     * @since      4.8.0
+     */
 
+    /**
+     * Core class that implements an audio widget.
+     *
+     * @since 4.8.0
+     *
+     * @see   WP_Widget_Media
+     * @see   WP_Widget
+     */
     class WP_Widget_Media_Audio extends WP_Widget_Media
     {
+        /**
+         * Constructor.
+         *
+         * @since 4.8.0
+         */
         public function __construct()
         {
             parent::__construct('media_audio', __('Audio'), [
                 'description' => __('Displays an audio player.'),
                 'mime_type' => 'audio',
             ]);
-
             $this->l10n = array_merge($this->l10n, [
                 'no_media_selected' => __('No audio selected'),
                 'add_media' => _x('Add Audio', 'label for button in the audio widget'),
@@ -22,16 +41,22 @@
             ]);
         }
 
+        /**
+         * Render the media on the frontend.
+         *
+         * @param array $instance Widget instance props.
+         *
+         * @since 4.8.0
+         *
+         */
         public function render_media($instance)
         {
             $instance = array_merge(wp_list_pluck($this->get_instance_schema(), 'default'), $instance);
             $attachment = null;
-
             if($this->is_attachment_with_mime_type($instance['attachment_id'], $this->widget_options['mime_type']))
             {
                 $attachment = get_post($instance['attachment_id']);
             }
-
             if($attachment)
             {
                 $src = wp_get_attachment_url($attachment->ID);
@@ -40,10 +65,20 @@
             {
                 $src = $instance['url'];
             }
-
             echo wp_audio_shortcode(array_merge($instance, compact('src')));
         }
 
+        /**
+         * Get schema for properties of a widget instance (item).
+         *
+         * @return array Schema for properties.
+         * @see   WP_REST_Controller::get_item_schema()
+         * @see   WP_REST_Controller::get_additional_fields()
+         * @link  https://core.trac.wordpress.org/ticket/35574
+         *
+         * @since 4.8.0
+         *
+         */
         public function get_instance_schema()
         {
             $schema = [
@@ -59,7 +94,6 @@
                     'description' => __('Loop'),
                 ],
             ];
-
             foreach(wp_get_audio_extensions() as $audio_extension)
             {
                 $schema[$audio_extension] = [
@@ -74,8 +108,19 @@
             return array_merge($schema, parent::get_instance_schema());
         }
 
+        /**
+         * Enqueue preview scripts.
+         *
+         * These scripts normally are enqueued just-in-time when an audio shortcode is used.
+         * In the customizer, however, widgets can be dynamically added and rendered via
+         * selective refresh, and so it is important to unconditionally enqueue them in
+         * case a widget does get added.
+         *
+         * @since 4.8.0
+         */
         public function enqueue_preview_scripts()
         {
+            /** This filter is documented in wp-includes/media.php */
             if('mediaelement' === apply_filters('wp_audio_shortcode_library', 'mediaelement'))
             {
                 wp_enqueue_style('wp-mediaelement');
@@ -83,16 +128,18 @@
             }
         }
 
+        /**
+         * Loads the required media files for the media manager and scripts for media widgets.
+         *
+         * @since 4.8.0
+         */
         public function enqueue_admin_scripts()
         {
             parent::enqueue_admin_scripts();
-
             wp_enqueue_style('wp-mediaelement');
             wp_enqueue_script('wp-mediaelement');
-
             $handle = 'media-audio-widget';
             wp_enqueue_script($handle);
-
             $exported_schema = [];
             foreach($this->get_instance_schema() as $field => $field_schema)
             {
@@ -107,7 +154,6 @@
                 ]);
             }
             wp_add_inline_script($handle, sprintf('wp.mediaWidgets.modelConstructors[ %s ].prototype.schema = %s;', wp_json_encode($this->id_base), wp_json_encode($exported_schema)));
-
             wp_add_inline_script(
                 $handle, sprintf(
                            '
@@ -118,6 +164,11 @@
             );
         }
 
+        /**
+         * Render form template scripts.
+         *
+         * @since 4.8.0
+         */
         public function render_control_template_scripts()
         {
             parent::render_control_template_scripts()

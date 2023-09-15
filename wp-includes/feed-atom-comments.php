@@ -1,8 +1,12 @@
 <?php
-
+    /**
+     * Atom Feed Template for displaying Atom Comments feed.
+     *
+     * @package WordPress
+     */
     header('Content-Type: '.feed_content_type('atom').'; charset='.get_option('blog_charset'), true);
     echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'" ?'.'>';
-
+    /** This action is documented in wp-includes/feed-rss2.php */
     do_action('rss_tag_pre', 'atom-comments');
 ?>
 <feed
@@ -10,9 +14,13 @@
         xml:lang="<?php bloginfo_rss('language'); ?>"
         xmlns:thr="http://purl.org/syndication/thread/1.0"
     <?php
-
+        /** This action is documented in wp-includes/feed-atom.php */
         do_action('atom_ns');
-
+        /**
+         * Fires inside the feed tag in the Atom comment feed.
+         *
+         * @since 2.8.0
+         */
         do_action('atom_comments_ns');
     ?>
 >
@@ -57,7 +65,11 @@
         <id><?php bloginfo_rss('comments_atom_url'); ?></id>
     <?php endif; ?>
     <?php
-
+        /**
+         * Fires at the end of the Atom comment feed header.
+         *
+         * @since 2.8.0
+         */
         do_action('comments_atom_head');
     ?>
     <?php
@@ -69,18 +81,18 @@
             <entry>
                 <title>
                     <?php
-                        if(is_singular())
-                        {
-                            /* translators: Comment author title. %s: Comment author name. */
-                            printf(ent2ncr(__('By: %s')), get_comment_author_rss());
-                        }
-                        else
+                        if(! is_singular())
                         {
                             $title = get_the_title($comment_post->ID);
-
+                            /** This filter is documented in wp-includes/feed.php */
                             $title = apply_filters('the_title_rss', $title);
                             /* translators: Individual comment title. 1: Post title, 2: Comment author name. */
                             printf(ent2ncr(__('Comment on %1$s by %2$s')), $title, get_comment_author_rss());
+                        }
+                        else
+                        {
+                            /* translators: Comment author title. %s: Comment author name. */
+                            printf(ent2ncr(__('By: %s')), get_comment_author_rss());
                         }
                     ?>
                 </title>
@@ -132,7 +144,15 @@
                                          type="<?php bloginfo_rss('html_type'); ?>"/>
                     <?php
                     endif;
-
+                    /**
+                     * Fires at the end of each Atom comment feed item.
+                     *
+                     * @param int $comment_id      ID of the current comment.
+                     * @param int $comment_post_id ID of the post the current comment is connected to.
+                     *
+                     * @since 2.2.0
+                     *
+                     */
                     do_action('comment_atom_entry', $comment->comment_ID, $comment_post->ID);
                 ?>
             </entry>

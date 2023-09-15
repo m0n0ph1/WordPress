@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Template for displaying attachments
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Ten
+     * @since      Twenty Ten 1.0
+     */
     get_header(); ?>
 
 <div id="container" class="single-attachment">

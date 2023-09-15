@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Page layout with two columns.
+     */
     return [
         'title' => __('Page layout with two columns', 'twentytwentytwo'),
         'categories' => ['pages'],

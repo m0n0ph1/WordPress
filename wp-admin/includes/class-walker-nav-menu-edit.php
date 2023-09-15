@@ -1,23 +1,72 @@
 <?php
+    /**
+     * Navigation Menu API: Walker_Nav_Menu_Edit class
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     * @since      4.4.0
+     */
 
+    /**
+     * Create HTML list of nav menu input items.
+     *
+     * @since 3.0.0
+     *
+     * @see   Walker_Nav_Menu
+     */
     class Walker_Nav_Menu_Edit extends Walker_Nav_Menu
     {
-        public function start_lvl(&$output, $depth = 0, $args = null)
-        {
-            parent::start_lvl($output, $depth, $args);
-        }
+        /**
+         * Starts the list before the elements are added.
+         *
+         * @param string   $output Passed by reference.
+         * @param int      $depth  Depth of menu item. Used for padding.
+         * @param stdClass $args   Not used.
+         *
+         * @since 3.0.0
+         *
+         * @see   Walker_Nav_Menu::start_lvl()
+         *
+         */
+        public function start_lvl(&$output, $depth = 0, $args = null) {}
 
+        /**
+         * Ends the list of after the elements are added.
+         *
+         * @param string   $output Passed by reference.
+         * @param int      $depth  Depth of menu item. Used for padding.
+         * @param stdClass $args   Not used.
+         *
+         * @since 3.0.0
+         *
+         * @see   Walker_Nav_Menu::end_lvl()
+         *
+         */
         public function end_lvl(&$output, $depth = 0, $args = null) {}
 
+        /**
+         * Start the element output.
+         *
+         * @param string   $output            Used to append additional content (passed by reference).
+         * @param WP_Post  $data_object       Menu item data object.
+         * @param int      $depth             Depth of menu item. Used for padding.
+         * @param stdClass $args              Not used.
+         * @param int      $current_object_id Optional. ID of the current menu item. Default 0.
+         *
+         * @since 3.0.0
+         * @since 5.9.0 Renamed `$item` to `$data_object` and `$id` to `$current_object_id`
+         *              to match parent class for PHP 8 named parameter support.
+         *
+         * @global int     $_wp_nav_menu_max_depth
+         *
+         * @see   Walker_Nav_Menu::start_el()
+         */
         public function start_el(&$output, $data_object, $depth = 0, $args = null, $current_object_id = 0)
         {
             global $_wp_nav_menu_max_depth;
-
             // Restores the more descriptive, specific name for use within this method.
             $menu_item = $data_object;
-
             $_wp_nav_menu_max_depth = $depth > $_wp_nav_menu_max_depth ? $depth : $_wp_nav_menu_max_depth;
-
             ob_start();
             $item_id = esc_attr($menu_item->ID);
             $removed_args = [
@@ -28,9 +77,7 @@
                 'page-tab',
                 '_wpnonce',
             ];
-
             $original_title = false;
-
             if('taxonomy' === $menu_item->type)
             {
                 $original_object = get_term((int) $menu_item->object_id, $menu_item->object);
@@ -55,15 +102,12 @@
                     $original_title = $original_object->labels->archives;
                 }
             }
-
             $classes = [
                 'menu-item menu-item-depth-'.$depth,
                 'menu-item-'.esc_attr($menu_item->object),
                 'menu-item-edit-'.((isset($_GET['edit-menu-item']) && $item_id === $_GET['edit-menu-item']) ? 'active' : 'inactive'),
             ];
-
             $title = $menu_item->title;
-
             if(! empty($menu_item->_invalid))
             {
                 $classes[] = 'menu-item-invalid';
@@ -76,15 +120,12 @@
                 /* translators: %s: Title of a menu item in draft status. */
                 $title = sprintf(__('%s (Pending)'), $menu_item->title);
             }
-
             $title = (! isset($menu_item->label) || '' === $menu_item->label) ? $title : $menu_item->label;
-
             $submenu_text = '';
             if(0 === $depth)
             {
                 $submenu_text = 'style="display: none;"';
             }
-
             ?>
         <li id="menu-item-<?php echo $item_id; ?>" class="<?php echo implode(' ', $classes); ?>">
             <div class="menu-item-bar">
@@ -134,7 +175,6 @@
                                                               'edit-menu-item' => $item_id,
                                                           ], remove_query_arg($removed_args, admin_url('nav-menus.php#menu-item-settings-'.$item_id)));
                             }
-
                             printf('<a class="item-edit" id="edit-%s" href="%s" aria-label="%s"><span class="screen-reader-text">%s</span></a>', $item_id, esc_url($edit_url), esc_attr__('Edit menu item'), /* translators: Hidden accessibility text. */ __('Edit'));
                         ?>
 					</span>
@@ -217,7 +257,18 @@
                 </p>
 
                 <?php
-
+                    /**
+                     * Fires just before the move buttons of a nav menu item in the menu editor.
+                     *
+                     * @param string        $item_id           Menu item ID as a numeric string.
+                     * @param WP_Post       $menu_item         Menu item data object.
+                     * @param int           $depth             Depth of menu item. Used for padding.
+                     * @param stdClass|null $args              An object of menu item arguments.
+                     * @param int           $current_object_id Nav menu ID.
+                     *
+                     * @since 5.4.0
+                     *
+                     */
                     do_action('wp_nav_menu_item_custom_fields', $item_id, $menu_item, $depth, $args, $current_object_id);
                 ?>
 

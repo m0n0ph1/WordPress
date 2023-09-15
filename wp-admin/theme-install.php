@@ -1,37 +1,35 @@
 <?php
-
+    /**
+     * Install theme administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
     require ABSPATH.'wp-admin/includes/theme-install.php';
-
     wp_reset_vars(['tab']);
-
     if(! current_user_can('install_themes'))
     {
         wp_die(__('Sorry, you are not allowed to install themes on this site.'));
     }
-
     if(is_multisite() && ! is_network_admin())
     {
         wp_redirect(network_admin_url('theme-install.php'));
         exit;
     }
-
 // Used in the HTML title tag.
     $title = __('Add Themes');
     $parent_file = 'themes.php';
-
     if(! is_network_admin())
     {
         $submenu_file = 'themes.php';
     }
-
     $installed_themes = search_theme_directories();
-
     if(false === $installed_themes)
     {
         $installed_themes = [];
     }
-
     foreach($installed_themes as $theme_slug => $theme_data)
     {
         // Ignore child themes.
@@ -40,7 +38,6 @@
             unset($installed_themes[$theme_slug]);
         }
     }
-
     wp_localize_script('theme', '_wpThemeSettings', [
         'themes' => false,
         'settings' => [
@@ -69,50 +66,67 @@
         'installedThemes' => array_keys($installed_themes),
         'activeTheme' => get_stylesheet(),
     ]);
-
     wp_enqueue_script('theme');
     wp_enqueue_script('updates');
-
     if($tab)
     {
+        /**
+         * Fires before each of the tabs are rendered on the Install Themes page.
+         *
+         * The dynamic portion of the hook name, `$tab`, refers to the current
+         * theme installation tab.
+         *
+         * Possible hook names include:
+         *
+         *  - `install_themes_pre_block-themes`
+         *  - `install_themes_pre_dashboard`
+         *  - `install_themes_pre_featured`
+         *  - `install_themes_pre_new`
+         *  - `install_themes_pre_search`
+         *  - `install_themes_pre_updated`
+         *  - `install_themes_pre_upload`
+         *
+         * @since 2.8.0
+         * @since 6.1.0 Added the `install_themes_pre_block-themes` hook name.
+         */
         do_action("install_themes_pre_{$tab}");
     }
-
     $help_overview = '<p>'.sprintf(/* translators: %s: Theme Directory URL. */ __('You can find additional themes for your site by using the Theme Browser/Installer on this screen, which will display themes from the <a href="%s">WordPress Theme Directory</a>. These themes are designed and developed by third parties, are available free of charge, and are compatible with the license WordPress uses.'), __('https://wordpress.org/themes/')).'</p>'.'<p>'.__('You can Search for themes by keyword, author, or tag, or can get more specific and search by criteria listed in the feature filter.').' <span id="live-search-desc">'.__('The search results will be updated as you type.').'</span></p>'.'<p>'.__('Alternately, you can browse the themes that are Popular or Latest. When you find a theme you like, you can preview it or install it.').'</p>'.'<p>'.sprintf(/* translators: %s: /wp-content/themes */ __('You can Upload a theme manually if you have already downloaded its ZIP archive onto your computer (make sure it is from a trusted and original source). You can also do it the old-fashioned way and copy a downloaded theme&#8217;s folder via FTP into your %s directory.'), '<code>/wp-content/themes</code>').'</p>';
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => $help_overview,
                                        ]);
-
     $help_installing = '<p>'.__('Once you have generated a list of themes, you can preview and install any of them. Click on the thumbnail of the theme you are interested in previewing. It will open up in a full-screen Preview page to give you a better idea of how that theme will look.').'</p>'.'<p>'.__('To install the theme so you can preview it with your site&#8217;s content and customize its theme options, click the "Install" button at the top of the left-hand pane. The theme files will be downloaded to your website automatically. When this is complete, the theme is now available for activation, which you can do by clicking the "Activate" link, or by navigating to your Manage Themes screen and clicking the "Live Preview" link under any installed theme&#8217;s thumbnail image.').'</p>';
-
     get_current_screen()->add_help_tab([
                                            'id' => 'installing',
                                            'title' => __('Previewing and Installing'),
                                            'content' => $help_installing,
                                        ]);
-
 // Help tab: Block themes.
     $help_block_themes = '<p>'.__('A block theme is a theme that uses blocks for all parts of a site including navigation menus, header, content, and site footer. These themes are built for the features that allow you to edit and customize all parts of your site.').'</p>'.'<p>'.__('With a block theme, you can place and edit blocks without affecting your content by customizing or creating new templates.').'</p>';
-
     get_current_screen()->add_help_tab([
                                            'id' => 'block_themes',
                                            'title' => __('Block themes'),
                                            'content' => $help_block_themes,
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/appearance-themes-screen/#install-themes">Documentation on Adding New Themes</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/block-themes/">Documentation on Block Themes</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     require_once ABSPATH.'wp-admin/admin-header.php';
-
 ?>
     <div class="wrap">
         <h1 class="wp-heading-inline"><?php echo esc_html($title); ?></h1>
 
         <?php
-
+            /**
+             * Filters the tabs shown on the Add Themes screen.
+             *
+             * This filter is for backward compatibility only, for the suppression of the upload tab.
+             *
+             * @param string[] $tabs Associative array of the tabs shown on the Add Themes screen. Default is 'upload'.
+             *
+             * @since 2.8.0
+             *
+             */
             $tabs = apply_filters('install_themes_tabs', ['upload' => __('Upload Theme')]);
             if(! empty($tabs['upload']) && current_user_can('upload_themes'))
             {
@@ -195,7 +209,6 @@
                     // Use the core list, rather than the .org API, due to inconsistencies
                     // and to ensure tags are translated.
                     $feature_list = get_theme_feature_list(false);
-
                     foreach($feature_list as $feature_group => $features)
                     {
                         echo '<fieldset class="filter-group">';
@@ -240,6 +253,28 @@
         <?php
             if($tab)
             {
+                /**
+                 * Fires at the top of each of the tabs on the Install Themes page.
+                 *
+                 * The dynamic portion of the hook name, `$tab`, refers to the current
+                 * theme installation tab.
+                 *
+                 * Possible hook names include:
+                 *
+                 *  - `install_themes_block-themes`
+                 *  - `install_themes_dashboard`
+                 *  - `install_themes_featured`
+                 *  - `install_themes_new`
+                 *  - `install_themes_search`
+                 *  - `install_themes_updated`
+                 *  - `install_themes_upload`
+                 *
+                 * @param int $paged Number of the current page of results being viewed.
+                 *
+                 * @since 6.1.0 Added the `install_themes_block-themes` hook name.
+                 *
+                 * @since 2.8.0
+                 */
                 do_action("install_themes_{$tab}", $paged);
             }
         ?>
@@ -531,5 +566,4 @@
 <?php
     wp_print_request_filesystem_credentials_modal();
     wp_print_admin_notice_templates();
-
     require_once ABSPATH.'wp-admin/admin-footer.php';

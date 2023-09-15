@@ -1,17 +1,25 @@
 <?php
-
+    /**
+     * WordPress Export Administration Screen
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** Load WordPress Bootstrap */
     require_once __DIR__.'/admin.php';
-
     if(! current_user_can('export'))
     {
         wp_die(__('Sorry, you are not allowed to export the content of this site.'));
     }
-
+    /** Load WordPress export API */
     require_once ABSPATH.'wp-admin/includes/export.php';
-
     // Used in the HTML title tag.
     $title = __('Export');
-
+    /**
+     * Display JavaScript on the page.
+     *
+     * @since 3.5.0
+     */
     function export_add_js()
     {
         ?>
@@ -40,20 +48,16 @@
     }
 
     add_action('admin_head', 'export_add_js');
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => '<p>'.__('You can export a file of your site&#8217;s content in order to import it into another installation or platform. The export file will be an XML file format called WXR. Posts, pages, comments, custom fields, categories, and tags can be included. You can choose for the WXR file to include only certain posts or pages by setting the dropdown filters to limit the export by category, author, date range by month, or publishing status.').'</p>'.'<p>'.__('Once generated, your WXR file can be imported by another WordPress site or by another blogging platform able to access this format.').'</p>',
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/tools-export-screen/">Documentation on Export</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     // If the 'download' URL parameter is set, a WXR export file is baked and returned.
     if(isset($_GET['download']))
     {
         $args = [];
-
         if(! isset($_GET['content']) || 'all' === $_GET['content'])
         {
             $args['content'] = 'all';
@@ -61,23 +65,19 @@
         elseif('posts' === $_GET['content'])
         {
             $args['content'] = 'post';
-
             if($_GET['cat'])
             {
                 $args['category'] = (int) $_GET['cat'];
             }
-
             if($_GET['post_author'])
             {
                 $args['author'] = (int) $_GET['post_author'];
             }
-
             if($_GET['post_start_date'] || $_GET['post_end_date'])
             {
                 $args['start_date'] = $_GET['post_start_date'];
                 $args['end_date'] = $_GET['post_end_date'];
             }
-
             if($_GET['post_status'])
             {
                 $args['status'] = $_GET['post_status'];
@@ -86,18 +86,15 @@
         elseif('pages' === $_GET['content'])
         {
             $args['content'] = 'page';
-
             if($_GET['page_author'])
             {
                 $args['author'] = (int) $_GET['page_author'];
             }
-
             if($_GET['page_start_date'] || $_GET['page_end_date'])
             {
                 $args['start_date'] = $_GET['page_start_date'];
                 $args['end_date'] = $_GET['page_end_date'];
             }
-
             if($_GET['page_status'])
             {
                 $args['status'] = $_GET['page_status'];
@@ -106,7 +103,6 @@
         elseif('attachment' === $_GET['content'])
         {
             $args['content'] = 'attachment';
-
             if($_GET['attachment_start_date'] || $_GET['attachment_end_date'])
             {
                 $args['start_date'] = $_GET['attachment_start_date'];
@@ -117,19 +113,33 @@
         {
             $args['content'] = $_GET['content'];
         }
-
+        /**
+         * Filters the export args.
+         *
+         * @param array $args The arguments to send to the exporter.
+         *
+         * @since 3.5.0
+         *
+         */
         $args = apply_filters('export_args', $args);
-
         export_wp($args);
         die();
     }
-
     require_once ABSPATH.'wp-admin/admin-header.php';
-
+    /**
+     * Creates the date options fields for exporting a given post type.
+     *
+     * @param string     $post_type The post type. Default 'post'.
+     *
+     * @global WP_Locale $wp_locale WordPress date and time locale object.
+     *
+     * @since 3.1.0
+     *
+     * @global wpdb      $wpdb      WordPress database abstraction object.
+     */
     function export_date_options($post_type = 'post')
     {
         global $wpdb, $wp_locale;
-
         $months = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month
@@ -138,20 +148,17 @@
 			ORDER BY post_date DESC", $post_type
             )
         );
-
         $month_count = count($months);
         if(! $month_count || (1 === $month_count && 0 === (int) $months[0]->month))
         {
             return;
         }
-
         foreach($months as $date)
         {
             if(0 === (int) $date->year)
             {
                 continue;
             }
-
             $month = zeroise($date->month, 2);
             echo '<option value="'.$date->year.'-'.$month.'">'.$wp_locale->get_month($month).' '.$date->year.'</option>';
         }
@@ -327,7 +334,11 @@
 
         </fieldset>
         <?php
-
+            /**
+             * Fires at the end of the export filters form.
+             *
+             * @since 3.5.0
+             */
             do_action('export_filters');
         ?>
 

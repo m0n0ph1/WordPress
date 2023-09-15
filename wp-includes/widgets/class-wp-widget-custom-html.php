@@ -1,14 +1,45 @@
 <?php
+    /**
+     * Widget API: WP_Widget_Custom_HTML class
+     *
+     * @package    WordPress
+     * @subpackage Widgets
+     * @since      4.8.1
+     */
 
+    /**
+     * Core class used to implement a Custom HTML widget.
+     *
+     * @since 4.8.1
+     *
+     * @see   WP_Widget
+     */
     class WP_Widget_Custom_HTML extends WP_Widget
     {
+        /**
+         * Whether or not the widget has been registered yet.
+         *
+         * @since 4.9.0
+         * @var bool
+         */
         protected $registered = false;
 
+        /**
+         * Default instance.
+         *
+         * @since 4.8.1
+         * @var array
+         */
         protected $default_instance = [
             'title' => '',
             'content' => '',
         ];
 
+        /**
+         * Sets up a new Custom HTML widget instance.
+         *
+         * @since 4.8.1
+         */
         public function __construct()
         {
             $widget_ops = [
@@ -24,6 +55,11 @@
             parent::__construct('custom_html', __('Custom HTML'), $widget_ops, $control_ops);
         }
 
+        /**
+         * Render form template scripts.
+         *
+         * @since 4.9.0
+         */
         public static function render_control_template_scripts()
         {
             ?>
@@ -64,20 +100,22 @@
             <?php
         }
 
+        /**
+         * Add help text to widgets admin screen.
+         *
+         * @since 4.9.0
+         */
         public static function add_help_text()
         {
             $screen = get_current_screen();
-
             $content = '<p>';
             $content .= __('Use the Custom HTML widget to add arbitrary HTML code to your widget areas.');
             $content .= '</p>';
-
             if('false' !== wp_get_current_user()->syntax_highlighting)
             {
                 $content .= '<p>';
                 $content .= sprintf(/* translators: 1: Link to user profile, 2: Additional link attributes, 3: Accessibility text. */ __('The edit field automatically highlights code syntax. You can disable this in your <a href="%1$s" %2$s>user profile%3$s</a> to work in plain text mode.'), esc_url(get_edit_profile_url()), 'class="external-link" target="_blank"', sprintf('<span class="screen-reader-text"> %s</span>', /* translators: Hidden accessibility text. */ __('(opens in a new tab)')));
                 $content .= '</p>';
-
                 $content .= '<p id="editor-keyboard-trap-help-1">'.__('When using a keyboard to navigate:').'</p>';
                 $content .= '<ul>';
                 $content .= '<li id="editor-keyboard-trap-help-2">'.__('In the editing area, the Tab key enters a tab character.').'</li>';
@@ -85,7 +123,6 @@
                 $content .= '<li id="editor-keyboard-trap-help-4">'.__('Screen reader users: when in forms mode, you may need to press the Esc key twice.').'</li>';
                 $content .= '</ul>';
             }
-
             $screen->add_help_tab([
                                       'id' => 'custom_html_widget',
                                       'title' => __('Custom HTML Widget'),
@@ -93,6 +130,15 @@
                                   ]);
         }
 
+        /**
+         * Add hooks for enqueueing assets when registering all widget instances of this widget class.
+         *
+         * @param int $number Optional. The unique order number of this widget instance
+         *                    compared to other instances of the same class. Default -1.
+         *
+         * @since 4.9.0
+         *
+         */
         public function _register_one($number = -1)
         {
             parent::_register_one($number);
@@ -101,23 +147,32 @@
                 return;
             }
             $this->registered = true;
-
             /*
              * Note that the widgets component in the customizer will also do
              * the 'admin_print_scripts-widgets.php' action in WP_Customize_Widgets::print_scripts().
              */
             add_action('admin_print_scripts-widgets.php', [$this, 'enqueue_admin_scripts']);
-
             /*
              * Note that the widgets component in the customizer will also do
              * the 'admin_footer-widgets.php' action in WP_Customize_Widgets::print_footer_scripts().
              */
             add_action('admin_footer-widgets.php', ['WP_Widget_Custom_HTML', 'render_control_template_scripts']);
-
             // Note this action is used to ensure the help text is added to the end.
             add_action('admin_head-widgets.php', ['WP_Widget_Custom_HTML', 'add_help_text']);
         }
 
+        /**
+         * Filters gallery shortcode attributes.
+         *
+         * Prevents all of a site's attachments from being shown in a gallery displayed on a
+         * non-singular template where a $post context is not available.
+         *
+         * @param array $attrs Attributes.
+         *
+         * @return array Attributes.
+         * @since 4.9.0
+         *
+         */
         public function _filter_gallery_shortcode_attrs($attrs)
         {
             if(! is_singular() && empty($attrs['id']) && empty($attrs['include']))
@@ -128,11 +183,21 @@
             return $attrs;
         }
 
+        /**
+         * Outputs the content for the current Custom HTML widget instance.
+         *
+         * @param array    $args     Display arguments including 'before_title', 'after_title',
+         *                           'before_widget', and 'after_widget'.
+         * @param array    $instance Settings for the current Custom HTML widget instance.
+         *
+         * @since 4.8.1
+         *
+         * @global WP_Post $post     Global post object.
+         *
+         */
         public function widget($args, $instance)
         {
-            global parent::widget($args, $instance);
-            $post;
-
+            global $post;
             // Override global $post so filters (and shortcodes) apply in a consistent context.
             $original_post = $post;
             if(is_singular())
@@ -145,14 +210,11 @@
                 // Nullify the $post global during widget rendering to prevent shortcodes from running with the unexpected context on archive queries.
                 $post = null;
             }
-
             // Prevent dumping out all attachments from the media library.
             add_filter('shortcode_atts_gallery', [$this, '_filter_gallery_shortcode_attrs']);
-
             $instance = array_merge($this->default_instance, $instance);
-
+            /** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
             $title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
-
             // Prepare instance data that looks like a normal Text widget.
             $simulated_text_widget_instance = array_merge($instance, [
                 'text' => isset($instance['content']) ? $instance['content'] : '',
@@ -160,21 +222,26 @@
                 'visual' => false, // Because it wasn't created in TinyMCE.
             ]);
             unset($simulated_text_widget_instance['content']); // Was moved to 'text' prop.
-
+            /** This filter is documented in wp-includes/widgets/class-wp-widget-text.php */
             $content = apply_filters('widget_text', $instance['content'], $simulated_text_widget_instance, $this);
-
             // Adds 'noopener' relationship, without duplicating values, to all HTML A elements that have a target.
             $content = wp_targeted_link_rel($content);
-
+            /**
+             * Filters the content of the Custom HTML widget.
+             *
+             * @param string                $content  The widget content.
+             * @param array                 $instance Array of settings for the current widget.
+             * @param WP_Widget_Custom_HTML $widget   Current Custom HTML widget instance.
+             *
+             * @since 4.8.1
+             *
+             */
             $content = apply_filters('widget_custom_html_content', $content, $instance, $this);
-
             // Restore post global.
             $post = $original_post;
             remove_filter('shortcode_atts_gallery', [$this, '_filter_gallery_shortcode_attrs']);
-
             // Inject the Text widget's container class name alongside this widget's class name for theme styling compatibility.
             $args['before_widget'] = preg_replace('/(?<=\sclass=["\'])/', 'widget_text ', $args['before_widget']);
-
             echo $args['before_widget'];
             if(! empty($title))
             {
@@ -186,6 +253,17 @@
             echo $args['after_widget'];
         }
 
+        /**
+         * Handles updating settings for the current Custom HTML widget instance.
+         *
+         * @param array $new_instance New settings for this instance as input by the user via
+         *                            WP_Widget::form().
+         * @param array $old_instance Old settings for this instance.
+         *
+         * @return array Settings to save or bool false to cancel saving.
+         * @since 4.8.1
+         *
+         */
         public function update($new_instance, $old_instance)
         {
             $instance = array_merge($this->default_instance, $old_instance);
@@ -202,6 +280,11 @@
             return $instance;
         }
 
+        /**
+         * Loads the required scripts and styles for the widget control.
+         *
+         * @since 4.9.0
+         */
         public function enqueue_admin_scripts()
         {
             $settings = wp_enqueue_code_editor([
@@ -211,10 +294,8 @@
                                                        'tabSize' => 2,
                                                    ],
                                                ]);
-
             wp_enqueue_script('custom-html-widgets');
             wp_add_inline_script('custom-html-widgets', sprintf('wp.customHtmlWidgets.idBases.push( %s );', wp_json_encode($this->id_base)));
-
             if(empty($settings))
             {
                 $settings = [
@@ -222,7 +303,6 @@
                 ];
             }
             wp_add_inline_script('custom-html-widgets', sprintf('wp.customHtmlWidgets.init( %s );', wp_json_encode($settings)), 'after');
-
             $l10n = [
                 'errorNotice' => [
                     /* translators: %d: Error count. */
@@ -235,9 +315,20 @@
             wp_add_inline_script('custom-html-widgets', sprintf('jQuery.extend( wp.customHtmlWidgets.l10n, %s );', wp_json_encode($l10n)), 'after');
         }
 
+        /**
+         * Outputs the Custom HTML widget settings form.
+         *
+         * @param array $instance Current instance.
+         *
+         * @since 4.9.0 The form contains only hidden sync inputs. For the control UI, see
+         *     `WP_Widget_Custom_HTML::render_control_template_scripts()`.
+         *
+         * @see   WP_Widget_Custom_HTML::render_control_template_scripts()
+         *
+         * @since 4.8.1
+         */
         public function form($instance)
         {
-            parent::form($instance);
             $instance = wp_parse_args((array) $instance, $this->default_instance);
             ?>
             <input id="<?php echo $this->get_field_id('title'); ?>"

@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Template for displaying Author Archive pages
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 1.0
+     */
     get_header(); ?>
 
 <section id="primary">
@@ -45,7 +51,14 @@
                 <div id="author-info">
                     <div id="author-avatar">
                         <?php
-
+                            /**
+                             * Filters the Twenty Eleven author bio avatar size.
+                             *
+                             * @param int The height and width avatar dimension in pixels. Default 60.
+                             *
+                             * @since Twenty Eleven 1.0
+                             *
+                             */
                             $author_bio_avatar_size = apply_filters('twentyeleven_author_bio_avatar_size', 60);
                             echo get_avatar(get_the_author_meta('user_email'), $author_bio_avatar_size);
                         ?>

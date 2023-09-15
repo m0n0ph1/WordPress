@@ -1,5 +1,4 @@
 <?php
-
 /////////////////////////////////////////////////////////////////
 /// getID3() by James Heinrich <info@getid3.org>               //
 //  available at https://github.com/JamesHeinrich/getID3       //
@@ -13,14 +12,18 @@
 // dependencies: NONE                                          //
 //                                                            ///
 /////////////////////////////////////////////////////////////////
-
     if(! defined('GETID3_INCLUDEPATH'))
     { // prevent path-exposing attacks that access modules directly on public webservers
         exit;
     }
 
-    class module extends getid3_handler
+    class getid3_id3v1 extends getid3_handler
     {
+        /**
+         * @param string $OriginalGenre
+         *
+         * @return string|false
+         */
         public static function StandardiseID3v1GenreName($OriginalGenre)
         {
             if(($GenreID = self::LookupGenreID($OriginalGenre)) !== false)
@@ -31,6 +34,12 @@
             return $OriginalGenre;
         }
 
+        /**
+         * @param string $genre
+         * @param bool   $allowSCMPXextended
+         *
+         * @return string|false
+         */
         public static function LookupGenreID($genre, $allowSCMPXextended = false)
         {
             $GenreLookup = self::ArrayOfGenres($allowSCMPXextended);
@@ -46,6 +55,11 @@
             return false;
         }
 
+        /**
+         * @param bool $allowSCMPXextended
+         *
+         * @return string[]
+         */
         public static function ArrayOfGenres($allowSCMPXextended = false)
         {
             static $GenreLookup = [
@@ -241,13 +255,10 @@
                 189 => 'Dubstep',
                 190 => 'Garage Rock',
                 191 => 'Psybient',
-
                 255 => 'Unknown',
-
                 'CR' => 'Cover',
                 'RX' => 'Remix'
             ];
-
             static $GenreLookupSCMPX = [];
             if($allowSCMPXextended && empty($GenreLookupSCMPX))
             {
@@ -276,6 +287,12 @@
             return ($allowSCMPXextended ? $GenreLookupSCMPX : $GenreLookup);
         }
 
+        /**
+         * @param string $genreid
+         * @param bool   $allowSCMPXextended
+         *
+         * @return string|false
+         */
         public static function LookupGenreName($genreid, $allowSCMPXextended = true)
         {
             switch($genreid)
@@ -296,17 +313,18 @@
             return (isset($GenreLookup[$genreid]) ? $GenreLookup[$genreid] : false);
         }
 
+        /**
+         * @return bool
+         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
-
             if(! getid3_lib::intValueSupported($info['filesize']))
             {
                 $this->warning('Unable to check for ID3v1 because file is larger than '.round(PHP_INT_MAX / 1073741824).'GB');
 
                 return false;
             }
-
             if($info['filesize'] < 256)
             {
                 $this->fseek(-128, SEEK_END);
@@ -319,11 +337,9 @@
                 $preid3v1 = $this->fread(128);
                 $id3v1tag = $this->fread(128);
             }
-
-            if(strpos($id3v1tag, 'TAG') === 0)
+            if(substr($id3v1tag, 0, 3) == 'TAG')
             {
                 $info['avdataend'] = $info['filesize'] - 128;
-
                 $ParsedID3v1 = [];
                 $ParsedID3v1['title'] = $this->cutfield(substr($id3v1tag, 3, 30));
                 $ParsedID3v1['artist'] = $this->cutfield(substr($id3v1tag, 33, 30));
@@ -331,7 +347,6 @@
                 $ParsedID3v1['year'] = $this->cutfield(substr($id3v1tag, 93, 4));
                 $ParsedID3v1['comment'] = substr($id3v1tag, 97, 30);  // can't remove nulls yet, track detection depends on them
                 $ParsedID3v1['genreid'] = ord(substr($id3v1tag, 127, 1));
-
                 // If second-last byte of comment field is null and last byte of comment field is non-null
                 // then this is ID3v1.1 and the comment field is 28 bytes long and the 30th byte is the track number
                 if(($id3v1tag[125] === "\x00") && ($id3v1tag[126] !== "\x00"))
@@ -340,7 +355,6 @@
                     $ParsedID3v1['comment'] = substr($ParsedID3v1['comment'], 0, 28);
                 }
                 $ParsedID3v1['comment'] = $this->cutfield($ParsedID3v1['comment']);
-
                 $ParsedID3v1['genre'] = $this->LookupGenreName($ParsedID3v1['genreid']);
                 if(! empty($ParsedID3v1['genre']))
                 {
@@ -350,7 +364,6 @@
                 {
                     unset($ParsedID3v1['genre']);
                 }
-
                 foreach($ParsedID3v1 as $key => $value)
                 {
                     $ParsedID3v1['comments'][$key][0] = $value;
@@ -387,7 +400,6 @@
                     }
                     // ID3v1 encoding detection hack END
                 }
-
                 // ID3v1 data is supposed to be padded with NULL characters, but some taggers pad with spaces
                 $GoodFormatID3v1tag = $this->GenerateID3v1Tag($ParsedID3v1['title'], $ParsedID3v1['artist'], $ParsedID3v1['album'], $ParsedID3v1['year'], (isset($ParsedID3v1['genre']) ? $this->LookupGenreID($ParsedID3v1['genre']) : false), $ParsedID3v1['comment'], (! empty($ParsedID3v1['track_number']) ? $ParsedID3v1['track_number'] : ''));
                 $ParsedID3v1['padding_valid'] = true;
@@ -396,20 +408,16 @@
                     $ParsedID3v1['padding_valid'] = false;
                     $this->warning('Some ID3v1 fields do not use NULL characters for padding');
                 }
-
                 $ParsedID3v1['tag_offset_end'] = $info['filesize'];
                 $ParsedID3v1['tag_offset_start'] = $ParsedID3v1['tag_offset_end'] - 128;
-
                 $info['id3v1'] = $ParsedID3v1;
                 $info['id3v1']['encoding'] = $ID3v1encoding;
             }
-
-            if(strpos($preid3v1, 'TAG') === 0)
+            if(substr($preid3v1, 0, 3) == 'TAG')
             {
                 // The way iTunes handles tags is, well, brain-damaged.
                 // It completely ignores v1 if ID3v2 is present.
                 // This goes as far as adding a new v1 tag *even if there already is one*
-
                 // A suspected double-ID3v1 tag has been detected, but it could be that
                 // the "TAG" identifier is a legitimate part of an APE or Lyrics3 tag
                 if(substr($preid3v1, 96, 8) == 'APETAGEX')
@@ -431,11 +439,27 @@
             return true;
         }
 
+        /**
+         * @param string $str
+         *
+         * @return string
+         */
         public static function cutfield($str)
         {
             return trim(substr($str, 0, strcspn($str, "\x00")));
         }
 
+        /**
+         * @param string     $title
+         * @param string     $artist
+         * @param string     $album
+         * @param string     $year
+         * @param int        $genreid
+         * @param string     $comment
+         * @param int|string $track
+         *
+         * @return string
+         */
         public static function GenerateID3v1Tag($title, $artist, $album, $year, $genreid, $comment, $track = '')
         {
             $ID3v1Tag = 'TAG';
@@ -447,7 +471,7 @@
             {
                 $ID3v1Tag .= str_pad(trim(substr($comment, 0, 28)), 28, "\x00", STR_PAD_RIGHT);
                 $ID3v1Tag .= "\x00";
-                if(is_string($track))
+                if(gettype($track) == 'string')
                 {
                     $track = (int) $track;
                 }

@@ -1,18 +1,25 @@
 <?php
-
+    /**
+     * The default template for displaying content
+     *
+     * Used for both singular and index.
+     *
+     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty
+     * @since      Twenty Twenty 1.0
+     */
 ?>
 
 <article <?php post_class(); ?> id="post-<?php the_ID(); ?>">
 
     <?php
-
         get_template_part('template-parts/entry-header');
-
         if(! is_search())
         {
             get_template_part('template-parts/featured-image');
         }
-
     ?>
 
     <div class="post-inner <?php echo is_page_template('templates/template-full-width.php') ? '' : 'thin'; ?> ">
@@ -42,12 +49,9 @@
                               'link_before' => '<span class="page-number">',
                               'link_after' => '</span>',
                           ]);
-
             edit_post_link();
-
             // Single bottom post meta.
             twentytwenty_the_post_meta(get_the_ID(), 'single-bottom');
-
             if(post_type_supports(get_post_type(get_the_ID()), 'author') && is_single())
             {
                 get_template_part('template-parts/entry-author-bio');
@@ -57,12 +61,10 @@
     </div><!-- .section-inner -->
 
     <?php
-
         if(is_single())
         {
             get_template_part('template-parts/navigation');
         }
-
         /*
          * Output comments wrapper if it's a post, or if comments are open,
          * or if there's a comment number – and check for password.

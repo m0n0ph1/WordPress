@@ -1,11 +1,24 @@
 <?php
-
+    /**
+     * The template for displaying Author bios
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Thirteen
+     * @since      Twenty Thirteen 1.0
+     */
 ?>
 
 <div class="author-info">
     <div class="author-avatar">
         <?php
-
+            /**
+             * Filters the author bio avatar size.
+             *
+             * @param int $size The avatar height and width size in pixels.
+             *
+             * @since Twenty Thirteen 1.0
+             *
+             */
             $author_bio_avatar_size = apply_filters('twentythirteen_author_bio_avatar_size', 74);
             echo get_avatar(get_the_author_meta('user_email'), $author_bio_avatar_size);
         ?>

@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Simple blog posts block pattern
+     */
     return [
         'title' => __('Simple blog posts', 'twentytwentytwo'),
         'categories' => ['query'],

@@ -1,5 +1,13 @@
 <?php
-
+    /**
+     * The default template for displaying content
+     *
+     * Used for both single and index/archive/search.
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twelve
+     * @since      Twenty Twelve 1.0
+     */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -55,7 +63,7 @@
                 <div class="author-info">
                     <div class="author-avatar">
                         <?php
-
+                            /** This filter is documented in author.php */
                             $author_bio_avatar_size = apply_filters('twentytwelve_author_bio_avatar_size', 68);
                             echo get_avatar(get_the_author_meta('user_email'), $author_bio_avatar_size);
                         ?>

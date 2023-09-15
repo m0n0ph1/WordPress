@@ -1,12 +1,32 @@
 <?php
+    /**
+     * Custom comment walker for this theme
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Nineteen
+     * @since      Twenty Nineteen 1.0
+     */
 
+    /**
+     * This class outputs custom comment walker for HTML5 friendly WordPress comment and threaded replies.
+     *
+     * @since Twenty Nineteen 1.0
+     */
     class TwentyNineteen_Walker_Comment extends Walker_Comment
     {
+        /**
+         * Outputs a comment in the HTML5 format.
+         *
+         * @param WP_Comment $comment Comment to display.
+         * @param int        $depth   Depth of the current comment.
+         * @param array      $args    An array of arguments.
+         *
+         * @see wp_list_comments()
+         *
+         */
         protected function html5_comment($comment, $depth, $args)
         {
-            parent::html5_comment($comment, $depth, $args);
             $tag = ('div' === $args['style']) ? 'div' : 'li';
-
             ?>
             <<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class($this->has_children ? 'parent' : '', $comment); ?>>
             <article id="div-comment-<?php comment_ID(); ?>" class="comment-body">
@@ -28,7 +48,6 @@
                                     echo $avatar;
                                 }
                             }
-
                             /*
                              * Using the `check` icon instead of `check_circle`, since we can't add a
                              * fill color to the inner check shape when in circle form.
@@ -37,7 +56,6 @@
                             {
                                 printf('<span class="post-author-badge" aria-hidden="true">%s</span>', twentynineteen_get_icon_svg('check', 24));
                             }
-
                             printf(
                                 wp_kses(/* translators: %s: Comment author link. */ __('%s <span class="screen-reader-text says">says:</span>', 'twentynineteen'), [
                                     'span' => [
@@ -45,7 +63,6 @@
                                     ],
                                 ]), '<b class="fn">'.$comment_author.'</b>'
                             );
-
                             if(! empty($comment_author_url))
                             {
                                 echo '</a>';
@@ -57,9 +74,7 @@
                         <?php
                             /* translators: 1: Comment date, 2: Comment time. */
                             $comment_timestamp = sprintf(__('%1$s at %2$s', 'twentynineteen'), get_comment_date('', $comment), get_comment_time());
-
                             printf('<a href="%s"><time datetime="%s">%s</time></a>', esc_url(get_comment_link($comment, $args)), get_comment_time('c'), $comment_timestamp);
-
                             $edit_comment_icon = twentynineteen_get_icon_svg('edit', 16);
                             edit_comment_link(__('Edit', 'twentynineteen'), ' <span class="edit-link-sep">&mdash;</span> <span class="edit-link">'.$edit_comment_icon, '</span>');
                         ?>

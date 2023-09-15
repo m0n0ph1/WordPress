@@ -1,12 +1,29 @@
 <?php
-
     if(class_exists('ParagonIE_Sodium_Core_HSalsa20', false))
     {
         return;
     }
 
-    abstract class HSalsa20 extends ParagonIE_Sodium_Core_Salsa20
+    /**
+     * Class ParagonIE_Sodium_Core_HSalsa20
+     */
+    abstract class ParagonIE_Sodium_Core_HSalsa20 extends ParagonIE_Sodium_Core_Salsa20
     {
+        /**
+         * Calculate an hsalsa20 hash of a single block
+         *
+         * HSalsa20 doesn't have a counter and will never be used for more than
+         * one block (used to derive a subkey for xsalsa20).
+         *
+         * @param string      $in
+         * @param string      $k
+         * @param string|null $c
+         *
+         * @return string
+         * @throws TypeError
+         * @internal You should not use this directly from another application
+         *
+         */
         public static function hsalsa20($in, $k, $c = null)
         {
             if($c === null)
@@ -35,7 +52,6 @@
             $x7 = self::load_4(self::substr($in, 4, 4));
             $x8 = self::load_4(self::substr($in, 8, 4));
             $x9 = self::load_4(self::substr($in, 12, 4));
-
             for($i = self::ROUNDS; $i > 0; $i -= 2)
             {
                 $x4 ^= self::rotate($x0 + $x12, 7);

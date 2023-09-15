@@ -1,15 +1,32 @@
-<?php /** @noinspection ALL */
-    /** @noinspection ALL */
-    /** @noinspection ALL */
+<?php
+    /**
+     * Upgrader API: Bulk_Upgrader_Skin class
+     *
+     * @package    WordPress
+     * @subpackage Upgrader
+     * @since      4.6.0
+     */
 
-    /** @noinspection ALL */
-
+    /**
+     * Generic Bulk Upgrader Skin for WordPress Upgrades.
+     *
+     * @since 3.0.0
+     * @since 4.6.0 Moved to its own file from wp-admin/includes/class-wp-upgrader-skins.php.
+     *
+     * @see   WP_Upgrader_Skin
+     */
     class Bulk_Upgrader_Skin extends WP_Upgrader_Skin
     {
         public $in_loop = false;
 
+        /**
+         * @var string|false
+         */
         public $error = false;
 
+        /**
+         * @param array $args
+         */
         public function __construct($args = [])
         {
             $defaults = [
@@ -17,10 +34,11 @@
                 'nonce' => '',
             ];
             $args = wp_parse_args($args, $defaults);
-
             parent::__construct($args);
         }
 
+        /**
+         */
         public function add_strings()
         {
             $this->upgrader->strings['skin_upgrade_start'] = __('The update process is starting. This process may take a while on some hosts, so please be patient.');
@@ -33,35 +51,39 @@
             $this->upgrader->strings['skin_upgrade_end'] = __('All updates have been completed.');
         }
 
+        /**
+         */
         public function header()
         {
             // Nothing. This will be displayed within an iframe.
         }
 
+        /**
+         */
         public function footer()
         {
-            parent::footer();
+            // Nothing. This will be displayed within an iframe.
         }
 
+        /**
+         * @param string|WP_Error $errors Errors.
+         *
+         * @since 5.9.0 Renamed `$error` to `$errors` for PHP 8 named parameter support.
+         *
+         */
         public function error($errors)
         {
-            parent::error($errors);
             if(is_string($errors) && isset($this->upgrader->strings[$errors]))
             {
                 $this->error = $this->upgrader->strings[$errors];
             }
-
             if(is_wp_error($errors))
             {
                 $messages = [];
-                /** @noinspection NativeMemberUsageInspection */
                 foreach($errors->get_error_messages() as $emessage)
                 {
-                    /** @noinspection NativeMemberUsageInspection */
-                    /** @noinspection NativeMemberUsageInspection */
                     if($errors->get_error_data() && is_string($errors->get_error_data()))
                     {
-                        /** @noinspection NativeMemberUsageInspection */
                         $messages[] = $emessage.' '.esc_html(strip_tags($errors->get_error_data()));
                     }
                     else
@@ -74,24 +96,34 @@
             echo '<script type="text/javascript">jQuery(\'.waiting-'.esc_js($this->upgrader->update_current).'\').hide();</script>';
         }
 
+        /**
+         */
         public function bulk_header()
         {
             $this->feedback('skin_upgrade_start');
         }
 
+        /**
+         * @param string $feedback Message data.
+         * @param mixed  ...$args  Optional text replacements.
+         *
+         * @since 5.9.0 Renamed `$string` (a PHP reserved keyword) to `$feedback` for PHP 8 named parameter support.
+         *
+         */
         public function feedback($feedback, ...$args)
         {
-            parent::feedback($feedback, ...$args);
             if(isset($this->upgrader->strings[$feedback]))
             {
                 $feedback = $this->upgrader->strings[$feedback];
             }
-
-            if(str_contains($feedback, '%') && $args)
+            if(str_contains($feedback, '%'))
             {
-                $args = array_map('strip_tags', $args);
-                $args = array_map('esc_html', $args);
-                $feedback = vsprintf($feedback, $args);
+                if($args)
+                {
+                    $args = array_map('strip_tags', $args);
+                    $args = array_map('esc_html', $args);
+                    $feedback = vsprintf($feedback, $args);
+                }
             }
             if(empty($feedback))
             {
@@ -107,11 +139,16 @@
             }
         }
 
+        /**
+         */
         public function bulk_footer()
         {
             $this->feedback('skin_upgrade_end');
         }
 
+        /**
+         * @param string $title
+         */
         public function before($title = '')
         {
             $this->in_loop = true;
@@ -122,12 +159,17 @@
             $this->flush_output();
         }
 
+        /**
+         */
         public function flush_output()
         {
             wp_ob_end_flush_all();
             flush();
         }
 
+        /**
+         * @param string $title
+         */
         public function after($title = '')
         {
             echo '</p></div>';
@@ -141,7 +183,6 @@
                 {
                     echo '<div class="error"><p>'.sprintf($this->upgrader->strings['skin_update_failed'], $title).'</p></div>';
                 }
-
                 echo '<script type="text/javascript">jQuery(\'#progress-'.esc_js($this->upgrader->update_current).'\').show();</script>';
             }
             if($this->result && ! is_wp_error($this->result))
@@ -150,14 +191,14 @@
                 {
                     echo '<div class="updated js-update-details" data-update-details="progress-'.esc_attr($this->upgrader->update_current).'">'.'<p>'.sprintf($this->upgrader->strings['skin_update_successful'], $title).' <button type="button" class="hide-if-no-js button-link js-update-details-toggle" aria-expanded="false">'.__('More details.').'<span class="dashicons dashicons-arrow-down" aria-hidden="true"></span></button>'.'</p></div>';
                 }
-
                 echo '<script type="text/javascript">jQuery(\'.waiting-'.esc_js($this->upgrader->update_current).'\').hide();</script>';
             }
-
             $this->reset();
             $this->flush_output();
         }
 
+        /**
+         */
         public function reset()
         {
             $this->in_loop = false;

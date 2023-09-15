@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Build Network Administration Menu.
+     *
+     * @package    WordPress
+     * @subpackage Multisite
+     * @since      3.1.0
+     */
     /* translators: Network menu item. */
     $menu[2] = [
         __('Dashboard'),
@@ -10,9 +16,7 @@
         'menu-dashboard',
         'dashicons-dashboard',
     ];
-
     $submenu['index.php'][0] = [__('Home'), 'read', 'index.php'];
-
     if(current_user_can('update_core'))
     {
         $cap = 'update_core';
@@ -29,7 +33,6 @@
     {
         $cap = 'update_languages';
     }
-
     $update_data = wp_get_update_data();
     if($update_data['counts']['total'])
     {
@@ -43,13 +46,9 @@
     {
         $submenu['index.php'][10] = [__('Updates'), $cap, 'update-core.php'];
     }
-
     unset($cap);
-
     $submenu['index.php'][15] = [__('Upgrade Network'), 'upgrade_network', 'upgrade.php'];
-
     $menu[4] = ['', 'read', 'separator1', '', 'wp-menu-separator'];
-
     /* translators: Sites menu item. */
     $menu[5] = [
         __('Sites'),
@@ -62,7 +61,6 @@
     ];
     $submenu['sites.php'][5] = [__('All Sites'), 'manage_sites', 'sites.php'];
     $submenu['sites.php'][10] = [__('Add New Site'), 'create_sites', 'site-new.php'];
-
     $menu[10] = [
         __('Users'),
         'manage_network_users',
@@ -74,7 +72,6 @@
     ];
     $submenu['users.php'][5] = [__('All Users'), 'manage_network_users', 'users.php'];
     $submenu['users.php'][10] = [__('Add New User'), 'create_users', 'user-new.php'];
-
     if(current_user_can('update_themes') && $update_data['counts']['themes'])
     {
         $menu[15] = [
@@ -102,7 +99,6 @@
     $submenu['themes.php'][5] = [__('Installed Themes'), 'manage_network_themes', 'themes.php'];
     $submenu['themes.php'][10] = [__('Add New Theme'), 'install_themes', 'theme-install.php'];
     $submenu['themes.php'][15] = [__('Theme File Editor'), 'edit_themes', 'theme-editor.php'];
-
     if(current_user_can('update_plugins') && $update_data['counts']['plugins'])
     {
         $menu[20] = [
@@ -130,7 +126,6 @@
     $submenu['plugins.php'][5] = [__('Installed Plugins'), 'manage_network_plugins', 'plugins.php'];
     $submenu['plugins.php'][10] = [__('Add New Plugin'), 'install_plugins', 'plugin-install.php'];
     $submenu['plugins.php'][15] = [__('Plugin File Editor'), 'edit_plugins', 'plugin-editor.php'];
-
     $menu[25] = [
         __('Settings'),
         'manage_network_options',
@@ -146,7 +141,5 @@
         $submenu['settings.php'][10] = [__('Network Setup'), 'setup_network', 'setup.php'];
     }
     unset($update_data);
-
     $menu[99] = ['', 'exist', 'separator-last', '', 'wp-menu-separator'];
-
     require_once ABSPATH.'wp-admin/includes/menu.php';

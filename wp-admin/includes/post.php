@@ -1,21 +1,34 @@
-<?php /** @noinspection ALL */
-    /** @noinspection ALL */
-    /** @noinspection ALL */
-
+<?php
+    /**
+     * WordPress Post Administration API.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /**
+     * Renames `$_POST` data from form names to DB post columns.
+     *
+     * Manipulates `$_POST` directly.
+     *
+     * @param bool       $update    Whether the post already exists.
+     * @param array|null $post_data Optional. The array of post data to process.
+     *                              Defaults to the `$_POST` superglobal.
+     *
+     * @return array|WP_Error Array of post data on success, WP_Error on failure.
+     * @since 2.6.0
+     *
+     */
     function _wp_translate_postdata($update = false, $post_data = null)
     {
         if(empty($post_data))
         {
             $post_data = &$_POST;
         }
-
         if($update)
         {
             $post_data['ID'] = (int) $post_data['post_ID'];
         }
-
         $ptype = get_post_type_object($post_data['post_type']);
-
         if($update && ! current_user_can('edit_post', $post_data['ID']))
         {
             if('page' === $post_data['post_type'])
@@ -38,29 +51,23 @@
                 return new WP_Error('edit_others_posts', __('Sorry, you are not allowed to create posts as this user.'));
             }
         }
-
         if(isset($post_data['content']))
         {
             $post_data['post_content'] = $post_data['content'];
         }
-
         if(isset($post_data['excerpt']))
         {
             $post_data['post_excerpt'] = $post_data['excerpt'];
         }
-
         if(isset($post_data['parent_id']))
         {
             $post_data['post_parent'] = (int) $post_data['parent_id'];
         }
-
         if(isset($post_data['trackback_url']))
         {
             $post_data['to_ping'] = $post_data['trackback_url'];
         }
-
         $post_data['user_ID'] = get_current_user_id();
-
         if(! empty($post_data['post_author_override']))
         {
             $post_data['post_author'] = (int) $post_data['post_author_override'];
@@ -76,7 +83,6 @@
                 $post_data['post_author'] = (int) $post_data['user_ID'];
             }
         }
-
         if(isset($post_data['user_ID']) && ($post_data['post_author'] != $post_data['user_ID']) && ! current_user_can($ptype->cap->edit_others_posts))
         {
             if($update)
@@ -102,23 +108,19 @@
                 }
             }
         }
-
         if(! empty($post_data['post_status']))
         {
             $post_data['post_status'] = sanitize_key($post_data['post_status']);
-
             // No longer an auto-draft.
             if('auto-draft' === $post_data['post_status'])
             {
                 $post_data['post_status'] = 'draft';
             }
-
             if(! get_post_status_object($post_data['post_status']))
             {
                 unset($post_data['post_status']);
             }
         }
-
         // What to do based on which button they pressed.
         if(isset($post_data['saveasdraft']) && '' !== $post_data['saveasdraft'])
         {
@@ -140,7 +142,6 @@
         {
             $post_data['post_status'] = 'pending';
         }
-
         if(isset($post_data['ID']))
         {
             $post_id = $post_data['ID'];
@@ -150,14 +151,11 @@
             $post_id = false;
         }
         $previous_status = $post_id ? get_post_field('post_status', $post_id) : false;
-
         if(isset($post_data['post_status']) && 'private' === $post_data['post_status'] && ! current_user_can($ptype->cap->publish_posts))
         {
             $post_data['post_status'] = $previous_status ? $previous_status : 'pending';
         }
-
         $published_statuses = ['publish', 'future'];
-
         /*
          * Posts 'submitted for approval' are submitted to $_POST the same as if they were being published.
          * Change status from 'publish' to 'pending' if user lacks permissions to publish or to resave published posts.
@@ -169,27 +167,22 @@
                 $post_data['post_status'] = 'pending';
             }
         }
-
         if(! isset($post_data['post_status']))
         {
             $post_data['post_status'] = 'auto-draft' === $previous_status ? 'draft' : $previous_status;
         }
-
         if(isset($post_data['post_password']) && ! current_user_can($ptype->cap->publish_posts))
         {
             unset($post_data['post_password']);
         }
-
         if(! isset($post_data['comment_status']))
         {
             $post_data['comment_status'] = 'closed';
         }
-
         if(! isset($post_data['ping_status']))
         {
             $post_data['ping_status'] = 'closed';
         }
-
         foreach(['aa', 'mm', 'jj', 'hh', 'mn'] as $timeunit)
         {
             if(! empty($post_data['hidden_'.$timeunit]) && $post_data['hidden_'.$timeunit] != $post_data[$timeunit])
@@ -198,12 +191,10 @@
                 break;
             }
         }
-
         if(isset($post_data['edit_date']) && 'false' === $post_data['edit_date'])
         {
             $post_data['edit_date'] = false;
         }
-
         if(! empty($post_data['edit_date']))
         {
             $aa = $post_data['aa'];
@@ -219,18 +210,14 @@
             $hh = ($hh > 23) ? $hh - 24 : $hh;
             $mn = ($mn > 59) ? $mn - 60 : $mn;
             $ss = ($ss > 59) ? $ss - 60 : $ss;
-
             $post_data['post_date'] = sprintf('%04d-%02d-%02d %02d:%02d:%02d', $aa, $mm, $jj, $hh, $mn, $ss);
-
             $valid_date = wp_checkdate($mm, $jj, $aa, $post_data['post_date']);
             if(! $valid_date)
             {
                 return new WP_Error('invalid_date', __('Invalid date.'));
             }
-
             $post_data['post_date_gmt'] = get_gmt_from_date($post_data['post_date']);
         }
-
         if(isset($post_data['post_category']))
         {
             $category_object = get_taxonomy('category');
@@ -243,13 +230,22 @@
         return $post_data;
     }
 
+    /**
+     * Returns only allowed post data fields.
+     *
+     * @param array|WP_Error|null $post_data The array of post data to process, or an error object.
+     *                                       Defaults to the `$_POST` superglobal.
+     *
+     * @return array|WP_Error Array of post data on success, WP_Error on failure.
+     * @since 5.0.1
+     *
+     */
     function _wp_get_allowed_postdata($post_data = null)
     {
         if(empty($post_data))
         {
             $post_data = $_POST;
         }
-
         // Pass through errors.
         if(is_wp_error($post_data))
         {
@@ -259,34 +255,44 @@
         return array_diff_key($post_data, array_flip(['meta_input', 'file', 'guid']));
     }
 
+    /**
+     * Updates an existing post with values provided in `$_POST`.
+     *
+     * If post data is passed as an argument, it is treated as an array of data
+     * keyed appropriately for turning into a post object.
+     *
+     * If post data is not passed, the `$_POST` global variable is used instead.
+     *
+     * @param array|null $post_data Optional. The array of post data to process.
+     *                              Defaults to the `$_POST` superglobal.
+     *
+     * @return int Post ID.
+     * @since 1.5.0
+     *
+     * @global wpdb      $wpdb      WordPress database abstraction object.
+     *
+     */
     function edit_post($post_data = null)
     {
         global $wpdb;
-
         if(empty($post_data))
         {
             $post_data = &$_POST;
         }
-
         // Clear out any data in internal vars.
         unset($post_data['filter']);
-
         $post_id = (int) $post_data['post_ID'];
         $post = get_post($post_id);
-
         $post_data['post_type'] = $post->post_type;
         $post_data['post_mime_type'] = $post->post_mime_type;
-
         if(! empty($post_data['post_status']))
         {
             $post_data['post_status'] = sanitize_key($post_data['post_status']);
-
             if('inherit' === $post_data['post_status'])
             {
                 unset($post_data['post_status']);
             }
         }
-
         $ptype = get_post_type_object($post_data['post_type']);
         if(! current_user_can('edit_post', $post_id))
         {
@@ -299,7 +305,6 @@
                 wp_die(__('Sorry, you are not allowed to edit this post.'));
             }
         }
-
         if(post_type_supports($ptype->name, 'revisions'))
         {
             $revisions = wp_get_post_revisions($post_id, [
@@ -307,14 +312,12 @@
                 'posts_per_page' => 1,
             ]);
             $revision = current($revisions);
-
             // Check if the revisions have been upgraded.
             if($revisions && _wp_get_post_revision_version($revision) < 1)
             {
                 _wp_upgrade_revisions_of_post($post, wp_get_post_revisions($post_id));
             }
         }
-
         if(isset($post_data['visibility']))
         {
             switch($post_data['visibility'])
@@ -332,21 +335,17 @@
                     break;
             }
         }
-
         $post_data = _wp_translate_postdata(true, $post_data);
         if(is_wp_error($post_data))
         {
-            /** @noinspection NativeMemberUsageInspection */
             wp_die($post_data->get_error_message());
         }
         $translated = _wp_get_allowed_postdata($post_data);
-
         // Post formats.
         if(isset($post_data['post_format']))
         {
             set_post_format($post_id, $post_data['post_format']);
         }
-
         $format_meta_urls = ['url', 'link_url', 'quote_source_url'];
         foreach($format_meta_urls as $format_meta_url)
         {
@@ -356,9 +355,7 @@
                 update_post_meta($post_id, $keyed, wp_slash(sanitize_url(wp_unslash($post_data[$keyed]))));
             }
         }
-
         $format_keys = ['quote', 'quote_source_name', 'image', 'gallery', 'audio_embed', 'video_embed'];
-
         foreach($format_keys as $key)
         {
             $keyed = '_format_'.$key;
@@ -374,7 +371,6 @@
                 }
             }
         }
-
         if('attachment' === $post_data['post_type'] && preg_match('#^(audio|video)/#', $post_data['post_mime_type']))
         {
             $id3data = wp_get_attachment_metadata($post_id);
@@ -382,7 +378,6 @@
             {
                 $id3data = [];
             }
-
             foreach(wp_get_attachment_id3_keys($post, 'edit') as $key => $label)
             {
                 if(isset($post_data['id3_'.$key]))
@@ -392,7 +387,6 @@
             }
             wp_update_attachment_metadata($post_id, $id3data);
         }
-
         // Meta stuff.
         if(isset($post_data['meta']) && $post_data['meta'])
         {
@@ -403,26 +397,21 @@
                 {
                     continue;
                 }
-
                 if($meta->post_id != $post_id)
                 {
                     continue;
                 }
-
                 if(is_protected_meta($meta->meta_key, 'post') || ! current_user_can('edit_post_meta', $post_id, $meta->meta_key))
                 {
                     continue;
                 }
-
                 if(is_protected_meta($value['key'], 'post') || ! current_user_can('edit_post_meta', $post_id, $value['key']))
                 {
                     continue;
                 }
-
                 update_meta($key, $value['key'], $value['value']);
             }
         }
-
         if(isset($post_data['deletemeta']) && $post_data['deletemeta'])
         {
             foreach($post_data['deletemeta'] as $key => $value)
@@ -432,49 +421,40 @@
                 {
                     continue;
                 }
-
                 if($meta->post_id != $post_id)
                 {
                     continue;
                 }
-
                 if(is_protected_meta($meta->meta_key, 'post') || ! current_user_can('delete_post_meta', $post_id, $meta->meta_key))
                 {
                     continue;
                 }
-
                 delete_meta($key);
             }
         }
-
         // Attachment stuff.
         if('attachment' === $post_data['post_type'])
         {
             if(isset($post_data['_wp_attachment_image_alt']))
             {
                 $image_alt = wp_unslash($post_data['_wp_attachment_image_alt']);
-
                 if(get_post_meta($post_id, '_wp_attachment_image_alt', true) !== $image_alt)
                 {
                     $image_alt = wp_strip_all_tags($image_alt, true);
-
                     // update_post_meta() expects slashed.
                     update_post_meta($post_id, '_wp_attachment_image_alt', wp_slash($image_alt));
                 }
             }
-
             $attachment_data = isset($post_data['attachments'][$post_id]) ? $post_data['attachments'][$post_id] : [];
-
+            /** This filter is documented in wp-admin/includes/media.php */
             $translated = apply_filters('attachment_fields_to_save', $translated, $attachment_data);
         }
-
         // Convert taxonomy input to term IDs, to avoid ambiguity.
         if(isset($post_data['tax_input']))
         {
             foreach((array) $post_data['tax_input'] as $taxonomy => $terms)
             {
                 $tax_object = get_taxonomy($taxonomy);
-
                 if($tax_object && isset($tax_object->meta_box_sanitize_cb))
                 {
                     $translated['tax_input'][$taxonomy] = call_user_func_array($tax_object->meta_box_sanitize_cb, [
@@ -484,18 +464,13 @@
                 }
             }
         }
-
         add_meta($post_id);
-
         update_post_meta($post_id, '_edit_last', get_current_user_id());
-
         $success = wp_update_post($translated);
-
         // If the save failed, see if we can sanity check the main fields and try again.
         if(! $success && is_callable([$wpdb, 'strip_invalid_text_for_column']))
         {
             $fields = ['post_title', 'post_content', 'post_excerpt'];
-
             foreach($fields as $field)
             {
                 if(isset($translated[$field]))
@@ -503,15 +478,11 @@
                     $translated[$field] = $wpdb->strip_invalid_text_for_column($wpdb->posts, $field, $translated[$field]);
                 }
             }
-
             wp_update_post($translated);
         }
-
         // Now that we have an ID we can fix any attachment anchor hrefs.
         _fix_attachment_links($post_id);
-
         wp_set_post_lock($post_id);
-
         if(current_user_can($ptype->cap->edit_others_posts) && current_user_can($ptype->cap->publish_posts))
         {
             if(! empty($post_data['sticky']))
@@ -527,15 +498,28 @@
         return $post_id;
     }
 
+    /**
+     * Processes the post data for the bulk editing of posts.
+     *
+     * Updates all bulk edited posts/pages, adding (but not removing) tags and
+     * categories. Skips pages when they would be their own parent or child.
+     *
+     * @param array|null $post_data Optional. The array of post data to process.
+     *                              Defaults to the `$_POST` superglobal.
+     *
+     * @return array
+     * @since 2.7.0
+     *
+     * @global wpdb      $wpdb      WordPress database abstraction object.
+     *
+     */
     function bulk_edit_posts($post_data = null)
     {
         global $wpdb;
-
         if(empty($post_data))
         {
             $post_data = &$_POST;
         }
-
         if(isset($post_data['post_type']))
         {
             $ptype = get_post_type_object($post_data['post_type']);
@@ -544,7 +528,6 @@
         {
             $ptype = get_post_type_object('post');
         }
-
         if(! current_user_can($ptype->cap->edit_posts))
         {
             if('page' === $ptype->name)
@@ -556,7 +539,6 @@
                 wp_die(__('Sorry, you are not allowed to edit posts.'));
             }
         }
-
         if(-1 == $post_data['_status'])
         {
             $post_data['post_status'] = null;
@@ -567,19 +549,15 @@
             $post_data['post_status'] = $post_data['_status'];
         }
         unset($post_data['_status']);
-
         if(! empty($post_data['post_status']))
         {
             $post_data['post_status'] = sanitize_key($post_data['post_status']);
-
             if('inherit' === $post_data['post_status'])
             {
                 unset($post_data['post_status']);
             }
         }
-
         $post_ids = array_map('intval', (array) $post_data['post']);
-
         $reset = [
             'post_author',
             'post_status',
@@ -594,7 +572,6 @@
             'sticky',
             'post_format',
         ];
-
         foreach($reset as $field)
         {
             if(isset($post_data[$field]) && ('' === $post_data[$field] || -1 == $post_data[$field]))
@@ -602,7 +579,6 @@
                 unset($post_data[$field]);
             }
         }
-
         if(isset($post_data['post_category']))
         {
             if(is_array($post_data['post_category']) && ! empty($post_data['post_category']))
@@ -614,7 +590,6 @@
                 unset($post_data['post_category']);
             }
         }
-
         $tax_input = [];
         if(isset($post_data['tax_input']))
         {
@@ -624,7 +599,6 @@
                 {
                     continue;
                 }
-
                 if(is_taxonomy_hierarchical($tax_name))
                 {
                     $tax_input[$tax_name] = array_map('absint', $terms);
@@ -640,17 +614,14 @@
                 }
             }
         }
-
         if(isset($post_data['post_parent']) && (int) $post_data['post_parent'])
         {
             $parent = (int) $post_data['post_parent'];
             $pages = $wpdb->get_results("SELECT ID, post_parent FROM $wpdb->posts WHERE post_type = 'page'");
             $children = [];
-
             for($i = 0; $i < 50 && $parent > 0; $i++)
             {
                 $children[] = $parent;
-
                 foreach($pages as $page)
                 {
                     if((int) $page->ID === $parent)
@@ -661,43 +632,34 @@
                 }
             }
         }
-
         $updated = [];
         $skipped = [];
         $locked = [];
         $shared_post_data = $post_data;
-
         foreach($post_ids as $post_id)
         {
             // Start with fresh post data with each iteration.
             $post_data = $shared_post_data;
-
             $post_type_object = get_post_type_object(get_post_type($post_id));
-
             if(! isset($post_type_object) || (isset($children) && in_array($post_id, $children, true)) || ! current_user_can('edit_post', $post_id))
             {
                 $skipped[] = $post_id;
                 continue;
             }
-
             if(wp_check_post_lock($post_id))
             {
                 $locked[] = $post_id;
                 continue;
             }
-
             $post = get_post($post_id);
             $tax_names = get_object_taxonomies($post);
-
             foreach($tax_names as $tax_name)
             {
                 $taxonomy_obj = get_taxonomy($tax_name);
-
                 if(! $taxonomy_obj->show_in_quick_edit)
                 {
                     continue;
                 }
-
                 if(isset($tax_input[$tax_name]) && current_user_can($taxonomy_obj->cap->assign_terms))
                 {
                     $new_terms = $tax_input[$tax_name];
@@ -706,7 +668,6 @@
                 {
                     $new_terms = [];
                 }
-
                 if($taxonomy_obj->hierarchical)
                 {
                     $current_terms = (array) wp_get_object_terms($post_id, $tax_name, ['fields' => 'ids']);
@@ -715,21 +676,17 @@
                 {
                     $current_terms = (array) wp_get_object_terms($post_id, $tax_name, ['fields' => 'names']);
                 }
-
                 $post_data['tax_input'][$tax_name] = array_merge($current_terms, $new_terms);
             }
-
             if(isset($new_cats) && in_array('category', $tax_names, true))
             {
                 $cats = (array) wp_get_post_categories($post_id);
                 $post_data['post_category'] = array_unique(array_merge($cats, $new_cats));
                 unset($post_data['tax_input']['category']);
             }
-
             $post_data['post_ID'] = $post_id;
             $post_data['post_type'] = $post->post_type;
             $post_data['post_mime_type'] = $post->post_mime_type;
-
             foreach(['comment_status', 'ping_status', 'post_author'] as $field)
             {
                 if(! isset($post_data[$field]))
@@ -737,7 +694,6 @@
                     $post_data[$field] = $post->$field;
                 }
             }
-
             $post_data = _wp_translate_postdata(true, $post_data);
             if(is_wp_error($post_data))
             {
@@ -745,26 +701,21 @@
                 continue;
             }
             $post_data = _wp_get_allowed_postdata($post_data);
-
             if(isset($shared_post_data['post_format']))
             {
                 set_post_format($post_id, $shared_post_data['post_format']);
             }
-
             // Prevent wp_insert_post() from overwriting post format with the old data.
             unset($post_data['tax_input']['post_format']);
-
             // Reset post date of scheduled post to be published.
             if(in_array($post->post_status, ['future', 'draft'], true) && 'publish' === $post_data['post_status'])
             {
                 $post_data['post_date'] = current_time('mysql');
                 $post_data['post_date_gmt'] = '';
             }
-
             $post_id = wp_update_post($post_data);
             update_post_meta($post_id, '_edit_last', get_current_user_id());
             $updated[] = $post_id;
-
             if(isset($post_data['sticky']) && current_user_can($ptype->cap->edit_others_posts))
             {
                 if('sticky' === $post_data['sticky'])
@@ -777,7 +728,15 @@
                 }
             }
         }
-
+        /**
+         * Fires after processing the post data for bulk edit.
+         *
+         * @param int[] $updated          An array of updated post IDs.
+         * @param array $shared_post_data Associative array containing the post data.
+         *
+         * @since 6.3.0
+         *
+         */
         do_action('bulk_edit_posts', $updated, $shared_post_data);
 
         return [
@@ -787,6 +746,16 @@
         ];
     }
 
+    /**
+     * Returns default post information to use when populating the "Write Post" form.
+     *
+     * @param string $post_type    Optional. A post type string. Default 'post'.
+     * @param bool   $create_in_db Optional. Whether to insert the post into database. Default false.
+     *
+     * @return WP_Post Post object containing all the default post data as attributes
+     * @since 2.0.0
+     *
+     */
     function get_default_post_to_edit($post_type = 'post', $create_in_db = false)
     {
         $post_title = '';
@@ -794,19 +763,16 @@
         {
             $post_title = esc_html(wp_unslash($_REQUEST['post_title']));
         }
-
         $post_content = '';
         if(! empty($_REQUEST['content']))
         {
             $post_content = esc_html(wp_unslash($_REQUEST['content']));
         }
-
         $post_excerpt = '';
         if(! empty($_REQUEST['excerpt']))
         {
             $post_excerpt = esc_html(wp_unslash($_REQUEST['excerpt']));
         }
-
         if($create_in_db)
         {
             $post_id = wp_insert_post([
@@ -820,7 +786,6 @@
                 set_post_format($post, get_option('default_post_format'));
             }
             wp_after_insert_post($post, false, null);
-
             // Schedule auto-draft cleanup.
             if(! wp_next_scheduled('wp_scheduled_auto_draft_delete'))
             {
@@ -849,59 +814,92 @@
             $post->menu_order = 0;
             $post = new WP_Post($post);
         }
-
+        /**
+         * Filters the default post content initially used in the "Write Post" form.
+         *
+         * @param string  $post_content Default post content.
+         * @param WP_Post $post         Post object.
+         *
+         * @since 1.5.0
+         *
+         */
         $post->post_content = (string) apply_filters('default_content', $post_content, $post);
-
+        /**
+         * Filters the default post title initially used in the "Write Post" form.
+         *
+         * @param string  $post_title Default post title.
+         * @param WP_Post $post       Post object.
+         *
+         * @since 1.5.0
+         *
+         */
         $post->post_title = (string) apply_filters('default_title', $post_title, $post);
-
+        /**
+         * Filters the default post excerpt initially used in the "Write Post" form.
+         *
+         * @param string  $post_excerpt Default post excerpt.
+         * @param WP_Post $post         Post object.
+         *
+         * @since 1.5.0
+         *
+         */
         $post->post_excerpt = (string) apply_filters('default_excerpt', $post_excerpt, $post);
 
         return $post;
     }
 
+    /**
+     * Determines if a post exists based on title, content, date and type.
+     *
+     * @param string $title   Post title.
+     * @param string $content Optional. Post content.
+     * @param string $date    Optional. Post date.
+     * @param string $type    Optional. Post type.
+     * @param string $status  Optional. Post status.
+     *
+     * @return int Post ID if post exists, 0 otherwise.
+     * @since 2.0.0
+     * @since 5.2.0 Added the `$type` parameter.
+     * @since 5.8.0 Added the `$status` parameter.
+     *
+     * @global wpdb  $wpdb    WordPress database abstraction object.
+     *
+     */
     function post_exists($title, $content = '', $date = '', $type = '', $status = '')
     {
         global $wpdb;
-
         $post_title = wp_unslash(sanitize_post_field('post_title', $title, 0, 'db'));
         $post_content = wp_unslash(sanitize_post_field('post_content', $content, 0, 'db'));
         $post_date = wp_unslash(sanitize_post_field('post_date', $date, 0, 'db'));
         $post_type = wp_unslash(sanitize_post_field('post_type', $type, 0, 'db'));
         $post_status = wp_unslash(sanitize_post_field('post_status', $status, 0, 'db'));
-
         $query = "SELECT ID FROM $wpdb->posts WHERE 1=1";
         $args = [];
-
         if(! empty($date))
         {
             $query .= ' AND post_date = %s';
             $args[] = $post_date;
         }
-
         if(! empty($title))
         {
             $query .= ' AND post_title = %s';
             $args[] = $post_title;
         }
-
         if(! empty($content))
         {
             $query .= ' AND post_content = %s';
             $args[] = $post_content;
         }
-
         if(! empty($type))
         {
             $query .= ' AND post_type = %s';
             $args[] = $post_type;
         }
-
         if(! empty($status))
         {
             $query .= ' AND post_status = %s';
             $args[] = $post_status;
         }
-
         if(! empty($args))
         {
             return (int) $wpdb->get_var($wpdb->prepare($query, $args));
@@ -910,6 +908,15 @@
         return 0;
     }
 
+    /**
+     * Creates a new post from the "Write Post" form using `$_POST` information.
+     *
+     * @return int|WP_Error Post ID on success, WP_Error on failure.
+     * @global WP_User $current_user
+     *
+     * @since 2.1.0
+     *
+     */
     function wp_write_post()
     {
         if(isset($_POST['post_type']))
@@ -920,7 +927,6 @@
         {
             $ptype = get_post_type_object('post');
         }
-
         if(! current_user_can($ptype->cap->edit_posts))
         {
             if('page' === $ptype->name)
@@ -932,18 +938,14 @@
                 return new WP_Error('edit_posts', __('Sorry, you are not allowed to create posts or drafts on this site.'));
             }
         }
-
         $_POST['post_mime_type'] = '';
-
         // Clear out any data in internal vars.
         unset($_POST['filter']);
-
         // Edit, don't write, if we have a post ID.
         if(isset($_POST['post_ID']))
         {
             return edit_post();
         }
-
         if(isset($_POST['visibility']))
         {
             switch($_POST['visibility'])
@@ -961,44 +963,43 @@
                     break;
             }
         }
-
         $translated = _wp_translate_postdata(false);
         if(is_wp_error($translated))
         {
             return $translated;
         }
         $translated = _wp_get_allowed_postdata($translated);
-
         // Create the post.
         $post_id = wp_insert_post($translated);
         if(is_wp_error($post_id))
         {
             return $post_id;
         }
-
         if(empty($post_id))
         {
             return 0;
         }
-
         add_meta($post_id);
-
         add_post_meta($post_id, '_edit_last', $GLOBALS['current_user']->ID);
-
         // Now that we have an ID we can fix any attachment anchor hrefs.
         _fix_attachment_links($post_id);
-
         wp_set_post_lock($post_id);
 
         return $post_id;
     }
 
+    /**
+     * Calls wp_write_post() and handles the errors.
+     *
+     * @return int|void Post ID on success, void on failure.
+     * @since 2.0.0
+     *
+     */
     function write_post()
     {
         $result = wp_write_post();
         if(is_wp_error($result))
         {
-            /** @noinspection NativeMemberUsageInspection */
             wp_die($result->get_error_message());
         }
         else
@@ -1010,11 +1011,18 @@
 //
 // Post Meta.
 //
-
+    /**
+     * Adds post meta data defined in the `$_POST` superglobal for a post with given ID.
+     *
+     * @param int $post_id
+     *
+     * @return int|bool
+     * @since 1.2.0
+     *
+     */
     function add_meta($post_id)
     {
         $post_id = (int) $post_id;
-
         $metakeyselect = isset($_POST['metakeyselect']) ? wp_unslash(trim($_POST['metakeyselect'])) : '';
         $metakeyinput = isset($_POST['metakeyinput']) ? wp_unslash(trim($_POST['metakeyinput'])) : '';
         $metavalue = isset($_POST['metavalue']) ? $_POST['metavalue'] : '';
@@ -1022,7 +1030,6 @@
         {
             $metavalue = trim($metavalue);
         }
-
         if((('#NONE#' !== $metakeyselect) && ! empty($metakeyselect)) || ! empty($metakeyinput))
         {
             /*
@@ -1033,17 +1040,14 @@
             {
                 $metakey = $metakeyselect;
             }
-
             if($metakeyinput)
             {
                 $metakey = $metakeyinput; // Default.
             }
-
             if(is_protected_meta($metakey, 'post') || ! current_user_can('add_post_meta', $post_id, $metakey))
             {
                 return false;
             }
-
             $metakey = wp_slash($metakey);
 
             return add_post_meta($post_id, $metakey, $metavalue);
@@ -1052,15 +1056,32 @@
         return false;
     }
 
+    /**
+     * Deletes post meta data by meta ID.
+     *
+     * @param int $mid
+     *
+     * @return bool
+     * @since 1.2.0
+     *
+     */
     function delete_meta($mid)
     {
         return delete_metadata_by_mid('post', $mid);
     }
 
+    /**
+     * Returns a list of previously defined keys.
+     *
+     * @return string[] Array of meta key names.
+     * @global wpdb $wpdb WordPress database abstraction object.
+     *
+     * @since 1.2.0
+     *
+     */
     function get_meta_keys()
     {
         global $wpdb;
-
         $keys = $wpdb->get_col(
             "SELECT meta_key
 		FROM $wpdb->postmeta
@@ -1071,11 +1092,42 @@
         return $keys;
     }
 
+    /**
+     * Returns post meta data by meta ID.
+     *
+     * @param int $mid
+     *
+     * @return object|bool
+     * @since 2.1.0
+     *
+     */
     function get_post_meta_by_id($mid)
     {
         return get_metadata_by_mid('post', $mid);
     }
 
+    /**
+     * Returns meta data for the given post ID.
+     *
+     * @param int   $postid     A post ID.
+     *
+     * @return array[] {
+     *     Array of meta data arrays for the given post ID.
+     *
+     * @type array ...$0 {
+     *                          Associative array of meta data.
+     *
+     * @type string $meta_key   Meta key.
+     * @type mixed  $meta_value Meta value.
+     * @type string $meta_id    Meta ID as a numeric string.
+     * @type string $post_id    Post ID as a numeric string.
+     *                          }
+     *                          }
+     * @since 1.2.0
+     *
+     * @global wpdb $wpdb       WordPress database abstraction object.
+     *
+     */
     function has_meta($postid)
     {
         global $wpdb;
@@ -1089,6 +1141,17 @@
         );
     }
 
+    /**
+     * Updates post meta data by meta ID.
+     *
+     * @param int    $meta_id    Meta ID.
+     * @param string $meta_key   Meta key. Expect slashed.
+     * @param string $meta_value Meta value. Expect slashed.
+     *
+     * @return bool
+     * @since 1.2.0
+     *
+     */
     function update_meta($meta_id, $meta_key, $meta_value)
     {
         $meta_key = wp_unslash($meta_key);
@@ -1100,51 +1163,56 @@
 //
 // Private.
 //
-
+    /**
+     * Replaces hrefs of attachment anchors with up-to-date permalinks.
+     *
+     * @param int|object $post Post ID or post object.
+     *
+     * @return void|int|WP_Error Void if nothing fixed. 0 or WP_Error on update failure. The post ID on update success.
+     * @since  2.3.0
+     * @access private
+     *
+     */
     function _fix_attachment_links($post)
     {
         $post = get_post($post, ARRAY_A);
         $content = $post['post_content'];
-
         // Don't run if no pretty permalinks or post is not published, scheduled, or privately published.
-        // Short if there aren't any links or no '?attachment_id=' strings (strpos cannot be zero).
         if(
             ! get_option('permalink_structure') || ! in_array($post['post_status'], [
                 'publish',
                 'future',
                 'private',
-            ],                                                true) || ! strpos($content, '?attachment_id=') || ! preg_match_all('/<a ([^>]+)>[\s\S]+?<\/a>/', $content, $link_matches)
+            ],                                                true)
         )
         {
             return;
         }
-
+        // Short if there aren't any links or no '?attachment_id=' strings (strpos cannot be zero).
+        if(! strpos($content, '?attachment_id=') || ! preg_match_all('/<a ([^>]+)>[\s\S]+?<\/a>/', $content, $link_matches))
+        {
+            return;
+        }
         $site_url = get_bloginfo('url');
         $site_url = substr($site_url, (int) strpos($site_url, '://')); // Remove the http(s).
         $replace = '';
-
         foreach($link_matches[1] as $key => $value)
         {
             if(! strpos($value, '?attachment_id=') || ! strpos($value, 'wp-att-') || ! preg_match('/href=(["\'])[^"\']*\?attachment_id=(\d+)[^"\']*\\1/', $value, $url_match) || ! preg_match('/rel=["\'][^"\']*wp-att-(\d+)/', $value, $rel_match))
             {
                 continue;
             }
-
             $quote = $url_match[1]; // The quote (single or double).
             $url_id = (int) $url_match[2];
             $rel_id = (int) $rel_match[1];
-
-            if(! $url_id || ! $rel_id || $url_id !== $rel_id || ! str_contains($url_match[0], $site_url))
+            if(! $url_id || ! $rel_id || $url_id != $rel_id || ! str_contains($url_match[0], $site_url))
             {
                 continue;
             }
-
             $link = $link_matches[0][$key];
             $replace = str_replace($url_match[0], 'href='.$quote.get_attachment_link($url_id).$quote, $link);
-
             $content = str_replace($link, $replace, $content);
         }
-
         if($replace)
         {
             $post['post_content'] = $content;
@@ -1155,6 +1223,15 @@
         }
     }
 
+    /**
+     * Returns all the possible statuses for a post type.
+     *
+     * @param string $type The post_type you want the statuses for. Default 'post'.
+     *
+     * @return string[] An array of all the statuses for the supplied post type.
+     * @since 2.5.0
+     *
+     */
     function get_available_post_statuses($type = 'post')
     {
         $stati = wp_count_posts($type);
@@ -1162,6 +1239,16 @@
         return array_keys(get_object_vars($stati));
     }
 
+    /**
+     * Runs the query to fetch the posts for listing on the edit posts page.
+     *
+     * @param array|false $q Optional. Array of query variables to use to build the query.
+     *                       Defaults to the `$_GET` superglobal.
+     *
+     * @return array
+     * @since 2.5.0
+     *
+     */
     function wp_edit_posts_query($q = false)
     {
         if(false === $q)
@@ -1171,7 +1258,6 @@
         $q['m'] = isset($q['m']) ? (int) $q['m'] : 0;
         $q['cat'] = isset($q['cat']) ? (int) $q['cat'] : 0;
         $post_stati = get_post_stati();
-
         if(isset($q['post_type']) && in_array($q['post_type'], get_post_types(), true))
         {
             $post_type = $q['post_type'];
@@ -1180,19 +1266,15 @@
         {
             $post_type = 'post';
         }
-
         $avail_post_stati = get_available_post_statuses($post_type);
         $post_status = '';
         $perm = '';
-
         if(isset($q['post_status']) && in_array($q['post_status'], $post_stati, true))
         {
             $post_status = $q['post_status'];
             $perm = 'readable';
         }
-
         $orderby = '';
-
         if(isset($q['orderby']))
         {
             $orderby = $q['orderby'];
@@ -1201,9 +1283,7 @@
         {
             $orderby = 'modified';
         }
-
         $order = '';
-
         if(isset($q['order']))
         {
             $order = $q['order'];
@@ -1212,20 +1292,41 @@
         {
             $order = 'ASC';
         }
-
         $per_page = "edit_{$post_type}_per_page";
         $posts_per_page = (int) get_user_option($per_page);
         if(empty($posts_per_page) || $posts_per_page < 1)
         {
             $posts_per_page = 20;
         }
-
+        /**
+         * Filters the number of items per page to show for a specific 'per_page' type.
+         *
+         * The dynamic portion of the hook name, `$post_type`, refers to the post type.
+         *
+         * Possible hook names include:
+         *
+         *  - `edit_post_per_page`
+         *  - `edit_page_per_page`
+         *  - `edit_attachment_per_page`
+         *
+         * @param int $posts_per_page Number of posts to display per page for the given post
+         *                            type. Default 20.
+         *
+         * @since 3.0.0
+         *
+         */
         $posts_per_page = apply_filters("edit_{$post_type}_per_page", $posts_per_page);
-
+        /**
+         * Filters the number of posts displayed per page when specifically listing "posts".
+         *
+         * @param int    $posts_per_page Number of posts to be displayed. Default 20.
+         * @param string $post_type      The post type.
+         *
+         * @since 2.8.0
+         *
+         */
         $posts_per_page = apply_filters('edit_posts_per_page', $posts_per_page, $post_type);
-
         $query = compact('post_type', 'post_status', 'perm', 'order', 'orderby', 'posts_per_page');
-
         // Hierarchical types require special args.
         if(is_post_type_hierarchical($post_type) && empty($orderby))
         {
@@ -1235,17 +1336,25 @@
             $query['posts_per_archive_page'] = -1;
             $query['fields'] = 'id=>parent';
         }
-
         if(! empty($q['show_sticky']))
         {
             $query['post__in'] = (array) get_option('sticky_posts');
         }
-
         wp($query);
 
         return $avail_post_stati;
     }
 
+    /**
+     * Returns the query variables for the current attachments request.
+     *
+     * @param array|false $q Optional. Array of query variables to use to build the query.
+     *                       Defaults to the `$_GET` superglobal.
+     *
+     * @return array The parsed query vars.
+     * @since 4.2.0
+     *
+     */
     function wp_edit_attachments_query_vars($q = false)
     {
         if(false === $q)
@@ -1261,24 +1370,27 @@
         {
             $states .= ',private';
         }
-
         $q['post_status'] = isset($q['status']) && 'trash' === $q['status'] ? 'trash' : $states;
         $q['post_status'] = isset($q['attachment-filter']) && 'trash' === $q['attachment-filter'] ? 'trash' : $states;
-
         $media_per_page = (int) get_user_option('upload_per_page');
         if(empty($media_per_page) || $media_per_page < 1)
         {
             $media_per_page = 20;
         }
-
+        /**
+         * Filters the number of items to list per page when listing media items.
+         *
+         * @param int $media_per_page Number of media to list. Default 20.
+         *
+         * @since 2.9.0
+         *
+         */
         $q['posts_per_page'] = apply_filters('upload_per_page', $media_per_page);
-
         $post_mime_types = get_post_mime_types();
         if(isset($q['post_mime_type']) && ! array_intersect((array) $q['post_mime_type'], array_keys($post_mime_types)))
         {
             unset($q['post_mime_type']);
         }
-
         foreach(array_keys($post_mime_types) as $type)
         {
             if(isset($q['attachment-filter']) && "post_mime_type:$type" === $q['attachment-filter'])
@@ -1287,17 +1399,14 @@
                 break;
             }
         }
-
         if(isset($q['detached']) || (isset($q['attachment-filter']) && 'detached' === $q['attachment-filter']))
         {
             $q['post_parent'] = 0;
         }
-
         if(isset($q['mine']) || (isset($q['attachment-filter']) && 'mine' === $q['attachment-filter']))
         {
             $q['author'] = get_current_user_id();
         }
-
         // Filter query clauses to include filenames.
         if(isset($q['s']))
         {
@@ -1307,16 +1416,36 @@
         return $q;
     }
 
+    /**
+     * Executes a query for attachments. An array of WP_Query arguments
+     * can be passed in, which will override the arguments set by this function.
+     *
+     * @param array|false $q Optional. Array of query variables to use to build the query.
+     *                       Defaults to the `$_GET` superglobal.
+     *
+     * @return array
+     * @since 2.5.0
+     *
+     */
     function wp_edit_attachments_query($q = false)
     {
         wp(wp_edit_attachments_query_vars($q));
-
         $post_mime_types = get_post_mime_types();
         $avail_post_mime_types = get_available_post_mime_types('attachment');
 
         return [$post_mime_types, $avail_post_mime_types];
     }
 
+    /**
+     * Returns the list of classes to be used by a meta box.
+     *
+     * @param string $box_id    Meta box ID (used in the 'id' attribute for the meta box).
+     * @param string $screen_id The screen on which the meta box is shown.
+     *
+     * @return string Space-separated string of class names.
+     * @since 2.5.0
+     *
+     */
     function postbox_classes($box_id, $screen_id)
     {
         if(isset($_GET['edit']) && $_GET['edit'] == $box_id)
@@ -1339,35 +1468,57 @@
         {
             $classes = [''];
         }
-
+        /**
+         * Filters the postbox classes for a specific screen and box ID combo.
+         *
+         * The dynamic portions of the hook name, `$screen_id` and `$box_id`, refer to
+         * the screen ID and meta box ID, respectively.
+         *
+         * @param string[] $classes An array of postbox classes.
+         *
+         * @since 3.2.0
+         *
+         */
         $classes = apply_filters("postbox_classes_{$screen_id}_{$box_id}", $classes);
 
         return implode(' ', $classes);
     }
 
+    /**
+     * Returns a sample permalink based on the post name.
+     *
+     * @param int|WP_Post $post  Post ID or post object.
+     * @param string|null $title Optional. Title to override the post's current title
+     *                           when generating the post name. Default null.
+     * @param string|null $name  Optional. Name to override the post name. Default null.
+     *
+     * @return array {
+     *     Array containing the sample permalink with placeholder for the post name, and the post name.
+     *
+     * @type string $0 The permalink with placeholder for the post name.
+     * @type string $1 The post name.
+     *                           }
+     * @since 2.5.0
+     *
+     */
     function get_sample_permalink($post, $title = null, $name = null)
     {
         $post = get_post($post);
-
         if(! $post)
         {
             return ['', ''];
         }
-
         $ptype = get_post_type_object($post->post_type);
-
         $original_status = $post->post_status;
         $original_date = $post->post_date;
         $original_name = $post->post_name;
         $original_filter = $post->filter;
-
         // Hack: get_permalink() would return plain permalink for drafts, so we will fake that our post is published.
         if(in_array($post->post_status, ['draft', 'pending', 'future'], true))
         {
             $post->post_status = 'publish';
             $post->post_name = sanitize_title($post->post_name ? $post->post_name : $post->post_title, $post->ID);
         }
-
         /*
          * If the user wants to set a new name -- override the current one.
          * Note: if empty name is supplied -- use the title instead, see #6072.
@@ -1376,16 +1527,11 @@
         {
             $post->post_name = sanitize_title($name ? $name : $title, $post->ID);
         }
-
         $post->post_name = wp_unique_post_slug($post->post_name, $post->ID, $post->post_status, $post->post_type, $post->post_parent);
-
         $post->filter = 'sample';
-
         $permalink = get_permalink($post, true);
-
         // Replace custom post_type token with generic pagename token for ease of use.
         $permalink = str_replace("%$post->post_type%", '%pagename%', $permalink);
-
         // Handle page hierarchy.
         if($ptype->hierarchical)
         {
@@ -1396,7 +1542,7 @@
                 $uri = strrev(stristr(strrev($uri), '/'));
                 $uri = untrailingslashit($uri);
             }
-
+            /** This filter is documented in wp-admin/edit-tag-form.php */
             $uri = apply_filters('editable_slug', $uri, $post);
             if(! empty($uri))
             {
@@ -1404,30 +1550,55 @@
             }
             $permalink = str_replace('%pagename%', "{$uri}%pagename%", $permalink);
         }
-
+        /** This filter is documented in wp-admin/edit-tag-form.php */
         $permalink = [$permalink, apply_filters('editable_slug', $post->post_name, $post)];
         $post->post_status = $original_status;
         $post->post_date = $original_date;
         $post->post_name = $original_name;
         $post->filter = $original_filter;
 
+        /**
+         * Filters the sample permalink.
+         *
+         * @param array   $permalink {
+         *                           Array containing the sample permalink with placeholder for the post name, and the post name.
+         *
+         * @type string $0 The permalink with placeholder for the post name.
+         * @type string $1 The post name.
+         *                           }
+         *
+         * @param int     $post_id   Post ID.
+         * @param string  $title     Post title.
+         * @param string  $name      Post name (slug).
+         * @param WP_Post $post      Post object.
+         *
+         * @since 4.4.0
+         *
+         */
         return apply_filters('get_sample_permalink', $permalink, $post->ID, $title, $name, $post);
     }
 
+    /**
+     * Returns the HTML of the sample permalink slug editor.
+     *
+     * @param int|WP_Post $post      Post ID or post object.
+     * @param string|null $new_title Optional. New title. Default null.
+     * @param string|null $new_slug  Optional. New slug. Default null.
+     *
+     * @return string The HTML of the sample permalink slug editor.
+     * @since 2.5.0
+     *
+     */
     function get_sample_permalink_html($post, $new_title = null, $new_slug = null)
     {
         $post = get_post($post);
-
         if(! $post)
         {
             return '';
         }
-
         [$permalink, $post_name] = get_sample_permalink($post->ID, $new_title, $new_slug);
-
         $view_link = false;
         $preview_target = '';
-
         if(current_user_can('read_post', $post->ID))
         {
             if('draft' === $post->post_status || empty($post->post_name))
@@ -1448,12 +1619,10 @@
                 }
             }
         }
-
         // Permalinks without a post/page name placeholder don't have anything to edit.
         if(! str_contains($permalink, '%postname%') && ! str_contains($permalink, '%pagename%'))
         {
             $return = '<strong>'.__('Permalink:')."</strong>\n";
-
             if(false !== $view_link)
             {
                 $display_link = urldecode($view_link);
@@ -1463,7 +1632,6 @@
             {
                 $return .= '<span id="sample-permalink">'.$permalink."</span>\n";
             }
-
             // Encourage a pretty permalink setting.
             if(! get_option('permalink_structure') && current_user_can('manage_options') && ! ('page' === get_option('show_on_front') && get_option('page_on_front') == $post->ID))
             {
@@ -1480,44 +1648,74 @@
             {
                 $post_name_abridged = $post_name;
             }
-
             $post_name_html = '<span id="editable-post-name">'.esc_html($post_name_abridged).'</span>';
             $display_link = str_replace(['%pagename%', '%postname%'], $post_name_html, esc_html(urldecode($permalink)));
-
             $return = '<strong>'.__('Permalink:')."</strong>\n";
             $return .= '<span id="sample-permalink"><a href="'.esc_url($view_link).'"'.$preview_target.'>'.$display_link."</a></span>\n";
             $return .= '&lrm;'; // Fix bi-directional text display defect in RTL languages.
             $return .= '<span id="edit-slug-buttons"><button type="button" class="edit-slug button button-small hide-if-no-js" aria-label="'.__('Edit permalink').'">'.__('Edit')."</button></span>\n";
             $return .= '<span id="editable-post-name-full">'.esc_html($post_name)."</span>\n";
         }
-
+        /**
+         * Filters the sample permalink HTML markup.
+         *
+         * @param string      $return    Sample permalink HTML markup.
+         * @param int         $post_id   Post ID.
+         * @param string|null $new_title New sample permalink title.
+         * @param string|null $new_slug  New sample permalink slug.
+         * @param WP_Post     $post      Post object.
+         *
+         * @since 4.4.0 Added `$post` parameter.
+         *
+         * @since 2.9.0
+         */
         $return = apply_filters('get_sample_permalink_html', $return, $post->ID, $new_title, $new_slug, $post);
 
         return $return;
     }
 
+    /**
+     * Returns HTML for the post thumbnail meta box.
+     *
+     * @param int|null         $thumbnail_id Optional. Thumbnail attachment ID. Default null.
+     * @param int|WP_Post|null $post         Optional. The post ID or object associated
+     *                                       with the thumbnail. Defaults to global $post.
+     *
+     * @return string The post thumbnail HTML.
+     * @since 2.9.0
+     *
+     */
     function _wp_post_thumbnail_html($thumbnail_id = null, $post = null)
     {
         $_wp_additional_image_sizes = wp_get_additional_image_sizes();
-
         $post = get_post($post);
         $post_type_object = get_post_type_object($post->post_type);
         $set_thumbnail_link = '<p class="hide-if-no-js"><a href="%s" id="set-post-thumbnail"%s class="thickbox">%s</a></p>';
         $upload_iframe_src = get_upload_iframe_src('image', $post->ID);
-
         $content = sprintf(
             $set_thumbnail_link, esc_url($upload_iframe_src), '', // Empty when there's no featured image set, `aria-describedby` attribute otherwise.
             esc_html($post_type_object->labels->set_featured_image)
         );
-
         if($thumbnail_id && get_post($thumbnail_id))
         {
             $size = isset($_wp_additional_image_sizes['post-thumbnail']) ? 'post-thumbnail' : [266, 266];
-
+            /**
+             * Filters the size used to display the post thumbnail image in the 'Featured image' meta box.
+             *
+             * Note: When a theme adds 'post-thumbnail' support, a special 'post-thumbnail'
+             * image size is registered, which differs from the 'thumbnail' image size
+             * managed via the Settings > Media screen.
+             *
+             * @param string|int[] $size         Requested image size. Can be any registered image size name, or
+             *                                   an array of width and height values in pixels (in that order).
+             * @param int          $thumbnail_id Post thumbnail attachment ID.
+             * @param WP_Post      $post         The post object associated with the thumbnail.
+             *
+             * @since 4.4.0
+             *
+             */
             $size = apply_filters('admin_post_thumbnail_size', $size, $thumbnail_id, $post);
-
             $thumbnail_html = wp_get_attachment_image($thumbnail_id, $size);
-
             if(! empty($thumbnail_html))
             {
                 $content = sprintf($set_thumbnail_link, esc_url($upload_iframe_src), ' aria-describedby="set-post-thumbnail-desc"', $thumbnail_html);
@@ -1525,39 +1723,54 @@
                 $content .= '<p class="hide-if-no-js"><a href="#" id="remove-post-thumbnail">'.esc_html($post_type_object->labels->remove_featured_image).'</a></p>';
             }
         }
-
         $content .= '<input type="hidden" id="_thumbnail_id" name="_thumbnail_id" value="'.esc_attr($thumbnail_id ? $thumbnail_id : '-1').'" />';
 
+        /**
+         * Filters the admin post thumbnail HTML markup to return.
+         *
+         * @param string   $content      Admin post thumbnail HTML markup.
+         * @param int      $post_id      Post ID.
+         * @param int|null $thumbnail_id Thumbnail attachment ID, or null if there isn't one.
+         *
+         * @since 2.9.0
+         * @since 3.5.0 Added the `$post_id` parameter.
+         * @since 4.6.0 Added the `$thumbnail_id` parameter.
+         *
+         */
         return apply_filters('admin_post_thumbnail_html', $content, $post->ID, $thumbnail_id);
     }
 
+    /**
+     * Determines whether the post is currently being edited by another user.
+     *
+     * @param int|WP_Post $post ID or object of the post to check for editing.
+     *
+     * @return int|false ID of the user with lock. False if the post does not exist, post is not locked,
+     *                   the user with lock does not exist, or the post is locked by current user.
+     * @since 2.5.0
+     *
+     */
     function wp_check_post_lock($post)
     {
         $post = get_post($post);
-
         if(! $post)
         {
             return false;
         }
-
         $lock = get_post_meta($post->ID, '_edit_lock', true);
-
         if(! $lock)
         {
             return false;
         }
-
         $lock = explode(':', $lock);
         $time = $lock[0];
         $user = isset($lock[1]) ? $lock[1] : get_post_meta($post->ID, '_edit_last', true);
-
         if(! get_userdata($user))
         {
             return false;
         }
-
+        /** This filter is documented in wp-admin/includes/ajax-actions.php */
         $time_window = apply_filters('wp_check_post_lock_window', 150);
-
         if($time && $time > time() - $time_window && get_current_user_id() != $user)
         {
             return $user;
@@ -1566,61 +1779,82 @@
         return false;
     }
 
+    /**
+     * Marks the post as currently being edited by the current user.
+     *
+     * @param int|WP_Post $post ID or object of the post being edited.
+     *
+     * @return array|false {
+     *     Array of the lock time and user ID. False if the post does not exist, or there
+     *     is no current user.
+     *
+     * @type int $0 The current time as a Unix timestamp.
+     * @type int $1 The ID of the current user.
+     *                          }
+     * @since 2.5.0
+     *
+     */
     function wp_set_post_lock($post)
     {
         $post = get_post($post);
-
         if(! $post)
         {
             return false;
         }
-
         $user_id = get_current_user_id();
-
         if(0 == $user_id)
         {
             return false;
         }
-
         $now = time();
         $lock = "$now:$user_id";
-
         update_post_meta($post->ID, '_edit_lock', $lock);
 
         return [$now, $user_id];
     }
 
+    /**
+     * Outputs the HTML for the notice to say that someone else is editing or has taken over editing of this post.
+     *
+     * @since 2.8.5
+     */
     function _admin_notice_post_locked()
     {
         $post = get_post();
-
         if(! $post)
         {
             return;
         }
-
         $user = null;
         $user_id = wp_check_post_lock($post->ID);
-
         if($user_id)
         {
             $user = get_userdata($user_id);
         }
-
         if($user)
         {
+            /**
+             * Filters whether to show the post locked dialog.
+             *
+             * Returning false from the filter will prevent the dialog from being displayed.
+             *
+             * @param bool    $display Whether to display the dialog. Default true.
+             * @param WP_Post $post    Post object.
+             * @param WP_User $user    The user with the lock for the post.
+             *
+             * @since 3.6.0
+             *
+             */
             if(! apply_filters('show_post_locked_dialog', true, $post, $user))
             {
                 return;
             }
-
             $locked = true;
         }
         else
         {
             $locked = false;
         }
-
         $sendback = wp_get_referer();
         if($locked && $sendback && ! str_contains($sendback, 'post.php') && ! str_contains($sendback, 'post-new.php'))
         {
@@ -1629,23 +1863,18 @@
         else
         {
             $sendback = admin_url('edit.php');
-
             if('post' !== $post->post_type)
             {
                 $sendback = add_query_arg('post_type', $post->post_type, $sendback);
             }
-
             $sendback_text = get_post_type_object($post->post_type)->labels->all_items;
         }
-
         $hidden = $locked ? '' : ' hidden';
-
         ?>
         <div id="post-lock-dialog" class="notification-dialog-wrap<?php echo $hidden; ?>">
             <div class="notification-dialog-background"></div>
             <div class="notification-dialog">
                 <?php
-
                     if($locked)
                     {
                         $query_args = [];
@@ -1659,12 +1888,22 @@
                                 $query_args['preview_nonce'] = $nonce;
                             }
                         }
-
                         $preview_link = get_preview_post_link($post->ID, $query_args);
-
+                        /**
+                         * Filters whether to allow the post lock to be overridden.
+                         *
+                         * Returning false from the filter will disable the ability
+                         * to override the post lock.
+                         *
+                         * @param bool    $override Whether to allow the post lock to be overridden. Default true.
+                         * @param WP_Post $post     Post object.
+                         * @param WP_User $user     The user with the lock for the post.
+                         *
+                         * @since 3.6.0
+                         *
+                         */
                         $override = apply_filters('override_post_lock', true, $post, $user);
                         $tab_last = $override ? '' : ' wp-tab-last';
-
                         ?>
                         <div class="post-locked-message">
                             <div class="post-locked-avatar"><?php echo get_avatar($user->ID, 64); ?></div>
@@ -1683,7 +1922,16 @@
                                 ?>
                             </p>
                             <?php
-
+                                /**
+                                 * Fires inside the post locked dialog before the buttons are displayed.
+                                 *
+                                 * @param WP_Post $post Post object.
+                                 * @param WP_User $user The user with the lock for the post.
+                                 *
+                                 * @since 3.6.0
+                                 * @since 5.4.0 The $user parameter was added.
+                                 *
+                                 */
                                 do_action('post_locked_dialog', $post, $user);
                             ?>
                             <p>
@@ -1694,7 +1942,6 @@
                                        href="<?php echo esc_url($preview_link); ?>"><?php _e('Preview'); ?></a>
                                     <?php
                                 }
-
                                     // Allow plugins to prevent some users overriding the post lock.
                                     if($override)
                                     {
@@ -1703,7 +1950,6 @@
                                            href="<?php echo esc_url(add_query_arg('get-post-lock', '1', wp_nonce_url(get_edit_post_link($post->ID, 'url'), 'lock-post_'.$post->ID))); ?>"><?php _e('Take over'); ?></a>
                                         <?php
                                     }
-
                                 ?>
                             </p>
                         </div>
@@ -1724,7 +1970,14 @@
                                 <span class="locked-saved hidden"><?php _e('Your latest changes were saved as a revision.'); ?></span>
                             </p>
                             <?php
-
+                                /**
+                                 * Fires inside the dialog displayed when a user has lost the post lock.
+                                 *
+                                 * @param WP_Post $post Post object.
+                                 *
+                                 * @since 3.6.0
+                                 *
+                                 */
                                 do_action('post_lock_lost_dialog', $post);
                             ?>
                             <p><a class="button button-primary wp-tab-last"
@@ -1732,13 +1985,22 @@
                         </div>
                         <?php
                     }
-
                 ?>
             </div>
         </div>
         <?php
     }
 
+    /**
+     * Creates autosave data for the specified post from `$_POST` data.
+     *
+     * @param array|int $post_data Associative array containing the post data, or integer post ID.
+     *                             If a numeric post ID is provided, will use the `$_POST` superglobal.
+     *
+     * @return int|WP_Error The autosave revision ID. WP_Error or 0 on error.
+     * @since 2.6.0
+     *
+     */
     function wp_create_post_autosave($post_data)
     {
         if(is_numeric($post_data))
@@ -1750,16 +2012,13 @@
         {
             $post_id = (int) $post_data['post_ID'];
         }
-
         $post_data = _wp_translate_postdata(true, $post_data);
         if(is_wp_error($post_data))
         {
             return $post_data;
         }
         $post_data = _wp_get_allowed_postdata($post_data);
-
         $post_author = get_current_user_id();
-
         // Store one autosave per author. If there is already an autosave, overwrite it.
         $old_autosave = wp_get_post_autosave($post_id, $post_author);
         if($old_autosave)
@@ -1767,9 +2026,7 @@
             $new_autosave = _wp_post_revision_data($post_data, true);
             $new_autosave['ID'] = $old_autosave->ID;
             $new_autosave['post_author'] = $post_author;
-
             $post = get_post($post_id);
-
             // If the new autosave has the same content as the post, delete the autosave.
             $autosave_is_different = false;
             foreach(array_intersect(array_keys($new_autosave), array_keys(_wp_post_revision_fields($post))) as $field)
@@ -1780,19 +2037,24 @@
                     break;
                 }
             }
-
             if(! $autosave_is_different)
             {
                 wp_delete_post_revision($old_autosave->ID);
 
                 return 0;
             }
-
+            /**
+             * Fires before an autosave is stored.
+             *
+             * @param array $new_autosave Post array - the autosave that is about to be saved.
+             *
+             * @since 4.1.0
+             *
+             */
             do_action('wp_creating_autosave', $new_autosave);
 
             return wp_update_post($new_autosave);
         }
-
         // _wp_put_post_revision() expects unescaped.
         $post_data = wp_unslash($post_data);
 
@@ -1800,25 +2062,27 @@
         return _wp_put_post_revision($post_data, true);
     }
 
+    /**
+     * Saves a draft or manually autosaves for the purpose of showing a post preview.
+     *
+     * @return string URL to redirect to show the preview.
+     * @since 2.7.0
+     *
+     */
     function post_preview()
     {
         $post_id = (int) $_POST['post_ID'];
         $_POST['ID'] = $post_id;
-
         $post = get_post($post_id);
-
         if(! $post)
         {
             wp_die(__('Sorry, you are not allowed to edit this post.'));
         }
-
         if(! current_user_can('edit_post', $post->ID))
         {
             wp_die(__('Sorry, you are not allowed to edit this post.'));
         }
-
         $is_autosave = false;
-
         if(! wp_check_post_lock($post->ID) && get_current_user_id() == $post->post_author && ('draft' === $post->post_status || 'auto-draft' === $post->post_status))
         {
             $saved_post_id = edit_post();
@@ -1826,33 +2090,25 @@
         else
         {
             $is_autosave = true;
-
             if(isset($_POST['post_status']) && 'auto-draft' === $_POST['post_status'])
             {
                 $_POST['post_status'] = 'draft';
             }
-
             $saved_post_id = wp_create_post_autosave($post->ID);
         }
-
         if(is_wp_error($saved_post_id))
         {
-            /** @noinspection NativeMemberUsageInspection */
             wp_die($saved_post_id->get_error_message());
         }
-
         $query_args = [];
-
         if($is_autosave && $saved_post_id)
         {
             $query_args['preview_id'] = $post->ID;
             $query_args['preview_nonce'] = wp_create_nonce('post_preview_'.$post->ID);
-
             if(isset($_POST['post_format']))
             {
                 $query_args['post_format'] = empty($_POST['post_format']) ? 'standard' : sanitize_key($_POST['post_format']);
             }
-
             if(isset($_POST['_thumbnail_id']))
             {
                 $query_args['_thumbnail_id'] = ((int) $_POST['_thumbnail_id'] <= 0) ? '-1' : (int) $_POST['_thumbnail_id'];
@@ -1862,6 +2118,18 @@
         return get_preview_post_link($post, $query_args);
     }
 
+    /**
+     * Saves a post submitted with XHR.
+     *
+     * Intended for use with heartbeat and autosave.js
+     *
+     * @param array $post_data Associative array of the submitted post data.
+     *
+     * @return mixed The value 0 or WP_Error on failure. The saved post ID on success.
+     *               The ID can be the draft post_id or the autosave revision post_id.
+     * @since 3.9.0
+     *
+     */
     function wp_autosave($post_data)
     {
         // Back-compat.
@@ -1869,33 +2137,26 @@
         {
             define('DOING_AUTOSAVE', true);
         }
-
         $post_id = (int) $post_data['post_id'];
         $post_data['ID'] = $post_id;
         $post_data['post_ID'] = $post_id;
-
         if(false === wp_verify_nonce($post_data['_wpnonce'], 'update-post_'.$post_id))
         {
             return new WP_Error('invalid_nonce', __('Error while saving.'));
         }
-
         $post = get_post($post_id);
-
         if(! current_user_can('edit_post', $post->ID))
         {
             return new WP_Error('edit_posts', __('Sorry, you are not allowed to edit this item.'));
         }
-
         if('auto-draft' === $post->post_status)
         {
             $post_data['post_status'] = 'draft';
         }
-
         if('page' !== $post_data['post_type'] && ! empty($post_data['catslist']))
         {
             $post_data['post_category'] = explode(',', $post_data['catslist']);
         }
-
         if(! wp_check_post_lock($post->ID) && get_current_user_id() == $post->post_author && ('auto-draft' === $post->post_status || 'draft' === $post->post_status))
         {
             // Drafts and auto-drafts are just overwritten by autosave for the same user if the post is not locked.
@@ -1911,12 +2172,19 @@
         }
     }
 
+    /**
+     * Redirects to previous page.
+     *
+     * @param int $post_id Optional. Post ID.
+     *
+     * @since 2.7.0
+     *
+     */
     function redirect_post($post_id = '')
     {
         if(isset($_POST['save']) || isset($_POST['publish']))
         {
             $status = get_post_status($post_id);
-
             if(isset($_POST['publish']))
             {
                 switch($status)
@@ -1935,7 +2203,6 @@
             {
                 $message = 'draft' === $status ? 10 : 1;
             }
-
             $location = add_query_arg('message', $message, get_edit_post_link($post_id, 'url'));
         }
         elseif(isset($_POST['addmeta']) && $_POST['addmeta'])
@@ -1954,16 +2221,44 @@
         {
             $location = add_query_arg('message', 4, get_edit_post_link($post_id, 'url'));
         }
-
+        /**
+         * Filters the post redirect destination URL.
+         *
+         * @param string $location The destination URL.
+         * @param int    $post_id  The post ID.
+         *
+         * @since 2.9.0
+         *
+         */
         wp_redirect(apply_filters('redirect_post_location', $location, $post_id));
         exit;
     }
 
+    /**
+     * Sanitizes POST values from a checkbox taxonomy metabox.
+     *
+     * @param string $taxonomy The taxonomy name.
+     * @param array  $terms    Raw term data from the 'tax_input' field.
+     *
+     * @return int[] Array of sanitized term IDs.
+     * @since 5.1.0
+     *
+     */
     function taxonomy_meta_box_sanitize_cb_checkboxes($taxonomy, $terms)
     {
         return array_map('intval', $terms);
     }
 
+    /**
+     * Sanitizes POST values from an input taxonomy metabox.
+     *
+     * @param string       $taxonomy The taxonomy name.
+     * @param array|string $terms    Raw term data from the 'tax_input' field.
+     *
+     * @return array
+     * @since 5.1.0
+     *
+     */
     function taxonomy_meta_box_sanitize_cb_input($taxonomy, $terms)
     {
         /*
@@ -1980,7 +2275,6 @@
             }
             $terms = explode(',', trim($terms, " \n\t\r\0\x0B,"));
         }
-
         $clean_terms = [];
         foreach($terms as $term)
         {
@@ -1989,14 +2283,12 @@
             {
                 continue;
             }
-
             $_term = get_terms([
                                    'taxonomy' => $taxonomy,
                                    'name' => $term,
                                    'fields' => 'ids',
                                    'hide_empty' => false,
                                ]);
-
             if(! empty($_term))
             {
                 $clean_terms[] = (int) $_term[0];
@@ -2011,6 +2303,18 @@
         return $clean_terms;
     }
 
+    /**
+     * Prepares server-registered blocks for the block editor.
+     *
+     * Returns an associative array of registered block data keyed by block name. Data includes properties
+     * of a block relevant for client registration.
+     *
+     * @return array An associative array of registered block data.
+     * @since 6.3.0 Added `selectors` field.
+     * @since 6.4.0 Added `block_hooks` field.
+     *
+     * @since 5.0.0
+     */
     function get_block_editor_server_block_settings()
     {
         $block_registry = WP_Block_Type_Registry::get_instance();
@@ -2035,7 +2339,6 @@
             'example' => 'example',
             'variations' => 'variations',
         ];
-
         foreach($block_registry->get_all_registered() as $block_name => $block_type)
         {
             foreach($fields_to_pick as $field => $key)
@@ -2044,12 +2347,10 @@
                 {
                     continue;
                 }
-
                 if(! isset($blocks[$block_name]))
                 {
                     $blocks[$block_name] = [];
                 }
-
                 $blocks[$block_name][$key] = $block_type->{$field};
             }
         }
@@ -2057,17 +2358,34 @@
         return $blocks;
     }
 
+    /**
+     * Renders the meta boxes forms.
+     *
+     * @since 5.0.0
+     *
+     * @global WP_Post   $post           Global post object.
+     * @global WP_Screen $current_screen WordPress current screen object.
+     * @global array     $wp_meta_boxes
+     */
     function the_block_editor_meta_boxes()
     {
         global $post, $current_screen, $wp_meta_boxes;
-
         // Handle meta box state.
         $_original_meta_boxes = $wp_meta_boxes;
-
+        /**
+         * Fires right before the meta boxes are rendered.
+         *
+         * This allows for the filtering of meta box data, that should already be
+         * present by this point. Do not use as a means of adding meta box data.
+         *
+         * @param array $wp_meta_boxes Global meta box state.
+         *
+         * @since 5.0.0
+         *
+         */
         $wp_meta_boxes = apply_filters('filter_block_editor_meta_boxes', $wp_meta_boxes);
         $locations = ['side', 'normal', 'advanced'];
         $priorities = ['high', 'sorted', 'core', 'default', 'low'];
-
         // Render meta boxes.
         ?>
         <form class="metabox-base-form">
@@ -2089,24 +2407,20 @@
         </form>
     <?php endforeach; ?>
         <?php
-
         $meta_boxes_per_location = [];
         foreach($locations as $location)
         {
             $meta_boxes_per_location[$location] = [];
-
             if(! isset($wp_meta_boxes[$current_screen->id][$location]))
             {
                 continue;
             }
-
             foreach($priorities as $priority)
             {
                 if(! isset($wp_meta_boxes[$current_screen->id][$location][$priority]))
                 {
                     continue;
                 }
-
                 $meta_boxes = (array) $wp_meta_boxes[$current_screen->id][$location][$priority];
                 foreach($meta_boxes as $meta_box)
                 {
@@ -2114,13 +2428,11 @@
                     {
                         continue;
                     }
-
                     // If a meta box is just here for back compat, don't show it in the block editor.
                     if(isset($meta_box['args']['__back_compat_meta_box']) && $meta_box['args']['__back_compat_meta_box'])
                     {
                         continue;
                     }
-
                     $meta_boxes_per_location[$location][] = [
                         'id' => $meta_box['id'],
                         'title' => $meta_box['title'],
@@ -2128,7 +2440,6 @@
                 }
             }
         }
-
         /*
          * Sadly we probably cannot add this data directly into editor settings.
          *
@@ -2139,9 +2450,7 @@
         $script = 'window._wpLoadBlockEditor.then( function() {
 		wp.data.dispatch( \'core/edit-post\' ).setAvailableMetaBoxesPerLocation( '.wp_json_encode($meta_boxes_per_location).' );
 	} );';
-
         wp_add_inline_script('wp-edit-post', $script);
-
         /*
          * When `wp-edit-post` is output in the `<head>`, the inline script needs to be manually printed.
          * Otherwise, meta boxes will not display because inline scripts for `wp-edit-post`
@@ -2151,13 +2460,11 @@
         {
             printf("<script type='text/javascript'>\n%s\n</script>\n", trim($script));
         }
-
         /*
          * If the 'postcustom' meta box is enabled, then we need to perform
          * some extra initialization on it.
          */
         $enable_custom_fields = (bool) get_user_meta(get_current_user_id(), 'enable_custom_fields', true);
-
         if($enable_custom_fields)
         {
             $script = "( function( $ ) {
@@ -2176,7 +2483,6 @@
             wp_enqueue_script('wp-lists');
             wp_add_inline_script('wp-lists', $script);
         }
-
         /*
          * Refresh nonces used by the meta box loader.
          *
@@ -2220,11 +2526,18 @@
 		});
 	} )( jQuery );";
         wp_add_inline_script('heartbeat', $script);
-
         // Reset meta box data.
         $wp_meta_boxes = $_original_meta_boxes;
     }
 
+    /**
+     * Renders the hidden form required for the meta boxes form.
+     *
+     * @param WP_Post $post Current post object.
+     *
+     * @since 5.0.0
+     *
+     */
     function the_block_editor_meta_box_post_form_hidden_fields($post)
     {
         $form_extra = '';
@@ -2239,19 +2552,17 @@
         $current_user = wp_get_current_user();
         $user_id = $current_user->ID;
         wp_nonce_field($nonce_action);
-
         /*
          * Some meta boxes hook into these actions to add hidden input fields in the classic post form.
          * For backward compatibility, we can capture the output from these actions,
          * and extract the hidden input fields.
          */
         ob_start();
-
+        /** This filter is documented in wp-admin/edit-form-advanced.php */
         do_action('edit_form_after_title', $post);
-
+        /** This filter is documented in wp-admin/edit-form-advanced.php */
         do_action('edit_form_advanced', $post);
         $classic_output = ob_get_clean();
-
         $classic_elements = wp_html_split($classic_output);
         $hidden_inputs = '';
         foreach($classic_elements as $element)
@@ -2260,7 +2571,6 @@
             {
                 continue;
             }
-
             if(preg_match('/\stype=[\'"]hidden[\'"]\s/', $element))
             {
                 echo $element;
@@ -2290,10 +2600,31 @@
         wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
         // Permalink title nonce.
         wp_nonce_field('samplepermalink', 'samplepermalinknonce', false);
-
+        /**
+         * Adds hidden input fields to the meta box save form.
+         *
+         * Hook into this action to print `<input type="hidden" ... />` fields, which will be POSTed back to
+         * the server when meta boxes are saved.
+         *
+         * @param WP_Post $post The post that is being edited.
+         *
+         * @since 5.0.0
+         *
+         */
         do_action('block_editor_meta_box_hidden_fields', $post);
     }
 
+    /**
+     * Disables block editor for wp_navigation type posts so they can be managed via the UI.
+     *
+     * @param bool   $value     Whether the CPT supports block editor or not.
+     * @param string $post_type Post type.
+     *
+     * @return bool Whether the block editor should be disabled or not.
+     * @since  5.9.0
+     * @access private
+     *
+     */
     function _disable_block_editor_for_navigation_post_type($value, $post_type)
     {
         if('wp_navigation' === $post_type)
@@ -2304,6 +2635,18 @@
         return $value;
     }
 
+    /**
+     * This callback disables the content editor for wp_navigation type posts.
+     * Content editor cannot handle wp_navigation type posts correctly.
+     * We cannot disable the "editor" feature in the wp_navigation's CPT definition
+     * because it disables the ability to save navigation blocks via REST API.
+     *
+     * @param WP_Post $post An instance of WP_Post class.
+     *
+     * @since  5.9.0
+     * @access private
+     *
+     */
     function _disable_content_editor_for_navigation_post_type($post)
     {
         $post_type = get_post_type($post);
@@ -2311,10 +2654,22 @@
         {
             return;
         }
-
         remove_post_type_support($post_type, 'editor');
     }
 
+    /**
+     * This callback enables content editor for wp_navigation type posts.
+     * We need to enable it back because we disable it to hide
+     * the content editor for wp_navigation type posts.
+     *
+     * @param WP_Post $post An instance of WP_Post class.
+     *
+     * @see    _disable_content_editor_for_navigation_post_type
+     *
+     * @since  5.9.0
+     * @access private
+     *
+     */
     function _enable_content_editor_for_navigation_post_type($post)
     {
         $post_type = get_post_type($post);
@@ -2322,6 +2677,5 @@
         {
             return;
         }
-
         add_post_type_support($post_type, 'editor');
     }

@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Centered header with navigation, social links, and salmon background block pattern
+     */
     return [
         'title' => __('Centered header with navigation, social links, and background', 'twentytwentytwo'),
         'categories' => ['header'],

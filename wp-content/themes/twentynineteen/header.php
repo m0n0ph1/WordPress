@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * The header for our theme
+ *
+ * This is the template that displays all of the <head> section and everything up until <div id="content">
+ *
+ * @link       https://developer.wordpress.org/themes/basics/template-files/#template-partials
+ *
+ * @package    WordPress
+ * @subpackage Twenty_Nineteen
+ * @since      Twenty Nineteen 1.0
+ */
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -32,7 +42,6 @@
                     twentynineteen_post_thumbnail();
                     the_post();
                     $discussion = ! is_page() && twentynineteen_can_show_post_thumbnail() ? twentynineteen_get_discussion_data() : null;
-
                     $classes = 'entry-header';
                     if(! empty($discussion) && absint($discussion->responses) > 0)
                     {

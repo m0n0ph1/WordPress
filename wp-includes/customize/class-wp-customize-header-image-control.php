@@ -1,13 +1,53 @@
 <?php
+    /**
+     * Customize API: WP_Customize_Header_Image_Control class
+     *
+     * @package    WordPress
+     * @subpackage Customize
+     * @since      4.4.0
+     */
 
+    /**
+     * Customize Header Image Control class.
+     *
+     * @since 3.4.0
+     *
+     * @see   WP_Customize_Image_Control
+     */
     class WP_Customize_Header_Image_Control extends WP_Customize_Image_Control
     {
+        /**
+         * Customize control type.
+         *
+         * @since 4.2.0
+         * @var string
+         */
         public $type = 'header';
 
+        /**
+         * Uploaded header images.
+         *
+         * @since 3.9.0
+         * @var string
+         */
         public $uploaded_headers;
 
+        /**
+         * Default header images.
+         *
+         * @since 3.9.0
+         * @var string
+         */
         public $default_headers;
 
+        /**
+         * Constructor.
+         *
+         * @param WP_Customize_Manager $manager Customizer bootstrap instance.
+         *
+         * @since 3.4.0
+         *
+         */
         public function __construct($manager)
         {
             parent::__construct($manager, 'header_image', [
@@ -22,13 +62,13 @@
             ]);
         }
 
+        /**
+         */
         public function enqueue()
         {
             wp_enqueue_media();
             wp_enqueue_script('customize-views');
-
             $this->prepare_control();
-
             wp_localize_script('customize-views', '_wpCustomizeHeader', [
                 'data' => [
                     'width' => absint(get_theme_support('custom-header', 'width')),
@@ -44,10 +84,12 @@
                 'uploads' => $this->uploaded_headers,
                 'defaults' => $this->default_headers,
             ]);
-
             parent::enqueue();
         }
 
+        /**
+         * @global Custom_Image_Header $custom_image_header
+         */
         public function prepare_control()
         {
             global $custom_image_header;
@@ -55,15 +97,16 @@
             {
                 return;
             }
-
             add_action('customize_controls_print_footer_scripts', [$this, 'print_header_image_template']);
-
             // Process default headers and uploaded headers.
             $custom_image_header->process_default_headers();
             $this->default_headers = $custom_image_header->get_default_header_images();
             $this->uploaded_headers = $custom_image_header->get_uploaded_header_images();
         }
 
+        /**
+         * @return string|void
+         */
         public function get_current_image_src()
         {
             $src = $this->value();
@@ -75,6 +118,8 @@
             }
         }
 
+        /**
+         */
         public function print_header_image_template()
         {
             ?>
@@ -146,6 +191,8 @@
             <?php
         }
 
+        /**
+         */
         public function render_content()
         {
             $visibility = $this->get_current_image_src() ? '' : ' style="display:none" ';

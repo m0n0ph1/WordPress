@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Subscribe callout block pattern
+     */
     return [
         'title' => __('Subscribe callout', 'twentytwentytwo'),
         'categories' => ['featured', 'buttons'],

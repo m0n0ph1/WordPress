@@ -1,10 +1,21 @@
 <?php
-
+    /**
+     * Twenty Twenty Theme: Block Patterns
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Seventeen
+     * @since      Twenty Seventeen 2.5
+     */
+    /**
+     * Register Block Pattern Category.
+     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentyseventeen', ['label' => __('Twenty Seventeen', 'twentyseventeen')]);
     }
-
+    /**
+     * Register Block Patterns.
+     */
     if(function_exists('register_block_pattern'))
     {
         register_block_pattern('twentyseventeen/large-heading-with-button', [
@@ -20,7 +31,6 @@
             <!-- /wp:button --></div>
             <!-- /wp:buttons -->',
         ]);
-
         register_block_pattern('twentyseventeen/images-with-text-and-link', [
             'title' => __('Images with Text and Link', 'twentyseventeen'),
             'categories' => ['twentyseventeen'],
@@ -62,7 +72,6 @@
             <!-- /wp:column --></div>
             <!-- /wp:columns -->',
         ]);
-
         register_block_pattern('twentyseventeen/images-with-link', [
             'title' => __('Images with Link', 'twentyseventeen'),
             'categories' => ['twentyseventeen'],
@@ -117,7 +126,6 @@
             <div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
             <!-- /wp:spacer -->',
         ]);
-
         register_block_pattern('twentyseventeen/services', [
             'title' => __('Services', 'twentyseventeen'),
             'categories' => ['twentyseventeen'],
@@ -150,7 +158,6 @@
             <div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
             <!-- /wp:spacer -->',
         ]);
-
         register_block_pattern('twentyseventeen/contact-us', [
             'title' => __('Contact Us', 'twentyseventeen'),
             'categories' => ['twentyseventeen'],

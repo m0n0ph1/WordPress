@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * The template for displaying posts in the Aside post format
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twelve
+     * @since      Twenty Twelve 1.0
+     */
     /* translators: %s: Post title. */
     $post_title = sprintf(__('Permalink to %s', 'twentytwelve'), the_title_attribute('echo=0'));
 ?>

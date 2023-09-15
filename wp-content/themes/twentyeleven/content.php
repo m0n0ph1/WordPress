@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Template for displaying content
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 1.0
+     */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -49,7 +55,6 @@
         <?php if(is_object_in_taxonomy(get_post_type(), 'category')) : // Hide category text when not supported. ?>
             <?php
             $categories_list = get_the_category_list(wp_get_list_item_separator());
-
             if($categories_list) :
                 ?>
                 <span class="cat-links">
@@ -65,7 +70,6 @@
         <?php if(is_object_in_taxonomy(get_post_type(), 'post_tag')) : // Hide tag text when not supported. ?>
             <?php
             $tags_list = get_the_tag_list('', wp_get_list_item_separator());
-
             if($tags_list && ! is_wp_error($tags_list)) :
                 if($show_sep) :
                     ?>

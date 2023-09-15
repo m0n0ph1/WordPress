@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Header with tagline block pattern
+     */
     return [
         'title' => __('Header with tagline', 'twentytwentytwo'),
         'categories' => ['header'],

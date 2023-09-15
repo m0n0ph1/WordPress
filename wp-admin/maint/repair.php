@@ -1,9 +1,12 @@
 <?php
-
+    /**
+     * Database Repair and Optimization Script.
+     *
+     * @package    WordPress
+     * @subpackage Database
+     */
     define('WP_REPAIRING', true);
-
     require_once dirname(__DIR__, 2).'/wp-load.php';
-
     header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html>
@@ -19,16 +22,13 @@
 <p id="logo"><a href="<?php echo esc_url(__('https://wordpress.org/')); ?>"><?php _e('WordPress'); ?></a></p>
 
 <?php
-
     if(! defined('WP_ALLOW_REPAIR') || ! WP_ALLOW_REPAIR)
     {
         echo '<h1 class="screen-reader-text">'./* translators: Hidden accessibility text. */
             __('Allow automatic database repair').'</h1>';
-
         echo '<p>';
         printf(/* translators: %s: wp-config.php */ __('To allow use of this page to automatically repair database problems, please add the following line to your %s file. Once this line is added to your config, reload this page.'), '<code>wp-config.php</code>');
         echo "</p><p><code>define('WP_ALLOW_REPAIR', true);</code></p>";
-
         $default_keys = array_unique([
                                          'put your unique phrase here',
                                          /*
@@ -39,7 +39,6 @@
                                      ]);
         $missing_key = false;
         $duplicated_keys = [];
-
         foreach(
             [
                 'AUTH_KEY',
@@ -64,7 +63,6 @@
                 $missing_key = true;
             }
         }
-
         // If at least one key uses a default value, consider it duplicated.
         foreach($default_keys as $default_key)
         {
@@ -73,15 +71,12 @@
                 $duplicated_keys[$default_key] = true;
             }
         }
-
         // Weed out all unique, non-default values.
         $duplicated_keys = array_filter($duplicated_keys);
-
         if($duplicated_keys || $missing_key)
         {
             echo '<h2 class="screen-reader-text">'./* translators: Hidden accessibility text. */
                 __('Check secret keys').'</h2>';
-
             /* translators: 1: wp-config.php, 2: Secret key service URL. */
             echo '<p>'.sprintf(__('While you are editing your %1$s file, take a moment to make sure you have all 8 keys and that they are unique. You can generate these using the <a href="%2$s">WordPress.org secret key service</a>.'), '<code>wp-config.php</code>', 'https://api.wordpress.org/secret-key/1.1/salt/').'</p>';
         }
@@ -90,20 +85,23 @@
     {
         echo '<h1 class="screen-reader-text">'./* translators: Hidden accessibility text. */
             __('Database repair results').'</h1>';
-
         $optimize = '2' === $_GET['repair'];
         $okay = true;
         $problems = [];
-
         $tables = $wpdb->tables();
-
+        /**
+         * Filters additional database tables to repair.
+         *
+         * @param string[] $tables Array of prefixed table names to be repaired.
+         *
+         * @since 3.0.0
+         *
+         */
         $tables = array_merge($tables, (array) apply_filters('tables_to_repair', []));
-
         // Loop over the tables, checking and repairing as needed.
         foreach($tables as $table)
         {
             $check = $wpdb->get_row("CHECK TABLE $table");
-
             echo '<p>';
             if('OK' === $check->Msg_text)
             {
@@ -114,9 +112,7 @@
             {
                 /* translators: 1: Table name, 2: Error message. */
                 printf(__('The %1$s table is not okay. It is reporting the following error: %2$s. WordPress will attempt to repair this table&hellip;'), "<code>$table</code>", "<code>$check->Msg_text</code>");
-
                 $repair = $wpdb->get_row("REPAIR TABLE $table");
-
                 echo '<br />&nbsp;&nbsp;&nbsp;&nbsp;';
                 if('OK' === $repair->Msg_text)
                 {
@@ -131,11 +127,9 @@
                     $okay = false;
                 }
             }
-
             if($okay && $optimize)
             {
                 $analyze = $wpdb->get_row("ANALYZE TABLE $table");
-
                 echo '<br />&nbsp;&nbsp;&nbsp;&nbsp;';
                 if('Table is already up to date' === $analyze->Msg_text)
                 {
@@ -145,7 +139,6 @@
                 else
                 {
                     $optimize = $wpdb->get_row("OPTIMIZE TABLE $table");
-
                     echo '<br />&nbsp;&nbsp;&nbsp;&nbsp;';
                     if('OK' === $optimize->Msg_text || 'Table is already up to date' === $optimize->Msg_text)
                     {
@@ -161,7 +154,6 @@
             }
             echo '</p>';
         }
-
         if($problems)
         {
             printf(/* translators: %s: URL to "Fixing WordPress" forum. */ '<p>'.__('Some database problems could not be repaired. Please copy-and-paste the following list of errors to the <a href="%s">WordPress support forums</a> to get additional assistance.').'</p>', __('https://wordpress.org/support/forum/how-to-and-troubleshooting'));
@@ -181,7 +173,6 @@
     {
         echo '<h1 class="screen-reader-text">'./* translators: Hidden accessibility text. */
             __('WordPress database repair').'</h1>';
-
         if(isset($_GET['referrer']) && 'is_blog_installed' === $_GET['referrer'])
         {
             echo '<p>'.__('One or more database tables are unavailable. To allow WordPress to attempt to repair these tables, press the &#8220;Repair Database&#8221; button. Repairing can take a while, so please be patient.').'</p>';

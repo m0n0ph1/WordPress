@@ -1,12 +1,21 @@
 <?php
-
     if(class_exists('ParagonIE_Sodium_Core32_Curve25519_H', false))
     {
         return;
     }
 
-    class H extends ParagonIE_Sodium_Core32_Util
+    /**
+     * Class ParagonIE_Sodium_Core32_Curve25519_H
+     *
+     * This just contains the constants in the ref10/base.h file
+     */
+    class ParagonIE_Sodium_Core32_Curve25519_H extends ParagonIE_Sodium_Core32_Util
     {
+        /**
+         * See: libsodium's crypto_core/curve25519/ref10/base.h
+         *
+         * @var array<int, array<int, array<int, array<int, int>>>> Basically, int[32][8][3][10]
+         */
         protected static $base = [
             [
                 [
@@ -6348,6 +6357,11 @@
             ]
         ];
 
+        /**
+         * See: libsodium's crypto_core/curve25519/ref10/base2.h
+         *
+         * @var array<int, array<int, array<int, int>>> basically int[8][3]
+         */
         protected static $base2 = [
             [
                 [25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605],
@@ -6391,6 +6405,11 @@
             ]
         ];
 
+        /**
+         * 37095705934669439343138083508754565189542113879843219016388785533085940283555
+         *
+         * @var array<int, int>
+         */
         protected static $d = [
             -10913610,
             13857413,
@@ -6404,6 +6423,11 @@
             -12055116
         ];
 
+        /**
+         * 2 * d = 16295367250680780974490674513165176452449235426866156013048779062215315747161
+         *
+         * @var array<int, int>
+         */
         protected static $d2 = [
             -21827239,
             -5839606,
@@ -6417,6 +6441,11 @@
             9444199
         ];
 
+        /**
+         * sqrt(-1)
+         *
+         * @var array<int, int>
+         */
         protected static $sqrtm1 = [
             -32595792,
             -7943725,

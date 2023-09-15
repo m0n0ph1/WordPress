@@ -1,5 +1,25 @@
 <?php
-
+    /**
+     * Custom CSS
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty_One
+     * @since      Twenty Twenty-One 1.0
+     */
+    /**
+     * Generate CSS.
+     *
+     * @param string $selector The CSS selector.
+     * @param string $style    The CSS style.
+     * @param string $value    The CSS value.
+     * @param string $prefix   The CSS prefix.
+     * @param string $suffix   The CSS suffix.
+     * @param bool   $display  Print the styles.
+     *
+     * @return string
+     * @since Twenty Twenty-One 1.0
+     *
+     */
     function twenty_twenty_one_generate_css($selector, $style, $value, $prefix = '', $suffix = '', $display = true)
     {
         // Bail early if there is no $selector elements or properties and $value.
@@ -7,9 +27,7 @@
         {
             return '';
         }
-
         $css = sprintf('%s { %s: %s; }', $selector, $style, $prefix.$value.$suffix);
-
         if($display)
         {
             /*

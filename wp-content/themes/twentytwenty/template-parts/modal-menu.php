@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Displays the menu icon and modal
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty
+     * @since      Twenty Twenty 1.0
+     */
 ?>
 
 <div class="menu-modal cover-modal header-footer-group" data-modal-target-string=".menu-modal">
@@ -19,9 +25,7 @@
                 </button><!-- .nav-toggle -->
 
                 <?php
-
                     $mobile_menu_location = '';
-
                     // If the mobile menu location is not set, use the primary and expanded locations as fallbacks, in that order.
                     if(has_nav_menu('mobile'))
                     {
@@ -35,16 +39,13 @@
                     {
                         $mobile_menu_location = 'expanded';
                     }
-
                     if(has_nav_menu('expanded'))
                     {
                         $expanded_nav_classes = '';
-
                         if('expanded' === $mobile_menu_location)
                         {
                             $expanded_nav_classes .= ' mobile-menu';
                         }
-
                         ?>
 
                         <nav class="expanded-menu<?php echo esc_attr($expanded_nav_classes); ?>"
@@ -68,7 +69,6 @@
 
                         <?php
                     }
-
                     if('expanded' !== $mobile_menu_location)
                     {
                         ?>

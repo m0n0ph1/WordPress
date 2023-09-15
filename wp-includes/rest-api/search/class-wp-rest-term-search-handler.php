@@ -1,11 +1,29 @@
 <?php
+    /**
+     * REST API: WP_REST_Term_Search_Handler class
+     *
+     * @package    WordPress
+     * @subpackage REST_API
+     * @since      5.6.0
+     */
 
+    /**
+     * Core class representing a search handler for terms in the REST API.
+     *
+     * @since 5.6.0
+     *
+     * @see   WP_REST_Search_Handler
+     */
     class WP_REST_Term_Search_Handler extends WP_REST_Search_Handler
     {
+        /**
+         * Constructor.
+         *
+         * @since 5.6.0
+         */
         public function __construct()
         {
             $this->type = 'term';
-
             $this->subtypes = array_values(
                 get_taxonomies([
                                    'public' => true,
@@ -14,6 +32,22 @@
             );
         }
 
+        /**
+         * Searches the object type content for a given search request.
+         *
+         * @param WP_REST_Request    $request   Full REST request.
+         *
+         * @return array {
+         *     Associative array containing found IDs and total count for the matching search results.
+         *
+         * @type int[]               $ids       Found IDs.
+         * @type string|int|WP_Error $total     Numeric string containing the number of terms in that
+         *                                      taxonomy, 0 if there are no results, or WP_Error if
+         *                                      the requested taxonomy does not exist.
+         *                                      }
+         * @since 5.6.0
+         *
+         */
         public function search_items(WP_REST_Request $request)
         {
             $taxonomies = $request[WP_REST_Search_Controller::PROP_SUBTYPE];
@@ -21,42 +55,43 @@
             {
                 $taxonomies = $this->subtypes;
             }
-
             $page = (int) $request['page'];
             $per_page = (int) $request['per_page'];
-
             $query_args = [
                 'taxonomy' => $taxonomies,
                 'hide_empty' => false,
                 'offset' => ($page - 1) * $per_page,
                 'number' => $per_page,
             ];
-
             if(! empty($request['search']))
             {
                 $query_args['search'] = $request['search'];
             }
-
             if(! empty($request['exclude']))
             {
                 $query_args['exclude'] = $request['exclude'];
             }
-
             if(! empty($request['include']))
             {
                 $query_args['include'] = $request['include'];
             }
-
+            /**
+             * Filters the query arguments for a REST API search request.
+             *
+             * Enables adding extra arguments or setting defaults for a term search request.
+             *
+             * @param array           $query_args Key value array of query var to query value.
+             * @param WP_REST_Request $request    The request used.
+             *
+             * @since 5.6.0
+             *
+             */
             $query_args = apply_filters('rest_term_search_query', $query_args, $request);
-
             $query = new WP_Term_Query();
             $found_terms = $query->query($query_args);
             $found_ids = wp_list_pluck($found_terms, 'term_id');
-
             unset($query_args['offset'], $query_args['number']);
-
             $total = wp_count_terms($query_args);
-
             // wp_count_terms() can return a falsey value when the term has no children.
             if(! $total)
             {
@@ -69,12 +104,20 @@
             ];
         }
 
+        /**
+         * Prepares the search result for a given ID.
+         *
+         * @param int   $id     Item ID.
+         * @param array $fields Fields to include for the item.
+         *
+         * @return array Associative array containing all fields for the item.
+         * @since 5.6.0
+         *
+         */
         public function prepare_item($id, array $fields)
         {
             $term = get_term($id);
-
             $data = [];
-
             if(in_array(WP_REST_Search_Controller::PROP_ID, $fields, true))
             {
                 $data[WP_REST_Search_Controller::PROP_ID] = (int) $id;
@@ -95,12 +138,19 @@
             return $data;
         }
 
+        /**
+         * Prepares links for the search result of a given ID.
+         *
+         * @param int $id Item ID.
+         *
+         * @return array[] Array of link arrays for the given item.
+         * @since 5.6.0
+         *
+         */
         public function prepare_item_links($id)
         {
             $term = get_term($id);
-
             $links = [];
-
             $item_route = rest_get_route_for_term($term);
             if($item_route)
             {
@@ -109,7 +159,6 @@
                     'embeddable' => true,
                 ];
             }
-
             $links['about'] = [
                 'href' => rest_url(sprintf('wp/v2/taxonomies/%s', $term->taxonomy)),
             ];

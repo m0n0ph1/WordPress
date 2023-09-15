@@ -1,5 +1,20 @@
 <?php
-
+    /**
+     * Functions related to registering and parsing blocks.
+     *
+     * @package    WordPress
+     * @subpackage Blocks
+     * @since      5.0.0
+     */
+    /**
+     * Removes the block asset's path prefix if provided.
+     *
+     * @param string $asset_handle_or_path Asset handle or prefixed path.
+     *
+     * @return string Path without the prefix or the original value.
+     * @since 5.5.0
+     *
+     */
     function remove_block_asset_path_prefix($asset_handle_or_path)
     {
         $path_prefix = 'file:';
@@ -16,6 +31,20 @@
         return $path;
     }
 
+    /**
+     * Generates the name for an asset based on the name of the block
+     * and the field name provided.
+     *
+     * @param string $block_name Name of the block.
+     * @param string $field_name Name of the metadata field.
+     * @param int    $index      Optional. Index of the asset when multiple items passed.
+     *                           Default 0.
+     *
+     * @return string Generated asset name for the block's field.
+     * @since 5.5.0
+     * @since 6.1.0 Added `$index` parameter.
+     *
+     */
     function generate_block_asset_handle($block_name, $field_name, $index = 0)
     {
         if(str_starts_with($block_name, 'core/'))
@@ -36,7 +65,6 @@
 
             return $asset_handle;
         }
-
         $field_mappings = [
             'editorScript' => 'editor-script',
             'script' => 'script',
@@ -53,13 +81,29 @@
         return $asset_handle;
     }
 
+    /**
+     * Finds a script handle for the selected block metadata field. It detects
+     * when a path to file was provided and finds a corresponding asset file
+     * with details necessary to register the script under automatically
+     * generated handle name. It returns unprocessed script handle otherwise.
+     *
+     * @param array  $metadata   Block metadata.
+     * @param string $field_name Field name to pick from metadata.
+     * @param int    $index      Optional. Index of the script to register when multiple items passed.
+     *                           Default 0.
+     *
+     * @return string|false Script handle provided directly or created through
+     *                      script's registration, or false on failure.
+     * @since 5.5.0
+     * @since 6.1.0 Added `$index` parameter.
+     *
+     */
     function register_block_script_handle($metadata, $field_name, $index = 0)
     {
         if(empty($metadata[$field_name]))
         {
             return false;
         }
-
         $script_handle = $metadata[$field_name];
         if(is_array($script_handle))
         {
@@ -69,31 +113,26 @@
             }
             $script_handle = $script_handle[$index];
         }
-
         $script_path = remove_block_asset_path_prefix($script_handle);
         if($script_handle === $script_path)
         {
             return $script_handle;
         }
-
         $script_asset_raw_path = dirname($metadata['file']).'/'.substr_replace($script_path, '.asset.php', -strlen('.js'));
         $script_handle = generate_block_asset_handle($metadata['name'], $field_name, $index);
         $script_asset_path = wp_normalize_path(realpath($script_asset_raw_path));
-
         if(empty($script_asset_path))
         {
             _doing_it_wrong(__FUNCTION__, sprintf(/* translators: 1: Asset file location, 2: Field name, 3: Block name.  */ __('The asset file (%1$s) for the "%2$s" defined in "%3$s" block definition is missing.'), $script_asset_raw_path, $field_name, $metadata['name']), '5.5.0');
 
             return false;
         }
-
         // Path needs to be normalized to work in Windows env.
         static $wpinc_path_norm = '';
         if(! $wpinc_path_norm)
         {
             $wpinc_path_norm = wp_normalize_path(realpath(ABSPATH.WPINC));
         }
-
         // Cache $template_path_norm and $stylesheet_path_norm to avoid unnecessary additional calls.
         static $template_path_norm = '';
         static $stylesheet_path_norm = '';
@@ -102,11 +141,8 @@
             $template_path_norm = wp_normalize_path(get_template_directory());
             $stylesheet_path_norm = wp_normalize_path(get_stylesheet_directory());
         }
-
         $script_path_norm = wp_normalize_path(realpath(dirname($metadata['file']).'/'.$script_path));
-
         $is_core_block = isset($metadata['file']) && str_starts_with($metadata['file'], $wpinc_path_norm);
-
         /*
          * Determine if the block script was registered in a theme, by checking if the script path starts with either
          * the parent (template) or child (stylesheet) directory path.
@@ -114,7 +150,6 @@
         $is_parent_theme_block = str_starts_with($script_path_norm, trailingslashit($template_path_norm));
         $is_child_theme_block = str_starts_with($script_path_norm, trailingslashit($stylesheet_path_norm));
         $is_theme_block = ($is_parent_theme_block || $is_child_theme_block);
-
         $script_uri = '';
         if($is_core_block)
         {
@@ -130,13 +165,11 @@
             // Fallback to plugins_url().
             $script_uri = plugins_url($script_path, $metadata['file']);
         }
-
         $script_args = [];
         if('viewScript' === $field_name)
         {
             $script_args['strategy'] = 'defer';
         }
-
         $script_asset = require $script_asset_path;
         $script_dependencies = isset($script_asset['dependencies']) ? $script_asset['dependencies'] : [];
         $result = wp_register_script($script_handle, $script_uri, $script_dependencies, isset($script_asset['version']) ? $script_asset['version'] : false, $script_args);
@@ -144,7 +177,6 @@
         {
             return false;
         }
-
         if(! empty($metadata['textdomain']) && in_array('wp-i18n', $script_dependencies, true))
         {
             wp_set_script_translations($script_handle, $metadata['textdomain']);
@@ -153,13 +185,28 @@
         return $script_handle;
     }
 
+    /**
+     * Finds a style handle for the block metadata field. It detects when a path
+     * to file was provided and registers the style under automatically
+     * generated handle name. It returns unprocessed style handle otherwise.
+     *
+     * @param array  $metadata   Block metadata.
+     * @param string $field_name Field name to pick from metadata.
+     * @param int    $index      Optional. Index of the style to register when multiple items passed.
+     *                           Default 0.
+     *
+     * @return string|false Style handle provided directly or created through
+     *                      style's registration, or false on failure.
+     * @since 5.5.0
+     * @since 6.1.0 Added `$index` parameter.
+     *
+     */
     function register_block_style_handle($metadata, $field_name, $index = 0)
     {
         if(empty($metadata[$field_name]))
         {
             return false;
         }
-
         $style_handle = $metadata[$field_name];
         if(is_array($style_handle))
         {
@@ -169,27 +216,23 @@
             }
             $style_handle = $style_handle[$index];
         }
-
         $style_handle_name = generate_block_asset_handle($metadata['name'], $field_name, $index);
         // If the style handle is already registered, skip re-registering.
         if(wp_style_is($style_handle_name, 'registered'))
         {
             return $style_handle_name;
         }
-
         static $wpinc_path_norm = '';
         if(! $wpinc_path_norm)
         {
             $wpinc_path_norm = wp_normalize_path(realpath(ABSPATH.WPINC));
         }
-
         $is_core_block = isset($metadata['file']) && str_starts_with($metadata['file'], $wpinc_path_norm);
         // Skip registering individual styles for each core block when a bundled version provided.
         if($is_core_block && ! wp_should_load_separate_core_block_assets())
         {
             return false;
         }
-
         $style_path = remove_block_asset_path_prefix($style_handle);
         $is_style_handle = $style_handle === $style_path;
         // Allow only passing style handles for core blocks.
@@ -202,21 +245,17 @@
         {
             return $style_handle;
         }
-
         // Check whether styles should have a ".min" suffix or not.
         $suffix = SCRIPT_DEBUG ? '' : '.min';
         if($is_core_block)
         {
             $style_path = ('editorStyle' === $field_name) ? "editor{$suffix}.css" : "style{$suffix}.css";
         }
-
         $style_path_norm = wp_normalize_path(realpath(dirname($metadata['file']).'/'.$style_path));
         $has_style_file = '' !== $style_path_norm;
-
         if($has_style_file)
         {
             $style_uri = plugins_url($style_path, $metadata['file']);
-
             // Cache $template_path_norm and $stylesheet_path_norm to avoid unnecessary additional calls.
             static $template_path_norm = '';
             static $stylesheet_path_norm = '';
@@ -225,13 +264,11 @@
                 $template_path_norm = wp_normalize_path(get_template_directory());
                 $stylesheet_path_norm = wp_normalize_path(get_stylesheet_directory());
             }
-
             // Determine if the block style was registered in a theme, by checking if the script path starts with either
             // the parent (template) or child (stylesheet) directory path.
             $is_parent_theme_block = str_starts_with($style_path_norm, trailingslashit($template_path_norm));
             $is_child_theme_block = str_starts_with($style_path_norm, trailingslashit($stylesheet_path_norm));
             $is_theme_block = ($is_parent_theme_block || $is_child_theme_block);
-
             if($is_core_block)
             {
                 // All possible $style_path variants for core blocks are hard-coded above.
@@ -247,18 +284,15 @@
         {
             $style_uri = false;
         }
-
         $version = ! $is_core_block && isset($metadata['version']) ? $metadata['version'] : false;
         $result = wp_register_style($style_handle_name, $style_uri, [], $version);
         if(! $result)
         {
             return false;
         }
-
         if($has_style_file)
         {
             wp_style_add_data($style_handle_name, 'path', $style_path_norm);
-
             if($is_core_block)
             {
                 $rtl_file = str_replace("{$suffix}.css", "-rtl{$suffix}.css", $style_path_norm);
@@ -267,7 +301,6 @@
             {
                 $rtl_file = str_replace('.css', '-rtl.css', $style_path_norm);
             }
-
             if(is_rtl() && file_exists($rtl_file))
             {
                 wp_style_add_data($style_handle_name, 'rtl', 'replace');
@@ -279,10 +312,16 @@
         return $style_handle_name;
     }
 
+    /**
+     * Gets i18n schema for block's metadata read from `block.json` file.
+     *
+     * @return object The schema for block's metadata.
+     * @since 5.9.0
+     *
+     */
     function get_block_metadata_i18n_schema()
     {
         static $i18n_block_schema;
-
         if(! isset($i18n_block_schema))
         {
             $i18n_block_schema = wp_json_file_decode(__DIR__.'/block-i18n.json');
@@ -291,6 +330,25 @@
         return $i18n_block_schema;
     }
 
+    /**
+     * Registers a block type from the metadata stored in the `block.json` file.
+     *
+     * @param string $file_or_folder Path to the JSON file with metadata definition for
+     *                               the block or path to the folder where the `block.json` file is located.
+     *                               If providing the path to a JSON file, the filename must end with `block.json`.
+     * @param array  $args           Optional. Array of block type arguments. Accepts any public property
+     *                               of `WP_Block_Type`. See WP_Block_Type::__construct() for information
+     *                               on accepted arguments. Default empty array.
+     *
+     * @return WP_Block_Type|false The registered block type on success, or false on failure.
+     * @since 6.1.0 Added support for `render` field.
+     * @since 6.3.0 Added `selectors` field.
+     * @since 6.4.0 Added support for `blockHooks` field.
+     *
+     * @since 5.5.0
+     * @since 5.7.0 Added support for `textdomain` field and i18n handling for all translatable fields.
+     * @since 5.9.0 Added support for `variations` and `viewScript` fields.
+     */
     function register_block_type_from_metadata($file_or_folder, $args = [])
     {
         /*
@@ -304,16 +362,12 @@
         {
             $core_blocks_meta = require ABSPATH.WPINC.'/blocks/blocks-json.php';
         }
-
         $metadata_file = (! str_ends_with($file_or_folder, 'block.json')) ? trailingslashit($file_or_folder).'block.json' : $file_or_folder;
-
         $is_core_block = str_starts_with($file_or_folder, ABSPATH.WPINC);
-
         if(! $is_core_block && ! file_exists($metadata_file))
         {
             return false;
         }
-
         // Try to get metadata from the static cache for core blocks.
         $metadata = false;
         if($is_core_block)
@@ -324,26 +378,29 @@
                 $metadata = $core_blocks_meta[$core_block_name];
             }
         }
-
         // If metadata is not found in the static cache, read it from the file.
         if(! $metadata)
         {
             $metadata = wp_json_file_decode($metadata_file, ['associative' => true]);
         }
-
         if(! is_array($metadata) || empty($metadata['name']))
         {
             return false;
         }
         $metadata['file'] = wp_normalize_path(realpath($metadata_file));
-
+        /**
+         * Filters the metadata provided for registering a block type.
+         *
+         * @param array $metadata Metadata for registering a block type.
+         *
+         * @since 5.7.0
+         *
+         */
         $metadata = apply_filters('block_type_metadata', $metadata);
-
         // Add `style` and `editor_style` for core blocks if missing.
         if(! empty($metadata['name']) && str_starts_with($metadata['name'], 'core/'))
         {
             $block_name = str_replace('core/', '', $metadata['name']);
-
             if(! isset($metadata['style']))
             {
                 $metadata['style'] = "wp-block-$block_name";
@@ -358,7 +415,6 @@
                 $metadata['editorStyle'] = "wp-block-{$block_name}-editor";
             }
         }
-
         $settings = [];
         $property_mappings = [
             'apiVersion' => 'api_version',
@@ -380,7 +436,6 @@
         ];
         $textdomain = ! empty($metadata['textdomain']) ? $metadata['textdomain'] : null;
         $i18n_schema = get_block_metadata_i18n_schema();
-
         foreach($property_mappings as $key => $mapped_key)
         {
             if(isset($metadata[$key]))
@@ -392,7 +447,6 @@
                 }
             }
         }
-
         $script_fields = [
             'editorScript' => 'editor_script_handles',
             'script' => 'script_handles',
@@ -406,7 +460,7 @@
                 $processed_scripts = [];
                 if(is_array($scripts))
                 {
-                    for($index = 0, $indexMax = count($scripts); $index < $indexMax; $index++)
+                    for($index = 0; $index < count($scripts); $index++)
                     {
                         $result = register_block_script_handle($metadata, $metadata_field_name, $index);
                         if($result)
@@ -426,7 +480,6 @@
                 $settings[$settings_field_name] = $processed_scripts;
             }
         }
-
         $style_fields = [
             'editorStyle' => 'editor_style_handles',
             'style' => 'style_handles',
@@ -439,7 +492,7 @@
                 $processed_styles = [];
                 if(is_array($styles))
                 {
-                    for($index = 0, $indexMax = count($styles); $index < $indexMax; $index++)
+                    for($index = 0; $index < count($styles); $index++)
                     {
                         $result = register_block_style_handle($metadata, $metadata_field_name, $index);
                         if($result)
@@ -459,16 +512,19 @@
                 $settings[$settings_field_name] = $processed_styles;
             }
         }
-
         if(! empty($metadata['blockHooks']))
         {
+            /**
+             * Map camelCased position string (from block.json) to snake_cased block type position.
+             *
+             * @var array
+             */
             $position_mappings = [
                 'before' => 'before',
                 'after' => 'after',
                 'firstChild' => 'first_child',
                 'lastChild' => 'last_child',
             ];
-
             $settings['block_hooks'] = [];
             foreach($metadata['blockHooks'] as $anchor_block_name => $position)
             {
@@ -478,21 +534,29 @@
                     _doing_it_wrong(__METHOD__, __('Cannot hook block to itself.'), '6.4.0');
                     continue;
                 }
-
                 if(! isset($position_mappings[$position]))
                 {
                     continue;
                 }
-
                 $settings['block_hooks'][$anchor_block_name] = $position_mappings[$position];
             }
         }
-
         if(! empty($metadata['render']))
         {
             $template_path = wp_normalize_path(realpath(dirname($metadata['file']).'/'.remove_block_asset_path_prefix($metadata['render'])));
             if($template_path)
             {
+                /**
+                 * Renders the block on the server.
+                 *
+                 * @param array    $attributes Block attributes.
+                 * @param string   $content    Block default content.
+                 * @param WP_Block $block      Block instance.
+                 *
+                 * @return string Returns the block content.
+                 * @since 6.1.0
+                 *
+                 */
                 $settings['render_callback'] = static function($attributes, $content, $block) use ($template_path)
                 { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
                     ob_start();
@@ -502,12 +566,38 @@
                 };
             }
         }
-
+        /**
+         * Filters the settings determined from the block type metadata.
+         *
+         * @param array $settings Array of determined settings for registering a block type.
+         * @param array $metadata Metadata provided for registering a block type.
+         *
+         * @since 5.7.0
+         *
+         */
         $settings = apply_filters('block_type_metadata_settings', array_merge($settings, $args), $metadata);
 
         return WP_Block_Type_Registry::get_instance()->register($metadata['name'], $settings);
     }
 
+    /**
+     * Registers a block type. The recommended way is to register a block type using
+     * the metadata stored in the `block.json` file.
+     *
+     * @param string|WP_Block_Type $block_type Block type name including namespace, or alternatively
+     *                                         a path to the JSON file with metadata definition for the block,
+     *                                         or a path to the folder where the `block.json` file is located,
+     *                                         or a complete WP_Block_Type instance.
+     *                                         In case a WP_Block_Type is provided, the $args parameter will be ignored.
+     * @param array                $args       Optional. Array of block type arguments. Accepts any public property
+     *                                         of `WP_Block_Type`. See WP_Block_Type::__construct() for information
+     *                                         on accepted arguments. Default empty array.
+     *
+     * @return WP_Block_Type|false The registered block type on success, or false on failure.
+     * @since 5.8.0 First parameter now accepts a path to the `block.json` file.
+     *
+     * @since 5.0.0
+     */
     function register_block_type($block_type, $args = [])
     {
         if(is_string($block_type) && file_exists($block_type))
@@ -518,35 +608,75 @@
         return WP_Block_Type_Registry::get_instance()->register($block_type, $args);
     }
 
+    /**
+     * Unregisters a block type.
+     *
+     * @param string|WP_Block_Type $name Block type name including namespace, or alternatively
+     *                                   a complete WP_Block_Type instance.
+     *
+     * @return WP_Block_Type|false The unregistered block type on success, or false on failure.
+     * @since 5.0.0
+     *
+     */
     function unregister_block_type($name)
     {
         return WP_Block_Type_Registry::get_instance()->unregister($name);
     }
 
+    /**
+     * Determines whether a post or content string has blocks.
+     *
+     * This test optimizes for performance rather than strict accuracy, detecting
+     * the pattern of a block but not validating its structure. For strict accuracy,
+     * you should use the block parser on post content.
+     *
+     * @param int|string|WP_Post|null $post Optional. Post content, post ID, or post object.
+     *                                      Defaults to global $post.
+     *
+     * @return bool Whether the post has blocks.
+     * @since 5.0.0
+     *
+     * @see   parse_blocks()
+     *
+     */
     function has_blocks($post = null)
     {
         if(! is_string($post))
         {
             $wp_post = get_post($post);
-
             if(! $wp_post instanceof WP_Post)
             {
                 return false;
             }
-
             $post = $wp_post->post_content;
         }
 
         return str_contains((string) $post, '<!-- wp:');
     }
 
+    /**
+     * Determines whether a $post or a string contains a specific block type.
+     *
+     * This test optimizes for performance rather than strict accuracy, detecting
+     * whether the block type exists but not validating its structure and not checking
+     * reusable blocks. For strict accuracy, you should use the block parser on post content.
+     *
+     * @param string                  $block_name Full block type to look for.
+     * @param int|string|WP_Post|null $post       Optional. Post content, post ID, or post object.
+     *                                            Defaults to global $post.
+     *
+     * @return bool Whether the post content contains the specified block.
+     * @see   parse_blocks()
+     *
+     * @since 5.0.0
+     *
+     */
     function has_block($block_name, $post = null)
     {
         if(! has_blocks($post))
         {
             return false;
         }
-
         if(! is_string($post))
         {
             $wp_post = get_post($post);
@@ -555,7 +685,6 @@
                 $post = $wp_post->post_content;
             }
         }
-
         /*
          * Normalize block name to include namespace, if provided as non-namespaced.
          * This matches behavior for WordPress 5.0.0 - 5.3.0 in matching blocks by
@@ -565,10 +694,8 @@
         {
             $block_name = 'core/'.$block_name;
         }
-
         // Test for existence of block by its fully qualified name.
         $has_block = str_contains($post, '<!-- wp:'.$block_name.' ');
-
         if(! $has_block)
         {
             /*
@@ -585,10 +712,16 @@
         return $has_block;
     }
 
+    /**
+     * Returns an array of the names of all registered dynamic block types.
+     *
+     * @return string[] Array of dynamic block names.
+     * @since 5.0.0
+     *
+     */
     function get_dynamic_block_names()
     {
         $dynamic_block_names = [];
-
         $block_types = WP_Block_Type_Registry::get_instance()->get_all_registered();
         foreach($block_types as $block_type)
         {
@@ -601,10 +734,28 @@
         return $dynamic_block_names;
     }
 
+    /**
+     * Given an array of attributes, returns a string in the serialized attributes
+     * format prepared for post content.
+     *
+     * The serialized result is a JSON-encoded string, with unicode escape sequence
+     * substitution for characters which might otherwise interfere with embedding
+     * the result in an HTML comment.
+     *
+     * This function must produce output that remains in sync with the output of
+     * the serializeAttributes JavaScript function in the block editor in order
+     * to ensure consistent operation between PHP and JavaScript.
+     *
+     * @param array $block_attributes Attributes object.
+     *
+     * @return string Serialized attributes.
+     * @since 5.3.1
+     *
+     */
     function serialize_block_attributes($block_attributes)
     {
         $encoded_attributes = wp_json_encode($block_attributes, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        $encoded_attributes = str_replace("--", '\\u002d\\u002d', $encoded_attributes);
+        $encoded_attributes = preg_replace('/--/', '\\u002d\\u002d', $encoded_attributes);
         $encoded_attributes = preg_replace('/</', '\\u003c', $encoded_attributes);
         $encoded_attributes = preg_replace('/>/', '\\u003e', $encoded_attributes);
         $encoded_attributes = preg_replace('/&/', '\\u0026', $encoded_attributes);
@@ -614,6 +765,17 @@
         return $encoded_attributes;
     }
 
+    /**
+     * Returns the block name to use for serialization. This will remove the default
+     * "core/" namespace from a block name.
+     *
+     * @param string|null $block_name Optional. Original block name. Null if the block name is unknown,
+     *                                e.g. Classic blocks have their name set to null. Default null.
+     *
+     * @return string Block name to use for serialization.
+     * @since 5.3.1
+     *
+     */
     function strip_core_block_namespace($block_name = null)
     {
         if(is_string($block_name) && str_starts_with($block_name, 'core/'))
@@ -624,16 +786,26 @@
         return $block_name;
     }
 
+    /**
+     * Returns the content of a block, including comment delimiters.
+     *
+     * @param string|null $block_name       Block name. Null if the block name is unknown,
+     *                                      e.g. Classic blocks have their name set to null.
+     * @param array       $block_attributes Block attributes.
+     * @param string      $block_content    Block save content.
+     *
+     * @return string Comment-delimited block content.
+     * @since 5.3.1
+     *
+     */
     function get_comment_delimited_block_content($block_name, $block_attributes, $block_content)
     {
         if(is_null($block_name))
         {
             return $block_content;
         }
-
         $serialized_block_name = strip_core_block_namespace($block_name);
         $serialized_attributes = empty($block_attributes) ? '' : serialize_block_attributes($block_attributes).' ';
-
         if(empty($block_content))
         {
             return sprintf('<!-- wp:%s %s/-->', $serialized_block_name, $serialized_attributes);
@@ -642,21 +814,36 @@
         return sprintf('<!-- wp:%s %s-->%s<!-- /wp:%s -->', $serialized_block_name, $serialized_attributes, $block_content, $serialized_block_name);
     }
 
+    /**
+     * Returns the content of a block, including comment delimiters, serializing all
+     * attributes from the given parsed block.
+     *
+     * This should be used when preparing a block to be saved to post content.
+     * Prefer `render_block` when preparing a block for display. Unlike
+     * `render_block`, this does not evaluate a block's `render_callback`, and will
+     * instead preserve the markup as parsed.
+     *
+     * @param array         $block    A representative array of a single parsed block object. See WP_Block_Parser_Block.
+     * @param callable|null $callback Optional. Callback to run on each block in the tree before serialization. Default
+     *                                null.
+     *
+     * @return string String of rendered HTML.
+     * @since 6.4.0 The `$callback` parameter was added.
+     *
+     * @since 5.3.1
+     */
     function serialize_block($block, $callback = null)
     {
         if(is_callable($callback))
         {
             $block = call_user_func($callback, $block);
         }
-
         $block_content = '';
-
         $index = 0;
         foreach($block['innerContent'] as $chunk)
         {
             $block_content .= is_string($chunk) ? $chunk : serialize_block($block['innerBlocks'][$index++], $callback);
         }
-
         if(! is_array($block['attrs']))
         {
             $block['attrs'] = [];
@@ -665,26 +852,52 @@
         return get_comment_delimited_block_content($block['blockName'], $block['attrs'], $block_content);
     }
 
+    /**
+     * Returns a joined string of the aggregate serialization of the given
+     * parsed blocks.
+     *
+     * @param array[]       $blocks   An array of representative arrays of parsed block objects. See serialize_block().
+     * @param callable|null $callback Optional. Callback to run on each block in the tree before serialization. Default
+     *                                null.
+     *
+     * @return string String of rendered HTML.
+     * @since 6.4.0 The `$callback` parameter was added.
+     *
+     * @since 5.3.1
+     */
     function serialize_blocks($blocks, $callback = null)
     {
         $result = '';
         foreach($blocks as $block)
         {
             $result .= serialize_block($block, $callback);
-        };
+        }
 
         return $result;
     }
 
+    /**
+     * Filters and sanitizes block content to remove non-allowable HTML
+     * from parsed block attribute values.
+     *
+     * @param string         $text              Text that may contain block content.
+     * @param array[]|string $allowed_html      Optional. An array of allowed HTML elements and attributes,
+     *                                          or a context name such as 'post'. See wp_kses_allowed_html()
+     *                                          for the list of accepted context names. Default 'post'.
+     * @param string[]       $allowed_protocols Optional. Array of allowed URL protocols.
+     *                                          Defaults to the result of wp_allowed_protocols().
+     *
+     * @return string The filtered and sanitized content result.
+     * @since 5.3.1
+     *
+     */
     function filter_block_content($text, $allowed_html = 'post', $allowed_protocols = [])
     {
         $result = '';
-
         if(str_contains($text, '<!--') && str_contains($text, '--->'))
         {
             $text = preg_replace_callback('%<!--(.*?)--->%', '_filter_block_content_callback', $text);
         }
-
         $blocks = parse_blocks($text);
         foreach($blocks as $block)
         {
@@ -695,15 +908,40 @@
         return $result;
     }
 
+    /**
+     * Callback used for regular expression replacement in filter_block_content().
+     *
+     * @private
+     *
+     * @param array $matches Array of preg_replace_callback matches.
+     *
+     * @return string Replacement string.
+     * @since 6.2.1
+     *
+     */
     function _filter_block_content_callback($matches)
     {
         return '<!--'.rtrim($matches[1], '-').'-->';
     }
 
+    /**
+     * Filters and sanitizes a parsed block to remove non-allowable HTML
+     * from block attribute values.
+     *
+     * @param WP_Block_Parser_Block $block             The parsed block object.
+     * @param array[]|string        $allowed_html      An array of allowed HTML elements and attributes,
+     *                                                 or a context name such as 'post'. See wp_kses_allowed_html()
+     *                                                 for the list of accepted context names.
+     * @param string[]              $allowed_protocols Optional. Array of allowed URL protocols.
+     *                                                 Defaults to the result of wp_allowed_protocols().
+     *
+     * @return array The filtered and sanitized block object result.
+     * @since 5.3.1
+     *
+     */
     function filter_block_kses($block, $allowed_html, $allowed_protocols = [])
     {
         $block['attrs'] = filter_block_kses_value($block['attrs'], $allowed_html, $allowed_protocols);
-
         if(is_array($block['innerBlocks']))
         {
             foreach($block['innerBlocks'] as $i => $inner_block)
@@ -715,6 +953,21 @@
         return $block;
     }
 
+    /**
+     * Filters and sanitizes a parsed block attribute value to remove
+     * non-allowable HTML.
+     *
+     * @param string[]|string $value             The attribute value to filter.
+     * @param array[]|string  $allowed_html      An array of allowed HTML elements and attributes,
+     *                                           or a context name such as 'post'. See wp_kses_allowed_html()
+     *                                           for the list of accepted context names.
+     * @param string[]        $allowed_protocols Optional. Array of allowed URL protocols.
+     *                                           Defaults to the result of wp_allowed_protocols().
+     *
+     * @return string[]|string The filtered and sanitized result.
+     * @since 5.3.1
+     *
+     */
     function filter_block_kses_value($value, $allowed_html, $allowed_protocols = [])
     {
         if(is_array($value))
@@ -723,12 +976,10 @@
             {
                 $filtered_key = filter_block_kses_value($key, $allowed_html, $allowed_protocols);
                 $filtered_value = filter_block_kses_value($inner_value, $allowed_html, $allowed_protocols);
-
                 if($filtered_key !== $key)
                 {
                     unset($value[$key]);
                 }
-
                 $value[$filtered_key] = $filtered_value;
             }
         }
@@ -740,13 +991,24 @@
         return $value;
     }
 
+    /**
+     * Parses blocks out of a content string, and renders those appropriate for the excerpt.
+     *
+     * As the excerpt should be a small string of text relevant to the full post content,
+     * this function renders the blocks that are most likely to contain such text.
+     *
+     * @param string $content The content to parse.
+     *
+     * @return string The parsed and filtered content.
+     * @since 5.0.0
+     *
+     */
     function excerpt_remove_blocks($content)
     {
         if(! has_blocks($content))
         {
             return $content;
         }
-
         $allowed_inner_blocks = [
             // Classic blocks have their blockName set to null.
             null,
@@ -762,21 +1024,36 @@
             'core/table',
             'core/verse',
         ];
-
         $allowed_wrapper_blocks = [
             'core/columns',
             'core/column',
             'core/group',
         ];
-
+        /**
+         * Filters the list of blocks that can be used as wrapper blocks, allowing
+         * excerpts to be generated from the `innerBlocks` of these wrappers.
+         *
+         * @param string[] $allowed_wrapper_blocks The list of names of allowed wrapper blocks.
+         *
+         * @since 5.8.0
+         *
+         */
         $allowed_wrapper_blocks = apply_filters('excerpt_allowed_wrapper_blocks', $allowed_wrapper_blocks);
-
         $allowed_blocks = array_merge($allowed_inner_blocks, $allowed_wrapper_blocks);
-
+        /**
+         * Filters the list of blocks that can contribute to the excerpt.
+         *
+         * If a dynamic block is added to this list, it must not generate another
+         * excerpt, as this will cause an infinite loop to occur.
+         *
+         * @param string[] $allowed_blocks The list of names of allowed blocks.
+         *
+         * @since 5.0.0
+         *
+         */
         $allowed_blocks = apply_filters('excerpt_allowed_blocks', $allowed_blocks);
         $blocks = parse_blocks($content);
         $output = '';
-
         foreach($blocks as $block)
         {
             if(in_array($block['blockName'], $allowed_blocks, true))
@@ -788,7 +1065,6 @@
                         $output .= _excerpt_render_inner_blocks($block, $allowed_blocks);
                         continue;
                     }
-
                     // Skip the block if it has disallowed or nested inner blocks.
                     foreach($block['innerBlocks'] as $inner_block)
                     {
@@ -798,7 +1074,6 @@
                         }
                     }
                 }
-
                 $output .= render_block($block);
             }
         }
@@ -806,6 +1081,16 @@
         return $output;
     }
 
+    /**
+     * Parses footnotes markup out of a content string,
+     * and renders those appropriate for the excerpt.
+     *
+     * @param string $content The content to parse.
+     *
+     * @return string The parsed and filtered content.
+     * @since 6.3.0
+     *
+     */
     function excerpt_remove_footnotes($content)
     {
         if(! str_contains($content, 'data-fn='))
@@ -816,17 +1101,27 @@
         return preg_replace('_<sup data-fn="[^"]+" class="[^"]+">\s*<a href="[^"]+" id="[^"]+">\d+</a>\s*</sup>_', '', $content);
     }
 
+    /**
+     * Renders inner blocks from the allowed wrapper blocks
+     * for generating an excerpt.
+     *
+     * @param array $parsed_block   The parsed block.
+     * @param array $allowed_blocks The list of allowed inner blocks.
+     *
+     * @return string The rendered inner blocks.
+     * @since  5.8.0
+     * @access private
+     *
+     */
     function _excerpt_render_inner_blocks($parsed_block, $allowed_blocks)
     {
         $output = '';
-
         foreach($parsed_block['innerBlocks'] as $inner_block)
         {
             if(! in_array($inner_block['blockName'], $allowed_blocks, true))
             {
                 continue;
             }
-
             if(empty($inner_block['innerBlocks']))
             {
                 $output .= render_block($inner_block);
@@ -840,27 +1135,54 @@
         return $output;
     }
 
+    /**
+     * Renders a single block into a HTML string.
+     *
+     * @param array    $parsed_block A single parsed block object.
+     *
+     * @return string String of rendered HTML.
+     * @since 5.0.0
+     *
+     * @global WP_Post $post         The post to edit.
+     *
+     */
     function render_block($parsed_block)
     {
         global $post;
         $parent_block = null;
-
+        /**
+         * Allows render_block() to be short-circuited, by returning a non-null value.
+         *
+         * @param string|null   $pre_render   The pre-rendered content. Default null.
+         * @param array         $parsed_block The block being rendered.
+         * @param WP_Block|null $parent_block If this is a nested block, a reference to the parent block.
+         *
+         * @since 5.9.0 The `$parent_block` parameter was added.
+         *
+         * @since 5.1.0
+         */
         $pre_render = apply_filters('pre_render_block', null, $parsed_block, $parent_block);
         if(! is_null($pre_render))
         {
             return $pre_render;
         }
-
         $source_block = $parsed_block;
-
+        /**
+         * Filters the block being rendered in render_block(), before it's processed.
+         *
+         * @param array         $parsed_block The block being rendered.
+         * @param array         $source_block An un-modified copy of $parsed_block, as it appeared in the source content.
+         * @param WP_Block|null $parent_block If this is a nested block, a reference to the parent block.
+         *
+         * @since 5.9.0 The `$parent_block` parameter was added.
+         *
+         * @since 5.1.0
+         */
         $parsed_block = apply_filters('render_block_data', $parsed_block, $source_block, $parent_block);
-
         $context = [];
-
         if($post instanceof WP_Post)
         {
             $context['postId'] = $post->ID;
-
             /*
              * The `postType` context is largely unnecessary server-side, since the ID
              * is usually sufficient on its own. That being said, since a block's
@@ -869,33 +1191,65 @@
              */
             $context['postType'] = $post->post_type;
         }
-
+        /**
+         * Filters the default context provided to a rendered block.
+         *
+         * @param array         $context      Default context.
+         * @param array         $parsed_block Block being rendered, filtered by `render_block_data`.
+         * @param WP_Block|null $parent_block If this is a nested block, a reference to the parent block.
+         *
+         * @since 5.9.0 The `$parent_block` parameter was added.
+         *
+         * @since 5.5.0
+         */
         $context = apply_filters('render_block_context', $context, $parsed_block, $parent_block);
-
         $block = new WP_Block($parsed_block, $context);
 
         return $block->render();
     }
 
+    /**
+     * Parses blocks out of a content string.
+     *
+     * @param string $content Post content.
+     *
+     * @return array[] Array of parsed block objects.
+     * @since 5.0.0
+     *
+     */
     function parse_blocks($content)
     {
+        /**
+         * Filter to allow plugins to replace the server-side block parser.
+         *
+         * @param string $parser_class Name of block parser class.
+         *
+         * @since 5.0.0
+         *
+         */
         $parser_class = apply_filters('block_parser_class', 'WP_Block_Parser');
-
         $parser = new $parser_class();
 
         return $parser->parse($content);
     }
 
+    /**
+     * Parses dynamic blocks out of `post_content` and re-renders them.
+     *
+     * @param string $content Post content.
+     *
+     * @return string Updated post content.
+     * @since 5.0.0
+     *
+     */
     function do_blocks($content)
     {
         $blocks = parse_blocks($content);
         $output = '';
-
         foreach($blocks as $block)
         {
             $output .= render_block($block);
         }
-
         // If there are blocks in this content, we shouldn't run wpautop() on it later.
         $priority = has_filter('the_content', 'wpautop');
         if(false !== $priority && doing_filter('the_content') && has_blocks($content))
@@ -907,36 +1261,88 @@
         return $output;
     }
 
+    /**
+     * If do_blocks() needs to remove wpautop() from the `the_content` filter, this re-adds it afterwards,
+     * for subsequent `the_content` usage.
+     *
+     * @param string $content The post content running through this filter.
+     *
+     * @return string The unmodified content.
+     * @since  5.0.0
+     * @access private
+     *
+     */
     function _restore_wpautop_hook($content)
     {
         $current_priority = has_filter('the_content', '_restore_wpautop_hook');
-
         add_filter('the_content', 'wpautop', $current_priority - 1);
         remove_filter('the_content', '_restore_wpautop_hook', $current_priority);
 
         return $content;
     }
 
+    /**
+     * Returns the current version of the block format that the content string is using.
+     *
+     * If the string doesn't contain blocks, it returns 0.
+     *
+     * @param string $content Content to test.
+     *
+     * @return int The block format version is 1 if the content contains one or more blocks, 0 otherwise.
+     * @since 5.0.0
+     *
+     */
     function block_version($content)
     {
-        if(has_blocks($content))
-        {
-            return 1;
-        }
-
-        return 0;
+        return has_blocks($content) ? 1 : 0;
     }
 
+    /**
+     * Registers a new block style.
+     *
+     * @param string $block_name       Block type name including namespace.
+     * @param array  $style_properties Array containing the properties of the style name, label,
+     *                                 style_handle (name of the stylesheet to be enqueued),
+     *                                 inline_style (string containing the CSS to be added).
+     *
+     * @return bool True if the block style was registered with success and false otherwise.
+     * @link  https://developer.wordpress.org/block-editor/reference-guides/block-api/block-styles/
+     *
+     * @since 5.3.0
+     *
+     */
     function register_block_style($block_name, $style_properties)
     {
         return WP_Block_Styles_Registry::get_instance()->register($block_name, $style_properties);
     }
 
+    /**
+     * Unregisters a block style.
+     *
+     * @param string $block_name       Block type name including namespace.
+     * @param string $block_style_name Block style name.
+     *
+     * @return bool True if the block style was unregistered with success and false otherwise.
+     * @since 5.3.0
+     *
+     */
     function unregister_block_style($block_name, $block_style_name)
     {
         return WP_Block_Styles_Registry::get_instance()->unregister($block_name, $block_style_name);
     }
 
+    /**
+     * Checks whether the current block type supports the feature requested.
+     *
+     * @param WP_Block_Type $block_type    Block type to check for support.
+     * @param string|array  $feature       Feature slug, or path to a specific feature to check support for.
+     * @param mixed         $default_value Optional. Fallback value for feature support. Default false.
+     *
+     * @return bool Whether the feature is supported.
+     * @since 5.8.0
+     * @since 6.4.0 The `$feature` parameter now supports a string.
+     *
+     */
     function block_has_support($block_type, $feature, $default_value = false)
     {
         $block_support = $default_value;
@@ -946,7 +1352,6 @@
             {
                 $feature = $feature[0];
             }
-
             if(is_array($feature))
             {
                 $block_support = _wp_array_get($block_type->supports, $feature, $default_value);
@@ -960,13 +1365,23 @@
         return true === $block_support || is_array($block_support);
     }
 
+    /**
+     * Converts typography keys declared under `supports.*` to `supports.typography.*`.
+     *
+     * Displays a `_doing_it_wrong()` notice when a block using the older format is detected.
+     *
+     * @param array $metadata Metadata for registering a block type.
+     *
+     * @return array Filtered metadata for registering a block type.
+     * @since 5.8.0
+     *
+     */
     function wp_migrate_old_typography_shape($metadata)
     {
         if(! isset($metadata['supports']))
         {
             return $metadata;
         }
-
         $typography_keys = [
             '__experimentalFontFamily',
             '__experimentalFontStyle',
@@ -977,15 +1392,12 @@
             'fontSize',
             'lineHeight',
         ];
-
         foreach($typography_keys as $typography_key)
         {
             $support_for_key = _wp_array_get($metadata['supports'], [$typography_key], null);
-
             if(null !== $support_for_key)
             {
                 _doing_it_wrong('register_block_type_from_metadata()', sprintf(/* translators: 1: Block type, 2: Typography supports key, e.g: fontSize, lineHeight, etc. 3: block.json, 4: Old metadata key, 5: New metadata key. */ __('Block "%1$s" is declaring %2$s support in %3$s file under %4$s. %2$s support is now declared under %5$s.'), $metadata['name'], "<code>$typography_key</code>", '<code>block.json</code>', "<code>supports.$typography_key</code>", "<code>supports.typography.$typography_key</code>"), '5.8.0');
-
                 _wp_array_set($metadata['supports'], ['typography', $typography_key], $support_for_key);
                 unset($metadata['supports'][$typography_key]);
             }
@@ -994,6 +1406,20 @@
         return $metadata;
     }
 
+    /**
+     * Helper function that constructs a WP_Query args array from
+     * a `Query` block properties.
+     *
+     * It's used in Query Loop, Query Pagination Numbers and Query Pagination Next blocks.
+     *
+     * @param WP_Block $block Block instance.
+     * @param int      $page  Current query's page.
+     *
+     * @return array Returns the constructed WP_Query arguments.
+     * @since 6.1.0 Added `query_loop_block_query_vars` filter and `parents` support in query.
+     *
+     * @since 5.8.0
+     */
     function build_query_vars_from_query_block($block, $page)
     {
         $query = [
@@ -1002,7 +1428,6 @@
             'orderby' => 'date',
             'post__not_in' => [],
         ];
-
         if(isset($block->context['query']))
         {
             if(! empty($block->context['query']['postType']))
@@ -1043,12 +1468,10 @@
             {
                 $per_page = absint($block->context['query']['perPage']);
                 $offset = 0;
-
                 if(isset($block->context['query']['offset']) && is_numeric($block->context['query']['offset']))
                 {
                     $offset = absint($block->context['query']['offset']);
                 }
-
                 $query['offset'] = ($per_page * ($page - 1)) + $offset;
                 $query['posts_per_page'] = $per_page;
             }
@@ -1127,9 +1550,44 @@
             }
         }
 
+        /**
+         * Filters the arguments which will be passed to `WP_Query` for the Query Loop Block.
+         *
+         * Anything to this filter should be compatible with the `WP_Query` API to form
+         * the query context which will be passed down to the Query Loop Block's children.
+         * This can help, for example, to include additional settings or meta queries not
+         * directly supported by the core Query Loop Block, and extend its capabilities.
+         *
+         * Please note that this will only influence the query that will be rendered on the
+         * front-end. The editor preview is not affected by this filter. Also, worth noting
+         * that the editor preview uses the REST API, so, ideally, one should aim to provide
+         * attributes which are also compatible with the REST API, in order to be able to
+         * implement identical queries on both sides.
+         *
+         * @param array    $query Array containing parameters for `WP_Query` as parsed by the block context.
+         * @param WP_Block $block Block instance.
+         * @param int      $page  Current query's page.
+         *
+         * @since 6.1.0
+         *
+         */
         return apply_filters('query_loop_block_query_vars', $query, $block, $page);
     }
 
+    /**
+     * Helper function that returns the proper pagination arrow HTML for
+     * `QueryPaginationNext` and `QueryPaginationPrevious` blocks based
+     * on the provided `paginationArrow` from `QueryPagination` context.
+     *
+     * It's used in QueryPaginationNext and QueryPaginationPrevious blocks.
+     *
+     * @param WP_Block $block   Block instance.
+     * @param bool     $is_next Flag for handling `next/previous` blocks.
+     *
+     * @return string|null The pagination arrow HTML or null if there is none.
+     * @since 5.9.0
+     *
+     */
     function get_query_pagination_arrow($block, $is_next)
     {
         $arrow_map = [
@@ -1156,6 +1614,19 @@
         return null;
     }
 
+    /**
+     * Helper function that constructs a comment query vars array from the passed
+     * block properties.
+     *
+     * It's used with the Comment Query Loop inner blocks.
+     *
+     * @param WP_Block $block Block instance.
+     *
+     * @return array Returns the comment query parameters to use with the
+     *               WP_Comment_Query constructor.
+     * @since 6.0.0
+     *
+     */
     function build_comment_query_vars_from_block($block)
     {
         $comment_args = [
@@ -1164,7 +1635,6 @@
             'status' => 'approve',
             'no_found_rows' => false,
         ];
-
         if(is_user_logged_in())
         {
             $comment_args['include_unapproved'] = [get_current_user_id()];
@@ -1172,18 +1642,15 @@
         else
         {
             $unapproved_email = wp_get_unapproved_comment_author_email();
-
             if($unapproved_email)
             {
                 $comment_args['include_unapproved'] = [$unapproved_email];
             }
         }
-
         if(! empty($block->context['postId']))
         {
             $comment_args['post_id'] = (int) $block->context['postId'];
         }
-
         if(get_option('thread_comments'))
         {
             $comment_args['hierarchical'] = 'threaded';
@@ -1192,7 +1659,6 @@
         {
             $comment_args['hierarchical'] = false;
         }
-
         if(get_option('page_comments') === '1' || get_option('page_comments') === true)
         {
             $per_page = get_option('comments_per_page');
@@ -1200,7 +1666,6 @@
             if($per_page > 0)
             {
                 $comment_args['number'] = $per_page;
-
                 $page = (int) get_query_var('cpage');
                 if($page)
                 {
@@ -1230,6 +1695,21 @@
         return $comment_args;
     }
 
+    /**
+     * Helper function that returns the proper pagination arrow HTML for
+     * `CommentsPaginationNext` and `CommentsPaginationPrevious` blocks based on the
+     * provided `paginationArrow` from `CommentsPagination` context.
+     *
+     * It's used in CommentsPaginationNext and CommentsPaginationPrevious blocks.
+     *
+     * @param WP_Block $block           Block instance.
+     * @param string   $pagination_type Optional. Type of the arrow we will be rendering.
+     *                                  Accepts 'next' or 'previous'. Default 'next'.
+     *
+     * @return string|null The pagination arrow HTML or null if there is none.
+     * @since 6.0.0
+     *
+     */
     function get_comments_pagination_arrow($block, $pagination_type = 'next')
     {
         $arrow_map = [

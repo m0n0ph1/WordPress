@@ -1,21 +1,33 @@
 <?php
 
+    /**
+     * IXR_Server
+     *
+     * @package IXR
+     * @since   1.5.0
+     */
     class IXR_Server
     {
-        public $data;
+        var $data;
 
-        public $callbacks = [];
+        var $callbacks = [];
 
-        public $message;
+        var $message;
 
-        public $capabilities;
+        var $capabilities;
 
+        /**
+         * PHP4 constructor.
+         */
         public function IXR_Server($callbacks = false, $data = false, $wait = false)
         {
-            $this->__construct($callbacks, $data, $wait);
+            self::__construct($callbacks, $data, $wait);
         }
 
-        public function __construct($callbacks = false, $data = false, $wait = false)
+        /**
+         * PHP5 constructor.
+         */
+        function __construct($callbacks = false, $data = false, $wait = false)
         {
             $this->setCapabilities();
             if($callbacks)
@@ -29,14 +41,14 @@
             }
         }
 
-        public function setCallbacks()
+        function setCallbacks()
         {
             $this->callbacks['system.getCapabilities'] = 'this:getCapabilities';
             $this->callbacks['system.listMethods'] = 'this:listMethods';
             $this->callbacks['system.multicall'] = 'this:multiCall';
         }
 
-        public function serve($data = false)
+        function serve($data = false)
         {
             if(! $data)
             {
@@ -50,7 +62,6 @@
                     header('Content-Type: text/plain'); // merged from WP #9093
                     die('XML-RPC server accepts POST requests only.');
                 }
-
                 $data = file_get_contents('php://input');
             }
             $this->message = new IXR_Message($data);
@@ -63,17 +74,14 @@
                 $this->error(-32600, 'server error. invalid xml-rpc. not conforming to spec. Request must be a methodCall');
             }
             $result = $this->call($this->message->methodName, $this->message->params);
-
             // Is the result an error?
             if(is_a($result, 'IXR_Error'))
             {
                 $this->error($result);
             }
-
             // Encode the result
             $r = new IXR_Value($result);
             $resultxml = $r->getXml();
-
             // Create the XML
             $xml = <<<EOD
 <methodResponse>
@@ -91,18 +99,17 @@ EOD;
             $this->output($xml);
         }
 
-        public function error($error, $message = false)
+        function error($error, $message = false)
         {
             // Accepts either an error object or an error code and message
             if($message && ! is_object($error))
             {
                 $error = new IXR_Error($error, $message);
             }
-
             $this->output($error->getXml());
         }
 
-        public function output($xml)
+        function output($xml)
         {
             $charset = function_exists('get_option') ? get_option('blog_charset') : '';
             if($charset)
@@ -128,23 +135,21 @@ EOD;
             exit;
         }
 
-        public function call($methodname, $args)
+        function call($methodname, $args)
         {
             if(! $this->hasMethod($methodname))
             {
                 return new IXR_Error(-32601, 'server error. requested method '.$methodname.' does not exist.');
             }
             $method = $this->callbacks[$methodname];
-
             // Perform the callback and send the response
             if(count($args) == 1)
             {
                 // If only one parameter just send that instead of the whole array
                 $args = $args[0];
             }
-
             // Are we dealing with a function or a method?
-            if(is_string($method) && strpos($method, 'this:') === 0)
+            if(is_string($method) && substr($method, 0, 5) == 'this:')
             {
                 // It's a class method - check it exists
                 $method = substr($method, 5);
@@ -152,7 +157,6 @@ EOD;
                 {
                     return new IXR_Error(-32601, 'server error. requested class method "'.$method.'" does not exist.');
                 }
-
                 // Call the method
                 $result = $this->$method($args);
             }
@@ -173,7 +177,6 @@ EOD;
                         return new IXR_Error(-32601, 'server error. requested function "'.$method.'" does not exist.');
                     }
                 }
-
                 // Call the function
                 $result = call_user_func($method, $args);
             }
@@ -181,17 +184,17 @@ EOD;
             return $result;
         }
 
-        public function hasMethod($method)
+        function hasMethod($method)
         {
-            return array_key_exists($method, $this->callbacks);
+            return in_array($method, array_keys($this->callbacks));
         }
 
-        public function getCapabilities($args)
+        function getCapabilities($args)
         {
             return $this->capabilities;
         }
 
-        public function setCapabilities()
+        function setCapabilities()
         {
             // Initialises capabilities array
             $this->capabilities = [
@@ -210,14 +213,14 @@ EOD;
             ];
         }
 
-        public function listMethods($args)
+        function listMethods($args)
         {
             // Returns a list of methods - uses array_reverse to ensure user defined
             // methods are listed before server defined methods
             return array_reverse(array_keys($this->callbacks));
         }
 
-        public function multiCall($methodcalls)
+        function multiCall($methodcalls)
         {
             // See http://www.xmlrpc.com/discuss/msgReader$1208
             $return = [];

@@ -1,9 +1,35 @@
 <?php
-
+    /**
+     * Javascript Loader Class
+     *
+     * Allow `async` and `defer` while enqueuing Javascript.
+     *
+     * Based on a solution in WP Rig.
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty
+     * @since      Twenty Twenty 1.0
+     */
     if(! class_exists('TwentyTwenty_Script_Loader'))
     {
+        /**
+         * A class that provides a way to add `async` or `defer` attributes to scripts.
+         *
+         * @since Twenty Twenty 1.0
+         */
         class TwentyTwenty_Script_Loader
         {
+            /**
+             * Migrates legacy async/defer script data which might be used by child themes.
+             *
+             * This method is used on the `print_scripts_array` filter.
+             *
+             * @param string[] $to_do An array of script dependency handles.
+             *
+             * @return string[] Unchanged array of script dependency handles.
+             * @since Twenty Twenty 2.0
+             *
+             */
             public function migrate_legacy_strategy_script_data($to_do)
             {
                 foreach($to_do as $handle)
@@ -20,6 +46,21 @@
                 return $to_do;
             }
 
+            /**
+             * Adds async/defer attributes to enqueued / registered scripts.
+             *
+             * Now that #12009 has landed in WordPress 6.3, this method is only used for older versions of WordPress.
+             * This method is used on the `script_loader_tag` filter.
+             *
+             * @param string $tag    The script tag.
+             * @param string $handle The script handle.
+             *
+             * @return string Script HTML string.
+             * @link  https://core.trac.wordpress.org/ticket/12009
+             *
+             * @since Twenty Twenty 1.0
+             *
+             */
             public function filter_script_loader_tag($tag, $handle)
             {
                 $strategies = [
@@ -31,7 +72,6 @@
                 {
                     $strategies[$strategy] = true;
                 }
-
                 foreach(array_keys(array_filter($strategies)) as $attr)
                 {
                     // Prevent adding attribute when already added in #12009.

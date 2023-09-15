@@ -1,5 +1,4 @@
 <?php
-
 /////////////////////////////////////////////////////////////////
 /// getID3() by James Heinrich <info@getid3.org>               //
 //  available at https://github.com/JamesHeinrich/getID3       //
@@ -13,38 +12,44 @@
 // dependencies: NONE                                          //
 //                                                            ///
 /////////////////////////////////////////////////////////////////
-
     if(! defined('GETID3_INCLUDEPATH'))
     { // prevent path-exposing attacks that access modules directly on public webservers
         exit;
     }
 
-    class module extends getid3_handler
+    class getid3_apetag extends getid3_handler
     {
+        /**
+         * true: return full data for all attachments;
+         * false: return no data for all attachments;
+         * integer: return data for attachments <= than this;
+         * string: save as file to this directory.
+         *
+         * @var int|bool|string
+         */
         public $inline_attachments = true;
 
         public $overrideendoffset = 0;
 
+        /**
+         * @return bool
+         */
         public function Analyze()
         {
             $info = &$this->getid3->info;
-
             if(! getid3_lib::intValueSupported($info['filesize']))
             {
                 $this->warning('Unable to check for APEtags because file is larger than '.round(PHP_INT_MAX / 1073741824).'GB');
 
                 return false;
             }
-
             $id3v1tagsize = 128;
             $apetagheadersize = 32;
             $lyrics3tagsize = 10;
-
             if($this->overrideendoffset == 0)
             {
                 $this->fseek(0 - $id3v1tagsize - $apetagheadersize - $lyrics3tagsize, SEEK_END);
                 $APEfooterID3v1 = $this->fread($id3v1tagsize + $apetagheadersize + $lyrics3tagsize);
-
                 // if (preg_match('/APETAGEX.{24}TAG.{125}$/i', $APEfooterID3v1)) {
                 if(substr($APEfooterID3v1, strlen($APEfooterID3v1) - $id3v1tagsize - $apetagheadersize, 8) == 'APETAGEX')
                 {
@@ -73,10 +78,8 @@
 
                 return false;
             }
-
             // shortcut
             $thisfile_ape = &$info['ape'];
-
             $this->fseek($thisfile_ape['tag_offset_end'] - $apetagheadersize);
             $APEfooterData = $this->fread(32);
             if(! ($thisfile_ape['footer'] = $this->parseAPEheaderFooter($APEfooterData)))
@@ -85,7 +88,6 @@
 
                 return false;
             }
-
             if(isset($thisfile_ape['footer']['flags']['header']) && $thisfile_ape['footer']['flags']['header'])
             {
                 $this->fseek($thisfile_ape['tag_offset_end'] - $thisfile_ape['footer']['raw']['tagsize'] - $apetagheadersize);
@@ -99,7 +101,6 @@
                 $APEtagData = $this->fread($thisfile_ape['footer']['raw']['tagsize']);
             }
             $info['avdataend'] = $thisfile_ape['tag_offset_start'];
-
             if(isset($info['id3v1']['tag_offset_start']) && ($info['id3v1']['tag_offset_start'] < $thisfile_ape['tag_offset_end']))
             {
                 $this->warning('ID3v1 tag information ignored since it appears to be a false synch in APEtag data');
@@ -114,7 +115,6 @@
                     }
                 }
             }
-
             $offset = 0;
             if(isset($thisfile_ape['footer']['flags']['header']) && $thisfile_ape['footer']['flags']['header'])
             {
@@ -129,11 +129,9 @@
                     return false;
                 }
             }
-
             // shortcut
             $info['replay_gain'] = [];
             $thisfile_replaygain = &$info['replay_gain'];
-
             for($i = 0; $i < $thisfile_ape['footer']['raw']['tag_items']; $i++)
             {
                 $value_size = getid3_lib::LittleEndian2Int(substr($APEtagData, $offset, 4));
@@ -148,17 +146,13 @@
                 }
                 $ItemKeyLength = strpos($APEtagData, "\x00", $offset) - $offset;
                 $item_key = strtolower(substr($APEtagData, $offset, $ItemKeyLength));
-
                 // shortcut
                 $thisfile_ape['items'][$item_key] = [];
                 $thisfile_ape_items_current = &$thisfile_ape['items'][$item_key];
-
                 $thisfile_ape_items_current['offset'] = $thisfile_ape['tag_offset_start'] + $offset;
-
                 $offset += ($ItemKeyLength + 1); // skip 0x00 terminator
                 $thisfile_ape_items_current['data'] = substr($APEtagData, $offset, $value_size);
                 $offset += $value_size;
-
                 $thisfile_ape_items_current['flags'] = $this->parseAPEtagFlags($item_flags);
                 switch($thisfile_ape_items_current['flags']['item_contents_raw'])
                 {
@@ -166,12 +160,10 @@
                     case 2: // Locator (URL, filename, etc), UTF-8 encoded
                         $thisfile_ape_items_current['data'] = explode("\x00", $thisfile_ape_items_current['data']);
                         break;
-
                     case 1:  // binary data
                     default:
                         break;
                 }
-
                 switch(strtolower($item_key))
                 {
                     // http://wiki.hydrogenaud.io/index.php?title=ReplayGain#MP3Gain
@@ -186,7 +178,6 @@
                             $this->warning('MP3gainTrackGain value in APEtag appears invalid: "'.$thisfile_ape_items_current['data'][0].'"');
                         }
                         break;
-
                     case 'replaygain_track_peak':
                         if(preg_match('#^([0-9\\.,]{8})$#', $thisfile_ape_items_current['data'][0], $matches))
                         {
@@ -202,7 +193,6 @@
                             $this->warning('MP3gainTrackPeak value in APEtag appears invalid: "'.$thisfile_ape_items_current['data'][0].'"');
                         }
                         break;
-
                     case 'replaygain_album_gain':
                         if(preg_match('#^([\\-\\+][0-9\\.,]{8})( dB)?$#', $thisfile_ape_items_current['data'][0], $matches))
                         {
@@ -214,7 +204,6 @@
                             $this->warning('MP3gainAlbumGain value in APEtag appears invalid: "'.$thisfile_ape_items_current['data'][0].'"');
                         }
                         break;
-
                     case 'replaygain_album_peak':
                         if(preg_match('#^([0-9\\.,]{8})$#', $thisfile_ape_items_current['data'][0], $matches))
                         {
@@ -230,7 +219,6 @@
                             $this->warning('MP3gainAlbumPeak value in APEtag appears invalid: "'.$thisfile_ape_items_current['data'][0].'"');
                         }
                         break;
-
                     case 'mp3gain_undo':
                         if(preg_match('#^[\\-\\+][0-9]{3},[\\-\\+][0-9]{3},[NW]$#', $thisfile_ape_items_current['data'][0]))
                         {
@@ -241,14 +229,13 @@
                             ] = explode(',', $thisfile_ape_items_current['data'][0]);
                             $thisfile_replaygain['mp3gain']['undo_left'] = intval($mp3gain_undo_left);
                             $thisfile_replaygain['mp3gain']['undo_right'] = intval($mp3gain_undo_right);
-                            $thisfile_replaygain['mp3gain']['undo_wrap'] = ($mp3gain_undo_wrap == 'Y');
+                            $thisfile_replaygain['mp3gain']['undo_wrap'] = (($mp3gain_undo_wrap == 'Y') ? true : false);
                         }
                         else
                         {
                             $this->warning('MP3gainUndo value in APEtag appears invalid: "'.$thisfile_ape_items_current['data'][0].'"');
                         }
                         break;
-
                     case 'mp3gain_minmax':
                         if(preg_match('#^[0-9]{3},[0-9]{3}$#', $thisfile_ape_items_current['data'][0]))
                         {
@@ -264,7 +251,6 @@
                             $this->warning('MP3gainMinMax value in APEtag appears invalid: "'.$thisfile_ape_items_current['data'][0].'"');
                         }
                         break;
-
                     case 'mp3gain_album_minmax':
                         if(preg_match('#^[0-9]{3},[0-9]{3}$#', $thisfile_ape_items_current['data'][0]))
                         {
@@ -280,7 +266,6 @@
                             $this->warning('MP3gainAlbumMinMax value in APEtag appears invalid: "'.$thisfile_ape_items_current['data'][0].'"');
                         }
                         break;
-
                     case 'tracknumber':
                         if(is_array($thisfile_ape_items_current['data']))
                         {
@@ -290,7 +275,6 @@
                             }
                         }
                         break;
-
                     case 'cover art (artist)':
                     case 'cover art (back)':
                     case 'cover art (band logo)':
@@ -324,7 +308,6 @@
                         ] = explode("\x00", $thisfile_ape_items_current['data'], 2);
                         $thisfile_ape_items_current['data_offset'] = $thisfile_ape_items_current['offset'] + strlen($thisfile_ape_items_current['filename']."\x00");
                         $thisfile_ape_items_current['data_length'] = strlen($thisfile_ape_items_current['data']);
-
                         do
                         {
                             $thisfile_ape_items_current['image_mime'] = '';
@@ -336,7 +319,6 @@
                                 break;
                             }
                             $thisfile_ape_items_current['image_mime'] = image_type_to_mime_type($imagechunkcheck[2]);
-
                             if($this->inline_attachments === false)
                             {
                                 // skip entirely
@@ -419,7 +401,6 @@
                         }
                         while(false);
                         break;
-
                     default:
                         if(is_array($thisfile_ape_items_current['data']))
                         {
@@ -439,15 +420,18 @@
             return true;
         }
 
+        /**
+         * @param string $APEheaderFooterData
+         *
+         * @return array|false
+         */
         public function parseAPEheaderFooter($APEheaderFooterData)
         {
             // http://www.uni-jena.de/~pfk/mpp/sv8/apeheader.html
-
             // shortcut
             $headerfooterinfo = [];
             $headerfooterinfo['raw'] = [];
             $headerfooterinfo_raw = &$headerfooterinfo['raw'];
-
             $headerfooterinfo_raw['footer_tag'] = substr($APEheaderFooterData, 0, 8);
             if($headerfooterinfo_raw['footer_tag'] != 'APETAGEX')
             {
@@ -458,7 +442,6 @@
             $headerfooterinfo_raw['tag_items'] = getid3_lib::LittleEndian2Int(substr($APEheaderFooterData, 16, 4));
             $headerfooterinfo_raw['global_flags'] = getid3_lib::LittleEndian2Int(substr($APEheaderFooterData, 20, 4));
             $headerfooterinfo_raw['reserved'] = substr($APEheaderFooterData, 24, 8);
-
             $headerfooterinfo['tag_version'] = $headerfooterinfo_raw['version'] / 1000;
             if($headerfooterinfo['tag_version'] >= 2)
             {
@@ -468,6 +451,11 @@
             return $headerfooterinfo;
         }
 
+        /**
+         * @param int $rawflagint
+         *
+         * @return array
+         */
         public function parseAPEtagFlags($rawflagint)
         {
             // "Note: APE Tags 1.0 do not use any of the APE Tag flags.
@@ -479,12 +467,16 @@
             $flags['this_is_header'] = (bool) ($rawflagint & 0x20000000);
             $flags['item_contents_raw'] = ($rawflagint & 0x00000006) >> 1;
             $flags['read_only'] = (bool) ($rawflagint & 0x00000001);
-
             $flags['item_contents'] = $this->APEcontentTypeFlagLookup($flags['item_contents_raw']);
 
             return $flags;
         }
 
+        /**
+         * @param int $contenttypeid
+         *
+         * @return string
+         */
         public function APEcontentTypeFlagLookup($contenttypeid)
         {
             static $APEcontentTypeFlagLookup = [
@@ -497,6 +489,11 @@
             return (isset($APEcontentTypeFlagLookup[$contenttypeid]) ? $APEcontentTypeFlagLookup[$contenttypeid] : 'invalid');
         }
 
+        /**
+         * @param string $itemkey
+         *
+         * @return bool
+         */
         public function APEtagItemIsUTF8Lookup($itemkey)
         {
             static $APEtagItemIsUTF8Lookup = [

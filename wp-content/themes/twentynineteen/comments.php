@@ -1,5 +1,16 @@
 <?php
-
+    /**
+     * The template for displaying comments
+     *
+     * This is the template that displays the area of the page that contains both the current comments
+     * and the comment form.
+     *
+     * @link       https://developer.wordpress.org/themes/basics/template-hierarchy/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Nineteen
+     * @since      Twenty Nineteen 1.0
+     */
     /*
      * If the current post is protected by a password and
      * the visitor has not yet entered the password we will
@@ -9,7 +20,6 @@
     {
         return;
     }
-
     $discussion = twentynineteen_get_discussion_data();
 ?>
 
@@ -52,13 +62,11 @@
     </div><!-- .comments-title-wrap -->
     <?php
         if(have_comments()) :
-
             // Show comment form at top if showing newest comments at the top.
             if(comments_open())
             {
                 twentynineteen_comment_form('desc');
             }
-
             ?>
             <ol class="comment-list">
                 <?php
@@ -71,7 +79,6 @@
                 ?>
             </ol><!-- .comment-list -->
             <?php
-
             // Show comment navigation.
             if(have_comments()) :
                 $prev_icon = twentynineteen_get_icon_svg('chevron_left', 22);
@@ -81,7 +88,6 @@
                                             'next_text' => sprintf('<span class="nav-next-text">%1$s</span> %2$s', /* translators: Comments navigation link text. The secondary-text element is hidden on small screens. */ __('<span class="primary-text">Next</span> <span class="secondary-text">Comments</span>', 'twentynineteen'), $next_icon),
                                         ]);
             endif;
-
             // Show comment form at bottom if showing newest comments at the bottom.
             if(comments_open() && 'asc' === strtolower(get_option('comment_order', 'asc'))) :
                 ?>
@@ -91,7 +97,6 @@
                 </div>
             <?php
             endif;
-
             // If comments are closed and there are comments, let's leave a little note, shall we?
             if(! comments_open()) :
                 ?>
@@ -100,12 +105,9 @@
                 </p>
             <?php
             endif;
-
         else :
-
             // Show comment form.
             twentynineteen_comment_form(true);
-
         endif; // if have_comments();
     ?>
 </div><!-- #comments -->

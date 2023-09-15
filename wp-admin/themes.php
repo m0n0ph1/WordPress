@@ -1,24 +1,26 @@
 <?php
-
+    /**
+     * Themes administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
     if(! current_user_can('switch_themes') && ! current_user_can('edit_theme_options'))
     {
         wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to edit theme options on this site.').'</p>', 403);
     }
-
     if(current_user_can('switch_themes') && isset($_GET['action']))
     {
         if('activate' === $_GET['action'])
         {
             check_admin_referer('switch-theme_'.$_GET['stylesheet']);
             $theme = wp_get_theme($_GET['stylesheet']);
-
             if(! $theme->exists() || ! $theme->is_allowed())
             {
                 wp_die('<h1>'.__('Something went wrong.').'</h1>'.'<p>'.__('The requested theme does not exist.').'</p>', 403);
             }
-
             switch_theme($theme->get_stylesheet());
             wp_redirect(admin_url('themes.php?activated=true'));
             exit;
@@ -27,19 +29,15 @@
         {
             check_admin_referer('resume-theme_'.$_GET['stylesheet']);
             $theme = wp_get_theme($_GET['stylesheet']);
-
             if(! current_user_can('resume_theme', $_GET['stylesheet']))
             {
                 wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to resume this theme.').'</p>', 403);
             }
-
             $result = resume_theme($theme->get_stylesheet(), self_admin_url('themes.php?error=resuming'));
-
             if(is_wp_error($result))
             {
                 wp_die($result);
             }
-
             wp_redirect(admin_url('themes.php?resumed=true'));
             exit;
         }
@@ -47,17 +45,14 @@
         {
             check_admin_referer('delete-theme_'.$_GET['stylesheet']);
             $theme = wp_get_theme($_GET['stylesheet']);
-
             if(! current_user_can('delete_themes'))
             {
                 wp_die('<h1>'.__('You need a higher level of permission.').'</h1>'.'<p>'.__('Sorry, you are not allowed to delete this item.').'</p>', 403);
             }
-
             if(! $theme->exists())
             {
                 wp_die('<h1>'.__('Something went wrong.').'</h1>'.'<p>'.__('The requested theme does not exist.').'</p>', 403);
             }
-
             $active = wp_get_theme();
             if($active->get('Template') === $_GET['stylesheet'])
             {
@@ -76,21 +71,15 @@
             {
                 wp_die(__('Sorry, you are not allowed to enable themes automatic updates.'));
             }
-
             check_admin_referer('updates');
-
             $all_items = wp_get_themes();
             $auto_updates = (array) get_site_option('auto_update_themes', []);
-
             $auto_updates[] = $_GET['stylesheet'];
             $auto_updates = array_unique($auto_updates);
             // Remove themes that have been deleted since the site option was last updated.
             $auto_updates = array_intersect($auto_updates, array_keys($all_items));
-
             update_site_option('auto_update_themes', $auto_updates);
-
             wp_redirect(admin_url('themes.php?enabled-auto-update=true'));
-
             exit;
         }
         elseif('disable-auto-update' === $_GET['action'])
@@ -99,40 +88,30 @@
             {
                 wp_die(__('Sorry, you are not allowed to disable themes automatic updates.'));
             }
-
             check_admin_referer('updates');
-
             $all_items = wp_get_themes();
             $auto_updates = (array) get_site_option('auto_update_themes', []);
-
             $auto_updates = array_diff($auto_updates, [$_GET['stylesheet']]);
             // Remove themes that have been deleted since the site option was last updated.
             $auto_updates = array_intersect($auto_updates, array_keys($all_items));
-
             update_site_option('auto_update_themes', $auto_updates);
-
             wp_redirect(admin_url('themes.php?disabled-auto-update=true'));
-
             exit;
         }
     }
-
 // Used in the HTML title tag.
     $title = __('Themes');
     $parent_file = 'themes.php';
-
 // Help tab: Overview.
     if(current_user_can('switch_themes'))
     {
         $help_overview = '<p>'.__('This screen is used for managing your installed themes. Aside from the default theme(s) included with your WordPress installation, themes are designed and developed by third parties.').'</p>'.'<p>'.__('From this screen you can:').'</p>'.'<ul><li>'.__('Hover or tap to see Activate and Live Preview buttons').'</li>'.'<li>'.__('Click on the theme to see the theme name, version, author, description, tags, and the Delete link').'</li>'.'<li>'.__('Click Customize for the active theme or Live Preview for any other theme to see a live preview').'</li></ul>'.'<p>'.__('The active theme is displayed highlighted as the first theme.').'</p>'.'<p>'.__('The search for installed themes will search for terms in their name, description, author, or tag.').' <span id="live-search-desc">'.__('The search results will be updated as you type.').'</span></p>';
-
         get_current_screen()->add_help_tab([
                                                'id' => 'overview',
                                                'title' => __('Overview'),
                                                'content' => $help_overview,
                                            ]);
     } // End if 'switch_themes'.
-
 // Help tab: Adding Themes.
     if(current_user_can('install_themes'))
     {
@@ -144,44 +123,35 @@
         {
             $help_install = '<p>'.sprintf(/* translators: %s: https://wordpress.org/themes/ */ __('If you would like to see more themes to choose from, click on the &#8220;Add New Theme&#8221; button and you will be able to browse or search for additional themes from the <a href="%s">WordPress Theme Directory</a>. Themes in the WordPress Theme Directory are designed and developed by third parties, and are compatible with the license WordPress uses. Oh, and they&#8217;re free!'), __('https://wordpress.org/themes/')).'</p>';
         }
-
         get_current_screen()->add_help_tab([
                                                'id' => 'adding-themes',
                                                'title' => __('Adding Themes'),
                                                'content' => $help_install,
                                            ]);
     } // End if 'install_themes'.
-
 // Help tab: Previewing and Customizing.
     if(current_user_can('edit_theme_options') && current_user_can('customize'))
     {
         $help_customize = '<p>'.__('Tap or hover on any theme then click the Live Preview button to see a live preview of that theme and change theme options in a separate, full-screen view. You can also find a Live Preview button at the bottom of the theme details screen. Any installed theme can be previewed and customized in this way.').'</p>'.'<p>'.__('The theme being previewed is fully interactive &mdash; navigate to different pages to see how the theme handles posts, archives, and other page templates. The settings may differ depending on what theme features the theme being previewed supports. To accept the new settings and activate the theme all in one step, click the Activate &amp; Publish button above the menu.').'</p>'.'<p>'.__('When previewing on smaller monitors, you can use the collapse icon at the bottom of the left-hand pane. This will hide the pane, giving you more room to preview your site in the new theme. To bring the pane back, click on the collapse icon again.').'</p>';
-
         get_current_screen()->add_help_tab([
                                                'id' => 'customize-preview-themes',
                                                'title' => __('Previewing and Customizing'),
                                                'content' => $help_customize,
                                            ]);
     } // End if 'edit_theme_options' && 'customize'.
-
     $help_sidebar_autoupdates = '';
-
 // Help tab: Auto-updates.
     if(current_user_can('update_themes') && wp_is_auto_update_enabled_for_type('theme'))
     {
         $help_tab_autoupdates = '<p>'.__('Auto-updates can be enabled or disabled for each individual theme. Themes with auto-updates enabled will display the estimated date of the next auto-update. Auto-updates depends on the WP-Cron task scheduling system.').'</p>'.'<p>'.__('Please note: Third-party themes and plugins, or custom code, may override WordPress scheduling.').'</p>';
-
         get_current_screen()->add_help_tab([
                                                'id' => 'plugins-themes-auto-updates',
                                                'title' => __('Auto-updates'),
                                                'content' => $help_tab_autoupdates,
                                            ]);
-
         $help_sidebar_autoupdates = '<p>'.__('<a href="https://wordpress.org/documentation/article/plugins-themes-auto-updates/">Documentation on Auto-updates</a>').'</p>';
     } // End if 'update_themes' && 'wp_is_auto_update_enabled_for_type'.
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/work-with-themes/">Documentation on Using Themes</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/appearance-themes-screen/">Documentation on Managing Themes</a>').'</p>'.$help_sidebar_autoupdates.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     if(current_user_can('switch_themes'))
     {
         $themes = wp_prepare_themes_for_js();
@@ -191,7 +161,6 @@
         $themes = wp_prepare_themes_for_js([wp_get_theme()]);
     }
     wp_reset_vars(['theme', 'search']);
-
     wp_localize_script('theme', '_wpThemeSettings', [
         'themes' => $themes,
         'settings' => [
@@ -208,11 +177,9 @@
             'noThemesFound' => __('No themes found. Try a different search.'),
         ],
     ]);
-
     add_thickbox();
     wp_enqueue_script('theme');
     wp_enqueue_script('updates');
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
 
@@ -303,16 +270,12 @@
                     'dismissible' => true,
                 ]);
             }
-
             $current_theme = wp_get_theme();
-
             if($current_theme->errors() && (! is_multisite() || current_user_can('manage_network_themes')))
             {
                 echo '<div class="error"><p>'.__('Error:').' '.$current_theme->errors()->get_error_message().'</p></div>';
             }
-
             $current_theme_actions = [];
-
             if(is_array($submenu) && isset($submenu['themes.php']))
             {
                 $forbidden_paths = [
@@ -321,27 +284,22 @@
                     'site-editor.php',
                     'edit.php?post_type=wp_navigation',
                 ];
-
                 foreach((array) $submenu['themes.php'] as $item)
                 {
                     $class = '';
-
                     if(in_array($item[2], $forbidden_paths, true) || str_starts_with($item[2], 'customize.php'))
                     {
                         continue;
                     }
-
                     // 0 = name, 1 = capability, 2 = file.
                     if(0 === strcmp($self, $item[2]) && empty($parent_file) || $parent_file && $item[2] === $parent_file)
                     {
                         $class = ' current';
                     }
-
                     if(! empty($submenu[$item[2]]))
                     {
                         $submenu[$item[2]] = array_values($submenu[$item[2]]); // Re-index.
                         $menu_hook = get_plugin_page_hook($submenu[$item[2]][0][2], $item[2]);
-
                         if(file_exists(WP_PLUGIN_DIR."/{$submenu[$item[2]][0][2]}") || ! empty($menu_hook))
                         {
                             $current_theme_actions[] = "<a class='button$class' href='admin.php?page={$submenu[$item[2]][0][2]}'>{$item[0]}</a>";
@@ -354,7 +312,6 @@
                     elseif(! empty($item[2]) && current_user_can($item[1]))
                     {
                         $menu_file = $item[2];
-
                         if(current_user_can('customize'))
                         {
                             if('custom-header' === $menu_file)
@@ -366,13 +323,11 @@
                                 $current_theme_actions[] = "<a class='button hide-if-no-customize$class' href='customize.php?autofocus[control]=background_image'>{$item[0]}</a>";
                             }
                         }
-
                         $pos = strpos($menu_file, '?');
                         if(false !== $pos)
                         {
                             $menu_file = substr($menu_file, 0, $pos);
                         }
-
                         if(file_exists(ABSPATH."wp-admin/$menu_file"))
                         {
                             $current_theme_actions[] = "<a class='button$class' href='{$item[2]}'>{$item[0]}</a>";
@@ -384,7 +339,6 @@
                     }
                 }
             }
-
             $class_name = 'theme-browser';
             if(! empty($_GET['search']))
             {
@@ -398,11 +352,9 @@
                     /*
                      * This PHP is synchronized with the tmpl-theme template below!
                      */
-
                     foreach($themes as $theme) :
                         $aria_action = $theme['id'].'-action';
                         $aria_name = $theme['id'].'-name';
-
                         $active_class = '';
                         if($theme['active'])
                         {
@@ -510,7 +462,6 @@
                                             $message .= wp_update_php_annotation('</p><p><em>', '</em>', false);
                                         }
                                     }
-
                                     wp_admin_notice($message, [
                                         'type' => 'error',
                                         'additional_classes' => ['inline', 'notice-alt'],
@@ -653,7 +604,6 @@
                                             <?php
                                         }
                                     }
-
                                     if($can_delete)
                                     {
                                         $stylesheet = $broken_theme->get_stylesheet();
@@ -667,12 +617,10 @@
                                                class="button delete-theme"><?php _e('Delete'); ?></a></td>
                                         <?php
                                     }
-
                                     if($can_install && 'theme_no_parent' === $broken_theme->errors()->get_error_code())
                                     {
                                         $parent_theme_name = $broken_theme->get('Template');
                                         $parent_theme = themes_api('theme_information', ['slug' => urlencode($parent_theme_name)]);
-
                                         if(! is_wp_error($parent_theme))
                                         {
                                             $install_url = add_query_arg([
@@ -699,7 +647,13 @@
     </div><!-- .wrap -->
 
 <?php
-
+    /**
+     * Returns the JavaScript template used to display the auto-update setting for a theme.
+     *
+     * @return string The template for displaying the auto-update setting link.
+     * @since 5.5.0
+     *
+     */
     function wp_theme_auto_update_setting_template()
     {
         $notice = wp_get_admin_notice('', [
@@ -735,6 +689,16 @@
 		</div>
 	';
 
+        /**
+         * Filters the JavaScript template used to display the auto-update setting for a theme (in the overlay).
+         *
+         * See {@see wp_prepare_themes_for_js()} for the properties of the `data` object.
+         *
+         * @param string $template The template for displaying the auto-update setting link.
+         *
+         * @since 5.5.0
+         *
+         */
         return apply_filters('theme_auto_update_setting_template', $template);
     }
 
@@ -1125,9 +1089,7 @@
     wp_print_request_filesystem_credentials_modal();
     wp_print_admin_notice_templates();
     wp_print_update_row_templates();
-
     wp_localize_script('updates', '_wpUpdatesItemCounts', [
         'totals' => wp_get_update_data(),
     ]);
-
     require_once ABSPATH.'wp-admin/admin-footer.php';

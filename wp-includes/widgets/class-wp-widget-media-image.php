@@ -1,14 +1,33 @@
 <?php
+    /**
+     * Widget API: WP_Widget_Media_Image class
+     *
+     * @package    WordPress
+     * @subpackage Widgets
+     * @since      4.8.0
+     */
 
+    /**
+     * Core class that implements an image widget.
+     *
+     * @since 4.8.0
+     *
+     * @see   WP_Widget_Media
+     * @see   WP_Widget
+     */
     class WP_Widget_Media_Image extends WP_Widget_Media
     {
+        /**
+         * Constructor.
+         *
+         * @since 4.8.0
+         */
         public function __construct()
         {
             parent::__construct('media_image', __('Image'), [
                 'description' => __('Displays an image.'),
                 'mime_type' => 'image',
             ]);
-
             $this->l10n = array_merge($this->l10n, [
                 'no_media_selected' => __('No image selected'),
                 'add_media' => _x('Add Image', 'label for button in the image widget'),
@@ -21,20 +40,25 @@
             ]);
         }
 
+        /**
+         * Render the media on the frontend.
+         *
+         * @param array $instance Widget instance props.
+         *
+         * @since 4.8.0
+         *
+         */
         public function render_media($instance)
         {
             $instance = array_merge(wp_list_pluck($this->get_instance_schema(), 'default'), $instance);
             $instance = wp_parse_args($instance, [
                 'size' => 'thumbnail',
             ]);
-
             $attachment = null;
-
             if($this->is_attachment_with_mime_type($instance['attachment_id'], $this->widget_options['mime_type']))
             {
                 $attachment = get_post($instance['attachment_id']);
             }
-
             if($attachment)
             {
                 $caption = '';
@@ -46,7 +70,6 @@
                 {
                     $caption = $instance['caption'];
                 }
-
                 $image_attributes = [
                     'class' => sprintf('image wp-image-%d %s', $attachment->ID, $instance['image_classes']),
                     'style' => 'max-width: 100%; height: auto;',
@@ -55,14 +78,11 @@
                 {
                     $image_attributes['title'] = $instance['image_title'];
                 }
-
                 if($instance['alt'])
                 {
                     $image_attributes['alt'] = $instance['alt'];
                 }
-
                 $size = $instance['size'];
-
                 if('custom' === $size || ! in_array($size, array_merge(get_intermediate_image_sizes(), ['full']), true))
                 {
                     $size = [$instance['width'], $instance['height']];
@@ -73,9 +93,7 @@
                     $caption_size = _wp_get_image_size_from_meta($instance['size'], wp_get_attachment_metadata($attachment->ID));
                     $width = empty($caption_size[0]) ? 0 : $caption_size[0];
                 }
-
                 $image_attributes['class'] .= sprintf(' attachment-%1$s size-%1$s', is_array($size) ? implode('x', $size) : $size);
-
                 $image = wp_get_attachment_image($attachment->ID, $size, false, $image_attributes);
             }
             else
@@ -84,7 +102,6 @@
                 {
                     return;
                 }
-
                 $instance['size'] = 'custom';
                 $caption = $instance['caption'];
                 $width = $instance['width'];
@@ -97,7 +114,6 @@
                 {
                     $instance['height'] = '';
                 }
-
                 $attr = [
                     'class' => $classes,
                     'src' => $instance['url'],
@@ -106,22 +122,16 @@
                     'height' => $instance['height'],
                     'decoding' => 'async',
                 ];
-
                 $loading_optimization_attr = wp_get_loading_optimization_attributes('img', $attr, 'widget_media_image');
-
                 $attr = array_merge($attr, $loading_optimization_attr);
-
                 $attr = array_map('esc_attr', $attr);
                 $image = '<img';
-
                 foreach($attr as $name => $value)
                 {
                     $image .= ' '.$name.'="'.$value.'"';
                 }
-
                 $image .= ' />';
             } // End if().
-
             $url = '';
             if('file' === $instance['link_type'])
             {
@@ -135,7 +145,6 @@
             {
                 $url = $instance['link_url'];
             }
-
             if($url)
             {
                 $link = sprintf('<a href="%s"', esc_url($url));
@@ -156,15 +165,27 @@
                 $link .= '</a>';
                 $image = wp_targeted_link_rel($link);
             }
-
             if($caption)
             {
-                $image = img_caption_shortcode(compact('width', 'caption'), $image);
+                $image = img_caption_shortcode([
+                                                   'width' => $width,
+                                                   'caption' => $caption,
+                                               ], $image);
             }
-
             echo $image;
         }
 
+        /**
+         * Get schema for properties of a widget instance (item).
+         *
+         * @return array Schema for properties.
+         * @see   WP_REST_Controller::get_item_schema()
+         * @see   WP_REST_Controller::get_additional_fields()
+         * @link  https://core.trac.wordpress.org/ticket/35574
+         *
+         * @since 4.8.0
+         *
+         */
         public function get_instance_schema()
         {
             return array_merge([
@@ -186,7 +207,6 @@
                                        'default' => 0,
                                        'description' => __('Height'),
                                    ],
-
                                    'caption' => [
                                        'type' => 'string',
                                        'default' => '',
@@ -255,7 +275,6 @@
                                        'description' => __('Image Title Attribute'),
                                        'should_preview_update' => false,
                                    ],
-
                                    /*
                                     * There are two additional properties exposed by the PostImage modal
                                     * that don't seem to be relevant, as they may only be derived read-only
@@ -268,13 +287,16 @@
                                ], parent::get_instance_schema());
         }
 
+        /**
+         * Loads the required media files for the media manager and scripts for media widgets.
+         *
+         * @since 4.8.0
+         */
         public function enqueue_admin_scripts()
         {
             parent::enqueue_admin_scripts();
-
             $handle = 'media-image-widget';
             wp_enqueue_script($handle);
-
             $exported_schema = [];
             foreach($this->get_instance_schema() as $field => $field_schema)
             {
@@ -289,7 +311,6 @@
                 ]);
             }
             wp_add_inline_script($handle, sprintf('wp.mediaWidgets.modelConstructors[ %s ].prototype.schema = %s;', wp_json_encode($this->id_base), wp_json_encode($exported_schema)));
-
             wp_add_inline_script(
                 $handle, sprintf(
                            '
@@ -300,10 +321,14 @@
             );
         }
 
+        /**
+         * Render form template scripts.
+         *
+         * @since 4.8.0
+         */
         public function render_control_template_scripts()
         {
             parent::render_control_template_scripts();
-
             ?>
             <script type="text/html" id="tmpl-wp-media-widget-image-fields">
                 <# var elementIdPrefix = 'el' + String( Math.random() ) + '_'; #>

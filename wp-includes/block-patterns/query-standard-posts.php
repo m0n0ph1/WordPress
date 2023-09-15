@@ -1,5 +1,9 @@
 <?php
-
+    /**
+     * Query: Standard.
+     *
+     * @package WordPress
+     */
     return [
         'title' => _x('Standard', 'Block pattern title'),
         'blockTypes' => ['core/query'],

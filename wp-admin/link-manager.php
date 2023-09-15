@@ -1,38 +1,37 @@
 <?php
-
+    /**
+     * Link Management Administration Screen.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
     if(! current_user_can('manage_links'))
     {
         wp_die(__('Sorry, you are not allowed to edit the links for this site.'));
     }
-
     $wp_list_table = _get_list_table('WP_Links_List_Table');
-
 // Handle bulk deletes.
     $doaction = $wp_list_table->current_action();
-
     if($doaction && isset($_REQUEST['linkcheck']))
     {
         check_admin_referer('bulk-bookmarks');
-
         $redirect_to = admin_url('link-manager.php');
         $bulklinks = (array) $_REQUEST['linkcheck'];
-
         if('delete' === $doaction)
         {
             foreach($bulklinks as $link_id)
             {
                 $link_id = (int) $link_id;
-
                 wp_delete_link($link_id);
             }
-
             $redirect_to = add_query_arg('deleted', count($bulklinks), $redirect_to);
         }
         else
         {
             $screen = get_current_screen()->id;
-
+            /** This action is documented in wp-admin/edit.php */
             $redirect_to = apply_filters("handle_bulk_actions-{$screen}", $redirect_to, $doaction, $bulklinks); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
         }
         wp_redirect($redirect_to);
@@ -43,14 +42,11 @@
         wp_redirect(remove_query_arg(['_wp_http_referer', '_wpnonce'], wp_unslash($_SERVER['REQUEST_URI'])));
         exit;
     }
-
     $wp_list_table->prepare_items();
-
 // Used in the HTML title tag.
     $title = __('Links');
     $this_file = 'link-manager.php';
     $parent_file = $this_file;
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
@@ -61,20 +57,15 @@
                                            'title' => __('Deleting Links'),
                                            'content' => '<p>'.__('If you delete a link, it will be removed permanently, as Links do not have a Trash function yet.').'</p>',
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://codex.wordpress.org/Links_Screen">Documentation on Managing Links</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     get_current_screen()->set_screen_reader_content([
                                                         'heading_list' => __('Links list'),
                                                     ]);
-
     require_once ABSPATH.'wp-admin/admin-header.php';
-
     if(! current_user_can('manage_links'))
     {
         wp_die(__('Sorry, you are not allowed to edit the links for this site.'));
     }
-
 ?>
 
     <div class="wrap nosubsub">

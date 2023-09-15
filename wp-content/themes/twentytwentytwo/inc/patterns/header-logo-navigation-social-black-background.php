@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Logo, navigation, and social links header with black background block pattern
+     */
     return [
         'title' => __('Logo, navigation, and social links header with background', 'twentytwentytwo'),
         'categories' => ['header'],

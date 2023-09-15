@@ -1,19 +1,21 @@
 <?php
-
+    /**
+     * Your Rights administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
     // This file was used to also display the Privacy tab on the About screen from 4.9.6 until 5.3.0.
     if(isset($_GET['privacy-notice']))
     {
         wp_redirect(admin_url('privacy.php'), 301);
         exit;
     }
-
     // Used in the HTML title tag.
     $title = __('Freedoms');
-
     [$display_version] = explode('-', get_bloginfo('version'));
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
 <div class="wrap about__container">

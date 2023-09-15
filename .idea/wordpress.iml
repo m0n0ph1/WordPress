@@ -5,6 +5,8 @@
       <sourceFolder url="file://$MODULE_DIR$/wp-admin" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/wp-content" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/wp-includes" isTestSource="false" packagePrefix="PHPMailer" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

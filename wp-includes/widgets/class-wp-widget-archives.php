@@ -1,7 +1,26 @@
 <?php
+    /**
+     * Widget API: WP_Widget_Archives class
+     *
+     * @package    WordPress
+     * @subpackage Widgets
+     * @since      4.4.0
+     */
 
+    /**
+     * Core class used to implement the Archives widget.
+     *
+     * @since 2.8.0
+     *
+     * @see   WP_Widget
+     */
     class WP_Widget_Archives extends WP_Widget
     {
+        /**
+         * Sets up a new Archives widget instance.
+         *
+         * @since 2.8.0
+         */
         public function __construct()
         {
             $widget_ops = [
@@ -13,24 +32,29 @@
             parent::__construct('archives', __('Archives'), $widget_ops);
         }
 
+        /**
+         * Outputs the content for the current Archives widget instance.
+         *
+         * @param array $args     Display arguments including 'before_title', 'after_title',
+         *                        'before_widget', and 'after_widget'.
+         * @param array $instance Settings for the current Archives widget instance.
+         *
+         * @since 2.8.0
+         *
+         */
         public function widget($args, $instance)
         {
-            parent::widget($args, $instance);
             $default_title = __('Archives');
             $title = ! empty($instance['title']) ? $instance['title'] : $default_title;
-
+            /** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
             $title = apply_filters('widget_title', $title, $instance, $this->id_base);
-
             $count = ! empty($instance['count']) ? '1' : '0';
             $dropdown = ! empty($instance['dropdown']) ? '1' : '0';
-
             echo $args['before_widget'];
-
             if($title)
             {
                 echo $args['before_title'].$title.$args['after_title'];
             }
-
             if($dropdown)
             {
                 $dropdown_id = "{$this->id_base}-dropdown-{$this->number}";
@@ -39,13 +63,23 @@
                        for="<?php echo esc_attr($dropdown_id); ?>"><?php echo $title; ?></label>
                 <select id="<?php echo esc_attr($dropdown_id); ?>" name="archive-dropdown">
                     <?php
-
+                        /**
+                         * Filters the arguments for the Archives widget drop-down.
+                         *
+                         * @param array $args     An array of Archives widget drop-down arguments.
+                         * @param array $instance Settings for the current Archives widget instance.
+                         *
+                         * @see   wp_get_archives()
+                         *
+                         * @since 2.8.0
+                         * @since 4.9.0 Added the `$instance` parameter.
+                         *
+                         */
                         $dropdown_args = apply_filters('widget_archives_dropdown_args', [
                             'type' => 'monthly',
                             'format' => 'option',
                             'show_post_count' => $count,
                         ],                             $instance);
-
                         switch($dropdown_args['type'])
                         {
                             case 'yearly':
@@ -64,7 +98,6 @@
                                 $label = __('Select Post');
                                 break;
                         }
-
                         $type_attr = current_theme_supports('html5', 'script') ? '' : ' type="text/javascript"';
                     ?>
 
@@ -93,9 +126,8 @@
             else
             {
                 $format = current_theme_supports('html5', 'navigation-widgets') ? 'html5' : 'xhtml';
-
+                /** This filter is documented in wp-includes/widgets/class-wp-nav-menu-widget.php */
                 $format = apply_filters('navigation_widgets_format', $format);
-
                 if('html5' === $format)
                 {
                     // The title may be filtered: Strip out HTML and make sure the aria-label is never empty.
@@ -108,7 +140,18 @@
                 <ul>
                     <?php
                         wp_get_archives(
-                            apply_filters('widget_archives_args', [
+                        /**
+                         * Filters the arguments for the Archives widget.
+                         *
+                         * @param array $args     An array of Archives option arguments.
+                         * @param array $instance Array of settings for the current widget.
+                         *
+                         * @see   wp_get_archives()
+                         *
+                         * @since 2.8.0
+                         * @since 4.9.0 Added the `$instance` parameter.
+                         *
+                         */ apply_filters('widget_archives_args', [
                                 'type' => 'monthly',
                                 'show_post_count' => $count,
                             ],            $instance)
@@ -122,10 +165,20 @@
                     echo '</nav>';
                 }
             }
-
             echo $args['after_widget'];
         }
 
+        /**
+         * Handles updating settings for the current Archives widget instance.
+         *
+         * @param array $new_instance New settings for this instance as input by the user via
+         *                            WP_Widget_Archives::form().
+         * @param array $old_instance Old settings for this instance.
+         *
+         * @return array Updated settings to save.
+         * @since 2.8.0
+         *
+         */
         public function update($new_instance, $old_instance)
         {
             $instance = $old_instance;
@@ -141,9 +194,16 @@
             return $instance;
         }
 
+        /**
+         * Outputs the settings form for the Archives widget.
+         *
+         * @param array $instance Current settings.
+         *
+         * @since 2.8.0
+         *
+         */
         public function form($instance)
         {
-            parent::form($instance);
             $instance = wp_parse_args((array) $instance, [
                 'title' => '',
                 'count' => 0,

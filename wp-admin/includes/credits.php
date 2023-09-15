@@ -1,69 +1,105 @@
 <?php
-
+    /**
+     * WordPress Credits Administration API.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     * @since      4.4.0
+     */
+    /**
+     * Retrieves the contributor credits.
+     *
+     * @param string $version WordPress version. Defaults to the current version.
+     * @param string $locale  WordPress locale. Defaults to the current user's locale.
+     *
+     * @return array|false A list of all of the contributors, or false on error.
+     * @since 5.6.0 Added the `$version` and `$locale` parameters.
+     *
+     * @since 3.2.0
+     */
     function wp_credits($version = '', $locale = '')
     {
         if(! $version)
         {
             // Include an unmodified $wp_version.
             require ABSPATH.WPINC.'/version.php';
-
             $version = $wp_version;
         }
-
         if(! $locale)
         {
             $locale = get_user_locale();
         }
-
         $results = get_site_transient('wordpress_credits_'.$locale);
-
         if(! is_array($results) || str_contains($version, '-') || (isset($results['data']['version']) && ! str_starts_with($version, $results['data']['version'])))
         {
             $url = "http://api.wordpress.org/core/credits/1.1/?version={$version}&locale={$locale}";
             $options = ['user-agent' => 'WordPress/'.$version.'; '.home_url('/')];
-
             if(wp_http_supports(['ssl']))
             {
                 $url = set_url_scheme($url, 'https');
             }
-
             $response = wp_remote_get($url, $options);
-
             if(is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response))
             {
                 return false;
             }
-
             $results = json_decode(wp_remote_retrieve_body($response), true);
-
             if(! is_array($results))
             {
                 return false;
             }
-
             set_site_transient('wordpress_credits_'.$locale, $results, DAY_IN_SECONDS);
         }
 
         return $results;
     }
 
+    /**
+     * Retrieves the link to a contributor's WordPress.org profile page.
+     *
+     * @access private
+     *
+     * @param string $display_name The contributor's display name (passed by reference).
+     * @param string $username     The contributor's username.
+     * @param string $profiles     URL to the contributor's WordPress.org profile page.
+     *
+     * @since  3.2.0
+     *
+     */
     function _wp_credits_add_profile_link(&$display_name, $username, $profiles)
     {
         $display_name = '<a href="'.esc_url(sprintf($profiles, $username)).'">'.esc_html($display_name).'</a>';
     }
 
+    /**
+     * Retrieves the link to an external library used in WordPress.
+     *
+     * @access private
+     *
+     * @param string $data External library data (passed by reference).
+     *
+     * @since  3.2.0
+     *
+     */
     function _wp_credits_build_object_link(&$data)
     {
         $data = '<a href="'.esc_url($data[1]).'">'.esc_html($data[0]).'</a>';
     }
 
+    /**
+     * Displays the title for a given group of contributors.
+     *
+     * @param array $group_data The current contributor group.
+     *
+     * @since 5.3.0
+     *
+     */
     function wp_credits_section_title($group_data = [])
     {
         if(! count($group_data))
         {
             return;
         }
-
         if($group_data['name'])
         {
             if('Translators' === $group_data['name'])
@@ -81,11 +117,19 @@
                 // phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction,WordPress.WP.I18n.NonSingularStringLiteralText
                 $title = translate($group_data['name']);
             }
-
             echo '<h2 class="wp-people-group-title">'.esc_html($title)."</h2>\n";
         }
     }
 
+    /**
+     * Displays a list of contributors for a given group.
+     *
+     * @param array  $credits The credits groups returned from the API.
+     * @param string $slug    The current group to display.
+     *
+     * @since 5.3.0
+     *
+     */
     function wp_credits_section_list($credits = [], $slug = '')
     {
         $group_data = isset($credits['groups'][$slug]) ? $credits['groups'][$slug] : [];
@@ -94,12 +138,10 @@
         {
             return;
         }
-
         if(! empty($group_data['shuffle']))
         {
             shuffle($group_data['data']); // We were going to sort by ability to pronounce "hierarchical," but that wouldn't be fair to Matt.
         }
-
         switch($group_data['type'])
         {
             case 'list':

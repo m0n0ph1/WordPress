@@ -1,5 +1,9 @@
 <?php
-
+    /**
+     * Query: Image at left.
+     *
+     * @package WordPress
+     */
     return [
         'title' => _x('Image at left', 'Block pattern title'),
         'blockTypes' => ['core/query'],

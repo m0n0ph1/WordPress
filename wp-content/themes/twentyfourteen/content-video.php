@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * The template for displaying posts in the Video post format
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Fourteen
+     * @since      Twenty Fourteen 1.0
+     */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -12,7 +18,6 @@
             </div><!-- .entry-meta -->
         <?php
         endif;
-
             if(is_single()) :
                 the_title('<h1 class="entry-title">', '</h1>');
             else :
@@ -39,7 +44,6 @@
     <div class="entry-content">
         <?php
             the_content(sprintf(/* translators: %s: Post title. Only visible to screen readers. */ __('Continue reading %s <span class="meta-nav">&rarr;</span>', 'twentyfourteen'), the_title('<span class="screen-reader-text">', '</span>', false)));
-
             wp_link_pages([
                               'before' => '<div class="page-links"><span class="page-links-title">'.__('Pages:', 'twentyfourteen').'</span>',
                               'after' => '</div>',

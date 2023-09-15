@@ -1,9 +1,31 @@
 <?php
-
+    /**
+     * WordPress Comment Administration API.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     * @since      2.3.0
+     */
+    /**
+     * Determines if a comment exists based on author and date.
+     *
+     * For best performance, use `$timezone = 'gmt'`, which queries a field that is properly indexed. The default value
+     * for `$timezone` is 'blog' for legacy reasons.
+     *
+     * @param string $comment_author Author of the comment.
+     * @param string $comment_date   Date of the comment.
+     * @param string $timezone       Timezone. Accepts 'blog' or 'gmt'. Default 'blog'.
+     *
+     * @return string|null Comment post ID on success.
+     * @since 4.4.0 Added the `$timezone` parameter.
+     *
+     * @global wpdb  $wpdb           WordPress database abstraction object.
+     *
+     * @since 2.0.0
+     */
     function comment_exists($comment_author, $comment_date, $timezone = 'blog')
     {
         global $wpdb;
-
         $date_field = 'comment_date';
         if('gmt' === $timezone)
         {
@@ -18,13 +40,21 @@
         );
     }
 
+    /**
+     * Updates a comment with values provided in $_POST.
+     *
+     * @return int|WP_Error The value 1 if the comment was updated, 0 if not updated.
+     *                      A WP_Error object on failure.
+     * @since 5.5.0 A return value was added.
+     *
+     * @since 2.0.0
+     */
     function edit_comment()
     {
         if(! current_user_can('edit_comment', (int) $_POST['comment_ID']))
         {
             wp_die(__('Sorry, you are not allowed to edit comments on this post.'));
         }
-
         if(isset($_POST['newcomment_author']))
         {
             $_POST['comment_author'] = $_POST['newcomment_author'];
@@ -49,7 +79,6 @@
         {
             $_POST['comment_ID'] = (int) $_POST['comment_ID'];
         }
-
         foreach(['aa', 'mm', 'jj', 'hh', 'mn'] as $timeunit)
         {
             if(! empty($_POST['hidden_'.$timeunit]) && $_POST['hidden_'.$timeunit] !== $_POST[$timeunit])
@@ -58,7 +87,6 @@
                 break;
             }
         }
-
         if(! empty($_POST['edit_date']))
         {
             $aa = $_POST['aa'];
@@ -71,13 +99,21 @@
             $hh = ($hh > 23) ? $hh - 24 : $hh;
             $mn = ($mn > 59) ? $mn - 60 : $mn;
             $ss = ($ss > 59) ? $ss - 60 : $ss;
-
             $_POST['comment_date'] = "$aa-$mm-$jj $hh:$mn:$ss";
         }
 
         return wp_update_comment($_POST, true);
     }
 
+    /**
+     * Returns a WP_Comment object based on comment ID.
+     *
+     * @param int $id ID of comment to retrieve.
+     *
+     * @return WP_Comment|false Comment if found. False on failure.
+     * @since 2.0.0
+     *
+     */
     function get_comment_to_edit($id)
     {
         $comment = get_comment($id);
@@ -85,14 +121,18 @@
         {
             return false;
         }
-
         $comment->comment_ID = (int) $comment->comment_ID;
         $comment->comment_post_ID = (int) $comment->comment_post_ID;
-
         $comment->comment_content = format_to_edit($comment->comment_content);
-
+        /**
+         * Filters the comment content before editing.
+         *
+         * @param string $comment_content Comment content.
+         *
+         * @since 2.0.0
+         *
+         */
         $comment->comment_content = apply_filters('comment_edit_pre', $comment->comment_content);
-
         $comment->comment_author = format_to_edit($comment->comment_author);
         $comment->comment_author_email = format_to_edit($comment->comment_author_email);
         $comment->comment_author_url = format_to_edit($comment->comment_author_url);
@@ -101,25 +141,33 @@
         return $comment;
     }
 
+    /**
+     * Gets the number of pending comments on a post or posts.
+     *
+     * @param int|int[] $post_id Either a single Post ID or an array of Post IDs
+     *
+     * @return int|int[] Either a single Posts pending comments as an int or an array of ints keyed on the Post IDs
+     * @since 2.3.0
+     *
+     * @global wpdb     $wpdb    WordPress database abstraction object.
+     *
+     */
     function get_pending_comments_num($post_id)
     {
         global $wpdb;
-
         $single = false;
-        if(is_array($post_id))
-        {
-            $post_id_array = $post_id;
-        }
-        else
+        if(! is_array($post_id))
         {
             $post_id_array = (array) $post_id;
             $single = true;
         }
+        else
+        {
+            $post_id_array = $post_id;
+        }
         $post_id_array = array_map('intval', $post_id_array);
         $post_id_in = "'".implode("', '", $post_id_array)."'";
-
         $pending = $wpdb->get_results("SELECT comment_post_ID, COUNT(comment_ID) as num_comments FROM $wpdb->comments WHERE comment_post_ID IN ( $post_id_in ) AND comment_approved = '0' GROUP BY comment_post_ID", ARRAY_A);
-
         if($single)
         {
             if(empty($pending))
@@ -131,15 +179,12 @@
                 return absint($pending[0]['num_comments']);
             }
         }
-
         $pending_keyed = [];
-
         // Default to zero pending for all posts in request.
         foreach($post_id_array as $id)
         {
             $pending_keyed[$id] = 0;
         }
-
         if(! empty($pending))
         {
             foreach($pending as $pend)
@@ -151,6 +196,15 @@
         return $pending_keyed;
     }
 
+    /**
+     * Adds avatars to relevant places in admin.
+     *
+     * @param string $name User name.
+     *
+     * @return string Avatar with the user name.
+     * @since 2.5.0
+     *
+     */
     function floated_admin_avatar($name)
     {
         $avatar = get_avatar(get_comment(), 32, 'mystery');
@@ -158,6 +212,11 @@
         return "$avatar $name";
     }
 
+    /**
+     * Enqueues comment shortcuts jQuery script.
+     *
+     * @since 2.7.0
+     */
     function enqueue_comment_hotkeys_js()
     {
         if('true' === get_user_option('comment_shortcuts'))
@@ -166,6 +225,11 @@
         }
     }
 
+    /**
+     * Displays error message at bottom of comments.
+     *
+     * @param string $msg Error Message. Assumed to contain HTML and be sanitized.
+     */
     function comment_footer_die($msg)
     {
         echo "<div class='wrap'><p>$msg</p></div>";

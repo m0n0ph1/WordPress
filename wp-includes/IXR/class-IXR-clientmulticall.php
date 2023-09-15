@@ -1,22 +1,38 @@
 <?php
 
+    /**
+     * IXR_ClientMulticall
+     *
+     * @package IXR
+     * @since   1.5.0
+     */
     class IXR_ClientMulticall extends IXR_Client
     {
-        public $calls = [];
+        var $calls = [];
 
+        /**
+         * PHP4 constructor.
+         */
         public function IXR_ClientMulticall($server, $path = false, $port = 80)
         {
-            $this->__construct($server, $path, $port);
+            self::__construct($server, $path, $port);
         }
 
-        public function __construct($server, $path = false, $port = 80)
+        /**
+         * PHP5 constructor.
+         */
+        function __construct($server, $path = false, $port = 80)
         {
-            parent::__construct($server, $path, $port, null);
             parent::IXR_Client($server, $path, $port);
             $this->useragent = 'The Incutio XML-RPC PHP Library (multicall client)';
         }
 
-        public function addCall(...$args)
+        /**
+         * @since 1.5.0
+         * @since 5.5.0 Formalized the existing `...$args` parameter by adding it
+         *              to the function signature.
+         */
+        function addCall(...$args)
         {
             $methodName = array_shift($args);
             $struct = [
@@ -26,7 +42,14 @@
             $this->calls[] = $struct;
         }
 
-        public function query(...$args)
+        /**
+         * @return bool
+         * @since 5.5.0 Formalized the existing `...$args` parameter by adding it
+         *              to the function signature.
+         *
+         * @since 1.5.0
+         */
+        function query(...$args)
         {
             // Prepare multicall, then call the parent::query() method
             return parent::query('system.multicall', $this->calls);

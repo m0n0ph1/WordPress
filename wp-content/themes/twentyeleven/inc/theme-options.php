@@ -1,5 +1,21 @@
 <?php
-
+    /**
+     * Twenty Eleven Theme Options
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 1.0
+     */
+    /**
+     * Properly enqueue styles and scripts for our theme options page.
+     *
+     * This function is attached to the admin_enqueue_scripts action hook.
+     *
+     * @param string $hook_suffix An admin page's hook suffix.
+     *
+     * @since Twenty Eleven 1.0
+     *
+     */
     function twentyeleven_admin_enqueue_scripts($hook_suffix)
     {
         wp_enqueue_style('twentyeleven-theme-options', get_template_directory_uri().'/inc/theme-options.css', false, '20110602');
@@ -8,7 +24,17 @@
     }
 
     add_action('admin_print_styles-appearance_page_theme_options', 'twentyeleven_admin_enqueue_scripts');
-
+    /**
+     * Register the form setting for our twentyeleven_options array.
+     *
+     * This function is attached to the admin_init action hook.
+     *
+     * This call to register_setting() registers a validation callback, twentyeleven_theme_options_validate(),
+     * which is used when the option is saved, to ensure that our option values are complete, properly
+     * formatted, and safe.
+     *
+     * @since Twenty Eleven 1.0
+     */
     function twentyeleven_theme_options_init()
     {
         register_setting(
@@ -16,7 +42,6 @@
             'twentyeleven_theme_options',         // Database option, see twentyeleven_get_theme_options().
             'twentyeleven_theme_options_validate' // The sanitization callback, see twentyeleven_theme_options_validate().
         );
-
         // Register our settings field group.
         add_settings_section(
             'general',        // Unique identifier for the settings section.
@@ -24,7 +49,6 @@
             '__return_false', // Section callback (we don't want anything).
             'theme_options'   // Menu slug, used to uniquely identify the page; see twentyeleven_theme_options_add_page().
         );
-
         // Register our individual settings fields.
         add_settings_field(
             'color_scheme',                             // Unique identifier for the field for this section.
@@ -33,20 +57,40 @@
             'theme_options', // Menu slug, used to uniquely identify the page; see twentyeleven_theme_options_add_page().
             'general'                                   // Settings section. Same as the first argument in the add_settings_section() above.
         );
-
         add_settings_field('link_color', __('Link Color', 'twentyeleven'), 'twentyeleven_settings_field_link_color', 'theme_options', 'general');
         add_settings_field('layout', __('Default Layout', 'twentyeleven'), 'twentyeleven_settings_field_layout', 'theme_options', 'general');
     }
 
     add_action('admin_init', 'twentyeleven_theme_options_init');
-
+    /**
+     * Change the capability required to save the 'twentyeleven_options' options group.
+     *
+     * @param string $capability The capability used for the page, which is manage_options by default.
+     *
+     * @return string The capability to actually use.
+     * @see twentyeleven_theme_options_init()     First parameter to register_setting() is the name of the options
+     *     group.
+     * @see twentyeleven_theme_options_add_page() The edit_theme_options capability is used for viewing the page.
+     *
+     * By default, the options groups for all registered settings require the manage_options capability.
+     * This filter is required to change our theme options page to edit_theme_options instead.
+     * By default, only administrators have either of these capabilities, but the desire here is
+     * to allow for finer-grained control for roles and users.
+     *
+     */
     function twentyeleven_option_page_capability($capability)
     {
         return 'edit_theme_options';
     }
 
     add_filter('option_page_capability_twentyeleven_options', 'twentyeleven_option_page_capability');
-
+    /**
+     * Add a theme options page to the admin menu, including some help documentation.
+     *
+     * This function is attached to the admin_menu action hook.
+     *
+     * @since Twenty Eleven 1.0
+     */
     function twentyeleven_theme_options_add_page()
     {
         $theme_page = add_theme_page(
@@ -56,25 +100,19 @@
             'theme_options',                         // Menu slug, used to uniquely identify the page.
             'twentyeleven_theme_options_render_page' // Function that renders the options page.
         );
-
         if(! $theme_page)
         {
             return;
         }
-
         add_action("load-{$theme_page}", 'twentyeleven_theme_options_help');
     }
 
     add_action('admin_menu', 'twentyeleven_theme_options_add_page');
-
     function twentyeleven_theme_options_help()
     {
         $help = '<p>'.__('Some themes provide customization options that are grouped together on a Theme Options screen. If you change themes, options may change or disappear, as they are theme-specific. Your current theme, Twenty Eleven, provides the following Theme Options:', 'twentyeleven').'</p>'.'<ol>'.'<li>'.__('<strong>Color Scheme</strong>: You can choose a color palette of "Light" (light background with dark text) or "Dark" (dark background with light text) for your site.', 'twentyeleven').'</li>'.'<li>'.__('<strong>Link Color</strong>: You can choose the color used for text links on your site. You can enter the HTML color or hex code, or you can choose visually by clicking the "Select a Color" button to pick from a color wheel.', 'twentyeleven').'</li>'.'<li>'.__('<strong>Default Layout</strong>: You can choose if you want your site&#8217;s default layout to have a sidebar on the left, the right, or not at all.', 'twentyeleven').'</li>'.'</ol>'.'<p>'.__('Remember to click "Save Changes" to save any changes you have made to the theme options.', 'twentyeleven').'</p>';
-
         $sidebar = '<p><strong>'.__('For more information:', 'twentyeleven').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/customizer/" target="_blank">Documentation on Theme Customization</a>', 'twentyeleven').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/" target="_blank">Support forums</a>', 'twentyeleven').'</p>';
-
         $screen = get_current_screen();
-
         if(method_exists($screen, 'add_help_tab'))
         {
             // WordPress 3.3.0.
@@ -83,7 +121,6 @@
                                       'id' => 'theme-options-help',
                                       'content' => $help,
                                   ]);
-
             $screen->set_help_sidebar($sidebar);
         }
         else
@@ -93,6 +130,11 @@
         }
     }
 
+    /**
+     * Return an array of color schemes registered for Twenty Eleven.
+     *
+     * @since Twenty Eleven 1.0
+     */
     function twentyeleven_color_schemes()
     {
         $color_scheme_options = [
@@ -110,9 +152,22 @@
             ],
         ];
 
+        /**
+         * Filters the Twenty Eleven color scheme options.
+         *
+         * @param array $color_scheme_options An associative array of color scheme options.
+         *
+         * @since Twenty Eleven 1.0
+         *
+         */
         return apply_filters('twentyeleven_color_schemes', $color_scheme_options);
     }
 
+    /**
+     * Return an array of layout options registered for Twenty Eleven.
+     *
+     * @since Twenty Eleven 1.0
+     */
     function twentyeleven_layouts()
     {
         $layout_options = [
@@ -133,9 +188,24 @@
             ],
         ];
 
+        /**
+         * Filters the Twenty Eleven layout options.
+         *
+         * @param array $layout_options An associative array of layout options.
+         *
+         * @since Twenty Eleven 1.0
+         *
+         */
         return apply_filters('twentyeleven_layouts', $layout_options);
     }
 
+    /**
+     * Return the default options for Twenty Eleven.
+     *
+     * @return array An array of default theme options.
+     * @since Twenty Eleven 1.0
+     *
+     */
     function twentyeleven_get_default_theme_options()
     {
         $default_theme_options = [
@@ -143,15 +213,32 @@
             'link_color' => twentyeleven_get_default_link_color('light'),
             'theme_layout' => 'content-sidebar',
         ];
-
         if(is_rtl())
         {
             $default_theme_options['theme_layout'] = 'sidebar-content';
         }
 
+        /**
+         * Filters the Twenty Eleven default options.
+         *
+         * @param array $default_theme_options An array of default theme options.
+         *
+         * @since Twenty Eleven 1.0
+         *
+         */
         return apply_filters('twentyeleven_default_theme_options', $default_theme_options);
     }
 
+    /**
+     * Return the default link color for Twenty Eleven, based on color scheme.
+     *
+     * @param string $color_scheme Optional. Color scheme.
+     *                             Default null (or the active color scheme).
+     *
+     * @return string The default link color.
+     * @since Twenty Eleven 1.0
+     *
+     */
     function twentyeleven_get_default_link_color($color_scheme = null)
     {
         if(null === $color_scheme)
@@ -159,7 +246,6 @@
             $options = twentyeleven_get_theme_options();
             $color_scheme = $options['color_scheme'];
         }
-
         $color_schemes = twentyeleven_color_schemes();
         if(! isset($color_schemes[$color_scheme]))
         {
@@ -169,15 +255,24 @@
         return $color_schemes[$color_scheme]['default_link_color'];
     }
 
+    /**
+     * Return the options array for Twenty Eleven.
+     *
+     * @since Twenty Eleven 1.0
+     */
     function twentyeleven_get_theme_options()
     {
         return get_option('twentyeleven_theme_options', twentyeleven_get_default_theme_options());
     }
 
+    /**
+     * Render the Color Scheme setting field.
+     *
+     * @since Twenty Eleven 1.3
+     */
     function twentyeleven_settings_field_color_scheme()
     {
         $options = twentyeleven_get_theme_options();
-
         foreach(twentyeleven_color_schemes() as $scheme)
         {
             ?>
@@ -199,6 +294,11 @@
         }
     }
 
+    /**
+     * Render the Link Color setting field.
+     *
+     * @since Twenty Eleven 1.3
+     */
     function twentyeleven_settings_field_link_color()
     {
         $options = twentyeleven_get_theme_options();
@@ -223,6 +323,11 @@
         <?php
     }
 
+    /**
+     * Render the Layout setting field.
+     *
+     * @since Twenty Eleven 1.3
+     */
     function twentyeleven_settings_field_layout()
     {
         $options = twentyeleven_get_theme_options();
@@ -244,6 +349,11 @@
         }
     }
 
+    /**
+     * Render the theme options page for Twenty Eleven.
+     *
+     * @since Twenty Eleven 1.2
+     */
     function twentyeleven_theme_options_render_page()
     {
         $theme_name = function_exists('wp_get_theme') ? wp_get_theme()->display('Name') : get_option('current_theme');
@@ -268,58 +378,92 @@
         <?php
     }
 
+    /**
+     * Sanitize and validate form input.
+     *
+     * Accepts an array, return a sanitized array.
+     *
+     * @param array $input An array of form input.
+     *
+     * @todo  set up Reset Options action
+     *
+     * @since Twenty Eleven 1.0
+     *
+     * @see   twentyeleven_theme_options_init()
+     */
     function twentyeleven_theme_options_validate($input)
     {
         $defaults = twentyeleven_get_default_theme_options();
         $output = $defaults;
-
         // Color scheme must be in our array of color scheme options.
         if(isset($input['color_scheme']) && array_key_exists($input['color_scheme'], twentyeleven_color_schemes()))
         {
             $output['color_scheme'] = $input['color_scheme'];
         }
-
         // Our defaults for the link color may have changed, based on the color scheme.
         $defaults['link_color'] = twentyeleven_get_default_link_color($output['color_scheme']);
         $output['link_color'] = $defaults['link_color'];
-
         // Link color must be 3 or 6 hexadecimal characters.
         if(isset($input['link_color']) && preg_match('/^#?([a-f0-9]{3}){1,2}$/i', $input['link_color']))
         {
             $output['link_color'] = '#'.strtolower(ltrim($input['link_color'], '#'));
         }
-
         // Theme layout must be in our array of theme layout options.
         if(isset($input['theme_layout']) && array_key_exists($input['theme_layout'], twentyeleven_layouts()))
         {
             $output['theme_layout'] = $input['theme_layout'];
         }
 
+        /**
+         * Filters the Twenty Eleven sanitized form input array.
+         *
+         * @param array $output   An array of sanitized form output.
+         * @param array $input    An array of un-sanitized form input.
+         * @param array $defaults An array of default theme options.
+         *
+         * @since Twenty Eleven 1.0
+         *
+         */
         return apply_filters('twentyeleven_theme_options_validate', $output, $input, $defaults);
     }
 
+    /**
+     * Enqueue the styles for the current color scheme.
+     *
+     * @since Twenty Eleven 1.0
+     */
     function twentyeleven_enqueue_color_scheme()
     {
         $options = twentyeleven_get_theme_options();
         $color_scheme = $options['color_scheme'];
-
         if('dark' === $color_scheme)
         {
             wp_enqueue_style('dark', get_template_directory_uri().'/colors/dark.css', [], '20190404');
         }
-
+        /**
+         * Fires after the styles for the Twenty Eleven color scheme are enqueued.
+         *
+         * @param string $color_scheme The color scheme.
+         *
+         * @since Twenty Eleven 1.0
+         *
+         */
         do_action('twentyeleven_enqueue_color_scheme', $color_scheme);
     }
 
     add_action('wp_enqueue_scripts', 'twentyeleven_enqueue_color_scheme');
-
+    /**
+     * Add a style block to the theme for the current link color.
+     *
+     * This function is attached to the wp_head action hook.
+     *
+     * @since Twenty Eleven 1.0
+     */
     function twentyeleven_print_link_color_style()
     {
         $options = twentyeleven_get_theme_options();
         $link_color = $options['link_color'];
-
         $default_options = twentyeleven_get_default_theme_options();
-
         // Don't do anything if the current link color is the default.
         if($default_options['link_color'] === $link_color)
         {
@@ -359,12 +503,18 @@
     }
 
     add_action('wp_head', 'twentyeleven_print_link_color_style');
-
+    /**
+     * Add Twenty Eleven layout classes to the array of body classes.
+     *
+     * @param array $existing_classes An array of existing body classes.
+     *
+     * @since Twenty Eleven 1.0
+     *
+     */
     function twentyeleven_layout_classes($existing_classes)
     {
         $options = twentyeleven_get_theme_options();
         $current_layout = $options['theme_layout'];
-
         if(in_array($current_layout, ['content-sidebar', 'sidebar-content'], true))
         {
             $classes = ['two-column'];
@@ -373,7 +523,6 @@
         {
             $classes = ['one-column'];
         }
-
         if('content-sidebar' === $current_layout)
         {
             $classes[] = 'right-sidebar';
@@ -386,20 +535,34 @@
         {
             $classes[] = $current_layout;
         }
-
+        /**
+         * Filters the Twenty Eleven layout body classes.
+         *
+         * @param array  $classes        An array of body classes.
+         * @param string $current_layout The current theme layout.
+         *
+         * @since Twenty Eleven 1.0
+         *
+         */
         $classes = apply_filters('twentyeleven_layout_classes', $classes, $current_layout);
 
         return array_merge($existing_classes, $classes);
     }
 
     add_filter('body_class', 'twentyeleven_layout_classes');
-
+    /**
+     * Implements Twenty Eleven theme options into Customizer
+     *
+     * @param WP_Customize_Manager $wp_customize Customizer object.
+     *
+     * @since Twenty Eleven 1.3
+     *
+     */
     function twentyeleven_customize_register($wp_customize)
     {
         $wp_customize->get_setting('blogname')->transport = 'postMessage';
         $wp_customize->get_setting('blogdescription')->transport = 'postMessage';
         $wp_customize->get_setting('header_textcolor')->transport = 'postMessage';
-
         if(isset($wp_customize->selective_refresh))
         {
             $wp_customize->selective_refresh->add_partial('blogname', [
@@ -413,23 +576,19 @@
                 'render_callback' => 'twentyeleven_customize_partial_blogdescription',
             ]);
         }
-
         $options = twentyeleven_get_theme_options();
         $defaults = twentyeleven_get_default_theme_options();
-
         $wp_customize->add_setting('twentyeleven_theme_options[color_scheme]', [
             'default' => $defaults['color_scheme'],
             'type' => 'option',
             'capability' => 'edit_theme_options',
         ]);
-
         $schemes = twentyeleven_color_schemes();
         $choices = [];
         foreach($schemes as $scheme)
         {
             $choices[$scheme['value']] = $scheme['label'];
         }
-
         $wp_customize->add_control('twentyeleven_color_scheme', [
             'label' => __('Color Scheme', 'twentyeleven'),
             'section' => 'colors',
@@ -438,7 +597,6 @@
             'choices' => $choices,
             'priority' => 5,
         ]);
-
         // Link Color (added to Color Scheme section in Customizer).
         $wp_customize->add_setting('twentyeleven_theme_options[link_color]', [
             'default' => twentyeleven_get_default_link_color($options['color_scheme']),
@@ -446,7 +604,6 @@
             'sanitize_callback' => 'sanitize_hex_color',
             'capability' => 'edit_theme_options',
         ]);
-
         $wp_customize->add_control(
             new WP_Customize_Color_Control($wp_customize, 'link_color', [
                 'label' => __('Link Color', 'twentyeleven'),
@@ -454,26 +611,22 @@
                 'settings' => 'twentyeleven_theme_options[link_color]',
             ])
         );
-
         // Default Layout.
         $wp_customize->add_section('twentyeleven_layout', [
             'title' => __('Layout', 'twentyeleven'),
             'priority' => 50,
         ]);
-
         $wp_customize->add_setting('twentyeleven_theme_options[theme_layout]', [
             'type' => 'option',
             'default' => $defaults['theme_layout'],
             'sanitize_callback' => 'sanitize_key',
         ]);
-
         $layouts = twentyeleven_layouts();
         $choices = [];
         foreach($layouts as $layout)
         {
             $choices[$layout['value']] = $layout['label'];
         }
-
         $wp_customize->add_control('twentyeleven_theme_options[theme_layout]', [
             'section' => 'twentyeleven_layout',
             'type' => 'radio',
@@ -482,17 +635,41 @@
     }
 
     add_action('customize_register', 'twentyeleven_customize_register');
-
+    /**
+     * Render the site title for the selective refresh partial.
+     *
+     * @return void
+     * @see   twentyeleven_customize_register()
+     *
+     * @since Twenty Eleven 2.4
+     *
+     */
     function twentyeleven_customize_partial_blogname()
     {
         bloginfo('name');
     }
 
+    /**
+     * Render the site tagline for the selective refresh partial.
+     *
+     * @return void
+     * @see   twentyeleven_customize_register()
+     *
+     * @since Twenty Eleven 2.4
+     *
+     */
     function twentyeleven_customize_partial_blogdescription()
     {
         bloginfo('description');
     }
 
+    /**
+     * Bind JS handlers to make Customizer preview reload changes asynchronously.
+     *
+     * Used with blogname and blogdescription.
+     *
+     * @since Twenty Eleven 1.3
+     */
     function twentyeleven_customize_preview_js()
     {
         wp_enqueue_script('twentyeleven-customizer', get_template_directory_uri().'/inc/theme-customizer.js', ['customize-preview'], '20150401', ['in_footer' => true]);

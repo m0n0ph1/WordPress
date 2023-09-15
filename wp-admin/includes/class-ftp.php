@@ -1,116 +1,173 @@
 <?php
-
+    /**
+     * PemFTP - An Ftp implementation in pure PHP
+     *
+     * @package   PemFTP
+     * @since     2.5.0
+     *
+     * @version   1.0
+     * @copyright Alexey Dotsenko
+     * @author    Alexey Dotsenko
+     * @link      https://www.phpclasses.org/package/1743-PHP-FTP-client-in-pure-PHP.html
+     * @license   LGPL https://opensource.org/licenses/lgpl-license.html
+     */
+    /**
+     * Defines the newline characters, if not defined already.
+     *
+     * This can be redefined.
+     *
+     * @since 2.5.0
+     * @var string
+     */
     if(! defined('CRLF'))
     {
         define('CRLF', "\r\n");
     }
-
+    /**
+     * Sets whatever to autodetect ASCII mode.
+     *
+     * This can be redefined.
+     *
+     * @since 2.5.0
+     * @var int
+     */
     if(! defined("FTP_AUTOASCII"))
     {
         define("FTP_AUTOASCII", -1);
     }
-
+    /**
+     *
+     * This can be redefined.
+     *
+     * @since 2.5.0
+     * @var int
+     */
     if(! defined("FTP_BINARY"))
     {
         define("FTP_BINARY", 1);
     }
-
+    /**
+     *
+     * This can be redefined.
+     *
+     * @since 2.5.0
+     * @var int
+     */
     if(! defined("FTP_ASCII"))
     {
         define("FTP_ASCII", 0);
     }
-
+    /**
+     * Whether to force FTP.
+     *
+     * This can be redefined.
+     *
+     * @since 2.5.0
+     * @var bool
+     */
     if(! defined('FTP_FORCE'))
     {
         define('FTP_FORCE', true);
     }
-
+    /**
+     * @since 2.5.0
+     * @var string
+     */
     define('FTP_OS_Unix', 'u');
-
+    /**
+     * @since 2.5.0
+     * @var string
+     */
     define('FTP_OS_Windows', 'w');
-
+    /**
+     * @since 2.5.0
+     * @var string
+     */
     define('FTP_OS_Mac', 'm');
 
+    /**
+     * PemFTP base class
+     *
+     */
     class ftp_base
     {
         /* Public variables */
-        public $LocalEcho;
+        var $LocalEcho;
 
-        public $Verbose;
+        var $Verbose;
 
-        public $OS_local;
+        var $OS_local;
 
-        public $OS_remote;
+        var $OS_remote;
 
         /* Private variables */
-        public $_lastaction;
+        var $_lastaction;
 
-        public $_errors;
+        var $_errors;
 
-        public $_type;
+        var $_type;
 
-        public $_umask;
+        var $_umask;
 
-        public $_timeout;
+        var $_timeout;
 
-        public $_passive;
+        var $_passive;
 
-        public $_host;
+        var $_host;
 
-        public $_fullhost;
+        var $_fullhost;
 
-        public $_port;
+        var $_port;
 
-        public $_datahost;
+        var $_datahost;
 
-        public $_dataport;
+        var $_dataport;
 
-        public $_ftp_control_sock;
+        var $_ftp_control_sock;
 
-        public $_ftp_data_sock;
+        var $_ftp_data_sock;
 
-        public $_ftp_temp_sock;
+        var $_ftp_temp_sock;
 
-        public $_ftp_buff_size;
+        var $_ftp_buff_size;
 
-        public $_login;
+        var $_login;
 
-        public $_password;
+        var $_password;
 
-        public $_connected;
+        var $_connected;
 
-        public $_ready;
+        var $_ready;
 
-        public $_code;
+        var $_code;
 
-        public $_message;
+        var $_message;
 
-        public $_can_restore;
+        var $_can_restore;
 
-        public $_port_available;
+        var $_port_available;
 
-        public $_curtype;
+        var $_curtype;
 
-        public $_features;
+        var $_features;
 
-        public $_error_array;
+        var $_error_array;
 
-        public $AuthorizedTransferMode;
+        var $AuthorizedTransferMode;
 
-        public $OS_FullName;
+        var $OS_FullName;
 
-        public $_eol_code;
+        var $_eol_code;
 
-        public $AutoAsciiExt;
+        var $AutoAsciiExt;
 
         /* Constructor */
-
-        public function ftp_base($port_mode = false)
+        function ftp_base($port_mode = false)
         {
             $this->__construct($port_mode);
         }
 
-        public function __construct($port_mode = false, $verb = false, $le = false)
+        function __construct($port_mode = false, $verb = false, $le = false)
         {
             $this->LocalEcho = $le;
             $this->Verbose = $verb;
@@ -160,11 +217,11 @@
             $this->OS_local = FTP_OS_Unix;
             $this->OS_remote = FTP_OS_Unix;
             $this->features = [];
-            if(stripos(PHP_OS, 'WIN') === 0)
+            if(strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
             {
                 $this->OS_local = FTP_OS_Windows;
             }
-            elseif(stripos(PHP_OS, 'MAC') === 0)
+            elseif(strtoupper(substr(PHP_OS, 0, 3)) === 'MAC')
             {
                 $this->OS_local = FTP_OS_Mac;
             }
@@ -173,8 +230,7 @@
 // <!-- --------------------------------------------------------------------------------------- -->
 // <!--       Public functions                                                                  -->
 // <!-- --------------------------------------------------------------------------------------- -->
-
-        public function SendMSG($message = "", $crlf = true)
+        function SendMSG($message = "", $crlf = true)
         {
             if($this->Verbose)
             {
@@ -185,7 +241,7 @@
             return true;
         }
 
-        public function SetUmask($umask = 0022)
+        function SetUmask($umask = 0022)
         {
             $this->_umask = $umask;
             umask($this->_umask);
@@ -194,7 +250,7 @@
             return true;
         }
 
-        public function SetType($mode = FTP_AUTOASCII)
+        function SetType($mode = FTP_AUTOASCII)
         {
             if(! in_array($mode, $this->AuthorizedTransferMode))
             {
@@ -208,7 +264,7 @@
             return true;
         }
 
-        public function _settype($mode = FTP_ASCII)
+        function _settype($mode = FTP_ASCII)
         {
             if($this->_ready)
             {
@@ -240,15 +296,22 @@
             return true;
         }
 
-        public function SetTimeout($timeout = 30)
+        function SetTimeout($timeout = 30)
         {
             $this->_timeout = $timeout;
             $this->SendMSG("Timeout ".$this->_timeout);
+            if($this->_connected)
+            {
+                if(! $this->_settimeout($this->_ftp_control_sock))
+                {
+                    return false;
+                }
+            }
 
-            return ! ($this->_connected && ! $this->_settimeout($this->_ftp_control_sock));
+            return true;
         }
 
-        public function Passive($pasv = null)
+        function Passive($pasv = null)
         {
             if(is_null($pasv))
             {
@@ -270,9 +333,16 @@
             return true;
         }
 
-        public function SetServer($host, $port = 21, $reconnect = true)
+        function SetServer($host, $port = 21, $reconnect = true)
         {
-            if(is_int($port))
+            if(! is_long($port))
+            {
+                $this->verbose = true;
+                $this->SendMSG("Incorrect port syntax");
+
+                return false;
+            }
+            else
             {
                 $ip = @gethostbyname($host);
                 $dns = @gethostbyaddr($host);
@@ -298,31 +368,35 @@
                 $this->_port = $port;
                 $this->_dataport = $port - 1;
             }
-            else
-            {
-                $this->verbose = true;
-                $this->SendMSG("Incorrect port syntax");
-
-                return false;
-            }
             $this->SendMSG("Host \"".$this->_fullhost."(".$this->_host."):".$this->_port."\"");
-            if($reconnect && $this->_connected)
+            if($reconnect)
             {
-                $this->SendMSG("Reconnecting");
-                if(! $this->quit(FTP_FORCE) || ! $this->connect())
+                if($this->_connected)
                 {
-                    return false;
+                    $this->SendMSG("Reconnecting");
+                    if(! $this->quit(FTP_FORCE))
+                    {
+                        return false;
+                    }
+                    if(! $this->connect())
+                    {
+                        return false;
+                    }
                 }
             }
 
             return true;
         }
 
-        public function quit($force = false)
+        function quit($force = false)
         {
             if($this->_ready)
             {
-                if(! $this->_exec("QUIT") and ! $force || ! $this->_checkCode() and ! $force)
+                if(! $this->_exec("QUIT") and ! $force)
+                {
+                    return false;
+                }
+                if(! $this->_checkCode() and ! $force)
                 {
                     return false;
                 }
@@ -334,16 +408,19 @@
             return true;
         }
 
-        public function _checkCode()
+        function _checkCode()
         {
             return ($this->_code < 400 and $this->_code > 0);
         }
 
-        public function connect($server = null)
+        function connect($server = null)
         {
-            if(! empty($server) && ! $this->SetServer($server))
+            if(! empty($server))
             {
-                return false;
+                if(! $this->SetServer($server))
+                {
+                    return false;
+                }
             }
             if($this->_ready)
             {
@@ -359,7 +436,11 @@
             $this->SendMSG("Connected to remote host \"".$this->_fullhost.":".$this->_port."\". Waiting for greeting.");
             do
             {
-                if(! $this->_readmsg() || ! $this->_checkCode())
+                if(! $this->_readmsg())
+                {
+                    return false;
+                }
+                if(! $this->_checkCode())
                 {
                     return false;
                 }
@@ -368,13 +449,17 @@
             while($this->_code < 200);
             $this->_ready = true;
             $syst = $this->systype();
-            if($syst)
+            if(! $syst)
+            {
+                $this->SendMSG("Cannot detect remote OS");
+            }
+            else
             {
                 if(preg_match("/win|dos|novell/i", $syst[0]))
                 {
                     $this->OS_remote = FTP_OS_Windows;
                 }
-                elseif(false !== stripos($syst[0], "os"))
+                elseif(preg_match("/os/i", $syst[0]))
                 {
                     $this->OS_remote = FTP_OS_Mac;
                 }
@@ -388,25 +473,25 @@
                 }
                 $this->SendMSG("Remote OS: ".$this->OS_FullName[$this->OS_remote]);
             }
-            else
-            {
-                $this->SendMSG("Cannot detect remote OS");
-            }
-            if($this->features())
-            {
-                $this->SendMSG("Supported features: ".implode(", ", array_keys($this->_features)));
-            }
-            else
+            if(! $this->features())
             {
                 $this->SendMSG("Cannot get features list. All supported - disabled");
+            }
+            else
+            {
+                $this->SendMSG("Supported features: ".implode(", ", array_keys($this->_features)));
             }
 
             return true;
         }
 
-        public function systype()
+        function systype()
         {
-            if(! $this->_exec("SYST", "systype") || ! $this->_checkCode())
+            if(! $this->_exec("SYST", "systype"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -415,9 +500,13 @@
             return [$DATA[1], $DATA[3]];
         }
 
-        public function features()
+        function features()
         {
-            if(! $this->_exec("FEAT", "features") || ! $this->_checkCode())
+            if(! $this->_exec("FEAT", "features"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -432,31 +521,39 @@
             return true;
         }
 
-        public function login($user = null, $pass = null)
+        function login($user = null, $pass = null)
         {
-            if(is_null($user))
-            {
-                $this->_login = "anonymous";
-            }
-            else
+            if(! is_null($user))
             {
                 $this->_login = $user;
             }
-            if(is_null($pass))
-            {
-                $this->_password = "anon@anon.com";
-            }
             else
+            {
+                $this->_login = "anonymous";
+            }
+            if(! is_null($pass))
             {
                 $this->_password = $pass;
             }
-            if(! $this->_exec("USER ".$this->_login, "login") || ! $this->_checkCode())
+            else
+            {
+                $this->_password = "anon@anon.com";
+            }
+            if(! $this->_exec("USER ".$this->_login, "login"))
             {
                 return false;
             }
-            if($this->_code !== 230)
+            if(! $this->_checkCode())
             {
-                if(! $this->_exec((($this->_code === 331) ? "PASS " : "ACCT ").$this->_password, "login") || ! $this->_checkCode())
+                return false;
+            }
+            if($this->_code != 230)
+            {
+                if(! $this->_exec((($this->_code == 331) ? "PASS " : "ACCT ").$this->_password, "login"))
+                {
+                    return false;
+                }
+                if(! $this->_checkCode())
                 {
                     return false;
                 }
@@ -464,22 +561,26 @@
             $this->SendMSG("Authentication succeeded");
             if(empty($this->_features))
             {
-                if($this->features())
+                if(! $this->features())
                 {
-                    $this->SendMSG("Supported features: ".implode(", ", array_keys($this->_features)));
+                    $this->SendMSG("Cannot get features list. All supported - disabled");
                 }
                 else
                 {
-                    $this->SendMSG("Cannot get features list. All supported - disabled");
+                    $this->SendMSG("Supported features: ".implode(", ", array_keys($this->_features)));
                 }
             }
 
             return true;
         }
 
-        public function pwd()
+        function pwd()
         {
-            if(! $this->_exec("PWD", "pwd") || ! $this->_checkCode())
+            if(! $this->_exec("PWD", "pwd"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -487,25 +588,51 @@
             return preg_replace("/^[0-9]{3} \"(.+)\".*$/s", "\\1", $this->_message);
         }
 
-        public function cdup()
+        function cdup()
         {
-            return ! (! $this->_exec("CDUP", "cdup") || ! $this->_checkCode());
-        }
-
-        public function chdir($pathname)
-        {
-            return ! (! $this->_exec("CWD ".$pathname, "chdir") || ! $this->_checkCode());
-        }
-
-        public function rename($from, $to)
-        {
-            if(! $this->_exec("RNFR ".$from, "rename") || ! $this->_checkCode())
+            if(! $this->_exec("CDUP", "cdup"))
             {
                 return false;
             }
-            if($this->_code === 350)
+            if(! $this->_checkCode())
             {
-                if(! $this->_exec("RNTO ".$to, "rename") || ! $this->_checkCode())
+                return false;
+            }
+
+            return true;
+        }
+
+        function chdir($pathname)
+        {
+            if(! $this->_exec("CWD ".$pathname, "chdir"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        function rename($from, $to)
+        {
+            if(! $this->_exec("RNFR ".$from, "rename"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
+            {
+                return false;
+            }
+            if($this->_code == 350)
+            {
+                if(! $this->_exec("RNTO ".$to, "rename"))
+                {
+                    return false;
+                }
+                if(! $this->_checkCode())
                 {
                     return false;
                 }
@@ -518,7 +645,7 @@
             return true;
         }
 
-        public function filesize($pathname)
+        function filesize($pathname)
         {
             if(! isset($this->_features["SIZE"]))
             {
@@ -526,7 +653,11 @@
 
                 return false;
             }
-            if(! $this->_exec("SIZE ".$pathname, "filesize") || ! $this->_checkCode())
+            if(! $this->_exec("SIZE ".$pathname, "filesize"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -534,7 +665,7 @@
             return preg_replace("/^[0-9]{3} ([0-9]+).*$/s", "\\1", $this->_message);
         }
 
-        public function PushError($fctname, $msg, $desc = false)
+        function PushError($fctname, $msg, $desc = false)
         {
             $error = [];
             $error['time'] = time();
@@ -554,7 +685,7 @@
             return (array_push($this->_error_array, $error));
         }
 
-        public function mdtm($pathname)
+        function mdtm($pathname)
         {
             if(! isset($this->_features["MDTM"]))
             {
@@ -562,7 +693,11 @@
 
                 return false;
             }
-            if(! $this->_exec("MDTM ".$pathname, "mdtm") || ! $this->_checkCode())
+            if(! $this->_exec("MDTM ".$pathname, "mdtm"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -573,12 +708,12 @@
             return $timestamp;
         }
 
-        public function nlist($pathname = "", $arg = "")
+        function nlist($pathname = "", $arg = "")
         {
             return $this->_list(($arg ? " ".$arg : "").($pathname ? " ".$pathname : ""), "NLST", "nlist");
         }
 
-        public function _list($arg = "", $cmd = "LIST", $fnction = "_list")
+        function _list($arg = "", $cmd = "LIST", $fnction = "_list")
         {
             if(! $this->_data_prepare())
             {
@@ -601,7 +736,15 @@
             {
                 $out = $this->_data_read();
                 $this->_data_close();
-                if(! $this->_readmsg() || ! $this->_checkCode() || $out === false)
+                if(! $this->_readmsg())
+                {
+                    return false;
+                }
+                if(! $this->_checkCode())
+                {
+                    return false;
+                }
+                if($out === false)
                 {
                     return false;
                 }
@@ -612,7 +755,7 @@
             return $out;
         }
 
-        public function fget($fp, $remotefile, $rest = 0)
+        function fget($fp, $remotefile, $rest = 0)
         {
             if($this->_can_restore and $rest != 0)
             {
@@ -649,7 +792,11 @@
             }
             $out = $this->_data_read($mode, $fp);
             $this->_data_close();
-            if(! $this->_readmsg() || ! $this->_checkCode())
+            if(! $this->_readmsg())
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -657,7 +804,7 @@
             return $out;
         }
 
-        public function restore($from)
+        function restore($from)
         {
             if(! isset($this->_features["REST"]))
             {
@@ -671,7 +818,11 @@
 
                 return false;
             }
-            if(! $this->_exec("REST ".$from, "resore") || ! $this->_checkCode())
+            if(! $this->_exec("REST ".$from, "resore"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -679,7 +830,7 @@
             return true;
         }
 
-        public function fput($remotefile, $fp, $rest = 0)
+        function fput($remotefile, $fp, $rest = 0)
         {
             if($this->_can_restore and $rest != 0)
             {
@@ -716,7 +867,11 @@
             }
             $ret = $this->_data_write($mode, $fp);
             $this->_data_close();
-            if(! $this->_readmsg() || ! $this->_checkCode())
+            if(! $this->_readmsg())
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -724,7 +879,7 @@
             return $ret;
         }
 
-        public function mput($local = ".", $remote = null, $continious = false)
+        function mput($local = ".", $remote = null, $continious = false)
         {
             $local = realpath($local);
             if(! @file_exists($local))
@@ -791,7 +946,7 @@
             return $ret;
         }
 
-        public function put($localfile, $remotefile = null, $rest = 0)
+        function put($localfile, $remotefile = null, $rest = 0)
         {
             if(is_null($remotefile))
             {
@@ -804,7 +959,6 @@
                 return false;
             }
             $fp = @fopen($localfile, "r");
-
             if(! $fp)
             {
                 $this->PushError("put", "cannot open local file", "Cannot read file \"".$localfile."\"");
@@ -851,7 +1005,11 @@
             $ret = $this->_data_write($mode, $fp);
             fclose($fp);
             $this->_data_close();
-            if(! $this->_readmsg() || ! $this->_checkCode())
+            if(! $this->_readmsg())
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -859,20 +1017,20 @@
             return $ret;
         }
 
-        public function file_exists($pathname)
+        function file_exists($pathname)
         {
             $exists = true;
-            if($this->_exec("RNFR ".$pathname, "rename"))
+            if(! $this->_exec("RNFR ".$pathname, "rename"))
+            {
+                $exists = false;
+            }
+            else
             {
                 if(! $this->_checkCode())
                 {
                     $exists = false;
                 }
                 $this->abort();
-            }
-            else
-            {
-                $exists = false;
             }
             if($exists)
             {
@@ -886,7 +1044,7 @@
             return $exists;
         }
 
-        public function abort()
+        function abort()
         {
             if(! $this->_exec("ABOR", "abort"))
             {
@@ -894,7 +1052,15 @@
             }
             if(! $this->_checkCode())
             {
-                if($this->_code !== 426 || ! $this->_readmsg("abort") || ! $this->_checkCode())
+                if($this->_code != 426)
+                {
+                    return false;
+                }
+                if(! $this->_readmsg("abort"))
+                {
+                    return false;
+                }
+                if(! $this->_checkCode())
                 {
                     return false;
                 }
@@ -903,12 +1069,21 @@
             return true;
         }
 
-        public function mkdir($pathname)
+        function mkdir($pathname)
         {
-            return ! (! $this->_exec("MKD ".$pathname, "mkdir") || ! $this->_checkCode());
+            if(! $this->_exec("MKD ".$pathname, "mkdir"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        public function mget($remote, $local = ".", $continious = false)
+        function mget($remote, $local = ".", $continious = false)
         {
             $list = $this->rawlist($remote, "-lA");
             if($list === false)
@@ -921,11 +1096,14 @@
             {
                 return true;
             }
-            if(! @file_exists($local) && ! @mkdir($local))
+            if(! @file_exists($local))
             {
-                $this->PushError("mget", "cannot create local folder", "Cannot create folder \"".$local."\"");
+                if(! @mkdir($local))
+                {
+                    $this->PushError("mget", "cannot create local folder", "Cannot create folder \"".$local."\"");
 
-                return false;
+                    return false;
+                }
             }
             foreach($list as $k => $v)
             {
@@ -973,14 +1151,14 @@
             return $ret;
         }
 
-        public function rawlist($pathname = "", $arg = "")
+        function rawlist($pathname = "", $arg = "")
         {
             return $this->_list(($arg ? " ".$arg : "").($pathname ? " ".$pathname : ""), "LIST", "rawlist");
         }
 
-        public function parselisting($line)
+        function parselisting($line)
         {
-            $is_windows = ($this->OS_remote === FTP_OS_Windows);
+            $is_windows = ($this->OS_remote == FTP_OS_Windows);
             if($is_windows && preg_match("/([0-9]{2})-([0-9]{2})-([0-9]{2}) +([0-9]{2}):([0-9]{2})(AM|PM) +([0-9]+|<DIR>) +(.+)/", $line, $lucifer))
             {
                 $b = [];
@@ -1073,7 +1251,7 @@
             return $b;
         }
 
-        public function get($remotefile, $localfile = null, $rest = 0)
+        function get($remotefile, $localfile = null, $rest = 0)
         {
             if(is_null($localfile))
             {
@@ -1130,7 +1308,11 @@
             $out = $this->_data_read($mode, $fp);
             fclose($fp);
             $this->_data_close();
-            if(! $this->_readmsg() || ! $this->_checkCode())
+            if(! $this->_readmsg())
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
             {
                 return false;
             }
@@ -1138,7 +1320,7 @@
             return $out;
         }
 
-        public function mdel($remote, $continious = false)
+        function mdel($remote, $continious = false)
         {
             $list = $this->rawlist($remote, "-la");
             if($list === false)
@@ -1147,7 +1329,6 @@
 
                 return false;
             }
-
             foreach($list as $k => $v)
             {
                 $list[$k] = $this->parselisting($v);
@@ -1157,14 +1338,12 @@
                 }
             }
             $ret = true;
-
             foreach($list as $el)
             {
                 if(empty($el))
                 {
                     continue;
                 }
-
                 if($el["type"] == "d")
                 {
                     if(! $this->mdel($remote."/".$el["name"], $continious))
@@ -1189,7 +1368,6 @@
                     }
                 }
             }
-
             if(! $this->rmdir($remote))
             {
                 $this->PushError("mdel", "cannot delete folder", "Cannot delete remote folder \"".$remote."/".$el["name"]."\"");
@@ -1199,17 +1377,35 @@
             return $ret;
         }
 
-        public function delete($pathname)
+        function delete($pathname)
         {
-            return ! (! $this->_exec("DELE ".$pathname, "delete") || ! $this->_checkCode());
+            if(! $this->_exec("DELE ".$pathname, "delete"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        public function rmdir($pathname)
+        function rmdir($pathname)
         {
-            return ! (! $this->_exec("RMD ".$pathname, "rmdir") || ! $this->_checkCode());
+            if(! $this->_exec("RMD ".$pathname, "rmdir"))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        public function mmkdir($dir, $mode = 0777)
+        function mmkdir($dir, $mode = 0777)
         {
             if(empty($dir))
             {
@@ -1229,12 +1425,12 @@
             return $r;
         }
 
-        public function is_exists($pathname)
+        function is_exists($pathname)
         {
             return $this->file_exists($pathname);
         }
 
-        public function chmod($pathname, $mode)
+        function chmod($pathname, $mode)
         {
             if(! $this->site(sprintf('CHMOD %o %s', $mode, $pathname), "chmod"))
             {
@@ -1244,15 +1440,23 @@
             return true;
         }
 
-        public function site($command, $fnction = "site")
+        function site($command, $fnction = "site")
         {
-            return ! (! $this->_exec("SITE ".$command, $fnction) || ! $this->_checkCode());
+            if(! $this->_exec("SITE ".$command, $fnction))
+            {
+                return false;
+            }
+            if(! $this->_checkCode())
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        public function glob($pattern, $handle = null)
+        function glob($pattern, $handle = null)
         {
-            $output = null;
-            $path = null;
+            $path = $output = null;
             if(PHP_OS == 'WIN32')
             {
                 $slash = '\\';
@@ -1262,14 +1466,14 @@
                 $slash = '/';
             }
             $lastpos = strrpos($pattern, $slash);
-            if($lastpos === false)
-            {
-                $path = getcwd();
-            }
-            else
+            if(! ($lastpos === false))
             {
                 $path = substr($pattern, 0, -$lastpos - 1);
                 $pattern = substr($pattern, $lastpos);
+            }
+            else
+            {
+                $path = getcwd();
             }
             if(is_array($handle) and ! empty($handle))
             {
@@ -1307,8 +1511,7 @@
 // <!-- --------------------------------------------------------------------------------------- -->
 // <!--       Private functions                                                                 -->
 // <!-- --------------------------------------------------------------------------------------- -->
-
-        public function glob_pattern_match($pattern, $subject)
+        function glob_pattern_match($pattern, $subject)
         {
             $out = null;
             $chunks = explode(';', $pattern);
@@ -1323,10 +1526,7 @@
                 {
                     $pattern = str_replace($probe, "\\$probe", $pattern);
                 }
-                $pattern = str_replace(array(
-                                           '*?',
-                                           '?*'
-                                       ), '*', str_replace('*', ".*", str_replace('?', '.{1,1}', $pattern)));
+                $pattern = str_replace('?*', '*', str_replace('*?', '*', str_replace('*', ".*", str_replace('?', '.{1,1}', $pattern))));
                 $out[] = $pattern;
             }
             if(count($out) == 1)
@@ -1347,7 +1547,7 @@
             return false;
         }
 
-        public function glob_regexp($pattern, $subject)
+        function glob_regexp($pattern, $subject)
         {
             $sensitive = (PHP_OS != 'WIN32');
 
@@ -1358,8 +1558,7 @@
 // <!-- Partie : gestion des erreurs                                                            -->
 // <!-- --------------------------------------------------------------------------------------- -->
 // Gnre une erreur pour traitement externe  la classe
-
-        public function dirlist($remote)
+        function dirlist($remote)
         {
             $list = $this->rawlist($remote, "-la");
             if($list === false)
@@ -1368,7 +1567,6 @@
 
                 return false;
             }
-
             $dirlist = [];
             foreach($list as $k => $v)
             {
@@ -1377,12 +1575,10 @@
                 {
                     continue;
                 }
-
                 if($entry["name"] == "." or $entry["name"] == "..")
                 {
                     continue;
                 }
-
                 $dirlist[$entry['name']] = $entry;
             }
 
@@ -1390,8 +1586,7 @@
         }
 
 // Rcupre une erreur externe
-
-        public function PopError()
+        function PopError()
         {
             if(count($this->_error_array))
             {
@@ -1411,9 +1606,7 @@
         @dl($prefix.'sockets.'.PHP_SHLIB_SUFFIX); // phpcs:ignore PHPCompatibility.FunctionUse.RemovedFunctions.dlDeprecated
         $mod_sockets = extension_loaded('sockets');
     }
-
     require_once __DIR__."/class-ftp-".($mod_sockets ? "sockets" : "pure").".php";
-
     if($mod_sockets)
     {
         class ftp extends ftp_sockets

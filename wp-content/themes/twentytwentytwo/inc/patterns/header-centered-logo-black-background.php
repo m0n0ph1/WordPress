@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Header with centered logo and black background
+     */
     return [
         'title' => __('Header with centered logo and background', 'twentytwentytwo'),
         'categories' => ['header'],

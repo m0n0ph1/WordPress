@@ -1,10 +1,24 @@
 <?php
-
+    /**
+     * Block Patterns
+     *
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern/
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern_category/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twelve
+     * @since      Twenty Twelve 3.4
+     */
+    /**
+     * Register Block Pattern Category.
+     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentytwelve', ['label' => esc_html__('Twenty Twelve', 'twentytwelve')]);
     }
-
+    /**
+     * Register Block Patterns.
+     */
     if(function_exists('register_block_pattern'))
     {
         // Images and spacer blocks inside of columns.
@@ -44,7 +58,6 @@
 				<!-- /wp:columns --></div></div>
 				<!-- /wp:group -->',
         ]);
-
         // Heading and paragraph arranged as a large quote.
         register_block_pattern('twentytwelve/large-quote', [
             'title' => esc_html__('Left-aligned Large Quote', 'twentytwelve'),
@@ -56,7 +69,6 @@
 				<p><em>'.esc_html__('—  Albert Einstein', 'twentytwelve').'</em></p>
 				<!-- /wp:paragraph -->',
         ]);
-
         // Columns block with image in the first column and paragraphs with a drop cap in the second.
         register_block_pattern('twentytwelve/mixed-content-columns', [
             'title' => esc_html__('Left-aligned Image and Paragraph', 'twentytwelve'),

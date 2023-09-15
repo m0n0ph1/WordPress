@@ -1,10 +1,14 @@
 <?php
-
+    /**
+     * Tools Administration Screen.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
     if(! defined('ABSPATH'))
     {
         die();
     }
-
     if(! class_exists('WP_Debug_Data'))
     {
         require_once ABSPATH.'wp-admin/includes/class-wp-debug-data.php';
@@ -13,9 +17,7 @@
     {
         require_once ABSPATH.'wp-admin/includes/class-wp-site-health.php';
     }
-
     $health_check_site_status = WP_Site_Health::get_instance();
-
     wp_admin_notice(__('The Site Health check requires JavaScript.'), [
         'type' => 'error',
         'additional_classes' => ['hide-if-js'],
@@ -24,11 +26,8 @@
 
 <div class="health-check-body health-check-debug-tab hide-if-no-js">
     <?php
-
         WP_Debug_Data::check_for_updates();
-
         $info = WP_Debug_Data::debug_data();
-
     ?>
 
     <h2>
@@ -59,7 +58,6 @@
     <div id="health-check-debug" class="health-check-accordion">
 
         <?php
-
             $sizes_fields = [
                 'uploads_size',
                 'themes_size',
@@ -68,14 +66,12 @@
                 'database_size',
                 'total_size',
             ];
-
             foreach($info as $section => $details)
             {
                 if(! isset($details['fields']) || empty($details['fields']))
                 {
                     continue;
                 }
-
                 ?>
                 <h3 class="health-check-accordion-heading">
                     <button aria-expanded="false"
@@ -85,23 +81,19 @@
 					<span class="title">
 						<?php echo esc_html($details['label']); ?>
                         <?php
-
                             if(isset($details['show_count']) && $details['show_count'])
                             {
                                 printf('(%s)', number_format_i18n(count($details['fields'])));
                             }
-
                         ?>
 					</span>
                         <?php
-
                             if('wp-paths-sizes' === $section)
                             {
                                 ?>
                                 <span class="health-check-wp-paths-sizes spinner"></span>
                                 <?php
                             }
-
                         ?>
                         <span class="icon"></span>
                     </button>
@@ -111,35 +103,29 @@
                      class="health-check-accordion-panel"
                      hidden="hidden">
                     <?php
-
                         if(isset($details['description']) && ! empty($details['description']))
                         {
                             printf('<p>%s</p>', $details['description']);
                         }
-
                     ?>
                     <table class="widefat striped health-check-table" role="presentation">
                         <tbody>
                         <?php
-
                             foreach($details['fields'] as $field_name => $field)
                             {
                                 if(is_array($field['value']))
                                 {
                                     $values = '<ul>';
-
                                     foreach($field['value'] as $name => $value)
                                     {
                                         $values .= sprintf('<li>%s: %s</li>', esc_html($name), esc_html($value));
                                     }
-
                                     $values .= '</ul>';
                                 }
                                 else
                                 {
                                     $values = esc_html($field['value']);
                                 }
-
                                 if(in_array($field_name, $sizes_fields, true))
                                 {
                                     printf('<tr><td>%s</td><td class="%s">%s</td></tr>', esc_html($field['label']), esc_attr($field_name), $values);
@@ -149,7 +135,6 @@
                                     printf('<tr><td>%s</td><td>%s</td></tr>', esc_html($field['label']), $values);
                                 }
                             }
-
                         ?>
                         </tbody>
                     </table>

@@ -1,10 +1,22 @@
 <?php
-
+    /**
+     * Server-side rendering of the `core/query-pagination-previous` block.
+     *
+     * @package WordPress
+     */
+    /**
+     * Renders the `core/query-pagination-previous` block on the server.
+     *
+     * @param array    $attributes Block attributes.
+     * @param string   $content    Block default content.
+     * @param WP_Block $block      Block instance.
+     *
+     * @return string Returns the previous posts link for the query.
+     */
     function render_block_core_query_pagination_previous($attributes, $content, $block)
     {
         $page_key = isset($block->context['queryId']) ? 'query-'.$block->context['queryId'].'-page' : 'query-page';
         $page = empty($_GET[$page_key]) ? 1 : (int) $_GET[$page_key];
-
         $wrapper_attributes = get_block_wrapper_attributes();
         $show_label = isset($block->context['showLabel']) ? (bool) $block->context['showLabel'] : true;
         $default_label = __('Previous Page');
@@ -28,7 +40,6 @@
             {
                 return $wrapper_attributes;
             };
-
             add_filter('previous_posts_link_attributes', $filter_link_attributes);
             $content = get_previous_posts_link($label);
             remove_filter('previous_posts_link_attributes', $filter_link_attributes);
@@ -41,6 +52,9 @@
         return $content;
     }
 
+    /**
+     * Registers the `core/query-pagination-previous` block on the server.
+     */
     function register_block_core_query_pagination_previous()
     {
         register_block_type_from_metadata(__DIR__.'/query-pagination-previous', [

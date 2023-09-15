@@ -1,76 +1,74 @@
 <?php
-
+    /**
+     * Tools Administration Screen.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /** WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
     wp_reset_vars(['action']);
-
     $tabs = [
         /* translators: Tab heading for Site Health Status page. */
         '' => _x('Status', 'Site Health'),
         /* translators: Tab heading for Site Health Info page. */
         'debug' => _x('Info', 'Site Health'),
     ];
-
+    /**
+     * Filters the extra tabs for the Site Health navigation bar.
+     *
+     * Add a custom page to the Site Health screen, based on a tab slug and label.
+     * The label you provide will also be used as part of the site title.
+     *
+     * @param string[] $tabs An associative array of tab labels keyed by their slug.
+     *
+     * @since 5.8.0
+     *
+     */
     $tabs = apply_filters('site_health_navigation_tabs', $tabs);
-
     $wrapper_classes = [
         'health-check-tabs-wrapper',
         'hide-if-no-js',
         'tab-count-'.count($tabs),
     ];
-
     $current_tab = (isset($_GET['tab']) ? $_GET['tab'] : '');
-
     $title = sprintf(// translators: %s: The currently displayed tab.
         __('Site Health - %s'), (isset($tabs[$current_tab]) ? esc_html($tabs[$current_tab]) : esc_html(reset($tabs)))
     );
-
     if(! current_user_can('view_site_health_checks'))
     {
         wp_die(__('Sorry, you are not allowed to access site health information.'), '', 403);
     }
-
     wp_enqueue_style('site-health');
     wp_enqueue_script('site-health');
-
     if(! class_exists('WP_Site_Health'))
     {
         require_once ABSPATH.'wp-admin/includes/class-wp-site-health.php';
     }
-
     if('update_https' === $action)
     {
         check_admin_referer('wp_update_https');
-
         if(! current_user_can('update_https'))
         {
             wp_die(__('Sorry, you are not allowed to update this site to HTTPS.'), 403);
         }
-
         if(! wp_is_https_supported())
         {
             wp_die(__('It looks like HTTPS is not supported for your website at this point.'));
         }
-
         $result = wp_update_urls_to_https();
-
         wp_redirect(add_query_arg('https_updated', (int) $result, wp_get_referer()));
         exit;
     }
-
     $health_check_site_status = WP_Site_Health::get_instance();
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => '<p>'.__('This screen allows you to obtain a health diagnosis of your site, and displays an overall rating of the status of your installation.').'</p>'.'<p>'.__('In the Status tab, you can see critical information about your WordPress configuration, along with anything else that requires your attention.').'</p>'.'<p>'.__('In the Info tab, you will find all the details about the configuration of your WordPress site, server, and database. There is also an export feature that allows you to copy all of the information about your site to the clipboard, to help solve problems on your site when obtaining support.').'</p>',
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/site-health-screen/">Documentation on Site Health tool</a>').'</p>');
-
 // Start by checking if this is a special request checking for the existence of certain filters.
     $health_check_site_status->check_wp_version_check_exists();
-
     require_once ABSPATH.'wp-admin/admin-header.php';
 ?>
     <div class="health-check-header">
@@ -134,7 +132,6 @@
         <nav class="<?php echo implode(' ', $wrapper_classes); ?>" aria-label="<?php esc_attr_e('Secondary menu'); ?>">
             <?php
                 $tabs_slice = $tabs;
-
                 /*
                  * If there are more than 4 tabs, only output the first 3 inline,
                  * the remaining links will be added to a sub-navigation.
@@ -143,7 +140,6 @@
                 {
                     $tabs_slice = array_slice($tabs, 0, 3);
                 }
-
                 foreach($tabs_slice as $slug => $label)
                 {
                     printf(
@@ -192,8 +188,18 @@
 <?php
     if(isset($_GET['tab']) && ! empty($_GET['tab']))
     {
+        /**
+         * Fires when outputting the content of a custom Site Health tab.
+         *
+         * This action fires right after the Site Health header, and users are still subject to
+         * the capability checks for the Site Health page to view any custom tabs and their contents.
+         *
+         * @param string $tab The slug of the tab that was requested.
+         *
+         * @since 5.8.0
+         *
+         */
         do_action('site_health_tab_content', $_GET['tab']);
-
         require_once ABSPATH.'wp-admin/admin-footer.php';
 
         return;

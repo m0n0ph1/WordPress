@@ -1,5 +1,24 @@
 <?php
-
+    /**
+     * Build Administration Menu.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /**
+     * Constructs the admin menu.
+     *
+     * The elements in the array are:
+     *     0: Menu item name.
+     *     1: Minimum level or capability required.
+     *     2: The URL of the item's file.
+     *     3: Page title.
+     *     4: Classes.
+     *     5: ID.
+     *     6: Icon for top level menu.
+     *
+     * @global array $menu
+     */
     $menu[2] = [
         __('Dashboard'),
         'read',
@@ -9,19 +28,15 @@
         'menu-dashboard',
         'dashicons-dashboard',
     ];
-
     $submenu['index.php'][0] = [__('Home'), 'read', 'index.php'];
-
     if(is_multisite())
     {
         $submenu['index.php'][5] = [__('My Sites'), 'read', 'my-sites.php'];
     }
-
     if(! is_multisite() || current_user_can('update_core'))
     {
         $update_data = wp_get_update_data();
     }
-
     if(! is_multisite())
     {
         if(current_user_can('update_core'))
@@ -47,11 +62,8 @@
         ];
         unset($cap);
     }
-
     $menu[4] = ['', 'read', 'separator1', '', 'wp-menu-separator'];
-
 // $menu[5] = Posts.
-
     $menu[10] = [
         __('Media'),
         'upload_files',
@@ -70,7 +82,6 @@
         {
             continue;
         }
-
         $submenu['upload.php'][$i++] = [
             esc_attr($tax->labels->menu_name),
             $tax->cap->manage_terms,
@@ -78,7 +89,6 @@
         ];
     }
     unset($tax, $i);
-
     $menu[15] = [
         __('Links'),
         'manage_links',
@@ -95,9 +105,7 @@
         'manage_categories',
         'edit-tags.php?taxonomy=link_category',
     ];
-
 // $menu[20] = Pages.
-
 // Avoid the comment count query for users who cannot edit_posts.
     if(current_user_can('edit_posts'))
     {
@@ -106,7 +114,6 @@
         $awaiting_mod_i18n = number_format_i18n($awaiting_mod);
         /* translators: %s: Number of comments. */
         $awaiting_mod_text = sprintf(_n('%s Comment in moderation', '%s Comments in moderation', $awaiting_mod), $awaiting_mod_i18n);
-
         $menu[25] = [
             /* translators: %s: Number of comments. */
             sprintf(__('Comments %s'), '<span class="awaiting-mod count-'.absint($awaiting_mod).'"><span class="pending-count" aria-hidden="true">'.$awaiting_mod_i18n.'</span><span class="comments-in-moderation-text screen-reader-text">'.$awaiting_mod_text.'</span></span>'),
@@ -119,11 +126,8 @@
         ];
         unset($awaiting_mod);
     }
-
     $submenu['edit-comments.php'][0] = [__('All Comments'), 'edit_posts', 'edit-comments.php'];
-
     $_wp_last_object_menu = 25; // The index of the last top-level menu in the object menu group.
-
     $types = (array) get_post_types([
                                         'show_ui' => true,
                                         '_builtin' => false,
@@ -140,7 +144,6 @@
         }
         $ptype_menu_position = is_int($ptype_obj->menu_position) ? $ptype_obj->menu_position : ++$_wp_last_object_menu; // If we're to use $_wp_last_object_menu, increment it first.
         $ptype_for_id = sanitize_html_class($ptype);
-
         $menu_icon = 'dashicons-admin-post';
         if(is_string($ptype_obj->menu_icon))
         {
@@ -158,7 +161,6 @@
         {
             $menu_icon = 'dashicons-admin-'.$ptype;
         }
-
         $menu_class = 'menu-top menu-icon-'.$ptype_for_id;
         // 'post' special case.
         if('post' === $ptype)
@@ -174,7 +176,6 @@
             $post_new_file = "post-new.php?post_type=$ptype";
             $edit_tags_file = "edit-tags.php?taxonomy=%s&amp;post_type=$ptype";
         }
-
         if(in_array($ptype, $builtin, true))
         {
             $ptype_menu_id = 'menu-'.$ptype_for_id.'s';
@@ -192,7 +193,6 @@
         {
             ++$ptype_menu_position;
         }
-
         $menu[$ptype_menu_position] = [
             esc_attr($ptype_obj->labels->menu_name),
             $ptype_obj->cap->edit_posts,
@@ -204,7 +204,6 @@
         ];
         $submenu[$ptype_file][5] = [$ptype_obj->labels->all_items, $ptype_obj->cap->edit_posts, $ptype_file];
         $submenu[$ptype_file][10] = [$ptype_obj->labels->add_new, $ptype_obj->cap->create_posts, $post_new_file];
-
         $i = 15;
         foreach(get_taxonomies([], 'objects') as $tax)
         {
@@ -212,7 +211,6 @@
             {
                 continue;
             }
-
             $submenu[$ptype_file][$i++] = [
                 esc_attr($tax->labels->menu_name),
                 $tax->cap->manage_terms,
@@ -221,11 +219,8 @@
         }
     }
     unset($ptype, $ptype_obj, $ptype_for_id, $ptype_menu_position, $menu_icon, $i, $tax, $post_new_file);
-
     $menu[59] = ['', 'read', 'separator2', '', 'wp-menu-separator'];
-
     $appearance_cap = current_user_can('switch_themes') ? 'switch_themes' : 'edit_theme_options';
-
     $menu[60] = [
         __('Appearance'),
         $appearance_cap,
@@ -235,7 +230,6 @@
         'menu-appearance',
         'dashicons-admin-appearance',
     ];
-
     $count = '';
     if(! is_multisite() && current_user_can('update_themes'))
     {
@@ -245,15 +239,12 @@
         }
         $count = sprintf('<span class="update-plugins count-%s"><span class="theme-count">%s</span></span>', $update_data['counts']['themes'], number_format_i18n($update_data['counts']['themes']));
     }
-
     /* translators: %s: Number of available theme updates. */
     $submenu['themes.php'][5] = [sprintf(__('Themes %s'), $count), $appearance_cap, 'themes.php'];
-
     if(wp_is_block_theme())
     {
         $submenu['themes.php'][6] = [_x('Editor', 'site editor menu item'), 'edit_theme_options', 'site-editor.php'];
     }
-
     if(! wp_is_block_theme() && current_theme_supports('block-template-parts'))
     {
         $submenu['themes.php'][6] = [
@@ -262,15 +253,12 @@
             'site-editor.php?path=/wp_template_part/all',
         ];
     }
-
     $customize_url = add_query_arg('return', urlencode(remove_query_arg(wp_removable_query_args(), wp_unslash($_SERVER['REQUEST_URI']))), 'customize.php');
-
 // Hide Customize link on block themes unless a plugin or theme
 // is using 'customize_register' to add a setting.
     if(! wp_is_block_theme() || has_action('customize_register'))
     {
         $position = (wp_is_block_theme() || current_theme_supports('block-template-parts')) ? 7 : 6;
-
         $submenu['themes.php'][$position] = [
             __('Customize'),
             'customize',
@@ -279,12 +267,10 @@
             'hide-if-no-customize',
         ];
     }
-
     if(current_theme_supports('menus') || current_theme_supports('widgets'))
     {
         $submenu['themes.php'][10] = [__('Menus'), 'edit_theme_options', 'nav-menus.php'];
     }
-
     if(current_theme_supports('custom-header') && current_user_can('customize'))
     {
         $customize_header_url = add_query_arg(['autofocus' => ['control' => 'header_image']], $customize_url);
@@ -296,7 +282,6 @@
             'hide-if-no-customize',
         ];
     }
-
     if(current_theme_supports('custom-background') && current_user_can('customize'))
     {
         $customize_background_url = add_query_arg(['autofocus' => ['control' => 'background_image']], $customize_url);
@@ -308,23 +293,35 @@
             'hide-if-no-customize',
         ];
     }
-
     unset($customize_url);
-
     unset($appearance_cap);
-
 // Add 'Theme File Editor' to the bottom of the Appearance (non-block themes) or Tools (block themes) menu.
     if(! is_multisite())
     {
         // Must use API on the admin_menu hook, direct modification is only possible on/before the _admin_menu hook.
         add_action('admin_menu', '_add_themes_utility_last', 101);
     }
-
+    /**
+     * Adds the 'Theme File Editor' menu item to the bottom of the Appearance (non-block themes)
+     * or Tools (block themes) menu.
+     *
+     * @access private
+     * @since  3.0.0
+     * @since  5.9.0 Renamed 'Theme Editor' to 'Theme File Editor'.
+     *              Relocates to Tools for block themes.
+     */
     function _add_themes_utility_last()
     {
         add_submenu_page(wp_is_block_theme() ? 'tools.php' : 'themes.php', __('Theme File Editor'), __('Theme File Editor'), 'edit_themes', 'theme-editor.php');
     }
 
+    /**
+     * Adds the 'Plugin File Editor' menu item after the 'Themes File Editor' in Tools
+     * for block themes.
+     *
+     * @access private
+     * @since  5.9.0
+     */
     function _add_plugin_file_editor_to_tools()
     {
         if(! wp_is_block_theme())
@@ -343,7 +340,6 @@
         }
         $count = sprintf('<span class="update-plugins count-%s"><span class="plugin-count">%s</span></span>', $update_data['counts']['plugins'], number_format_i18n($update_data['counts']['plugins']));
     }
-
     /* translators: %s: Number of available plugin updates. */
     $menu[65] = [
         sprintf(__('Plugins %s'), $count),
@@ -354,9 +350,7 @@
         'menu-plugins',
         'dashicons-admin-plugins',
     ];
-
     $submenu['plugins.php'][5] = [__('Installed Plugins'), 'activate_plugins', 'plugins.php'];
-
     if(! is_multisite())
     {
         $submenu['plugins.php'][10] = [__('Add New Plugin'), 'install_plugins', 'plugin-install.php'];
@@ -370,9 +364,7 @@
             $submenu['plugins.php'][15] = [__('Plugin File Editor'), 'edit_plugins', 'plugin-editor.php'];
         }
     }
-
     unset($update_data);
-
     if(current_user_can('list_users'))
     {
         $menu[70] = [
@@ -397,7 +389,6 @@
             'dashicons-admin-users',
         ];
     }
-
     if(current_user_can('list_users'))
     {
         $_wp_real_parent_file['profile.php'] = 'users.php'; // Back-compat for plugins adding submenus to profile.php.
@@ -410,7 +401,6 @@
         {
             $submenu['users.php'][10] = [__('Add New User'), 'promote_users', 'user-new.php'];
         }
-
         $submenu['users.php'][15] = [__('Profile'), 'read', 'profile.php'];
     }
     else
@@ -426,19 +416,15 @@
             $submenu['profile.php'][10] = [__('Add New User'), 'promote_users', 'user-new.php'];
         }
     }
-
     $site_health_count = '';
     if(! is_multisite() && current_user_can('view_site_health_checks'))
     {
         $get_issues = get_transient('health-check-site-status-result');
-
         $issue_counts = [];
-
         if(false !== $get_issues)
         {
             $issue_counts = json_decode($get_issues, true);
         }
-
         if(! is_array($issue_counts) || ! $issue_counts)
         {
             $issue_counts = [
@@ -447,10 +433,8 @@
                 'critical' => 0,
             ];
         }
-
         $site_health_count = sprintf('<span class="menu-counter site-health-counter count-%s"><span class="count">%s</span></span>', $issue_counts['critical'], number_format_i18n($issue_counts['critical']));
     }
-
     $menu[75] = [
         __('Tools'),
         'edit_posts',
@@ -479,7 +463,6 @@
     {
         $submenu['tools.php'][50] = [__('Network Setup'), 'setup_network', 'network.php'];
     }
-
     $menu[80] = [
         __('Settings'),
         'manage_options',
@@ -496,11 +479,8 @@
     $submenu['options-general.php'][30] = [__('Media'), 'manage_options', 'options-media.php'];
     $submenu['options-general.php'][40] = [__('Permalinks'), 'manage_options', 'options-permalink.php'];
     $submenu['options-general.php'][45] = [__('Privacy'), 'manage_privacy_options', 'options-privacy.php'];
-
     $_wp_last_utility_menu = 80; // The index of the last top-level menu in the utility menu group.
-
     $menu[99] = ['', 'read', 'separator-last', '', 'wp-menu-separator'];
-
 // Back-compat for old top-levels.
     $_wp_real_parent_file['post.php'] = 'edit.php';
     $_wp_real_parent_file['post-new.php'] = 'edit.php';
@@ -508,7 +488,6 @@
     $_wp_real_parent_file['page-new.php'] = 'edit.php?post_type=page';
     $_wp_real_parent_file['wpmu-admin.php'] = 'tools.php';
     $_wp_real_parent_file['ms-admin.php'] = 'tools.php';
-
 // Ensure backward compatibility.
     $compat = [
         'index' => 'dashboard',
@@ -522,5 +501,4 @@
         'options-general' => 'settings',
         'themes' => 'appearance',
     ];
-
     require_once ABSPATH.'wp-admin/includes/menu.php';

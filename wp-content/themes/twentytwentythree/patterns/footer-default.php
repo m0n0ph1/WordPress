@@ -1,5 +1,10 @@
 <?php
-
+    /**
+     * Title: Default Footer
+     * Slug: twentytwentythree/footer-default
+     * Categories: footer
+     * Block Types: core/template-part/footer
+     */
 ?>
 <!-- wp:group {"layout":{"type":"constrained"}} -->
 <div class="wp-block-group">

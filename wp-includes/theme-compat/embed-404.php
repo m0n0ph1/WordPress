@@ -1,5 +1,14 @@
 <?php
-
+    /**
+     * Contains the post embed content template part
+     *
+     * When a post is embedded in an iframe, this file is used to create the content template part
+     * output if the active theme does not include an embed-404.php template.
+     *
+     * @package    WordPress
+     * @subpackage Theme_Compat
+     * @since      4.5.0
+     */
 ?>
 <div class="wp-embed">
     <p class="wp-embed-heading"><?php _e('Oops! That embed cannot be found.'); ?></p>
@@ -13,7 +22,7 @@
     </div>
 
     <?php
-
+        /** This filter is documented in wp-includes/theme-compat/embed-content.php */
         do_action('embed_content');
     ?>
 

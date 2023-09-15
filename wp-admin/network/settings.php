@@ -1,18 +1,22 @@
 <?php
-
+    /**
+     * Multisite network settings administration panel.
+     *
+     * @package    WordPress
+     * @subpackage Multisite
+     * @since      3.0.0
+     */
+    /** Load WordPress Administration Bootstrap */
     require_once __DIR__.'/admin.php';
-
+    /** WordPress Translation Installation API */
     require_once ABSPATH.'wp-admin/includes/translation-install.php';
-
     if(! current_user_can('manage_network_options'))
     {
         wp_die(__('Sorry, you are not allowed to access this page.'), 403);
     }
-
     // Used in the HTML title tag.
     $title = __('Network Settings');
     $parent_file = 'settings.php';
-
     // Handle network admin email change requests.
     if(! empty($_GET['network_admin_hash']))
     {
@@ -36,23 +40,18 @@
         wp_redirect(network_admin_url('settings.php?updated=true'));
         exit;
     }
-
     add_action('admin_head', 'network_settings_add_js');
-
     get_current_screen()->add_help_tab([
                                            'id' => 'overview',
                                            'title' => __('Overview'),
                                            'content' => '<p>'.__('This screen sets and changes options for the network as a whole. The first site is the main site in the network and network options are pulled from that original site&#8217;s options.').'</p>'.'<p>'.__('Operational settings has fields for the network&#8217;s name and admin email.').'</p>'.'<p>'.__('Registration settings can disable/enable public signups. If you let others sign up for a site, install spam plugins. Spaces, not commas, should separate names banned as sites for this network.').'</p>'.'<p>'.__('New site settings are defaults applied when a new site is created in the network. These include welcome email for when a new site or user account is registered, and what&#8127;s put in the first post, page, comment, comment author, and comment URL.').'</p>'.'<p>'.__('Upload settings control the size of the uploaded files and the amount of available upload space for each site. You can change the default value for specific sites when you edit a particular site. Allowed file types are also listed (space separated only).').'</p>'.'<p>'.__('You can set the language, and WordPress will automatically download and install the translation files (available if your filesystem is writable).').'</p>'.'<p>'.__('Menu setting enables/disables the plugin menus from appearing for non super admins, so that only super admins, not site admins, have access to activate plugins.').'</p>'.'<p>'.__('Super admins can no longer be added on the Options screen. You must now go to the list of existing users on Network Admin > Users and click on Username or the Edit action link below that name. This goes to an Edit User page where you can check a box to grant super admin privileges.').'</p>',
                                        ]);
-
     get_current_screen()->set_help_sidebar('<p><strong>'.__('For more information:').'</strong></p>'.'<p>'.__('<a href="https://wordpress.org/documentation/article/network-admin-settings-screen/">Documentation on Network Settings</a>').'</p>'.'<p>'.__('<a href="https://wordpress.org/support/forums/">Support forums</a>').'</p>');
-
     if($_POST)
     {
+        /** This action is documented in wp-admin/network/edit.php */
         do_action('wpmuadminedit');
-
         check_admin_referer('siteoptions');
-
         $checked_options = [
             'menu_items' => [],
             'registrationnotification' => 'no',
@@ -66,7 +65,6 @@
                 $_POST[$option_name] = $option_unchecked_value;
             }
         }
-
         $options = [
             'registrationnotification',
             'registration',
@@ -91,7 +89,6 @@
             'new_admin_email',
             'first_comment_email',
         ];
-
         // Handle translation installation.
         if(! empty($_POST['WPLANG']) && current_user_can('install_languages') && wp_can_install_language_pack())
         {
@@ -101,7 +98,6 @@
                 $_POST['WPLANG'] = $language;
             }
         }
-
         foreach($options as $option_name)
         {
             if(! isset($_POST[$option_name]))
@@ -111,15 +107,16 @@
             $value = wp_unslash($_POST[$option_name]);
             update_site_option($option_name, $value);
         }
-
+        /**
+         * Fires after the network options are updated.
+         *
+         * @since MU (3.0.0)
+         */
         do_action('update_wpmu_options');
-
         wp_redirect(add_query_arg('updated', 'true', network_admin_url('settings.php')));
         exit;
     }
-
     require_once ABSPATH.'wp-admin/admin-header.php';
-
     if(isset($_GET['updated']))
     {
         wp_admin_notice(__('Settings saved.'), [
@@ -163,9 +160,7 @@
                         $new_admin_email = get_site_option('new_admin_email');
                         if($new_admin_email && get_site_option('admin_email') !== $new_admin_email) :
                             $notice_message = sprintf(/* translators: %s: New network admin email. */ __('There is a pending change of the network admin email to %s.'), '<code>'.esc_html($new_admin_email).'</code>');
-
                             $notice_message .= sprintf(' <a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(network_admin_url('settings.php?dismiss=new_network_admin_email'), 'dismiss_new_network_admin_email')), __('Cancel'));
-
                             wp_admin_notice($notice_message, [
                                 'type' => 'warning',
                                 'dismissible' => true,
@@ -258,7 +253,6 @@
                 <td>
                     <?php
                         $illegal_names = get_site_option('illegal_names');
-
                         if(empty($illegal_names))
                         {
                             $illegal_names = '';
@@ -287,7 +281,6 @@
                 <td>
                     <?php
                         $limited_email_domains = get_site_option('limited_email_domains');
-
                         if(empty($limited_email_domains))
                         {
                             $limited_email_domains = '';
@@ -296,7 +289,6 @@
                         {
                             // Convert from an input field. Back-compat for WPMU < 1.0.
                             $limited_email_domains = str_replace(' ', "\n", $limited_email_domains);
-
                             if(is_array($limited_email_domains))
                             {
                                 $limited_email_domains = implode("\n", $limited_email_domains);
@@ -320,7 +312,6 @@
                 <td>
                     <?php
                         $banned_email_domains = get_site_option('banned_email_domains');
-
                         if(empty($banned_email_domains))
                         {
                             $banned_email_domains = '';
@@ -536,7 +527,6 @@
                                 {
                                     $lang = '';
                                 }
-
                                 wp_dropdown_languages([
                                                           'name' => 'WPLANG',
                                                           'id' => 'WPLANG',
@@ -555,9 +545,23 @@
 
         <?php
             $menu_perms = get_site_option('menu_items');
-
+            /**
+             * Filters available network-wide administration menu options.
+             *
+             * Options returned to this filter are output as individual checkboxes that, when selected,
+             * enable site administrator access to the specified administration menu in certain contexts.
+             *
+             * Adding options for specific menus here hinges on the appropriate checks and capabilities
+             * being in place in the site dashboard on the other side. For instance, when the single
+             * default option, 'plugins' is enabled, site administrators are granted access to the Plugins
+             * screen in their individual sites' dashboards.
+             *
+             * @param string[] $admin_menus Associative array of the menu items available.
+             *
+             * @since MU (3.0.0)
+             *
+             */
             $menu_items = apply_filters('mu_menu_items', ['plugins' => __('Plugins')]);
-
             if($menu_items) :
                 ?>
                 <h2><?php _e('Menu Settings'); ?></h2>
@@ -568,12 +572,10 @@
                             <?php
                                 echo '<fieldset><legend class="screen-reader-text">'./* translators: Hidden accessibility text. */
                                     __('Enable menus').'</legend>';
-
                                 foreach((array) $menu_items as $key => $val)
                                 {
                                     echo "<label><input type='checkbox' name='menu_items[".$key."]' value='1'".(isset($menu_perms[$key]) ? checked($menu_perms[$key], '1', false) : '').' /> '.esc_html($val).'</label><br/>';
                                 }
-
                                 echo '</fieldset>';
                             ?>
                         </td>
@@ -584,7 +586,11 @@
         ?>
 
         <?php
-
+            /**
+             * Fires at the end of the Network Settings form, before the submit button.
+             *
+             * @since MU (3.0.0)
+             */
             do_action('wpmu_options');
         ?>
         <?php submit_button(); ?>

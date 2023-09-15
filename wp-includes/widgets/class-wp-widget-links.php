@@ -1,7 +1,26 @@
 <?php
+    /**
+     * Widget API: WP_Widget_Links class
+     *
+     * @package    WordPress
+     * @subpackage Widgets
+     * @since      4.4.0
+     */
 
+    /**
+     * Core class used to implement a Links widget.
+     *
+     * @since 2.8.0
+     *
+     * @see   WP_Widget
+     */
     class WP_Widget_Links extends WP_Widget
     {
+        /**
+         * Sets up a new Links widget instance.
+         *
+         * @since 2.8.0
+         */
         public function __construct()
         {
             $widget_ops = [
@@ -11,9 +30,18 @@
             parent::__construct('links', __('Links'), $widget_ops);
         }
 
+        /**
+         * Outputs the content for the current Links widget instance.
+         *
+         * @param array $args     Display arguments including 'before_title', 'after_title',
+         *                        'before_widget', and 'after_widget'.
+         * @param array $instance Settings for the current Links widget instance.
+         *
+         * @since 2.8.0
+         *
+         */
         public function widget($args, $instance)
         {
-            parent::widget($args, $instance);
             $show_description = isset($instance['description']) ? $instance['description'] : false;
             $show_name = isset($instance['name']) ? $instance['name'] : false;
             $show_rating = isset($instance['rating']) ? $instance['rating'] : false;
@@ -22,9 +50,7 @@
             $orderby = isset($instance['orderby']) ? $instance['orderby'] : 'name';
             $order = 'rating' === $orderby ? 'DESC' : 'ASC';
             $limit = isset($instance['limit']) ? $instance['limit'] : -1;
-
             $before_widget = preg_replace('/ id="[^"]*"/', ' id="%id"', $args['before_widget']);
-
             $widget_links_args = [
                 'title_before' => $args['before_title'],
                 'title_after' => $args['after_title'],
@@ -40,10 +66,32 @@
                 'order' => $order,
                 'limit' => $limit,
             ];
-
+            /**
+             * Filters the arguments for the Links widget.
+             *
+             * @param array $widget_links_args An array of arguments to retrieve the links list.
+             * @param array $instance          The settings for the particular instance of the widget.
+             *
+             * @see   wp_list_bookmarks()
+             *
+             * @since 2.6.0
+             * @since 4.4.0 Added the `$instance` parameter.
+             *
+             */
             wp_list_bookmarks(apply_filters('widget_links_args', $widget_links_args, $instance));
         }
 
+        /**
+         * Handles updating settings for the current Links widget instance.
+         *
+         * @param array $new_instance New settings for this instance as input by the user via
+         *                            WP_Widget::form().
+         * @param array $old_instance Old settings for this instance.
+         *
+         * @return array Updated settings to save.
+         * @since 2.8.0
+         *
+         */
         public function update($new_instance, $old_instance)
         {
             $new_instance = (array) $new_instance;
@@ -60,23 +108,28 @@
                     $instance[$field] = 1;
                 }
             }
-
             $instance['orderby'] = 'name';
             if(in_array($new_instance['orderby'], ['name', 'rating', 'id', 'rand'], true))
             {
                 $instance['orderby'] = $new_instance['orderby'];
             }
-
             $instance['category'] = (int) $new_instance['category'];
             $instance['limit'] = ! empty($new_instance['limit']) ? (int) $new_instance['limit'] : -1;
 
             return $instance;
         }
 
+        /**
+         * Outputs the settings form for the Links widget.
+         *
+         * @param array $instance Current settings.
+         *
+         * @since 2.8.0
+         *
+         */
         public function form($instance)
         {
             // Defaults.
-            parent::form($instance);
             $instance = wp_parse_args((array) $instance, [
                 'images' => true,
                 'name' => true,

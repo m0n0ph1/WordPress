@@ -1,18 +1,50 @@
 <?php
+    /**
+     * REST API: WP_REST_Sidebars_Controller class
+     *
+     * Original code from
+     * {@link https://github.com/martin-pettersson/wp-rest-api-sidebars Martin Pettersson (martin_pettersson@outlook.com)}.
+     *
+     * @package    WordPress
+     * @subpackage REST_API
+     * @since      5.8.0
+     */
 
+    /**
+     * Core class used to manage a site's sidebars.
+     *
+     * @since 5.8.0
+     *
+     * @see   WP_REST_Controller
+     */
     class WP_REST_Sidebars_Controller extends WP_REST_Controller
     {
+        /**
+         * Tracks whether {@see retrieve_widgets()} has been called in the current request.
+         *
+         * @since 5.9.0
+         * @var bool
+         */
         protected $widgets_retrieved = false;
 
+        /**
+         * Sidebars controller constructor.
+         *
+         * @since 5.8.0
+         */
         public function __construct()
         {
             $this->namespace = 'wp/v2';
             $this->rest_base = 'sidebars';
         }
 
+        /**
+         * Registers the controllers routes.
+         *
+         * @since 5.8.0
+         */
         public function register_routes()
         {
-            parent::register_routes();
             register_rest_route($this->namespace, '/'.$this->rest_base, [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -24,7 +56,6 @@
                 ],
                 'schema' => [$this, 'get_public_item_schema'],
             ]);
-
             register_rest_route($this->namespace, '/'.$this->rest_base.'/(?P<id>[\w-]+)', [
                 [
                     'methods' => WP_REST_Server::READABLE,
@@ -48,18 +79,25 @@
             ]);
         }
 
+        /**
+         * Checks if a given request has access to get sidebars.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         public function get_items_permissions_check($request)
         {
             $this->retrieve_widgets();
             foreach(wp_get_sidebars_widgets() as $id => $widgets)
             {
                 $sidebar = $this->get_sidebar($id);
-
                 if(! $sidebar)
                 {
                     continue;
                 }
-
                 if($this->check_read_permission($sidebar))
                 {
                     return true;
@@ -69,6 +107,13 @@
             return $this->do_permissions_check();
         }
 
+        /**
+         * Looks for "lost" widgets once per request.
+         *
+         * @since 5.9.0
+         *
+         * @see   retrieve_widgets()
+         */
         protected function retrieve_widgets()
         {
             if(! $this->widgets_retrieved)
@@ -78,16 +123,41 @@
             }
         }
 
+        /**
+         * Retrieves the registered sidebar with the given id.
+         *
+         * @param string|int $id ID of the sidebar.
+         *
+         * @return array|null The discovered sidebar, or null if it is not registered.
+         * @since 5.8.0
+         *
+         */
         protected function get_sidebar($id)
         {
             return wp_get_sidebar($id);
         }
 
+        /**
+         * Checks if a sidebar can be read publicly.
+         *
+         * @param array $sidebar The registered sidebar configuration.
+         *
+         * @return bool Whether the side can be read.
+         * @since 5.9.0
+         *
+         */
         protected function check_read_permission($sidebar)
         {
             return ! empty($sidebar['show_in_rest']);
         }
 
+        /**
+         * Checks if the user has permissions to make the request.
+         *
+         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         protected function do_permissions_check()
         {
             /*
@@ -102,47 +172,61 @@
             return true;
         }
 
+        /**
+         * Retrieves the list of sidebars (active or inactive).
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response Response object on success.
+         * @since 5.8.0
+         *
+         */
         public function get_items($request)
         {
             $this->retrieve_widgets();
-
             $data = [];
             $permissions_check = $this->do_permissions_check();
-
             foreach(wp_get_sidebars_widgets() as $id => $widgets)
             {
                 $sidebar = $this->get_sidebar($id);
-
                 if(! $sidebar)
                 {
                     continue;
                 }
-
                 if(is_wp_error($permissions_check) && ! $this->check_read_permission($sidebar))
                 {
                     continue;
                 }
-
                 $data[] = $this->prepare_response_for_collection($this->prepare_item_for_response($sidebar, $request));
             }
 
             return rest_ensure_response($data);
         }
 
+        /**
+         * Prepares a single sidebar output for response.
+         *
+         * @param array           $item                   Sidebar instance.
+         * @param WP_REST_Request $request                Full details about the request.
+         *
+         * @return WP_REST_Response Prepared response object.
+         * @global array          $wp_registered_widgets  The registered widgets.
+         *
+         * @since 5.8.0
+         * @since 5.9.0 Renamed `$raw_sidebar` to `$item` to match parent class for PHP 8 named parameter support.
+         *
+         * @global array          $wp_registered_sidebars The registered sidebars.
+         */
         public function prepare_item_for_response($item, $request)
         {
             global $wp_registered_sidebars, $wp_registered_widgets;
-
             // Restores the more descriptive, specific name for use within this method.
             $raw_sidebar = $item;
-
             $id = $raw_sidebar['id'];
             $sidebar = ['id' => $id];
-
             if(isset($wp_registered_sidebars[$id]))
             {
                 $registered_sidebar = $wp_registered_sidebars[$id];
-
                 $sidebar['status'] = 'active';
                 $sidebar['name'] = isset($registered_sidebar['name']) ? $registered_sidebar['name'] : '';
                 $sidebar['description'] = isset($registered_sidebar['description']) ? wp_sidebar_description($id) : '';
@@ -159,12 +243,10 @@
                 $sidebar['description'] = '';
                 $sidebar['class'] = '';
             }
-
             if(wp_is_block_theme())
             {
                 $sidebar['status'] = 'inactive';
             }
-
             $fields = $this->get_fields_for_response($request);
             if(rest_is_field_included('widgets', $fields))
             {
@@ -175,10 +257,8 @@
                 {
                     return isset($wp_registered_widgets[$widget_id]);
                 });
-
                 $sidebar['widgets'] = array_values($widgets);
             }
-
             $schema = $this->get_item_schema();
             $data = [];
             foreach($schema['properties'] as $property_id => $property)
@@ -192,28 +272,41 @@
                     $data[$property_id] = $property['default'];
                 }
             }
-
             $context = ! empty($request['context']) ? $request['context'] : 'view';
             $data = $this->add_additional_fields_to_object($data, $request);
             $data = $this->filter_response_by_context($data, $context);
-
             $response = rest_ensure_response($data);
-
             if(rest_is_field_included('_links', $fields) || rest_is_field_included('_embedded', $fields))
             {
                 $response->add_links($this->prepare_links($sidebar));
             }
 
+            /**
+             * Filters the REST API response for a sidebar.
+             *
+             * @param WP_REST_Response $response    The response object.
+             * @param array            $raw_sidebar The raw sidebar data.
+             * @param WP_REST_Request  $request     The request object.
+             *
+             * @since 5.8.0
+             *
+             */
             return apply_filters('rest_prepare_sidebar', $response, $raw_sidebar, $request);
         }
 
+        /**
+         * Retrieves the block type' schema, conforming to JSON Schema.
+         *
+         * @return array Item schema data.
+         * @since 5.8.0
+         *
+         */
         public function get_item_schema()
         {
             if($this->schema)
             {
                 return $this->add_additional_fields_schema($this->schema);
             }
-
             $schema = [
                 '$schema' => 'http://json-schema.org/draft-04/schema#',
                 'title' => 'sidebar',
@@ -289,12 +382,20 @@
                     ],
                 ],
             ];
-
             $this->schema = $schema;
 
             return $this->add_additional_fields_schema($this->schema);
         }
 
+        /**
+         * Prepares links for the sidebar.
+         *
+         * @param array $sidebar Sidebar.
+         *
+         * @return array Links for the given widget.
+         * @since 5.8.0
+         *
+         */
         protected function prepare_links($sidebar)
         {
             return [
@@ -311,10 +412,18 @@
             ];
         }
 
+        /**
+         * Checks if a given request has access to get a single sidebar.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         public function get_item_permissions_check($request)
         {
             $this->retrieve_widgets();
-
             $sidebar = $this->get_sidebar($request['id']);
             if($sidebar && $this->check_read_permission($sidebar))
             {
@@ -324,10 +433,18 @@
             return $this->do_permissions_check();
         }
 
+        /**
+         * Retrieves one sidebar from the collection.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+         * @since 5.8.0
+         *
+         */
         public function get_item($request)
         {
             $this->retrieve_widgets();
-
             $sidebar = $this->get_sidebar($request['id']);
             if(! $sidebar)
             {
@@ -337,17 +454,34 @@
             return $this->prepare_item_for_response($sidebar, $request);
         }
 
+        /**
+         * Checks if a given request has access to update sidebars.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+         * @since 5.8.0
+         *
+         */
         public function update_item_permissions_check($request)
         {
             return $this->do_permissions_check();
         }
 
+        /**
+         * Updates a sidebar.
+         *
+         * @param WP_REST_Request $request Full details about the request.
+         *
+         * @return WP_REST_Response Response object on success, or WP_Error object on failure.
+         * @since 5.8.0
+         *
+         */
         public function update_item($request)
         {
             if(isset($request['widgets']))
             {
                 $sidebars = wp_get_sidebars_widgets();
-
                 foreach($sidebars as $sidebar_id => $widgets)
                 {
                     foreach($widgets as $i => $widget_id)
@@ -357,7 +491,6 @@
                         {
                             unset($sidebars[$sidebar_id][$i]);
                         }
-
                         // This automatically removes omitted widget IDs to the inactive sidebar.
                         if($sidebar_id === $request['id'] && ! in_array($widget_id, $request['widgets'], true))
                         {
@@ -365,16 +498,20 @@
                         }
                     }
                 }
-
                 $sidebars[$request['id']] = $request['widgets'];
-
                 wp_set_sidebars_widgets($sidebars);
             }
-
             $request['context'] = 'edit';
-
             $sidebar = $this->get_sidebar($request['id']);
-
+            /**
+             * Fires after a sidebar is updated via the REST API.
+             *
+             * @param array           $sidebar The updated sidebar.
+             * @param WP_REST_Request $request Request object.
+             *
+             * @since 5.8.0
+             *
+             */
             do_action('rest_save_sidebar', $sidebar, $request);
 
             return $this->prepare_item_for_response($sidebar, $request);

@@ -1,16 +1,46 @@
 <?php
-
+    /**
+     * Non-latin language handling.
+     *
+     * Handle non-latin language styles.
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Twenty
+     * @since      Twenty Twenty 1.0
+     */
     if(! class_exists('TwentyTwenty_Non_Latin_Languages'))
     {
+        /**
+         * Language handling.
+         *
+         * @since Twenty Twenty 1.0
+         */
         class TwentyTwenty_Non_Latin_Languages
         {
+            /**
+             * Get custom CSS.
+             *
+             * Return CSS for non-latin language, if available, or null
+             *
+             * @param string $type Whether to return CSS for the "front-end", "block-editor", or "classic-editor".
+             *
+             * @return string|null Custom CSS, or null if not applicable.
+             * @since Twenty Twenty 1.0
+             *
+             */
             public static function get_non_latin_css($type = 'front-end')
             {
                 // Fetch site locale.
                 $locale = get_bloginfo('language');
-
+                /**
+                 * Filters the fallback fonts for non-latin languages.
+                 *
+                 * @param array $font_family An array of locales and font families.
+                 *
+                 * @since Twenty Twenty 1.0
+                 *
+                 */
                 $font_family = apply_filters('twentytwenty_get_localized_font_family_types', [
-
                     // Arabic.
                     'ar' => ['Tahoma', 'Arial', 'sans-serif'],
                     'ary' => ['Tahoma', 'Arial', 'sans-serif'],
@@ -19,7 +49,6 @@
                     'fa-IR' => ['Tahoma', 'Arial', 'sans-serif'],
                     'haz' => ['Tahoma', 'Arial', 'sans-serif'],
                     'ps' => ['Tahoma', 'Arial', 'sans-serif'],
-
                     // Chinese Simplified (China) - Noto Sans SC.
                     'zh-CN' => [
                         '\'PingFang SC\'',
@@ -28,7 +57,6 @@
                         '\'STHeiti Light\'',
                         'sans-serif',
                     ],
-
                     // Chinese Traditional (Taiwan) - Noto Sans TC.
                     'zh-TW' => [
                         '\'PingFang TC\'',
@@ -37,7 +65,6 @@
                         '\'STHeiti Light\'',
                         'sans-serif',
                     ],
-
                     // Chinese (Hong Kong) - Noto Sans HK.
                     'zh-HK' => [
                         '\'PingFang HK\'',
@@ -46,7 +73,6 @@
                         '\'STHeiti Light\'',
                         'sans-serif',
                     ],
-
                     // Cyrillic.
                     'bel' => ['\'Helvetica Neue\'', 'Helvetica', '\'Segoe UI\'', 'Arial', 'sans-serif'],
                     'bg-BG' => ['\'Helvetica Neue\'', 'Helvetica', '\'Segoe UI\'', 'Arial', 'sans-serif'],
@@ -58,25 +84,19 @@
                     'sr-RS' => ['\'Helvetica Neue\'', 'Helvetica', '\'Segoe UI\'', 'Arial', 'sans-serif'],
                     'tt-RU' => ['\'Helvetica Neue\'', 'Helvetica', '\'Segoe UI\'', 'Arial', 'sans-serif'],
                     'uk' => ['\'Helvetica Neue\'', 'Helvetica', '\'Segoe UI\'', 'Arial', 'sans-serif'],
-
                     // Devanagari.
                     'bn-BD' => ['Arial', 'sans-serif'],
                     'hi-IN' => ['Arial', 'sans-serif'],
                     'mr' => ['Arial', 'sans-serif'],
                     'ne-NP' => ['Arial', 'sans-serif'],
-
                     // Greek.
                     'el' => ['\'Helvetica Neue\', Helvetica, Arial, sans-serif'],
-
                     // Gujarati.
                     'gu' => ['Arial', 'sans-serif'],
-
                     // Hebrew.
                     'he-IL' => ['\'Arial Hebrew\'', 'Arial', 'sans-serif'],
-
                     // Japanese.
                     'ja' => ['sans-serif'],
-
                     // Korean.
                     'ko-KR' => [
                         '\'Apple SD Gothic Neo\'',
@@ -85,21 +105,24 @@
                         'Dotum',
                         'sans-serif',
                     ],
-
                     // Thai.
                     'th' => ['\'Sukhumvit Set\'', '\'Helvetica Neue\'', 'Helvetica', 'Arial', 'sans-serif'],
-
                     // Vietnamese.
                     'vi' => ['\'Libre Franklin\'', 'sans-serif'],
-
                 ]);
-
                 // Return if the selected language has no fallback fonts.
                 if(empty($font_family[$locale]))
                 {
                     return null;
                 }
-
+                /**
+                 * Filters the elements to apply fallback fonts to.
+                 *
+                 * @param array $elements An array of elements for "front-end", "block-editor", or "classic-editor".
+                 *
+                 * @since Twenty Twenty 1.0
+                 *
+                 */
                 $elements = apply_filters('twentytwenty_get_localized_font_family_elements', [
                     'front-end' => [
                         'body',
@@ -195,7 +218,6 @@
                         'body#tinymce.wp-editor table',
                     ],
                 ]);
-
                 // Return if the specified type doesn't exist.
                 if(empty($elements[$type]))
                 {

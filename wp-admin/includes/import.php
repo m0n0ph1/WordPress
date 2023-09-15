@@ -1,5 +1,18 @@
 <?php
-
+    /**
+     * WordPress Administration Importer API.
+     *
+     * @package    WordPress
+     * @subpackage Administration
+     */
+    /**
+     * Retrieves the list of importers.
+     *
+     * @return array
+     * @global array $wp_importers
+     * @since 2.0.0
+     *
+     */
     function get_importers()
     {
         global $wp_importers;
@@ -11,11 +24,38 @@
         return $wp_importers;
     }
 
+    /**
+     * Sorts a multidimensional array by first member of each top level member.
+     *
+     * Used by uasort() as a callback, should not be used directly.
+     *
+     * @param array $a
+     * @param array $b
+     *
+     * @return int
+     * @since  2.9.0
+     * @access private
+     *
+     */
     function _usort_by_first_member($a, $b)
     {
         return strnatcasecmp($a[0], $b[0]);
     }
 
+    /**
+     * Registers importer for WordPress.
+     *
+     * @param string   $id          Importer tag. Used to uniquely identify importer.
+     * @param string   $name        Importer name and title.
+     * @param string   $description Importer description.
+     * @param callable $callback    Callback to run.
+     *
+     * @return void|WP_Error Void on success. WP_Error when $callback is WP_Error.
+     * @global array   $wp_importers
+     *
+     * @since 2.0.0
+     *
+     */
     function register_importer($id, $name, $description, $callback)
     {
         global $wp_importers;
@@ -26,11 +66,28 @@
         $wp_importers[$id] = [$name, $description, $callback];
     }
 
+    /**
+     * Cleanup importer.
+     *
+     * Removes attachment based on ID.
+     *
+     * @param string $id Importer ID.
+     *
+     * @since 2.0.0
+     *
+     */
     function wp_import_cleanup($id)
     {
         wp_delete_attachment($id);
     }
 
+    /**
+     * Handles importer uploading and adds attachment.
+     *
+     * @return array Uploaded file's details on success, error message on failure.
+     * @since 2.0.0
+     *
+     */
     function wp_import_handle_upload()
     {
         if(! isset($_FILES['import']))
@@ -39,19 +96,16 @@
                 'error' => sprintf(/* translators: 1: php.ini, 2: post_max_size, 3: upload_max_filesize */ __('File is empty. Please upload something more substantial. This error could also be caused by uploads being disabled in your %1$s file or by %2$s being defined as smaller than %3$s in %1$s.'), 'php.ini', 'post_max_size', 'upload_max_filesize'),
             ];
         }
-
         $overrides = [
             'test_form' => false,
             'test_type' => false,
         ];
         $_FILES['import']['name'] .= '.txt';
         $upload = wp_handle_upload($_FILES['import'], $overrides);
-
         if(isset($upload['error']))
         {
             return $upload;
         }
-
         // Construct the attachment array.
         $attachment = [
             'post_title' => wp_basename($upload['file']),
@@ -61,10 +115,8 @@
             'context' => 'import',
             'post_status' => 'private',
         ];
-
         // Save the data.
         $id = wp_insert_attachment($attachment, $upload['file']);
-
         /*
          * Schedule a cleanup for one day from now in case of failed
          * import or missing wp_import_cleanup() call.
@@ -77,15 +129,20 @@
         ];
     }
 
+    /**
+     * Returns a list from WordPress.org of popular importer plugins.
+     *
+     * @return array Importers with metadata for each.
+     * @since 3.5.0
+     *
+     */
     function wp_get_popular_importers()
     {
         // Include an unmodified $wp_version.
         require ABSPATH.WPINC.'/version.php';
-
         $locale = get_user_locale();
         $cache_key = 'popular_importers_'.md5($locale.$wp_version);
         $popular_importers = get_site_transient($cache_key);
-
         if(! $popular_importers)
         {
             $url = add_query_arg([
@@ -93,15 +150,12 @@
                                      'version' => $wp_version,
                                  ], 'http://api.wordpress.org/core/importers/1.1/');
             $options = ['user-agent' => 'WordPress/'.$wp_version.'; '.home_url('/')];
-
             if(wp_http_supports(['ssl']))
             {
                 $url = set_url_scheme($url, 'https');
             }
-
             $response = wp_remote_get($url, $options);
             $popular_importers = json_decode(wp_remote_retrieve_body($response), true);
-
             if(is_array($popular_importers))
             {
                 set_site_transient($cache_key, $popular_importers, 2 * DAY_IN_SECONDS);
@@ -111,7 +165,6 @@
                 $popular_importers = false;
             }
         }
-
         if(is_array($popular_importers))
         {
             // If the data was received as translated, return it as-is.
@@ -119,7 +172,6 @@
             {
                 return $popular_importers['importers'];
             }
-
             foreach($popular_importers['importers'] as &$importer)
             {
                 // phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction,WordPress.WP.I18n.NonSingularStringLiteralText

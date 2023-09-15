@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Footer with navigation and copyright
+     */
     return [
         'title' => __('Footer with navigation and copyright', 'twentytwentytwo'),
         'categories' => ['footer'],

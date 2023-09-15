@@ -1,51 +1,115 @@
 <?php
-
+    /**
+     * "Inline" diff renderer.
+     *
+     * Copyright 2004-2010 The Horde Project (http://www.horde.org/)
+     *
+     * See the enclosed file COPYING for license information (LGPL). If you did
+     * not receive this file, see https://opensource.org/license/lgpl-2-1/.
+     *
+     * @author  Ciprian Popovici
+     * @package Text_Diff
+     */
+    /** Text_Diff_Renderer */
 // WP #7391
     require_once dirname(dirname(__FILE__)).'/Renderer.php';
 
-    class inline extends Text_Diff_Renderer
+    /**
+     * "Inline" diff renderer.
+     *
+     * This class renders diffs in the Wiki-style "inline" format.
+     *
+     * @author  Ciprian Popovici
+     * @package Text_Diff
+     */
+    class Text_Diff_Renderer_inline extends Text_Diff_Renderer
     {
-        public $_leading_context_lines = 10000;
+        /**
+         * Number of leading context "lines" to preserve.
+         *
+         * @var integer
+         */
+        var $_leading_context_lines = 10000;
 
-        public $_trailing_context_lines = 10000;
+        /**
+         * Number of trailing context "lines" to preserve.
+         *
+         * @var integer
+         */
+        var $_trailing_context_lines = 10000;
 
-        public $_ins_prefix = '<ins>';
+        /**
+         * Prefix for inserted text.
+         *
+         * @var string
+         */
+        var $_ins_prefix = '<ins>';
 
-        public $_ins_suffix = '</ins>';
+        /**
+         * Suffix for inserted text.
+         *
+         * @var string
+         */
+        var $_ins_suffix = '</ins>';
 
-        public $_del_prefix = '<del>';
+        /**
+         * Prefix for deleted text.
+         *
+         * @var string
+         */
+        var $_del_prefix = '<del>';
 
-        public $_del_suffix = '</del>';
+        /**
+         * Suffix for deleted text.
+         *
+         * @var string
+         */
+        var $_del_suffix = '</del>';
 
-        public $_block_header = '';
+        /**
+         * Header for each change block.
+         *
+         * @var string
+         */
+        var $_block_header = '';
 
-        public $_split_characters = false;
+        /**
+         * Whether to split down to character-level.
+         *
+         * @var boolean
+         */
+        var $_split_characters = false;
 
-        public $_split_level = 'lines';
+        /**
+         * What are we currently splitting on? Used to recurse to show word-level
+         * or character-level changes.
+         *
+         * @var string
+         */
+        var $_split_level = 'lines';
 
-        public function _blockHeader($xbeg, $xlen, $ybeg, $ylen)
+        function _blockHeader($xbeg, $xlen, $ybeg, $ylen)
         {
             return $this->_block_header;
         }
 
-        public function _startBlock($header)
+        function _startBlock($header)
         {
             return $header;
         }
 
-        public function _changed($orig, $final)
+        function _changed($orig, $final)
         {
             /* If we've already split on characters, just display. */
             if($this->_split_level == 'characters')
             {
                 return $this->_deleted($orig).$this->_added($final);
             }
-
             /* If we've already split on words, just display. */
             if($this->_split_level == 'words')
             {
                 $prefix = '';
-                while($orig[0] !== false && $final[0] !== false && strpos($orig[0], ' ') === 0 && strpos($final[0], ' ') === 0)
+                while($orig[0] !== false && $final[0] !== false && substr($orig[0], 0, 1) == ' ' && substr($final[0], 0, 1) == ' ')
                 {
                     $prefix .= substr($orig[0], 0, 1);
                     $orig[0] = substr($orig[0], 1);
@@ -54,13 +118,10 @@
 
                 return $prefix.$this->_deleted($orig).$this->_added($final);
             }
-
             $text1 = implode("\n", $orig);
             $text2 = implode("\n", $final);
-
             /* Non-printing newline marker. */
             $nl = "\0";
-
             if($this->_split_characters)
             {
                 $diff = new Text_Diff('native', [
@@ -78,7 +139,6 @@
                     $this->_splitOnWords($text2, $nl)
                 ]);
             }
-
             /* Get the diff in inline format. */
             $renderer = new Text_Diff_Renderer_inline
             (
@@ -90,7 +150,7 @@
             return str_replace($nl, "\n", $renderer->render($diff))."\n";
         }
 
-        public function _deleted($lines, $words = false)
+        function _deleted($lines, $words = false)
         {
             array_walk($lines, [&$this, '_encode']);
             $lines[0] = $this->_del_prefix.$lines[0];
@@ -99,13 +159,12 @@
             return $this->_lines($lines, ' ', false);
         }
 
-        public function _lines($lines, $prefix = ' ', $encode = true)
+        function _lines($lines, $prefix = ' ', $encode = true)
         {
             if($encode)
             {
                 array_walk($lines, [&$this, '_encode']);
             }
-
             if($this->_split_level == 'lines')
             {
                 return implode("\n", $lines)."\n";
@@ -116,7 +175,7 @@
             }
         }
 
-        public function _added($lines)
+        function _added($lines)
         {
             array_walk($lines, [&$this, '_encode']);
             $lines[0] = $this->_ins_prefix.$lines[0];
@@ -125,15 +184,13 @@
             return $this->_lines($lines, ' ', false);
         }
 
-        public function _splitOnWords($string, $newlineEscape = "\n")
+        function _splitOnWords($string, $newlineEscape = "\n")
         {
             // Ignore \0; otherwise the while loop will never finish.
             $string = str_replace("\0", '', $string);
-
             $words = [];
             $length = strlen($string);
             $pos = 0;
-
             while($pos < $length)
             {
                 // Eat a word with any preceding whitespace.
@@ -146,7 +203,7 @@
             return $words;
         }
 
-        public function _encode(&$string)
+        function _encode(&$string)
         {
             $string = htmlspecialchars($string);
         }

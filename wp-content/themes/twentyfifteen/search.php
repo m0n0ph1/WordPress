@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * The template for displaying search results pages.
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Fifteen
+     * @since      Twenty Fifteen 1.0
+     */
     get_header(); ?>
 
 <section id="primary" class="content-area">
@@ -29,10 +35,8 @@
                  * called content-search.php and that will be used instead.
                  */
                 get_template_part('content', 'search');
-
                 // End the loop.
             endwhile;
-
             // Previous/next page navigation.
             the_posts_pagination([
                                      'prev_text' => __('Previous page', 'twentyfifteen'),
@@ -40,11 +44,9 @@
                                      /* translators: Hidden accessibility text. */
                                      'before_page_number' => '<span class="meta-nav screen-reader-text">'.__('Page', 'twentyfifteen').' </span>',
                                  ]);
-
         // If no content, include the "No posts found" template.
         else :
             get_template_part('content', 'none');
-
         endif;
         ?>
 

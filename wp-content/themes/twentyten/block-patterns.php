@@ -1,10 +1,24 @@
 <?php
-
+    /**
+     * Block Patterns
+     *
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern/
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern_category/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Ten
+     * @since      Twenty Ten 3.4
+     */
+    /**
+     * Register Block Pattern Category.
+     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentyten', ['label' => esc_html__('Twenty Ten', 'twentyten')]);
     }
-
+    /**
+     * Register Block Patterns.
+     */
     if(function_exists('register_block_pattern'))
     {
         // Image with large heading and paragraph.
@@ -14,7 +28,6 @@
             'viewportWidth' => 700,
             'content' => '<!-- wp:image {"id":null,"sizeSlug":"large","linkDestination":"none"} --><figure class="wp-block-image size-large"><img src="'.esc_url(get_template_directory_uri()).'/images/patterns/pattern-barn.jpg" alt="'.esc_attr__('A red barn with a white roof in a field.', 'twentyten').'" /><figcaption><em>'.esc_html__('An old barn we passed on the drive', 'twentyten').'</em></figcaption></figure><!-- /wp:image --><!-- wp:heading {"style":{"typography":{"fontSize":60}}} --><h2 style="font-size:60px">'.esc_html__('A Weekend Away', 'twentyten').'</h2><!-- /wp:heading --><!-- wp:paragraph --><p>'.esc_html__('It’s amazing what a good weekend can do. After a tough couple weeks at work, I knew I needed to get away and be in nature. My partner and I decided to take a long weekend and stay in a cabin in the woods. We packed up after work on Friday and drove out into the country, passing through fields full of horses, old farms, and quaint little town squares. It was an idyllic drive. Eventually, we reached our destination and unpacked the car. We couldn’t wait to cook up a simple dinner and then relax by the fireplace.', 'twentyten').'</p><!-- /wp:paragraph -->',
         ]);
-
         // Cover block with a pullquote.
         register_block_pattern('twentyten/highlighted-quote', [
             'title' => esc_html__('Highlighted Quote', 'twentyten'),
@@ -22,7 +35,6 @@
             'viewportWidth' => 700,
             'content' => '<!-- wp:cover {"overlayColor":"light-gray"} --><div class="wp-block-cover has-light-gray-background-color has-background-dim"><div class="wp-block-cover__inner-container"><!-- wp:pullquote {"textColor":"black","className":"is-style-solid-color"} --><figure class="wp-block-pullquote is-style-solid-color"><blockquote class="has-text-color has-black-color"><p><em>'.esc_html__('"Take time off&hellip; The world will not fall apart without you."', 'twentyten').'</em></p><cite>'.esc_html__('— Malebo Sephodi', 'twentyten').'</cite></blockquote></figure><!-- /wp:pullquote --></div></div><!-- /wp:cover -->',
         ]);
-
         // Column blocks featuring two images with text on the side.
         register_block_pattern('twentyten/alternating-images', [
             'title' => esc_html__('Alternating Images', 'twentyten'),

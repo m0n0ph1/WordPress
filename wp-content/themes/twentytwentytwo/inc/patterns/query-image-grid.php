@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * Grid of image posts block pattern
+     */
     return [
         'title' => __('Grid of image posts', 'twentytwentytwo'),
         'categories' => ['query'],

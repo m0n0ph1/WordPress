@@ -1,10 +1,24 @@
 <?php
-
+    /**
+     * Block Patterns
+     *
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern/
+     * @link       https://developer.wordpress.org/reference/functions/register_block_pattern_category/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 3.8
+     */
+    /**
+     * Register Block Pattern Category.
+     */
     if(function_exists('register_block_pattern_category'))
     {
         register_block_pattern_category('twentyeleven', ['label' => esc_html__('Twenty Eleven', 'twentyeleven')]);
     }
-
+    /**
+     * Register Block Patterns.
+     */
     if(function_exists('register_block_pattern'))
     {
         // Heading, and two columns featuring an image and dropcap.
@@ -31,7 +45,6 @@
 				<!-- /wp:column --></div>
 				<!-- /wp:columns -->',
         ]);
-
         // Two columns with a quote.
         register_block_pattern('twentyeleven/inline-quote', [
             'title' => esc_html__('Inline Quote', 'twentyeleven'),
@@ -53,7 +66,6 @@
 				<!-- /wp:column --></div>
 				<!-- /wp:columns -->',
         ]);
-
         // Cover block with a call-to-action to follow the blog.
         register_block_pattern('twentyeleven/follow', [
             'title' => esc_html__('Follow Blog', 'twentyeleven'),
@@ -76,7 +88,6 @@
 				<!-- /wp:buttons --></div></div>
 				<!-- /wp:cover -->',
         ]);
-
         // Heading, and two columns with an image and text.
         register_block_pattern('twentyeleven/about', [
             'title' => esc_html__('About Me', 'twentyeleven'),
@@ -97,7 +108,6 @@
 				<!-- /wp:column --></div>
 				<!-- /wp:columns -->',
         ]);
-
         // Two columns with headings and lists.
         register_block_pattern('twentyeleven/lists', [
             'title' => esc_html__('Two Columns of Lists', 'twentyeleven'),

@@ -1,5 +1,15 @@
 <?php
-
+    /**
+     * Template for displaying posts in the Gallery Post Format
+     *
+     * Used on index and archive pages.
+     *
+     * @link       https://wordpress.org/documentation/article/post-formats/
+     *
+     * @package    WordPress
+     * @subpackage Twenty_Eleven
+     * @since      Twenty Eleven 1.0
+     */
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -56,7 +66,6 @@
 
         <?php
             $categories_list = get_the_category_list(wp_get_list_item_separator());
-
             if($categories_list) :
                 ?>
                 <span class="cat-links">
@@ -70,7 +79,6 @@
 
         <?php
             $tags_list = get_the_tag_list('', wp_get_list_item_separator());
-
             if($tags_list && ! is_wp_error($tags_list)) :
                 if($show_sep) :
                     ?>

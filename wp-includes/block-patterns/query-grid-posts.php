@@ -1,5 +1,9 @@
 <?php
-
+    /**
+     * Query: Grid.
+     *
+     * @package WordPress
+     */
     return [
         'title' => _x('Grid', 'Block pattern title'),
         'blockTypes' => ['core/query'],

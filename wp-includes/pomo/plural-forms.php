@@ -1,56 +1,108 @@
 <?php
-
+    /**
+     * A gettext Plural-Forms parser.
+     *
+     * @since 4.9.0
+     */
     if(! class_exists('Plural_Forms', false)) :
         #[AllowDynamicProperties]
         class Plural_Forms
         {
-            public const OP_CHARS = '|&><!=%?:';
+            /**
+             * Operator characters.
+             *
+             * @since 4.9.0
+             * @var string OP_CHARS Operator characters.
+             */
+            const OP_CHARS = '|&><!=%?:';
 
-            public const NUM_CHARS = '0123456789';
+            /**
+             * Valid number characters.
+             *
+             * @since 4.9.0
+             * @var string NUM_CHARS Valid number characters.
+             */
+            const NUM_CHARS = '0123456789';
 
+            /**
+             * Operator precedence.
+             *
+             * Operator precedence from highest to lowest. Higher numbers indicate
+             * higher precedence, and are executed first.
+             *
+             * @see   https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B#Operator_precedence
+             *
+             * @since 4.9.0
+             * @var array $op_precedence Operator precedence from highest to lowest.
+             */
             protected static $op_precedence = [
                 '%' => 6,
-
                 '<' => 5,
                 '<=' => 5,
                 '>' => 5,
                 '>=' => 5,
-
                 '==' => 4,
                 '!=' => 4,
-
                 '&&' => 3,
-
                 '||' => 2,
-
                 '?:' => 1,
                 '?' => 1,
-
                 '(' => 0,
                 ')' => 0,
             ];
 
+            /**
+             * Tokens generated from the string.
+             *
+             * @since 4.9.0
+             * @var array $tokens List of tokens.
+             */
             protected $tokens = [];
 
+            /**
+             * Cache for repeated calls to the function.
+             *
+             * @since 4.9.0
+             * @var array $cache Map of $n => $result
+             */
             protected $cache = [];
 
+            /**
+             * Constructor.
+             *
+             * @param string $str Plural function (just the bit after `plural=` from Plural-Forms)
+             *
+             * @since 4.9.0
+             *
+             */
             public function __construct($str)
             {
                 $this->parse($str);
             }
 
+            /**
+             * Parse a Plural-Forms string into tokens.
+             *
+             * Uses the shunting-yard algorithm to convert the string to Reverse Polish
+             * Notation tokens.
+             *
+             * @param string $str String to parse.
+             *
+             * @throws Exception If there is a syntax or parsing error with the string.
+             *
+             * @since 4.9.0
+             *
+             */
             protected function parse($str)
             {
                 $pos = 0;
                 $len = strlen($str);
-
                 // Convert infix operators to postfix using the shunting-yard algorithm.
                 $output = [];
                 $stack = [];
                 while($pos < $len)
                 {
                     $next = substr($str, $pos, 1);
-
                     switch($next)
                     {
                         // Ignore whitespace.
@@ -58,19 +110,16 @@
                         case "\t":
                             ++$pos;
                             break;
-
                         // Variable (n).
                         case 'n':
                             $output[] = ['var'];
                             ++$pos;
                             break;
-
                         // Parentheses.
                         case '(':
                             $stack[] = $next;
                             ++$pos;
                             break;
-
                         case ')':
                             $found = false;
                             while(! empty($stack))
@@ -81,21 +130,17 @@
                                     $output[] = ['op', array_pop($stack)];
                                     continue;
                                 }
-
                                 // Discard open paren.
                                 array_pop($stack);
                                 $found = true;
                                 break;
                             }
-
                             if(! $found)
                             {
-                                throw new \RuntimeException('Mismatched parentheses');
+                                throw new Exception('Mismatched parentheses');
                             }
-
                             ++$pos;
                             break;
-
                         // Operators.
                         case '|':
                         case '&':
@@ -109,13 +154,11 @@
                             $operator = substr($str, $pos, $end_operator);
                             if(! array_key_exists($operator, self::$op_precedence))
                             {
-                                throw new \RuntimeException(sprintf('Unknown operator "%s"', $operator));
+                                throw new Exception(sprintf('Unknown operator "%s"', $operator));
                             }
-
                             while(! empty($stack))
                             {
                                 $o2 = $stack[count($stack) - 1];
-
                                 // Ternary is right-associative in C.
                                 if('?:' === $operator || '?' === $operator)
                                 {
@@ -128,14 +171,11 @@
                                 {
                                     break;
                                 }
-
                                 $output[] = ['op', array_pop($stack)];
                             }
                             $stack[] = $operator;
-
                             $pos += $end_operator;
                             break;
-
                         // Ternary "else".
                         case ':':
                             $found = false;
@@ -149,20 +189,17 @@
                                     --$s_pos;
                                     continue;
                                 }
-
                                 // Replace.
                                 $stack[$s_pos] = '?:';
                                 $found = true;
                                 break;
                             }
-
                             if(! $found)
                             {
-                                throw new \RuntimeException('Missing starting "?" ternary operator');
+                                throw new Exception('Missing starting "?" ternary operator');
                             }
                             ++$pos;
                             break;
-
                         // Default - number or invalid.
                         default:
                             if($next >= '0' && $next <= '9')
@@ -172,25 +209,32 @@
                                 $pos += $span;
                                 break;
                             }
-
-                            throw new \RuntimeException(sprintf('Unknown symbol "%s"', $next));
+                            throw new Exception(sprintf('Unknown symbol "%s"', $next));
                     }
                 }
-
                 while(! empty($stack))
                 {
                     $o2 = array_pop($stack);
                     if('(' === $o2 || ')' === $o2)
                     {
-                        throw new \RuntimeException('Mismatched parentheses');
+                        throw new Exception('Mismatched parentheses');
                     }
-
                     $output[] = ['op', $o2];
                 }
-
                 $this->tokens = $output;
             }
 
+            /**
+             * Get the plural form for a number.
+             *
+             * Caches the value for repeated calls.
+             *
+             * @param int $num Number to get plural form for.
+             *
+             * @return int Plural form value.
+             * @since 4.9.0
+             *
+             */
             public function get($num)
             {
                 if(isset($this->cache[$num]))
@@ -202,6 +246,17 @@
                 return $this->cache[$num];
             }
 
+            /**
+             * Execute the plural form function.
+             *
+             * @param int $n Variable "n" to substitute.
+             *
+             * @return int Plural form value.
+             * @throws Exception If the plural form value cannot be calculated.
+             *
+             * @since 4.9.0
+             *
+             */
             public function execute($n)
             {
                 $stack = [];
@@ -221,7 +276,6 @@
                         $stack[] = $next[1];
                         continue;
                     }
-
                     // Only operators left.
                     switch($next[1])
                     {
@@ -230,70 +284,59 @@
                             $v1 = array_pop($stack);
                             $stack[] = $v1 % $v2;
                             break;
-
                         case '||':
                             $v2 = array_pop($stack);
                             $v1 = array_pop($stack);
                             $stack[] = $v1 || $v2;
                             break;
-
                         case '&&':
                             $v2 = array_pop($stack);
                             $v1 = array_pop($stack);
                             $stack[] = $v1 && $v2;
                             break;
-
                         case '<':
                             $v2 = array_pop($stack);
                             $v1 = array_pop($stack);
                             $stack[] = $v1 < $v2;
                             break;
-
                         case '<=':
                             $v2 = array_pop($stack);
                             $v1 = array_pop($stack);
                             $stack[] = $v1 <= $v2;
                             break;
-
                         case '>':
                             $v2 = array_pop($stack);
                             $v1 = array_pop($stack);
                             $stack[] = $v1 > $v2;
                             break;
-
                         case '>=':
                             $v2 = array_pop($stack);
                             $v1 = array_pop($stack);
                             $stack[] = $v1 >= $v2;
                             break;
-
                         case '!=':
                             $v2 = array_pop($stack);
                             $v1 = array_pop($stack);
                             $stack[] = $v1 != $v2;
                             break;
-
                         case '==':
                             $v2 = array_pop($stack);
                             $v1 = array_pop($stack);
                             $stack[] = $v1 == $v2;
                             break;
-
                         case '?:':
                             $v3 = array_pop($stack);
                             $v2 = array_pop($stack);
                             $v1 = array_pop($stack);
                             $stack[] = $v1 ? $v2 : $v3;
                             break;
-
                         default:
-                            throw new \RuntimeException(sprintf('Unknown operator "%s"', $next[1]));
+                            throw new Exception(sprintf('Unknown operator "%s"', $next[1]));
                     }
                 }
-
                 if(count($stack) !== 1)
                 {
-                    throw new \RuntimeException('Too many values remaining on the stack');
+                    throw new Exception('Too many values remaining on the stack');
                 }
 
                 return (int) $stack[0];
